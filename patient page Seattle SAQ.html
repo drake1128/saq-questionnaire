@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>西雅圖心絞痛問卷 (SAQ)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .info-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 30px;
+            border-radius: 5px;
+        }
+
+        .info-box strong {
+            color: #856404;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .patient-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .patient-info h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .form-group input {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .section {
+            background: #f8f9fa;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-number {
+            background: #667eea;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .question {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .question-text {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+
+        .table-question {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .activity-name {
+            text-align: left !important;
+            font-weight: 500;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .radio-option:hover {
+            background: #f0f4ff;
+            border-color: #667eea;
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .radio-option label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .radio-option input[type="radio"]:checked + label {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        input[type="radio"] {
+            accent-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .results {
+            display: none;
+            background: #e8f5e9;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 30px;
+            border-left: 5px solid #4caf50;
+        }
+
+        .results h2 {
+            color: #2e7d32;
+            margin-bottom: 20px;
+        }
+
+        .score-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .score-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .score-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .interpretation {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .interpretation h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+            }
+            .btn, .progress-bar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 0;
+            }
+            .content {
+                padding: 15px;
+            }
+            .section {
+                padding: 15px;
+            }
+            table {
+                font-size: 12px;
+            }
+            th, td {
+                padding: 8px 4px;
+            }
+        }
+
+        .required {
+            color: red;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #c62828;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>西雅圖心絞痛問卷</h1>
+            <p>Seattle Angina Questionnaire (SAQ)</p>
+        </div>
+
+        <div class="info-box">
+            <strong>📋 填寫說明：</strong>
+            請根據<strong>過去4週</strong>的情況回答所有問題。您的回答將協助醫療團隊提供更好的照護。
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="content">
+            <form id="saqForm">
+                <!-- 基本資料 -->
+                <div class="patient-info">
+                    <h3>📝 基本資料</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>姓名 <span class="required">*</span></label>
+                            <input type="text" id="patientName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>病歷號</label>
+                            <input type="text" id="patientID">
+                        </div>
+                        <div class="form-group">
+                            <label>填寫日期 <span class="required">*</span></label>
+                            <input type="date" id="fillDate" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="error-message" id="errorMessage">
+                    ⚠️ 請回答所有必填問題
+                </div>
+
+                <!-- 第一部分：身體活動限制 -->
+                <div class="section">
+                    <h2><span class="section-number">1</span>身體活動限制</h2>
+                    <p style="margin-bottom: 15px; color: #666;">在<strong>過去4週內</strong>，由於胸痛、胸悶或心絞痛，您在進行以下活動時受到多少限制？</p>
+                    
+                    <div class="question table-question">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>活動項目</th>
+                                    <th>嚴重限制</th>
+                                    <th>中度限制</th>
+                                    <th>輕微限制</th>
+                                    <th>未受限制</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="activity-name">1. 自己穿衣服</td>
+                                    <td><input type="radio" name="q1" value="1" required></td>
+                                    <td><input type="radio" name="q1" value="2"></td>
+                                    <td><input type="radio" name="q1" value="3"></td>
+                                    <td><input type="radio" name="q1" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td class="activity-name">2. 在室內走動</td>
+                                    <td><input type="radio" name="q2" value="1" required></td>
+                                    <td><input type="radio" name="q2" value="2"></td>
+                                    <td><input type="radio" name="q2" value="3"></td>
+                                    <td><input type="radio" name="q2" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td class="activity-name">3. 淋浴</td>
+                                    <td><input type="radio" name="q3" value="1" required></td>
+                                    <td><input type="radio" name="q3" value="2"></td>
+                                    <td><input type="radio" name="q3" value="3"></td>
+                                    <td><input type="radio" name="q3" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td class="activity-name">4. 爬一段樓梯(不休息)</td>
+                                    <td><input type="radio" name="q4" value="1" required></td>
+                                    <td><input type="radio" name="q4" value="2"></td>
+                                    <td><input type="radio" name="q4" value="3"></td>
+                                    <td><input type="radio" name="q4" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td class="activity-name">5. 園藝工作或做家事</td>
+                                    <td><input type="radio" name="q5" value="1" required></td>
+                                    <td><input type="radio" name="q5" value="2"></td>
+                                    <td><input type="radio" name="q5" value="3"></td>
+                                    <td><input type="radio" name="q5" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td class="activity-name">6. 在平地快走(約100公尺)</td>
+                                    <td><input type="radio" name="q6" value="1" required></td>
+                                    <td><input type="radio" name="q6" value="2"></td>
+                                    <td><input type="radio" name="q6" value="3"></td>
+                                    <td><input type="radio" name="q6" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td class="activity-name">7. 跑步或慢跑(約1公里)</td>
+                                    <td><input type="radio" name="q7" value="1" required></td>
+                                    <td><input type="radio" name="q7" value="2"></td>
+                                    <td><input type="radio" name="q7" value="3"></td>
+                                    <td><input type="radio" name="q7" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td class="activity-name">8. 提重物或搬重物</td>
+                                    <td><input type="radio" name="q8" value="1" required></td>
+                                    <td><input type="radio" name="q8" value="2"></td>
+                                    <td><input type="radio" name="q8" value="3"></td>
+                                    <td><input type="radio" name="q8" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td class="activity-name">9. 參與劇烈運動(如游泳、網球)</td>
+                                    <td><input type="radio" name="q9" value="1" required></td>
+                                    <td><input type="radio" name="q9" value="2"></td>
+                                    <td><input type="radio" name="q9" value="3"></td>
+                                    <td><input type="radio" name="q9" value="4"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 第二部分：心絞痛穩定度 -->
+                <div class="section">
+                    <h2><span class="section-number">2</span>心絞痛穩定度</h2>
+                    
+                    <div class="question">
+                        <div class="question-text">10. 與4週前相比，您認為您的胸痛、胸悶或心絞痛的頻率：</div>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="q10_1" name="q10" value="1" required>
+                                <label for="q10_1">比4週前好很多 (發作次數減少很多)</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q10_2" name="q10" value="2">
+                                <label for="q10_2">比4週前稍微好一點 (發作次數稍微減少)</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q10_3" name="q10" value="3">
+                                <label for="q10_3">沒有改變 (發作次數差不多)</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q10_4" name="q10" value="4">
+                                <label for="q10_4">比4週前稍微差一點 (發作次數稍微增加)</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q10_5" name="q10" value="5">
+                                <label for="q10_5">比4週前差很多 (發作次數增加很多)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第三部分：心絞痛發作頻率 -->
+                <div class="section">
+                    <h2><span class="section-number">3</span>心絞痛發作頻率</h2>
+                    
+                    <div class="question">
+                        <div class="question-text">11. 在過去4週內，您平均多久發生一次胸痛、胸悶或心絞痛？</div>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="q11_1" name="q11" value="1" required>
+                                <label for="q11_1">每天發作4次或更多</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q11_2" name="q11" value="2">
+                                <label for="q11_2">每天發作1-3次</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q11_3" name="q11" value="3">
+                                <label for="q11_3">每週發作3次或更多 (但不是每天)</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q11_4" name="q11" value="4">
+                                <label for="q11_4">每週發作1-2次</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q11_5" name="q11" value="5">
+                                <label for="q11_5">每週發作少於1次</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q11_6" name="q11" value="6">
+                                <label for="q11_6">過去4週內完全沒有發作</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">12. 在過去4週內，您平均多久使用一次硝酸甘油 (舌下含片或噴劑)？</div>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="q12_1" name="q12" value="1" required>
+                                <label for="q12_1">每天使用4次或更多</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q12_2" name="q12" value="2">
+                                <label for="q12_2">每天使用1-3次</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q12_3" name="q12" value="3">
+                                <label for="q12_3">每週使用3次或更多 (但不是每天)</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q12_4" name="q12" value="4">
+                                <label for="q12_4">每週使用1-2次</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q12_5" name="q12" value="5">
+                                <label for="q12_5">每週使用少於1次</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q12_6" name="q12" value="6">
+                                <label for="q12_6">過去4週內完全沒有使用</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第四部分：治療滿意度 -->
+                <div class="section">
+                    <h2><span class="section-number">4</span>治療滿意度</h2>
+                    
+                    <div class="question">
+                        <div class="question-text">13. 對於治療您的心絞痛的藥物，您有多滿意？</div>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="q13_1" name="q13" value="1" required>
+                                <label for="q13_1">非常不滿意</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q13_2" name="q13" value="2">
+                                <label for="q13_2">大多不滿意</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q13_3" name="q13" value="3">
+                                <label for="q13_3">大多滿意</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q13_4" name="q13" value="4">
+                                <label for="q13_4">非常滿意</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">14. 服用心絞痛的藥物，對您來說有多麻煩或不方便？</div>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="q14_1" name="q14" value="4" required>
+                                <label for="q14_1">非常麻煩</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q14_2" name="q14" value="3">
+                                <label for="q14_2">有點麻煩</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q14_3" name="q14" value="2">
+                                <label for="q14_3">不太麻煩</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q14_4" name="q14" value="1">
+                                <label for="q14_4">完全不麻煩</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">15. 對於醫療人員向您解釋為什麼要服用心絞痛的藥物，您有多滿意？</div>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="q15_1" name="q15" value="1" required>
+                                <label for="q15_1">非常不滿意</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q15_2" name="q15" value="2">
+                                <label for="q15_2">大多不滿意</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q15_3" name="q15" value="3">
+                                <label for="q15_3">大多滿意</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q15_4" name="q15" value="4">
+                                <label for="q15_4">非常滿意</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">16. 整體而言，對於目前的治療如何控制您的心絞痛症狀，您有多滿意？</div>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="q16_1" name="q16" value="1" required>
+                                <label for="q16_1">非常不滿意</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q16_2" name="q16" value="2">
+                                <label for="q16_2">大多不滿意</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q16_3" name="q16" value="3">
+                                <label for="q16_3">大多滿意</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q16_4" name="q16" value="4">
+                                <label for="q16_4">非常滿意</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第五部分：對疾病的認知 -->
+                <div class="section">
+                    <h2><span class="section-number">5</span>對疾病的認知</h2>
+                    
+                    <div class="question">
+                        <div class="question-text">17. 您對自己的心臟病了解多少？</div>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="q17_1" name="q17" value="1" required>
+                                <label for="q17_1">完全不了解</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q17_2" name="q17" value="2">
+                                <label for="q17_2">了解一點</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q17_3" name="q17" value="3">
+                                <label for="q17_3">有些了解</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q17_4" name="q17" value="4">
+                                <label for="q17_4">相當了解</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q17_5" name="q17" value="5">
+                                <label for="q17_5">非常了解</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">18. 您覺得未來會發生心臟問題 (如心臟病發作) 的機會有多大？</div>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="q18_1" name="q18" value="1" required>
+                                <label for="q18_1">非常有可能</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q18_2" name="q18" value="2">
+                                <label for="q18_2">有些可能</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q18_3" name="q18" value="3">
+                                <label for="q18_3">不太可能</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q18_4" name="q18" value="2">
+                                <label for="q18_4">不太確定</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">19. 整體而言，您的心臟病對您的生活影響有多大？</div>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="q19_1" name="q19" value="1" required>
+                                <label for="q19_1">影響非常大 (幾乎無法正常生活)</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q19_2" name="q19" value="2">
+                                <label for="q19_2">影響很大 (嚴重限制我的生活)</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q19_3" name="q19" value="3">
+                                <label for="q19_3">有中度影響 (我的生活受到一些限制)</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q19_4" name="q19" value="4">
+                                <label for="q19_4">影響不大 (我可以做大部分想做的事)</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="q19_5" name="q19" value="5">
+                                <label for="q19_5">完全沒有影響 (我可以正常生活)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 按鈕 -->
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">🔄 重新填寫</button>
+                    <button type="submit" class="btn btn-primary">📊 計算分數</button>
+                </div>
+
+                <!-- 結果顯示 -->
+                <div class="results" id="results">
+                    <h2>📈 評估結果</h2>
+                    
+                    <div class="score-card">
+                        <span class="score-label">身體限制分數 (Physical Limitation)</span>
+                        <span class="score-value" id="plScore">--</span>
+                    </div>
+
+                    <div class="score-card">
+                        <span class="score-label">心絞痛穩定度 (Angina Stability)</span>
+                        <span class="score-value" id="asScore">--</span>
+                    </div>
+
+                    <div class="score-card">
+                        <span class="score-label">心絞痛頻率 (Angina Frequency)</span>
+                        <span class="score-value" id="afScore">--</span>
+                    </div>
+
+                    <div class="score-card">
+                        <span class="score-label">治療滿意度 (Treatment Satisfaction)</span>
+                        <span class="score-value" id="tsScore">--</span>
+                    </div>
+
+                    <div class="score-card">
+                        <span class="score-label">疾病認知 (Disease Perception)</span>
+                        <span class="score-value" id="dpScore">--</span>
+                    </div>
+
+                    <div class="score-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                        <span class="score-label" style="color: white; font-size: 20px;">✨ SAQ 總分 (SAQSS)</span>
+                        <span class="score-value" style="color: white; font-size: 36px;" id="saqss">--</span>
+                    </div>
+
+                    <div class="interpretation" id="interpretation">
+                        <h4>💡 結果解釋</h4>
+                        <p id="interpretationText"></p>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn btn-primary" onclick="window.print()">🖨️ 列印結果</button>
+                        <button type="button" class="btn btn-secondary" onclick="copyResults()">📋 複製結果</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="footer">
+            <p>西雅圖心絞痛問卷 (SAQ) © 2025</p>
+            <p>本問卷僅供醫療專業人員使用，不可作為自我診斷工具</p>
+        </div>
+    </div>
+
+    <script>
+        // 設定今天日期為預設值
+        document.getElementById('fillDate').valueAsDate = new Date();
+
+        // 計算進度
+        const form = document.getElementById('saqForm');
+        const totalQuestions = 19;
+
+        form.addEventListener('change', updateProgress);
+
+        function updateProgress() {
+            let answered = 0;
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (document.querySelector(`input[name="q${i}"]:checked`)) {
+                    answered++;
+                }
+            }
+            const progress = (answered / totalQuestions) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        // 表單提交
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 檢查基本資料
+            if (!document.getElementById('patientName').value) {
+                alert('請填寫姓名');
+                return;
+            }
+
+            // 計算分數
+            calculateScores();
+        });
+
+        function calculateScores() {
+            // 身體限制 (Q1-Q9)
+            let plSum = 0;
+            for (let i = 1; i <= 9; i++) {
+                const value = parseInt(document.querySelector(`input[name="q${i}"]:checked`).value);
+                plSum += value;
+            }
+            const plScore = ((plSum - 9) / 27) * 100;
+
+            // 心絞痛穩定度 (Q10)
+            const asValue = parseInt(document.querySelector('input[name="q10"]:checked').value);
+            const asScore = ((asValue - 1) / 4) * 100;
+
+            // 心絞痛頻率 (Q11-Q12)
+            const q11 = parseInt(document.querySelector('input[name="q11"]:checked').value);
+            const q12 = parseInt(document.querySelector('input[name="q12"]:checked').value);
+            const afScore = ((q11 + q12 - 2) / 10) * 100;
+
+            // 治療滿意度 (Q13-Q16) - 注意Q14是反向計分
+            const q13 = parseInt(document.querySelector('input[name="q13"]:checked').value);
+            const q14 = parseInt(document.querySelector('input[name="q14"]:checked').value);
+            const q15 = parseInt(document.querySelector('input[name="q15"]:checked').value);
+            const q16 = parseInt(document.querySelector('input[name="q16"]:checked').value);
+            const tsSum = q13 + q14 + q15 + q16;
+            const tsScore = ((tsSum - 4) / 12) * 100;
+
+            // 疾病認知 (Q17-Q19)
+            const q17 = parseInt(document.querySelector('input[name="q17"]:checked').value);
+            const q18 = parseInt(document.querySelector('input[name="q18"]:checked').value);
+            const q19 = parseInt(document.querySelector('input[name="q19"]:checked').value);
+            const dpSum = q17 + q18 + q19;
+            const dpScore = ((dpSum - 3) / 10) * 100;
+
+            // SAQSS (平均身體限制和心絞痛頻率)
+            const saqss = (plScore + afScore) / 2;
+
+            // 顯示結果
+            document.getElementById('plScore').textContent = plScore.toFixed(1);
+            document.getElementById('asScore').textContent = asScore.toFixed(1);
+            document.getElementById('afScore').textContent = afScore.toFixed(1);
+            document.getElementById('tsScore').textContent = tsScore.toFixed(1);
+            document.getElementById('dpScore').textContent = dpScore.toFixed(1);
+            document.getElementById('saqss').textContent = saqss.toFixed(1);
+
+            // 解釋
+            let interpretation = '';
+            if (saqss >= 75) {
+                interpretation = '✅ <strong>輕微/無症狀：</strong>您的心絞痛症狀對日常生活影響很小，身體功能良好。請繼續維持現有治療和健康的生活型態。';
+            } else if (saqss >= 50) {
+                interpretation = '⚠️ <strong>輕度至中度：</strong>您的某些活動受到限制。建議與醫師討論是否需要調整治療計畫。';
+            } else if (saqss >= 25) {
+                interpretation = '🚨 <strong>中度至重度：</strong>您的日常活動顯著受限，生活品質明顯下降。建議盡快與醫療團隊討論治療調整方案。';
+            } else {
+                interpretation = '🆘 <strong>極重度：</strong>您有嚴重的活動限制。請立即告知您的醫療團隊，可能需要積極的治療介入。';
+            }
+
+            document.getElementById('interpretationText').innerHTML = interpretation;
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetForm() {
+            if (confirm('確定要重新填寫問卷嗎？所有資料將會清除。')) {
+                form.reset();
+                document.getElementById('fillDate').valueAsDate = new Date();
+                document.getElementById('results').style.display = 'none';
+                document.getElementById('progressFill').style.width = '0%';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function copyResults() {
+            const name = document.getElementById('patientName').value;
+            const date = document.getElementById('fillDate').value;
+            const pl = document.getElementById('plScore').textContent;
+            const as = document.getElementById('asScore').textContent;
+            const af = document.getElementById('afScore').textContent;
+            const ts = document.getElementById('tsScore').textContent;
+            const dp = document.getElementById('dpScore').textContent;
+            const saqss = document.getElementById('saqss').textContent;
+
+            const text = `
+西雅圖心絞痛問卷 (SAQ) 結果
+
+姓名：${name}
+日期：${date}
+
+評估結果：
+- 身體限制：${pl}
+- 心絞痛穩定度：${as}
+- 心絞痛頻率：${af}
+- 治療滿意度：${ts}
+- 疾病認知：${dp}
+- SAQ總分 (SAQSS)：${saqss}
+            `.trim();
+
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ 結果已複製到剪貼簿！');
+            }).catch(() => {
+                alert('❌ 複製失敗，請手動複製結果');
+            });
+        }
+    </script>
+</body>
+</html>
