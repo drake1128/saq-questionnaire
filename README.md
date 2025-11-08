@@ -1,0 +1,1 @@
+這個網頁是為了將SEATTLE angina questionnaire上線
