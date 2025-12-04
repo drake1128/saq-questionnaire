@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>心肌旋轉蛋白升高解讀教學講義</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif; }
+    body { margin: 0; padding: 0; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); min-height: 100vh; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+    .fade-in { animation: fadeIn 0.3s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // Icons as simple SVG components
+    const Icons = {
+      Heart: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>,
+      AlertTriangle: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>,
+      BookOpen: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>,
+      ChevronRight: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>,
+      ChevronDown: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>,
+      Activity: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>,
+      CheckCircle: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+      XCircle: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+      Menu: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>,
+      X: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>,
+      Home: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>,
+      FileText: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>,
+      HelpCircle: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+      BookMarked: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>,
+      Clock: () => <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+      TrendingUp: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>,
+      Users: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>,
+      Stethoscope: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>,
+    };
+
+    // Quiz data
+    const quizData = [
+      { question: "高靈敏度心肌旋轉蛋白檢測的主要優勢是：", options: ["提高診斷特異性", "降低漏診ACS的風險", "減少檢測時間", "降低檢測成本"], correct: 1, explanation: "高靈敏度cTn檢測的主要優勢是提高靈敏度，降低漏診ACS的風險。" },
+      { question: "根據2007年指南，cTn陽性結果的定義是：", options: ["超過健康人群的50th百分位", "超過健康人群的99th百分位", "任何可檢測的cTn濃度", "超過0.1 ng/mL"], correct: 1, explanation: "根據2007年指南，cTn陽性定義為超過健康人群的99th百分位（變異係數<10%）。" },
+      { question: "以下哪項不是高靈敏度cTn檢測的特徵？", options: ["可在>95%健康人群中檢測到cTn", "檢測下限低至0.006 ng/mL", "完全特異於ACS", "檢測範圍跨越4個數量級"], correct: 2, explanation: "高靈敏度cTn檢測不完全特異於ACS，非ACS原因也可導致升高。" },
+      { question: "cTn升高的非ACS原因包括：", options: ["心肌炎", "肺栓塞", "腎衰竭", "以上皆是"], correct: 3, explanation: "心肌炎、肺栓塞和腎衰竭均可導致cTn升高，屬於非ACS原因。" },
+      { question: "連續cTn檢測的主要目的是：", options: ["確定cTn的絕對濃度", "觀察cTn濃度的動態變化", "確認心電圖異常", "排除非心臟疾病"], correct: 1, explanation: "連續cTn檢測的目的是觀察濃度動態變化，以區分急性心肌損傷和其他原因。" },
+      { question: "高靈敏度cTn檢測建議的第二次檢測間隔是：", options: ["6–8小時", "12小時", "2–3小時", "24小時"], correct: 2, explanation: "高靈敏度cTn檢測建議在入院後2–3小時進行第二次檢測。" },
+      { question: "病例中，哪位患者的cTn動態變化提示NSTEMI？", options: ["cTnI緩慢升至0.9 ng/mL", "cTnI波動於0.05–0.09 ng/mL", "cTnI快速升至53 ng/mL", "cTnI穩定於0.04 ng/mL"], correct: 2, explanation: "快速、顯著的cTnI升高提示NSTEMI。" },
+      { question: "cTn陽性結果在低ACS風險患者中的主要問題是：", options: ["靈敏度不足", "特異性降低", "檢測成本高", "檢測時間長"], correct: 1, explanation: "在低ACS風險患者中，cTn陽性結果的特異性降低。" },
+      { question: "以下哪項檢查有助於解讀cTn陽性結果？", options: ["心電圖", "心臟超音波", "臨床病史", "以上皆是"], correct: 3, explanation: "心電圖、心臟超音波和臨床病史均有助於解讀cTn陽性結果。" },
+      { question: "高靈敏度cTn檢測的挑戰是：", options: ["無法檢測健康人群的cTn", "靈敏度過低", "非ACS原因的cTn升高增加", "無法進行連續檢測"], correct: 2, explanation: "高靈敏度cTn檢測的挑戰是非ACS原因的cTn升高更常見。" }
+    ];
+
+    // Cause table data
+    const causesData = {
+      cardiac: ["心臟挫傷（創傷）", "心臟手術", "心臟復律", "心內膜活檢", "急性/慢性心衰竭", "主動脈剝離", "主動脈瓣疾病", "肥厚型心肌病", "心搏過速", "心搏過緩/心臟傳導阻滯", "章魚壺心肌症", "冠狀動脈介入術後", "橫紋肌溶解伴心肌壞死", "心肌炎/心內膜炎/心包炎"],
+      nonCardiac: ["肺栓塞", "嚴重肺動脈高壓", "腎衰竭", "中風/蛛網膜下腔出血", "浸潤性疾病（如類澱粉沉積症）", "心臟毒性藥物", "危重症", "敗血症", "大面積燒傷", "極度運動"]
+    };
+
+    // Case data
+    const caseData = [
+      { id: 1, title: "急性心肌炎", patient: "48歲男性，胸痛伴流感樣症狀", initial: 50, peak: 900, multiplier: "18倍", findings: "心臟超音波顯示急性擴張型心肌病和整體心室功能障礙", pattern: "緩慢上升", color: "from-amber-500 to-orange-500" },
+      { id: 2, title: "急性失代償性心衰", patient: "60歲女性，有心衰病史，胸痛持續1.5小時", initial: 50, range: "50-90", peak: 90, multiplier: "1.8倍", findings: "後續cTnI檢測無顯著上升，未發現ACS證據", pattern: "輕度波動", color: "from-blue-500 to-cyan-500" },
+      { id: 3, title: "NSTEMI", patient: "54歲男性，有糖尿病史，胸痛持續1小時", initial: 60, sixHour: 6300, peak: 53000, multiplier: "883倍", findings: "6小時時cTnI顯著升高，確認ACS診斷", pattern: "快速陡升", color: "from-red-500 to-rose-600" }
+    ];
+
+    // Components
+    const ImportantBox = ({ children, type = "warning" }) => {
+      const styles = { warning: "bg-gradient-to-r from-red-50 to-amber-50 border-l-4 border-red-500", info: "bg-gradient-to-r from-blue-50 to-cyan-50 border-l-4 border-blue-500" };
+      return (
+        <div className={`${styles[type]} rounded-r-xl p-4 my-4 shadow-sm`}>
+          <div className="flex gap-3">
+            <div className="flex-shrink-0">{type === "warning" ? <Icons.AlertTriangle /> : <Icons.Activity />}</div>
+            <div className="text-sm leading-relaxed text-gray-700">{children}</div>
+          </div>
+        </div>
+      );
+    };
+
+    const NoteBox = ({ children }) => (
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 my-4">
+        <div className="flex items-start gap-3">
+          <div className="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded">重點</div>
+          <p className="text-sm text-gray-700 leading-relaxed">{children}</p>
+        </div>
+      </div>
+    );
+
+    const SectionHeader = ({ icon: IconName, title, subtitle }) => (
+      <div className="mb-6">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="bg-gradient-to-br from-red-500 to-rose-600 p-2 rounded-xl shadow-lg text-white">
+            {IconName && <IconName />}
+          </div>
+          <h2 className="text-xl font-bold text-gray-800">{title}</h2>
+        </div>
+        {subtitle && <p className="text-sm text-gray-500 ml-12">{subtitle}</p>}
+      </div>
+    );
+
+    const SubSection = ({ title, children }) => (
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold text-blue-700 mb-3 flex items-center gap-2">
+          <Icons.ChevronRight />
+          {title}
+        </h3>
+        {children}
+      </div>
+    );
+
+    const CaseCard = ({ caseInfo }) => {
+      const [expanded, setExpanded] = useState(false);
+      return (
+        <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-4 border border-gray-100">
+          <div className={`bg-gradient-to-r ${caseInfo.color} p-4 cursor-pointer`} onClick={() => setExpanded(!expanded)}>
+            <div className="flex justify-between items-center">
+              <div>
+                <span className="text-white/80 text-xs font-medium">病例 {caseInfo.id}</span>
+                <h4 className="text-white font-bold text-lg">{caseInfo.title}</h4>
+              </div>
+              <div className="bg-white/20 backdrop-blur rounded-full p-2 text-white">
+                {expanded ? <Icons.ChevronDown /> : <Icons.ChevronRight />}
+              </div>
+            </div>
+          </div>
+          {expanded && (
+            <div className="p-4 space-y-4 fade-in">
+              <div className="flex items-start gap-3">
+                <div className="text-gray-400 flex-shrink-0 mt-0.5"><Icons.Users /></div>
+                <div>
+                  <span className="text-xs text-gray-500">患者背景</span>
+                  <p className="text-sm text-gray-700">{caseInfo.patient}</p>
+                </div>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-4">
+                <span className="text-xs text-gray-500 mb-2 block">cTnI 變化</span>
+                <div className="grid grid-cols-3 gap-3 text-center">
+                  <div>
+                    <div className="text-lg font-bold text-gray-800">{caseInfo.initial}</div>
+                    <div className="text-xs text-gray-500">初始值 (ng/L)</div>
+                  </div>
+                  {caseInfo.sixHour && (
+                    <div>
+                      <div className="text-lg font-bold text-orange-500">{caseInfo.sixHour}</div>
+                      <div className="text-xs text-gray-500">6小時</div>
+                    </div>
+                  )}
+                  <div>
+                    <div className="text-lg font-bold text-red-500">{caseInfo.peak}</div>
+                    <div className="text-xs text-gray-500">峰值</div>
+                  </div>
+                  <div className="col-span-3">
+                    <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-rose-600">↑ {caseInfo.multiplier}</div>
+                    <div className="text-xs text-gray-500">上升倍數</div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="text-gray-400 flex-shrink-0 mt-0.5"><Icons.Stethoscope /></div>
+                <div>
+                  <span className="text-xs text-gray-500">檢查結果</span>
+                  <p className="text-sm text-gray-700">{caseInfo.findings}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs bg-gray-100 px-3 py-1 rounded-full text-gray-600">變化模式：{caseInfo.pattern}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    // Quiz Component
+    const Quiz = () => {
+      const [currentQuestion, setCurrentQuestion] = useState(0);
+      const [selectedAnswer, setSelectedAnswer] = useState(null);
+      const [showResult, setShowResult] = useState(false);
+      const [score, setScore] = useState(0);
+      const [answered, setAnswered] = useState(false);
+      const [quizComplete, setQuizComplete] = useState(false);
+
+      const handleAnswer = (index) => {
+        if (answered) return;
+        setSelectedAnswer(index);
+        setAnswered(true);
+        if (index === quizData[currentQuestion].correct) setScore(score + 1);
+        setShowResult(true);
+      };
+
+      const nextQuestion = () => {
+        if (currentQuestion < quizData.length - 1) {
+          setCurrentQuestion(currentQuestion + 1);
+          setSelectedAnswer(null);
+          setShowResult(false);
+          setAnswered(false);
+        } else {
+          setQuizComplete(true);
+        }
+      };
+
+      const resetQuiz = () => {
+        setCurrentQuestion(0);
+        setSelectedAnswer(null);
+        setShowResult(false);
+        setScore(0);
+        setAnswered(false);
+        setQuizComplete(false);
+      };
+
+      if (quizComplete) {
+        const percentage = (score / quizData.length) * 100;
+        return (
+          <div className="bg-white rounded-2xl shadow-xl p-6 text-center fade-in">
+            <div className={`w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-4 ${percentage >= 80 ? 'bg-green-100' : percentage >= 60 ? 'bg-amber-100' : 'bg-red-100'}`}>
+              <span className={`text-3xl font-bold ${percentage >= 80 ? 'text-green-600' : percentage >= 60 ? 'text-amber-600' : 'text-red-600'}`}>{score}/{quizData.length}</span>
+            </div>
+            <h3 className="text-xl font-bold text-gray-800 mb-2">測驗完成！</h3>
+            <p className="text-gray-600 mb-4">{percentage >= 80 ? '太棒了！你對心肌旋轉蛋白的理解非常扎實！' : percentage >= 60 ? '不錯！建議再複習一下部分章節。' : '建議重新閱讀講義內容後再次測驗。'}</p>
+            <button onClick={resetQuiz} className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-xl font-medium shadow-lg active:scale-95 transition-transform">重新測驗</button>
+          </div>
+        );
+      }
+
+      const question = quizData[currentQuestion];
+      return (
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-4">
+            <div className="flex justify-between items-center text-white">
+              <span className="text-sm opacity-80">題目 {currentQuestion + 1} / {quizData.length}</span>
+              <span className="bg-white/20 px-3 py-1 rounded-full text-sm">得分: {score}</span>
+            </div>
+            <div className="w-full bg-white/20 rounded-full h-2 mt-3">
+              <div className="bg-white rounded-full h-2 transition-all duration-300" style={{ width: `${((currentQuestion + 1) / quizData.length) * 100}%` }} />
+            </div>
+          </div>
+          <div className="p-5">
+            <p className="text-gray-800 font-medium mb-4 leading-relaxed">{question.question}</p>
+            <div className="space-y-3">
+              {question.options.map((option, index) => (
+                <button key={index} onClick={() => handleAnswer(index)} disabled={answered}
+                  className={`w-full p-4 rounded-xl text-left transition-all duration-200 border-2 ${answered ? index === question.correct ? 'border-green-500 bg-green-50' : index === selectedAnswer ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-gray-50 opacity-50' : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50 active:scale-98'}`}>
+                  <div className="flex items-center gap-3">
+                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${answered && index === question.correct ? 'bg-green-500 text-white' : answered && index === selectedAnswer ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-600'}`}>{String.fromCharCode(65 + index)}</span>
+                    <span className="text-sm text-gray-700 flex-1">{option}</span>
+                    {answered && index === question.correct && <span className="text-green-500"><Icons.CheckCircle /></span>}
+                    {answered && index === selectedAnswer && index !== question.correct && <span className="text-red-500"><Icons.XCircle /></span>}
+                  </div>
+                </button>
+              ))}
+            </div>
+            {showResult && (
+              <div className={`mt-4 p-4 rounded-xl fade-in ${selectedAnswer === question.correct ? 'bg-green-50 border border-green-200' : 'bg-amber-50 border border-amber-200'}`}>
+                <p className="text-sm text-gray-700 leading-relaxed"><span className="font-bold">解析：</span> {question.explanation}</p>
+              </div>
+            )}
+            {answered && (
+              <button onClick={nextQuestion} className="w-full mt-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 rounded-xl font-medium shadow-lg active:scale-95 transition-transform">
+                {currentQuestion < quizData.length - 1 ? '下一題' : '查看結果'}
+              </button>
+            )}
+          </div>
+        </div>
+      );
+    };
+
+    // Main App
+    function App() {
+      const [activeSection, setActiveSection] = useState('home');
+      const [menuOpen, setMenuOpen] = useState(false);
+
+      const sections = [
+        { id: 'home', label: '首頁', icon: Icons.Home },
+        { id: 'basics', label: '基礎', icon: Icons.BookOpen },
+        { id: 'serial', label: '檢測', icon: Icons.TrendingUp },
+        { id: 'cases', label: '病例', icon: Icons.FileText },
+        { id: 'clinical', label: '建議', icon: Icons.Stethoscope },
+        { id: 'quiz', label: '測驗', icon: Icons.HelpCircle },
+        { id: 'references', label: '文獻', icon: Icons.BookMarked },
+      ];
+
+      const renderContent = () => {
+        switch (activeSection) {
+          case 'home':
+            return (
+              <div className="space-y-6 fade-in">
+                <div className="bg-gradient-to-br from-red-500 via-rose-500 to-pink-600 rounded-3xl p-6 text-white shadow-xl">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Icons.Heart />
+                    <span className="text-sm font-medium opacity-90">心血管中心教學文件</span>
+                  </div>
+                  <h1 className="text-2xl font-bold mb-2 leading-tight">"我的病人心肌酵素異常升高，我該怎麼辦?"</h1>
+                  <p className="text-lg opacity-90 mb-4">心肌旋轉蛋白升高解讀教學講義</p>
+                  <p className="text-sm opacity-75 italic">Interpretation of Elevated Cardiac Troponin Levels</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100">
+                    <div className="text-gray-500 text-xs mb-1">目標對象</div>
+                    <div className="font-bold text-gray-800">醫護全體同仁</div>
+                  </div>
+                  <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100">
+                    <div className="text-gray-500 text-xs mb-1">文件版本</div>
+                    <div className="font-bold text-gray-800">第 1.1 版</div>
+                    <div className="text-xs text-gray-400">2025-11-09</div>
+                  </div>
+                </div>
+                <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white">
+                      <Icons.Stethoscope />
+                    </div>
+                    <div>
+                      <div className="font-bold text-gray-800">謝慕揚</div>
+                      <div className="text-sm text-gray-500">Mu-Yang Hsieh, MD, PhD, FESC</div>
+                      <div className="text-xs text-gray-400">心血管中心</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-5 border border-blue-100">
+                  <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2"><span className="text-blue-500"><Icons.BookOpen /></span>自學方案</h3>
+                  <p className="text-sm text-gray-600 leading-relaxed mb-3">本講義為搭配文獻 Mahajan and Jarolim 的 "How to Interpret Elevated Cardiac Troponin Levels" 而製作。</p>
+                  <p className="text-sm text-gray-600 leading-relaxed">已有基礎的同事，請直接跳至<span className="text-blue-600 font-medium">「自我測驗」</span>進行自我測驗。</p>
+                </div>
+                <div className="space-y-3">
+                  <button onClick={() => setActiveSection('basics')} className="w-full bg-white rounded-2xl p-4 shadow-lg border border-gray-100 flex items-center justify-between group hover:border-red-200 transition-all active:scale-98">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-red-100 p-2 rounded-xl text-red-500"><Icons.BookOpen /></div>
+                      <span className="font-medium text-gray-700">開始學習基礎知識</span>
+                    </div>
+                    <span className="text-gray-400 group-hover:text-red-500 transition-colors"><Icons.ChevronRight /></span>
+                  </button>
+                  <button onClick={() => setActiveSection('quiz')} className="w-full bg-white rounded-2xl p-4 shadow-lg border border-gray-100 flex items-center justify-between group hover:border-indigo-200 transition-all active:scale-98">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-indigo-100 p-2 rounded-xl text-indigo-500"><Icons.HelpCircle /></div>
+                      <span className="font-medium text-gray-700">直接進行自我測驗</span>
+                    </div>
+                    <span className="text-gray-400 group-hover:text-indigo-500 transition-colors"><Icons.ChevronRight /></span>
+                  </button>
+                </div>
+              </div>
+            );
+
+          case 'basics':
+            return (
+              <div className="space-y-6 fade-in">
+                <SectionHeader icon={Icons.BookOpen} title="心肌旋轉蛋白基礎" subtitle="Cardiac Troponin Basics" />
+                <SubSection title="概述">
+                  <p className="text-sm text-gray-600 leading-relaxed mb-4">心肌旋轉蛋白（cardiac troponin, cTn）檢測是診斷和管理急性冠狀動脈症候群（ACS）的核心工具，特別是非ST段抬高型心肌梗塞（NSTEMI）。</p>
+                  <p className="text-sm text-gray-600 leading-relaxed">高靈敏度cTn檢測（例如TnI-Ultra和TnT-hs）顯著提高了診斷靈敏度，但降低了特異性，增加了臨床診斷挑戰。</p>
+                </SubSection>
+                <ImportantBox type="warning">
+                  <p className="font-bold mb-2">🚨 緊急提醒</p>
+                  <p>如果病人是<strong>急性胸痛</strong>加上<strong>ST elevation</strong>（心電圖），絕對不該等待 cardiac troponin 檢驗結果，要直接緊急照會心臟內科，並且考慮緊急心導管檢查。</p>
+                  <p className="mt-2 text-red-600 font-medium">下一個重要動作：穩定病患，並且在照會醫師到場前，緊急調閱病患過去舊的心電圖進行比較！</p>
+                </ImportantBox>
+                <NoteBox>高靈敏度cTn檢測可在健康人群中檢測到低濃度cTn，因此需結合臨床病史和檢查結果解讀。</NoteBox>
+                <SubSection title="高靈敏度心肌旋轉蛋白檢測">
+                  <div className="space-y-3">
+                    <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                      <div className="flex items-start gap-3">
+                        <div className="bg-blue-100 p-2 rounded-lg text-blue-500"><Icons.TrendingUp /></div>
+                        <div>
+                          <h4 className="font-medium text-gray-800 mb-1">靈敏度提升</h4>
+                          <p className="text-sm text-gray-600">1995至2007年，cTn檢測靈敏度提高約100倍（從0.5 ng/mL降至0.006 ng/mL）</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                      <div className="flex items-start gap-3">
+                        <div className="bg-green-100 p-2 rounded-lg text-green-500"><Icons.Activity /></div>
+                        <div>
+                          <h4 className="font-medium text-gray-800 mb-1">檢測範圍</h4>
+                          <p className="text-sm text-gray-600">TnI-Ultra檢測範圍為0.006–50 ng/mL，TnT-hs檢測下限為0.005 ng/mL</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                      <div className="flex items-start gap-3">
+                        <div className="bg-purple-100 p-2 rounded-lg text-purple-500"><Icons.Users /></div>
+                        <div>
+                          <h4 className="font-medium text-gray-800 mb-1">健康人群</h4>
+                          <p className="text-sm text-gray-600">高靈敏度檢測可在 &gt;95% 健康人群中檢測到cTn</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </SubSection>
+                <ImportantBox type="info">高靈敏度cTn檢測的低閾值使早期診斷ACS成為可能，但需小心非冠狀動脈事件也可以讓cTn升高。</ImportantBox>
+                <SubSection title="陽性結果定義">
+                  <p className="text-sm text-gray-600 leading-relaxed mb-3">根據2007年國家臨床生物化學學會指南：</p>
+                  <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200">
+                    <p className="text-sm text-gray-700 leading-relaxed mb-3">在疑似ACS的臨床病史下，cTn濃度超過健康參考人群的<strong>99th百分位</strong>（變異係數&lt;10%）即為陽性。</p>
+                    <div className="bg-white/80 rounded-lg p-3 mt-3">
+                      <p className="text-sm font-medium text-gray-800">🏥 目前院內 TnT 正常值：<span className="text-red-600">&lt;14 ng/L</span>（或 0.014 ng/mL）</p>
+                    </div>
+                  </div>
+                </SubSection>
+                <SubSection title="cTn升高的非ACS原因">
+                  <p className="text-sm text-gray-600 mb-4">cTn升高可能由以下原因引起：</p>
+                  <div className="space-y-4">
+                    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                      <div className="bg-gradient-to-r from-red-500 to-rose-600 px-4 py-2">
+                        <h4 className="text-white font-medium text-sm">心臟原因 (Cardiac)</h4>
+                      </div>
+                      <div className="p-4">
+                        <div className="flex flex-wrap gap-2">
+                          {causesData.cardiac.map((cause, i) => (
+                            <span key={i} className="bg-red-50 text-red-700 text-xs px-3 py-1.5 rounded-full">{cause}</span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                      <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-4 py-2">
+                        <h4 className="text-white font-medium text-sm">非心臟原因 (Noncardiac)</h4>
+                      </div>
+                      <div className="p-4">
+                        <div className="flex flex-wrap gap-2">
+                          {causesData.nonCardiac.map((cause, i) => (
+                            <span key={i} className="bg-blue-50 text-blue-700 text-xs px-3 py-1.5 rounded-full">{cause}</span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </SubSection>
+                <NoteBox>cTn陽性結果需結合臨床病史、心電圖和影像學檢查綜合判斷。</NoteBox>
+              </div>
+            );
+
+          case 'serial':
+            return (
+              <div className="space-y-6 fade-in">
+                <SectionHeader icon={Icons.TrendingUp} title="連續cTn檢測的重要性" subtitle="Serial Testing" />
+                <SubSection title="動態變化">
+                  <div className="space-y-3">
+                    <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                      <p className="text-sm text-gray-600 leading-relaxed">cTn濃度的<strong className="text-red-600">上升或下降</strong>是診斷急性心肌損傷（如心肌梗塞）的關鍵。</p>
+                    </div>
+                    <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                      <p className="text-sm text-gray-600 leading-relaxed">慢性心臟或非心臟疾病可能導致<strong>持續性cTn升高</strong>，但無顯著動態變化。</p>
+                    </div>
+                  </div>
+                </SubSection>
+                <SubSection title="檢測間隔">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
+                      <div className="text-center">
+                        <div className="text-green-500 mx-auto mb-2 flex justify-center"><Icons.Clock /></div>
+                        <div className="text-2xl font-bold text-green-600">2-3hr</div>
+                        <div className="text-xs text-gray-600 mt-1">高靈敏度檢測</div>
+                      </div>
+                    </div>
+                    <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl p-4 border border-gray-200">
+                      <div className="text-center">
+                        <div className="text-gray-400 mx-auto mb-2 flex justify-center"><Icons.Clock /></div>
+                        <div className="text-2xl font-bold text-gray-500">6-8hr</div>
+                        <div className="text-xs text-gray-600 mt-1">傳統檢測</div>
+                      </div>
+                    </div>
+                  </div>
+                </SubSection>
+                <ImportantBox type="warning">
+                  <p className="font-bold mb-2">⏱️ 建議流程</p>
+                  <p>患者入急診後，若為胸痛胸悶患者，應立即在<strong>十分鐘內</strong>完成心電圖。若心電圖沒有ST elevation且第一次抽血無異常，則在第一次抽血後<strong>2-3小時內</strong>進行第二次cTn檢測，以加速ACS診斷。</p>
+                </ImportantBox>
+                <SubSection title="0/1 小時檢測策略">
+                  <p className="text-sm text-gray-600 leading-relaxed mb-4">近年來，快速診斷協議如 0/1 小時算法已被廣泛應用於急性心肌梗塞（AMI）的評估。</p>
+                  <div className="space-y-3">
+                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="text-green-500"><Icons.CheckCircle /></span>
+                        <span className="font-medium text-gray-800">排除區域 (Rule-out)</span>
+                      </div>
+                      <p className="text-sm text-gray-600">NPV = 99.6%，在排除AMI方面高度可靠</p>
+                    </div>
+                    <div className="bg-gradient-to-r from-red-50 to-rose-50 rounded-xl p-4 border border-red-200">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="text-red-500"><Icons.AlertTriangle /></span>
+                        <span className="font-medium text-gray-800">確診區域 (Rule-in)</span>
+                      </div>
+                      <p className="text-sm text-gray-600">PPV = 56.6%，確診AMI的準確性較高</p>
+                    </div>
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="text-blue-500"><Icons.Activity /></span>
+                        <span className="font-medium text-gray-800">隨訪結果</span>
+                      </div>
+                      <p className="text-sm text-gray-600">排除組的30-45天MACE率僅為0.4%</p>
+                    </div>
+                  </div>
+                </SubSection>
+                <NoteBox>0/1 小時算法結合 0-1-3 小時採樣可加速 AMI 診斷，尤其適用於急診環境。</NoteBox>
+              </div>
+            );
+
+          case 'cases':
+            return (
+              <div className="space-y-6 fade-in">
+                <SectionHeader icon={Icons.FileText} title="病例分析" subtitle="Case Studies" />
+                <p className="text-sm text-gray-600 leading-relaxed">連續心肌旋轉蛋白（cTn）檢測是診斷ACS的重要工具，其動態變化模式有助於區分ACS與其他疾病。以下為三個病例展示：</p>
+                {caseData.map(caseInfo => (<CaseCard key={caseInfo.id} caseInfo={caseInfo} />))}
+                <SubSection title="ACS與其他疾病的上升幅度比較">
+                  <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                    <table className="w-full text-sm">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-4 py-3 text-left text-gray-600 font-medium">疾病</th>
+                          <th className="px-4 py-3 text-center text-gray-600 font-medium">上升倍數</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        <tr className="bg-red-50">
+                          <td className="px-4 py-3 font-medium text-gray-800">NSTEMI (ACS)</td>
+                          <td className="px-4 py-3 text-center"><span className="bg-red-500 text-white px-3 py-1 rounded-full font-bold">883倍</span></td>
+                        </tr>
+                        <tr>
+                          <td className="px-4 py-3 text-gray-700">急性心肌炎</td>
+                          <td className="px-4 py-3 text-center"><span className="bg-amber-100 text-amber-700 px-3 py-1 rounded-full font-medium">18倍</span></td>
+                        </tr>
+                        <tr>
+                          <td className="px-4 py-3 text-gray-700">心衰竭</td>
+                          <td className="px-4 py-3 text-center"><span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">1.8倍</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </SubSection>
+                <ImportantBox type="warning">
+                  <p className="font-bold mb-2">📊 風險提醒</p>
+                  <p>ACS的cTnI上升幅度通常遠超非ACS疾病（&gt;100倍），而非ACS疾病的上升幅度多低於20倍，且無超過十倍以上的顯著升高。</p>
+                </ImportantBox>
+                <SubSection title="情境分析">
+                  <div className="space-y-4">
+                    <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200">
+                      <h4 className="font-bold text-gray-800 mb-2">情境1：cTnT 緩慢上升</h4>
+                      <div className="bg-white/80 rounded-lg p-3 mb-3">
+                        <p className="text-sm text-gray-700"><strong>數據：</strong>第一次 18 ng/L → 第二次 51 ng/L → 第三次 53 ng/L</p>
+                        <p className="text-sm text-gray-700 mt-1"><strong>上升倍數：</strong>約 2.94 倍</p>
+                      </div>
+                      <p className="text-sm text-gray-600"><strong>結論：</strong>緩慢、小幅上升（低於10倍）不符合ACS的典型快速陡升模式，可能為慢性心臟疾病或其他非ACS因素。</p>
+                    </div>
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
+                      <h4 className="font-bold text-gray-800 mb-2">情境2：cTnT 穩定高值伴高血壓</h4>
+                      <div className="bg-white/80 rounded-lg p-3 mb-3">
+                        <p className="text-sm text-gray-700"><strong>數據：</strong>第一次 78 ng/L → 第二次 85 ng/L → 第三次 72 ng/L</p>
+                        <p className="text-sm text-gray-700 mt-1"><strong>上升倍數：</strong>僅 1.09 倍</p>
+                      </div>
+                      <p className="text-sm text-gray-600"><strong>結論：</strong>穩定高值模式不像ACS，更可能與高血壓危象（hypertensive urgency）相關。</p>
+                    </div>
+                  </div>
+                </SubSection>
+                <NoteBox>cTn動態變化模式有助於區分ACS與非ACS原因的cTn升高。ACS通常表現為cTn快速陡升（數百倍以上），而緩慢上升或穩定高值更可能提示非ACS原因。</NoteBox>
+              </div>
+            );
+
+          case 'clinical':
+            return (
+              <div className="space-y-6 fade-in">
+                <SectionHeader icon={Icons.Stethoscope} title="臨床應用建議" subtitle="Clinical Recommendations" />
+                <div className="space-y-4">
+                  <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                    <div className="flex items-start gap-3">
+                      <div className="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
+                      <p className="text-sm text-gray-700">結合臨床病史、心電圖和影像學檢查解讀cTn結果</p>
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                    <div className="flex items-start gap-3">
+                      <div className="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
+                      <p className="text-sm text-gray-700">在低ACS風險患者中，cTn陽性結果的特異性較低，需謹慎解讀</p>
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                    <div className="flex items-start gap-3">
+                      <div className="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">3</div>
+                      <p className="text-sm text-gray-700">連續cTn檢測（2–3小時間隔）可提高診斷效率</p>
+                    </div>
+                  </div>
+                </div>
+                <ImportantBox type="warning">
+                  <p className="font-bold mb-2">👨‍⚕️ 年輕醫護同仁注意</p>
+                  <p className="mb-2">臨床判斷需要經驗，建議好好在床邊與病患評估 chest pain scale。</p>
+                  <p className="font-medium">同時若手邊有其他檢查，應該一起做判斷，尤其是：</p>
+                  <ul className="mt-2 space-y-1 text-sm">
+                    <li>• 過去的舊的心電圖</li>
+                    <li>• 過去的心導管檢查結果</li>
+                    <li>• 心臟超音波（收縮功能、局部運動障礙）</li>
+                    <li>• 電腦斷層（冠狀動脈鈣化）</li>
+                  </ul>
+                </ImportantBox>
+                <SubSection title="分析結論摘要">
+                  <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl p-5 border border-gray-200">
+                    <div className="space-y-4">
+                      <div>
+                        <h4 className="font-bold text-red-600 mb-2">ACS 特徵</h4>
+                        <p className="text-sm text-gray-600">cTnI上升幅度極大（數百倍），且速度快（6小時內顯著上升），反映急性心肌缺血壞死的顯著損傷。</p>
+                      </div>
+                      <div className="border-t border-gray-200 pt-4">
+                        <h4 className="font-bold text-blue-600 mb-2">非ACS疾病特徵</h4>
+                        <div className="space-y-2">
+                          <p className="text-sm text-gray-600"><strong>急性心肌炎：</strong>cTnI上升幅度較小（約18倍），速度緩慢</p>
+                          <p className="text-sm text-gray-600"><strong>心衰竭：</strong>cTnI幾乎無顯著上升（僅1.8倍），反映慢性狀態</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </SubSection>
+              </div>
+            );
+
+          case 'quiz':
+            return (
+              <div className="space-y-6 fade-in">
+                <SectionHeader icon={Icons.HelpCircle} title="自我測驗" subtitle="Self Assessment" />
+                <p className="text-sm text-gray-600 mb-4">以下為針對「心肌旋轉蛋白升高解讀」的十道選擇題，旨在檢驗對關鍵概念的理解。</p>
+                <Quiz />
+              </div>
+            );
+
+          case 'references':
+            return (
+              <div className="space-y-6 fade-in">
+                <SectionHeader icon={Icons.BookMarked} title="參考文獻" subtitle="References" />
+                <div className="space-y-4">
+                  <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                    <div className="flex items-start gap-3">
+                      <div className="bg-gray-100 px-2 py-1 rounded text-xs font-mono text-gray-600">[1]</div>
+                      <div>
+                        <p className="text-sm text-gray-700 leading-relaxed">Mahajan, V. S., & Jarolim, P. (2011). How to Interpret Elevated Cardiac Troponin Levels. <em>Circulation</em>, 124(21), 2350–2354.</p>
+                        <a href="https://doi.org/10.1161/CIRCULATIONAHA.111.023697" className="text-blue-500 text-xs mt-1 block" target="_blank" rel="noopener noreferrer">DOI: 10.1161/CIRCULATIONAHA.111.023697</a>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                    <div className="flex items-start gap-3">
+                      <div className="bg-gray-100 px-2 py-1 rounded text-xs font-mono text-gray-600">[2]</div>
+                      <div><p className="text-sm text-gray-700 leading-relaxed">The role of cardiac testing with the 0/1-hour high-sensitivity cardiac troponin algorithm evaluating for acute myocardial infarction. <em>ScienceDirect</em>.</p></div>
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                    <div className="flex items-start gap-3">
+                      <div className="bg-gray-100 px-2 py-1 rounded text-xs font-mono text-gray-600">[3]</div>
+                      <div>
+                        <p className="text-sm text-gray-700 leading-relaxed">Thygesen, K., Alpert, J. S., Jaffe, A. S., et al. (2018). Fourth Universal Definition of Myocardial Infarction. <em>Circulation</em>, 138(20), e618–e651.</p>
+                        <a href="https://doi.org/10.1161/CIR.0000000000000617" className="text-blue-500 text-xs mt-1 block" target="_blank" rel="noopener noreferrer">DOI: 10.1161/CIR.0000000000000617</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <SubSection title="版本歷程">
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <div className="space-y-2 text-sm text-gray-600">
+                      <p><strong>Version 1.0</strong> - 2025-07-01</p>
+                      <p><strong>Version 1.1</strong> - 2025-11-09 標題更新</p>
+                    </div>
+                  </div>
+                </SubSection>
+              </div>
+            );
+
+          default:
+            return null;
+        }
+      };
+
+      return (
+        <div className="min-h-screen pb-20">
+          {/* Header */}
+          <header className="bg-white/80 backdrop-blur-lg sticky top-0 z-30 border-b border-gray-200">
+            <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="text-red-500"><Icons.Heart /></div>
+                <span className="font-bold text-gray-800 text-sm">Troponin 教學講義</span>
+              </div>
+              <button onClick={() => setMenuOpen(!menuOpen)} className="p-2 rounded-lg hover:bg-gray-100">
+                {menuOpen ? <Icons.X /> : <Icons.Menu />}
+              </button>
+            </div>
+          </header>
+
+          {/* Side Menu */}
+          {menuOpen && (
+            <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)}>
+              <div className="absolute inset-0 bg-black/50" />
+              <div className="absolute right-0 top-0 h-full w-72 bg-white shadow-2xl p-6 pt-16" onClick={e => e.stopPropagation()}>
+                <h3 className="text-lg font-bold text-gray-800 mb-4">目錄</h3>
+                <div className="space-y-2">
+                  {sections.map(section => (
+                    <button key={section.id} onClick={() => { setActiveSection(section.id); setMenuOpen(false); }}
+                      className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all ${activeSection === section.id ? 'bg-gradient-to-r from-red-500 to-rose-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>
+                      <section.icon />
+                      <span className="font-medium">{section.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Main Content */}
+          <main className="max-w-lg mx-auto px-4 py-6">
+            {renderContent()}
+          </main>
+
+          {/* Bottom Navigation */}
+          <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 py-2 z-30">
+            <div className="max-w-lg mx-auto flex justify-around">
+              {sections.slice(0, 5).map(section => (
+                <button key={section.id} onClick={() => setActiveSection(section.id)}
+                  className={`flex flex-col items-center p-2 rounded-lg transition-colors ${activeSection === section.id ? 'text-red-500' : 'text-gray-400'}`}>
+                  <section.icon />
+                  <span className="text-xs mt-1">{section.label}</span>
+                </button>
+              ))}
+            </div>
+          </nav>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
