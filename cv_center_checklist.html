@@ -1,0 +1,2161 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>心血管中心評鑑準備查核清單</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a5276;
+            --primary-light: #2980b9;
+            --primary-dark: #0e3a5c;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --bg-main: #f4f6f9;
+            --bg-card: #ffffff;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --border: #dfe6e9;
+            --shadow: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-hover: 0 4px 16px rgba(0,0,0,0.12);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 24px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(26, 82, 118, 0.3);
+        }
+
+        header h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        header .subtitle {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .progress-bar-container {
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            height: 8px;
+            margin-top: 16px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            height: 100%;
+            width: 0%;
+            transition: width 0.4s ease;
+            border-radius: 20px;
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-tabs {
+            display: flex;
+            overflow-x: auto;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 0 8px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .nav-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-tab {
+            flex: 0 0 auto;
+            padding: 14px 16px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            border: none;
+            background: none;
+            cursor: pointer;
+            white-space: nowrap;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .nav-tab.active {
+            color: var(--primary);
+        }
+
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 8px;
+            right: 8px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .nav-tab .badge {
+            display: inline-block;
+            background: var(--border);
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 4px;
+        }
+
+        .nav-tab.active .badge {
+            background: var(--primary-light);
+            color: white;
+        }
+
+        main {
+            padding: 16px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            color: white;
+            padding: 14px 16px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .section-header.equipment {
+            background: linear-gradient(135deg, #8e44ad 0%, #6c3483 100%);
+        }
+
+        .section-header .section-progress {
+            font-size: 0.8rem;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        .section-header .toggle-icon {
+            transition: transform 0.3s;
+        }
+
+        .section-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .section-body {
+            padding: 8px 0;
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .section-body.collapsed {
+            max-height: 0;
+            padding: 0;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s;
+        }
+
+        .check-item:last-child {
+            border-bottom: none;
+        }
+
+        .check-item:active {
+            background: var(--bg-main);
+        }
+
+        .check-item.completed {
+            background: rgba(39, 174, 96, 0.05);
+        }
+
+        .check-item.completed .item-text {
+            color: var(--text-secondary);
+        }
+
+        .checkbox-wrapper {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            margin-right: 12px;
+            margin-top: 2px;
+        }
+
+        .checkbox-wrapper input {
+            display: none;
+        }
+
+        .checkbox-custom {
+            width: 28px;
+            height: 28px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .checkbox-wrapper input:checked + .checkbox-custom {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .checkbox-custom svg {
+            width: 16px;
+            height: 16px;
+            stroke: white;
+            stroke-width: 3;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.2s;
+        }
+
+        .checkbox-wrapper input:checked + .checkbox-custom svg {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .item-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+        }
+
+        .item-sub {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            padding-left: 12px;
+            border-left: 2px solid var(--border);
+        }
+
+        .item-tag {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        .tag-urgent {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--accent);
+        }
+
+        .tag-important {
+            background: rgba(243, 156, 18, 0.1);
+            color: var(--warning);
+        }
+
+        .tag-location {
+            background: rgba(142, 68, 173, 0.1);
+            color: #8e44ad;
+        }
+
+        .floating-actions {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 50;
+        }
+
+        .fab {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .fab:active {
+            transform: scale(0.95);
+        }
+
+        .fab-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .fab-danger {
+            background: var(--accent);
+            color: white;
+        }
+
+        .fab svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: var(--radius);
+            max-width: 400px;
+            width: 100%;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .modal h3 {
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .modal p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .modal-btn-cancel {
+            background: var(--bg-main);
+            color: var(--text-primary);
+        }
+
+        .modal-btn-confirm {
+            background: var(--accent);
+            color: white;
+        }
+
+        .info-banner {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 12px 16px;
+            margin: 16px;
+            border-radius: var(--radius);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-banner svg {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+        }
+
+        .version-info {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        @media (min-width: 600px) {
+            header {
+                padding: 28px 24px;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            main {
+                padding: 24px;
+            }
+
+            .section-header {
+                padding: 16px 20px;
+            }
+
+            .check-item {
+                padding: 14px 20px;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            header {
+                position: static;
+            }
+            .floating-actions, .nav-tabs {
+                display: none;
+            }
+            .tab-content {
+                display: block !important;
+            }
+            .section-body {
+                max-height: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>心血管中心評鑑準備查核清單</h1>
+        <div class="subtitle">國立臺灣大學醫學院附設醫院新竹臺大分院</div>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="progress-text">
+            <span id="progressText">已完成 0 / 0 項</span>
+            <span id="progressPercent">0%</span>
+        </div>
+    </header>
+
+    <nav class="nav-tabs" id="navTabs">
+        <button class="nav-tab active" data-tab="day3">
+            倒數3天<span class="badge" id="badge-day3">0</span>
+        </button>
+        <button class="nav-tab" data-tab="day2">
+            倒數2天<span class="badge" id="badge-day2">0</span>
+        </button>
+        <button class="nav-tab" data-tab="day1">
+            倒數1天<span class="badge" id="badge-day1">0</span>
+        </button>
+        <button class="nav-tab" data-tab="dayD">
+            評鑑當日<span class="badge" id="badge-dayD">0</span>
+        </button>
+        <button class="nav-tab" data-tab="equipment">
+            設備校時<span class="badge" id="badge-equipment">0</span>
+        </button>
+    </nav>
+
+    <main>
+        <div class="info-banner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 16v-4M12 8h.01"></path>
+            </svg>
+            <span>勾選項目會自動儲存於本機，重新整理頁面後仍會保留進度。</span>
+        </div>
+
+        <!-- 倒數3天 -->
+        <div class="tab-content active" id="tab-day3">
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>👥 全體同仁</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-all-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">了解心血管中心 SDM 過去到現在執行 SDM 的概況</div>
+                            <div class="item-sub">2A/CCU 護理師、導管室全體成員</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-all-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">陪評 VS 閱聽錄製的影音檔: ACS_SDM_process</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-all-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">知道 NAS 上標準流程資料的位置（ACS 照護基準）</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>👨‍⚕️ 主治醫師 (VS)</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-vs-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">完成電子簽章（前一日的記錄）</div>
+                            <span class="item-tag tag-urgent">重要</span>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-vs-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">完成所有未完成病歷及電子簽章</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-vs-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">TMS 上課記錄確認</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-vs-4">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">陪評 VS/NP 熟悉操作電腦點閱病歷</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>💉 CV NP</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cvnp-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">了解目前住院中 ACS/HF 病人資料</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cvnp-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">完成目前住院中病人的記錄</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cvnp-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">完成病房病人的記錄</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cvnp-4">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">找到合適讓委員訪談的病患</div>
+                            <div class="item-sub">會被問衛教、醫師的術前同意、手術前後的說明 (PCI or CABG)</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cvnp-5">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">知道臨床縮寫表查詢方式</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>🫀 CVS NP</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cvsnp-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">已開刀病人，術前的 EuroScoreII 是否都有呈現在照會單中</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cvsnp-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">病人的照護、病情轉折是否留有記錄</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>🤝 跨領域同仁</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cross-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">人員文件確認（訓練/教育/評核/資歷）</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cross-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">教育訓練 TMS 確認</div>
+                            <div class="item-sub">復健部、呼吸治療師、藥劑部、營養室</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cross-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">跨領域各科部陪評人員 (Leader) 確認</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cross-4">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">花時間看 TMS 團隊教程</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>🏥 導管室</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cath-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">盤點資料</div>
+                            <div class="item-sub">科務會議、CV-CVS service meeting、MMC 資料夾</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cath-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">D2B 表單查核（導管影像時間戳記）</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cath-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">文件確認：保養/消防/氧氣鋼瓶</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cath-4">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">人員訓練資歷、查核/評核資料、教育訓練資料</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cath-5">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">管制藥的管理程序確認</div>
+                            <span class="item-tag tag-urgent">重要</span>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cath-6">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">消防與 COVID-19 防護演練/停電演練</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cath-7">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">文件再盤查，準備文件推車</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cath-8">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">環境衛生整理</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cath-9">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">消防動線整理</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cath-10">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">Time-out 表單確認</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-cath-11">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">人員加班時數、上班機制（符合法規）</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>💉 麻醉科/開刀房</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-anes-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">交班記錄，高風險病患如何交班?</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-anes-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">高風險病患的定義確認</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-anes-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">團隊會議頻率確認（麻醉科與 CVS）</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-anes-4">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">跟刀護理師與開心手術麻醉護理師的心血管專門訓練</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-anes-5">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">手術 time-out 查核表、電子表單</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-anes-6">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">不穩定病人運送單</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d3-anes-7">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">手術後如何與 CCU 交班?</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 倒數2天 -->
+        <div class="tab-content" id="tab-day2">
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>👥 全體人員</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-all-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">確定該上的 TMS-ACS 相關課程都已經完成</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-all-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">知道 ACS 照護基準放在 NAS 哪裡</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-all-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">問題回報</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-all-4">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">點電腦 NAS（品管中心 LINE 公告）</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>🚭 戒菸個管師</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-smoke-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">按月呈現的 2A 病房戒菸轉介與追蹤報表</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-smoke-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">ACS 病人戒菸成功率統計（112-113 年總人數）</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-smoke-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">完成戒菸病患連續性追蹤 - 病房到門診</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>📋 VS and NP、品管中心</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-vsnp-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">病患名單病歷最後確認 08AM, 2A 病房</div>
+                            <div class="item-sub">病歷小組/慕揚</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-vsnp-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">病歷查核演練 PM</div>
+                            <div class="item-sub">恆宇、吳主任</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-vsnp-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">評鑑當日演練：得知名單後，專人提前檢查病歷</div>
+                            <div class="item-sub">11AM, CCU: 慕揚/宗彥/如瑩/新育, 2A: 恆宇/秋燕/惠婷</div>
+                            <span class="item-tag tag-important">演練</span>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-vsnp-4">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">名單確認後，從病歷室調病歷（品管中心）</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-vsnp-5">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">通知導管室準備 D2W 時間資料</div>
+                            <div class="item-sub">品管中心、紫蘭、明倩</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>🫀 CVS VS and NP</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-cvs-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">心臟手術術後死亡的病患列表</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-cvs-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">病歷資料回顧（林明賢主任）</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-cvs-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">CVS 實地訪查演練</div>
+                            <div class="item-sub">林明賢主任、吳主任/慕揚</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>🤝 跨領域同仁</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-cross-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">人員文件（訓練/教育/評核/資歷）</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-cross-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">教育訓練 TMS 確認</div>
+                            <div class="item-sub">復健部、呼吸治療師、藥劑部、營養室</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-cross-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">跨領域各科部陪評人員 (Leader)</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-cross-4">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">花時間看各領域團隊教程（品管中心→LINE 筆記本）</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>🏥 導管室/CCU/ward</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-cath-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">環境整理</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-cath-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">補登 SYNTAX score（10AM 會公告最後病患名單）</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-cath-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">臨時科會記錄（提到 ECMO SOP、照護基準增加門診工作）</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d2-cath-4">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">通過本中心縮寫表</div>
+                            <div class="item-sub">14:00: cath room 紫蘭 →CCU/2A NP/護理長</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 倒數1天 -->
+        <div class="tab-content" id="tab-day1">
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>👥 全體人員</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-all-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">把該上的 TMS 課程上完</div>
+                            <span class="item-tag tag-urgent">最後期限</span>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-all-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">知道 ACS 照護基準放在 NAS 的位置</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-all-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">問題回報</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-all-4">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">點電腦 NAS（品管中心 LINE 公告）</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>🛏️ 病房病患</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-ward-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">決定現場訪查時讓委員床邊訪談之病患</div>
+                            <div class="item-sub">請恆宇決定（護理長及 NP 協助）</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>📋 CV VS and NP、品管中心</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-vsnp-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">病歷查核演練</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-vsnp-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">當日 8-9AM 演練：得知名單後，專人提前檢查病歷</div>
+                            <div class="item-sub">宗彥/恆宇/如瑩，惠婷/秋燕</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-vsnp-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">名單確認後，從病歷室調病歷</div>
+                            <div class="item-sub">品管中心 → 導管室紫蘭</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-vsnp-4">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">導管室準備 D2W 資料</div>
+                            <div class="item-sub">品管中心 → 紫蘭、道明、明倩</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>🫀 CVS VS and NP</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-cvs-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">心臟手術術後死亡的病患列表</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-cvs-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">病歷資料回顧（林明賢主任）</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-cvs-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">CVS 實地訪查演練（林明賢主任）</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>🤝 跨領域同仁的合作事項</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-cross-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">確認病房住院病人名單（LINE）</div>
+                            <div class="item-sub">復健部、呼吸治療師、藥劑部、營養室、戒菸個管師</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-cross-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">確認訪談、病歷是否完成</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-cross-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">戒菸病患名單 → 提供給品管中心與 2A 護理長</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>🏥 導管室/CCU/ward</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-cath-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">環境整理</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>🏢 內科部辦公室</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-int-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">住院醫師教育訓練計畫</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-int-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">住院醫師評核結果（口試）</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-int-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">住院醫師導生訪談記錄</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-int-4">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">住院醫師參與的 TMS、ACLS 證明</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="d1-int-5">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">明天請待命，委員若要看由品管中心通知</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 評鑑當日 -->
+        <div class="tab-content" id="tab-dayD">
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>🌙 前一晚</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="dd-night-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">確認所有病歷電子簽章完成</div>
+                            <span class="item-tag tag-urgent">重要</span>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="dd-night-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">確認環境整潔</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="dd-night-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">確認文件推車準備妥當</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>☀️ 當日早上</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="dd-am-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">8-9AM 演練：得知名單後專人檢查病歷</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="dd-am-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">陪評人員就位</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="dd-am-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">訪談病患已確認並準備好</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="dd-am-4">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">跨領域團隊待命</div>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="dd-am-5">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">內科部辦公室待命（住院醫師資料）</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 設備校時 -->
+        <div class="tab-content" id="tab-equipment">
+            <div class="section">
+                <div class="section-header equipment" onclick="toggleSection(this)">
+                    <span>⚡ 電擊器校時</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="eq-def-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">生理功能室 - 電擊器校時</div>
+                            <span class="item-tag tag-location">生理功能室</span>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="eq-def-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">導管室 - 電擊器校時</div>
+                            <span class="item-tag tag-location">導管室</span>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="eq-def-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">心超室 - 電擊器校時</div>
+                            <span class="item-tag tag-location">心超室</span>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="eq-def-4">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">CCU/病房 - 電擊器校時</div>
+                            <span class="item-tag tag-location">CCU/病房</span>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="eq-def-5">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">急診 - 電擊器校時</div>
+                            <span class="item-tag tag-location">急診</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header equipment" onclick="toggleSection(this)">
+                    <span>🩺 導管機校時</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="eq-cath-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">生理功能室 - 導管機校時</div>
+                            <span class="item-tag tag-location">生理功能室</span>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="eq-cath-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">導管室 - 導管機校時</div>
+                            <span class="item-tag tag-location">導管室</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header equipment" onclick="toggleSection(this)">
+                    <span>📡 超音波機校時</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="eq-us-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">生理功能室 - 超音波機校時</div>
+                            <span class="item-tag tag-location">生理功能室</span>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="eq-us-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">導管室 - 超音波機校時</div>
+                            <span class="item-tag tag-location">導管室</span>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="eq-us-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">心超室 - 超音波機校時</div>
+                            <span class="item-tag tag-location">心超室</span>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="eq-us-4">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">CCU/病房 - 超音波機校時</div>
+                            <span class="item-tag tag-location">CCU/病房</span>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="eq-us-5">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">急診 - 超音波機校時</div>
+                            <span class="item-tag tag-location">急診</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header equipment" onclick="toggleSection(this)">
+                    <span>📟 ECG 設備校時</span>
+                    <span class="section-progress"></span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-body">
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="eq-ecg-1">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">生理功能室 - ECG 對時</div>
+                            <span class="item-tag tag-location">生理功能室</span>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="eq-ecg-2">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">導管室 - ECG 對時</div>
+                            <span class="item-tag tag-location">導管室</span>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="eq-ecg-3">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">CCU/病房 - ECG 對時</div>
+                            <span class="item-tag tag-location">CCU/病房</span>
+                        </div>
+                    </label>
+                    <label class="check-item">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" data-id="eq-ecg-4">
+                            <span class="checkbox-custom">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"></path></svg>
+                            </span>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-text">急診 - ECG 對時</div>
+                            <span class="item-tag tag-location">急診</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="version-info">
+            文件版本：2025 年 11 月 22 日 ver 2.0<br>
+            製作：謝慕揚醫師
+        </div>
+    </main>
+
+    <div class="floating-actions">
+        <button class="fab fab-danger" onclick="confirmReset()" title="重置所有項目">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
+            </svg>
+        </button>
+    </div>
+
+    <div class="modal-overlay" id="resetModal">
+        <div class="modal">
+            <h3>確定要重置嗎？</h3>
+            <p>這將清除所有已勾選的項目，此操作無法復原。</p>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" onclick="closeModal()">取消</button>
+                <button class="modal-btn modal-btn-confirm" onclick="resetAll()">確定重置</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadState();
+            initTabs();
+            initCheckboxes();
+            updateAllProgress();
+        });
+
+        // Tab navigation
+        function initTabs() {
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
+                    
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById('tab-' + tabId).classList.add('active');
+                });
+            });
+        }
+
+        // Checkbox handling
+        function initCheckboxes() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const item = this.closest('.check-item');
+                    if (this.checked) {
+                        item.classList.add('completed');
+                    } else {
+                        item.classList.remove('completed');
+                    }
+                    saveState();
+                    updateAllProgress();
+                });
+            });
+        }
+
+        // Toggle section collapse
+        function toggleSection(header) {
+            header.classList.toggle('collapsed');
+            const body = header.nextElementSibling;
+            body.classList.toggle('collapsed');
+        }
+
+        // Save state to localStorage
+        function saveState() {
+            const state = {};
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                if (cb.dataset.id) {
+                    state[cb.dataset.id] = cb.checked;
+                }
+            });
+            localStorage.setItem('cv-checklist-state', JSON.stringify(state));
+        }
+
+        // Load state from localStorage
+        function loadState() {
+            const saved = localStorage.getItem('cv-checklist-state');
+            if (saved) {
+                const state = JSON.parse(saved);
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                    if (cb.dataset.id && state[cb.dataset.id]) {
+                        cb.checked = true;
+                        cb.closest('.check-item').classList.add('completed');
+                    }
+                });
+            }
+        }
+
+        // Update progress displays
+        function updateAllProgress() {
+            const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+            const allChecked = document.querySelectorAll('input[type="checkbox"]:checked');
+            const total = allCheckboxes.length;
+            const completed = allChecked.length;
+            const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+            // Update header progress
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressText').textContent = `已完成 ${completed} / ${total} 項`;
+            document.getElementById('progressPercent').textContent = percent + '%';
+
+            // Update tab badges
+            const tabs = ['day3', 'day2', 'day1', 'dayD', 'equipment'];
+            tabs.forEach(tabId => {
+                const tabContent = document.getElementById('tab-' + tabId);
+                if (tabContent) {
+                    const tabCheckboxes = tabContent.querySelectorAll('input[type="checkbox"]');
+                    const tabChecked = tabContent.querySelectorAll('input[type="checkbox"]:checked');
+                    const remaining = tabCheckboxes.length - tabChecked.length;
+                    document.getElementById('badge-' + tabId).textContent = remaining;
+                }
+            });
+
+            // Update section progress
+            document.querySelectorAll('.section').forEach(section => {
+                const sectionCheckboxes = section.querySelectorAll('input[type="checkbox"]');
+                const sectionChecked = section.querySelectorAll('input[type="checkbox"]:checked');
+                const progressSpan = section.querySelector('.section-progress');
+                if (progressSpan && sectionCheckboxes.length > 0) {
+                    progressSpan.textContent = `${sectionChecked.length}/${sectionCheckboxes.length}`;
+                }
+            });
+        }
+
+        // Reset confirmation
+        function confirmReset() {
+            document.getElementById('resetModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('resetModal').classList.remove('active');
+        }
+
+        function resetAll() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.checked = false;
+                cb.closest('.check-item').classList.remove('completed');
+            });
+            localStorage.removeItem('cv-checklist-state');
+            updateAllProgress();
+            closeModal();
+        }
+
+        // Close modal on overlay click
+        document.getElementById('resetModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
