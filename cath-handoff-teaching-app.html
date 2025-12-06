@@ -1,0 +1,2043 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>導管室護理教學</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #1e3a5f;
+            --primary-light: #2d5a87;
+            --accent: #e74c3c;
+            --accent-light: #ff6b5b;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #3498db;
+            --purple: #9b59b6;
+            --bg-cream: #faf8f5;
+            --bg-card: #ffffff;
+            --text-dark: #2c3e50;
+            --text-muted: #7f8c8d;
+            --border: #ecf0f1;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-cream);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        #root {
+            min-height: 100vh;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.1); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // ==================== SVG ICONS ====================
+        const Icons = {
+            Heart: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+            ),
+            Clipboard: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                </svg>
+            ),
+            Warning: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                </svg>
+            ),
+            Check: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                </svg>
+            ),
+            Arrow: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"/>
+                </svg>
+            ),
+            Back: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+            ),
+            Quiz: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/>
+                </svg>
+            ),
+            Clock: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                </svg>
+            ),
+            Medical: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M19 3H5c-1.1 0-1.99.9-1.99 2L3 19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 11h-4v4h-4v-4H6v-4h4V6h4v4h4v4z"/>
+                </svg>
+            ),
+            Pulse: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/>
+                </svg>
+            ),
+            Person: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+            ),
+            AlertCircle: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                </svg>
+            ),
+            Star: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                </svg>
+            ),
+            Bed: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z"/>
+                </svg>
+            ),
+            Document: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                </svg>
+            ),
+            Stethoscope: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M19 8c-1.66 0-3 1.34-3 3v4c0 1.1-.9 2-2 2s-2-.9-2-2V5c0-1.1-.9-2-2-2H7V1H5v2H2v2h3v8c0 2.21 1.79 4 4 4h2c2.21 0 4-1.79 4-4v-4c0-.55.45-1 1-1s1 .45 1 1v4c0 2.76-2.24 5-5 5H9c-2.76 0-5-2.24-5-5v-2H2v2c0 3.87 3.13 7 7 7h3c3.87 0 7-3.13 7-7v-4c0-.55.45-1 1-1s1 .45 1 1v2h2v-2c0-1.66-1.34-3-3-3z"/>
+                </svg>
+            ),
+            Kidney: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12 2C8.5 2 5 4.5 5 9c0 3.5 2 6 4 8 1 1 2 2 3 4 1-2 2-3 3-4 2-2 4-4.5 4-8 0-4.5-3.5-7-7-7zm0 10c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
+                </svg>
+            ),
+            Syringe: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M11.15 15.18l-1.42-1.41 1.42-1.42 1.41 1.42 1.42-1.42-1.42-1.41 1.42-1.42 1.41 1.42 1.42-1.42-2.83-2.83-7.07 7.07 2.83 2.83 1.41-1.41zM3.08 19l3.12-3.11-2.12-2.12 9.89-9.9 2.83 2.83 1.08-1.08 1.06 1.06 2.26-2.26-2.11-2.11 1.42-1.42 2.11 2.11 1.06-1.06-1.06-1.06 1.42-1.42-1.42 1.42-1.06 1.06-2.11-2.11-1.42 1.42 1.77 1.77-1.08 1.08 1.08.71-1.42 1.42 1.42 1.41-1.42 1.42-1.41-1.42-1.42 1.42 1.41 1.41-1.15 1.16.71.71-2.12 2.12L3.08 19z"/>
+                </svg>
+            ),
+            Running: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9l1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1l-5.2 2.2v4.7h2v-3.4l1.8-.7-1.6 8.1-4.9-1-.4 2 7 1.4z"/>
+                </svg>
+            ),
+            Exchange: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/>
+                </svg>
+            ),
+            Checklist: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+            ),
+            Emergency: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M19 3H5c-1.1 0-1.99.9-1.99 2L3 19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 11h-4v4h-4v-4H6v-4h4V6h4v4h4v4z"/>
+                </svg>
+            ),
+            Pills: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M4.22 11.29l6.07-6.07a4.5 4.5 0 0 1 6.36 6.37l-6.07 6.07a4.5 4.5 0 0 1-6.36-6.37zm1.42 4.95a2.5 2.5 0 0 0 3.53 0L12 13.41 10.59 12l-2.83 2.83a2.5 2.5 0 0 0 0 3.53v-.12zm14.14-11.02a4.5 4.5 0 0 0-6.36 0l-.71.71 6.37 6.37.71-.71a4.5 4.5 0 0 0 0-6.37z"/>
+                </svg>
+            )
+        };
+
+        // ==================== CHECKLIST ITEM COMPONENT ====================
+        const ChecklistItem = ({ checked, onChange, children, important = false, critical = false }) => (
+            <div 
+                onClick={() => onChange(!checked)}
+                style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '12px',
+                    padding: '14px 16px',
+                    background: checked ? (critical ? '#fee2e2' : important ? '#fef3c7' : '#d1fae5') : 'white',
+                    borderRadius: '12px',
+                    marginBottom: '8px',
+                    cursor: 'pointer',
+                    border: `2px solid ${checked ? (critical ? '#fca5a5' : important ? '#fcd34d' : '#6ee7b7') : '#e5e7eb'}`,
+                    transition: 'all 0.2s ease'
+                }}
+            >
+                <div style={{
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '6px',
+                    border: `2px solid ${checked ? (critical ? '#dc2626' : important ? '#f59e0b' : '#10b981') : '#d1d5db'}`,
+                    background: checked ? (critical ? '#dc2626' : important ? '#f59e0b' : '#10b981') : 'white',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    marginTop: '2px'
+                }}>
+                    {checked && <Icons.Check />}
+                </div>
+                <div style={{ 
+                    flex: 1,
+                    color: checked ? '#374151' : '#6b7280',
+                    fontSize: '15px',
+                    lineHeight: '1.5'
+                }}>
+                    {children}
+                </div>
+            </div>
+        );
+
+        // ==================== INFO CARD COMPONENT ====================
+        const InfoCard = ({ title, icon, color, children }) => (
+            <div style={{
+                background: 'white',
+                borderRadius: '16px',
+                padding: '20px',
+                marginBottom: '16px',
+                boxShadow: 'var(--shadow)',
+                borderTop: `4px solid ${color}`
+            }}>
+                <h3 style={{ 
+                    fontSize: '17px', 
+                    fontWeight: '600', 
+                    marginBottom: '16px',
+                    color: '#1f2937',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px'
+                }}>
+                    <span style={{ color }}>{icon}</span>
+                    {title}
+                </h3>
+                {children}
+            </div>
+        );
+
+        // ==================== TAG COMPONENT ====================
+        const Tag = ({ children, color = '#3b82f6' }) => (
+            <span style={{
+                display: 'inline-block',
+                padding: '4px 10px',
+                background: `${color}15`,
+                color: color,
+                borderRadius: '6px',
+                fontSize: '13px',
+                fontWeight: '500',
+                marginRight: '6px',
+                marginBottom: '6px'
+            }}>
+                {children}
+            </span>
+        );
+
+        // ==================== BED POSITION DIAGRAM ====================
+        const BedPositionDiagram = ({ type }) => {
+            if (type === 'supine') {
+                return (
+                    <svg viewBox="0 0 200 100" style={{ width: '100%', maxWidth: '200px' }}>
+                        {/* Bed frame */}
+                        <rect x="10" y="60" width="180" height="30" fill="#e5e7eb" stroke="#9ca3af" strokeWidth="2" rx="5"/>
+                        
+                        {/* Mattress */}
+                        <rect x="15" y="40" width="170" height="25" fill="#fef3c7" stroke="#fcd34d" strokeWidth="2" rx="3"/>
+                        
+                        {/* Person - supine (face up) */}
+                        <ellipse cx="50" cy="35" rx="15" ry="12" fill="#fad0c4" stroke="#d4a5a5" strokeWidth="1.5"/>
+                        <circle cx="47" cy="32" r="2" fill="#374151"/>
+                        <circle cx="53" cy="32" r="2" fill="#374151"/>
+                        <path d="M 47 38 Q 50 41 53 38" stroke="#374151" strokeWidth="1.5" fill="none"/>
+                        
+                        {/* Body */}
+                        <rect x="35" y="47" width="30" height="15" fill="#93c5fd" rx="3"/>
+                        
+                        {/* Legs */}
+                        <rect x="65" y="50" width="100" height="10" fill="#bfdbfe" rx="2"/>
+                        
+                        {/* Arrow pointing up */}
+                        <path d="M 50 15 L 50 5" stroke="#10b981" strokeWidth="2" markerEnd="url(#arrowUp)"/>
+                        <defs>
+                            <marker id="arrowUp" markerWidth="10" markerHeight="7" refX="5" refY="3.5" orient="auto">
+                                <polygon points="0 7, 5 0, 10 7" fill="#10b981"/>
+                            </marker>
+                        </defs>
+                        
+                        <text x="100" y="95" textAnchor="middle" fontSize="11" fill="#374151" fontWeight="600">正躺 (Supine)</text>
+                    </svg>
+                );
+            }
+            
+            if (type === 'prone') {
+                return (
+                    <svg viewBox="0 0 200 100" style={{ width: '100%', maxWidth: '200px' }}>
+                        {/* Bed frame */}
+                        <rect x="10" y="60" width="180" height="30" fill="#e5e7eb" stroke="#9ca3af" strokeWidth="2" rx="5"/>
+                        
+                        {/* Mattress */}
+                        <rect x="15" y="40" width="170" height="25" fill="#fef3c7" stroke="#fcd34d" strokeWidth="2" rx="3"/>
+                        
+                        {/* Person - prone (face down) */}
+                        <ellipse cx="50" cy="35" rx="15" ry="12" fill="#fad0c4" stroke="#d4a5a5" strokeWidth="1.5"/>
+                        {/* Back of head - no face visible */}
+                        <ellipse cx="50" cy="33" rx="10" ry="8" fill="#8b5a2b"/>
+                        
+                        {/* Body */}
+                        <rect x="35" y="47" width="30" height="15" fill="#93c5fd" rx="3"/>
+                        
+                        {/* Legs */}
+                        <rect x="65" y="50" width="100" height="10" fill="#bfdbfe" rx="2"/>
+                        
+                        {/* Arrow pointing down */}
+                        <path d="M 50 15 L 50 5" stroke="#ef4444" strokeWidth="2" markerEnd="url(#arrowDown)"/>
+                        <defs>
+                            <marker id="arrowDown" markerWidth="10" markerHeight="7" refX="5" refY="3.5" orient="auto">
+                                <polygon points="0 0, 5 7, 10 0" fill="#ef4444"/>
+                            </marker>
+                        </defs>
+                        
+                        <text x="100" y="95" textAnchor="middle" fontSize="11" fill="#374151" fontWeight="600">反躺/趴躺 (Prone)</text>
+                    </svg>
+                );
+            }
+            
+            return null;
+        };
+
+        // ==================== DIAGNOSIS BADGE ====================
+        const DiagnosisBadge = ({ type, active, onClick }) => {
+            const configs = {
+                'STEMI': { color: '#dc2626', bg: '#fee2e2', icon: '🔴', desc: 'ST elevation MI' },
+                'NSTEMI': { color: '#ea580c', bg: '#ffedd5', icon: '🟠', desc: 'Non-ST elevation MI' },
+                'UA': { color: '#ca8a04', bg: '#fef9c3', icon: '🟡', desc: 'Unstable Angina' },
+                'Stable CAD': { color: '#16a34a', bg: '#dcfce7', icon: '🟢', desc: 'Stable Angina' },
+                'PAOD': { color: '#7c3aed', bg: '#ede9fe', icon: '🟣', desc: 'Peripheral Artery Disease' }
+            };
+            
+            const config = configs[type] || { color: '#6b7280', bg: '#f3f4f6', icon: '⚪', desc: type };
+            
+            return (
+                <button
+                    onClick={onClick}
+                    style={{
+                        padding: '12px 16px',
+                        background: active ? config.bg : 'white',
+                        border: `2px solid ${active ? config.color : '#e5e7eb'}`,
+                        borderRadius: '12px',
+                        cursor: 'pointer',
+                        textAlign: 'center',
+                        transition: 'all 0.2s ease',
+                        minWidth: '100px'
+                    }}
+                >
+                    <div style={{ fontSize: '24px', marginBottom: '6px' }}>{config.icon}</div>
+                    <div style={{ fontWeight: '600', fontSize: '14px', color: config.color }}>{type}</div>
+                    <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '2px' }}>{config.desc}</div>
+                </button>
+            );
+        };
+
+        // ==================== STEP INDICATOR ====================
+        const StepIndicator = ({ steps, currentStep }) => (
+            <div style={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                gap: '8px',
+                marginBottom: '20px'
+            }}>
+                {steps.map((step, idx) => (
+                    <div
+                        key={idx}
+                        style={{
+                            width: idx === currentStep ? '24px' : '8px',
+                            height: '8px',
+                            borderRadius: '4px',
+                            background: idx <= currentStep ? '#3b82f6' : '#e5e7eb',
+                            transition: 'all 0.3s ease'
+                        }}
+                    />
+                ))}
+            </div>
+        );
+
+        // ==================== MAIN APP ====================
+        const App = () => {
+            const [currentPage, setCurrentPage] = useState('home');
+            const [currentStep, setCurrentStep] = useState(0);
+            
+            // Pre-cath checklist state
+            const [preCathChecks, setPreCathChecks] = useState({
+                consent: false,
+                clothes: false,
+                dentures: false,
+                hearingAid: false,
+                noShaving: false,
+                ivLine: false,
+                allergies: false,
+                npo: false
+            });
+            
+            // Patient info state
+            const [patientInfo, setPatientInfo] = useState({
+                diagnosis: '',
+                hasSTEMI: false,
+                hasNSTEMI: false,
+                hasUA: false,
+                attendingMD: '',
+                hasFever: false,
+                creatinine: '',
+                egfr: '',
+                lvef: '',
+                hasAS: false,
+                hasMR: false,
+                hasMS: false,
+                thalliumResult: '',
+                treadmillResult: ''
+            });
+
+            const menuItems = [
+                { id: 'pre-cath', icon: <Icons.Checklist />, title: '術前準備', subtitle: 'Pre-Cath Checklist', color: '#3b82f6' },
+                { id: 'patient-handoff', icon: <Icons.Person />, title: '病人交班', subtitle: '診斷與檢查結果', color: '#8b5cf6' },
+                { id: 'procedure-handoff', icon: <Icons.Bed />, title: '術式交班', subtitle: '配合術式注意事項', color: '#06b6d4' },
+                { id: 'post-cath', icon: <Icons.Exchange />, title: '術後交班', subtitle: '治療結果與照護', color: '#10b981' },
+                { id: 'wound-care', icon: <Icons.Medical />, title: '傷口護理', subtitle: '加壓止血與評估', color: '#f59e0b' },
+                { id: 'complications', icon: <Icons.Warning />, title: '併發症教學', subtitle: '血管併發症識別', color: '#ef4444' },
+                { id: 'quiz', icon: <Icons.Quiz />, title: '自我測驗', subtitle: '綜合能力評量', color: '#ec4899' }
+            ];
+
+            // ==================== HEADER COMPONENT ====================
+            const Header = ({ title, subtitle, showBack = false }) => (
+                <div style={{
+                    background: 'linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%)',
+                    color: 'white',
+                    padding: '20px',
+                    paddingTop: '50px',
+                    borderRadius: '0 0 30px 30px',
+                    marginBottom: '20px',
+                    position: 'relative'
+                }}>
+                    {showBack && (
+                        <button
+                            onClick={() => setCurrentPage('home')}
+                            style={{
+                                position: 'absolute',
+                                top: '50px',
+                                left: '15px',
+                                background: 'rgba(255,255,255,0.2)',
+                                border: 'none',
+                                borderRadius: '50%',
+                                width: '40px',
+                                height: '40px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: 'white',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            <Icons.Back />
+                        </button>
+                    )}
+                    <h1 style={{ 
+                        textAlign: 'center', 
+                        fontSize: '20px', 
+                        fontWeight: '600',
+                        marginBottom: subtitle ? '6px' : '0'
+                    }}>
+                        {title}
+                    </h1>
+                    {subtitle && (
+                        <p style={{ textAlign: 'center', fontSize: '13px', opacity: 0.85 }}>{subtitle}</p>
+                    )}
+                </div>
+            );
+
+            // ==================== HOME PAGE ====================
+            const HomePage = () => (
+                <div className="fade-in">
+                    <div style={{
+                        background: 'linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%)',
+                        color: 'white',
+                        padding: '30px 20px',
+                        paddingTop: '60px',
+                        borderRadius: '0 0 40px 40px',
+                        marginBottom: '25px',
+                        textAlign: 'center'
+                    }}>
+                        <div style={{ 
+                            fontSize: '50px', 
+                            marginBottom: '15px',
+                            animation: 'heartbeat 2s infinite'
+                        }}>
+                            🫀
+                        </div>
+                        <h1 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '8px' }}>
+                            導管室護理教學
+                        </h1>
+                        <p style={{ opacity: 0.9, fontSize: '14px' }}>
+                            Cardiac Catheterization Nursing Education
+                        </p>
+                        <div style={{
+                            marginTop: '20px',
+                            padding: '10px 20px',
+                            background: 'rgba(255,255,255,0.15)',
+                            borderRadius: '20px',
+                            display: 'inline-block',
+                            fontSize: '13px'
+                        }}>
+                            📚 交班工作與術後護理
+                        </div>
+                    </div>
+                    
+                    <div style={{ padding: '0 16px' }}>
+                        {menuItems.map((item, idx) => (
+                            <button
+                                key={item.id}
+                                onClick={() => setCurrentPage(item.id)}
+                                className="slide-in"
+                                style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '16px',
+                                    padding: '18px 20px',
+                                    background: 'white',
+                                    border: 'none',
+                                    borderRadius: '16px',
+                                    marginBottom: '12px',
+                                    boxShadow: 'var(--shadow)',
+                                    cursor: 'pointer',
+                                    textAlign: 'left',
+                                    animationDelay: `${idx * 0.08}s`,
+                                    transition: 'transform 0.2s ease'
+                                }}
+                            >
+                                <div style={{
+                                    width: '50px',
+                                    height: '50px',
+                                    borderRadius: '14px',
+                                    background: `linear-gradient(135deg, ${item.color} 0%, ${item.color}dd 100%)`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: 'white',
+                                    flexShrink: 0
+                                }}>
+                                    {item.icon}
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <div style={{ fontWeight: '600', fontSize: '16px', color: '#2c3e50' }}>
+                                        {item.title}
+                                    </div>
+                                    <div style={{ fontSize: '13px', color: '#7f8c8d', marginTop: '2px' }}>
+                                        {item.subtitle}
+                                    </div>
+                                </div>
+                                <div style={{ color: '#bdc3c7' }}>
+                                    <Icons.Arrow />
+                                </div>
+                            </button>
+                        ))}
+                        
+                        <div style={{ 
+                            textAlign: 'center', 
+                            padding: '30px 0',
+                            color: '#7f8c8d',
+                            fontSize: '12px'
+                        }}>
+                            <div>心臟內科護理教學</div>
+                            <div style={{ marginTop: '4px' }}>Based on Clinical Protocols</div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // ==================== PRE-CATH PAGE ====================
+            const PreCathPage = () => {
+                const updateCheck = (key) => {
+                    setPreCathChecks(prev => ({ ...prev, [key]: !prev[key] }));
+                };
+                
+                const allChecked = Object.values(preCathChecks).every(v => v);
+                const checkedCount = Object.values(preCathChecks).filter(v => v).length;
+                
+                return (
+                    <div className="fade-in">
+                        <Header title="術前準備 Checklist" subtitle="Pre-Catheterization Preparation" showBack />
+                        <div style={{ padding: '0 16px' }}>
+                            {/* Progress */}
+                            <div style={{
+                                background: 'white',
+                                borderRadius: '12px',
+                                padding: '16px',
+                                marginBottom: '20px',
+                                boxShadow: 'var(--shadow)'
+                            }}>
+                                <div style={{ 
+                                    display: 'flex', 
+                                    justifyContent: 'space-between',
+                                    marginBottom: '8px'
+                                }}>
+                                    <span style={{ fontWeight: '600', color: '#374151' }}>完成進度</span>
+                                    <span style={{ color: '#3b82f6', fontWeight: '600' }}>{checkedCount}/8</span>
+                                </div>
+                                <div style={{ 
+                                    height: '8px', 
+                                    background: '#e5e7eb', 
+                                    borderRadius: '4px',
+                                    overflow: 'hidden'
+                                }}>
+                                    <div style={{
+                                        height: '100%',
+                                        width: `${(checkedCount / 8) * 100}%`,
+                                        background: allChecked ? '#10b981' : 'linear-gradient(90deg, #3b82f6, #8b5cf6)',
+                                        borderRadius: '4px',
+                                        transition: 'width 0.3s ease'
+                                    }}/>
+                                </div>
+                            </div>
+                            
+                            {/* Checklist */}
+                            <InfoCard title="文件確認" icon="📋" color="#3b82f6">
+                                <ChecklistItem 
+                                    checked={preCathChecks.consent} 
+                                    onChange={() => updateCheck('consent')}
+                                    important
+                                >
+                                    <strong>確認同意書</strong>已簽署完成
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                        包含：導管檢查/治療同意書、麻醉同意書
+                                    </div>
+                                </ChecklistItem>
+                                
+                                <ChecklistItem 
+                                    checked={preCathChecks.allergies} 
+                                    onChange={() => updateCheck('allergies')}
+                                    critical
+                                >
+                                    <strong>確認過敏史</strong>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                        特別注意：顯影劑過敏、Iodine過敏
+                                    </div>
+                                </ChecklistItem>
+                            </InfoCard>
+                            
+                            <InfoCard title="病人準備" icon="👤" color="#8b5cf6">
+                                <ChecklistItem 
+                                    checked={preCathChecks.clothes} 
+                                    onChange={() => updateCheck('clothes')}
+                                >
+                                    <strong>更換手術衣</strong>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                        脫除內衣褲，穿著醫院手術衣
+                                    </div>
+                                </ChecklistItem>
+                                
+                                <ChecklistItem 
+                                    checked={preCathChecks.dentures} 
+                                    onChange={() => updateCheck('dentures')}
+                                >
+                                    <strong>取下假牙</strong>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                        確認活動假牙已取下並妥善保管
+                                    </div>
+                                </ChecklistItem>
+                                
+                                <ChecklistItem 
+                                    checked={preCathChecks.hearingAid} 
+                                    onChange={() => updateCheck('hearingAid')}
+                                >
+                                    <strong>確認助聽器</strong>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                        評估是否需保留以利術中溝通
+                                    </div>
+                                </ChecklistItem>
+                                
+                                <ChecklistItem 
+                                    checked={preCathChecks.noShaving} 
+                                    onChange={() => updateCheck('noShaving')}
+                                >
+                                    <strong>不需剃毛</strong>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                        現行規範：穿刺部位不需事先剃毛
+                                    </div>
+                                </ChecklistItem>
+                            </InfoCard>
+                            
+                            <InfoCard title="醫療準備" icon="💉" color="#10b981">
+                                <ChecklistItem 
+                                    checked={preCathChecks.ivLine} 
+                                    onChange={() => updateCheck('ivLine')}
+                                >
+                                    <strong>確認 IV Line</strong>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                        週邊靜脈導管通暢、位置適當
+                                    </div>
+                                </ChecklistItem>
+                                
+                                <ChecklistItem 
+                                    checked={preCathChecks.npo} 
+                                    onChange={() => updateCheck('npo')}
+                                >
+                                    <strong>確認 NPO 狀態</strong>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                        檢查禁食時間是否符合要求
+                                    </div>
+                                </ChecklistItem>
+                            </InfoCard>
+                            
+                            {/* Completion message */}
+                            {allChecked && (
+                                <div style={{
+                                    background: '#d1fae5',
+                                    borderRadius: '16px',
+                                    padding: '20px',
+                                    textAlign: 'center',
+                                    borderLeft: '4px solid #10b981'
+                                }} className="fade-in">
+                                    <div style={{ fontSize: '32px', marginBottom: '10px' }}>✅</div>
+                                    <div style={{ fontWeight: '600', color: '#065f46', fontSize: '16px' }}>
+                                        術前準備完成！
+                                    </div>
+                                    <div style={{ color: '#047857', fontSize: '14px', marginTop: '6px' }}>
+                                        可以準備送往導管室
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                );
+            };
+
+            // ==================== PATIENT HANDOFF PAGE ====================
+            const PatientHandoffPage = () => (
+                <div className="fade-in">
+                    <Header title="病人交班" subtitle="Patient Information Handoff" showBack />
+                    <div style={{ padding: '0 16px' }}>
+                        {/* Diagnosis */}
+                        <InfoCard title="診斷分類" icon="🏥" color="#dc2626">
+                            <div style={{ marginBottom: '16px' }}>
+                                <div style={{ fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '10px' }}>
+                                    CAD / ACS 分類：
+                                </div>
+                                <div style={{ 
+                                    display: 'grid', 
+                                    gridTemplateColumns: 'repeat(2, 1fr)', 
+                                    gap: '10px' 
+                                }}>
+                                    <DiagnosisBadge type="STEMI" active={patientInfo.hasSTEMI} onClick={() => setPatientInfo(p => ({...p, hasSTEMI: !p.hasSTEMI}))} />
+                                    <DiagnosisBadge type="NSTEMI" active={patientInfo.hasNSTEMI} onClick={() => setPatientInfo(p => ({...p, hasNSTEMI: !p.hasNSTEMI}))} />
+                                    <DiagnosisBadge type="UA" active={patientInfo.hasUA} onClick={() => setPatientInfo(p => ({...p, hasUA: !p.hasUA}))} />
+                                    <DiagnosisBadge type="Stable CAD" active={patientInfo.diagnosis === 'stable'} onClick={() => setPatientInfo(p => ({...p, diagnosis: 'stable'}))} />
+                                </div>
+                            </div>
+                            
+                            <div style={{
+                                background: '#fef2f2',
+                                borderRadius: '10px',
+                                padding: '14px',
+                                fontSize: '13px',
+                                color: '#991b1b'
+                            }}>
+                                <strong>⚠️ ACS 提醒：</strong>
+                                <div style={{ marginTop: '6px' }}>
+                                    • STEMI：立即 Primary PCI 為首選治療<br/>
+                                    • NSTEMI/UA：依風險分層決定介入時機
+                                </div>
+                            </div>
+                        </InfoCard>
+                        
+                        {/* Important Info */}
+                        <InfoCard title="重要交班資訊" icon="📝" color="#8b5cf6">
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '12px',
+                                    padding: '12px',
+                                    background: '#f3f4f6',
+                                    borderRadius: '10px'
+                                }}>
+                                    <span style={{ fontSize: '20px' }}>👨‍⚕️</span>
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ fontSize: '12px', color: '#6b7280' }}>主治醫師</div>
+                                        <input 
+                                            type="text"
+                                            placeholder="輸入醫師姓名..."
+                                            value={patientInfo.attendingMD}
+                                            onChange={(e) => setPatientInfo(p => ({...p, attendingMD: e.target.value}))}
+                                            style={{
+                                                border: 'none',
+                                                background: 'transparent',
+                                                fontSize: '15px',
+                                                fontWeight: '500',
+                                                width: '100%',
+                                                outline: 'none'
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                                
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    padding: '12px',
+                                    background: patientInfo.hasFever ? '#fee2e2' : '#f3f4f6',
+                                    borderRadius: '10px',
+                                    cursor: 'pointer'
+                                }} onClick={() => setPatientInfo(p => ({...p, hasFever: !p.hasFever}))}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                        <span style={{ fontSize: '20px' }}>🌡️</span>
+                                        <span style={{ fontWeight: '500' }}>發燒狀態</span>
+                                    </div>
+                                    <div style={{
+                                        padding: '4px 12px',
+                                        borderRadius: '20px',
+                                        background: patientInfo.hasFever ? '#dc2626' : '#10b981',
+                                        color: 'white',
+                                        fontSize: '13px',
+                                        fontWeight: '500'
+                                    }}>
+                                        {patientInfo.hasFever ? '有發燒' : '無發燒'}
+                                    </div>
+                                </div>
+                            </div>
+                        </InfoCard>
+                        
+                        {/* Renal Function */}
+                        <InfoCard title="腎功能" icon="🫘" color="#f59e0b">
+                            <div style={{
+                                background: '#fffbeb',
+                                borderRadius: '10px',
+                                padding: '14px',
+                                marginBottom: '16px',
+                                fontSize: '13px',
+                                color: '#92400e'
+                            }}>
+                                <strong>💡 重要：</strong>Creatinine 與 eGFR 都要報告！
+                                <div style={{ marginTop: '4px' }}>
+                                    顯影劑腎病變風險評估必備資訊
+                                </div>
+                            </div>
+                            
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                <div style={{
+                                    padding: '16px',
+                                    background: '#f3f4f6',
+                                    borderRadius: '12px',
+                                    textAlign: 'center'
+                                }}>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px' }}>Creatinine (mg/dL)</div>
+                                    <input 
+                                        type="number"
+                                        step="0.1"
+                                        placeholder="0.0"
+                                        value={patientInfo.creatinine}
+                                        onChange={(e) => setPatientInfo(p => ({...p, creatinine: e.target.value}))}
+                                        style={{
+                                            border: 'none',
+                                            background: 'transparent',
+                                            fontSize: '24px',
+                                            fontWeight: '700',
+                                            width: '100%',
+                                            textAlign: 'center',
+                                            outline: 'none',
+                                            color: parseFloat(patientInfo.creatinine) > 1.5 ? '#dc2626' : '#374151'
+                                        }}
+                                    />
+                                </div>
+                                
+                                <div style={{
+                                    padding: '16px',
+                                    background: '#f3f4f6',
+                                    borderRadius: '12px',
+                                    textAlign: 'center'
+                                }}>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px' }}>eGFR (mL/min)</div>
+                                    <input 
+                                        type="number"
+                                        placeholder="0"
+                                        value={patientInfo.egfr}
+                                        onChange={(e) => setPatientInfo(p => ({...p, egfr: e.target.value}))}
+                                        style={{
+                                            border: 'none',
+                                            background: 'transparent',
+                                            fontSize: '24px',
+                                            fontWeight: '700',
+                                            width: '100%',
+                                            textAlign: 'center',
+                                            outline: 'none',
+                                            color: parseInt(patientInfo.egfr) < 60 ? '#dc2626' : '#374151'
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        </InfoCard>
+                        
+                        {/* Cardiac Exams */}
+                        <InfoCard title="心臟檢查報告" icon="💓" color="#ec4899">
+                            <div style={{ marginBottom: '16px' }}>
+                                <div style={{ 
+                                    fontSize: '13px', 
+                                    fontWeight: '600', 
+                                    color: '#374151',
+                                    marginBottom: '10px'
+                                }}>
+                                    Echo 結果：
+                                </div>
+                                
+                                <div style={{
+                                    padding: '16px',
+                                    background: '#f3f4f6',
+                                    borderRadius: '12px',
+                                    marginBottom: '12px'
+                                }}>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px' }}>LVEF (%)</div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <input 
+                                            type="number"
+                                            placeholder="--"
+                                            value={patientInfo.lvef}
+                                            onChange={(e) => setPatientInfo(p => ({...p, lvef: e.target.value}))}
+                                            style={{
+                                                border: 'none',
+                                                background: 'transparent',
+                                                fontSize: '28px',
+                                                fontWeight: '700',
+                                                width: '80px',
+                                                outline: 'none',
+                                                color: parseInt(patientInfo.lvef) < 40 ? '#dc2626' : '#374151'
+                                            }}
+                                        />
+                                        <span style={{ fontSize: '20px', color: '#6b7280' }}>%</span>
+                                        {patientInfo.lvef && (
+                                            <span style={{
+                                                padding: '4px 10px',
+                                                borderRadius: '20px',
+                                                fontSize: '12px',
+                                                fontWeight: '500',
+                                                background: parseInt(patientInfo.lvef) >= 50 ? '#d1fae5' : 
+                                                           parseInt(patientInfo.lvef) >= 40 ? '#fef3c7' : '#fee2e2',
+                                                color: parseInt(patientInfo.lvef) >= 50 ? '#065f46' : 
+                                                       parseInt(patientInfo.lvef) >= 40 ? '#92400e' : '#991b1b'
+                                            }}>
+                                                {parseInt(patientInfo.lvef) >= 50 ? 'Normal' : 
+                                                 parseInt(patientInfo.lvef) >= 40 ? 'Mild ↓' : 'Reduced'}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                                
+                                <div style={{ 
+                                    display: 'flex', 
+                                    flexWrap: 'wrap',
+                                    gap: '8px'
+                                }}>
+                                    {['AS', 'MR', 'MS', 'AR', 'TR'].map(valve => (
+                                        <button
+                                            key={valve}
+                                            onClick={() => setPatientInfo(p => ({...p, [`has${valve}`]: !p[`has${valve}`]}))}
+                                            style={{
+                                                padding: '8px 16px',
+                                                borderRadius: '20px',
+                                                border: `2px solid ${patientInfo[`has${valve}`] ? '#ec4899' : '#e5e7eb'}`,
+                                                background: patientInfo[`has${valve}`] ? '#fdf2f8' : 'white',
+                                                color: patientInfo[`has${valve}`] ? '#be185d' : '#6b7280',
+                                                fontSize: '14px',
+                                                fontWeight: '500',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            {valve}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            
+                            <div style={{ 
+                                display: 'grid', 
+                                gridTemplateColumns: '1fr 1fr', 
+                                gap: '12px' 
+                            }}>
+                                <div style={{
+                                    padding: '14px',
+                                    background: '#f3f4f6',
+                                    borderRadius: '10px'
+                                }}>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px' }}>
+                                        🏃 Treadmill
+                                    </div>
+                                    <select
+                                        value={patientInfo.treadmillResult}
+                                        onChange={(e) => setPatientInfo(p => ({...p, treadmillResult: e.target.value}))}
+                                        style={{
+                                            width: '100%',
+                                            padding: '8px',
+                                            border: '1px solid #d1d5db',
+                                            borderRadius: '6px',
+                                            fontSize: '14px'
+                                        }}
+                                    >
+                                        <option value="">選擇結果...</option>
+                                        <option value="positive">Positive (+)</option>
+                                        <option value="negative">Negative (-)</option>
+                                        <option value="inconclusive">Inconclusive</option>
+                                        <option value="not_done">未做</option>
+                                    </select>
+                                </div>
+                                
+                                <div style={{
+                                    padding: '14px',
+                                    background: '#f3f4f6',
+                                    borderRadius: '10px'
+                                }}>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px' }}>
+                                        💚 Thallium Scan
+                                    </div>
+                                    <select
+                                        value={patientInfo.thalliumResult}
+                                        onChange={(e) => setPatientInfo(p => ({...p, thalliumResult: e.target.value}))}
+                                        style={{
+                                            width: '100%',
+                                            padding: '8px',
+                                            border: '1px solid #d1d5db',
+                                            borderRadius: '6px',
+                                            fontSize: '14px'
+                                        }}
+                                    >
+                                        <option value="">選擇結果...</option>
+                                        <option value="ischemia">Ischemia (+)</option>
+                                        <option value="fixed_defect">Fixed Defect</option>
+                                        <option value="normal">Normal</option>
+                                        <option value="not_done">未做</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </InfoCard>
+                        
+                        {/* Handoff Template */}
+                        <div style={{
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            borderRadius: '16px',
+                            padding: '20px',
+                            color: 'white'
+                        }}>
+                            <h3 style={{ fontWeight: '600', marginBottom: '12px' }}>
+                                📋 交班範本
+                            </h3>
+                            <div style={{
+                                background: 'rgba(255,255,255,0.15)',
+                                borderRadius: '10px',
+                                padding: '14px',
+                                fontSize: '14px',
+                                lineHeight: '1.8'
+                            }}>
+                                「病患診斷 <strong>{patientInfo.hasSTEMI ? 'STEMI' : patientInfo.hasNSTEMI ? 'NSTEMI' : patientInfo.hasUA ? 'Unstable Angina' : 'CAD'}</strong>，
+                                主治醫師 <strong>{patientInfo.attendingMD || '___'}</strong>，
+                                {patientInfo.hasFever ? '目前有發燒，' : '無發燒，'}
+                                Cre <strong>{patientInfo.creatinine || '__'}</strong>，
+                                eGFR <strong>{patientInfo.egfr || '__'}</strong>，
+                                Echo LVEF <strong>{patientInfo.lvef || '__'}%</strong>
+                                {patientInfo.hasAS && '，有 AS'}
+                                {patientInfo.hasMR && '，有 MR'}
+                                {patientInfo.hasMS && '，有 MS'}。」
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // ==================== PROCEDURE HANDOFF PAGE ====================
+            const ProcedureHandoffPage = () => {
+                const [procedureType, setProcedureType] = useState('');
+                const [paodLeg, setPaodLeg] = useState('');
+                const [bedPosition, setBedPosition] = useState('supine');
+                const [goToICU, setGoToICU] = useState(null);
+                
+                return (
+                    <div className="fade-in">
+                        <Header title="術式交班" subtitle="Procedure-Specific Handoff" showBack />
+                        <div style={{ padding: '0 16px' }}>
+                            {/* Procedure Type */}
+                            <InfoCard title="預計術式" icon="🔧" color="#06b6d4">
+                                <div style={{ 
+                                    display: 'grid', 
+                                    gridTemplateColumns: 'repeat(2, 1fr)', 
+                                    gap: '10px',
+                                    marginBottom: '16px'
+                                }}>
+                                    {[
+                                        { id: 'cag', label: 'CAG', desc: '診斷導管' },
+                                        { id: 'pci', label: 'PCI', desc: '冠狀動脈介入' },
+                                        { id: 'paod', label: 'PAOD', desc: '週邊血管' },
+                                        { id: 'eps', label: 'EPS', desc: '電生理檢查' }
+                                    ].map(proc => (
+                                        <button
+                                            key={proc.id}
+                                            onClick={() => setProcedureType(proc.id)}
+                                            style={{
+                                                padding: '16px',
+                                                background: procedureType === proc.id ? '#e0f2fe' : 'white',
+                                                border: `2px solid ${procedureType === proc.id ? '#0ea5e9' : '#e5e7eb'}`,
+                                                borderRadius: '12px',
+                                                cursor: 'pointer',
+                                                textAlign: 'center'
+                                            }}
+                                        >
+                                            <div style={{ fontWeight: '600', color: '#0369a1' }}>{proc.label}</div>
+                                            <div style={{ fontSize: '12px', color: '#6b7280' }}>{proc.desc}</div>
+                                        </button>
+                                    ))}
+                                </div>
+                            </InfoCard>
+                            
+                            {/* PAOD Specific */}
+                            {procedureType === 'paod' && (
+                                <InfoCard title="PAOD 術式資訊" icon="🦵" color="#7c3aed">
+                                    <div style={{ marginBottom: '16px' }}>
+                                        <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '10px' }}>
+                                            要作哪支腳？
+                                        </div>
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                                            {['右腳', '左腳', '雙腳'].map(leg => (
+                                                <button
+                                                    key={leg}
+                                                    onClick={() => setPaodLeg(leg)}
+                                                    style={{
+                                                        padding: '14px',
+                                                        background: paodLeg === leg ? '#ede9fe' : 'white',
+                                                        border: `2px solid ${paodLeg === leg ? '#7c3aed' : '#e5e7eb'}`,
+                                                        borderRadius: '10px',
+                                                        cursor: 'pointer',
+                                                        fontWeight: '500',
+                                                        color: paodLeg === leg ? '#5b21b6' : '#6b7280'
+                                                    }}
+                                                >
+                                                    {leg}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </InfoCard>
+                            )}
+                            
+                            {/* ICU Decision */}
+                            {(procedureType === 'pci' || procedureType === 'cag') && (
+                                <InfoCard title="術後去向" icon="🏨" color="#10b981">
+                                    <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '12px' }}>
+                                        CAD/ACS 術後是否去加護病房？
+                                    </div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                        <button
+                                            onClick={() => setGoToICU(true)}
+                                            style={{
+                                                padding: '20px',
+                                                background: goToICU === true ? '#fee2e2' : 'white',
+                                                border: `2px solid ${goToICU === true ? '#ef4444' : '#e5e7eb'}`,
+                                                borderRadius: '12px',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            <div style={{ fontSize: '28px', marginBottom: '8px' }}>🏥</div>
+                                            <div style={{ fontWeight: '600', color: goToICU === true ? '#dc2626' : '#374151' }}>
+                                                進 ICU/CCU
+                                            </div>
+                                        </button>
+                                        
+                                        <button
+                                            onClick={() => setGoToICU(false)}
+                                            style={{
+                                                padding: '20px',
+                                                background: goToICU === false ? '#d1fae5' : 'white',
+                                                border: `2px solid ${goToICU === false ? '#10b981' : '#e5e7eb'}`,
+                                                borderRadius: '12px',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            <div style={{ fontSize: '28px', marginBottom: '8px' }}>🛏️</div>
+                                            <div style={{ fontWeight: '600', color: goToICU === false ? '#065f46' : '#374151' }}>
+                                                回一般病房
+                                            </div>
+                                        </button>
+                                    </div>
+                                    
+                                    <div style={{
+                                        marginTop: '16px',
+                                        padding: '14px',
+                                        background: '#fef3c7',
+                                        borderRadius: '10px',
+                                        fontSize: '13px',
+                                        color: '#92400e'
+                                    }}>
+                                        <strong>⚠️ 需入 ICU 情況：</strong>
+                                        <div style={{ marginTop: '6px' }}>
+                                            • STEMI 術後<br/>
+                                            • 使用 IABP / ECMO<br/>
+                                            • 血行動力學不穩定<br/>
+                                            • Femoral sheath ≥ 6 Fr 未使用止血器
+                                        </div>
+                                    </div>
+                                </InfoCard>
+                            )}
+                            
+                            {/* Bed Position Teaching */}
+                            <InfoCard title="床位躺法教學" icon="🛏️" color="#f59e0b">
+                                <div style={{
+                                    background: '#fffbeb',
+                                    borderRadius: '10px',
+                                    padding: '14px',
+                                    marginBottom: '16px',
+                                    fontSize: '13px',
+                                    color: '#92400e'
+                                }}>
+                                    <strong>💡 病房護理師須知：</strong>
+                                    <div style={{ marginTop: '6px' }}>
+                                        導管室床位有「正躺」與「反躺/趴躺」之分，交班時需確認病人躺法方向
+                                    </div>
+                                </div>
+                                
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                    <div 
+                                        onClick={() => setBedPosition('supine')}
+                                        style={{
+                                            padding: '16px',
+                                            background: bedPosition === 'supine' ? '#d1fae5' : '#f3f4f6',
+                                            borderRadius: '12px',
+                                            border: `2px solid ${bedPosition === 'supine' ? '#10b981' : 'transparent'}`,
+                                            cursor: 'pointer',
+                                            textAlign: 'center'
+                                        }}
+                                    >
+                                        <BedPositionDiagram type="supine" />
+                                        <div style={{ 
+                                            marginTop: '10px', 
+                                            fontSize: '13px', 
+                                            color: '#374151' 
+                                        }}>
+                                            大部分導管術式<br/>
+                                            <Tag color="#10b981">Femoral</Tag>
+                                            <Tag color="#10b981">Radial</Tag>
+                                        </div>
+                                    </div>
+                                    
+                                    <div 
+                                        onClick={() => setBedPosition('prone')}
+                                        style={{
+                                            padding: '16px',
+                                            background: bedPosition === 'prone' ? '#fef3c7' : '#f3f4f6',
+                                            borderRadius: '12px',
+                                            border: `2px solid ${bedPosition === 'prone' ? '#f59e0b' : 'transparent'}`,
+                                            cursor: 'pointer',
+                                            textAlign: 'center'
+                                        }}
+                                    >
+                                        <BedPositionDiagram type="prone" />
+                                        <div style={{ 
+                                            marginTop: '10px', 
+                                            fontSize: '13px', 
+                                            color: '#374151' 
+                                        }}>
+                                            特殊術式<br/>
+                                            <Tag color="#f59e0b">Popliteal</Tag>
+                                        </div>
+                                    </div>
+                                </div>
+                            </InfoCard>
+                        </div>
+                    </div>
+                );
+            };
+
+            // ==================== POST-CATH PAGE ====================
+            const PostCathPage = () => {
+                const [treatmentInfo, setTreatmentInfo] = useState({
+                    stentPlaced: false,
+                    balloonOnly: false,
+                    vesselCount: '',
+                    cabgConsult: false,
+                    hasIABP: false,
+                    hasECMO: false,
+                    hadCPR: false,
+                    compressionTime: '',
+                    plavixReloaded: false,
+                    bokeyReloaded: false
+                });
+                
+                return (
+                    <div className="fade-in">
+                        <Header title="術後交班" subtitle="Post-Procedure Handoff" showBack />
+                        <div style={{ padding: '0 16px' }}>
+                            {/* Treatment Summary */}
+                            <InfoCard title="治療經過" icon="🔧" color="#3b82f6">
+                                <div style={{ marginBottom: '16px' }}>
+                                    <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '10px' }}>
+                                        治療方式：
+                                    </div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+                                        <button
+                                            onClick={() => setTreatmentInfo(t => ({...t, stentPlaced: !t.stentPlaced, balloonOnly: false}))}
+                                            style={{
+                                                padding: '16px',
+                                                background: treatmentInfo.stentPlaced ? '#dbeafe' : 'white',
+                                                border: `2px solid ${treatmentInfo.stentPlaced ? '#3b82f6' : '#e5e7eb'}`,
+                                                borderRadius: '12px',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            <div style={{ fontSize: '24px', marginBottom: '6px' }}>💎</div>
+                                            <div style={{ fontWeight: '600' }}>放置支架</div>
+                                            <div style={{ fontSize: '12px', color: '#6b7280' }}>Stent Implantation</div>
+                                        </button>
+                                        
+                                        <button
+                                            onClick={() => setTreatmentInfo(t => ({...t, balloonOnly: !t.balloonOnly, stentPlaced: false}))}
+                                            style={{
+                                                padding: '16px',
+                                                background: treatmentInfo.balloonOnly ? '#fef3c7' : 'white',
+                                                border: `2px solid ${treatmentInfo.balloonOnly ? '#f59e0b' : '#e5e7eb'}`,
+                                                borderRadius: '12px',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            <div style={{ fontSize: '24px', marginBottom: '6px' }}>🎈</div>
+                                            <div style={{ fontWeight: '600' }}>僅氣球擴張</div>
+                                            <div style={{ fontSize: '12px', color: '#6b7280' }}>Balloon Angioplasty</div>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div style={{ marginBottom: '16px' }}>
+                                    <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '10px' }}>
+                                        診斷血管病變數：
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                        {['1-VD', '2-VD', '3-VD', 'LM'].map(v => (
+                                            <button
+                                                key={v}
+                                                onClick={() => setTreatmentInfo(t => ({...t, vesselCount: v}))}
+                                                style={{
+                                                    flex: 1,
+                                                    padding: '12px',
+                                                    background: treatmentInfo.vesselCount === v ? '#dbeafe' : 'white',
+                                                    border: `2px solid ${treatmentInfo.vesselCount === v ? '#3b82f6' : '#e5e7eb'}`,
+                                                    borderRadius: '10px',
+                                                    cursor: 'pointer',
+                                                    fontWeight: '600',
+                                                    color: treatmentInfo.vesselCount === v ? '#1d4ed8' : '#6b7280'
+                                                }}
+                                            >
+                                                {v}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                
+                                <ChecklistItem 
+                                    checked={treatmentInfo.cabgConsult} 
+                                    onChange={() => setTreatmentInfo(t => ({...t, cabgConsult: !t.cabgConsult}))}
+                                    important
+                                >
+                                    <strong>照會 CABG (心臟外科)</strong>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                        多支血管病變或左主幹病變可能需手術評估
+                                    </div>
+                                </ChecklistItem>
+                            </InfoCard>
+                            
+                            {/* Critical Support */}
+                            <InfoCard title="重要支持設備" icon="🚨" color="#dc2626">
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '16px' }}>
+                                    <button
+                                        onClick={() => setTreatmentInfo(t => ({...t, hasIABP: !t.hasIABP}))}
+                                        style={{
+                                            padding: '16px',
+                                            background: treatmentInfo.hasIABP ? '#fee2e2' : 'white',
+                                            border: `2px solid ${treatmentInfo.hasIABP ? '#dc2626' : '#e5e7eb'}`,
+                                            borderRadius: '12px',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        <div style={{ fontSize: '24px', marginBottom: '6px' }}>🫀</div>
+                                        <div style={{ fontWeight: '600', fontSize: '14px' }}>IABP</div>
+                                    </button>
+                                    
+                                    <button
+                                        onClick={() => setTreatmentInfo(t => ({...t, hasECMO: !t.hasECMO}))}
+                                        style={{
+                                            padding: '16px',
+                                            background: treatmentInfo.hasECMO ? '#fee2e2' : 'white',
+                                            border: `2px solid ${treatmentInfo.hasECMO ? '#dc2626' : '#e5e7eb'}`,
+                                            borderRadius: '12px',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        <div style={{ fontSize: '24px', marginBottom: '6px' }}>⚙️</div>
+                                        <div style={{ fontWeight: '600', fontSize: '14px' }}>ECMO</div>
+                                    </button>
+                                    
+                                    <button
+                                        onClick={() => setTreatmentInfo(t => ({...t, hadCPR: !t.hadCPR}))}
+                                        style={{
+                                            padding: '16px',
+                                            background: treatmentInfo.hadCPR ? '#fee2e2' : 'white',
+                                            border: `2px solid ${treatmentInfo.hadCPR ? '#dc2626' : '#e5e7eb'}`,
+                                            borderRadius: '12px',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        <div style={{ fontSize: '24px', marginBottom: '6px' }}>💔</div>
+                                        <div style={{ fontWeight: '600', fontSize: '14px' }}>CPR</div>
+                                    </button>
+                                </div>
+                                
+                                {(treatmentInfo.hasIABP || treatmentInfo.hasECMO || treatmentInfo.hadCPR) && (
+                                    <div style={{
+                                        padding: '14px',
+                                        background: '#fee2e2',
+                                        borderRadius: '10px',
+                                        borderLeft: '4px solid #dc2626',
+                                        fontSize: '13px',
+                                        color: '#991b1b'
+                                    }}>
+                                        <strong>⚠️ 嚴重警示：</strong> 病患使用重要生命支持設備，需密切監測！
+                                    </div>
+                                )}
+                            </InfoCard>
+                            
+                            {/* Compression Time */}
+                            <InfoCard title="加壓止血時間" icon="⏱️" color="#8b5cf6">
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', marginBottom: '16px' }}>
+                                    {['2小時', '4小時', '6小時', '8小時'].map(time => (
+                                        <button
+                                            key={time}
+                                            onClick={() => setTreatmentInfo(t => ({...t, compressionTime: time}))}
+                                            style={{
+                                                padding: '14px',
+                                                background: treatmentInfo.compressionTime === time ? '#ede9fe' : 'white',
+                                                border: `2px solid ${treatmentInfo.compressionTime === time ? '#8b5cf6' : '#e5e7eb'}`,
+                                                borderRadius: '10px',
+                                                cursor: 'pointer',
+                                                fontWeight: '600',
+                                                fontSize: '16px',
+                                                color: treatmentInfo.compressionTime === time ? '#6d28d9' : '#6b7280'
+                                            }}
+                                        >
+                                            {time}
+                                        </button>
+                                    ))}
+                                </div>
+                                
+                                <div style={{
+                                    padding: '14px',
+                                    background: '#f3f4f6',
+                                    borderRadius: '10px',
+                                    fontSize: '13px'
+                                }}>
+                                    <strong>📋 加壓時間參考：</strong>
+                                    <div style={{ marginTop: '8px', lineHeight: '1.8' }}>
+                                        • AngioSeal/Proglide → <Tag color="#10b981">2小時</Tag><br/>
+                                        • Radial 診斷 → <Tag color="#3b82f6">4小時</Tag><br/>
+                                        • Radial 治療 → <Tag color="#f59e0b">6小時</Tag><br/>
+                                        • Brachial → <Tag color="#dc2626">觀察8小時</Tag>
+                                    </div>
+                                </div>
+                            </InfoCard>
+                            
+                            {/* Medication Reloading */}
+                            <InfoCard title="藥物 Reloading" icon="💊" color="#10b981">
+                                <div style={{
+                                    background: '#d1fae5',
+                                    borderRadius: '10px',
+                                    padding: '14px',
+                                    marginBottom: '16px',
+                                    fontSize: '13px',
+                                    color: '#065f46'
+                                }}>
+                                    <strong>⚠️ 重要：</strong>確認是否已在導管室給予 loading dose！
+                                </div>
+                                
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                    <ChecklistItem 
+                                        checked={treatmentInfo.plavixReloaded} 
+                                        onChange={() => setTreatmentInfo(t => ({...t, plavixReloaded: !t.plavixReloaded}))}
+                                    >
+                                        <strong>Plavix (Clopidogrel)</strong>
+                                        <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                            Loading: 300-600mg (通常 75mg × 4-8#)
+                                        </div>
+                                    </ChecklistItem>
+                                    
+                                    <ChecklistItem 
+                                        checked={treatmentInfo.bokeyReloaded} 
+                                        onChange={() => setTreatmentInfo(t => ({...t, bokeyReloaded: !t.bokeyReloaded}))}
+                                    >
+                                        <strong>Bokey (Aspirin)</strong>
+                                        <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                            Loading: 100-325mg
+                                        </div>
+                                    </ChecklistItem>
+                                </div>
+                                
+                                <div style={{
+                                    marginTop: '16px',
+                                    padding: '14px',
+                                    background: '#fef3c7',
+                                    borderRadius: '10px',
+                                    fontSize: '13px',
+                                    color: '#92400e'
+                                }}>
+                                    <strong>💡 護理提醒：</strong>
+                                    <div style={{ marginTop: '6px' }}>
+                                        若導管室已給 Plavix loading，回病房後開始 <strong>75mg QD</strong>，出院也要開立！
+                                    </div>
+                                </div>
+                            </InfoCard>
+                            
+                            {/* Summary Card */}
+                            <div style={{
+                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                borderRadius: '16px',
+                                padding: '20px',
+                                color: 'white',
+                                marginBottom: '20px'
+                            }}>
+                                <h3 style={{ fontWeight: '600', marginBottom: '12px' }}>
+                                    📋 術後交班摘要
+                                </h3>
+                                <div style={{
+                                    background: 'rgba(255,255,255,0.15)',
+                                    borderRadius: '10px',
+                                    padding: '14px',
+                                    fontSize: '14px',
+                                    lineHeight: '1.8'
+                                }}>
+                                    「治療方式：<strong>{treatmentInfo.stentPlaced ? '放置支架' : treatmentInfo.balloonOnly ? '氣球擴張' : '___'}</strong>，
+                                    血管病變：<strong>{treatmentInfo.vesselCount || '___'}</strong>
+                                    {treatmentInfo.cabgConsult && '，已照會 CABG'}
+                                    {treatmentInfo.hasIABP && '，使用 IABP'}
+                                    {treatmentInfo.hasECMO && '，使用 ECMO'}，
+                                    加壓 <strong>{treatmentInfo.compressionTime || '___'}</strong>
+                                    {treatmentInfo.plavixReloaded && '，Plavix 已 loading'}
+                                    {treatmentInfo.bokeyReloaded && '，Bokey 已 loading'}。」
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            // ==================== WOUND CARE PAGE (Simplified) ====================
+            const WoundCarePage = () => (
+                <div className="fade-in">
+                    <Header title="傷口護理" subtitle="Wound Care & Assessment" showBack />
+                    <div style={{ padding: '0 16px' }}>
+                        <InfoCard title="加壓止血時間速查" icon="⏱️" color="#8b5cf6">
+                            {[
+                                { site: 'Femoral + AngioSeal/Proglide', time: '2 小時', color: '#10b981' },
+                                { site: 'Femoral (無止血器)', time: '手壓20分 + 沙包', color: '#3b82f6' },
+                                { site: 'Radial (診斷導管)', time: '4 小時', color: '#f59e0b' },
+                                { site: 'Radial (治療導管)', time: '6 小時', color: '#ef4444' },
+                                { site: 'Venous Sheath', time: '2 小時', color: '#06b6d4' },
+                                { site: 'Brachial (觀察)', time: '8 小時', color: '#dc2626' }
+                            ].map((item, idx) => (
+                                <div key={idx} style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    padding: '14px',
+                                    background: `${item.color}10`,
+                                    borderRadius: '10px',
+                                    marginBottom: '8px',
+                                    borderLeft: `4px solid ${item.color}`
+                                }}>
+                                    <span style={{ fontWeight: '500' }}>{item.site}</span>
+                                    <span style={{ 
+                                        fontWeight: '700', 
+                                        color: item.color,
+                                        fontSize: '16px'
+                                    }}>{item.time}</span>
+                                </div>
+                            ))}
+                        </InfoCard>
+                        
+                        <InfoCard title="ACT 拔 Sheath 標準" icon="🔬" color="#3b82f6">
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                <div style={{ padding: '14px', background: '#d1fae5', borderRadius: '10px' }}>
+                                    <div style={{ fontWeight: '600', color: '#065f46' }}>ACT &lt; 150 秒</div>
+                                    <div style={{ fontSize: '13px', color: '#047857' }}>無止血綿 → 可拔除 sheath</div>
+                                </div>
+                                <div style={{ padding: '14px', background: '#dbeafe', borderRadius: '10px' }}>
+                                    <div style={{ fontWeight: '600', color: '#1e40af' }}>ACT &lt; 200 秒</div>
+                                    <div style={{ fontSize: '13px', color: '#1d4ed8' }}>使用止血綿 (QuickClot) → 可拔除</div>
+                                </div>
+                                <div style={{ padding: '14px', background: '#fef3c7', borderRadius: '10px' }}>
+                                    <div style={{ fontWeight: '600', color: '#92400e' }}>ACT 150-200 秒</div>
+                                    <div style={{ fontSize: '13px', color: '#a16207' }}>30 分鐘後再驗 ACT</div>
+                                </div>
+                                <div style={{ padding: '14px', background: '#fee2e2', borderRadius: '10px' }}>
+                                    <div style={{ fontWeight: '600', color: '#991b1b' }}>ACT &gt; 200 秒</div>
+                                    <div style={{ fontSize: '13px', color: '#b91c1c' }}>1 小時後再驗 ACT</div>
+                                </div>
+                            </div>
+                        </InfoCard>
+                        
+                        <InfoCard title="傷口評估要點" icon="👀" color="#ef4444">
+                            <div style={{ lineHeight: '2' }}>
+                                {[
+                                    '血腫大小 (用筆標記範圍)',
+                                    '遠端脈搏 (Dorsalis pedis / Radial)',
+                                    '傷口有無 Bruit 雜音',
+                                    '肢體溫度與顏色',
+                                    '疼痛指數 (0-10分)',
+                                    '活動能力 (可站立/行走)'
+                                ].map((item, idx) => (
+                                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <span style={{
+                                            width: '24px',
+                                            height: '24px',
+                                            borderRadius: '50%',
+                                            background: '#fee2e2',
+                                            color: '#dc2626',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '12px',
+                                            fontWeight: '600'
+                                        }}>{idx + 1}</span>
+                                        {item}
+                                    </div>
+                                ))}
+                            </div>
+                        </InfoCard>
+                    </div>
+                </div>
+            );
+
+            // ==================== COMPLICATIONS PAGE ====================
+            const ComplicationsPage = () => (
+                <div className="fade-in">
+                    <Header title="併發症教學" subtitle="Vascular Complications" showBack />
+                    <div style={{ padding: '0 16px' }}>
+                        <InfoCard title="假性動脈瘤 Pseudoaneurysm" icon="🔴" color="#dc2626">
+                            <div style={{ marginBottom: '16px' }}>
+                                <p style={{ fontSize: '14px', lineHeight: '1.7', marginBottom: '12px' }}>
+                                    動脈壁穿刺處未完全癒合，血液從破口流出形成與血管相通的血腫囊袋。
+                                </p>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                    {['搏動性腫塊', '收縮期雜音', '疼痛加劇', '瘀血擴大'].map(s => (
+                                        <Tag key={s} color="#dc2626">{s}</Tag>
+                                    ))}
+                                </div>
+                            </div>
+                            <div style={{ padding: '14px', background: '#fee2e2', borderRadius: '10px', fontSize: '13px' }}>
+                                <strong>處置：</strong>立即通知醫師，可能需超音波引導加壓或血管外科處置
+                            </div>
+                        </InfoCard>
+                        
+                        <InfoCard title="動靜脈瘻管 AV Fistula" icon="🟣" color="#8b5cf6">
+                            <div style={{ marginBottom: '16px' }}>
+                                <p style={{ fontSize: '14px', lineHeight: '1.7', marginBottom: '12px' }}>
+                                    穿刺時同時刺穿相鄰動靜脈，癒合過程形成異常連通，動脈血直接分流至靜脈。
+                                </p>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                    {['連續性雜音', '局部震顫', '靜脈擴張', '肢端缺血'].map(s => (
+                                        <Tag key={s} color="#8b5cf6">{s}</Tag>
+                                    ))}
+                                </div>
+                            </div>
+                            <div style={{ padding: '14px', background: '#ede9fe', borderRadius: '10px', fontSize: '13px' }}>
+                                <strong>處置：</strong>通知心臟科醫師，需血管超音波確認，嚴重者需手術修補
+                            </div>
+                        </InfoCard>
+                        
+                        <InfoCard title="血腫分級" icon="🟠" color="#f59e0b">
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+                                {[
+                                    { grade: 1, size: '< 3 cm', action: '持續觀察', color: '#fef3c7' },
+                                    { grade: 2, size: '3-6 cm', action: '加強監測', color: '#fed7aa' },
+                                    { grade: 3, size: '6-10 cm', action: '通知醫師', color: '#fecaca' },
+                                    { grade: 4, size: '> 10 cm', action: '緊急處置', color: '#fca5a5' }
+                                ].map(item => (
+                                    <div key={item.grade} style={{
+                                        padding: '14px',
+                                        background: item.color,
+                                        borderRadius: '10px',
+                                        textAlign: 'center'
+                                    }}>
+                                        <div style={{ fontWeight: '700', fontSize: '18px' }}>Grade {item.grade}</div>
+                                        <div style={{ fontSize: '14px', fontWeight: '500' }}>{item.size}</div>
+                                        <div style={{ fontSize: '12px', color: '#6b7280' }}>{item.action}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </InfoCard>
+                    </div>
+                </div>
+            );
+
+            // ==================== QUIZ PAGE ====================
+            const QuizPage = () => {
+                const [currentQ, setCurrentQ] = useState(0);
+                const [selected, setSelected] = useState(null);
+                const [showResult, setShowResult] = useState(false);
+                const [score, setScore] = useState(0);
+                const [quizComplete, setQuizComplete] = useState(false);
+                
+                const questions = [
+                    {
+                        q: "術前準備時，穿刺部位是否需要剃毛？",
+                        options: ["需要剃毛", "不需剃毛", "視情況決定", "由醫師執行"],
+                        correct: 1,
+                        explanation: "現行規範：穿刺部位不需事先剃毛，可減少感染風險。"
+                    },
+                    {
+                        q: "交班時腎功能需報告哪些數值？",
+                        options: ["只報 Creatinine", "只報 eGFR", "Creatinine 與 eGFR 都要報告", "BUN 與 Creatinine"],
+                        correct: 2,
+                        explanation: "Creatinine 與 eGFR 都要報告，是評估顯影劑腎病變風險的必備資訊。"
+                    },
+                    {
+                        q: "使用 AngioSeal 止血器後，股動脈穿刺處需加壓多久？",
+                        options: ["30分鐘", "2小時", "4小時", "6小時"],
+                        correct: 1,
+                        explanation: "使用 AngioSeal 或 Proglide 等血管閉合器後，沙包加壓 2 小時即可。"
+                    },
+                    {
+                        q: "放置 Stent 後，護理師需確認什麼藥物？",
+                        options: ["只需 Aspirin", "只需 Plavix", "確認導管室是否給 Plavix loading", "不需確認藥物"],
+                        correct: 2,
+                        explanation: "放置 Stent 後需確認導管室是否給 Plavix (75mg) 4#，若無需補開，之後 1# QD，出院也要開。"
+                    },
+                    {
+                        q: "拔除 femoral sheath 時，ACT 值需小於多少才可進行（無止血綿）？",
+                        options: ["100 秒", "150 秒", "200 秒", "250 秒"],
+                        correct: 1,
+                        explanation: "一般情況 ACT < 150 秒可拔除 sheath；使用止血綿則 ACT < 200 秒即可。"
+                    },
+                    {
+                        q: "Brachial artery sheath 拔除後需觀察多久？",
+                        options: ["2小時", "4小時", "6小時", "8小時"],
+                        correct: 3,
+                        explanation: "Brachial sheath 拔除後需觀察 8 小時無血腫，方可轉出加護病房。"
+                    },
+                    {
+                        q: "傷口處發現 bruit 雜音，可能表示什麼？",
+                        options: ["正常癒合", "假性動脈瘤或AV瘻管", "輕微血腫", "肌肉緊繃"],
+                        correct: 1,
+                        explanation: "Bruit 雜音可能表示假性動脈瘤或動靜脈瘻管形成，需立即通知醫師評估。"
+                    },
+                    {
+                        q: "PAOD 導管術可能需要病人用什麼姿勢？",
+                        options: ["一律正躺", "一律趴躺", "可能正躺或趴躺，依術式決定", "側躺"],
+                        correct: 2,
+                        explanation: "PAOD 可能從 femoral (正躺) 或 popliteal (趴躺) 進入，需交班確認躺法。"
+                    }
+                ];
+                
+                const handleAnswer = (idx) => {
+                    if (showResult) return;
+                    setSelected(idx);
+                    setShowResult(true);
+                    if (idx === questions[currentQ].correct) {
+                        setScore(s => s + 1);
+                    }
+                };
+                
+                const nextQuestion = () => {
+                    if (currentQ < questions.length - 1) {
+                        setCurrentQ(q => q + 1);
+                        setSelected(null);
+                        setShowResult(false);
+                    } else {
+                        setQuizComplete(true);
+                    }
+                };
+                
+                const resetQuiz = () => {
+                    setCurrentQ(0);
+                    setSelected(null);
+                    setShowResult(false);
+                    setScore(0);
+                    setQuizComplete(false);
+                };
+                
+                if (quizComplete) {
+                    const percentage = Math.round((score / questions.length) * 100);
+                    return (
+                        <div className="fade-in">
+                            <Header title="測驗結果" showBack />
+                            <div style={{ padding: '30px 20px', textAlign: 'center' }}>
+                                <div style={{ fontSize: '60px', marginBottom: '20px' }}>
+                                    {percentage >= 80 ? '🎉' : percentage >= 60 ? '👍' : '📚'}
+                                </div>
+                                <h2 style={{ color: '#2c3e50', marginBottom: '10px' }}>測驗完成！</h2>
+                                <div style={{
+                                    fontSize: '48px',
+                                    fontWeight: '700',
+                                    color: percentage >= 80 ? '#10b981' : percentage >= 60 ? '#f59e0b' : '#ef4444',
+                                    marginBottom: '10px'
+                                }}>
+                                    {score} / {questions.length}
+                                </div>
+                                <div style={{ color: '#6b7280', marginBottom: '30px' }}>
+                                    正確率: {percentage}%
+                                </div>
+                                <button
+                                    onClick={resetQuiz}
+                                    style={{
+                                        padding: '14px 40px',
+                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '25px',
+                                        fontSize: '16px',
+                                        fontWeight: '600',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    重新測驗
+                                </button>
+                            </div>
+                        </div>
+                    );
+                }
+                
+                const q = questions[currentQ];
+                
+                return (
+                    <div className="fade-in">
+                        <Header title="自我測驗" subtitle={`問題 ${currentQ + 1} / ${questions.length}`} showBack />
+                        <div style={{ padding: '0 16px' }}>
+                            {/* Progress */}
+                            <div style={{ 
+                                height: '6px', 
+                                background: '#e5e7eb', 
+                                borderRadius: '3px',
+                                marginBottom: '20px',
+                                overflow: 'hidden'
+                            }}>
+                                <div style={{
+                                    height: '100%',
+                                    width: `${((currentQ + 1) / questions.length) * 100}%`,
+                                    background: 'linear-gradient(90deg, #667eea, #764ba2)',
+                                    transition: 'width 0.3s ease'
+                                }}/>
+                            </div>
+                            
+                            {/* Question */}
+                            <div style={{
+                                background: 'white',
+                                borderRadius: '16px',
+                                padding: '20px',
+                                marginBottom: '16px',
+                                boxShadow: 'var(--shadow)'
+                            }}>
+                                <h3 style={{ fontSize: '17px', fontWeight: '600', lineHeight: '1.5' }}>
+                                    {q.q}
+                                </h3>
+                            </div>
+                            
+                            {/* Options */}
+                            {q.options.map((opt, idx) => {
+                                let bgColor = 'white';
+                                let borderColor = '#e5e7eb';
+                                
+                                if (showResult) {
+                                    if (idx === q.correct) {
+                                        bgColor = '#d1fae5';
+                                        borderColor = '#10b981';
+                                    } else if (idx === selected) {
+                                        bgColor = '#fee2e2';
+                                        borderColor = '#ef4444';
+                                    }
+                                } else if (idx === selected) {
+                                    borderColor = '#667eea';
+                                    bgColor = '#eef2ff';
+                                }
+                                
+                                return (
+                                    <button
+                                        key={idx}
+                                        onClick={() => handleAnswer(idx)}
+                                        disabled={showResult}
+                                        style={{
+                                            width: '100%',
+                                            padding: '16px',
+                                            marginBottom: '10px',
+                                            background: bgColor,
+                                            border: `2px solid ${borderColor}`,
+                                            borderRadius: '12px',
+                                            textAlign: 'left',
+                                            fontSize: '15px',
+                                            cursor: showResult ? 'default' : 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '12px'
+                                        }}
+                                    >
+                                        <span style={{
+                                            width: '28px',
+                                            height: '28px',
+                                            borderRadius: '50%',
+                                            background: showResult && idx === q.correct ? '#10b981' : '#f3f4f6',
+                                            color: showResult && idx === q.correct ? 'white' : '#6b7280',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontWeight: '600',
+                                            fontSize: '13px',
+                                            flexShrink: 0
+                                        }}>
+                                            {String.fromCharCode(65 + idx)}
+                                        </span>
+                                        {opt}
+                                    </button>
+                                );
+                            })}
+                            
+                            {/* Explanation */}
+                            {showResult && (
+                                <div style={{
+                                    padding: '16px',
+                                    background: selected === q.correct ? '#d1fae5' : '#fef3c7',
+                                    borderRadius: '12px',
+                                    borderLeft: `4px solid ${selected === q.correct ? '#10b981' : '#f59e0b'}`,
+                                    marginBottom: '16px'
+                                }} className="fade-in">
+                                    <div style={{ fontWeight: '600', marginBottom: '6px' }}>
+                                        {selected === q.correct ? '✓ 正確！' : '✗ 答錯了'}
+                                    </div>
+                                    <div style={{ fontSize: '14px', lineHeight: '1.5' }}>
+                                        {q.explanation}
+                                    </div>
+                                </div>
+                            )}
+                            
+                            {/* Next button */}
+                            {showResult && (
+                                <button
+                                    onClick={nextQuestion}
+                                    style={{
+                                        width: '100%',
+                                        padding: '16px',
+                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '12px',
+                                        fontSize: '16px',
+                                        fontWeight: '600',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '8px'
+                                    }}
+                                >
+                                    {currentQ < questions.length - 1 ? '下一題' : '查看結果'}
+                                    <Icons.Arrow />
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                );
+            };
+
+            // ==================== RENDER PAGE ====================
+            const renderPage = () => {
+                switch(currentPage) {
+                    case 'home': return <HomePage />;
+                    case 'pre-cath': return <PreCathPage />;
+                    case 'patient-handoff': return <PatientHandoffPage />;
+                    case 'procedure-handoff': return <ProcedureHandoffPage />;
+                    case 'post-cath': return <PostCathPage />;
+                    case 'wound-care': return <WoundCarePage />;
+                    case 'complications': return <ComplicationsPage />;
+                    case 'quiz': return <QuizPage />;
+                    default: return <HomePage />;
+                }
+            };
+            
+            return (
+                <div style={{ 
+                    maxWidth: '480px', 
+                    margin: '0 auto',
+                    minHeight: '100vh',
+                    background: 'var(--bg-cream)',
+                    paddingBottom: '30px'
+                }}>
+                    {renderPage()}
+                </div>
+            );
+        };
+        
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
