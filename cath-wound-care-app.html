@@ -1,0 +1,1800 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>導管術後傷口護理教學</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #1e3a5f;
+            --primary-light: #2d5a87;
+            --accent: #e74c3c;
+            --accent-light: #ff6b5b;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --bg-cream: #faf8f5;
+            --bg-card: #ffffff;
+            --text-dark: #2c3e50;
+            --text-muted: #7f8c8d;
+            --border: #ecf0f1;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-cream);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        #root {
+            min-height: 100vh;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.1); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // ==================== SVG ICONS ====================
+        const Icons = {
+            Heart: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+            ),
+            Syringe: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M11.15,15.18L9.73,13.77L11.15,12.35L12.56,13.77L13.97,12.35L12.56,10.94L13.97,9.53L15.39,10.94L16.8,9.53L13.97,6.7L6.9,13.77L9.73,16.6L11.15,15.18M3.08,19L6.2,15.89L4.08,13.77L13.97,3.87L16.79,6.7L17.87,5.62L18.93,6.68L21.19,4.42L19.08,2.31L20.5,0.89L22.61,3L23.67,1.93L22.61,0.87L24.03,2.28L23.67,2.64L22.61,3.7L21.55,2.64L19.78,4.42L21.89,6.54L20.5,7.93L20.15,7.57L20.5,7.93L19.08,6.68L17.66,8.1L18.37,8.81L16.96,10.23L18.37,11.64L16.96,13.06L15.54,11.64L14.13,13.06L15.54,14.47L14.13,15.89L12.71,14.47L11.3,15.89L12.71,17.3L11.56,18.46L12.27,19.16L10.15,21.28L3.08,19Z"/>
+                </svg>
+            ),
+            Book: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12 4C10.08 4 8.5 5.58 8.5 7.5c0 1.27.68 2.39 1.71 3H6.9a6.12 6.12 0 0 1-1.26-.13c-.75-.16-1.49-.4-2.19-.73l-.45-.2v10.31l.75.3c1.02.41 2.09.68 3.18.81.54.06 1.09.1 1.64.1H12v-2h-.47c-.47 0-.93-.04-1.39-.11a10.69 10.69 0 0 1-2.04-.55V8.67c.49.18.99.33 1.51.42.52.1 1.06.15 1.6.15H12v11h2v-11h.79c.54 0 1.08-.05 1.6-.15.52-.09 1.02-.24 1.51-.42v9.63a10.69 10.69 0 0 1-2.04.55c-.46.07-.92.11-1.39.11H14v2h3.53c.55 0 1.1-.04 1.64-.1 1.09-.13 2.16-.4 3.18-.81l.75-.3V5.44l-.45.2c-.7.33-1.44.57-2.19.73-.42.09-.84.13-1.26.13h-3.31c1.03-.61 1.71-1.73 1.71-3C17.5 5.58 15.92 4 14 4h-2z"/>
+                </svg>
+            ),
+            Clipboard: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                </svg>
+            ),
+            Warning: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                </svg>
+            ),
+            Check: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                </svg>
+            ),
+            Arrow: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"/>
+                </svg>
+            ),
+            Back: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+            ),
+            Quiz: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/>
+                </svg>
+            ),
+            Clock: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                </svg>
+            ),
+            Location: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                </svg>
+            ),
+            Medical: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M19 3H5c-1.1 0-1.99.9-1.99 2L3 19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 11h-4v4h-4v-4H6v-4h4V6h4v4h4v4z"/>
+                </svg>
+            ),
+            Pulse: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/>
+                </svg>
+            ),
+            Person: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+            ),
+            AlertCircle: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                </svg>
+            ),
+            Star: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                </svg>
+            )
+        };
+
+        // ==================== HEMATOMA DIAGRAM COMPONENT ====================
+        const HematomaDiagram = ({ size = 'small' }) => {
+            const getSizeConfig = () => {
+                switch(size) {
+                    case 'small': return { radius: 15, color: '#ffeaa7', label: '< 3 cm', grade: 1 };
+                    case 'medium': return { radius: 25, color: '#fdcb6e', label: '3-6 cm', grade: 2 };
+                    case 'large': return { radius: 40, color: '#e17055', label: '6-10 cm', grade: 3 };
+                    case 'severe': return { radius: 55, color: '#d63031', label: '> 10 cm', grade: 4 };
+                    default: return { radius: 15, color: '#ffeaa7', label: '< 3 cm', grade: 1 };
+                }
+            };
+            
+            const config = getSizeConfig();
+            
+            return (
+                <div style={{ textAlign: 'center', padding: '15px' }}>
+                    <svg viewBox="0 0 200 150" style={{ width: '100%', maxWidth: '250px' }}>
+                        {/* Leg outline */}
+                        <ellipse cx="100" cy="75" rx="70" ry="60" fill="#fad0c4" stroke="#d4a5a5" strokeWidth="2"/>
+                        
+                        {/* Groin crease line */}
+                        <path d="M 30 45 Q 100 35 170 45" stroke="#d4a5a5" strokeWidth="1.5" fill="none"/>
+                        
+                        {/* Femoral artery line (dashed) */}
+                        <path d="M 100 40 L 100 130" stroke="#e74c3c" strokeWidth="2" strokeDasharray="5,3"/>
+                        
+                        {/* Puncture site */}
+                        <circle cx="100" cy="65" r="4" fill="#c0392b"/>
+                        
+                        {/* Hematoma */}
+                        <circle cx="100" cy="75" r={config.radius} fill={config.color} opacity="0.7" stroke="#c0392b" strokeWidth="1.5"/>
+                        
+                        {/* Labels */}
+                        <text x="100" y="145" textAnchor="middle" fontSize="12" fill="#2c3e50" fontWeight="500">
+                            血腫大小: {config.label}
+                        </text>
+                        
+                        {/* Artery label */}
+                        <text x="155" y="90" fontSize="9" fill="#e74c3c">股動脈</text>
+                    </svg>
+                    <div style={{
+                        display: 'inline-block',
+                        padding: '6px 16px',
+                        borderRadius: '20px',
+                        backgroundColor: config.color,
+                        color: config.grade >= 3 ? 'white' : '#2c3e50',
+                        fontWeight: '600',
+                        fontSize: '13px',
+                        marginTop: '8px'
+                    }}>
+                        Grade {config.grade}
+                    </div>
+                </div>
+            );
+        };
+
+        // ==================== PUNCTURE SITE DIAGRAM ====================
+        const PunctureSiteDiagram = ({ site = 'femoral' }) => {
+            const getContent = () => {
+                switch(site) {
+                    case 'femoral':
+                        return (
+                            <svg viewBox="0 0 200 200" style={{ width: '100%', maxWidth: '200px' }}>
+                                {/* Body outline - hip/groin area */}
+                                <ellipse cx="100" cy="60" rx="80" ry="50" fill="#fad0c4" stroke="#d4a5a5" strokeWidth="2"/>
+                                
+                                {/* Leg - left */}
+                                <path d="M 40 90 L 30 200 L 70 200 L 60 90" fill="#fad0c4" stroke="#d4a5a5" strokeWidth="2"/>
+                                
+                                {/* Leg - right */}
+                                <path d="M 140 90 L 130 200 L 170 200 L 160 90" fill="#fad0c4" stroke="#d4a5a5" strokeWidth="2"/>
+                                
+                                {/* Inguinal crease */}
+                                <path d="M 40 85 Q 100 75 160 85" stroke="#d4a5a5" strokeWidth="2" fill="none"/>
+                                
+                                {/* Femoral artery markers */}
+                                <circle cx="70" cy="100" r="8" fill="#e74c3c" opacity="0.8"/>
+                                <circle cx="130" cy="100" r="8" fill="#3498db" opacity="0.8"/>
+                                
+                                {/* Labels */}
+                                <text x="70" y="130" textAnchor="middle" fontSize="10" fill="#e74c3c" fontWeight="500">動脈</text>
+                                <text x="130" y="130" textAnchor="middle" fontSize="10" fill="#3498db" fontWeight="500">靜脈</text>
+                                <text x="100" y="25" textAnchor="middle" fontSize="12" fill="#2c3e50" fontWeight="600">Femoral (鼠蹊部)</text>
+                            </svg>
+                        );
+                    case 'radial':
+                        return (
+                            <svg viewBox="0 0 200 120" style={{ width: '100%', maxWidth: '200px' }}>
+                                {/* Forearm */}
+                                <path d="M 10 60 L 190 60" stroke="#fad0c4" strokeWidth="40" strokeLinecap="round"/>
+                                <path d="M 10 60 L 190 60" stroke="#d4a5a5" strokeWidth="40" strokeLinecap="round" fill="none" style={{strokeWidth: '2'}}/>
+                                
+                                {/* Hand outline */}
+                                <ellipse cx="185" cy="60" rx="15" ry="25" fill="#fad0c4" stroke="#d4a5a5" strokeWidth="2"/>
+                                
+                                {/* Radial artery line */}
+                                <path d="M 20 55 L 160 55" stroke="#e74c3c" strokeWidth="3" strokeDasharray="5,3"/>
+                                
+                                {/* Puncture site */}
+                                <circle cx="140" cy="55" r="6" fill="#e74c3c"/>
+                                
+                                {/* Label */}
+                                <text x="100" y="100" textAnchor="middle" fontSize="12" fill="#2c3e50" fontWeight="600">Radial (橈動脈)</text>
+                                <text x="140" y="35" textAnchor="middle" fontSize="9" fill="#e74c3c">穿刺點</text>
+                            </svg>
+                        );
+                    case 'brachial':
+                        return (
+                            <svg viewBox="0 0 200 150" style={{ width: '100%', maxWidth: '200px' }}>
+                                {/* Upper arm */}
+                                <path d="M 100 10 L 100 70" stroke="#fad0c4" strokeWidth="50" strokeLinecap="round"/>
+                                
+                                {/* Forearm */}
+                                <path d="M 100 70 L 60 140" stroke="#fad0c4" strokeWidth="35" strokeLinecap="round"/>
+                                <path d="M 100 70 L 140 140" stroke="#fad0c4" strokeWidth="35" strokeLinecap="round"/>
+                                
+                                {/* Elbow crease */}
+                                <ellipse cx="100" cy="70" rx="30" ry="10" fill="none" stroke="#d4a5a5" strokeWidth="1.5"/>
+                                
+                                {/* Brachial artery */}
+                                <path d="M 100 20 L 100 65" stroke="#e74c3c" strokeWidth="3" strokeDasharray="5,3"/>
+                                
+                                {/* Puncture site */}
+                                <circle cx="100" cy="60" r="6" fill="#e74c3c"/>
+                                
+                                {/* Label */}
+                                <text x="100" y="145" textAnchor="middle" fontSize="11" fill="#2c3e50" fontWeight="600">Brachial (肱動脈)</text>
+                            </svg>
+                        );
+                    default:
+                        return null;
+                }
+            };
+            
+            return (
+                <div style={{ textAlign: 'center', padding: '10px' }}>
+                    {getContent()}
+                </div>
+            );
+        };
+
+        // ==================== COMPLICATION DIAGRAM ====================
+        const ComplicationDiagram = ({ type }) => {
+            if (type === 'pseudoaneurysm') {
+                return (
+                    <svg viewBox="0 0 250 180" style={{ width: '100%', maxWidth: '280px' }}>
+                        {/* Blood vessel wall */}
+                        <rect x="20" y="70" width="210" height="40" fill="#ffeaa7" stroke="#d4a5a5" strokeWidth="2" rx="5"/>
+                        
+                        {/* Blood flow inside */}
+                        <rect x="25" y="80" width="200" height="20" fill="#e74c3c" rx="3"/>
+                        
+                        {/* Tear/defect in wall */}
+                        <path d="M 120 70 L 130 50 L 140 70" fill="#ffeaa7" stroke="#d4a5a5" strokeWidth="2"/>
+                        
+                        {/* Pseudoaneurysm sac */}
+                        <ellipse cx="130" cy="35" rx="35" ry="25" fill="#e74c3c" opacity="0.6" stroke="#c0392b" strokeWidth="2"/>
+                        
+                        {/* Blood swirl in sac */}
+                        <path d="M 110 35 Q 130 25 150 35 Q 130 45 110 35" fill="none" stroke="#c0392b" strokeWidth="1.5"/>
+                        
+                        {/* Neck of pseudoaneurysm */}
+                        <path d="M 120 55 L 130 70" stroke="#c0392b" strokeWidth="2" strokeDasharray="3,2"/>
+                        <path d="M 140 55 L 130 70" stroke="#c0392b" strokeWidth="2" strokeDasharray="3,2"/>
+                        
+                        {/* Labels */}
+                        <text x="130" y="15" textAnchor="middle" fontSize="10" fill="#c0392b" fontWeight="600">假性動脈瘤</text>
+                        <text x="125" y="165" textAnchor="middle" fontSize="11" fill="#2c3e50" fontWeight="500">Pseudoaneurysm</text>
+                        
+                        {/* Arrow showing blood flow */}
+                        <path d="M 40 90 L 60 90" stroke="#fff" strokeWidth="2" markerEnd="url(#arrowhead)"/>
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#fff"/>
+                            </marker>
+                        </defs>
+                        <text x="50" y="140" fontSize="9" fill="#666">血流方向</text>
+                    </svg>
+                );
+            }
+            
+            if (type === 'avfistula') {
+                return (
+                    <svg viewBox="0 0 250 180" style={{ width: '100%', maxWidth: '280px' }}>
+                        {/* Artery */}
+                        <rect x="20" y="50" width="210" height="30" fill="#e74c3c" rx="5"/>
+                        <text x="30" y="70" fontSize="10" fill="#fff" fontWeight="500">動脈</text>
+                        
+                        {/* Vein */}
+                        <rect x="20" y="110" width="210" height="25" fill="#3498db" rx="5"/>
+                        <text x="30" y="127" fontSize="10" fill="#fff" fontWeight="500">靜脈</text>
+                        
+                        {/* Abnormal connection (fistula) */}
+                        <ellipse cx="130" cy="95" rx="25" ry="30" fill="none" stroke="#9b59b6" strokeWidth="3" strokeDasharray="5,3"/>
+                        
+                        {/* Connection arrows */}
+                        <path d="M 130 80 L 130 110" stroke="#9b59b6" strokeWidth="3"/>
+                        <path d="M 120 95 L 140 95" stroke="#9b59b6" strokeWidth="2"/>
+                        
+                        {/* Turbulent flow indication */}
+                        <circle cx="130" cy="95" r="8" fill="#9b59b6" opacity="0.5"/>
+                        
+                        {/* Labels */}
+                        <text x="130" y="25" textAnchor="middle" fontSize="11" fill="#9b59b6" fontWeight="600">動靜脈瘻管</text>
+                        <text x="165" y="98" fontSize="9" fill="#9b59b6">異常連通</text>
+                        <text x="125" y="165" textAnchor="middle" fontSize="11" fill="#2c3e50" fontWeight="500">AV Fistula</text>
+                    </svg>
+                );
+            }
+            
+            return null;
+        };
+
+        // ==================== COMPRESSION TIME CARD ====================
+        const CompressionTimeCard = ({ site, device, time, notes }) => (
+            <div style={{
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                borderRadius: '16px',
+                padding: '20px',
+                color: 'white',
+                marginBottom: '12px',
+                boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)'
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <div style={{ 
+                        background: 'rgba(255,255,255,0.2)', 
+                        borderRadius: '50%', 
+                        padding: '8px',
+                        marginRight: '12px'
+                    }}>
+                        <Icons.Clock />
+                    </div>
+                    <div>
+                        <div style={{ fontWeight: '600', fontSize: '16px' }}>{site}</div>
+                        <div style={{ fontSize: '13px', opacity: 0.9 }}>{device}</div>
+                    </div>
+                </div>
+                <div style={{ 
+                    fontSize: '28px', 
+                    fontWeight: '700', 
+                    marginBottom: '8px',
+                    textShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                }}>
+                    {time}
+                </div>
+                {notes && (
+                    <div style={{ 
+                        fontSize: '12px', 
+                        opacity: 0.85,
+                        background: 'rgba(255,255,255,0.15)',
+                        padding: '8px 12px',
+                        borderRadius: '8px'
+                    }}>
+                        {notes}
+                    </div>
+                )}
+            </div>
+        );
+
+        // ==================== PAIN SCALE COMPONENT ====================
+        const PainScale = ({ value, onChange }) => {
+            const getColor = (score) => {
+                if (score <= 3) return '#27ae60';
+                if (score <= 6) return '#f39c12';
+                return '#e74c3c';
+            };
+            
+            const getEmoji = (score) => {
+                if (score === 0) return '😊';
+                if (score <= 2) return '🙂';
+                if (score <= 4) return '😐';
+                if (score <= 6) return '😣';
+                if (score <= 8) return '😫';
+                return '😭';
+            };
+            
+            return (
+                <div style={{ padding: '15px 0' }}>
+                    <div style={{ 
+                        display: 'flex', 
+                        justifyContent: 'center', 
+                        marginBottom: '15px',
+                        fontSize: '50px'
+                    }}>
+                        {getEmoji(value)}
+                    </div>
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        gap: '4px'
+                    }}>
+                        {[0,1,2,3,4,5,6,7,8,9,10].map(score => (
+                            <button
+                                key={score}
+                                onClick={() => onChange(score)}
+                                style={{
+                                    width: '28px',
+                                    height: '40px',
+                                    border: 'none',
+                                    borderRadius: '6px',
+                                    background: value === score ? getColor(score) : '#ecf0f1',
+                                    color: value === score ? 'white' : '#7f8c8d',
+                                    fontWeight: '600',
+                                    fontSize: '13px',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease'
+                                }}
+                            >
+                                {score}
+                            </button>
+                        ))}
+                    </div>
+                    <div style={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        marginTop: '8px',
+                        fontSize: '11px',
+                        color: '#7f8c8d'
+                    }}>
+                        <span>無痛</span>
+                        <span>劇烈疼痛</span>
+                    </div>
+                </div>
+            );
+        };
+
+        // ==================== HEMATOMA SIZE SELECTOR ====================
+        const HematomaSizeSelector = ({ value, onChange }) => {
+            const sizes = [
+                { id: 'none', label: '無血腫', color: '#27ae60', cm: '0 cm' },
+                { id: 'small', label: '輕微', color: '#f1c40f', cm: '< 3 cm' },
+                { id: 'medium', label: '中等', color: '#e67e22', cm: '3-6 cm' },
+                { id: 'large', label: '大', color: '#e74c3c', cm: '6-10 cm' },
+                { id: 'severe', label: '嚴重', color: '#c0392b', cm: '> 10 cm' }
+            ];
+            
+            return (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
+                    {sizes.map(size => (
+                        <button
+                            key={size.id}
+                            onClick={() => onChange(size.id)}
+                            style={{
+                                padding: '12px 8px',
+                                border: value === size.id ? `3px solid ${size.color}` : '2px solid #ecf0f1',
+                                borderRadius: '12px',
+                                background: value === size.id ? `${size.color}15` : 'white',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease'
+                            }}
+                        >
+                            <div style={{
+                                width: '20px',
+                                height: '20px',
+                                borderRadius: '50%',
+                                background: size.color,
+                                margin: '0 auto 6px'
+                            }}/>
+                            <div style={{ fontSize: '11px', fontWeight: '600', color: '#2c3e50' }}>{size.label}</div>
+                            <div style={{ fontSize: '9px', color: '#7f8c8d' }}>{size.cm}</div>
+                        </button>
+                    ))}
+                </div>
+            );
+        };
+
+        // ==================== MOBILITY CHECKER ====================
+        const MobilityChecker = ({ canStand, canWalk, onStandChange, onWalkChange }) => (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <button
+                    onClick={() => onStandChange(!canStand)}
+                    style={{
+                        padding: '20px',
+                        border: canStand ? '3px solid #27ae60' : '2px solid #ecf0f1',
+                        borderRadius: '16px',
+                        background: canStand ? '#27ae6015' : 'white',
+                        cursor: 'pointer'
+                    }}
+                >
+                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>🧍</div>
+                    <div style={{ fontWeight: '600', color: '#2c3e50' }}>可站立</div>
+                    <div style={{ 
+                        marginTop: '8px',
+                        padding: '4px 12px',
+                        borderRadius: '12px',
+                        background: canStand ? '#27ae60' : '#bdc3c7',
+                        color: 'white',
+                        fontSize: '12px'
+                    }}>
+                        {canStand ? '是' : '否'}
+                    </div>
+                </button>
+                
+                <button
+                    onClick={() => onWalkChange(!canWalk)}
+                    style={{
+                        padding: '20px',
+                        border: canWalk ? '3px solid #27ae60' : '2px solid #ecf0f1',
+                        borderRadius: '16px',
+                        background: canWalk ? '#27ae6015' : 'white',
+                        cursor: 'pointer'
+                    }}
+                >
+                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>🚶</div>
+                    <div style={{ fontWeight: '600', color: '#2c3e50' }}>可行走</div>
+                    <div style={{ 
+                        marginTop: '8px',
+                        padding: '4px 12px',
+                        borderRadius: '12px',
+                        background: canWalk ? '#27ae60' : '#bdc3c7',
+                        color: 'white',
+                        fontSize: '12px'
+                    }}>
+                        {canWalk ? '是' : '否'}
+                    </div>
+                </button>
+            </div>
+        );
+
+        // ==================== QUIZ COMPONENT ====================
+        const QuizSection = () => {
+            const [currentQ, setCurrentQ] = useState(0);
+            const [selected, setSelected] = useState(null);
+            const [showResult, setShowResult] = useState(false);
+            const [score, setScore] = useState(0);
+            const [quizComplete, setQuizComplete] = useState(false);
+            
+            const questions = [
+                {
+                    q: "使用 AngioSeal 止血器後，股動脈穿刺處需要加壓多久？",
+                    options: ["30分鐘", "2小時", "4小時", "6小時"],
+                    correct: 1,
+                    explanation: "使用 AngioSeal 或 Proglide 等血管閉合器後，只需要沙包加壓 2 小時即可。"
+                },
+                {
+                    q: "下列哪一種情況需要立即通知醫師？",
+                    options: ["輕微血腫 < 3cm", "穿刺處有 bruit 雜音", "疼痛指數 2 分", "四肢可活動"],
+                    correct: 1,
+                    explanation: "穿刺處有 bruit (雜音) 可能表示假性動脈瘤或動靜脈瘻管形成，需立即通知醫師評估。"
+                },
+                {
+                    q: "橈動脈(Radial)診斷性導管術後，建議加壓止血時間為？",
+                    options: ["2小時", "4小時", "6小時", "8小時"],
+                    correct: 1,
+                    explanation: "橈動脈診斷導管術後加壓 4 小時，治療導管則需 6 小時。"
+                },
+                {
+                    q: "拔除 femoral sheath 時，ACT 值需小於多少才可進行？",
+                    options: ["100 秒", "150 秒", "200 秒", "250 秒"],
+                    correct: 1,
+                    explanation: "一般情況下 ACT < 150 秒可拔除 sheath；若使用止血綿則 ACT < 200 秒即可。"
+                },
+                {
+                    q: "假性動脈瘤 (Pseudoaneurysm) 的主要臨床表現為？",
+                    options: ["傷口凹陷", "搏動性腫塊伴有雜音", "皮膚變白", "肢體麻木"],
+                    correct: 1,
+                    explanation: "假性動脈瘤典型表現為穿刺處可觸及搏動性腫塊，聽診可聽到收縮期雜音。"
+                },
+                {
+                    q: "Venous sheath (靜脈鞘) 拔除後需加壓多久？",
+                    options: ["1小時", "2小時", "4小時", "6小時"],
+                    correct: 1,
+                    explanation: "靜脈 sheath 因壓力較低，沙包加壓 2 小時即可。"
+                },
+                {
+                    q: "導管室交班時，以下哪項資訊最重要？",
+                    options: ["病人年齡", "穿刺部位、sheath大小及血管類型", "病人職業", "過敏史"],
+                    correct: 1,
+                    explanation: "交班重點：穿刺部位 (femoral/radial/brachial)、sheath 粗細 (Fr)、置放血管 (動脈/靜脈)。"
+                },
+                {
+                    q: "Brachial artery sheath 拔除後，需觀察多久才能轉出加護病房？",
+                    options: ["2小時", "4小時", "6小時", "8小時"],
+                    correct: 3,
+                    explanation: "Brachial sheath 拔除後需觀察 8 小時無血腫，方可轉出加護病房。"
+                }
+            ];
+            
+            const handleAnswer = (idx) => {
+                if (showResult) return;
+                setSelected(idx);
+                setShowResult(true);
+                if (idx === questions[currentQ].correct) {
+                    setScore(s => s + 1);
+                }
+            };
+            
+            const nextQuestion = () => {
+                if (currentQ < questions.length - 1) {
+                    setCurrentQ(q => q + 1);
+                    setSelected(null);
+                    setShowResult(false);
+                } else {
+                    setQuizComplete(true);
+                }
+            };
+            
+            const resetQuiz = () => {
+                setCurrentQ(0);
+                setSelected(null);
+                setShowResult(false);
+                setScore(0);
+                setQuizComplete(false);
+            };
+            
+            if (quizComplete) {
+                const percentage = Math.round((score / questions.length) * 100);
+                return (
+                    <div style={{ textAlign: 'center', padding: '30px 20px' }} className="fade-in">
+                        <div style={{ fontSize: '60px', marginBottom: '20px' }}>
+                            {percentage >= 80 ? '🎉' : percentage >= 60 ? '👍' : '📚'}
+                        </div>
+                        <h2 style={{ color: '#2c3e50', marginBottom: '10px' }}>測驗完成！</h2>
+                        <div style={{
+                            fontSize: '48px',
+                            fontWeight: '700',
+                            color: percentage >= 80 ? '#27ae60' : percentage >= 60 ? '#f39c12' : '#e74c3c',
+                            marginBottom: '10px'
+                        }}>
+                            {score} / {questions.length}
+                        </div>
+                        <div style={{ color: '#7f8c8d', marginBottom: '30px' }}>
+                            正確率: {percentage}%
+                        </div>
+                        <button
+                            onClick={resetQuiz}
+                            style={{
+                                padding: '14px 40px',
+                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '25px',
+                                fontSize: '16px',
+                                fontWeight: '600',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            重新測驗
+                        </button>
+                    </div>
+                );
+            }
+            
+            const q = questions[currentQ];
+            
+            return (
+                <div className="fade-in">
+                    {/* Progress */}
+                    <div style={{ marginBottom: '20px' }}>
+                        <div style={{ 
+                            display: 'flex', 
+                            justifyContent: 'space-between', 
+                            marginBottom: '8px',
+                            fontSize: '13px',
+                            color: '#7f8c8d'
+                        }}>
+                            <span>問題 {currentQ + 1} / {questions.length}</span>
+                            <span>得分: {score}</span>
+                        </div>
+                        <div style={{ 
+                            height: '6px', 
+                            background: '#ecf0f1', 
+                            borderRadius: '3px',
+                            overflow: 'hidden'
+                        }}>
+                            <div style={{
+                                height: '100%',
+                                width: `${((currentQ + 1) / questions.length) * 100}%`,
+                                background: 'linear-gradient(90deg, #667eea, #764ba2)',
+                                borderRadius: '3px',
+                                transition: 'width 0.3s ease'
+                            }}/>
+                        </div>
+                    </div>
+                    
+                    {/* Question */}
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '16px',
+                        padding: '20px',
+                        marginBottom: '16px',
+                        boxShadow: 'var(--shadow)'
+                    }}>
+                        <h3 style={{ 
+                            fontSize: '17px', 
+                            fontWeight: '600', 
+                            color: '#2c3e50',
+                            lineHeight: '1.5'
+                        }}>
+                            {q.q}
+                        </h3>
+                    </div>
+                    
+                    {/* Options */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        {q.options.map((opt, idx) => {
+                            let bgColor = 'white';
+                            let borderColor = '#ecf0f1';
+                            let textColor = '#2c3e50';
+                            
+                            if (showResult) {
+                                if (idx === q.correct) {
+                                    bgColor = '#d4edda';
+                                    borderColor = '#27ae60';
+                                } else if (idx === selected && idx !== q.correct) {
+                                    bgColor = '#f8d7da';
+                                    borderColor = '#e74c3c';
+                                }
+                            } else if (idx === selected) {
+                                borderColor = '#667eea';
+                                bgColor = '#667eea10';
+                            }
+                            
+                            return (
+                                <button
+                                    key={idx}
+                                    onClick={() => handleAnswer(idx)}
+                                    disabled={showResult}
+                                    style={{
+                                        padding: '16px 20px',
+                                        background: bgColor,
+                                        border: `2px solid ${borderColor}`,
+                                        borderRadius: '12px',
+                                        textAlign: 'left',
+                                        fontSize: '15px',
+                                        color: textColor,
+                                        cursor: showResult ? 'default' : 'pointer',
+                                        transition: 'all 0.2s ease',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px'
+                                    }}
+                                >
+                                    <span style={{
+                                        width: '28px',
+                                        height: '28px',
+                                        borderRadius: '50%',
+                                        background: showResult && idx === q.correct ? '#27ae60' : '#f1f3f4',
+                                        color: showResult && idx === q.correct ? 'white' : '#7f8c8d',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontWeight: '600',
+                                        fontSize: '13px',
+                                        flexShrink: 0
+                                    }}>
+                                        {String.fromCharCode(65 + idx)}
+                                    </span>
+                                    {opt}
+                                </button>
+                            );
+                        })}
+                    </div>
+                    
+                    {/* Explanation */}
+                    {showResult && (
+                        <div style={{
+                            marginTop: '16px',
+                            padding: '16px',
+                            background: selected === q.correct ? '#d4edda' : '#fff3cd',
+                            borderRadius: '12px',
+                            borderLeft: `4px solid ${selected === q.correct ? '#27ae60' : '#f39c12'}`
+                        }} className="fade-in">
+                            <div style={{ 
+                                fontWeight: '600', 
+                                marginBottom: '6px',
+                                color: selected === q.correct ? '#155724' : '#856404'
+                            }}>
+                                {selected === q.correct ? '✓ 正確！' : '✗ 答錯了'}
+                            </div>
+                            <div style={{ 
+                                fontSize: '14px', 
+                                color: selected === q.correct ? '#155724' : '#856404',
+                                lineHeight: '1.5'
+                            }}>
+                                {q.explanation}
+                            </div>
+                        </div>
+                    )}
+                    
+                    {/* Next button */}
+                    {showResult && (
+                        <button
+                            onClick={nextQuestion}
+                            style={{
+                                width: '100%',
+                                marginTop: '20px',
+                                padding: '16px',
+                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '12px',
+                                fontSize: '16px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '8px'
+                            }}
+                            className="fade-in"
+                        >
+                            {currentQ < questions.length - 1 ? '下一題' : '查看結果'}
+                            <Icons.Arrow />
+                        </button>
+                    )}
+                </div>
+            );
+        };
+
+        // ==================== ASSESSMENT FORM ====================
+        const AssessmentForm = () => {
+            const [painScore, setPainScore] = useState(0);
+            const [hematoma, setHematoma] = useState('none');
+            const [canStand, setCanStand] = useState(false);
+            const [canWalk, setCanWalk] = useState(false);
+            const [pulsePresent, setPulsePresent] = useState(true);
+            const [bruitPresent, setBruitPresent] = useState(false);
+            const [notes, setNotes] = useState('');
+            const [saved, setSaved] = useState(false);
+            
+            const handleSave = () => {
+                setSaved(true);
+                setTimeout(() => setSaved(false), 3000);
+            };
+            
+            const getAlertLevel = () => {
+                if (bruitPresent || hematoma === 'severe' || !pulsePresent) return 'critical';
+                if (hematoma === 'large' || painScore >= 7) return 'warning';
+                return 'normal';
+            };
+            
+            const alertLevel = getAlertLevel();
+            
+            return (
+                <div className="fade-in">
+                    {/* Alert Banner */}
+                    {alertLevel !== 'normal' && (
+                        <div style={{
+                            padding: '16px',
+                            borderRadius: '12px',
+                            marginBottom: '20px',
+                            background: alertLevel === 'critical' ? '#fee2e2' : '#fef3c7',
+                            borderLeft: `4px solid ${alertLevel === 'critical' ? '#dc2626' : '#f59e0b'}`,
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: '12px'
+                        }}>
+                            <div style={{ 
+                                color: alertLevel === 'critical' ? '#dc2626' : '#f59e0b',
+                                flexShrink: 0,
+                                marginTop: '2px'
+                            }}>
+                                <Icons.AlertCircle />
+                            </div>
+                            <div>
+                                <div style={{ 
+                                    fontWeight: '600', 
+                                    color: alertLevel === 'critical' ? '#991b1b' : '#92400e',
+                                    marginBottom: '4px'
+                                }}>
+                                    {alertLevel === 'critical' ? '⚠️ 需立即通知醫師' : '⚡ 需密切觀察'}
+                                </div>
+                                <div style={{ 
+                                    fontSize: '13px', 
+                                    color: alertLevel === 'critical' ? '#b91c1c' : '#a16207'
+                                }}>
+                                    {bruitPresent && '發現 bruit 雜音，懷疑血管併發症。'}
+                                    {!pulsePresent && '遠端脈搏消失，可能有血管阻塞。'}
+                                    {hematoma === 'severe' && '血腫範圍擴大中。'}
+                                    {hematoma === 'large' && '血腫需持續監測。'}
+                                    {painScore >= 7 && '疼痛指數偏高。'}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    
+                    {/* Pain Score */}
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '16px',
+                        padding: '20px',
+                        marginBottom: '16px',
+                        boxShadow: 'var(--shadow)'
+                    }}>
+                        <h3 style={{ 
+                            fontSize: '16px', 
+                            fontWeight: '600', 
+                            marginBottom: '15px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                        }}>
+                            <span style={{ color: '#e74c3c' }}>❤️‍🩹</span>
+                            疼痛指數評估
+                        </h3>
+                        <PainScale value={painScore} onChange={setPainScore} />
+                    </div>
+                    
+                    {/* Hematoma */}
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '16px',
+                        padding: '20px',
+                        marginBottom: '16px',
+                        boxShadow: 'var(--shadow)'
+                    }}>
+                        <h3 style={{ 
+                            fontSize: '16px', 
+                            fontWeight: '600', 
+                            marginBottom: '15px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                        }}>
+                            <span>🔴</span>
+                            血腫大小
+                        </h3>
+                        <HematomaSizeSelector value={hematoma} onChange={setHematoma} />
+                        {hematoma !== 'none' && (
+                            <div style={{ marginTop: '15px' }}>
+                                <HematomaDiagram size={hematoma} />
+                            </div>
+                        )}
+                    </div>
+                    
+                    {/* Mobility */}
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '16px',
+                        padding: '20px',
+                        marginBottom: '16px',
+                        boxShadow: 'var(--shadow)'
+                    }}>
+                        <h3 style={{ 
+                            fontSize: '16px', 
+                            fontWeight: '600', 
+                            marginBottom: '15px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                        }}>
+                            <span>🚶</span>
+                            活動能力
+                        </h3>
+                        <MobilityChecker 
+                            canStand={canStand}
+                            canWalk={canWalk}
+                            onStandChange={setCanStand}
+                            onWalkChange={setCanWalk}
+                        />
+                    </div>
+                    
+                    {/* Vascular Check */}
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '16px',
+                        padding: '20px',
+                        marginBottom: '16px',
+                        boxShadow: 'var(--shadow)'
+                    }}>
+                        <h3 style={{ 
+                            fontSize: '16px', 
+                            fontWeight: '600', 
+                            marginBottom: '15px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                        }}>
+                            <span style={{ color: '#e74c3c' }}><Icons.Pulse /></span>
+                            血管檢查
+                        </h3>
+                        
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                            <button
+                                onClick={() => setPulsePresent(!pulsePresent)}
+                                style={{
+                                    padding: '16px',
+                                    border: `2px solid ${pulsePresent ? '#27ae60' : '#e74c3c'}`,
+                                    borderRadius: '12px',
+                                    background: pulsePresent ? '#27ae6015' : '#e74c3c15',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                <div style={{ fontWeight: '600', color: '#2c3e50', marginBottom: '4px' }}>遠端脈搏</div>
+                                <div style={{ 
+                                    fontSize: '13px', 
+                                    color: pulsePresent ? '#27ae60' : '#e74c3c',
+                                    fontWeight: '600'
+                                }}>
+                                    {pulsePresent ? '✓ 可觸及' : '✗ 無法觸及'}
+                                </div>
+                            </button>
+                            
+                            <button
+                                onClick={() => setBruitPresent(!bruitPresent)}
+                                style={{
+                                    padding: '16px',
+                                    border: `2px solid ${bruitPresent ? '#e74c3c' : '#27ae60'}`,
+                                    borderRadius: '12px',
+                                    background: bruitPresent ? '#e74c3c15' : '#27ae6015',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                <div style={{ fontWeight: '600', color: '#2c3e50', marginBottom: '4px' }}>Bruit 雜音</div>
+                                <div style={{ 
+                                    fontSize: '13px', 
+                                    color: bruitPresent ? '#e74c3c' : '#27ae60',
+                                    fontWeight: '600'
+                                }}>
+                                    {bruitPresent ? '⚠️ 有雜音' : '✓ 無雜音'}
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    {/* Notes */}
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '16px',
+                        padding: '20px',
+                        marginBottom: '16px',
+                        boxShadow: 'var(--shadow)'
+                    }}>
+                        <h3 style={{ 
+                            fontSize: '16px', 
+                            fontWeight: '600', 
+                            marginBottom: '12px' 
+                        }}>
+                            📝 備註
+                        </h3>
+                        <textarea
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                            placeholder="其他觀察記錄..."
+                            style={{
+                                width: '100%',
+                                minHeight: '100px',
+                                padding: '12px',
+                                border: '2px solid #ecf0f1',
+                                borderRadius: '10px',
+                                fontSize: '15px',
+                                resize: 'vertical',
+                                fontFamily: 'inherit'
+                            }}
+                        />
+                    </div>
+                    
+                    {/* Save Button */}
+                    <button
+                        onClick={handleSave}
+                        style={{
+                            width: '100%',
+                            padding: '18px',
+                            background: saved ? '#27ae60' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '14px',
+                            fontSize: '17px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '10px',
+                            transition: 'all 0.3s ease'
+                        }}
+                    >
+                        {saved ? (
+                            <>
+                                <Icons.Check />
+                                已儲存評估記錄
+                            </>
+                        ) : (
+                            '儲存評估記錄'
+                        )}
+                    </button>
+                </div>
+            );
+        };
+
+        // ==================== MAIN APP ====================
+        const App = () => {
+            const [currentPage, setCurrentPage] = useState('home');
+            const [currentSection, setCurrentSection] = useState(null);
+            
+            const menuItems = [
+                { id: 'handoff', icon: <Icons.Clipboard />, title: '導管室交班', subtitle: '接班重點與評估' },
+                { id: 'compression', icon: <Icons.Clock />, title: '加壓時間', subtitle: '各部位止血規範' },
+                { id: 'assessment', icon: <Icons.Medical />, title: '傷口評估', subtitle: '記錄與監測工具' },
+                { id: 'complications', icon: <Icons.Warning />, title: '併發症教學', subtitle: '認識血管併發症' },
+                { id: 'quiz', icon: <Icons.Quiz />, title: '自我測驗', subtitle: '知識評量' }
+            ];
+            
+            // Header Component
+            const Header = ({ title, showBack = false }) => (
+                <div style={{
+                    background: 'linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%)',
+                    color: 'white',
+                    padding: '20px',
+                    paddingTop: '50px',
+                    borderRadius: '0 0 30px 30px',
+                    marginBottom: '20px',
+                    position: 'relative'
+                }}>
+                    {showBack && (
+                        <button
+                            onClick={() => {
+                                if (currentSection) {
+                                    setCurrentSection(null);
+                                } else {
+                                    setCurrentPage('home');
+                                }
+                            }}
+                            style={{
+                                position: 'absolute',
+                                top: '50px',
+                                left: '15px',
+                                background: 'rgba(255,255,255,0.2)',
+                                border: 'none',
+                                borderRadius: '50%',
+                                width: '40px',
+                                height: '40px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: 'white',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            <Icons.Back />
+                        </button>
+                    )}
+                    <h1 style={{ 
+                        textAlign: 'center', 
+                        fontSize: '20px', 
+                        fontWeight: '600',
+                        marginBottom: '8px'
+                    }}>
+                        {title}
+                    </h1>
+                </div>
+            );
+            
+            // Home Page
+            const HomePage = () => (
+                <div className="fade-in">
+                    <div style={{
+                        background: 'linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%)',
+                        color: 'white',
+                        padding: '30px 20px',
+                        paddingTop: '60px',
+                        borderRadius: '0 0 40px 40px',
+                        marginBottom: '25px',
+                        textAlign: 'center'
+                    }}>
+                        <div style={{ 
+                            fontSize: '50px', 
+                            marginBottom: '15px',
+                            animation: 'heartbeat 2s infinite'
+                        }}>
+                            🏥
+                        </div>
+                        <h1 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '8px' }}>
+                            導管術後傷口護理
+                        </h1>
+                        <p style={{ opacity: 0.9, fontSize: '14px' }}>
+                            Cardiac Catheterization Wound Care
+                        </p>
+                        <div style={{
+                            marginTop: '20px',
+                            padding: '10px 20px',
+                            background: 'rgba(255,255,255,0.15)',
+                            borderRadius: '20px',
+                            display: 'inline-block',
+                            fontSize: '13px'
+                        }}>
+                            📚 護理師自學教材
+                        </div>
+                    </div>
+                    
+                    <div style={{ padding: '0 16px' }}>
+                        {menuItems.map((item, idx) => (
+                            <button
+                                key={item.id}
+                                onClick={() => setCurrentPage(item.id)}
+                                className="slide-in"
+                                style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '16px',
+                                    padding: '18px 20px',
+                                    background: 'white',
+                                    border: 'none',
+                                    borderRadius: '16px',
+                                    marginBottom: '12px',
+                                    boxShadow: 'var(--shadow)',
+                                    cursor: 'pointer',
+                                    textAlign: 'left',
+                                    animationDelay: `${idx * 0.1}s`,
+                                    transition: 'transform 0.2s ease'
+                                }}
+                            >
+                                <div style={{
+                                    width: '50px',
+                                    height: '50px',
+                                    borderRadius: '14px',
+                                    background: `linear-gradient(135deg, ${['#667eea', '#e74c3c', '#27ae60', '#f39c12', '#9b59b6'][idx]} 0%, ${['#764ba2', '#c0392b', '#2ecc71', '#e67e22', '#8e44ad'][idx]} 100%)`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: 'white',
+                                    flexShrink: 0
+                                }}>
+                                    {item.icon}
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <div style={{ fontWeight: '600', fontSize: '16px', color: '#2c3e50' }}>
+                                        {item.title}
+                                    </div>
+                                    <div style={{ fontSize: '13px', color: '#7f8c8d', marginTop: '2px' }}>
+                                        {item.subtitle}
+                                    </div>
+                                </div>
+                                <div style={{ color: '#bdc3c7' }}>
+                                    <Icons.Arrow />
+                                </div>
+                            </button>
+                        ))}
+                        
+                        {/* Footer */}
+                        <div style={{ 
+                            textAlign: 'center', 
+                            padding: '30px 0',
+                            color: '#7f8c8d',
+                            fontSize: '12px'
+                        }}>
+                            <div>心臟內科護理教學</div>
+                            <div style={{ marginTop: '4px' }}>Based on TSOC Guidelines & Clinical Protocols</div>
+                        </div>
+                    </div>
+                </div>
+            );
+            
+            // Handoff Page
+            const HandoffPage = () => (
+                <div className="fade-in">
+                    <Header title="導管室交班要點" showBack />
+                    <div style={{ padding: '0 16px' }}>
+                        {/* Key Points */}
+                        <div style={{
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            borderRadius: '20px',
+                            padding: '24px',
+                            color: 'white',
+                            marginBottom: '20px'
+                        }}>
+                            <h3 style={{ fontWeight: '700', fontSize: '18px', marginBottom: '16px' }}>
+                                📋 交班必確認事項
+                            </h3>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                {[
+                                    'Sheath 粗細 (Fr 大小)',
+                                    '穿刺部位位置',
+                                    '置放血管 (動脈/靜脈)',
+                                    '有幾處穿刺點',
+                                    '是否使用止血器 (AngioSeal/Proglide)',
+                                    '抗凝血劑使用情況'
+                                ].map((item, idx) => (
+                                    <div key={idx} style={{ 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        gap: '10px',
+                                        background: 'rgba(255,255,255,0.15)',
+                                        padding: '10px 14px',
+                                        borderRadius: '10px'
+                                    }}>
+                                        <span style={{
+                                            width: '24px',
+                                            height: '24px',
+                                            borderRadius: '50%',
+                                            background: 'rgba(255,255,255,0.3)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '12px',
+                                            fontWeight: '600'
+                                        }}>
+                                            {idx + 1}
+                                        </span>
+                                        {item}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        
+                        {/* Example */}
+                        <div style={{
+                            background: 'white',
+                            borderRadius: '16px',
+                            padding: '20px',
+                            marginBottom: '16px',
+                            boxShadow: 'var(--shadow)'
+                        }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px', color: '#2c3e50' }}>
+                                💬 交班範例
+                            </h3>
+                            <div style={{
+                                background: '#f8f9fa',
+                                borderRadius: '12px',
+                                padding: '16px',
+                                fontSize: '14px',
+                                lineHeight: '1.7',
+                                borderLeft: '4px solid #667eea'
+                            }}>
+                                「6 Fr <span style={{color: '#e74c3c', fontWeight: '600'}}>arterial sheath</span> 在
+                                <span style={{color: '#27ae60', fontWeight: '600'}}>右側 femoral artery</span>，
+                                7 Fr <span style={{color: '#3498db', fontWeight: '600'}}>vein sheath</span> 在
+                                <span style={{color: '#27ae60', fontWeight: '600'}}>左側 femoral vein</span>，
+                                已使用 <span style={{color: '#9b59b6', fontWeight: '600'}}>AngioSeal</span>，
+                                沙包加壓中。」
+                            </div>
+                        </div>
+                        
+                        {/* Puncture Sites */}
+                        <div style={{
+                            background: 'white',
+                            borderRadius: '16px',
+                            padding: '20px',
+                            marginBottom: '16px',
+                            boxShadow: 'var(--shadow)'
+                        }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '16px', color: '#2c3e50' }}>
+                                📍 常見穿刺部位
+                            </h3>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+                                {['femoral', 'radial', 'brachial'].map(site => (
+                                    <div key={site} style={{ textAlign: 'center' }}>
+                                        <PunctureSiteDiagram site={site} />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        
+                        {/* Important Notes */}
+                        <div style={{
+                            background: '#fff3cd',
+                            borderRadius: '16px',
+                            padding: '20px',
+                            marginBottom: '16px',
+                            borderLeft: '4px solid #f39c12'
+                        }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px', color: '#856404' }}>
+                                ⚠️ 重要注意事項
+                            </h3>
+                            <ul style={{ 
+                                paddingLeft: '20px', 
+                                fontSize: '14px', 
+                                color: '#856404',
+                                lineHeight: '1.8'
+                            }}>
+                                <li>拔 sheath 前務必確認遠端動脈搏動</li>
+                                <li>若無搏動，用 Doppler 聽訊號</li>
+                                <li>兩者皆無，立即通知醫師</li>
+                                <li>出院前確認傷口無 bruit (雜音)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            );
+            
+            // Compression Time Page
+            const CompressionPage = () => (
+                <div className="fade-in">
+                    <Header title="加壓止血時間" showBack />
+                    <div style={{ padding: '0 16px' }}>
+                        {/* Quick Reference */}
+                        <div style={{
+                            background: 'white',
+                            borderRadius: '16px',
+                            padding: '20px',
+                            marginBottom: '20px',
+                            boxShadow: 'var(--shadow)'
+                        }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '16px', color: '#2c3e50' }}>
+                                ⏱️ 快速查表
+                            </h3>
+                            
+                            <CompressionTimeCard 
+                                site="Femoral + AngioSeal/Proglide"
+                                device="使用血管閉合器"
+                                time="2 小時"
+                                notes="沙包加壓兩小時即可"
+                            />
+                            
+                            <CompressionTimeCard 
+                                site="Femoral (無止血器)"
+                                device="一般手壓止血"
+                                time="手壓20分鐘 + 沙包"
+                                notes="ACT < 150 秒方可拔除"
+                            />
+                            
+                            <CompressionTimeCard 
+                                site="Radial (診斷導管)"
+                                device="橈動脈穿刺"
+                                time="4 小時"
+                                notes="使用加壓帶固定"
+                            />
+                            
+                            <CompressionTimeCard 
+                                site="Radial (治療導管)"
+                                device="PCI 介入治療"
+                                time="6 小時"
+                            />
+                            
+                            <CompressionTimeCard 
+                                site="Venous Sheath"
+                                device="靜脈鞘管"
+                                time="2 小時"
+                                notes="靜脈壓力低，止血較快"
+                            />
+                        </div>
+                        
+                        {/* ACT Guidelines */}
+                        <div style={{
+                            background: 'white',
+                            borderRadius: '16px',
+                            padding: '20px',
+                            marginBottom: '16px',
+                            boxShadow: 'var(--shadow)'
+                        }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '16px', color: '#2c3e50' }}>
+                                🔬 ACT 拔 Sheath 標準
+                            </h3>
+                            
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                <div style={{
+                                    padding: '14px',
+                                    background: '#d4edda',
+                                    borderRadius: '12px',
+                                    borderLeft: '4px solid #27ae60'
+                                }}>
+                                    <div style={{ fontWeight: '600', color: '#155724' }}>ACT &lt; 150 秒</div>
+                                    <div style={{ fontSize: '13px', color: '#155724', marginTop: '4px' }}>
+                                        無止血綿 → 可拔除 sheath
+                                    </div>
+                                </div>
+                                
+                                <div style={{
+                                    padding: '14px',
+                                    background: '#cce5ff',
+                                    borderRadius: '12px',
+                                    borderLeft: '4px solid #3498db'
+                                }}>
+                                    <div style={{ fontWeight: '600', color: '#004085' }}>ACT &lt; 200 秒</div>
+                                    <div style={{ fontSize: '13px', color: '#004085', marginTop: '4px' }}>
+                                        使用止血綿 (QuickClot) → 可拔除
+                                    </div>
+                                </div>
+                                
+                                <div style={{
+                                    padding: '14px',
+                                    background: '#fff3cd',
+                                    borderRadius: '12px',
+                                    borderLeft: '4px solid #f39c12'
+                                }}>
+                                    <div style={{ fontWeight: '600', color: '#856404' }}>ACT 150-200 秒</div>
+                                    <div style={{ fontSize: '13px', color: '#856404', marginTop: '4px' }}>
+                                        30 分鐘後再驗 ACT
+                                    </div>
+                                </div>
+                                
+                                <div style={{
+                                    padding: '14px',
+                                    background: '#f8d7da',
+                                    borderRadius: '12px',
+                                    borderLeft: '4px solid #e74c3c'
+                                }}>
+                                    <div style={{ fontWeight: '600', color: '#721c24' }}>ACT &gt; 200 秒</div>
+                                    <div style={{ fontSize: '13px', color: '#721c24', marginTop: '4px' }}>
+                                        1 小時後再驗 ACT
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* Brachial Special */}
+                        <div style={{
+                            background: '#e8f4fd',
+                            borderRadius: '16px',
+                            padding: '20px',
+                            borderLeft: '4px solid #3498db'
+                        }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '10px', color: '#1a5276' }}>
+                                💪 Brachial Sheath 特別注意
+                            </h3>
+                            <ul style={{ 
+                                paddingLeft: '20px', 
+                                fontSize: '14px', 
+                                color: '#2980b9',
+                                lineHeight: '1.8'
+                            }}>
+                                <li>需入住加護病房觀察</li>
+                                <li>拔除後觀察 <strong>8 小時</strong> 無血腫</li>
+                                <li>方可轉出加護病房</li>
+                                <li>一律在一個班內要拔掉</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            );
+            
+            // Complications Page
+            const ComplicationsPage = () => (
+                <div className="fade-in">
+                    <Header title="併發症教學" showBack />
+                    <div style={{ padding: '0 16px' }}>
+                        {/* Pseudoaneurysm */}
+                        <div style={{
+                            background: 'white',
+                            borderRadius: '16px',
+                            padding: '20px',
+                            marginBottom: '16px',
+                            boxShadow: 'var(--shadow)'
+                        }}>
+                            <h3 style={{ 
+                                fontSize: '18px', 
+                                fontWeight: '700', 
+                                marginBottom: '16px', 
+                                color: '#c0392b',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}>
+                                <span>🔴</span>
+                                假性動脈瘤 Pseudoaneurysm
+                            </h3>
+                            
+                            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                                <ComplicationDiagram type="pseudoaneurysm" />
+                            </div>
+                            
+                            <div style={{ marginBottom: '16px' }}>
+                                <h4 style={{ fontWeight: '600', marginBottom: '8px', color: '#2c3e50' }}>定義</h4>
+                                <p style={{ fontSize: '14px', lineHeight: '1.7', color: '#555' }}>
+                                    動脈壁穿刺處未完全癒合，血液從破口流出形成一個與血管相通的血腫囊袋，
+                                    外層僅有纖維組織包覆，並非真正的血管壁。
+                                </p>
+                            </div>
+                            
+                            <div style={{ marginBottom: '16px' }}>
+                                <h4 style={{ fontWeight: '600', marginBottom: '8px', color: '#2c3e50' }}>臨床表現</h4>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                    {['搏動性腫塊', '收縮期雜音 (bruit)', '疼痛', '瘀血擴大'].map(s => (
+                                        <span key={s} style={{
+                                            padding: '6px 12px',
+                                            background: '#fee2e2',
+                                            color: '#991b1b',
+                                            borderRadius: '20px',
+                                            fontSize: '13px'
+                                        }}>{s}</span>
+                                    ))}
+                                </div>
+                            </div>
+                            
+                            <div style={{
+                                background: '#fef3c7',
+                                padding: '14px',
+                                borderRadius: '10px'
+                            }}>
+                                <strong style={{ color: '#92400e' }}>處置：</strong>
+                                <span style={{ color: '#92400e', fontSize: '14px' }}>
+                                    發現立即通知醫師，可能需超音波引導加壓或血管外科處置
+                                </span>
+                            </div>
+                        </div>
+                        
+                        {/* AV Fistula */}
+                        <div style={{
+                            background: 'white',
+                            borderRadius: '16px',
+                            padding: '20px',
+                            marginBottom: '16px',
+                            boxShadow: 'var(--shadow)'
+                        }}>
+                            <h3 style={{ 
+                                fontSize: '18px', 
+                                fontWeight: '700', 
+                                marginBottom: '16px', 
+                                color: '#8e44ad',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}>
+                                <span>🟣</span>
+                                動靜脈瘻管 AV Fistula
+                            </h3>
+                            
+                            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                                <ComplicationDiagram type="avfistula" />
+                            </div>
+                            
+                            <div style={{ marginBottom: '16px' }}>
+                                <h4 style={{ fontWeight: '600', marginBottom: '8px', color: '#2c3e50' }}>定義</h4>
+                                <p style={{ fontSize: '14px', lineHeight: '1.7', color: '#555' }}>
+                                    穿刺時不慎同時刺穿相鄰的動脈與靜脈，癒合過程中形成異常的動靜脈連通。
+                                    動脈血直接分流至靜脈，繞過正常微血管床。
+                                </p>
+                            </div>
+                            
+                            <div style={{ marginBottom: '16px' }}>
+                                <h4 style={{ fontWeight: '600', marginBottom: '8px', color: '#2c3e50' }}>臨床表現</h4>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                    {['連續性雜音', '局部震顫 (thrill)', '靜脈擴張', '肢端缺血'].map(s => (
+                                        <span key={s} style={{
+                                            padding: '6px 12px',
+                                            background: '#ede9fe',
+                                            color: '#6b21a8',
+                                            borderRadius: '20px',
+                                            fontSize: '13px'
+                                        }}>{s}</span>
+                                    ))}
+                                </div>
+                            </div>
+                            
+                            <div style={{
+                                background: '#ede9fe',
+                                padding: '14px',
+                                borderRadius: '10px'
+                            }}>
+                                <strong style={{ color: '#6b21a8' }}>處置：</strong>
+                                <span style={{ color: '#6b21a8', fontSize: '14px' }}>
+                                    通知心臟科醫師，可能需血管超音波確認，嚴重者需手術修補
+                                </span>
+                            </div>
+                        </div>
+                        
+                        {/* Hematoma Grading */}
+                        <div style={{
+                            background: 'white',
+                            borderRadius: '16px',
+                            padding: '20px',
+                            boxShadow: 'var(--shadow)'
+                        }}>
+                            <h3 style={{ 
+                                fontSize: '18px', 
+                                fontWeight: '700', 
+                                marginBottom: '16px', 
+                                color: '#d35400' 
+                            }}>
+                                🟠 血腫分級參考
+                            </h3>
+                            
+                            <div style={{ 
+                                display: 'grid', 
+                                gridTemplateColumns: 'repeat(2, 1fr)', 
+                                gap: '12px' 
+                            }}>
+                                {[
+                                    { size: 'small', label: 'Grade 1', desc: '< 3 cm，持續觀察' },
+                                    { size: 'medium', label: 'Grade 2', desc: '3-6 cm，加強監測' },
+                                    { size: 'large', label: 'Grade 3', desc: '6-10 cm，通知醫師' },
+                                    { size: 'severe', label: 'Grade 4', desc: '> 10 cm，緊急處置' }
+                                ].map(item => (
+                                    <div key={item.size}>
+                                        <HematomaDiagram size={item.size} />
+                                        <div style={{ 
+                                            textAlign: 'center', 
+                                            fontSize: '12px', 
+                                            color: '#666',
+                                            marginTop: '-5px'
+                                        }}>
+                                            {item.desc}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+            
+            // Assessment Page
+            const AssessmentPage = () => (
+                <div className="fade-in">
+                    <Header title="傷口評估記錄" showBack />
+                    <div style={{ padding: '0 16px' }}>
+                        <AssessmentForm />
+                    </div>
+                </div>
+            );
+            
+            // Quiz Page
+            const QuizPage = () => (
+                <div className="fade-in">
+                    <Header title="自我測驗" showBack />
+                    <div style={{ padding: '0 16px' }}>
+                        <QuizSection />
+                    </div>
+                </div>
+            );
+            
+            // Render current page
+            const renderPage = () => {
+                switch(currentPage) {
+                    case 'home': return <HomePage />;
+                    case 'handoff': return <HandoffPage />;
+                    case 'compression': return <CompressionPage />;
+                    case 'assessment': return <AssessmentPage />;
+                    case 'complications': return <ComplicationsPage />;
+                    case 'quiz': return <QuizPage />;
+                    default: return <HomePage />;
+                }
+            };
+            
+            return (
+                <div style={{ 
+                    maxWidth: '480px', 
+                    margin: '0 auto',
+                    minHeight: '100vh',
+                    background: 'var(--bg-cream)',
+                    paddingBottom: '30px'
+                }}>
+                    {renderPage()}
+                </div>
+            );
+        };
+        
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
