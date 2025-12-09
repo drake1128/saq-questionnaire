@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高血壓衛教指南 - 病人與家屬版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #e74c3c;
+            --primary-dark: #c0392b;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #2c3e50;
+            --gray: #7f8c8d;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #fff5f5 0%, #f0f8ff 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header h1 {
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        
+        .heart-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            background: white;
+            border-bottom: 2px solid #eee;
+            overflow-x: auto;
+            position: sticky;
+            top: 100px;
+            z-index: 99;
+        }
+        
+        .nav-tab {
+            flex: 1;
+            min-width: 70px;
+            padding: 12px 8px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .nav-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: #fff5f5;
+        }
+        
+        .nav-tab:hover {
+            background: #f5f5f5;
+        }
+        
+        .tab-icon {
+            font-size: 1.3rem;
+            display: block;
+            margin-bottom: 3px;
+        }
+        
+        /* Content Sections */
+        .section {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid #eee;
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            color: var(--dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card-icon {
+            font-size: 1.3rem;
+        }
+        
+        /* BP Classification Table */
+        .bp-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+        
+        .bp-table th, .bp-table td {
+            padding: 10px 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        .bp-table th {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .bp-normal { background: #d4edda; }
+        .bp-elevated { background: #fff3cd; }
+        .bp-high1 { background: #ffe6e6; }
+        .bp-high2 { background: #ffcccc; }
+        
+        /* 722 Protocol Visual */
+        .protocol-722 {
+            background: linear-gradient(135deg, #e8f4fd 0%, #d1e7dd 100%);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .protocol-number {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .num-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .num-7 { background: var(--primary); }
+        .num-2a { background: var(--secondary); }
+        .num-2b { background: var(--success); }
+        
+        .num-box .big-num {
+            font-size: 1.5rem;
+        }
+        
+        .num-box .small-text {
+            font-size: 0.6rem;
+        }
+        
+        /* Steps */
+        .measure-steps {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .step {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .step:last-child {
+            border-bottom: none;
+        }
+        
+        .step-num {
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 3px;
+        }
+        
+        .step-desc {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+        
+        /* S-ABCDE */
+        .lifestyle-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .lifestyle-letter {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .lifestyle-content h4 {
+            color: var(--dark);
+            margin-bottom: 3px;
+        }
+        
+        .lifestyle-content p {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+        
+        .benefit-tag {
+            display: inline-block;
+            background: #d4edda;
+            color: #155724;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-top: 5px;
+        }
+        
+        /* Diet DASH */
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .food-item {
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+        
+        .food-good {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .food-bad {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .food-icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        /* Alert Box */
+        .alert-box {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5253 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 18px;
+            margin: 15px 0;
+        }
+        
+        .alert-box h3 {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .alert-box ul {
+            margin-left: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .alert-box li {
+            margin-bottom: 5px;
+        }
+        
+        /* Quiz Section */
+        .quiz-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .quiz-question {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .quiz-option {
+            padding: 12px 15px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .quiz-option:hover {
+            border-color: var(--secondary);
+            background: #f0f8ff;
+        }
+        
+        .quiz-option.correct {
+            border-color: var(--success);
+            background: #d4edda;
+        }
+        
+        .quiz-option.wrong {
+            border-color: var(--danger);
+            background: #f8d7da;
+        }
+        
+        .quiz-option.disabled {
+            pointer-events: none;
+        }
+        
+        .quiz-feedback {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+            font-size: 0.9rem;
+        }
+        
+        .quiz-feedback.show {
+            display: block;
+        }
+        
+        .feedback-correct {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .feedback-wrong {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        /* Progress */
+        .quiz-progress {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ddd;
+        }
+        
+        .progress-dot.active {
+            background: var(--primary);
+        }
+        
+        .progress-dot.completed {
+            background: var(--success);
+        }
+        
+        /* Score */
+        .score-display {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            color: white;
+            margin: 20px 0;
+        }
+        
+        .score-number {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+        
+        .score-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        /* BP Calculator */
+        .bp-input-group {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .bp-input-box {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .bp-input-box label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+        
+        .bp-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.5rem;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            outline: none;
+        }
+        
+        .bp-input:focus {
+            border-color: var(--primary);
+        }
+        
+        .bp-result {
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        
+        /* Info Box */
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid var(--secondary);
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+        }
+        
+        /* Medication Info */
+        .med-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+        
+        .med-name {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .med-desc {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+        
+        /* Checklist */
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid #eee;
+        }
+        
+        .checklist-item:hover {
+            background: #f5f5f5;
+        }
+        
+        .checklist-item.checked {
+            background: #d4edda;
+            border-color: var(--success);
+        }
+        
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .checklist-item.checked .checkbox {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+        
+        .footer p {
+            margin-bottom: 5px;
+            opacity: 0.8;
+        }
+        
+        .reference {
+            font-size: 0.7rem;
+            opacity: 0.6;
+        }
+        
+        /* Responsive */
+        @media (max-width: 360px) {
+            .header h1 { font-size: 1.2rem; }
+            .nav-tab { padding: 10px 5px; font-size: 0.7rem; }
+            .section { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="heart-icon">❤️</div>
+            <h1>高血壓自我管理指南</h1>
+            <p>守護心血管健康 · 病人與家屬衛教</p>
+        </header>
+        
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <div class="nav-tab active" onclick="showSection('home')">
+                <span class="tab-icon">🏠</span>
+                首頁
+            </div>
+            <div class="nav-tab" onclick="showSection('measure')">
+                <span class="tab-icon">📊</span>
+                量血壓
+            </div>
+            <div class="nav-tab" onclick="showSection('lifestyle')">
+                <span class="tab-icon">🥗</span>
+                生活調整
+            </div>
+            <div class="nav-tab" onclick="showSection('medicine')">
+                <span class="tab-icon">💊</span>
+                藥物
+            </div>
+            <div class="nav-tab" onclick="showSection('quiz')">
+                <span class="tab-icon">📝</span>
+                測驗
+            </div>
+        </nav>
+        
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <h2 class="section-title">🩺 認識高血壓</h2>
+            
+            <div class="card">
+                <h3 class="card-title"><span class="card-icon">❓</span>什麼是高血壓？</h3>
+                <p>高血壓是指血液對血管壁的壓力持續過高。根據 2022 年台灣心臟學會指南，<strong>血壓 ≥ 130/80 mmHg</strong> 即為高血壓。</p>
+                <div class="info-box">
+                    <strong>💡 您知道嗎？</strong><br>
+                    高血壓是心血管疾病和死亡的最重要可改變因素。控制好血壓可以大幅降低中風、心臟病和腎臟病的風險！
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title"><span class="card-icon">📋</span>血壓分級表</h3>
+                <table class="bp-table">
+                    <tr>
+                        <th>分級</th>
+                        <th>收縮壓</th>
+                        <th>舒張壓</th>
+                    </tr>
+                    <tr class="bp-normal">
+                        <td>正常血壓</td>
+                        <td>&lt; 120</td>
+                        <td>&lt; 80</td>
+                    </tr>
+                    <tr class="bp-elevated">
+                        <td>血壓偏高</td>
+                        <td>120-129</td>
+                        <td>&lt; 80</td>
+                    </tr>
+                    <tr class="bp-high1">
+                        <td>第一級高血壓</td>
+                        <td>130-139</td>
+                        <td>80-89</td>
+                    </tr>
+                    <tr class="bp-high2">
+                        <td>第二級高血壓</td>
+                        <td>≥ 140</td>
+                        <td>≥ 90</td>
+                    </tr>
+                </table>
+                <p style="font-size: 0.8rem; color: var(--gray); margin-top: 10px;">單位：mmHg（毫米汞柱）</p>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title"><span class="card-icon">🎯</span>血壓控制目標</h3>
+                <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-radius: 12px;">
+                    <div style="font-size: 2.5rem; font-weight: bold; color: #155724;">
+                        &lt; 130/80
+                    </div>
+                    <div style="font-size: 0.9rem; color: #155724; margin-top: 5px;">
+                        mmHg（居家血壓目標）
+                    </div>
+                </div>
+                <p style="margin-top: 15px; font-size: 0.9rem;">
+                    根據 TSOC 2022 指南建議，所有高血壓患者的血壓目標都應該控制在 130/80 mmHg 以下，以獲得最佳的心血管保護效果。
+                </p>
+            </div>
+            
+            <div class="alert-box">
+                <h3>⚠️ 危險警示 - 立即就醫</h3>
+                <ul>
+                    <li>血壓 ≥ 180/120 mmHg</li>
+                    <li>伴隨胸痛、呼吸困難</li>
+                    <li>突發劇烈頭痛</li>
+                    <li>視力模糊或說話困難</li>
+                    <li>肢體無力或麻木</li>
+                </ul>
+            </div>
+        </section>
+        
+        <!-- Measure Section -->
+        <section id="measure" class="section">
+            <h2 class="section-title">📊 正確量血壓</h2>
+            
+            <div class="card">
+                <h3 class="card-title"><span class="card-icon">⭐</span>722 居家血壓測量法</h3>
+                <p>台灣心臟學會推薦使用「722」居家血壓監測法，幫助您準確掌握血壓狀況：</p>
+                
+                <div class="protocol-722">
+                    <div class="protocol-number">
+                        <div class="num-box num-7">
+                            <span class="big-num">7</span>
+                            <span class="small-text">天</span>
+                        </div>
+                        <div class="num-box num-2a">
+                            <span class="big-num">2</span>
+                            <span class="small-text">次/天</span>
+                        </div>
+                        <div class="num-box num-2b">
+                            <span class="big-num">2</span>
+                            <span class="small-text">次/回</span>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.9rem; color: var(--dark);">
+                        <strong>連續7天</strong>測量，<strong>每天早晚2次</strong>，<strong>每次測2回</strong>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title"><span class="card-icon">⏰</span>測量時機</h3>
+                <div class="measure-steps">
+                    <div class="step">
+                        <div class="step-num">早</div>
+                        <div class="step-content">
+                            <div class="step-title">早晨測量</div>
+                            <div class="step-desc">起床後 1 小時內，上完廁所後，吃早餐和吃藥前</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">晚</div>
+                        <div class="step-content">
+                            <div class="step-title">睡前測量</div>
+                            <div class="step-desc">睡前 1 小時內，坐下休息 5 分鐘後</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title"><span class="card-icon">✅</span>正確測量步驟</h3>
+                <div class="measure-steps">
+                    <div class="step">
+                        <div class="step-num">1</div>
+                        <div class="step-content">
+                            <div class="step-title">安靜休息</div>
+                            <div class="step-desc">坐在有靠背的椅子上，休息 5 分鐘</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">2</div>
+                        <div class="step-content">
+                            <div class="step-title">正確姿勢</div>
+                            <div class="step-desc">背部靠好，雙腳平放地面，不要翹腳</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">3</div>
+                        <div class="step-content">
+                            <div class="step-title">壓脈帶位置</div>
+                            <div class="step-desc">手臂與心臟同高，壓脈帶距離手肘 2-3 公分</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">4</div>
+                        <div class="step-content">
+                            <div class="step-title">測量與記錄</div>
+                            <div class="step-desc">測量 2 次，間隔 1 分鐘，記錄兩次數值</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title"><span class="card-icon">🔢</span>血壓分類計算</h3>
+                <p>輸入您的血壓數值，了解您的血壓分級：</p>
+                <div class="bp-input-group">
+                    <div class="bp-input-box">
+                        <label>收縮壓 (高壓)</label>
+                        <input type="number" class="bp-input" id="systolic" placeholder="120" min="70" max="250">
+                    </div>
+                    <div class="bp-input-box">
+                        <label>舒張壓 (低壓)</label>
+                        <input type="number" class="bp-input" id="diastolic" placeholder="80" min="40" max="150">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="checkBP()">查看血壓分級</button>
+                <div id="bp-result" class="bp-result" style="display: none;"></div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title"><span class="card-icon">📅</span>監測頻率建議</h3>
+                <table class="bp-table">
+                    <tr>
+                        <th>血壓狀態</th>
+                        <th>722 監測頻率</th>
+                    </tr>
+                    <tr class="bp-normal">
+                        <td>正常血壓</td>
+                        <td>每年 1 次</td>
+                    </tr>
+                    <tr class="bp-elevated">
+                        <td>血壓偏高</td>
+                        <td>每 6 個月 1 次</td>
+                    </tr>
+                    <tr class="bp-high1">
+                        <td>治療中未達標</td>
+                        <td>每個月 1 次</td>
+                    </tr>
+                    <tr class="bp-high1">
+                        <td>治療中已達標</td>
+                        <td>每 3 個月 1 次</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Lifestyle Section -->
+        <section id="lifestyle" class="section">
+            <h2 class="section-title">🥗 S-ABCDE 生活調整</h2>
+            
+            <div class="card">
+                <p>台灣心臟學會建議使用 <strong>S-ABCDE</strong> 口訣記住生活調整重點，這些方法可有效降低血壓：</p>
+            </div>
+            
+            <div class="lifestyle-item">
+                <div class="lifestyle-letter">S</div>
+                <div class="lifestyle-content">
+                    <h4>Sodium 減鈉限鹽</h4>
+                    <p>每日鈉攝取 2-4 克（鹽 5-10 克）</p>
+                    <span class="benefit-tag">每減 1 克鈉可降 3.1 mmHg</span>
+                </div>
+            </div>
+            
+            <div class="lifestyle-item">
+                <div class="lifestyle-letter">A</div>
+                <div class="lifestyle-content">
+                    <h4>Alcohol 限制飲酒</h4>
+                    <p>男性 &lt; 14 克/天，女性 &lt; 7 克/天</p>
+                    <span class="benefit-tag">可降 2-4 mmHg</span>
+                </div>
+            </div>
+            
+            <div class="lifestyle-item">
+                <div class="lifestyle-letter">B</div>
+                <div class="lifestyle-content">
+                    <h4>Body weight 控制體重</h4>
+                    <p>維持 BMI 20-24.9 kg/m²</p>
+                    <span class="benefit-tag">每減 1 公斤可降 1 mmHg</span>
+                </div>
+            </div>
+            
+            <div class="lifestyle-item">
+                <div class="lifestyle-letter">C</div>
+                <div class="lifestyle-content">
+                    <h4>Cigarette 戒菸</h4>
+                    <p>完全戒除傳統菸及電子菸</p>
+                    <span class="benefit-tag">降低整體心血管風險</span>
+                </div>
+            </div>
+            
+            <div class="lifestyle-item">
+                <div class="lifestyle-letter">D</div>
+                <div class="lifestyle-content">
+                    <h4>Diet 得舒飲食</h4>
+                    <p>多蔬果、全穀、低脂乳品、堅果</p>
+                    <span class="benefit-tag">可降 10-12 mmHg</span>
+                </div>
+            </div>
+            
+            <div class="lifestyle-item">
+                <div class="lifestyle-letter">E</div>
+                <div class="lifestyle-content">
+                    <h4>Exercise 規律運動</h4>
+                    <p>每週 5-7 天，每次 30 分鐘中等強度運動</p>
+                    <span class="benefit-tag">可降 3-11 mmHg</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title"><span class="card-icon">🥬</span>DASH 得舒飲食</h3>
+                <div class="food-grid">
+                    <div class="food-item food-good">
+                        <span class="food-icon">🥗</span>
+                        多吃蔬菜水果
+                    </div>
+                    <div class="food-item food-good">
+                        <span class="food-icon">🥛</span>
+                        低脂乳製品
+                    </div>
+                    <div class="food-item food-good">
+                        <span class="food-icon">🌾</span>
+                        全穀類食物
+                    </div>
+                    <div class="food-item food-good">
+                        <span class="food-icon">🥜</span>
+                        堅果魚類
+                    </div>
+                    <div class="food-item food-bad">
+                        <span class="food-icon">🍖</span>
+                        減少紅肉
+                    </div>
+                    <div class="food-item food-bad">
+                        <span class="food-icon">🧂</span>
+                        少鹽少加工品
+                    </div>
+                    <div class="food-item food-bad">
+                        <span class="food-icon">🍰</span>
+                        少甜食飲料
+                    </div>
+                    <div class="food-item food-bad">
+                        <span class="food-icon">🍟</span>
+                        避免油炸物
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title"><span class="card-icon">🏃</span>運動建議</h3>
+                <div class="info-box">
+                    <strong>有氧運動：</strong>快走、游泳、騎腳踏車、跳舞<br>
+                    <strong>頻率：</strong>每週 5-7 天，每次至少 30 分鐘<br>
+                    <strong>強度：</strong>中等強度（可說話但無法唱歌）
+                </div>
+                <p style="margin-top: 10px; font-size: 0.9rem; color: var(--gray);">
+                    💡 太極拳、瑜珈等神經運動訓練也有助於降血壓（可降 6-14 mmHg）
+                </p>
+                <div class="alert-box" style="margin-top: 15px;">
+                    <h3>⚠️ 注意</h3>
+                    血壓未控制（收縮壓 &gt; 160 mmHg）者，應避免高強度運動
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title"><span class="card-icon">✅</span>今日生活習慣檢核</h3>
+                <div id="lifestyle-checklist">
+                    <div class="checklist-item" onclick="toggleCheck(this)">
+                        <div class="checkbox">✓</div>
+                        <span>今天有量血壓並記錄</span>
+                    </div>
+                    <div class="checklist-item" onclick="toggleCheck(this)">
+                        <div class="checkbox">✓</div>
+                        <span>今天吃了 5 份以上蔬果</span>
+                    </div>
+                    <div class="checklist-item" onclick="toggleCheck(this)">
+                        <div class="checkbox">✓</div>
+                        <span>今天有運動至少 30 分鐘</span>
+                    </div>
+                    <div class="checklist-item" onclick="toggleCheck(this)">
+                        <div class="checkbox">✓</div>
+                        <span>今天沒有吃太鹹的食物</span>
+                    </div>
+                    <div class="checklist-item" onclick="toggleCheck(this)">
+                        <div class="checkbox">✓</div>
+                        <span>今天按時服用降壓藥</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Medicine Section -->
+        <section id="medicine" class="section">
+            <h2 class="section-title">💊 藥物治療須知</h2>
+            
+            <div class="card">
+                <h3 class="card-title"><span class="card-icon">📋</span>常見降壓藥物</h3>
+                <p>醫師可能會開立以下五大類降壓藥物，簡稱 ABCD：</p>
+                
+                <div class="med-card">
+                    <div class="med-name">A - ACEI / ARB</div>
+                    <div class="med-desc">血管收縮素轉換酶抑制劑 / 血管收縮素受體阻斷劑<br>
+                    例如：Captopril、Losartan、Valsartan<br>
+                    特別適合：糖尿病、腎臟病、心衰竭患者</div>
+                </div>
+                
+                <div class="med-card">
+                    <div class="med-name">B - β-blocker 乙型阻斷劑</div>
+                    <div class="med-desc">例如：Atenolol、Bisoprolol、Carvedilol<br>
+                    特別適合：心絞痛、心律不整、心衰竭患者</div>
+                </div>
+                
+                <div class="med-card">
+                    <div class="med-name">C - CCB 鈣離子阻斷劑</div>
+                    <div class="med-desc">例如：Amlodipine、Nifedipine、Diltiazem<br>
+                    特別適合：老年人、心絞痛患者</div>
+                </div>
+                
+                <div class="med-card">
+                    <div class="med-name">D - Diuretic 利尿劑</div>
+                    <div class="med-desc">例如：Hydrochlorothiazide、Indapamide<br>
+                    特別適合：心衰竭、水腫患者</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title"><span class="card-icon">💡</span>服藥重點提醒</h3>
+                <div class="measure-steps">
+                    <div class="step">
+                        <div class="step-num">1</div>
+                        <div class="step-content">
+                            <div class="step-title">按時服藥</div>
+                            <div class="step-desc">每天固定時間服藥，不要隨意停藥或改變劑量</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">2</div>
+                        <div class="step-content">
+                            <div class="step-title">長期治療</div>
+                            <div class="step-desc">高血壓是慢性病，需要長期控制，血壓正常不代表可停藥</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">3</div>
+                        <div class="step-content">
+                            <div class="step-title">監測副作用</div>
+                            <div class="step-desc">如有頭暈、乾咳、腳腫等不適，應告知醫師</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">4</div>
+                        <div class="step-content">
+                            <div class="step-title">定期回診</div>
+                            <div class="step-desc">定期追蹤血壓和抽血檢查，配合醫師調整藥物</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title"><span class="card-icon">📊</span>藥物效果評估</h3>
+                <div class="info-box">
+                    <strong>10/5 法則：</strong><br>
+                    單一降壓藥標準劑量約可降低：<br>
+                    • 收縮壓 10 mmHg<br>
+                    • 舒張壓 5 mmHg<br><br>
+                    若血壓超過目標 20/10 mmHg 以上，醫師可能會建議合併用藥
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title"><span class="card-icon">⏰</span>調藥後監測</h3>
+                <p>開始服藥或調整藥物後：</p>
+                <ul style="margin: 10px 0 0 20px; color: var(--gray);">
+                    <li>藥物在 1 週後達到 50% 效果</li>
+                    <li>2 週後達到 80% 效果</li>
+                    <li>建議調藥 2 週後執行 722 血壓監測</li>
+                    <li>持續監測直到血壓達標</li>
+                </ul>
+            </div>
+            
+            <div class="alert-box">
+                <h3>⚠️ 服藥注意事項</h3>
+                <ul>
+                    <li>不可自行停藥或減藥</li>
+                    <li>漏服藥不要隔天加倍服用</li>
+                    <li>避免與葡萄柚汁同服（某些藥物）</li>
+                    <li>注意姿勢性低血壓（起身時頭暈）</li>
+                </ul>
+            </div>
+        </section>
+        
+        <!-- Quiz Section -->
+        <section id="quiz" class="section">
+            <h2 class="section-title">📝 學習測驗</h2>
+            
+            <div class="quiz-progress" id="quiz-progress"></div>
+            
+            <div id="quiz-container"></div>
+            
+            <div id="quiz-result" style="display: none;">
+                <div class="score-display">
+                    <div class="score-number" id="final-score">0/5</div>
+                    <div class="score-label">正確題數</div>
+                </div>
+                <div id="result-message" class="card"></div>
+                <button class="btn btn-primary" onclick="restartQuiz()">重新測驗</button>
+            </div>
+        </section>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <p>❤️ 控制血壓，守護健康 ❤️</p>
+            <p>如有任何疑問，請諮詢您的醫療團隊</p>
+            <p class="reference">
+                參考資料：2022 TSOC/THS 高血壓指南<br>
+                COBRA-BPS 研究 (NEJM 2020)
+            </p>
+        </footer>
+    </div>
+    
+    <script>
+        // Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.closest('.nav-tab').classList.add('active');
+            
+            window.scrollTo(0, 0);
+            
+            if (sectionId === 'quiz' && !quizStarted) {
+                startQuiz();
+            }
+        }
+        
+        // BP Calculator
+        function checkBP() {
+            const systolic = parseInt(document.getElementById('systolic').value);
+            const diastolic = parseInt(document.getElementById('diastolic').value);
+            const resultDiv = document.getElementById('bp-result');
+            
+            if (!systolic || !diastolic) {
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = '#fff3cd';
+                resultDiv.style.color = '#856404';
+                resultDiv.textContent = '請輸入完整的血壓數值';
+                return;
+            }
+            
+            let category, color, advice;
+            
+            if (systolic < 120 && diastolic < 80) {
+                category = '✅ 正常血壓';
+                color = '#d4edda';
+                advice = '繼續維持健康生活方式，每年監測一次血壓';
+            } else if (systolic >= 120 && systolic <= 129 && diastolic < 80) {
+                category = '⚠️ 血壓偏高';
+                color = '#fff3cd';
+                advice = '注意生活調整，每 6 個月監測一次血壓';
+            } else if ((systolic >= 130 && systolic <= 139) || (diastolic >= 80 && diastolic <= 89)) {
+                category = '🔶 第一級高血壓';
+                color = '#ffe6e6';
+                advice = '建議就醫評估，積極生活調整，可能需要藥物治療';
+            } else if (systolic >= 140 || diastolic >= 90) {
+                category = '🔴 第二級高血壓';
+                color = '#f8d7da';
+                advice = '應積極就醫治療，需要藥物控制';
+            } else if (systolic >= 180 || diastolic >= 120) {
+                category = '🚨 高血壓危象';
+                color = '#f5c6cb';
+                advice = '請立即就醫！';
+            }
+            
+            resultDiv.style.display = 'block';
+            resultDiv.style.background = color;
+            resultDiv.innerHTML = `
+                <div style="font-size: 1.2rem; margin-bottom: 8px;">${category}</div>
+                <div style="font-size: 0.9rem;">${advice}</div>
+            `;
+        }
+        
+        // Checklist
+        function toggleCheck(item) {
+            item.classList.toggle('checked');
+        }
+        
+        // Quiz
+        const quizData = [
+            {
+                question: '根據 2022 年台灣心臟學會指南，高血壓的定義是血壓達到多少？',
+                options: ['≥ 140/90 mmHg', '≥ 130/80 mmHg', '≥ 120/80 mmHg', '≥ 150/100 mmHg'],
+                correct: 1,
+                explanation: '根據 2022 TSOC/THS 指南，高血壓定義為血壓 ≥ 130/80 mmHg'
+            },
+            {
+                question: '「722」居家血壓測量法中的「7」代表什麼？',
+                options: ['每天量 7 次', '連續量 7 天', '早上 7 點量', '每次量 7 分鐘'],
+                correct: 1,
+                explanation: '722 法則：連續 7 天、每天 2 次（早晚）、每次測 2 回'
+            },
+            {
+                question: '以下哪項不是 S-ABCDE 生活調整的內容？',
+                options: ['限鹽減鈉', '戒菸', '規律運動', '多喝含糖飲料'],
+                correct: 3,
+                explanation: 'S-ABCDE 包括：限鹽、限酒、減重、戒菸、得舒飲食、運動。應避免含糖飲料'
+            },
+            {
+                question: '得舒飲食（DASH diet）主要建議多吃什麼？',
+                options: ['紅肉和加工食品', '蔬果、全穀和低脂乳品', '甜食和油炸物', '高鹽醃製品'],
+                correct: 1,
+                explanation: 'DASH 飲食強調多吃蔬果、全穀類、堅果、魚類和低脂乳品，可降低血壓 10-12 mmHg'
+            },
+            {
+                question: '服用降壓藥後，血壓恢復正常可以自行停藥嗎？',
+                options: ['可以，血壓正常就不用吃了', '不可以，需遵醫囑長期服用', '可以，但要每天監測', '可以，一週停一次沒關係'],
+                correct: 1,
+                explanation: '高血壓是慢性病，需要長期控制。血壓正常是藥物的效果，擅自停藥會導致血壓再度升高'
+            }
+        ];
+        
+        let currentQuestion = 0;
+        let score = 0;
+        let quizStarted = false;
+        let answered = false;
+        
+        function startQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            quizStarted = true;
+            answered = false;
+            document.getElementById('quiz-result').style.display = 'none';
+            renderProgress();
+            renderQuestion();
+        }
+        
+        function renderProgress() {
+            const progressHtml = quizData.map((_, index) => {
+                let className = 'progress-dot';
+                if (index < currentQuestion) className += ' completed';
+                else if (index === currentQuestion) className += ' active';
+                return `<div class="${className}"></div>`;
+            }).join('');
+            document.getElementById('quiz-progress').innerHTML = progressHtml;
+        }
+        
+        function renderQuestion() {
+            const q = quizData[currentQuestion];
+            const container = document.getElementById('quiz-container');
+            
+            container.innerHTML = `
+                <div class="quiz-container">
+                    <div class="quiz-question">
+                        <strong>第 ${currentQuestion + 1} 題，共 ${quizData.length} 題</strong><br><br>
+                        ${q.question}
+                    </div>
+                    <div class="quiz-options">
+                        ${q.options.map((opt, i) => `
+                            <div class="quiz-option" onclick="selectAnswer(${i})">${opt}</div>
+                        `).join('')}
+                    </div>
+                    <div class="quiz-feedback" id="feedback"></div>
+                </div>
+            `;
+        }
+        
+        function selectAnswer(selected) {
+            if (answered) return;
+            answered = true;
+            
+            const q = quizData[currentQuestion];
+            const options = document.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback');
+            
+            options.forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (i === q.correct) {
+                    opt.classList.add('correct');
+                } else if (i === selected && selected !== q.correct) {
+                    opt.classList.add('wrong');
+                }
+            });
+            
+            if (selected === q.correct) {
+                score++;
+                feedback.className = 'quiz-feedback show feedback-correct';
+                feedback.innerHTML = `✅ 正確！${q.explanation}`;
+            } else {
+                feedback.className = 'quiz-feedback show feedback-wrong';
+                feedback.innerHTML = `❌ 答錯了。${q.explanation}`;
+            }
+            
+            setTimeout(() => {
+                currentQuestion++;
+                answered = false;
+                if (currentQuestion < quizData.length) {
+                    renderProgress();
+                    renderQuestion();
+                } else {
+                    showResult();
+                }
+            }, 2500);
+        }
+        
+        function showResult() {
+            document.getElementById('quiz-container').innerHTML = '';
+            document.getElementById('quiz-progress').innerHTML = '';
+            document.getElementById('quiz-result').style.display = 'block';
+            document.getElementById('final-score').textContent = `${score}/${quizData.length}`;
+            
+            let message = '';
+            const percentage = score / quizData.length;
+            
+            if (percentage === 1) {
+                message = '🎉 太棒了！滿分！您對高血壓的認識非常充足，請繼續保持良好的自我管理！';
+            } else if (percentage >= 0.8) {
+                message = '👍 很好！您對高血壓有相當的了解，可以再複習一下答錯的部分。';
+            } else if (percentage >= 0.6) {
+                message = '📚 還不錯！建議您再多閱讀衛教內容，加深對高血壓管理的認識。';
+            } else {
+                message = '💪 加油！建議您仔細閱讀衛教內容，了解高血壓的重要知識對您的健康很有幫助！';
+            }
+            
+            document.getElementById('result-message').innerHTML = `<p>${message}</p>`;
+        }
+        
+        function restartQuiz() {
+            startQuiz();
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pre-fill quiz progress
+            document.getElementById('quiz-progress').innerHTML = quizData.map(() => 
+                '<div class="progress-dot"></div>'
+            ).join('');
+        });
+    </script>
+</body>
+</html>
