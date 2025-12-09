@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>心房顫動病房處置教學</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        :root {
+            --bg-primary: #0a0f1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a2332;
+            --bg-card-hover: #222d3f;
+            --accent-teal: #14b8a6;
+            --accent-teal-dim: #0d9488;
+            --accent-coral: #f97316;
+            --accent-rose: #f43f5e;
+            --accent-violet: #8b5cf6;
+            --accent-blue: #3b82f6;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #2d3748;
+            --border-light: #374151;
+        }
+        
+        html, body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        body {
+            background: 
+                radial-gradient(ellipse at 20% 0%, rgba(20, 184, 166, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
+                var(--bg-primary);
+            min-height: 100vh;
+        }
+        
+        #root {
+            min-height: 100vh;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-light);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(20, 184, 166, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(20, 184, 166, 0.5); }
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.15); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.1); }
+        }
+        
+        @keyframes ecg-line {
+            0% { stroke-dashoffset: 1000; }
+            100% { stroke-dashoffset: 0; }
+        }
+        
+        .animate-in {
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+        
+        .stagger-1 { animation-delay: 0.05s; opacity: 0; }
+        .stagger-2 { animation-delay: 0.1s; opacity: 0; }
+        .stagger-3 { animation-delay: 0.15s; opacity: 0; }
+        .stagger-4 { animation-delay: 0.2s; opacity: 0; }
+        .stagger-5 { animation-delay: 0.25s; opacity: 0; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        
+        // ============ SVG Icons ============
+        const Icons = {
+            Heart: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+            ),
+            Pill: () => (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
+                    <path d="M10.5 20.5L3.5 13.5C1.5 11.5 1.5 8.16 3.5 6.16C5.5 4.16 8.84 4.16 10.84 6.16L17.84 13.16C19.84 15.16 19.84 18.5 17.84 20.5C15.84 22.5 12.5 22.5 10.5 20.5Z"/>
+                    <line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/>
+                </svg>
+            ),
+            Activity: () => (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
+                    <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
+                </svg>
+            ),
+            Calculator: () => (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
+                    <rect x="4" y="2" width="16" height="20" rx="2"/>
+                    <line x1="8" y1="6" x2="16" y2="6"/>
+                    <line x1="8" y1="10" x2="8" y2="10.01"/>
+                    <line x1="12" y1="10" x2="12" y2="10.01"/>
+                    <line x1="16" y1="10" x2="16" y2="10.01"/>
+                    <line x1="8" y1="14" x2="8" y2="14.01"/>
+                    <line x1="12" y1="14" x2="12" y2="14.01"/>
+                    <line x1="16" y1="14" x2="16" y2="14.01"/>
+                    <line x1="8" y1="18" x2="8" y2="18.01"/>
+                    <line x1="12" y1="18" x2="16" y2="18"/>
+                </svg>
+            ),
+            AlertTriangle: () => (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+            ),
+            Check: () => (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="20" height="20">
+                    <polyline points="20,6 9,17 4,12"/>
+                </svg>
+            ),
+            ChevronRight: () => (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
+                    <polyline points="9,18 15,12 9,6"/>
+                </svg>
+            ),
+            Info: () => (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="16" x2="12" y2="12"/>
+                    <line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+            ),
+            Zap: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>
+                </svg>
+            ),
+            Clock: () => (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12,6 12,12 16,14"/>
+                </svg>
+            ),
+            Droplet: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                </svg>
+            )
+        };
+        
+        // ============ ECG Animation Component ============
+        const ECGLine = () => (
+            <svg viewBox="0 0 400 60" style={{width: '100%', height: '40px', marginBottom: '8px'}}>
+                <defs>
+                    <linearGradient id="ecgGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#14b8a6" stopOpacity="0.2"/>
+                        <stop offset="50%" stopColor="#14b8a6" stopOpacity="1"/>
+                        <stop offset="100%" stopColor="#14b8a6" stopOpacity="0.2"/>
+                    </linearGradient>
+                </defs>
+                <path
+                    d="M0,30 L30,30 L35,30 L40,30 L50,30 L55,10 L60,50 L65,25 L70,35 L75,30 L100,30 L130,30 L135,30 L140,30 L150,30 L155,8 L160,52 L165,25 L170,35 L175,30 L200,30 L230,30 L235,30 L240,30 L250,30 L255,12 L260,48 L265,25 L270,35 L275,30 L300,30 L330,30 L335,30 L340,30 L350,30 L355,10 L360,50 L365,25 L370,35 L375,30 L400,30"
+                    fill="none"
+                    stroke="url(#ecgGrad)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    style={{
+                        strokeDasharray: 1000,
+                        animation: 'ecg-line 3s linear infinite'
+                    }}
+                />
+            </svg>
+        );
+        
+        // ============ Header Component ============
+        const Header = ({ currentTab, setCurrentTab }) => {
+            const tabs = [
+                { id: 'overview', label: 'AF總覽', icon: <Icons.Heart /> },
+                { id: 'pulse', label: '脈搏vs心率', icon: <Icons.Activity /> },
+                { id: 'rate', label: '心率控制', icon: <Icons.Zap /> },
+                { id: 'meds', label: '藥物', icon: <Icons.Pill /> },
+                { id: 'chads', label: 'CHA₂DS₂-VASc', icon: <Icons.Calculator /> },
+                { id: 'hasbled', label: 'HAS-BLED', icon: <Icons.AlertTriangle /> },
+            ];
+            
+            return (
+                <header style={{
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 100,
+                    background: 'linear-gradient(180deg, rgba(10,15,26,0.98) 0%, rgba(10,15,26,0.95) 100%)',
+                    backdropFilter: 'blur(20px)',
+                    borderBottom: '1px solid var(--border-color)',
+                }}>
+                    <div style={{
+                        padding: '16px 16px 12px',
+                        textAlign: 'center',
+                    }}>
+                        <ECGLine />
+                        <h1 style={{
+                            fontSize: '1.4rem',
+                            fontWeight: 700,
+                            background: 'linear-gradient(135deg, #14b8a6 0%, #3b82f6 50%, #8b5cf6 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            letterSpacing: '0.5px',
+                        }}>
+                            心房顫動 AF 病房處置
+                        </h1>
+                        <p style={{
+                            fontSize: '0.75rem',
+                            color: 'var(--text-muted)',
+                            marginTop: '4px',
+                        }}>
+                            護理臨床教學指引
+                        </p>
+                    </div>
+                    
+                    <nav style={{
+                        display: 'flex',
+                        overflowX: 'auto',
+                        padding: '0 8px 12px',
+                        gap: '6px',
+                        scrollbarWidth: 'none',
+                        msOverflowStyle: 'none',
+                    }}>
+                        {tabs.map(tab => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setCurrentTab(tab.id)}
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    padding: '8px 14px',
+                                    borderRadius: '20px',
+                                    border: 'none',
+                                    background: currentTab === tab.id 
+                                        ? 'linear-gradient(135deg, var(--accent-teal) 0%, var(--accent-teal-dim) 100%)'
+                                        : 'var(--bg-card)',
+                                    color: currentTab === tab.id ? '#fff' : 'var(--text-secondary)',
+                                    fontSize: '0.8rem',
+                                    fontWeight: 500,
+                                    cursor: 'pointer',
+                                    whiteSpace: 'nowrap',
+                                    transition: 'all 0.2s ease',
+                                    flexShrink: 0,
+                                }}
+                            >
+                                <span style={{ 
+                                    display: 'flex', 
+                                    transform: 'scale(0.85)',
+                                    opacity: currentTab === tab.id ? 1 : 0.7 
+                                }}>
+                                    {tab.icon}
+                                </span>
+                                {tab.label}
+                            </button>
+                        ))}
+                    </nav>
+                </header>
+            );
+        };
+        
+        // ============ Card Components ============
+        const Card = ({ children, accent, style = {} }) => (
+            <div style={{
+                background: 'var(--bg-card)',
+                borderRadius: '16px',
+                padding: '20px',
+                border: '1px solid var(--border-color)',
+                borderLeft: accent ? `4px solid ${accent}` : '1px solid var(--border-color)',
+                ...style
+            }}>
+                {children}
+            </div>
+        );
+        
+        const InfoBox = ({ type = 'info', title, children }) => {
+            const styles = {
+                info: { bg: 'rgba(59, 130, 246, 0.1)', border: '#3b82f6', icon: <Icons.Info /> },
+                warning: { bg: 'rgba(249, 115, 22, 0.1)', border: '#f97316', icon: <Icons.AlertTriangle /> },
+                danger: { bg: 'rgba(244, 63, 94, 0.1)', border: '#f43f5e', icon: <Icons.AlertTriangle /> },
+                success: { bg: 'rgba(16, 185, 129, 0.1)', border: '#10b981', icon: <Icons.Check /> },
+            };
+            const s = styles[type];
+            
+            return (
+                <div style={{
+                    background: s.bg,
+                    borderLeft: `4px solid ${s.border}`,
+                    borderRadius: '8px',
+                    padding: '14px 16px',
+                    marginTop: '16px',
+                }}>
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        marginBottom: title ? '8px' : 0,
+                        color: s.border,
+                        fontWeight: 600,
+                        fontSize: '0.9rem',
+                    }}>
+                        {s.icon}
+                        {title}
+                    </div>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+                        {children}
+                    </div>
+                </div>
+            );
+        };
+        
+        const SectionTitle = ({ children, icon }) => (
+            <h2 style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                fontSize: '1.15rem',
+                fontWeight: 600,
+                color: 'var(--text-primary)',
+                marginBottom: '16px',
+            }}>
+                {icon && <span style={{ color: 'var(--accent-teal)' }}>{icon}</span>}
+                {children}
+            </h2>
+        );
+        
+        const SubTitle = ({ children, color = 'var(--accent-teal)' }) => (
+            <h3 style={{
+                fontSize: '1rem',
+                fontWeight: 600,
+                color: color,
+                marginBottom: '12px',
+                marginTop: '20px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+            }}>
+                <span style={{
+                    width: '4px',
+                    height: '18px',
+                    background: color,
+                    borderRadius: '2px',
+                }}/>
+                {children}
+            </h3>
+        );
+        
+        // ============ Overview Tab ============
+        const OverviewTab = () => (
+            <div style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <Card accent="var(--accent-teal)" className="animate-in stagger-1">
+                    <SectionTitle icon={<Icons.Heart />}>什麼是心房顫動 (AF)?</SectionTitle>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.8 }}>
+                        心房顫動是<strong style={{color: 'var(--accent-coral)'}}>最常見的心律不整</strong>，心房以 350-600 次/分 快速且不規則顫動，
+                        導致 <strong style={{color: 'var(--accent-teal)'}}>R-R 間距不規則 (irregularly irregular)</strong>。
+                    </p>
+                    
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(2, 1fr)',
+                        gap: '12px',
+                        marginTop: '16px',
+                    }}>
+                        {[
+                            { label: '心悸', desc: '最常見症狀' },
+                            { label: '呼吸困難', desc: '活動時加劇' },
+                            { label: '頭暈疲倦', desc: '心輸出量下降' },
+                            { label: '無症狀', desc: '約1/3病人' },
+                        ].map((item, i) => (
+                            <div key={i} style={{
+                                background: 'var(--bg-secondary)',
+                                padding: '12px',
+                                borderRadius: '10px',
+                                textAlign: 'center',
+                            }}>
+                                <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.9rem' }}>
+                                    {item.label}
+                                </div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                                    {item.desc}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </Card>
+                
+                <Card accent="var(--accent-blue)" className="animate-in stagger-2">
+                    <SectionTitle>ECG 特徵</SectionTitle>
+                    <div style={{
+                        background: '#0d1117',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        fontFamily: "'JetBrains Mono', monospace",
+                    }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                            {[
+                                { check: '✗', text: 'P wave 消失', color: '#f43f5e' },
+                                { check: '→', text: '被 f wave (顫動波) 取代', color: '#f97316' },
+                                { check: '~', text: 'R-R interval 不規則', color: '#eab308' },
+                                { check: '↑', text: '心室率通常 100-180 bpm', color: '#14b8a6' },
+                            ].map((item, i) => (
+                                <div key={i} style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '12px',
+                                    fontSize: '0.85rem',
+                                }}>
+                                    <span style={{
+                                        color: item.color,
+                                        fontWeight: 700,
+                                        fontSize: '1rem',
+                                        width: '24px',
+                                        textAlign: 'center',
+                                    }}>{item.check}</span>
+                                    <span style={{ color: 'var(--text-secondary)' }}>{item.text}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </Card>
+                
+                <Card accent="var(--accent-violet)" className="animate-in stagger-3">
+                    <SectionTitle>AF 治療三大目標</SectionTitle>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        {[
+                            { 
+                                num: '1', 
+                                title: 'Rate Control 心率控制',
+                                desc: '控制心室速率 → β-blocker、CCB、Digoxin',
+                                color: 'var(--accent-teal)'
+                            },
+                            { 
+                                num: '2', 
+                                title: 'Rhythm Control 節律控制',
+                                desc: '恢復正常竇性節律 → Amiodarone、電擊整流',
+                                color: 'var(--accent-blue)'
+                            },
+                            { 
+                                num: '3', 
+                                title: 'Anticoagulation 抗凝血',
+                                desc: '預防中風 → NOAC、Warfarin',
+                                color: 'var(--accent-coral)'
+                            },
+                        ].map((item, i) => (
+                            <div key={i} style={{
+                                display: 'flex',
+                                gap: '14px',
+                                alignItems: 'flex-start',
+                                background: 'var(--bg-secondary)',
+                                padding: '14px',
+                                borderRadius: '12px',
+                            }}>
+                                <div style={{
+                                    width: '32px',
+                                    height: '32px',
+                                    borderRadius: '50%',
+                                    background: item.color,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontWeight: 700,
+                                    fontSize: '0.9rem',
+                                    flexShrink: 0,
+                                }}>
+                                    {item.num}
+                                </div>
+                                <div>
+                                    <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.9rem' }}>
+                                        {item.title}
+                                    </div>
+                                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                                        {item.desc}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </Card>
+            </div>
+        );
+        
+        // ============ Pulse vs Heart Rate Tab ============
+        const PulseTab = () => (
+            <div style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <Card accent="var(--accent-coral)" className="animate-in stagger-1">
+                    <SectionTitle icon={<Icons.Activity />}>核心概念：脈搏落差</SectionTitle>
+                    
+                    <div style={{
+                        background: 'linear-gradient(135deg, rgba(249,115,22,0.15) 0%, rgba(244,63,94,0.1) 100%)',
+                        borderRadius: '16px',
+                        padding: '20px',
+                        textAlign: 'center',
+                        marginBottom: '16px',
+                    }}>
+                        <div style={{
+                            fontFamily: "'JetBrains Mono', monospace",
+                            fontSize: '1.4rem',
+                            fontWeight: 700,
+                            color: 'var(--accent-coral)',
+                            marginBottom: '8px',
+                        }}>
+                            Pulse Deficit = HR - Pulse
+                        </div>
+                        <div style={{
+                            fontSize: '0.85rem',
+                            color: 'var(--text-secondary)',
+                        }}>
+                            脈搏落差 = 心率 - 周邊脈搏
+                        </div>
+                    </div>
+                    
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr auto 1fr',
+                        gap: '12px',
+                        alignItems: 'center',
+                        background: 'var(--bg-secondary)',
+                        borderRadius: '12px',
+                        padding: '20px 16px',
+                    }}>
+                        <div style={{ textAlign: 'center' }}>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '6px' }}>
+                                心電圖心率
+                            </div>
+                            <div style={{
+                                fontSize: '2rem',
+                                fontWeight: 700,
+                                color: 'var(--accent-rose)',
+                                fontFamily: "'JetBrains Mono', monospace",
+                            }}>
+                                120
+                            </div>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>bpm</div>
+                        </div>
+                        
+                        <div style={{
+                            fontSize: '1.5rem',
+                            color: 'var(--text-muted)',
+                        }}>→</div>
+                        
+                        <div style={{ textAlign: 'center' }}>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '6px' }}>
+                                周邊脈搏
+                            </div>
+                            <div style={{
+                                fontSize: '2rem',
+                                fontWeight: 700,
+                                color: 'var(--accent-teal)',
+                                fontFamily: "'JetBrains Mono', monospace",
+                            }}>
+                                96
+                            </div>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>bpm</div>
+                        </div>
+                    </div>
+                    
+                    <div style={{
+                        textAlign: 'center',
+                        marginTop: '12px',
+                        padding: '12px',
+                        background: 'rgba(249,115,22,0.1)',
+                        borderRadius: '10px',
+                    }}>
+                        <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>脈搏落差 = </span>
+                        <span style={{
+                            fontFamily: "'JetBrains Mono', monospace",
+                            fontWeight: 700,
+                            color: 'var(--accent-coral)',
+                            fontSize: '1.2rem',
+                        }}>24 次/分</span>
+                    </div>
+                </Card>
+                
+                <Card accent="var(--accent-blue)" className="animate-in stagger-2">
+                    <SubTitle color="var(--accent-blue)">為什麼會有脈搏落差？</SubTitle>
+                    
+                    <div style={{
+                        background: 'var(--bg-secondary)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        marginBottom: '16px',
+                    }}>
+                        <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.8 }}>
+                            AF 時心室充盈時間<strong style={{color: 'var(--accent-coral)'}}>不固定</strong>：
+                        </div>
+                        <ul style={{
+                            margin: '12px 0 0 20px',
+                            color: 'var(--text-secondary)',
+                            fontSize: '0.85rem',
+                            lineHeight: 2,
+                        }}>
+                            <li>R-R 間距短 → 充盈不足 → 收縮力弱 → <strong style={{color: 'var(--accent-rose)'}}>無法產生周邊脈搏</strong></li>
+                            <li>R-R 間距長 → 充盈足夠 → 正常收縮 → 可摸到脈搏</li>
+                        </ul>
+                    </div>
+                    
+                    <InfoBox type="warning" title="臨床重點">
+                        <strong>只量脈搏會低估真正心率！</strong>
+                        <br/>AF 病人必須同時監測 <strong style={{color:'var(--accent-teal)'}}>心電圖心率 (apical rate)</strong> 與脈搏
+                    </InfoBox>
+                </Card>
+                
+                <Card accent="var(--accent-emerald)" className="animate-in stagger-3">
+                    <SubTitle color="var(--accent-emerald)">Apical-Radial Pulse 測量法</SubTitle>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        {[
+                            { step: '1', text: '需要兩位護理師同時測量' },
+                            { step: '2', text: '一人聽診心尖部 (apical pulse)' },
+                            { step: '3', text: '一人觸診橈動脈 (radial pulse)' },
+                            { step: '4', text: '同時開始，測量整整 60 秒' },
+                            { step: '5', text: '計算差值 = 脈搏落差' },
+                        ].map((item, i) => (
+                            <div key={i} style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '12px',
+                                background: 'var(--bg-secondary)',
+                                padding: '12px 14px',
+                                borderRadius: '10px',
+                            }}>
+                                <div style={{
+                                    width: '28px',
+                                    height: '28px',
+                                    borderRadius: '50%',
+                                    background: 'var(--accent-emerald)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontWeight: 700,
+                                    fontSize: '0.8rem',
+                                    flexShrink: 0,
+                                }}>
+                                    {item.step}
+                                </div>
+                                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                                    {item.text}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                    
+                    <InfoBox type="info" title="脈搏落差的意義">
+                        落差越大 → 表示無效收縮越多 → <strong>心輸出量越差</strong>
+                        <br/>可作為評估 rate control 療效的指標之一
+                    </InfoBox>
+                </Card>
+            </div>
+        );
+        
+        // ============ Rate Control Tab ============
+        const RateControlTab = () => (
+            <div style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <Card accent="var(--accent-teal)" className="animate-in stagger-1">
+                    <SectionTitle icon={<Icons.Zap />}>心率控制目標</SectionTitle>
+                    
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '12px',
+                    }}>
+                        <div style={{
+                            background: 'linear-gradient(135deg, rgba(20,184,166,0.2) 0%, rgba(20,184,166,0.05) 100%)',
+                            borderRadius: '12px',
+                            padding: '16px',
+                            textAlign: 'center',
+                            border: '1px solid rgba(20,184,166,0.3)',
+                        }}>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                                寬鬆目標
+                            </div>
+                            <div style={{
+                                fontFamily: "'JetBrains Mono', monospace",
+                                fontSize: '1.8rem',
+                                fontWeight: 700,
+                                color: 'var(--accent-teal)',
+                            }}>
+                                &lt;110
+                            </div>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>bpm (休息時)</div>
+                            <div style={{
+                                fontSize: '0.7rem',
+                                color: 'var(--text-muted)',
+                                marginTop: '8px',
+                                padding: '6px',
+                                background: 'rgba(0,0,0,0.2)',
+                                borderRadius: '6px',
+                            }}>
+                                適用：多數 AF 病人
+                            </div>
+                        </div>
+                        
+                        <div style={{
+                            background: 'linear-gradient(135deg, rgba(59,130,246,0.2) 0%, rgba(59,130,246,0.05) 100%)',
+                            borderRadius: '12px',
+                            padding: '16px',
+                            textAlign: 'center',
+                            border: '1px solid rgba(59,130,246,0.3)',
+                        }}>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                                嚴格目標
+                            </div>
+                            <div style={{
+                                fontFamily: "'JetBrains Mono', monospace",
+                                fontSize: '1.8rem',
+                                fontWeight: 700,
+                                color: 'var(--accent-blue)',
+                            }}>
+                                &lt;80
+                            </div>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>bpm (休息時)</div>
+                            <div style={{
+                                fontSize: '0.7rem',
+                                color: 'var(--text-muted)',
+                                marginTop: '8px',
+                                padding: '6px',
+                                background: 'rgba(0,0,0,0.2)',
+                                borderRadius: '6px',
+                            }}>
+                                適用：有症狀/HFrEF
+                            </div>
+                        </div>
+                    </div>
+                </Card>
+                
+                <Card accent="var(--accent-violet)" className="animate-in stagger-2">
+                    <SubTitle color="var(--accent-violet)">藥物選擇策略</SubTitle>
+                    
+                    <div style={{
+                        background: 'var(--bg-secondary)',
+                        borderRadius: '12px',
+                        overflow: 'hidden',
+                    }}>
+                        <div style={{
+                            padding: '12px 14px',
+                            background: 'rgba(139,92,246,0.15)',
+                            borderBottom: '1px solid var(--border-color)',
+                            fontWeight: 600,
+                            fontSize: '0.85rem',
+                        }}>
+                            有心衰竭 (HFrEF, EF &lt;40%)
+                        </div>
+                        <div style={{
+                            padding: '14px',
+                            fontSize: '0.85rem',
+                            color: 'var(--text-secondary)',
+                        }}>
+                            ✓ Beta-blocker (低劑量起始)<br/>
+                            ✓ Digoxin<br/>
+                            ✓ Amiodarone (急性情況)<br/>
+                            <span style={{ color: 'var(--accent-rose)' }}>✗ Diltiazem / Verapamil (禁用)</span>
+                        </div>
+                    </div>
+                    
+                    <div style={{
+                        background: 'var(--bg-secondary)',
+                        borderRadius: '12px',
+                        overflow: 'hidden',
+                        marginTop: '12px',
+                    }}>
+                        <div style={{
+                            padding: '12px 14px',
+                            background: 'rgba(20,184,166,0.15)',
+                            borderBottom: '1px solid var(--border-color)',
+                            fontWeight: 600,
+                            fontSize: '0.85rem',
+                        }}>
+                            無心衰竭
+                        </div>
+                        <div style={{
+                            padding: '14px',
+                            fontSize: '0.85rem',
+                            color: 'var(--text-secondary)',
+                        }}>
+                            ✓ Beta-blocker (首選)<br/>
+                            ✓ Diltiazem / Verapamil<br/>
+                            ✓ Digoxin (輔助)
+                        </div>
+                    </div>
+                </Card>
+                
+                <Card accent="var(--accent-coral)" className="animate-in stagger-3">
+                    <SubTitle color="var(--accent-coral)">急性 AF 藥物比較</SubTitle>
+                    
+                    <div style={{ overflowX: 'auto' }}>
+                        <table style={{
+                            width: '100%',
+                            minWidth: '400px',
+                            borderCollapse: 'collapse',
+                            fontSize: '0.8rem',
+                        }}>
+                            <thead>
+                                <tr style={{ background: 'var(--bg-secondary)' }}>
+                                    <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid var(--border-color)' }}>藥物</th>
+                                    <th style={{ padding: '12px', textAlign: 'center', borderBottom: '1px solid var(--border-color)' }}>起效</th>
+                                    <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid var(--border-color)' }}>特點</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style={{ padding: '12px', borderBottom: '1px solid var(--border-color)', color: 'var(--accent-blue)', fontWeight: 600 }}>
+                                        Diltiazem IV
+                                    </td>
+                                    <td style={{ padding: '12px', textAlign: 'center', borderBottom: '1px solid var(--border-color)', fontFamily: "'JetBrains Mono', monospace" }}>
+                                        2-5 min
+                                    </td>
+                                    <td style={{ padding: '12px', borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}>
+                                        快速有效，避免用於HFrEF
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style={{ padding: '12px', borderBottom: '1px solid var(--border-color)', color: 'var(--accent-emerald)', fontWeight: 600 }}>
+                                        Digoxin
+                                    </td>
+                                    <td style={{ padding: '12px', textAlign: 'center', borderBottom: '1px solid var(--border-color)', fontFamily: "'JetBrains Mono', monospace" }}>
+                                        30-60 min
+                                    </td>
+                                    <td style={{ padding: '12px', borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}>
+                                        HF可用，起效慢
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style={{ padding: '12px', color: 'var(--accent-violet)', fontWeight: 600 }}>
+                                        Amiodarone
+                                    </td>
+                                    <td style={{ padding: '12px', textAlign: 'center', fontFamily: "'JetBrains Mono', monospace" }}>
+                                        數小時
+                                    </td>
+                                    <td style={{ padding: '12px', color: 'var(--text-secondary)' }}>
+                                        HF可用，副作用多
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <InfoBox type="danger" title="Diltiazem / Verapamil 禁忌">
+                        <ul style={{ margin: '0 0 0 16px', lineHeight: 2 }}>
+                            <li>HFrEF (EF &lt;40%)</li>
+                            <li>WPW + AF (會加速傳導致VF)</li>
+                            <li>嚴重低血壓 (SBP &lt;90)</li>
+                            <li>正在使用 IV β-blocker</li>
+                        </ul>
+                    </InfoBox>
+                </Card>
+            </div>
+        );
+        
+        // ============ Medications Tab ============
+        const MedicationsTab = () => {
+            const [activeTab, setActiveTab] = useState('digoxin');
+            
+            const medications = {
+                digoxin: {
+                    name: 'Digoxin',
+                    color: 'var(--accent-emerald)',
+                    mechanism: '增加迷走神經張力 → 減慢房室結傳導 → 降低心室率\n同時有正性肌力作用，適合心衰竭病人',
+                    dosing: [
+                        { label: '負荷劑量', value: '0.25-0.5 mg IV', note: '可分次給予' },
+                        { label: '維持劑量', value: '0.125-0.25 mg PO QD', note: '' },
+                        { label: '治療濃度', value: '0.5-1.0 ng/mL', note: '不要超過 1.2' },
+                    ],
+                    cautions: [
+                        '腎功能不全需調整劑量',
+                        '低血鉀會增加毒性',
+                        '毒性症狀：噁心、黃綠色視覺、心律不整',
+                        'Amiodarone 會增加 digoxin 濃度',
+                    ]
+                },
+                amiodarone: {
+                    name: 'Amiodarone',
+                    color: 'var(--accent-violet)',
+                    mechanism: 'Class III 抗心律不整藥，同時具有 I, II, IV 類效果\n可用於心率控制及節律控制',
+                    dosing: [
+                        { label: 'Loading (急性)', value: '150 mg / 10 min IV', note: '或 300 mg / 20-60 min' },
+                        { label: '維持輸注', value: '1 mg/min × 6hr → 0.5 mg/min × 18hr', note: '' },
+                        { label: '24hr 總量', value: '約 900-1200 mg', note: '' },
+                    ],
+                    cautions: [
+                        '⚠️ 必須用中央靜脈或大血管 (周邊會靜脈炎)',
+                        '給藥時監測血壓 (可能低血壓)',
+                        '長期：甲狀腺、肺纖維化、肝毒性、角膜沉積',
+                        '增加 Warfarin 及 Digoxin 濃度',
+                    ]
+                },
+                diltiazem: {
+                    name: 'Diltiazem',
+                    color: 'var(--accent-blue)',
+                    mechanism: 'Non-DHP CCB → 阻斷 L-type 鈣離子通道\n減慢房室結傳導，快速控制心室率',
+                    dosing: [
+                        { label: 'IV Bolus', value: '0.25 mg/kg (~15-20 mg) / 2 min', note: '可重複 0.35 mg/kg' },
+                        { label: 'IV 輸注', value: '5-15 mg/hr', note: '依心率調整' },
+                        { label: '口服', value: '30-60 mg TID-QID', note: '或 SR 120-360 mg QD' },
+                    ],
+                    cautions: [
+                        '❌ 禁用於 HFrEF',
+                        '❌ 禁用於 WPW + AF',
+                        '不可與 IV β-blocker 併用 (AV block)',
+                        '給藥後 5-10 分鐘監測血壓',
+                    ]
+                },
+                noac: {
+                    name: 'NOAC 新型口服抗凝血劑',
+                    color: 'var(--accent-amber)',
+                    mechanism: '預防非瓣膜性 AF 的中風\n依據 CHA₂DS₂-VASc 分數決定是否使用',
+                    dosing: [
+                        { label: 'Dabigatran 普栓達', value: '150 / 110 mg BID', note: '腎代謝' },
+                        { label: 'Rivaroxaban 拜瑞妥', value: '20 / 15 mg QD', note: '隨餐服用' },
+                        { label: 'Apixaban 艾乃欣', value: '5 / 2.5 mg BID', note: '減量標準最寬鬆' },
+                        { label: 'Edoxaban 里先安', value: '60 / 30 mg QD', note: '' },
+                    ],
+                    cautions: [
+                        '機械瓣膜 → 必須用 Warfarin',
+                        '中重度 MS → 必須用 Warfarin',
+                        '嚴重腎衰竭 (CrCl <15-30) 禁用',
+                        '減量標準：年齡 ≥80、體重 ≤60 kg、腎功能不全',
+                    ]
+                }
+            };
+            
+            const med = medications[activeTab];
+            
+            return (
+                <div style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <div style={{
+                        display: 'flex',
+                        gap: '8px',
+                        overflowX: 'auto',
+                        paddingBottom: '8px',
+                    }}>
+                        {Object.entries(medications).map(([key, m]) => (
+                            <button
+                                key={key}
+                                onClick={() => setActiveTab(key)}
+                                style={{
+                                    padding: '10px 16px',
+                                    borderRadius: '10px',
+                                    border: activeTab === key ? `2px solid ${m.color}` : '1px solid var(--border-color)',
+                                    background: activeTab === key ? `${m.color}20` : 'var(--bg-card)',
+                                    color: activeTab === key ? m.color : 'var(--text-secondary)',
+                                    fontSize: '0.85rem',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    whiteSpace: 'nowrap',
+                                    transition: 'all 0.2s',
+                                }}
+                            >
+                                {m.name.split(' ')[0]}
+                            </button>
+                        ))}
+                    </div>
+                    
+                    <Card accent={med.color} className="animate-in">
+                        <h2 style={{
+                            fontSize: '1.2rem',
+                            fontWeight: 700,
+                            color: med.color,
+                            marginBottom: '8px',
+                        }}>
+                            {med.name}
+                        </h2>
+                        
+                        <SubTitle color={med.color}>作用機轉</SubTitle>
+                        <div style={{
+                            background: 'var(--bg-secondary)',
+                            padding: '14px',
+                            borderRadius: '10px',
+                            fontSize: '0.85rem',
+                            color: 'var(--text-secondary)',
+                            whiteSpace: 'pre-line',
+                            lineHeight: 1.8,
+                        }}>
+                            {med.mechanism}
+                        </div>
+                        
+                        <SubTitle color={med.color}>劑量</SubTitle>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                            {med.dosing.map((d, i) => (
+                                <div key={i} style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    background: 'var(--bg-secondary)',
+                                    padding: '12px 14px',
+                                    borderRadius: '10px',
+                                    gap: '12px',
+                                }}>
+                                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', minWidth: '80px' }}>
+                                        {d.label}
+                                    </div>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <div style={{
+                                            fontFamily: "'JetBrains Mono', monospace",
+                                            fontSize: '0.9rem',
+                                            fontWeight: 600,
+                                            color: med.color,
+                                        }}>
+                                            {d.value}
+                                        </div>
+                                        {d.note && (
+                                            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                                                {d.note}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        
+                        <SubTitle color="var(--accent-rose)">注意事項</SubTitle>
+                        <div style={{
+                            background: 'rgba(244,63,94,0.08)',
+                            borderRadius: '10px',
+                            padding: '14px',
+                        }}>
+                            <ul style={{
+                                margin: 0,
+                                paddingLeft: '18px',
+                                fontSize: '0.85rem',
+                                color: 'var(--text-secondary)',
+                                lineHeight: 2,
+                            }}>
+                                {med.cautions.map((c, i) => (
+                                    <li key={i}>{c}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    </Card>
+                </div>
+            );
+        };
+        
+        // ============ CHA₂DS₂-VASc Calculator ============
+        const CHADSCalculator = () => {
+            const [scores, setScores] = useState({
+                chf: false,
+                htn: false,
+                age75: false,
+                dm: false,
+                stroke: false,
+                vascular: false,
+                age65: false,
+                female: false,
+            });
+            
+            const items = [
+                { key: 'chf', label: 'C - 心衰竭 / LV dysfunction', score: 1 },
+                { key: 'htn', label: 'H - 高血壓', score: 1 },
+                { key: 'age75', label: 'A₂ - 年齡 ≥75 歲', score: 2 },
+                { key: 'dm', label: 'D - 糖尿病', score: 1 },
+                { key: 'stroke', label: 'S₂ - 中風/TIA/栓塞病史', score: 2 },
+                { key: 'vascular', label: 'V - 血管疾病 (MI, PAD, Aortic plaque)', score: 1 },
+                { key: 'age65', label: 'A - 年齡 65-74 歲', score: 1 },
+                { key: 'female', label: 'Sc - 女性', score: 1 },
+            ];
+            
+            const totalScore = Object.entries(scores).reduce((sum, [key, checked]) => {
+                if (!checked) return sum;
+                const item = items.find(i => i.key === key);
+                return sum + (item ? item.score : 0);
+            }, 0);
+            
+            const getRisk = () => {
+                if (totalScore === 0) return { level: '低風險', rate: '0%', action: '可考慮不使用抗凝血劑', color: 'var(--accent-emerald)' };
+                if (totalScore === 1) return { level: '中風險', rate: '1.3%', action: '建議考慮抗凝血治療', color: 'var(--accent-amber)' };
+                return { level: '高風險', rate: '≥2.2%', action: '建議抗凝血治療 (NOAC優先)', color: 'var(--accent-rose)' };
+            };
+            
+            const risk = getRisk();
+            
+            return (
+                <div style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    <Card accent="var(--accent-coral)" className="animate-in stagger-1">
+                        <SectionTitle icon={<Icons.Calculator />}>CHA₂DS₂-VASc 中風風險評估</SectionTitle>
+                        
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            {items.map(item => (
+                                <label
+                                    key={item.key}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px',
+                                        padding: '14px',
+                                        background: scores[item.key] ? 'rgba(249,115,22,0.15)' : 'var(--bg-secondary)',
+                                        borderRadius: '10px',
+                                        cursor: 'pointer',
+                                        border: scores[item.key] ? '1px solid var(--accent-coral)' : '1px solid transparent',
+                                        transition: 'all 0.2s',
+                                    }}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={scores[item.key]}
+                                        onChange={(e) => setScores({...scores, [item.key]: e.target.checked})}
+                                        style={{ display: 'none' }}
+                                    />
+                                    <div style={{
+                                        width: '24px',
+                                        height: '24px',
+                                        borderRadius: '6px',
+                                        border: scores[item.key] ? 'none' : '2px solid var(--border-light)',
+                                        background: scores[item.key] ? 'var(--accent-coral)' : 'transparent',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        flexShrink: 0,
+                                    }}>
+                                        {scores[item.key] && <Icons.Check />}
+                                    </div>
+                                    <span style={{ flex: 1, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                                        {item.label}
+                                    </span>
+                                    <span style={{
+                                        fontFamily: "'JetBrains Mono', monospace",
+                                        fontSize: '0.85rem',
+                                        fontWeight: 600,
+                                        color: scores[item.key] ? 'var(--accent-coral)' : 'var(--text-muted)',
+                                    }}>
+                                        +{item.score}
+                                    </span>
+                                </label>
+                            ))}
+                        </div>
+                    </Card>
+                    
+                    <Card accent={risk.color} className="animate-in stagger-2">
+                        <div style={{ textAlign: 'center' }}>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                                總分
+                            </div>
+                            <div style={{
+                                fontFamily: "'JetBrains Mono', monospace",
+                                fontSize: '4rem',
+                                fontWeight: 700,
+                                color: risk.color,
+                                lineHeight: 1,
+                            }}>
+                                {totalScore}
+                            </div>
+                            <div style={{
+                                marginTop: '16px',
+                                padding: '12px 20px',
+                                background: `${risk.color}20`,
+                                borderRadius: '10px',
+                                display: 'inline-block',
+                            }}>
+                                <div style={{ fontWeight: 600, color: risk.color, fontSize: '1rem' }}>
+                                    {risk.level}
+                                </div>
+                                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                                    年中風率 {risk.rate}
+                                </div>
+                            </div>
+                            <div style={{
+                                marginTop: '16px',
+                                fontSize: '0.9rem',
+                                color: 'var(--text-secondary)',
+                                padding: '14px',
+                                background: 'var(--bg-secondary)',
+                                borderRadius: '10px',
+                            }}>
+                                {risk.action}
+                            </div>
+                        </div>
+                    </Card>
+                </div>
+            );
+        };
+        
+        // ============ HAS-BLED Calculator ============
+        const HASBLEDCalculator = () => {
+            const [scores, setScores] = useState({
+                htn: false,
+                abnormal_renal: false,
+                abnormal_liver: false,
+                stroke: false,
+                bleeding: false,
+                labile: false,
+                elderly: false,
+                drugs: false,
+                alcohol: false,
+            });
+            
+            const items = [
+                { key: 'htn', label: 'H - 高血壓 (SBP >160 mmHg)' },
+                { key: 'abnormal_renal', label: 'A - 腎功能異常 (透析/Cr >2.6)' },
+                { key: 'abnormal_liver', label: 'A - 肝功能異常 (肝硬化/Bil >2x/AST ALT >3x)' },
+                { key: 'stroke', label: 'S - 中風病史' },
+                { key: 'bleeding', label: 'B - 出血病史或傾向' },
+                { key: 'labile', label: 'L - INR 不穩定 (TTR <60%)' },
+                { key: 'elderly', label: 'E - 年齡 >65 歲' },
+                { key: 'drugs', label: 'D - 藥物 (抗血小板/NSAIDs)' },
+                { key: 'alcohol', label: 'D - 酒精 (≥8杯/週)' },
+            ];
+            
+            const totalScore = Object.values(scores).filter(Boolean).length;
+            
+            const getRisk = () => {
+                if (totalScore <= 2) return { 
+                    level: '低出血風險', 
+                    action: '可安全使用抗凝血劑', 
+                    color: 'var(--accent-emerald)' 
+                };
+                return { 
+                    level: '高出血風險', 
+                    action: '謹慎使用抗凝血劑，加強監測', 
+                    color: 'var(--accent-rose)' 
+                };
+            };
+            
+            const risk = getRisk();
+            
+            return (
+                <div style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    <Card accent="var(--accent-rose)" className="animate-in stagger-1">
+                        <SectionTitle icon={<Icons.Droplet />}>HAS-BLED 出血風險評估</SectionTitle>
+                        
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            {items.map(item => (
+                                <label
+                                    key={item.key}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px',
+                                        padding: '14px',
+                                        background: scores[item.key] ? 'rgba(244,63,94,0.15)' : 'var(--bg-secondary)',
+                                        borderRadius: '10px',
+                                        cursor: 'pointer',
+                                        border: scores[item.key] ? '1px solid var(--accent-rose)' : '1px solid transparent',
+                                        transition: 'all 0.2s',
+                                    }}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={scores[item.key]}
+                                        onChange={(e) => setScores({...scores, [item.key]: e.target.checked})}
+                                        style={{ display: 'none' }}
+                                    />
+                                    <div style={{
+                                        width: '24px',
+                                        height: '24px',
+                                        borderRadius: '6px',
+                                        border: scores[item.key] ? 'none' : '2px solid var(--border-light)',
+                                        background: scores[item.key] ? 'var(--accent-rose)' : 'transparent',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        flexShrink: 0,
+                                    }}>
+                                        {scores[item.key] && <Icons.Check />}
+                                    </div>
+                                    <span style={{ flex: 1, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                                        {item.label}
+                                    </span>
+                                    <span style={{
+                                        fontFamily: "'JetBrains Mono', monospace",
+                                        fontSize: '0.85rem',
+                                        fontWeight: 600,
+                                        color: scores[item.key] ? 'var(--accent-rose)' : 'var(--text-muted)',
+                                    }}>
+                                        +1
+                                    </span>
+                                </label>
+                            ))}
+                        </div>
+                    </Card>
+                    
+                    <Card accent={risk.color} className="animate-in stagger-2">
+                        <div style={{ textAlign: 'center' }}>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                                總分
+                            </div>
+                            <div style={{
+                                fontFamily: "'JetBrains Mono', monospace",
+                                fontSize: '4rem',
+                                fontWeight: 700,
+                                color: risk.color,
+                                lineHeight: 1,
+                            }}>
+                                {totalScore}
+                            </div>
+                            <div style={{
+                                marginTop: '16px',
+                                padding: '12px 20px',
+                                background: `${risk.color}20`,
+                                borderRadius: '10px',
+                                display: 'inline-block',
+                            }}>
+                                <div style={{ fontWeight: 600, color: risk.color, fontSize: '1rem' }}>
+                                    {risk.level}
+                                </div>
+                                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                                    {totalScore <= 2 ? '分數 0-2' : '分數 ≥3'}
+                                </div>
+                            </div>
+                            <div style={{
+                                marginTop: '16px',
+                                fontSize: '0.9rem',
+                                color: 'var(--text-secondary)',
+                                padding: '14px',
+                                background: 'var(--bg-secondary)',
+                                borderRadius: '10px',
+                            }}>
+                                {risk.action}
+                            </div>
+                        </div>
+                        
+                        <InfoBox type="warning" title="重要觀念">
+                            HAS-BLED ≥3 <strong style={{color:'var(--accent-amber)'}}>不是抗凝血的絕對禁忌</strong>
+                            <br/>而是提醒需要：
+                            <ul style={{ margin: '8px 0 0 16px', lineHeight: 1.8 }}>
+                                <li>更密切監測出血徵象</li>
+                                <li>矯正可逆因素 (控制血壓、停NSAIDs)</li>
+                                <li>選擇出血風險較低的 NOAC</li>
+                            </ul>
+                        </InfoBox>
+                    </Card>
+                </div>
+            );
+        };
+        
+        // ============ Main App ============
+        const App = () => {
+            const [currentTab, setCurrentTab] = useState('overview');
+            
+            const renderContent = () => {
+                switch(currentTab) {
+                    case 'overview': return <OverviewTab />;
+                    case 'pulse': return <PulseTab />;
+                    case 'rate': return <RateControlTab />;
+                    case 'meds': return <MedicationsTab />;
+                    case 'chads': return <CHADSCalculator />;
+                    case 'hasbled': return <HASBLEDCalculator />;
+                    default: return <OverviewTab />;
+                }
+            };
+            
+            return (
+                <div style={{ 
+                    minHeight: '100vh',
+                    paddingBottom: '40px',
+                }}>
+                    <Header currentTab={currentTab} setCurrentTab={setCurrentTab} />
+                    <main key={currentTab}>
+                        {renderContent()}
+                    </main>
+                    <footer style={{
+                        textAlign: 'center',
+                        padding: '20px',
+                        fontSize: '0.7rem',
+                        color: 'var(--text-muted)',
+                    }}>
+                        AF Ward Management Teaching Guide v2.0
+                        <br/>
+                        僅供教學參考，臨床決策請依實際情況判斷
+                    </footer>
+                </div>
+            );
+        };
+        
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
