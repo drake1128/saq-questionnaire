@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>導管室護理教學 - 交班與照護</title>
+    <title>導管室護理教學 - 整合版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
@@ -19,7 +19,6 @@
             --primary: #1e3a5f;
             --primary-light: #2d5a87;
             --accent: #e74c3c;
-            --accent-light: #ff6b5b;
             --success: #27ae60;
             --warning: #f39c12;
             --info: #3498db;
@@ -28,7 +27,6 @@
             --bg-card: #ffffff;
             --text-dark: #2c3e50;
             --text-muted: #7f8c8d;
-            --border: #ecf0f1;
             --shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
         
@@ -41,9 +39,7 @@
             -webkit-font-smoothing: antialiased;
         }
         
-        #root {
-            min-height: 100vh;
-        }
+        #root { min-height: 100vh; }
         
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -55,11 +51,6 @@
             to { opacity: 1; transform: translateX(0); }
         }
         
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        
         @keyframes heartbeat {
             0%, 100% { transform: scale(1); }
             25% { transform: scale(1.1); }
@@ -69,54 +60,29 @@
         
         @keyframes flash {
             0%, 50%, 100% { opacity: 1; }
-            25%, 75% { opacity: 0.5; }
+            25%, 75% { opacity: 0.6; }
         }
         
-        .fade-in {
-            animation: fadeIn 0.4s ease-out forwards;
-        }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        .slide-in { animation: slideIn 0.3s ease-out forwards; }
+        .flash-alert { animation: flash 2s infinite; }
         
-        .slide-in {
-            animation: slideIn 0.3s ease-out forwards;
-        }
-        
-        .flash-alert {
-            animation: flash 2s infinite;
-        }
-        
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 2px;
-        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
     </style>
 </head>
 <body>
     <div id="root"></div>
     
     <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+        const { useState, useEffect } = React;
 
         // ==================== SVG ICONS ====================
         const Icons = {
             Heart: () => (
                 <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                </svg>
-            ),
-            Clipboard: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-                </svg>
-            ),
-            Warning: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
                 </svg>
             ),
             Check: () => (
@@ -134,14 +100,14 @@
                     <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
                 </svg>
             ),
+            Warning: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                </svg>
+            ),
             Quiz: () => (
                 <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
                     <path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/>
-                </svg>
-            ),
-            Clock: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
                 </svg>
             ),
             Medical: () => (
@@ -149,24 +115,9 @@
                     <path d="M19 3H5c-1.1 0-1.99.9-1.99 2L3 19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 11h-4v4h-4v-4H6v-4h4V6h4v4h4v4z"/>
                 </svg>
             ),
-            Pulse: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/>
-                </svg>
-            ),
             Person: () => (
                 <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
                     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                </svg>
-            ),
-            AlertCircle: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-                </svg>
-            ),
-            Star: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
                 </svg>
             ),
             Bed: () => (
@@ -174,208 +125,161 @@
                     <path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z"/>
                 </svg>
             ),
-            Document: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
-                </svg>
-            ),
             Checklist: () => (
                 <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
                     <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                </svg>
-            ),
-            Emergency: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M19 3H5c-1.1 0-1.99.9-1.99 2L3 19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 11h-4v4h-4v-4H6v-4h4V6h4v4h4v4z"/>
-                </svg>
-            ),
-            Pills: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M4.22 11.29l6.07-6.07a4.5 4.5 0 0 1 6.36 6.37l-6.07 6.07a4.5 4.5 0 0 1-6.36-6.37zm1.42 4.95a2.5 2.5 0 0 0 3.53 0L12 13.41 10.59 12l-2.83 2.83a2.5 2.5 0 0 0 0 3.53v-.12zm14.14-11.02a4.5 4.5 0 0 0-6.36 0l-.71.71 6.37 6.37.71-.71a4.5 4.5 0 0 0 0-6.37z"/>
                 </svg>
             ),
             Exchange: () => (
                 <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
                     <path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/>
                 </svg>
-            ),
-            Sandbag: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM10 4h4v2h-4V4zm10 16H4V8h16v12z"/>
-                    <text x="12" y="16" textAnchor="middle" fontSize="8" fontWeight="bold" fill="currentColor">2kg</text>
-                </svg>
             )
         };
-
-        // ==================== CHECKLIST ITEM COMPONENT ====================
-        const ChecklistItem = ({ checked, onChange, children, important = false, critical = false }) => (
-            <div 
-                onClick={() => onChange(!checked)}
-                style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '12px',
-                    padding: '14px 16px',
-                    background: checked ? (critical ? '#fee2e2' : important ? '#fef3c7' : '#d1fae5') : 'white',
-                    borderRadius: '12px',
-                    marginBottom: '8px',
-                    cursor: 'pointer',
-                    border: `2px solid ${checked ? (critical ? '#fca5a5' : important ? '#fcd34d' : '#6ee7b7') : '#e5e7eb'}`,
-                    transition: 'all 0.2s ease'
-                }}
-            >
-                <div style={{
-                    width: '24px',
-                    height: '24px',
-                    borderRadius: '6px',
-                    border: `2px solid ${checked ? (critical ? '#dc2626' : important ? '#f59e0b' : '#10b981') : '#d1d5db'}`,
-                    background: checked ? (critical ? '#dc2626' : important ? '#f59e0b' : '#10b981') : 'white',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                    marginTop: '2px',
-                    color: 'white'
-                }}>
-                    {checked && <Icons.Check />}
-                </div>
-                <div style={{ 
-                    flex: 1,
-                    color: checked ? '#374151' : '#6b7280',
-                    fontSize: '15px',
-                    lineHeight: '1.5'
-                }}>
-                    {children}
-                </div>
-            </div>
-        );
-
-        // ==================== INFO CARD COMPONENT ====================
-        const InfoCard = ({ title, icon, color, children }) => (
-            <div style={{
-                background: 'white',
-                borderRadius: '16px',
-                padding: '20px',
-                marginBottom: '16px',
-                boxShadow: 'var(--shadow)',
-                borderTop: `4px solid ${color}`
-            }}>
-                <h3 style={{ 
-                    fontSize: '17px', 
-                    fontWeight: '600', 
-                    marginBottom: '16px',
-                    color: '#1f2937',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px'
-                }}>
-                    <span style={{ color }}>{icon}</span>
-                    {title}
-                </h3>
-                {children}
-            </div>
-        );
-
-        // ==================== TAG COMPONENT ====================
-        const Tag = ({ children, color = '#3b82f6' }) => (
-            <span style={{
-                display: 'inline-block',
-                padding: '4px 10px',
-                background: `${color}15`,
-                color: color,
-                borderRadius: '6px',
-                fontSize: '13px',
-                fontWeight: '500',
-                marginRight: '6px',
-                marginBottom: '6px'
-            }}>
-                {children}
-            </span>
-        );
-
-        // ==================== CRITICAL ALERT COMPONENT ====================
-        const CriticalAlert = ({ children, icon = "⚠️" }) => (
-            <div style={{
-                background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
-                color: 'white',
-                padding: '16px',
-                borderRadius: '12px',
-                marginBottom: '16px',
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '12px',
-                boxShadow: '0 4px 15px rgba(220, 38, 38, 0.3)'
-            }} className="flash-alert">
-                <span style={{ fontSize: '24px' }}>{icon}</span>
-                <div style={{ flex: 1 }}>{children}</div>
-            </div>
-        );
 
         // ==================== MAIN APP ====================
         const App = () => {
             const [currentPage, setCurrentPage] = useState('home');
             
-            // Pre-cath checklist state
+            // 術前檢查清單
             const [preCathChecks, setPreCathChecks] = useState({
+                sandbag: false,
                 consent: false,
                 allergies: false,
                 clothes: false,
                 dentures: false,
                 hearingAid: false,
                 noShaving: false,
-                ivLine: false,
-                sandbag: false
-            });
-            
-            // Patient info state
-            const [patientInfo, setPatientInfo] = useState({
-                diagnosis: '',
-                hasSTEMI: false,
-                hasNSTEMI: false,
-                hasUA: false,
-                attendingMD: '',
-                hasFever: false,
-                creatinine: '',
-                egfr: '',
-                lvef: '',
-                hasAS: false,
-                hasMR: false,
-                hasMS: false,
-                thalliumResult: '',
-                treadmillResult: ''
+                ivLine: false
             });
 
-            // Post-cath treatment state
-            const [treatmentInfo, setTreatmentInfo] = useState({
-                intervention: '',
-                stentLocations: [],
-                sheathSite: '',
-                sheathRemoved: false,
-                actCheckTime: '',
-                actThreshold: '',
-                compressionTime: '',
-                bedRestHours: '',
-                antiplateletLoading: [],
-                maintenanceMeds: [],
-                icuAdmission: false,
-                icuHours: '',
-                vitalSignsFreq: '',
-                needECG: false,
-                labCheckTime: '',
-                ppiReminder: false
+            // 測驗狀態
+            const [quizState, setQuizState] = useState({
+                currentQ: 0,
+                score: 0,
+                selected: null,
+                showResult: false,
+                completed: false
             });
 
             const menuItems = [
                 { id: 'pre-cath', icon: <Icons.Checklist />, title: '術前準備', subtitle: 'Pre-Cath Checklist', color: '#3b82f6' },
-                { id: 'patient-handoff', icon: <Icons.Person />, title: '病人交班', subtitle: '病史/生命徵象/用藥', color: '#8b5cf6' },
-                { id: 'transfer-note', icon: <Icons.Document />, title: '交班單查核表', subtitle: 'Cath Lab Transfer Note', color: '#06b6d4' },
-                { id: 'post-cath', icon: <Icons.Exchange />, title: '術後交班', subtitle: '治療結果與藥物', color: '#10b981' },
+                { id: 'patient-handoff', icon: <Icons.Person />, title: '病人交班', subtitle: '診斷與檢查結果', color: '#8b5cf6' },
+                { id: 'procedure-handoff', icon: <Icons.Bed />, title: '術式交班', subtitle: '配合術式注意事項', color: '#06b6d4' },
+                { id: 'post-cath', icon: <Icons.Exchange />, title: '術後交班', subtitle: '治療結果與照護', color: '#10b981' },
                 { id: 'wound-care', icon: <Icons.Medical />, title: '傷口護理', subtitle: '加壓止血與評估', color: '#f59e0b' },
                 { id: 'complications', icon: <Icons.Warning />, title: '併發症教學', subtitle: '血管併發症識別', color: '#ef4444' },
                 { id: 'quiz', icon: <Icons.Quiz />, title: '自我測驗', subtitle: '綜合能力評量', color: '#ec4899' }
             ];
 
-            // ==================== HEADER COMPONENT ====================
+            // ==================== CRITICAL ALERT ====================
+            const CriticalAlert = ({ icon, children }) => (
+                <div style={{
+                    background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
+                    borderRadius: '16px',
+                    padding: '18px',
+                    marginBottom: '20px',
+                    color: 'white',
+                    display: 'flex',
+                    gap: '14px',
+                    alignItems: 'flex-start',
+                    boxShadow: '0 4px 15px rgba(220, 38, 38, 0.3)'
+                }} className="flash-alert">
+                    <span style={{ fontSize: '28px', flexShrink: 0 }}>{icon}</span>
+                    <div style={{ flex: 1 }}>{children}</div>
+                </div>
+            );
+
+            // ==================== CHECKLIST ITEM ====================
+            const ChecklistItem = ({ checked, onChange, children, important = false, critical = false }) => (
+                <div 
+                    onClick={() => onChange(!checked)}
+                    style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '12px',
+                        padding: '14px 16px',
+                        background: checked ? (critical ? '#fee2e2' : important ? '#fef3c7' : '#d1fae5') : 'white',
+                        borderRadius: '12px',
+                        marginBottom: '8px',
+                        cursor: 'pointer',
+                        border: `2px solid ${checked ? (critical ? '#fca5a5' : important ? '#fcd34d' : '#6ee7b7') : '#e5e7eb'}`,
+                        transition: 'all 0.2s ease'
+                    }}
+                >
+                    <div style={{
+                        width: '24px',
+                        height: '24px',
+                        borderRadius: '6px',
+                        border: `2px solid ${checked ? (critical ? '#dc2626' : important ? '#f59e0b' : '#10b981') : '#d1d5db'}`,
+                        background: checked ? (critical ? '#dc2626' : important ? '#f59e0b' : '#10b981') : 'white',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        marginTop: '2px',
+                        color: 'white'
+                    }}>
+                        {checked && <Icons.Check />}
+                    </div>
+                    <div style={{ 
+                        flex: 1,
+                        color: checked ? '#374151' : '#6b7280',
+                        fontSize: '15px',
+                        lineHeight: '1.5'
+                    }}>
+                        {children}
+                    </div>
+                </div>
+            );
+
+            // ==================== INFO CARD ====================
+            const InfoCard = ({ title, icon, color, children }) => (
+                <div style={{
+                    background: 'white',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    marginBottom: '16px',
+                    boxShadow: 'var(--shadow)',
+                    borderTop: `4px solid ${color}`
+                }}>
+                    <h3 style={{ 
+                        fontSize: '17px', 
+                        fontWeight: '600', 
+                        marginBottom: '16px',
+                        color: '#1f2937',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px'
+                    }}>
+                        <span style={{ color }}>{icon}</span>
+                        {title}
+                    </h3>
+                    {children}
+                </div>
+            );
+
+            // ==================== TOGGLE BUTTON ====================
+            const ToggleButton = ({ active, onClick, children, color = '#3b82f6' }) => (
+                <button
+                    onClick={onClick}
+                    style={{
+                        padding: '12px 18px',
+                        borderRadius: '10px',
+                        border: `2px solid ${active ? color : '#e5e7eb'}`,
+                        background: active ? `${color}15` : 'white',
+                        color: active ? color : '#6b7280',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease'
+                    }}
+                >
+                    {active && '✓ '}{children}
+                </button>
+            );
+
+            // ==================== HEADER ====================
             const Header = ({ title, subtitle, showBack = false }) => (
                 <div style={{
                     background: 'linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%)',
@@ -408,12 +312,7 @@
                             <Icons.Back />
                         </button>
                     )}
-                    <h1 style={{ 
-                        textAlign: 'center', 
-                        fontSize: '20px', 
-                        fontWeight: '600',
-                        marginBottom: subtitle ? '6px' : '0'
-                    }}>
+                    <h1 style={{ textAlign: 'center', fontSize: '20px', fontWeight: '600', marginBottom: subtitle ? '6px' : '0' }}>
                         {title}
                     </h1>
                     {subtitle && (
@@ -434,11 +333,7 @@
                         marginBottom: '25px',
                         textAlign: 'center'
                     }}>
-                        <div style={{ 
-                            fontSize: '50px', 
-                            marginBottom: '15px',
-                            animation: 'heartbeat 2s infinite'
-                        }}>
+                        <div style={{ fontSize: '50px', marginBottom: '15px', animation: 'heartbeat 2s infinite' }}>
                             🫀
                         </div>
                         <h1 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '8px' }}>
@@ -455,7 +350,7 @@
                             display: 'inline-block',
                             fontSize: '13px'
                         }}>
-                            📚 交班工作與術後護理
+                            📚 交班工作與術後護理 - 整合版
                         </div>
                     </div>
                     
@@ -478,8 +373,7 @@
                                     boxShadow: 'var(--shadow)',
                                     cursor: 'pointer',
                                     textAlign: 'left',
-                                    animationDelay: `${idx * 0.08}s`,
-                                    transition: 'transform 0.2s ease'
+                                    animationDelay: `${idx * 0.08}s`
                                 }}
                             >
                                 <div style={{
@@ -509,14 +403,8 @@
                             </button>
                         ))}
                         
-                        <div style={{ 
-                            textAlign: 'center', 
-                            padding: '30px 0',
-                            color: '#7f8c8d',
-                            fontSize: '12px'
-                        }}>
-                            <div>心臟內科護理教學</div>
-                            <div style={{ marginTop: '4px' }}>Based on Clinical Protocols</div>
+                        <div style={{ textAlign: 'center', padding: '20px 0', color: '#7f8c8d', fontSize: '12px' }}>
+                            心臟內科護理教學 - 整合版
                         </div>
                     </div>
                 </div>
@@ -535,17 +423,15 @@
                     <div className="fade-in">
                         <Header title="術前準備 Checklist" subtitle="Pre-Catheterization Preparation" showBack />
                         <div style={{ padding: '0 16px' }}>
-                            {/* 砂包重要提醒 */}
                             <CriticalAlert icon="🏋️">
                                 <div style={{ fontWeight: '700', fontSize: '16px', marginBottom: '4px' }}>
                                     請準備 2kg 砂包至導管室！
                                 </div>
                                 <div style={{ fontSize: '13px', opacity: 0.95 }}>
-                                    術後 femoral sheath 需使用砂包加壓止血，請務必攜帶
+                                    術後 femoral sheath 需使用砂包加壓止血
                                 </div>
                             </CriticalAlert>
 
-                            {/* Progress */}
                             <div style={{
                                 background: 'white',
                                 borderRadius: '12px',
@@ -553,105 +439,68 @@
                                 marginBottom: '20px',
                                 boxShadow: 'var(--shadow)'
                             }}>
-                                <div style={{ 
-                                    display: 'flex', 
-                                    justifyContent: 'space-between',
-                                    marginBottom: '8px'
-                                }}>
-                                    <span style={{ fontWeight: '600', color: '#374151' }}>完成進度</span>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                    <span style={{ fontWeight: '600' }}>完成進度</span>
                                     <span style={{ color: '#3b82f6', fontWeight: '600' }}>{checkedCount}/8</span>
                                 </div>
-                                <div style={{ 
-                                    height: '8px', 
-                                    background: '#e5e7eb', 
-                                    borderRadius: '4px',
-                                    overflow: 'hidden'
-                                }}>
+                                <div style={{ height: '8px', background: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' }}>
                                     <div style={{
                                         height: '100%',
                                         width: `${(checkedCount / 8) * 100}%`,
                                         background: allChecked ? '#10b981' : 'linear-gradient(90deg, #3b82f6, #8b5cf6)',
-                                        borderRadius: '4px',
                                         transition: 'width 0.3s ease'
                                     }}/>
                                 </div>
                             </div>
                             
-                            {/* 物品準備 - 砂包優先 */}
                             <InfoCard title="物品準備" icon="📦" color="#dc2626">
-                                <ChecklistItem 
-                                    checked={preCathChecks.sandbag} 
-                                    onChange={() => updateCheck('sandbag')}
-                                    critical
-                                >
+                                <ChecklistItem checked={preCathChecks.sandbag} onChange={() => updateCheck('sandbag')} critical>
                                     <strong>⚠️ 準備 2kg 砂包</strong>
-                                    <div style={{ fontSize: '12px', color: '#dc2626', marginTop: '4px', fontWeight: '500' }}>
-                                        【重要】攜帶至導管室，術後 femoral 穿刺止血必備
+                                    <div style={{ fontSize: '12px', color: '#dc2626', marginTop: '4px' }}>
+                                        【重要】攜帶至導管室，術後止血必備
                                     </div>
                                 </ChecklistItem>
                             </InfoCard>
 
-                            {/* 文件確認 */}
                             <InfoCard title="文件確認" icon="📋" color="#3b82f6">
-                                <ChecklistItem 
-                                    checked={preCathChecks.consent} 
-                                    onChange={() => updateCheck('consent')}
-                                    important
-                                >
+                                <ChecklistItem checked={preCathChecks.consent} onChange={() => updateCheck('consent')} important>
                                     <strong>確認同意書</strong>已簽署完成
                                     <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
                                         包含：導管檢查/治療同意書、麻醉同意書
                                     </div>
                                 </ChecklistItem>
                                 
-                                <ChecklistItem 
-                                    checked={preCathChecks.allergies} 
-                                    onChange={() => updateCheck('allergies')}
-                                    critical
-                                >
+                                <ChecklistItem checked={preCathChecks.allergies} onChange={() => updateCheck('allergies')} critical>
                                     <strong>確認過敏史</strong>
                                     <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                                        特別注意：顯影劑過敏、Iodine過敏
+                                        特別注意：顯影劑過敏、Iodine 過敏
                                     </div>
                                 </ChecklistItem>
                             </InfoCard>
                             
-                            {/* 病人準備 */}
                             <InfoCard title="病人準備" icon="👤" color="#8b5cf6">
-                                <ChecklistItem 
-                                    checked={preCathChecks.clothes} 
-                                    onChange={() => updateCheck('clothes')}
-                                >
+                                <ChecklistItem checked={preCathChecks.clothes} onChange={() => updateCheck('clothes')}>
                                     <strong>更換手術衣</strong>
                                     <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
                                         脫除內衣褲，穿著醫院手術衣
                                     </div>
                                 </ChecklistItem>
                                 
-                                <ChecklistItem 
-                                    checked={preCathChecks.dentures} 
-                                    onChange={() => updateCheck('dentures')}
-                                >
+                                <ChecklistItem checked={preCathChecks.dentures} onChange={() => updateCheck('dentures')}>
                                     <strong>取下假牙</strong>
                                     <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
                                         確認活動假牙已取下並妥善保管
                                     </div>
                                 </ChecklistItem>
                                 
-                                <ChecklistItem 
-                                    checked={preCathChecks.hearingAid} 
-                                    onChange={() => updateCheck('hearingAid')}
-                                >
+                                <ChecklistItem checked={preCathChecks.hearingAid} onChange={() => updateCheck('hearingAid')}>
                                     <strong>確認助聽器</strong>
                                     <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
                                         評估是否需保留以利術中溝通
                                     </div>
                                 </ChecklistItem>
                                 
-                                <ChecklistItem 
-                                    checked={preCathChecks.noShaving} 
-                                    onChange={() => updateCheck('noShaving')}
-                                >
+                                <ChecklistItem checked={preCathChecks.noShaving} onChange={() => updateCheck('noShaving')}>
                                     <strong>不需剃毛</strong>
                                     <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
                                         現行規範：穿刺部位不需事先剃毛
@@ -659,12 +508,8 @@
                                 </ChecklistItem>
                             </InfoCard>
                             
-                            {/* 醫療準備 */}
                             <InfoCard title="醫療準備" icon="💉" color="#10b981">
-                                <ChecklistItem 
-                                    checked={preCathChecks.ivLine} 
-                                    onChange={() => updateCheck('ivLine')}
-                                >
+                                <ChecklistItem checked={preCathChecks.ivLine} onChange={() => updateCheck('ivLine')}>
                                     <strong>建立靜脈通路</strong>
                                     <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
                                         首選左手：20G 或更大，避免同側 AVF
@@ -672,7 +517,6 @@
                                 </ChecklistItem>
                             </InfoCard>
 
-                            {/* 交班提醒 */}
                             <div style={{
                                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                 borderRadius: '16px',
@@ -680,9 +524,7 @@
                                 color: 'white',
                                 marginBottom: '20px'
                             }}>
-                                <h3 style={{ fontWeight: '600', marginBottom: '12px' }}>
-                                    📋 術前交班重點
-                                </h3>
+                                <h3 style={{ fontWeight: '600', marginBottom: '12px' }}>📋 術前交班重點</h3>
                                 <div style={{
                                     background: 'rgba(255,255,255,0.15)',
                                     borderRadius: '10px',
@@ -696,6 +538,24 @@
                                     <div><strong>4.</strong> <span style={{color: '#fcd34d'}}>確認 2kg 砂包已準備</span></div>
                                 </div>
                             </div>
+
+                            {allChecked && (
+                                <div style={{
+                                    background: '#d1fae5',
+                                    borderRadius: '16px',
+                                    padding: '20px',
+                                    textAlign: 'center',
+                                    borderLeft: '4px solid #10b981'
+                                }} className="fade-in">
+                                    <div style={{ fontSize: '32px', marginBottom: '10px' }}>✅</div>
+                                    <div style={{ fontWeight: '600', color: '#065f46', fontSize: '16px' }}>
+                                        術前準備完成！
+                                    </div>
+                                    <div style={{ color: '#047857', fontSize: '14px', marginTop: '6px' }}>
+                                        可以準備送往導管室
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 );
@@ -703,1188 +563,343 @@
 
             // ==================== PATIENT HANDOFF PAGE ====================
             const PatientHandoffPage = () => {
+                const [diagnosis, setDiagnosis] = useState([]);
+                const [valves, setValves] = useState([]);
+                const [fever, setFever] = useState(false);
+                const [kidneyConcern, setKidneyConcern] = useState(false);
+                const [lvefConcern, setLvefConcern] = useState(false);
+                
+                const toggleItem = (arr, setArr, item) => {
+                    setArr(prev => prev.includes(item) ? prev.filter(x => x !== item) : [...prev, item]);
+                };
+                
                 return (
                     <div className="fade-in">
-                        <Header title="病人交班" subtitle="Patient Handoff Information" showBack />
+                        <Header title="病人交班" subtitle="Patient Information Handoff" showBack />
                         <div style={{ padding: '0 16px' }}>
-                            {/* 穿刺狀態及生命徵象 */}
-                            <InfoCard title="穿刺狀態及生命徵象" icon="💓" color="#ef4444">
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
-                                    {[
-                                        { label: 'BT (體溫)', unit: '°C', icon: '🌡️' },
-                                        { label: 'HR (心率)', unit: '/min', icon: '💗' },
-                                        { label: 'BP (血壓)', unit: 'mmHg', icon: '🩸' },
-                                        { label: 'RR (呼吸)', unit: '/min', icon: '🫁' }
-                                    ].map(item => (
-                                        <div key={item.label} style={{
-                                            padding: '14px',
-                                            background: '#f9fafb',
-                                            borderRadius: '10px',
-                                            textAlign: 'center'
-                                        }}>
-                                            <div style={{ fontSize: '20px', marginBottom: '6px' }}>{item.icon}</div>
-                                            <div style={{ fontSize: '12px', color: '#6b7280' }}>{item.label}</div>
-                                            <div style={{ fontSize: '11px', color: '#9ca3af' }}>{item.unit}</div>
-                                        </div>
+                            <InfoCard title="診斷分類" icon="🏥" color="#dc2626">
+                                <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '10px' }}>CAD / ACS 分類：</div>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '16px' }}>
+                                    {['STEMI', 'NSTEMI', 'UA', 'Stable CAD', 'PAOD', 'CHF'].map(item => (
+                                        <ToggleButton
+                                            key={item}
+                                            active={diagnosis.includes(item)}
+                                            onClick={() => toggleItem(diagnosis, setDiagnosis, item)}
+                                            color="#dc2626"
+                                        >
+                                            {item}
+                                        </ToggleButton>
                                     ))}
                                 </div>
-                                <div style={{
-                                    marginTop: '12px',
-                                    padding: '12px',
-                                    background: '#fef3c7',
-                                    borderRadius: '10px',
-                                    fontSize: '13px',
-                                    color: '#92400e'
-                                }}>
-                                    <strong>💡 提醒：</strong>記錄術前基礎值，術後比較評估
-                                </div>
-                            </InfoCard>
-
-                            {/* 病史 */}
-                            <InfoCard title="病患過去病史" icon="📝" color="#8b5cf6">
-                                <div style={{ marginBottom: '16px' }}>
-                                    <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '10px' }}>
-                                        主要診斷 / 臨床狀況
-                                    </div>
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                        {[
-                                            { id: 'STEMI', label: 'STEMI', color: '#dc2626' },
-                                            { id: 'NSTEACS', label: 'NSTE-ACS', color: '#ea580c' },
-                                            { id: 'StableCAD', label: 'Stable CAD', color: '#3b82f6' },
-                                            { id: 'LM', label: 'LM病變', color: '#7c3aed' },
-                                            { id: 'PAOD', label: 'PAOD', color: '#0891b2' },
-                                            { id: 'CHF', label: 'CHF', color: '#059669' }
-                                        ].map(item => (
-                                            <button
-                                                key={item.id}
-                                                onClick={() => setPatientInfo(p => ({
-                                                    ...p, 
-                                                    [`has${item.id}`]: !p[`has${item.id}`]
-                                                }))}
-                                                style={{
-                                                    padding: '10px 16px',
-                                                    borderRadius: '20px',
-                                                    border: `2px solid ${patientInfo[`has${item.id}`] ? item.color : '#e5e7eb'}`,
-                                                    background: patientInfo[`has${item.id}`] ? `${item.color}15` : 'white',
-                                                    color: patientInfo[`has${item.id}`] ? item.color : '#6b7280',
-                                                    fontSize: '14px',
-                                                    fontWeight: '500',
-                                                    cursor: 'pointer'
-                                                }}
-                                            >
-                                                {item.label}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
                                 
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                                    <div style={{ padding: '14px', background: '#f3f4f6', borderRadius: '10px' }}>
-                                        <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px' }}>🧪 Creatinine</div>
-                                        <input 
-                                            type="number" 
-                                            step="0.1"
-                                            placeholder="mg/dL"
-                                            value={patientInfo.creatinine}
-                                            onChange={(e) => setPatientInfo(p => ({...p, creatinine: e.target.value}))}
-                                            style={{
-                                                width: '100%',
-                                                padding: '8px',
-                                                border: '1px solid #d1d5db',
-                                                borderRadius: '6px',
-                                                fontSize: '14px'
-                                            }}
-                                        />
-                                    </div>
-                                    <div style={{ padding: '14px', background: '#f3f4f6', borderRadius: '10px' }}>
-                                        <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px' }}>📊 eGFR</div>
-                                        <input 
-                                            type="number"
-                                            placeholder="mL/min"
-                                            value={patientInfo.egfr}
-                                            onChange={(e) => setPatientInfo(p => ({...p, egfr: e.target.value}))}
-                                            style={{
-                                                width: '100%',
-                                                padding: '8px',
-                                                border: '1px solid #d1d5db',
-                                                borderRadius: '6px',
-                                                fontSize: '14px'
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div style={{ marginTop: '12px' }}>
-                                    <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '10px' }}>
-                                        心臟超音波結果
-                                    </div>
-                                    <div style={{
-                                        padding: '14px',
-                                        background: '#f3f4f6',
-                                        borderRadius: '10px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '10px'
-                                    }}>
-                                        <span style={{ fontSize: '14px' }}>LVEF:</span>
-                                        <input 
-                                            type="number"
-                                            placeholder="--"
-                                            value={patientInfo.lvef}
-                                            onChange={(e) => setPatientInfo(p => ({...p, lvef: e.target.value}))}
-                                            style={{
-                                                border: 'none',
-                                                background: 'transparent',
-                                                fontSize: '24px',
-                                                fontWeight: '700',
-                                                width: '70px',
-                                                outline: 'none',
-                                                color: parseInt(patientInfo.lvef) < 40 ? '#dc2626' : '#374151'
-                                            }}
-                                        />
-                                        <span style={{ fontSize: '18px', color: '#6b7280' }}>%</span>
-                                        {patientInfo.lvef && (
-                                            <span style={{
-                                                padding: '4px 10px',
-                                                borderRadius: '20px',
-                                                fontSize: '12px',
-                                                fontWeight: '500',
-                                                background: parseInt(patientInfo.lvef) >= 50 ? '#d1fae5' : 
-                                                           parseInt(patientInfo.lvef) >= 40 ? '#fef3c7' : '#fee2e2',
-                                                color: parseInt(patientInfo.lvef) >= 50 ? '#065f46' : 
-                                                       parseInt(patientInfo.lvef) >= 40 ? '#92400e' : '#991b1b'
-                                            }}>
-                                                {parseInt(patientInfo.lvef) >= 50 ? 'Normal' : 
-                                                 parseInt(patientInfo.lvef) >= 40 ? 'Mild ↓' : 'Reduced'}
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-                            </InfoCard>
-
-                            {/* 現服藥狀況 */}
-                            <InfoCard title="現服藥狀況" icon="💊" color="#10b981">
-                                <div style={{ fontSize: '14px', lineHeight: '1.8', color: '#374151' }}>
-                                    <div style={{ marginBottom: '12px' }}>
-                                        <strong>抗血小板藥物：</strong>
-                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
-                                            {['Aspirin', 'Plavix', 'Brilinta', 'Efient'].map(med => (
-                                                <Tag key={med} color="#10b981">{med}</Tag>
-                                            ))}
-                                        </div>
-                                    </div>
-                                    <div style={{ marginBottom: '12px' }}>
-                                        <strong>抗凝血藥物：</strong>
-                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
-                                            {['Warfarin', 'Eliquis', 'Xarelto', 'Pradaxa'].map(med => (
-                                                <Tag key={med} color="#f59e0b">{med}</Tag>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
                                 <div style={{
-                                    marginTop: '12px',
-                                    padding: '12px',
-                                    background: '#fee2e2',
+                                    background: '#fef2f2',
                                     borderRadius: '10px',
+                                    padding: '14px',
                                     fontSize: '13px',
                                     color: '#991b1b'
                                 }}>
-                                    <strong>⚠️ 注意：</strong>記錄用藥時間，確認是否需停藥
+                                    <strong>⚠️ ACS 提醒：</strong>
+                                    <div style={{ marginTop: '6px' }}>
+                                        • STEMI：立即 Primary PCI 為首選治療<br/>
+                                        • NSTEMI/UA：依風險分層決定介入時機
+                                    </div>
                                 </div>
                             </InfoCard>
-
-                            {/* 主治醫師 */}
-                            <InfoCard title="主治醫師" icon="👨‍⚕️" color="#6366f1">
-                                <input 
-                                    type="text"
-                                    placeholder="輸入主治醫師姓名"
-                                    value={patientInfo.attendingMD}
-                                    onChange={(e) => setPatientInfo(p => ({...p, attendingMD: e.target.value}))}
-                                    style={{
-                                        width: '100%',
-                                        padding: '14px',
-                                        border: '2px solid #e5e7eb',
-                                        borderRadius: '10px',
-                                        fontSize: '16px',
-                                        outline: 'none'
-                                    }}
-                                />
-                            </InfoCard>
-                        </div>
-                    </div>
-                );
-            };
-
-            // ==================== TRANSFER NOTE PAGE (新增) ====================
-            const TransferNotePage = () => {
-                const [noteData, setNoteData] = useState({
-                    date: '',
-                    time: '',
-                    diagnosis: '',
-                    vesselDisease: '',
-                    hasLM: false,
-                    lmVesselDisease: '',
-                    pciDone: false,
-                    pciLocation: [],
-                    stentDone: false,
-                    stentLocation: [],
-                    sheathSite: '',
-                    sheathRemoved: true,
-                    actCheckTime: '',
-                    actThreshold: '150',
-                    // Loading drugs
-                    aspirinLoading: false,
-                    aspirinGiven: false,
-                    plavixLoading: false,
-                    plavixDose: '300',
-                    plavixGiven: false,
-                    efientLoading: false,
-                    efientGiven: false,
-                    brilintaLoading: false,
-                    brilintaGiven: false,
-                    // Maintenance
-                    bokeyMaintenance: false,
-                    plavixMaintenance: false,
-                    brilintaMaintenance: false,
-                    efientMaintenance: false,
-                    // Anticoagulation
-                    clexane: false,
-                    clexaneDose: '',
-                    clexaneTime: '',
-                    heparinInfusion: false,
-                    heparinUnit: '',
-                    heparinHours: '',
-                    aggrastatInfusion: false,
-                    aggrastatRate: '',
-                    aggrastatHours: '',
-                    millisrolInfusion: false,
-                    millisrolRate: '',
-                    nsFlush: false,
-                    nsVolume: '',
-                    nsHours: '',
-                    // Post-cath orders
-                    icuAdmission: false,
-                    icuHours: '',
-                    icuTransferTime: '',
-                    vsFreq15: '',
-                    vsFreq30: '',
-                    needECG: false,
-                    bedRestHours: '',
-                    bedRestStart: '',
-                    bedRestEnd: '',
-                    compressionSite: '',
-                    compressionHours: '',
-                    compressionStart: '',
-                    compressionEnd: '',
-                    restraint: false,
-                    restraintSide: '',
-                    restraintHours: '',
-                    labCheck: false,
-                    labCheckTime: '',
-                    specialNote: ''
-                });
-
-                const updateNote = (key, value) => {
-                    setNoteData(prev => ({ ...prev, [key]: value }));
-                };
-
-                const toggleArray = (key, item) => {
-                    setNoteData(prev => ({
-                        ...prev,
-                        [key]: prev[key].includes(item) 
-                            ? prev[key].filter(x => x !== item)
-                            : [...prev[key], item]
-                    }));
-                };
-
-                return (
-                    <div className="fade-in">
-                        <Header title="導管室交班單" subtitle="Cath Lab Transfer Note" showBack />
-                        <div style={{ padding: '0 16px' }}>
                             
-                            {/* 診斷 */}
-                            <InfoCard title="術後診斷 Post-Cath Diagnosis" icon="🩺" color="#dc2626">
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
-                                    {[
-                                        { id: 'stableCAD', label: 'Stable CAD' },
-                                        { id: 'STEMI', label: 'STEMI' },
-                                        { id: 'NSTEACS', label: 'NSTE-ACS' },
-                                        { id: 'PAOD', label: 'PAOD' },
-                                        { id: 'CHF', label: 'CHF' }
-                                    ].map(item => (
-                                        <button
-                                            key={item.id}
-                                            onClick={() => updateNote('diagnosis', noteData.diagnosis === item.id ? '' : item.id)}
-                                            style={{
-                                                padding: '10px 16px',
-                                                borderRadius: '10px',
-                                                border: `2px solid ${noteData.diagnosis === item.id ? '#dc2626' : '#e5e7eb'}`,
-                                                background: noteData.diagnosis === item.id ? '#fee2e2' : 'white',
-                                                color: noteData.diagnosis === item.id ? '#dc2626' : '#6b7280',
-                                                fontSize: '14px',
-                                                fontWeight: '500',
-                                                cursor: 'pointer'
-                                            }}
+                            <InfoCard title="重要警示" icon="⚠️" color="#f59e0b">
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                    <ChecklistItem checked={fever} onChange={() => setFever(!fever)} critical>
+                                        <strong>發燒 Fever</strong>
+                                        <div style={{ fontSize: '12px', color: '#dc2626', marginTop: '4px' }}>
+                                            需評估是否延遲手術
+                                        </div>
+                                    </ChecklistItem>
+                                    
+                                    <ChecklistItem checked={kidneyConcern} onChange={() => setKidneyConcern(!kidneyConcern)} important>
+                                        <strong>腎功能異常</strong>
+                                        <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                            eGFR &lt; 60 需注意顯影劑腎病變預防
+                                        </div>
+                                    </ChecklistItem>
+                                    
+                                    <ChecklistItem checked={lvefConcern} onChange={() => setLvefConcern(!lvefConcern)} important>
+                                        <strong>LVEF 降低</strong>
+                                        <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                            LVEF &lt; 40% 需注意血流動力學變化
+                                        </div>
+                                    </ChecklistItem>
+                                </div>
+                            </InfoCard>
+                            
+                            <InfoCard title="心臟瓣膜問題" icon="💔" color="#ec4899">
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                    {['AS', 'MR', 'MS', 'AR', 'TR'].map(valve => (
+                                        <ToggleButton
+                                            key={valve}
+                                            active={valves.includes(valve)}
+                                            onClick={() => toggleItem(valves, setValves, valve)}
+                                            color="#ec4899"
                                         >
-                                            {item.label}
-                                        </button>
+                                            {valve}
+                                        </ToggleButton>
                                     ))}
                                 </div>
                                 
-                                {/* LM 病變選項 */}
-                                <div style={{ 
-                                    padding: '14px',
-                                    background: noteData.hasLM ? '#fef2f2' : '#f9fafb',
-                                    border: `2px solid ${noteData.hasLM ? '#dc2626' : '#e5e7eb'}`,
-                                    borderRadius: '12px',
-                                    marginBottom: '12px'
-                                }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: noteData.hasLM ? '12px' : '0' }}>
-                                        <div style={{ fontWeight: '600', color: '#374151' }}>LM 病變</div>
-                                        <button
-                                            onClick={() => updateNote('hasLM', !noteData.hasLM)}
-                                            style={{
-                                                padding: '6px 16px',
-                                                borderRadius: '20px',
-                                                border: 'none',
-                                                background: noteData.hasLM ? '#dc2626' : '#e5e7eb',
-                                                color: noteData.hasLM ? 'white' : '#6b7280',
-                                                fontWeight: '500',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            {noteData.hasLM ? '✓ Yes' : 'No'}
-                                        </button>
-                                    </div>
-                                    {noteData.hasLM && (
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                                            <span style={{ fontSize: '14px', color: '#6b7280' }}>合併：</span>
-                                            {['1VD', '2VD', '3VD'].map(vd => (
-                                                <button
-                                                    key={vd}
-                                                    onClick={() => updateNote('lmVesselDisease', noteData.lmVesselDisease === vd ? '' : vd)}
-                                                    style={{
-                                                        padding: '8px 16px',
-                                                        borderRadius: '8px',
-                                                        border: `2px solid ${noteData.lmVesselDisease === vd ? '#7c3aed' : '#d1d5db'}`,
-                                                        background: noteData.lmVesselDisease === vd ? '#ede9fe' : 'white',
-                                                        color: noteData.lmVesselDisease === vd ? '#6d28d9' : '#6b7280',
-                                                        fontWeight: '600',
-                                                        fontSize: '13px',
-                                                        cursor: 'pointer'
-                                                    }}
-                                                >
-                                                    {vd}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* 血管病變數目 */}
-                                <div style={{ 
-                                    display: 'flex', 
-                                    alignItems: 'center', 
-                                    gap: '10px',
-                                    padding: '12px',
-                                    background: '#f3f4f6',
-                                    borderRadius: '10px'
-                                }}>
-                                    <span>血管病變：</span>
-                                    {['1', '2', '3'].map(n => (
-                                        <button
-                                            key={n}
-                                            onClick={() => updateNote('vesselDisease', noteData.vesselDisease === n ? '' : n)}
-                                            style={{
-                                                width: '40px',
-                                                height: '40px',
-                                                borderRadius: '50%',
-                                                border: `2px solid ${noteData.vesselDisease === n ? '#8b5cf6' : '#e5e7eb'}`,
-                                                background: noteData.vesselDisease === n ? '#ede9fe' : 'white',
-                                                color: noteData.vesselDisease === n ? '#7c3aed' : '#6b7280',
-                                                fontWeight: '600',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            {n}
-                                        </button>
-                                    ))}
-                                    <span style={{ marginLeft: '6px', color: '#6b7280' }}>vessel disease</span>
-                                </div>
-                            </InfoCard>
-
-                            {/* PCI/治療 */}
-                            <InfoCard title="PCI/PTCA/PTA 治療" icon="🔧" color="#3b82f6">
-                                <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
-                                    <button
-                                        onClick={() => updateNote('pciDone', false)}
-                                        style={{
-                                            flex: 1,
-                                            padding: '16px',
-                                            borderRadius: '12px',
-                                            border: `2px solid ${!noteData.pciDone ? '#10b981' : '#e5e7eb'}`,
-                                            background: !noteData.pciDone ? '#d1fae5' : 'white',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        <div style={{ fontWeight: '600', color: !noteData.pciDone ? '#065f46' : '#6b7280' }}>No</div>
-                                        <div style={{ fontSize: '12px', color: '#6b7280' }}>未做介入</div>
-                                    </button>
-                                    <button
-                                        onClick={() => updateNote('pciDone', true)}
-                                        style={{
-                                            flex: 1,
-                                            padding: '16px',
-                                            borderRadius: '12px',
-                                            border: `2px solid ${noteData.pciDone ? '#3b82f6' : '#e5e7eb'}`,
-                                            background: noteData.pciDone ? '#dbeafe' : 'white',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        <div style={{ fontWeight: '600', color: noteData.pciDone ? '#1d4ed8' : '#6b7280' }}>Yes</div>
-                                        <div style={{ fontSize: '12px', color: '#6b7280' }}>已做介入</div>
-                                    </button>
-                                </div>
-
-                                {noteData.pciDone && (
-                                    <div style={{ marginBottom: '12px' }}>
-                                        <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '8px' }}>介入位置：</div>
-                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                            {['LM', 'LAD', 'LCX', 'RCA', 'Other'].map(loc => (
-                                                <button
-                                                    key={loc}
-                                                    onClick={() => toggleArray('pciLocation', loc)}
-                                                    style={{
-                                                        padding: '8px 14px',
-                                                        borderRadius: '8px',
-                                                        border: `2px solid ${noteData.pciLocation.includes(loc) ? '#3b82f6' : '#e5e7eb'}`,
-                                                        background: noteData.pciLocation.includes(loc) ? '#dbeafe' : 'white',
-                                                        color: noteData.pciLocation.includes(loc) ? '#1d4ed8' : '#6b7280',
-                                                        fontSize: '13px',
-                                                        cursor: 'pointer'
-                                                    }}
-                                                >
-                                                    {loc}
-                                                </button>
-                                            ))}
-                                        </div>
+                                {valves.includes('AS') && (
+                                    <div style={{
+                                        marginTop: '12px',
+                                        padding: '12px',
+                                        background: '#fee2e2',
+                                        borderRadius: '10px',
+                                        fontSize: '13px',
+                                        color: '#991b1b'
+                                    }}>
+                                        <strong>⚠️ AS 警示：</strong> 主動脈瓣狹窄，術中需密切監測血壓
                                     </div>
                                 )}
+                            </InfoCard>
 
-                                {/* Stent */}
-                                <div style={{ 
-                                    padding: '14px', 
-                                    background: '#f3f4f6', 
-                                    borderRadius: '10px',
-                                    marginTop: '12px'
-                                }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
-                                        <span style={{ fontWeight: '500' }}>Stent Deployment:</span>
-                                        <button
-                                            onClick={() => updateNote('stentDone', !noteData.stentDone)}
-                                            style={{
-                                                padding: '6px 16px',
-                                                borderRadius: '20px',
-                                                border: 'none',
-                                                background: noteData.stentDone ? '#10b981' : '#e5e7eb',
-                                                color: noteData.stentDone ? 'white' : '#6b7280',
-                                                fontWeight: '500',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            {noteData.stentDone ? 'Yes' : 'No'}
-                                        </button>
-                                    </div>
-                                    {noteData.stentDone && (
-                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                            {['LM', 'LAD', 'LCX', 'RCA', 'Other'].map(loc => (
-                                                <button
-                                                    key={loc}
-                                                    onClick={() => toggleArray('stentLocation', loc)}
-                                                    style={{
-                                                        padding: '6px 12px',
-                                                        borderRadius: '6px',
-                                                        border: `2px solid ${noteData.stentLocation.includes(loc) ? '#10b981' : '#d1d5db'}`,
-                                                        background: noteData.stentLocation.includes(loc) ? '#d1fae5' : 'white',
-                                                        color: noteData.stentLocation.includes(loc) ? '#065f46' : '#6b7280',
-                                                        fontSize: '12px',
-                                                        cursor: 'pointer'
-                                                    }}
-                                                >
-                                                    {loc}
-                                                </button>
+                            <InfoCard title="心臟功能檢查" icon="🏃" color="#06b6d4">
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                    <div style={{ padding: '14px', background: '#f3f4f6', borderRadius: '10px' }}>
+                                        <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '8px' }}>🏃 Treadmill</div>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                                            {['(+)', '(-)', '未做'].map(r => (
+                                                <span key={r} style={{
+                                                    padding: '4px 10px',
+                                                    background: 'white',
+                                                    borderRadius: '6px',
+                                                    fontSize: '12px',
+                                                    border: '1px solid #d1d5db'
+                                                }}>{r}</span>
                                             ))}
                                         </div>
-                                    )}
-                                </div>
-                            </InfoCard>
-
-                            {/* Sheath */}
-                            <InfoCard title="Sheath 處置" icon="🩹" color="#f59e0b">
-                                <div style={{ marginBottom: '16px' }}>
-                                    <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '10px' }}>穿刺部位：</div>
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                        {['RFA', 'LFA', 'RRA', 'LRA'].map(site => (
-                                            <button
-                                                key={site}
-                                                onClick={() => updateNote('sheathSite', site)}
-                                                style={{
-                                                    padding: '12px 20px',
-                                                    borderRadius: '10px',
-                                                    border: `2px solid ${noteData.sheathSite === site ? '#f59e0b' : '#e5e7eb'}`,
-                                                    background: noteData.sheathSite === site ? '#fef3c7' : 'white',
-                                                    color: noteData.sheathSite === site ? '#b45309' : '#6b7280',
-                                                    fontWeight: '500',
-                                                    cursor: 'pointer'
-                                                }}
-                                            >
-                                                {site}
-                                            </button>
-                                        ))}
                                     </div>
-                                </div>
-
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                    <label style={{ 
-                                        display: 'flex', 
-                                        alignItems: 'center', 
-                                        gap: '10px',
-                                        padding: '12px',
-                                        background: noteData.sheathRemoved ? '#d1fae5' : '#f3f4f6',
-                                        borderRadius: '10px',
-                                        cursor: 'pointer'
-                                    }}>
-                                        <input 
-                                            type="checkbox"
-                                            checked={noteData.sheathRemoved}
-                                            onChange={(e) => updateNote('sheathRemoved', e.target.checked)}
-                                            style={{ width: '20px', height: '20px' }}
-                                        />
-                                        <span>已在導管室拔除 Sheath</span>
-                                    </label>
-
-                                    {!noteData.sheathRemoved && (
-                                        <div style={{ 
-                                            padding: '14px', 
-                                            background: '#fef3c7', 
-                                            borderRadius: '10px'
-                                        }}>
-                                            <div style={{ marginBottom: '10px', fontWeight: '500' }}>
-                                                ACT 查核時間與閾值：
-                                            </div>
-                                            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                                                <input 
-                                                    type="time"
-                                                    value={noteData.actCheckTime}
-                                                    onChange={(e) => updateNote('actCheckTime', e.target.value)}
-                                                    style={{
-                                                        padding: '8px',
-                                                        border: '1px solid #d1d5db',
-                                                        borderRadius: '6px',
-                                                        fontSize: '14px'
-                                                    }}
-                                                />
-                                                <span>ACT &lt;</span>
-                                                <select
-                                                    value={noteData.actThreshold}
-                                                    onChange={(e) => updateNote('actThreshold', e.target.value)}
-                                                    style={{
-                                                        padding: '8px',
-                                                        border: '1px solid #d1d5db',
-                                                        borderRadius: '6px',
-                                                        fontSize: '14px'
-                                                    }}
-                                                >
-                                                    <option value="150">150</option>
-                                                    <option value="200">200</option>
-                                                </select>
-                                                <span>秒</span>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </InfoCard>
-
-                            {/* 藥物 Loading */}
-                            <InfoCard title="抗血小板 Loading" icon="💊" color="#ec4899">
-                                <div style={{
-                                    padding: '12px',
-                                    background: '#fee2e2',
-                                    borderRadius: '10px',
-                                    marginBottom: '16px',
-                                    fontSize: '13px',
-                                    color: '#991b1b'
-                                }}>
-                                    <strong>⚠️ 重要：</strong>確認是否已在導管室或急診給予 loading！
-                                </div>
-
-                                {[
-                                    { id: 'aspirin', label: 'Aspirin', dose: '300mg stat po', color: '#dc2626' },
-                                    { id: 'plavix', label: 'Plavix (Clopidogrel)', dose: '300mg / 600mg stat po', color: '#7c3aed' },
-                                    { id: 'efient', label: 'Efient (Prasugrel)', dose: '20mg stat po', color: '#0891b2' },
-                                    { id: 'brilinta', label: 'Brilinta (Ticagrelor)', dose: '180mg stat po', color: '#059669' }
-                                ].map(drug => (
-                                    <div key={drug.id} style={{
-                                        padding: '14px',
-                                        background: noteData[`${drug.id}Loading`] ? `${drug.color}10` : '#f9fafb',
-                                        border: `2px solid ${noteData[`${drug.id}Loading`] ? drug.color : '#e5e7eb'}`,
-                                        borderRadius: '12px',
-                                        marginBottom: '10px'
-                                    }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                            <div>
-                                                <div style={{ fontWeight: '600', color: '#374151' }}>{drug.label}</div>
-                                                <div style={{ fontSize: '12px', color: '#6b7280' }}>{drug.dose}</div>
-                                            </div>
-                                            <button
-                                                onClick={() => updateNote(`${drug.id}Loading`, !noteData[`${drug.id}Loading`])}
-                                                style={{
-                                                    padding: '8px 16px',
-                                                    borderRadius: '8px',
-                                                    border: 'none',
-                                                    background: noteData[`${drug.id}Loading`] ? drug.color : '#e5e7eb',
-                                                    color: noteData[`${drug.id}Loading`] ? 'white' : '#6b7280',
-                                                    fontWeight: '500',
-                                                    cursor: 'pointer'
-                                                }}
-                                            >
-                                                {noteData[`${drug.id}Loading`] ? '✓ Loading' : '未給'}
-                                            </button>
-                                        </div>
-                                        {noteData[`${drug.id}Loading`] && (
-                                            <label style={{ 
-                                                display: 'flex', 
-                                                alignItems: 'center', 
-                                                gap: '8px',
-                                                marginTop: '10px',
-                                                fontSize: '13px',
-                                                color: '#6b7280'
-                                            }}>
-                                                <input 
-                                                    type="checkbox"
-                                                    checked={noteData[`${drug.id}Given`]}
-                                                    onChange={(e) => updateNote(`${drug.id}Given`, e.target.checked)}
-                                                />
-                                                已在導管室或急診給予
-                                            </label>
-                                        )}
-                                    </div>
-                                ))}
-                            </InfoCard>
-
-                            {/* 維持藥物 */}
-                            <InfoCard title="維持藥物 Maintenance" icon="💉" color="#10b981">
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                                    {[
-                                        { id: 'bokey', label: 'Bokey', dose: '100mg QD' },
-                                        { id: 'plavixM', label: 'Plavix', dose: '75mg QD' },
-                                        { id: 'brilintaM', label: 'Brilinta', dose: '90mg BID' },
-                                        { id: 'efientM', label: 'Efient', dose: '3.75mg QD' }
-                                    ].map(drug => (
-                                        <button
-                                            key={drug.id}
-                                            onClick={() => updateNote(`${drug.id}Maintenance`, !noteData[`${drug.id}Maintenance`])}
-                                            style={{
-                                                padding: '14px',
-                                                borderRadius: '10px',
-                                                border: `2px solid ${noteData[`${drug.id}Maintenance`] ? '#10b981' : '#e5e7eb'}`,
-                                                background: noteData[`${drug.id}Maintenance`] ? '#d1fae5' : 'white',
-                                                textAlign: 'left',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            <div style={{ 
-                                                fontWeight: '600', 
-                                                color: noteData[`${drug.id}Maintenance`] ? '#065f46' : '#374151'
-                                            }}>
-                                                {noteData[`${drug.id}Maintenance`] ? '✓ ' : ''}{drug.label}
-                                            </div>
-                                            <div style={{ fontSize: '12px', color: '#6b7280' }}>{drug.dose}</div>
-                                        </button>
-                                    ))}
-                                </div>
-
-                                {/* PPI 提醒 */}
-                                <div style={{
-                                    marginTop: '16px',
-                                    padding: '14px',
-                                    background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
-                                    borderRadius: '12px',
-                                    border: '2px solid #f59e0b'
-                                }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                                        <span style={{ fontSize: '20px' }}>⚠️</span>
-                                        <span style={{ fontWeight: '700', color: '#b45309' }}>PPI 使用提醒</span>
-                                    </div>
-                                    <div style={{ fontSize: '13px', color: '#92400e', lineHeight: '1.6' }}>
-                                        使用 DAPT（雙抗血小板治療）時，建議併用 PPI（如 Nexium、Pantoloc）以預防腸胃道出血，特別是：
-                                        <ul style={{ margin: '8px 0 0 16px' }}>
-                                            <li>年齡 ≥ 65 歲</li>
-                                            <li>消化性潰瘍病史</li>
-                                            <li>同時使用抗凝血劑或類固醇</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </InfoCard>
-
-                            {/* 術後醫囑 */}
-                            <InfoCard title="術後醫囑 Post-Cath Orders" icon="📝" color="#6366f1">
-                                {/* ICU */}
-                                <div style={{ marginBottom: '16px' }}>
-                                    <label style={{ 
-                                        display: 'flex', 
-                                        alignItems: 'center', 
-                                        gap: '10px',
-                                        padding: '12px',
-                                        background: noteData.icuAdmission ? '#fee2e2' : '#f9fafb',
-                                        borderRadius: '10px',
-                                        cursor: 'pointer',
-                                        marginBottom: '10px'
-                                    }}>
-                                        <input 
-                                            type="checkbox"
-                                            checked={noteData.icuAdmission}
-                                            onChange={(e) => updateNote('icuAdmission', e.target.checked)}
-                                            style={{ width: '20px', height: '20px' }}
-                                        />
-                                        <span style={{ fontWeight: '500' }}>ICU Admission</span>
-                                    </label>
-                                    {noteData.icuAdmission && (
-                                        <div style={{ display: 'flex', gap: '10px', marginLeft: '30px' }}>
-                                            <input 
-                                                type="number"
-                                                placeholder="小時"
-                                                value={noteData.icuHours}
-                                                onChange={(e) => updateNote('icuHours', e.target.value)}
-                                                style={{
-                                                    width: '80px',
-                                                    padding: '8px',
-                                                    border: '1px solid #d1d5db',
-                                                    borderRadius: '6px'
-                                                }}
-                                            />
-                                            <span style={{ lineHeight: '36px' }}>小時後轉回病房</span>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Vital Signs */}
-                                <div style={{ 
-                                    padding: '14px', 
-                                    background: '#f3f4f6', 
-                                    borderRadius: '10px',
-                                    marginBottom: '12px'
-                                }}>
-                                    <div style={{ fontWeight: '500', marginBottom: '10px' }}>Vital Signs 頻率：</div>
-                                    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                            <span>Q15min ×</span>
-                                            <input 
-                                                type="number"
-                                                value={noteData.vsFreq15}
-                                                onChange={(e) => updateNote('vsFreq15', e.target.value)}
-                                                style={{
-                                                    width: '50px',
-                                                    padding: '6px',
-                                                    border: '1px solid #d1d5db',
-                                                    borderRadius: '4px',
-                                                    textAlign: 'center'
-                                                }}
-                                            />
-                                        </div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                            <span>Q30min ×</span>
-                                            <input 
-                                                type="number"
-                                                value={noteData.vsFreq30}
-                                                onChange={(e) => updateNote('vsFreq30', e.target.value)}
-                                                style={{
-                                                    width: '50px',
-                                                    padding: '6px',
-                                                    border: '1px solid #d1d5db',
-                                                    borderRadius: '4px',
-                                                    textAlign: 'center'
-                                                }}
-                                            />
+                                    
+                                    <div style={{ padding: '14px', background: '#f3f4f6', borderRadius: '10px' }}>
+                                        <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '8px' }}>💚 Thallium</div>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                                            {['Ischemia', 'Fixed', 'Normal'].map(r => (
+                                                <span key={r} style={{
+                                                    padding: '4px 10px',
+                                                    background: 'white',
+                                                    borderRadius: '6px',
+                                                    fontSize: '12px',
+                                                    border: '1px solid #d1d5db'
+                                                }}>{r}</span>
+                                            ))}
                                         </div>
                                     </div>
                                 </div>
-
-                                {/* ECG */}
-                                <label style={{ 
-                                    display: 'flex', 
-                                    alignItems: 'center', 
-                                    gap: '10px',
-                                    padding: '12px',
-                                    background: noteData.needECG ? '#dbeafe' : '#f9fafb',
-                                    borderRadius: '10px',
-                                    cursor: 'pointer',
-                                    marginBottom: '12px'
-                                }}>
-                                    <input 
-                                        type="checkbox"
-                                        checked={noteData.needECG}
-                                        onChange={(e) => updateNote('needECG', e.target.checked)}
-                                        style={{ width: '20px', height: '20px' }}
-                                    />
-                                    <span>Complete ECG stat</span>
-                                </label>
-
-                                {/* Bed Rest */}
-                                <div style={{ 
-                                    padding: '14px', 
-                                    background: '#f3f4f6', 
-                                    borderRadius: '10px',
-                                    marginBottom: '12px'
-                                }}>
-                                    <div style={{ fontWeight: '500', marginBottom: '10px' }}>Bed-rest：</div>
-                                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                                        <input 
-                                            type="number"
-                                            placeholder="小時"
-                                            value={noteData.bedRestHours}
-                                            onChange={(e) => updateNote('bedRestHours', e.target.value)}
-                                            style={{
-                                                width: '70px',
-                                                padding: '8px',
-                                                border: '1px solid #d1d5db',
-                                                borderRadius: '6px',
-                                                textAlign: 'center'
-                                            }}
-                                        />
-                                        <span>小時</span>
-                                    </div>
-                                </div>
-
-                                {/* Lab Check */}
-                                <label style={{ 
-                                    display: 'flex', 
-                                    alignItems: 'center', 
-                                    gap: '10px',
-                                    padding: '12px',
-                                    background: noteData.labCheck ? '#d1fae5' : '#f9fafb',
-                                    borderRadius: '10px',
-                                    cursor: 'pointer'
-                                }}>
-                                    <input 
-                                        type="checkbox"
-                                        checked={noteData.labCheck}
-                                        onChange={(e) => updateNote('labCheck', e.target.checked)}
-                                        style={{ width: '20px', height: '20px' }}
-                                    />
-                                    <span>Check CK/CKMB/TropI/Hb/aPTT</span>
-                                </label>
-                            </InfoCard>
-
-                            {/* 特殊備註 */}
-                            <InfoCard title="特殊備註" icon="📌" color="#f97316">
-                                <textarea
-                                    placeholder="輸入特殊備註..."
-                                    value={noteData.specialNote}
-                                    onChange={(e) => updateNote('specialNote', e.target.value)}
-                                    style={{
-                                        width: '100%',
-                                        minHeight: '100px',
-                                        padding: '14px',
-                                        border: '2px solid #e5e7eb',
-                                        borderRadius: '10px',
-                                        fontSize: '14px',
-                                        resize: 'vertical',
-                                        outline: 'none'
-                                    }}
-                                />
                             </InfoCard>
                         </div>
                     </div>
                 );
             };
 
-            // ==================== POST-CATH PAGE ====================
-            const PostCathPage = () => {
+            // ==================== PROCEDURE HANDOFF PAGE (舊版完整術式) ====================
+            const ProcedureHandoffPage = () => {
+                const [procedureType, setProcedureType] = useState('');
+                const [paodLeg, setPaodLeg] = useState('');
+                const [goToICU, setGoToICU] = useState(null);
+                const [bedPosition, setBedPosition] = useState('supine');
+                
                 return (
                     <div className="fade-in">
-                        <Header title="術後交班" subtitle="Post-Procedure Handoff" showBack />
+                        <Header title="術式交班" subtitle="Procedure-Specific Handoff" showBack />
                         <div style={{ padding: '0 16px' }}>
+                            <InfoCard title="預計術式" icon="🔧" color="#06b6d4">
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', marginBottom: '16px' }}>
+                                    {[
+                                        { id: 'cag', label: 'CAG', desc: '診斷導管' },
+                                        { id: 'pci', label: 'PCI', desc: '冠狀動脈介入' },
+                                        { id: 'paod', label: 'PAOD', desc: '週邊血管' },
+                                        { id: 'eps', label: 'EPS', desc: '電生理檢查' }
+                                    ].map(proc => (
+                                        <button
+                                            key={proc.id}
+                                            onClick={() => setProcedureType(proc.id)}
+                                            style={{
+                                                padding: '16px',
+                                                background: procedureType === proc.id ? '#e0f2fe' : 'white',
+                                                border: `2px solid ${procedureType === proc.id ? '#0ea5e9' : '#e5e7eb'}`,
+                                                borderRadius: '12px',
+                                                cursor: 'pointer',
+                                                textAlign: 'center'
+                                            }}
+                                        >
+                                            <div style={{ fontWeight: '600', color: '#0369a1' }}>{proc.label}</div>
+                                            <div style={{ fontSize: '12px', color: '#6b7280' }}>{proc.desc}</div>
+                                        </button>
+                                    ))}
+                                </div>
+                            </InfoCard>
                             
-                            {/* 治療方式 */}
-                            <InfoCard title="治療方式" icon="🔧" color="#3b82f6">
-                                <div style={{ marginBottom: '16px' }}>
-                                    <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '10px' }}>治療結果：</div>
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                                        {[
-                                            { id: 'diagnostic', label: '僅診斷', desc: 'Diagnostic only' },
-                                            { id: 'balloon', label: '氣球擴張', desc: 'Balloon only' },
-                                            { id: 'stent', label: '放置支架', desc: 'Stent deployment' },
-                                            { id: 'cabg', label: '建議 CABG', desc: 'Refer to surgery' }
-                                        ].map(item => (
+                            {procedureType === 'paod' && (
+                                <InfoCard title="PAOD 術式資訊" icon="🦵" color="#7c3aed">
+                                    <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '10px' }}>要作哪支腳？</div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                                        {['右腳', '左腳', '雙腳'].map(leg => (
                                             <button
-                                                key={item.id}
-                                                onClick={() => setTreatmentInfo(t => ({...t, intervention: item.id}))}
+                                                key={leg}
+                                                onClick={() => setPaodLeg(leg)}
                                                 style={{
-                                                    flex: '1 1 calc(50% - 5px)',
                                                     padding: '14px',
-                                                    borderRadius: '12px',
-                                                    border: `2px solid ${treatmentInfo.intervention === item.id ? '#3b82f6' : '#e5e7eb'}`,
-                                                    background: treatmentInfo.intervention === item.id ? '#dbeafe' : 'white',
-                                                    textAlign: 'center',
-                                                    cursor: 'pointer'
+                                                    background: paodLeg === leg ? '#ede9fe' : 'white',
+                                                    border: `2px solid ${paodLeg === leg ? '#7c3aed' : '#e5e7eb'}`,
+                                                    borderRadius: '10px',
+                                                    cursor: 'pointer',
+                                                    fontWeight: '500',
+                                                    color: paodLeg === leg ? '#5b21b6' : '#6b7280'
                                                 }}
                                             >
-                                                <div style={{ fontWeight: '600', color: treatmentInfo.intervention === item.id ? '#1d4ed8' : '#374151' }}>
-                                                    {item.label}
-                                                </div>
-                                                <div style={{ fontSize: '11px', color: '#6b7280' }}>{item.desc}</div>
+                                                {leg}
                                             </button>
                                         ))}
                                     </div>
+                                </InfoCard>
+                            )}
+                            
+                            {(procedureType === 'pci' || procedureType === 'cag') && (
+                                <InfoCard title="術後去向" icon="🏨" color="#10b981">
+                                    <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '12px' }}>
+                                        CAD/ACS 術後是否去加護病房？
+                                    </div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                        <button
+                                            onClick={() => setGoToICU(true)}
+                                            style={{
+                                                padding: '20px',
+                                                background: goToICU === true ? '#fee2e2' : 'white',
+                                                border: `2px solid ${goToICU === true ? '#ef4444' : '#e5e7eb'}`,
+                                                borderRadius: '12px',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            <div style={{ fontSize: '28px', marginBottom: '8px' }}>🏥</div>
+                                            <div style={{ fontWeight: '600', color: goToICU === true ? '#dc2626' : '#374151' }}>
+                                                進 ICU/CCU
+                                            </div>
+                                        </button>
+                                        
+                                        <button
+                                            onClick={() => setGoToICU(false)}
+                                            style={{
+                                                padding: '20px',
+                                                background: goToICU === false ? '#d1fae5' : 'white',
+                                                border: `2px solid ${goToICU === false ? '#10b981' : '#e5e7eb'}`,
+                                                borderRadius: '12px',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            <div style={{ fontSize: '28px', marginBottom: '8px' }}>🛏️</div>
+                                            <div style={{ fontWeight: '600', color: goToICU === false ? '#065f46' : '#374151' }}>
+                                                回病房
+                                            </div>
+                                        </button>
+                                    </div>
+                                    
+                                    {goToICU === true && (
+                                        <div style={{
+                                            marginTop: '16px',
+                                            padding: '14px',
+                                            background: '#fef2f2',
+                                            borderRadius: '10px',
+                                            borderLeft: '4px solid #dc2626'
+                                        }}>
+                                            <strong style={{ color: '#dc2626' }}>⚠️ ICU 照護重點：</strong>
+                                            <div style={{ marginTop: '8px', fontSize: '14px', lineHeight: '1.6' }}>
+                                                • 持續心電圖監測<br/>
+                                                • 密切監測血壓、心律<br/>
+                                                • 注意穿刺部位出血<br/>
+                                                • 評估胸痛症狀變化
+                                            </div>
+                                        </div>
+                                    )}
+                                </InfoCard>
+                            )}
+                            
+                            <InfoCard title="術後臥床姿勢" icon="🛏️" color="#8b5cf6">
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+                                    <button
+                                        onClick={() => setBedPosition('supine')}
+                                        style={{
+                                            padding: '16px',
+                                            background: bedPosition === 'supine' ? '#ede9fe' : 'white',
+                                            border: `2px solid ${bedPosition === 'supine' ? '#8b5cf6' : '#e5e7eb'}`,
+                                            borderRadius: '12px',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        <div style={{ fontWeight: '600', color: bedPosition === 'supine' ? '#6d28d9' : '#374151' }}>平躺</div>
+                                        <div style={{ fontSize: '12px', color: '#6b7280' }}>Femoral 穿刺</div>
+                                    </button>
+                                    
+                                    <button
+                                        onClick={() => setBedPosition('radial')}
+                                        style={{
+                                            padding: '16px',
+                                            background: bedPosition === 'radial' ? '#d1fae5' : 'white',
+                                            border: `2px solid ${bedPosition === 'radial' ? '#10b981' : '#e5e7eb'}`,
+                                            borderRadius: '12px',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        <div style={{ fontWeight: '600', color: bedPosition === 'radial' ? '#065f46' : '#374151' }}>可坐起</div>
+                                        <div style={{ fontSize: '12px', color: '#6b7280' }}>Radial 穿刺</div>
+                                    </button>
                                 </div>
-
-                                {treatmentInfo.intervention === 'stent' && (
+                                
+                                {bedPosition === 'supine' && (
                                     <div style={{
                                         padding: '14px',
                                         background: '#fef3c7',
                                         borderRadius: '10px',
-                                        fontSize: '13px',
-                                        color: '#92400e'
+                                        borderLeft: '4px solid #f59e0b'
                                     }}>
-                                        <strong>💡 Stent 後提醒：</strong>
-                                        <div style={{ marginTop: '6px' }}>
-                                            確認 Loading dose 是否已給，並開始維持藥物治療
+                                        <strong style={{ color: '#b45309' }}>📌 Femoral 穿刺注意事項：</strong>
+                                        <div style={{ marginTop: '8px', fontSize: '14px', lineHeight: '1.6' }}>
+                                            • 平躺臥床，患肢伸直勿彎曲<br/>
+                                            • 依醫囑加壓時間<br/>
+                                            • 使用 2kg 砂包加壓<br/>
+                                            • 定時觀察穿刺部位
+                                        </div>
+                                    </div>
+                                )}
+                                
+                                {bedPosition === 'radial' && (
+                                    <div style={{
+                                        padding: '14px',
+                                        background: '#d1fae5',
+                                        borderRadius: '10px',
+                                        borderLeft: '4px solid #10b981'
+                                    }}>
+                                        <strong style={{ color: '#065f46' }}>📌 Radial 穿刺注意事項：</strong>
+                                        <div style={{ marginTop: '8px', fontSize: '14px', lineHeight: '1.6' }}>
+                                            • 可坐起休息<br/>
+                                            • 使用 TR-band 加壓<br/>
+                                            • 觀察手指顏色、溫度、感覺<br/>
+                                            • 定時評估周邊循環
                                         </div>
                                     </div>
                                 )}
                             </InfoCard>
-
-                            {/* 藥物 Loading - 增強版 */}
-                            <InfoCard title="藥物 Loading" icon="💊" color="#10b981">
-                                <div style={{
-                                    background: '#d1fae5',
-                                    borderRadius: '10px',
-                                    padding: '14px',
-                                    marginBottom: '16px',
-                                    fontSize: '13px',
-                                    color: '#065f46'
-                                }}>
-                                    <strong>⚠️ 重要：</strong>確認是否已在導管室給予 loading dose！
-                                </div>
-                                
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                    {/* Aspirin */}
-                                    <div style={{
-                                        padding: '14px',
-                                        background: treatmentInfo.antiplateletLoading.includes('aspirin') ? '#dcfce7' : '#f9fafb',
-                                        border: `2px solid ${treatmentInfo.antiplateletLoading.includes('aspirin') ? '#22c55e' : '#e5e7eb'}`,
-                                        borderRadius: '12px'
-                                    }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                            <div>
-                                                <div style={{ fontWeight: '600' }}>Aspirin (Bokey)</div>
-                                                <div style={{ fontSize: '12px', color: '#6b7280' }}>Loading: 100-325mg</div>
-                                            </div>
-                                            <button
-                                                onClick={() => {
-                                                    const arr = treatmentInfo.antiplateletLoading;
-                                                    setTreatmentInfo(t => ({
-                                                        ...t,
-                                                        antiplateletLoading: arr.includes('aspirin') 
-                                                            ? arr.filter(x => x !== 'aspirin')
-                                                            : [...arr, 'aspirin']
-                                                    }));
-                                                }}
-                                                style={{
-                                                    padding: '8px 16px',
-                                                    borderRadius: '8px',
-                                                    border: 'none',
-                                                    background: treatmentInfo.antiplateletLoading.includes('aspirin') ? '#22c55e' : '#e5e7eb',
-                                                    color: treatmentInfo.antiplateletLoading.includes('aspirin') ? 'white' : '#6b7280',
-                                                    cursor: 'pointer'
-                                                }}
-                                            >
-                                                {treatmentInfo.antiplateletLoading.includes('aspirin') ? '✓ 已給' : '未給'}
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {/* Plavix */}
-                                    <div style={{
-                                        padding: '14px',
-                                        background: treatmentInfo.antiplateletLoading.includes('plavix') ? '#f3e8ff' : '#f9fafb',
-                                        border: `2px solid ${treatmentInfo.antiplateletLoading.includes('plavix') ? '#a855f7' : '#e5e7eb'}`,
-                                        borderRadius: '12px'
-                                    }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                            <div>
-                                                <div style={{ fontWeight: '600' }}>Plavix (Clopidogrel)</div>
-                                                <div style={{ fontSize: '12px', color: '#6b7280' }}>Loading: 300-600mg (75mg × 4-8#)</div>
-                                            </div>
-                                            <button
-                                                onClick={() => {
-                                                    const arr = treatmentInfo.antiplateletLoading;
-                                                    setTreatmentInfo(t => ({
-                                                        ...t,
-                                                        antiplateletLoading: arr.includes('plavix') 
-                                                            ? arr.filter(x => x !== 'plavix')
-                                                            : [...arr, 'plavix']
-                                                    }));
-                                                }}
-                                                style={{
-                                                    padding: '8px 16px',
-                                                    borderRadius: '8px',
-                                                    border: 'none',
-                                                    background: treatmentInfo.antiplateletLoading.includes('plavix') ? '#a855f7' : '#e5e7eb',
-                                                    color: treatmentInfo.antiplateletLoading.includes('plavix') ? 'white' : '#6b7280',
-                                                    cursor: 'pointer'
-                                                }}
-                                            >
-                                                {treatmentInfo.antiplateletLoading.includes('plavix') ? '✓ 已給' : '未給'}
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {/* Ticagrelor (Brilinta) */}
-                                    <div style={{
-                                        padding: '14px',
-                                        background: treatmentInfo.antiplateletLoading.includes('ticagrelor') ? '#d1fae5' : '#f9fafb',
-                                        border: `2px solid ${treatmentInfo.antiplateletLoading.includes('ticagrelor') ? '#10b981' : '#e5e7eb'}`,
-                                        borderRadius: '12px'
-                                    }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                            <div>
-                                                <div style={{ fontWeight: '600' }}>Brilinta (Ticagrelor)</div>
-                                                <div style={{ fontSize: '12px', color: '#6b7280' }}>Loading: 180mg stat</div>
-                                                <div style={{ fontSize: '11px', color: '#059669' }}>維持: 90mg BID</div>
-                                            </div>
-                                            <button
-                                                onClick={() => {
-                                                    const arr = treatmentInfo.antiplateletLoading;
-                                                    setTreatmentInfo(t => ({
-                                                        ...t,
-                                                        antiplateletLoading: arr.includes('ticagrelor') 
-                                                            ? arr.filter(x => x !== 'ticagrelor')
-                                                            : [...arr, 'ticagrelor']
-                                                    }));
-                                                }}
-                                                style={{
-                                                    padding: '8px 16px',
-                                                    borderRadius: '8px',
-                                                    border: 'none',
-                                                    background: treatmentInfo.antiplateletLoading.includes('ticagrelor') ? '#10b981' : '#e5e7eb',
-                                                    color: treatmentInfo.antiplateletLoading.includes('ticagrelor') ? 'white' : '#6b7280',
-                                                    cursor: 'pointer'
-                                                }}
-                                            >
-                                                {treatmentInfo.antiplateletLoading.includes('ticagrelor') ? '✓ 已給' : '未給'}
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {/* Prasugrel (Efient) */}
-                                    <div style={{
-                                        padding: '14px',
-                                        background: treatmentInfo.antiplateletLoading.includes('prasugrel') ? '#cffafe' : '#f9fafb',
-                                        border: `2px solid ${treatmentInfo.antiplateletLoading.includes('prasugrel') ? '#0891b2' : '#e5e7eb'}`,
-                                        borderRadius: '12px'
-                                    }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                            <div>
-                                                <div style={{ fontWeight: '600' }}>Efient (Prasugrel)</div>
-                                                <div style={{ fontSize: '12px', color: '#6b7280' }}>Loading: 20mg stat</div>
-                                                <div style={{ fontSize: '11px', color: '#0891b2' }}>維持: 3.75mg QD</div>
-                                            </div>
-                                            <button
-                                                onClick={() => {
-                                                    const arr = treatmentInfo.antiplateletLoading;
-                                                    setTreatmentInfo(t => ({
-                                                        ...t,
-                                                        antiplateletLoading: arr.includes('prasugrel') 
-                                                            ? arr.filter(x => x !== 'prasugrel')
-                                                            : [...arr, 'prasugrel']
-                                                    }));
-                                                }}
-                                                style={{
-                                                    padding: '8px 16px',
-                                                    borderRadius: '8px',
-                                                    border: 'none',
-                                                    background: treatmentInfo.antiplateletLoading.includes('prasugrel') ? '#0891b2' : '#e5e7eb',
-                                                    color: treatmentInfo.antiplateletLoading.includes('prasugrel') ? 'white' : '#6b7280',
-                                                    cursor: 'pointer'
-                                                }}
-                                            >
-                                                {treatmentInfo.antiplateletLoading.includes('prasugrel') ? '✓ 已給' : '未給'}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* 維持藥物治療提醒 */}
-                                <div style={{
-                                    marginTop: '16px',
-                                    padding: '14px',
-                                    background: '#dbeafe',
-                                    borderRadius: '10px',
-                                    fontSize: '13px',
-                                    color: '#1e40af'
-                                }}>
-                                    <strong>📋 維持藥物治療：</strong>
-                                    <div style={{ marginTop: '6px', lineHeight: '1.8' }}>
-                                        • Bokey (Aspirin) 100mg QD<br/>
-                                        • Plavix 75mg QD <strong>或</strong><br/>
-                                        • Brilinta 90mg BID <strong>或</strong><br/>
-                                        • Efient 3.75mg QD
-                                    </div>
-                                </div>
-                            </InfoCard>
-
-                            {/* PPI 提醒 */}
-                            <InfoCard title="PPI 使用提醒" icon="⚠️" color="#f59e0b">
-                                <div style={{
-                                    padding: '16px',
-                                    background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
-                                    borderRadius: '12px',
-                                    border: '2px solid #f59e0b'
-                                }}>
-                                    <div style={{ fontWeight: '700', color: '#b45309', marginBottom: '10px', fontSize: '15px' }}>
-                                        🛡️ DAPT 時請評估是否需併用 PPI
-                                    </div>
-                                    <div style={{ fontSize: '13px', color: '#92400e', lineHeight: '1.7' }}>
-                                        <strong>高風險族群：</strong>
-                                        <ul style={{ margin: '8px 0 0 16px', paddingLeft: '0' }}>
-                                            <li>年齡 ≥ 65 歲</li>
-                                            <li>消化性潰瘍或 GI 出血病史</li>
-                                            <li>同時使用抗凝血劑</li>
-                                            <li>同時使用 NSAIDs 或類固醇</li>
-                                            <li>Helicobacter pylori 感染</li>
-                                        </ul>
-                                    </div>
-                                    <div style={{ 
-                                        marginTop: '12px', 
-                                        padding: '10px', 
-                                        background: 'rgba(255,255,255,0.6)', 
-                                        borderRadius: '8px',
-                                        fontSize: '12px'
-                                    }}>
-                                        <strong>常用 PPI：</strong>Nexium (Esomeprazole)、Pantoloc (Pantoprazole)、Takepron (Lansoprazole)
-                                    </div>
-                                </div>
-                            </InfoCard>
-
-                            {/* 加壓時間 */}
-                            <InfoCard title="加壓止血時間" icon="⏱️" color="#8b5cf6">
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+                            
+                            <InfoCard title="加壓止血時間" icon="⏱️" color="#f59e0b">
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', marginBottom: '16px' }}>
                                     {['2小時', '4小時', '6小時', '8小時'].map(time => (
                                         <button
                                             key={time}
-                                            onClick={() => setTreatmentInfo(t => ({...t, compressionTime: time}))}
                                             style={{
-                                                padding: '14px',
-                                                background: treatmentInfo.compressionTime === time ? '#ede9fe' : 'white',
-                                                border: `2px solid ${treatmentInfo.compressionTime === time ? '#8b5cf6' : '#e5e7eb'}`,
+                                                padding: '16px',
+                                                background: 'white',
+                                                border: '2px solid #e5e7eb',
                                                 borderRadius: '10px',
                                                 cursor: 'pointer',
                                                 fontWeight: '600',
                                                 fontSize: '16px',
-                                                color: treatmentInfo.compressionTime === time ? '#6d28d9' : '#6b7280'
+                                                color: '#6b7280'
                                             }}
                                         >
                                             {time}
@@ -1897,357 +912,747 @@
                                     background: '#f3f4f6',
                                     borderRadius: '10px',
                                     fontSize: '13px',
-                                    marginTop: '12px'
+                                    lineHeight: '1.6'
                                 }}>
-                                    <strong>📋 加壓時間參考：</strong>
-                                    <div style={{ marginTop: '8px', lineHeight: '1.8' }}>
-                                        • AngioSeal/Proglide → <Tag color="#10b981">2小時</Tag><br/>
-                                        • Radial 診斷 → <Tag color="#3b82f6">4小時</Tag><br/>
-                                        • Radial 治療 → <Tag color="#f59e0b">6小時</Tag><br/>
-                                        • Brachial → <Tag color="#dc2626">觀察8小時</Tag>
+                                    <strong>加壓時間參考：</strong>
+                                    <div style={{ marginTop: '8px' }}>
+                                        • CAG（診斷）：2-4 小時<br/>
+                                        • PCI + Heparin：4-6 小時<br/>
+                                        • 高劑量抗凝血：6-8 小時
+                                    </div>
+                                </div>
+                            </InfoCard>
+                        </div>
+                    </div>
+                );
+            };
+
+            // ==================== POST-CATH PAGE (新版完整術後交班) ====================
+            const PostCathPage = () => {
+                const [postData, setPostData] = useState({
+                    diagnosis: '',
+                    vesselDisease: '',
+                    hasLM: false,
+                    pciDone: false,
+                    pciLocation: [],
+                    stentDone: false,
+                    stentLocation: [],
+                    sheathSite: '',
+                    sheathRemoved: true,
+                    hasIABP: false,
+                    hasECMO: false,
+                    hadCPR: false,
+                    // 藥物
+                    aspirinLoading: false,
+                    plavixLoading: false,
+                    efientLoading: false,
+                    brilintaLoading: false,
+                    // 維持藥物
+                    bokeyMaintenance: false,
+                    plavixMaintenance: false,
+                    brilintaMaintenance: false,
+                    efientMaintenance: false,
+                    // 術後醫囑
+                    icuAdmission: false,
+                    needECG: false,
+                    labCheck: false
+                });
+                
+                const updatePost = (key, value) => {
+                    setPostData(prev => ({ ...prev, [key]: value }));
+                };
+                
+                const toggleArray = (key, item) => {
+                    setPostData(prev => ({
+                        ...prev,
+                        [key]: prev[key].includes(item) 
+                            ? prev[key].filter(x => x !== item)
+                            : [...prev[key], item]
+                    }));
+                };
+                
+                return (
+                    <div className="fade-in">
+                        <Header title="術後交班" subtitle="Post-Cath Transfer Note" showBack />
+                        <div style={{ padding: '0 16px' }}>
+                            
+                            <InfoCard title="術後診斷" icon="🩺" color="#dc2626">
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
+                                    {['Stable CAD', 'STEMI', 'NSTE-ACS', 'PAOD', 'CHF'].map(item => (
+                                        <ToggleButton
+                                            key={item}
+                                            active={postData.diagnosis === item}
+                                            onClick={() => updatePost('diagnosis', postData.diagnosis === item ? '' : item)}
+                                            color="#dc2626"
+                                        >
+                                            {item}
+                                        </ToggleButton>
+                                    ))}
+                                </div>
+                                
+                                <div style={{ 
+                                    padding: '12px',
+                                    background: postData.hasLM ? '#fef2f2' : '#f9fafb',
+                                    border: `2px solid ${postData.hasLM ? '#dc2626' : '#e5e7eb'}`,
+                                    borderRadius: '12px',
+                                    marginBottom: '12px'
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <div style={{ fontWeight: '600' }}>LM 病變</div>
+                                        <button
+                                            onClick={() => updatePost('hasLM', !postData.hasLM)}
+                                            style={{
+                                                padding: '6px 16px',
+                                                borderRadius: '20px',
+                                                border: 'none',
+                                                background: postData.hasLM ? '#dc2626' : '#e5e7eb',
+                                                color: postData.hasLM ? 'white' : '#6b7280',
+                                                fontWeight: '500',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            {postData.hasLM ? '✓ Yes' : 'No'}
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: '#f3f4f6', borderRadius: '10px' }}>
+                                    <span>血管病變：</span>
+                                    {['1', '2', '3'].map(n => (
+                                        <button
+                                            key={n}
+                                            onClick={() => updatePost('vesselDisease', postData.vesselDisease === n ? '' : n)}
+                                            style={{
+                                                width: '40px',
+                                                height: '40px',
+                                                borderRadius: '50%',
+                                                border: `2px solid ${postData.vesselDisease === n ? '#8b5cf6' : '#e5e7eb'}`,
+                                                background: postData.vesselDisease === n ? '#ede9fe' : 'white',
+                                                color: postData.vesselDisease === n ? '#7c3aed' : '#6b7280',
+                                                fontWeight: '600',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            {n}
+                                        </button>
+                                    ))}
+                                    <span style={{ marginLeft: '6px', color: '#6b7280' }}>vessel disease</span>
+                                </div>
+                            </InfoCard>
+
+                            <InfoCard title="PCI/PTCA 治療" icon="🔧" color="#3b82f6">
+                                <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+                                    <button
+                                        onClick={() => updatePost('pciDone', false)}
+                                        style={{
+                                            flex: 1,
+                                            padding: '16px',
+                                            borderRadius: '12px',
+                                            border: `2px solid ${!postData.pciDone ? '#10b981' : '#e5e7eb'}`,
+                                            background: !postData.pciDone ? '#d1fae5' : 'white',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        <div style={{ fontWeight: '600', color: !postData.pciDone ? '#065f46' : '#6b7280' }}>No</div>
+                                        <div style={{ fontSize: '12px', color: '#6b7280' }}>未做介入</div>
+                                    </button>
+                                    <button
+                                        onClick={() => updatePost('pciDone', true)}
+                                        style={{
+                                            flex: 1,
+                                            padding: '16px',
+                                            borderRadius: '12px',
+                                            border: `2px solid ${postData.pciDone ? '#3b82f6' : '#e5e7eb'}`,
+                                            background: postData.pciDone ? '#dbeafe' : 'white',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        <div style={{ fontWeight: '600', color: postData.pciDone ? '#1d4ed8' : '#6b7280' }}>Yes</div>
+                                        <div style={{ fontSize: '12px', color: '#6b7280' }}>已做介入</div>
+                                    </button>
+                                </div>
+
+                                {postData.pciDone && (
+                                    <>
+                                        <div style={{ marginBottom: '12px' }}>
+                                            <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '8px' }}>介入位置：</div>
+                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                                {['LM', 'LAD', 'LCX', 'RCA', 'Other'].map(loc => (
+                                                    <ToggleButton
+                                                        key={loc}
+                                                        active={postData.pciLocation.includes(loc)}
+                                                        onClick={() => toggleArray('pciLocation', loc)}
+                                                        color="#3b82f6"
+                                                    >
+                                                        {loc}
+                                                    </ToggleButton>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div style={{ padding: '14px', background: '#f3f4f6', borderRadius: '10px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
+                                                <span style={{ fontWeight: '500' }}>Stent Deployment:</span>
+                                                <button
+                                                    onClick={() => updatePost('stentDone', !postData.stentDone)}
+                                                    style={{
+                                                        padding: '6px 16px',
+                                                        borderRadius: '20px',
+                                                        border: 'none',
+                                                        background: postData.stentDone ? '#10b981' : '#e5e7eb',
+                                                        color: postData.stentDone ? 'white' : '#6b7280',
+                                                        fontWeight: '500',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                >
+                                                    {postData.stentDone ? 'Yes' : 'No'}
+                                                </button>
+                                            </div>
+                                            {postData.stentDone && (
+                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                                    {['LM', 'LAD', 'LCX', 'RCA'].map(loc => (
+                                                        <ToggleButton
+                                                            key={loc}
+                                                            active={postData.stentLocation.includes(loc)}
+                                                            onClick={() => toggleArray('stentLocation', loc)}
+                                                            color="#10b981"
+                                                        >
+                                                            {loc}
+                                                        </ToggleButton>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </>
+                                )}
+                            </InfoCard>
+
+                            <InfoCard title="Sheath 處置" icon="🩹" color="#f59e0b">
+                                <div style={{ marginBottom: '16px' }}>
+                                    <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '10px' }}>穿刺部位：</div>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                        {['RFA', 'LFA', 'RRA', 'LRA'].map(site => (
+                                            <ToggleButton
+                                                key={site}
+                                                active={postData.sheathSite === site}
+                                                onClick={() => updatePost('sheathSite', site)}
+                                                color="#f59e0b"
+                                            >
+                                                {site}
+                                            </ToggleButton>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <ChecklistItem 
+                                    checked={postData.sheathRemoved} 
+                                    onChange={() => updatePost('sheathRemoved', !postData.sheathRemoved)}
+                                >
+                                    <strong>已在導管室拔除 Sheath</strong>
+                                </ChecklistItem>
+
+                                {!postData.sheathRemoved && (
+                                    <div style={{ 
+                                        padding: '14px', 
+                                        background: '#fef3c7', 
+                                        borderRadius: '10px',
+                                        borderLeft: '4px solid #f59e0b',
+                                        marginTop: '10px'
+                                    }}>
+                                        <strong style={{ color: '#b45309' }}>⚠️ Sheath 留置中</strong>
+                                        <div style={{ marginTop: '8px', fontSize: '14px' }}>
+                                            請依醫囑執行 ACT 監測後拔除<br/>
+                                            ACT &lt; 150-200 秒可考慮拔除
+                                        </div>
+                                    </div>
+                                )}
+                            </InfoCard>
+
+                            <InfoCard title="重要支持設備" icon="🚨" color="#dc2626">
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '16px' }}>
+                                    {[
+                                        { id: 'hasIABP', icon: '🫀', label: 'IABP' },
+                                        { id: 'hasECMO', icon: '⚙️', label: 'ECMO' },
+                                        { id: 'hadCPR', icon: '💔', label: 'CPR' }
+                                    ].map(item => (
+                                        <button
+                                            key={item.id}
+                                            onClick={() => updatePost(item.id, !postData[item.id])}
+                                            style={{
+                                                padding: '16px',
+                                                background: postData[item.id] ? '#fee2e2' : 'white',
+                                                border: `2px solid ${postData[item.id] ? '#dc2626' : '#e5e7eb'}`,
+                                                borderRadius: '12px',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            <div style={{ fontSize: '24px', marginBottom: '6px' }}>{item.icon}</div>
+                                            <div style={{ fontWeight: '600', fontSize: '14px' }}>{item.label}</div>
+                                        </button>
+                                    ))}
+                                </div>
+                                
+                                {(postData.hasIABP || postData.hasECMO || postData.hadCPR) && (
+                                    <CriticalAlert icon="⚠️">
+                                        <strong>嚴重警示：</strong> 病患使用重要生命支持設備，需密切監測！
+                                    </CriticalAlert>
+                                )}
+                            </InfoCard>
+
+                            <InfoCard title="抗血小板 Loading" icon="💊" color="#ec4899">
+                                <div style={{
+                                    padding: '12px',
+                                    background: '#fee2e2',
+                                    borderRadius: '10px',
+                                    marginBottom: '16px',
+                                    fontSize: '13px',
+                                    color: '#991b1b'
+                                }}>
+                                    <strong>⚠️ 重要：</strong>確認是否已在導管室或急診給予 loading！
+                                </div>
+
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                                    {[
+                                        { id: 'aspirinLoading', label: 'Aspirin', dose: '300mg stat', color: '#dc2626' },
+                                        { id: 'plavixLoading', label: 'Plavix', dose: '300-600mg', color: '#7c3aed' },
+                                        { id: 'efientLoading', label: 'Efient', dose: '20mg stat', color: '#0891b2' },
+                                        { id: 'brilintaLoading', label: 'Brilinta', dose: '180mg stat', color: '#059669' }
+                                    ].map(drug => (
+                                        <button
+                                            key={drug.id}
+                                            onClick={() => updatePost(drug.id, !postData[drug.id])}
+                                            style={{
+                                                padding: '14px',
+                                                background: postData[drug.id] ? `${drug.color}10` : '#f9fafb',
+                                                border: `2px solid ${postData[drug.id] ? drug.color : '#e5e7eb'}`,
+                                                borderRadius: '12px',
+                                                textAlign: 'left',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            <div style={{ fontWeight: '600', color: postData[drug.id] ? drug.color : '#374151' }}>
+                                                {postData[drug.id] ? '✓ ' : ''}{drug.label}
+                                            </div>
+                                            <div style={{ fontSize: '12px', color: '#6b7280' }}>{drug.dose}</div>
+                                        </button>
+                                    ))}
+                                </div>
+                            </InfoCard>
+
+                            <InfoCard title="維持藥物 Maintenance" icon="💉" color="#10b981">
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                                    {[
+                                        { id: 'bokeyMaintenance', label: 'Bokey', dose: '100mg QD' },
+                                        { id: 'plavixMaintenance', label: 'Plavix', dose: '75mg QD' },
+                                        { id: 'brilintaMaintenance', label: 'Brilinta', dose: '90mg BID' },
+                                        { id: 'efientMaintenance', label: 'Efient', dose: '3.75mg QD' }
+                                    ].map(drug => (
+                                        <button
+                                            key={drug.id}
+                                            onClick={() => updatePost(drug.id, !postData[drug.id])}
+                                            style={{
+                                                padding: '14px',
+                                                borderRadius: '10px',
+                                                border: `2px solid ${postData[drug.id] ? '#10b981' : '#e5e7eb'}`,
+                                                background: postData[drug.id] ? '#d1fae5' : 'white',
+                                                textAlign: 'left',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            <div style={{ fontWeight: '600', color: postData[drug.id] ? '#065f46' : '#374151' }}>
+                                                {postData[drug.id] ? '✓ ' : ''}{drug.label}
+                                            </div>
+                                            <div style={{ fontSize: '12px', color: '#6b7280' }}>{drug.dose}</div>
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <div style={{
+                                    marginTop: '16px',
+                                    padding: '14px',
+                                    background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+                                    borderRadius: '12px',
+                                    border: '2px solid #f59e0b'
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                                        <span style={{ fontSize: '20px' }}>⚠️</span>
+                                        <span style={{ fontWeight: '700', color: '#b45309' }}>PPI 使用提醒</span>
+                                    </div>
+                                    <div style={{ fontSize: '13px', color: '#92400e', lineHeight: '1.6' }}>
+                                        使用 DAPT 時，建議併用 PPI 預防腸胃道出血：
+                                        <div style={{ marginTop: '6px' }}>• 年齡 ≥ 65 歲</div>
+                                        <div>• 消化性潰瘍病史</div>
+                                        <div>• 併用抗凝血劑或類固醇</div>
                                     </div>
                                 </div>
                             </InfoCard>
 
-                            {/* 交班摘要 */}
-                            <div style={{
-                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                borderRadius: '16px',
-                                padding: '20px',
-                                color: 'white',
-                                marginBottom: '20px'
-                            }}>
-                                <h3 style={{ fontWeight: '600', marginBottom: '12px' }}>
-                                    📋 術後交班摘要
-                                </h3>
-                                <div style={{
-                                    background: 'rgba(255,255,255,0.15)',
-                                    borderRadius: '10px',
-                                    padding: '14px',
-                                    fontSize: '14px',
-                                    lineHeight: '1.8'
-                                }}>
-                                    治療方式：<strong>
-                                        {treatmentInfo.intervention === 'diagnostic' ? '僅診斷' :
-                                         treatmentInfo.intervention === 'balloon' ? '氣球擴張' :
-                                         treatmentInfo.intervention === 'stent' ? '放置支架' :
-                                         treatmentInfo.intervention === 'cabg' ? '建議CABG' : '___'}
-                                    </strong>
-                                    {treatmentInfo.antiplateletLoading.length > 0 && (
-                                        <>，Loading: <strong>{treatmentInfo.antiplateletLoading.join(', ')}</strong></>
-                                    )}
-                                    {treatmentInfo.compressionTime && (
-                                        <>，加壓 <strong>{treatmentInfo.compressionTime}</strong></>
-                                    )}
-                                </div>
-                            </div>
+                            <InfoCard title="術後醫囑" icon="📝" color="#6366f1">
+                                <ChecklistItem 
+                                    checked={postData.icuAdmission} 
+                                    onChange={() => updatePost('icuAdmission', !postData.icuAdmission)}
+                                    critical
+                                >
+                                    <strong>ICU Admission</strong>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                        需要加護病房觀察
+                                    </div>
+                                </ChecklistItem>
+                                
+                                <ChecklistItem 
+                                    checked={postData.needECG} 
+                                    onChange={() => updatePost('needECG', !postData.needECG)}
+                                >
+                                    <strong>Complete ECG stat</strong>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                        術後即刻心電圖
+                                    </div>
+                                </ChecklistItem>
+                                
+                                <ChecklistItem 
+                                    checked={postData.labCheck} 
+                                    onChange={() => updatePost('labCheck', !postData.labCheck)}
+                                >
+                                    <strong>Check Labs</strong>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                        CK/CKMB/TropI/Hb/aPTT
+                                    </div>
+                                </ChecklistItem>
+                            </InfoCard>
                         </div>
                     </div>
                 );
             };
 
             // ==================== WOUND CARE PAGE ====================
-            const WoundCarePage = () => (
-                <div className="fade-in">
-                    <Header title="傷口護理" subtitle="Wound Care & Assessment" showBack />
-                    <div style={{ padding: '0 16px' }}>
-                        {/* 砂包提醒 */}
-                        <div style={{
-                            background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                            borderRadius: '16px',
-                            padding: '16px 20px',
-                            marginBottom: '16px',
-                            color: 'white',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '12px'
-                        }}>
-                            <span style={{ fontSize: '28px' }}>🏋️</span>
-                            <div>
-                                <div style={{ fontWeight: '700', fontSize: '15px' }}>Femoral 穿刺使用 2kg 砂包</div>
-                                <div style={{ fontSize: '13px', opacity: 0.9 }}>手壓20分鐘後，沙包加壓至指定時間</div>
-                            </div>
-                        </div>
+            const WoundCarePage = () => {
+                const [woundChecks, setWoundChecks] = useState({
+                    bleeding: false,
+                    hematoma: false,
+                    pulse: false,
+                    color: false,
+                    sensation: false
+                });
+                
+                const updateWound = (key) => {
+                    setWoundChecks(prev => ({ ...prev, [key]: !prev[key] }));
+                };
+                
+                return (
+                    <div className="fade-in">
+                        <Header title="傷口護理" subtitle="Wound Care & Assessment" showBack />
+                        <div style={{ padding: '0 16px' }}>
+                            <CriticalAlert icon="🏋️">
+                                <div style={{ fontWeight: '700', fontSize: '16px', marginBottom: '4px' }}>
+                                    Femoral 穿刺砂包加壓
+                                </div>
+                                <div style={{ fontSize: '13px', opacity: 0.95 }}>
+                                    使用 2kg 砂包加壓止血，依醫囑時間
+                                </div>
+                            </CriticalAlert>
 
-                        <InfoCard title="加壓止血時間速查" icon="⏱️" color="#8b5cf6">
-                            {[
-                                { site: 'Femoral + AngioSeal/Proglide', time: '2 小時', color: '#10b981' },
-                                { site: 'Femoral (無止血器) + 2kg沙包', time: '手壓20分 + 沙包4-6hr', color: '#3b82f6' },
-                                { site: 'Radial (診斷導管)', time: '4 小時', color: '#f59e0b' },
-                                { site: 'Radial (治療導管)', time: '6 小時', color: '#ef4444' },
-                                { site: 'Venous Sheath', time: '2 小時', color: '#06b6d4' },
-                                { site: 'Brachial (觀察)', time: '8 小時', color: '#dc2626' }
-                            ].map((item, idx) => (
-                                <div key={idx} style={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    padding: '14px',
-                                    background: `${item.color}10`,
-                                    borderRadius: '10px',
-                                    marginBottom: '8px',
-                                    borderLeft: `4px solid ${item.color}`
-                                }}>
-                                    <span style={{ fontWeight: '500', flex: 1 }}>{item.site}</span>
-                                    <span style={{ 
-                                        fontWeight: '700', 
-                                        color: item.color,
-                                        fontSize: '14px',
-                                        textAlign: 'right'
-                                    }}>{item.time}</span>
-                                </div>
-                            ))}
-                        </InfoCard>
-                        
-                        <InfoCard title="ACT 拔 Sheath 標準" icon="🔬" color="#3b82f6">
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                <div style={{ padding: '14px', background: '#d1fae5', borderRadius: '10px' }}>
-                                    <div style={{ fontWeight: '600', color: '#065f46' }}>ACT &lt; 150 秒</div>
-                                    <div style={{ fontSize: '13px', color: '#047857' }}>無止血綿 → 可拔除 sheath</div>
-                                </div>
-                                <div style={{ padding: '14px', background: '#dbeafe', borderRadius: '10px' }}>
-                                    <div style={{ fontWeight: '600', color: '#1e40af' }}>ACT &lt; 200 秒</div>
-                                    <div style={{ fontSize: '13px', color: '#1d4ed8' }}>使用止血綿 (QuickClot) → 可拔除</div>
-                                </div>
-                                <div style={{ padding: '14px', background: '#fef3c7', borderRadius: '10px' }}>
-                                    <div style={{ fontWeight: '600', color: '#92400e' }}>ACT 150-200 秒</div>
-                                    <div style={{ fontSize: '13px', color: '#a16207' }}>30 分鐘後再驗 ACT</div>
-                                </div>
-                                <div style={{ padding: '14px', background: '#fee2e2', borderRadius: '10px' }}>
-                                    <div style={{ fontWeight: '600', color: '#991b1b' }}>ACT &gt; 200 秒</div>
-                                    <div style={{ fontSize: '13px', color: '#b91c1c' }}>1 小時後再驗 ACT</div>
-                                </div>
-                            </div>
-                        </InfoCard>
-                        
-                        <InfoCard title="傷口評估要點" icon="👀" color="#ef4444">
-                            <div style={{ lineHeight: '2' }}>
-                                {[
-                                    '血腫大小 (用筆標記範圍)',
-                                    '遠端脈搏 (Dorsalis pedis / Radial)',
-                                    '傷口有無 Bruit 雜音',
-                                    '肢體溫度與顏色',
-                                    '疼痛指數 (0-10分)',
-                                    '活動能力 (可站立/行走)'
-                                ].map((item, idx) => (
-                                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                        <span style={{
-                                            width: '24px',
-                                            height: '24px',
-                                            borderRadius: '50%',
-                                            background: '#fee2e2',
-                                            color: '#dc2626',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            fontSize: '12px',
-                                            fontWeight: '600'
-                                        }}>{idx + 1}</span>
-                                        {item}
+                            <InfoCard title="傷口評估項目" icon="🔍" color="#f59e0b">
+                                <ChecklistItem checked={woundChecks.bleeding} onChange={() => updateWound('bleeding')} critical>
+                                    <strong>檢查出血</strong>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                        觀察穿刺部位有無滲血
                                     </div>
-                                ))}
-                            </div>
-                        </InfoCard>
+                                </ChecklistItem>
+                                
+                                <ChecklistItem checked={woundChecks.hematoma} onChange={() => updateWound('hematoma')} critical>
+                                    <strong>檢查血腫</strong>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                        標記血腫範圍，觀察是否擴大
+                                    </div>
+                                </ChecklistItem>
+                                
+                                <ChecklistItem checked={woundChecks.pulse} onChange={() => updateWound('pulse')} important>
+                                    <strong>檢查足背脈搏</strong>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                        比較兩側脈搏強度
+                                    </div>
+                                </ChecklistItem>
+                                
+                                <ChecklistItem checked={woundChecks.color} onChange={() => updateWound('color')}>
+                                    <strong>觀察肢端顏色</strong>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                        注意蒼白、發紺等變化
+                                    </div>
+                                </ChecklistItem>
+                                
+                                <ChecklistItem checked={woundChecks.sensation} onChange={() => updateWound('sensation')}>
+                                    <strong>評估感覺功能</strong>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                                        麻木、刺痛等異常感覺
+                                    </div>
+                                </ChecklistItem>
+                            </InfoCard>
+
+                            <InfoCard title="加壓止血流程" icon="⏱️" color="#8b5cf6">
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                    {[
+                                        { time: '0-2hr', action: '2kg 砂包加壓', note: '持續平躺，患肢伸直' },
+                                        { time: '2-4-6hr', action: '用 2kg 砂包', note: '觀察有無滲血' },
+                                        { time: '6hr後', action: '移除砂包', note: '彈繃包紮固定' },
+                                        { time: '6-8hr', action: '可翻身活動', note: '仍需避免大幅彎曲' }
+                                    ].map((step, idx) => (
+                                        <div key={idx} style={{
+                                            padding: '14px',
+                                            background: '#f9fafb',
+                                            borderRadius: '10px',
+                                            borderLeft: '4px solid #8b5cf6'
+                                        }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+                                                <span style={{
+                                                    padding: '4px 10px',
+                                                    background: '#8b5cf6',
+                                                    color: 'white',
+                                                    borderRadius: '6px',
+                                                    fontSize: '12px',
+                                                    fontWeight: '600'
+                                                }}>{step.time}</span>
+                                                <span style={{ fontWeight: '600' }}>{step.action}</span>
+                                            </div>
+                                            <div style={{ fontSize: '13px', color: '#6b7280' }}>{step.note}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </InfoCard>
+
+                            <InfoCard title="Radial 穿刺照護" icon="✋" color="#10b981">
+                                <div style={{
+                                    padding: '14px',
+                                    background: '#d1fae5',
+                                    borderRadius: '10px',
+                                    marginBottom: '12px'
+                                }}>
+                                    <strong style={{ color: '#065f46' }}>TR-Band 照護要點：</strong>
+                                    <div style={{ marginTop: '8px', fontSize: '14px', lineHeight: '1.6' }}>
+                                        • 每 15 分鐘觀察手指顏色<br/>
+                                        • 檢查橈動脈搏動<br/>
+                                        • 定時釋放壓力（依醫囑）<br/>
+                                        • 注意麻木、發紫等警訊
+                                    </div>
+                                </div>
+                            </InfoCard>
+                        </div>
                     </div>
-                </div>
-            );
+                );
+            };
 
             // ==================== COMPLICATIONS PAGE ====================
             const ComplicationsPage = () => (
                 <div className="fade-in">
                     <Header title="併發症教學" subtitle="Vascular Complications" showBack />
                     <div style={{ padding: '0 16px' }}>
-                        <InfoCard title="假性動脈瘤 Pseudoaneurysm" icon="🔴" color="#dc2626">
-                            <div style={{ marginBottom: '16px' }}>
-                                <p style={{ fontSize: '14px', lineHeight: '1.7', marginBottom: '12px' }}>
-                                    動脈壁穿刺處未完全癒合，血液從破口流出形成與血管相通的血腫囊袋。
-                                </p>
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                    {['搏動性腫塊', '收縮期雜音', '疼痛加劇', '瘀血擴大'].map(s => (
-                                        <Tag key={s} color="#dc2626">{s}</Tag>
-                                    ))}
-                                </div>
-                            </div>
-                            <div style={{ padding: '14px', background: '#fee2e2', borderRadius: '10px', fontSize: '13px' }}>
-                                <strong>處置：</strong>立即通知醫師，可能需超音波引導加壓或血管外科處置
-                            </div>
-                        </InfoCard>
-                        
-                        <InfoCard title="動靜脈瘻管 AV Fistula" icon="🟣" color="#8b5cf6">
-                            <div style={{ marginBottom: '16px' }}>
-                                <p style={{ fontSize: '14px', lineHeight: '1.7', marginBottom: '12px' }}>
-                                    穿刺時同時刺穿相鄰動靜脈，癒合過程形成異常連通，動脈血直接分流至靜脈。
-                                </p>
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                    {['連續性雜音', '局部震顫', '靜脈擴張', '肢端缺血'].map(s => (
-                                        <Tag key={s} color="#8b5cf6">{s}</Tag>
-                                    ))}
-                                </div>
-                            </div>
-                            <div style={{ padding: '14px', background: '#ede9fe', borderRadius: '10px', fontSize: '13px' }}>
-                                <strong>處置：</strong>通知心臟科醫師，需血管超音波確認，嚴重者需手術修補
-                            </div>
-                        </InfoCard>
-                        
-                        <InfoCard title="血腫分級" icon="🟠" color="#f59e0b">
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
-                                {[
-                                    { grade: 1, size: '< 3 cm', action: '持續觀察', color: '#fef3c7' },
-                                    { grade: 2, size: '3-6 cm', action: '加強監測', color: '#fed7aa' },
-                                    { grade: 3, size: '6-10 cm', action: '通知醫師', color: '#fecaca' },
-                                    { grade: 4, size: '> 10 cm', action: '緊急處置', color: '#fca5a5' }
-                                ].map(item => (
-                                    <div key={item.grade} style={{
-                                        padding: '14px',
-                                        background: item.color,
-                                        borderRadius: '10px',
-                                        textAlign: 'center'
-                                    }}>
-                                        <div style={{ fontWeight: '700', fontSize: '18px' }}>Grade {item.grade}</div>
-                                        <div style={{ fontSize: '14px', fontWeight: '500' }}>{item.size}</div>
-                                        <div style={{ fontSize: '12px', color: '#6b7280' }}>{item.action}</div>
+                        {[
+                            {
+                                title: '血腫 Hematoma',
+                                icon: '🩸',
+                                color: '#dc2626',
+                                symptoms: ['穿刺部位腫脹', '皮下瘀青擴大', '疼痛加劇'],
+                                actions: ['標記範圍', '加強加壓', '通知醫師']
+                            },
+                            {
+                                title: '假性動脈瘤 Pseudoaneurysm',
+                                icon: '💢',
+                                color: '#7c3aed',
+                                symptoms: ['搏動性腫塊', '聽診有雜音', '進行性擴大'],
+                                actions: ['超音波確認', '通知醫師', '準備壓迫或手術']
+                            },
+                            {
+                                title: '動靜脈瘻管 AV Fistula',
+                                icon: '🔄',
+                                color: '#0891b2',
+                                symptoms: ['持續性雜音', '震顫感', '靜脈怒張'],
+                                actions: ['超音波檢查', '照會血管外科']
+                            },
+                            {
+                                title: '後腹腔出血 Retroperitoneal Bleeding',
+                                icon: '⚠️',
+                                color: '#ef4444',
+                                symptoms: ['血壓下降', '心跳加速', '腰背疼痛', '腹脹'],
+                                actions: ['立即通知醫師', '建立大量輸液', '緊急輸血準備', 'CT 確認']
+                            },
+                            {
+                                title: '肢體缺血 Limb Ischemia',
+                                icon: '🦵',
+                                color: '#f59e0b',
+                                symptoms: ['足背脈搏消失', '肢端蒼白發冷', '劇烈疼痛', '感覺喪失'],
+                                actions: ['立即通知醫師', '保持患肢平放', '避免加壓', '準備緊急處置']
+                            }
+                        ].map((comp, idx) => (
+                            <InfoCard key={idx} title={comp.title} icon={comp.icon} color={comp.color}>
+                                <div style={{ marginBottom: '12px' }}>
+                                    <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#dc2626' }}>
+                                        🔔 警示症狀：
                                     </div>
-                                ))}
-                            </div>
-                        </InfoCard>
+                                    {comp.symptoms.map((s, i) => (
+                                        <div key={i} style={{ 
+                                            padding: '8px 12px', 
+                                            background: '#fee2e2', 
+                                            borderRadius: '8px', 
+                                            marginBottom: '6px',
+                                            fontSize: '14px'
+                                        }}>
+                                            • {s}
+                                        </div>
+                                    ))}
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#059669' }}>
+                                        ✅ 處置措施：
+                                    </div>
+                                    {comp.actions.map((a, i) => (
+                                        <div key={i} style={{ 
+                                            padding: '8px 12px', 
+                                            background: '#d1fae5', 
+                                            borderRadius: '8px', 
+                                            marginBottom: '6px',
+                                            fontSize: '14px'
+                                        }}>
+                                            {i + 1}. {a}
+                                        </div>
+                                    ))}
+                                </div>
+                            </InfoCard>
+                        ))}
                     </div>
                 </div>
             );
 
             // ==================== QUIZ PAGE ====================
             const QuizPage = () => {
-                const [currentQ, setCurrentQ] = useState(0);
-                const [selected, setSelected] = useState(null);
-                const [showResult, setShowResult] = useState(false);
-                const [score, setScore] = useState(0);
-                const [quizComplete, setQuizComplete] = useState(false);
-                
                 const questions = [
                     {
-                        q: "術前準備時，病房護理站需要準備什麼物品送到導管室？",
-                        options: ["冰袋", "2kg 砂包", "加壓帶", "止血鉗"],
+                        q: "Femoral 穿刺術後，患者應維持什麼姿勢？",
+                        options: ["可自由翻身", "平躺且患肢伸直", "側躺最佳", "坐起無妨"],
                         correct: 1,
-                        explanation: "2kg 砂包是術後 femoral 穿刺加壓止血的必備物品，需由病房準備送至導管室。"
+                        explanation: "Femoral 穿刺術後需平躺，患肢伸直勿彎曲，以利加壓止血。"
                     },
                     {
-                        q: "術前交班時，需要報告哪些生命徵象？",
-                        options: ["只報血壓", "只報心跳和血壓", "BT、RR、HR、BP 都要報告", "不需報告生命徵象"],
+                        q: "使用 2kg 砂包加壓止血的主要目的是？",
+                        options: ["幫助傷口癒合", "預防血栓形成", "壓迫穿刺點止血", "減輕患者疼痛"],
                         correct: 2,
-                        explanation: "術前交班需報告體溫(BT)、呼吸(RR)、心率(HR)、血壓(BP)等基本生命徵象。"
+                        explanation: "砂包加壓的主要目的是壓迫穿刺部位，促進止血及預防血腫形成。"
                     },
                     {
-                        q: "交班時腎功能需報告哪些數值？",
-                        options: ["只報 Creatinine", "只報 eGFR", "Creatinine 與 eGFR 都要報告", "BUN 與 Creatinine"],
+                        q: "發現穿刺部位血腫持續擴大，首要處置是？",
+                        options: ["繼續觀察", "標記範圍並加強加壓", "讓患者下床活動", "等待醫師巡房"],
+                        correct: 1,
+                        explanation: "發現血腫擴大應立即標記範圍、加強加壓，並通知醫師評估。"
+                    },
+                    {
+                        q: "STEMI 病患的首選治療方式是？",
+                        options: ["藥物治療", "Primary PCI", "觀察追蹤", "CABG 手術"],
+                        correct: 1,
+                        explanation: "STEMI 首選治療為 Primary PCI（緊急冠狀動脈介入），以盡快恢復血流。"
+                    },
+                    {
+                        q: "PCI 術後需使用 DAPT（雙抗血小板治療）的原因是？",
+                        options: ["預防感染", "預防支架內血栓", "加速傷口癒合", "減輕疼痛"],
+                        correct: 1,
+                        explanation: "DAPT 的主要目的是預防支架內血栓形成，通常需使用 6-12 個月。"
+                    },
+                    {
+                        q: "使用 DAPT 時建議併用 PPI 的主要原因是？",
+                        options: ["增強抗血小板效果", "預防腸胃道出血", "減少顯影劑腎病變", "預防過敏反應"],
+                        correct: 1,
+                        explanation: "DAPT 會增加腸胃道出血風險，PPI 可保護胃黏膜，特別在高風險族群更重要。"
+                    },
+                    {
+                        q: "後腹腔出血的典型症狀不包括？",
+                        options: ["血壓下降", "心跳加速", "發燒", "腰背疼痛"],
                         correct: 2,
-                        explanation: "Creatinine 與 eGFR 都要報告，是評估顯影劑腎病變風險的必備資訊。"
+                        explanation: "後腹腔出血典型症狀包括血壓下降、心跳加速、腰背疼痛、腹脹，但不會直接引起發燒。"
                     },
                     {
-                        q: "PCI 放置 Stent 後，除了 Aspirin 還需要給什麼藥物？",
-                        options: ["只需 Aspirin 即可", "Plavix 或 Brilinta 或 Efient", "Warfarin", "Heparin"],
-                        correct: 1,
-                        explanation: "放置 Stent 後需雙抗血小板治療(DAPT)，Aspirin 加上 P2Y12 抑制劑（Plavix/Brilinta/Efient 擇一）。"
-                    },
-                    {
-                        q: "使用 DAPT（雙抗血小板治療）時，什麼藥物可預防腸胃道出血？",
-                        options: ["抗生素", "PPI（如 Nexium）", "利尿劑", "鈣離子阻斷劑"],
-                        correct: 1,
-                        explanation: "PPI（質子泵抑制劑）如 Nexium、Pantoloc 可降低 DAPT 造成腸胃道出血的風險。"
-                    },
-                    {
-                        q: "使用 AngioSeal 止血器後，股動脈穿刺處需加壓多久？",
-                        options: ["30分鐘", "2小時", "4小時", "6小時"],
-                        correct: 1,
-                        explanation: "使用 AngioSeal 或 Proglide 等血管閉合器後，沙包加壓 2 小時即可。"
-                    },
-                    {
-                        q: "拔除 femoral sheath 時，ACT 值需小於多少才可進行（無止血綿）？",
-                        options: ["100 秒", "150 秒", "200 秒", "250 秒"],
-                        correct: 1,
-                        explanation: "一般情況 ACT < 150 秒可拔除 sheath；使用止血綿則 ACT < 200 秒即可。"
-                    },
-                    {
-                        q: "Brilinta (Ticagrelor) 的 Loading dose 是多少？",
-                        options: ["90mg", "180mg", "300mg", "600mg"],
-                        correct: 1,
-                        explanation: "Brilinta (Ticagrelor) Loading dose 為 180mg，維持劑量為 90mg BID。"
-                    },
-                    {
-                        q: "傷口處發現 bruit 雜音，可能表示什麼？",
-                        options: ["正常癒合", "假性動脈瘤或AV瘻管", "輕微血腫", "肌肉緊繃"],
-                        correct: 1,
-                        explanation: "Bruit 雜音可能表示假性動脈瘤或動靜脈瘻管形成，需立即通知醫師評估。"
-                    },
-                    {
-                        q: "Radial artery 治療導管術後，需加壓止血多久？",
-                        options: ["2小時", "4小時", "6小時", "8小時"],
+                        q: "Radial 穿刺後使用 TR-Band，最重要的觀察項目是？",
+                        options: ["體溫變化", "血壓高低", "手指顏色及脈搏", "傷口外觀"],
                         correct: 2,
-                        explanation: "Radial 治療導管因使用較大導管及抗凝血劑，需加壓 6 小時。診斷導管為 4 小時。"
+                        explanation: "TR-Band 可能造成橈動脈阻塞，需密切觀察手指顏色、溫度及橈動脈搏動。"
                     }
                 ];
                 
+                const { currentQ, score, selected, showResult, completed } = quizState;
+                
                 const handleAnswer = (idx) => {
                     if (showResult) return;
-                    setSelected(idx);
-                    setShowResult(true);
-                    if (idx === questions[currentQ].correct) {
-                        setScore(s => s + 1);
-                    }
+                    setQuizState(prev => ({
+                        ...prev,
+                        selected: idx,
+                        showResult: true,
+                        score: idx === questions[currentQ].correct ? prev.score + 1 : prev.score
+                    }));
                 };
                 
                 const nextQuestion = () => {
                     if (currentQ < questions.length - 1) {
-                        setCurrentQ(q => q + 1);
-                        setSelected(null);
-                        setShowResult(false);
+                        setQuizState(prev => ({
+                            ...prev,
+                            currentQ: prev.currentQ + 1,
+                            selected: null,
+                            showResult: false
+                        }));
                     } else {
-                        setQuizComplete(true);
+                        setQuizState(prev => ({ ...prev, completed: true }));
                     }
                 };
                 
                 const resetQuiz = () => {
-                    setCurrentQ(0);
-                    setSelected(null);
-                    setShowResult(false);
-                    setScore(0);
-                    setQuizComplete(false);
+                    setQuizState({
+                        currentQ: 0,
+                        score: 0,
+                        selected: null,
+                        showResult: false,
+                        completed: false
+                    });
                 };
                 
-                if (quizComplete) {
+                if (completed) {
                     const percentage = Math.round((score / questions.length) * 100);
                     return (
                         <div className="fade-in">
-                            <Header title="測驗結果" showBack />
-                            <div style={{ padding: '30px 20px', textAlign: 'center' }}>
-                                <div style={{ fontSize: '60px', marginBottom: '20px' }}>
-                                    {percentage >= 80 ? '🎉' : percentage >= 60 ? '👍' : '📚'}
-                                </div>
-                                <h2 style={{ color: '#2c3e50', marginBottom: '10px' }}>測驗完成！</h2>
+                            <Header title="測驗結果" subtitle="Quiz Results" showBack />
+                            <div style={{ padding: '0 16px', textAlign: 'center' }}>
                                 <div style={{
-                                    fontSize: '48px',
-                                    fontWeight: '700',
-                                    color: percentage >= 80 ? '#10b981' : percentage >= 60 ? '#f59e0b' : '#ef4444',
-                                    marginBottom: '10px'
+                                    background: 'white',
+                                    borderRadius: '20px',
+                                    padding: '40px 20px',
+                                    boxShadow: 'var(--shadow)'
                                 }}>
-                                    {score} / {questions.length}
+                                    <div style={{ 
+                                        fontSize: '60px', 
+                                        marginBottom: '20px',
+                                        animation: percentage >= 70 ? 'heartbeat 1s infinite' : 'none'
+                                    }}>
+                                        {percentage >= 80 ? '🏆' : percentage >= 60 ? '👍' : '📚'}
+                                    </div>
+                                    <h2 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '10px' }}>
+                                        {percentage >= 80 ? '太棒了！' : percentage >= 60 ? '不錯喔！' : '再加油！'}
+                                    </h2>
+                                    <div style={{ fontSize: '48px', fontWeight: '700', color: percentage >= 60 ? '#10b981' : '#f59e0b', marginBottom: '10px' }}>
+                                        {score}/{questions.length}
+                                    </div>
+                                    <div style={{ fontSize: '16px', color: '#6b7280', marginBottom: '30px' }}>
+                                        正確率 {percentage}%
+                                    </div>
+                                    <button
+                                        onClick={resetQuiz}
+                                        style={{
+                                            padding: '16px 40px',
+                                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '12px',
+                                            fontSize: '16px',
+                                            fontWeight: '600',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        重新測驗
+                                    </button>
                                 </div>
-                                <div style={{ color: '#6b7280', marginBottom: '30px' }}>
-                                    正確率: {percentage}%
-                                </div>
-                                <button
-                                    onClick={resetQuiz}
-                                    style={{
-                                        padding: '14px 40px',
-                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '25px',
-                                        fontSize: '16px',
-                                        fontWeight: '600',
-                                        cursor: 'pointer'
-                                    }}
-                                >
-                                    重新測驗
-                                </button>
                             </div>
                         </div>
                     );
@@ -2259,7 +1664,6 @@
                     <div className="fade-in">
                         <Header title="自我測驗" subtitle={`問題 ${currentQ + 1} / ${questions.length}`} showBack />
                         <div style={{ padding: '0 16px' }}>
-                            {/* Progress */}
                             <div style={{ 
                                 height: '6px', 
                                 background: '#e5e7eb', 
@@ -2275,7 +1679,6 @@
                                 }}/>
                             </div>
                             
-                            {/* Question */}
                             <div style={{
                                 background: 'white',
                                 borderRadius: '16px',
@@ -2288,7 +1691,6 @@
                                 </h3>
                             </div>
                             
-                            {/* Options */}
                             {q.options.map((opt, idx) => {
                                 let bgColor = 'white';
                                 let borderColor = '#e5e7eb';
@@ -2346,7 +1748,6 @@
                                 );
                             })}
                             
-                            {/* Explanation */}
                             {showResult && (
                                 <div style={{
                                     padding: '16px',
@@ -2364,7 +1765,6 @@
                                 </div>
                             )}
                             
-                            {/* Next button */}
                             {showResult && (
                                 <button
                                     onClick={nextQuestion}
@@ -2399,7 +1799,7 @@
                     case 'home': return <HomePage />;
                     case 'pre-cath': return <PreCathPage />;
                     case 'patient-handoff': return <PatientHandoffPage />;
-                    case 'transfer-note': return <TransferNotePage />;
+                    case 'procedure-handoff': return <ProcedureHandoffPage />;
                     case 'post-cath': return <PostCathPage />;
                     case 'wound-care': return <WoundCarePage />;
                     case 'complications': return <ComplicationsPage />;
