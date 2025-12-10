@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LAAO TEE 評估指引</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #1a365d;
+            --primary-light: #2c5282;
+            --accent: #ed8936;
+            --accent-light: #f6ad55;
+            --success: #38a169;
+            --warning: #d69e2e;
+            --danger: #e53e3e;
+            --bg-dark: #0f1419;
+            --bg-card: #1a2332;
+            --bg-card-hover: #243044;
+            --text-primary: #f7fafc;
+            --text-secondary: #a0aec0;
+            --text-muted: #718096;
+            --border: #2d3748;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        #root {
+            min-height: 100vh;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px var(--accent); }
+            50% { box-shadow: 0 0 20px var(--accent), 0 0 30px var(--accent); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback } = React;
+
+        // ========== Data ==========
+        const SECTIONS = [
+            { id: 'overview', title: '總覽', icon: '🫀', color: '#ed8936' },
+            { id: 'preprocedural', title: '術前評估', icon: '📋', color: '#38a169' },
+            { id: 'tee-angles', title: 'TEE 角度', icon: '📐', color: '#3182ce' },
+            { id: 'sizing', title: '尺寸測量', icon: '📏', color: '#9f7aea' },
+            { id: 'tsp', title: '心房中隔穿刺', icon: '🎯', color: '#e53e3e' },
+            { id: 'intraprocedural', title: '術中評估', icon: '⚙️', color: '#d69e2e' },
+            { id: 'release', title: '釋放標準', icon: '✅', color: '#38a169' },
+            { id: 'complications', title: '併發症監測', icon: '⚠️', color: '#e53e3e' },
+            { id: 'checklist', title: '檢查清單', icon: '☑️', color: '#4299e1' },
+        ];
+
+        const LAA_MORPHOLOGIES = [
+            { name: 'Chicken Wing (雞翅膀型)', percent: '48%', risk: '低', desc: '近端或中段有明顯彎折，血栓風險最低', color: '#38a169' },
+            { name: 'Cactus (仙人掌型)', percent: '30%', risk: '中', desc: '主要中央葉伴多個小葉向不同方向延伸', color: '#d69e2e' },
+            { name: 'Windsock (風向袋型)', percent: '19%', risk: '中', desc: '主要錐形或管狀葉，長度較長', color: '#ed8936' },
+            { name: 'Cauliflower (花椰菜型)', percent: '3%', risk: '高', desc: '短而寬，高度小梁化，無主要葉，血栓風險最高', color: '#e53e3e' },
+        ];
+
+        const TEE_ANGLES = [
+            { 
+                angle: '0°', 
+                view: '橫切面',
+                desc: 'LAA 開口橫向視圖',
+                measures: ['開口直徑 (前後向)', 'LAA 與 LUPV 關係'],
+                tips: '配合逆時針旋轉探頭獲得最佳視野',
+                landmark: '二尖瓣環作為參考'
+            },
+            { 
+                angle: '45°', 
+                view: '斜切面',
+                desc: '介於橫向與縱向之間',
+                measures: ['開口直徑', '分葉結構識別'],
+                tips: '用於確認多葉結構',
+                landmark: '主動脈瓣短軸視圖'
+            },
+            { 
+                angle: '90°', 
+                view: '縱切面',
+                desc: '最佳深度測量角度',
+                measures: ['LAA 深度/長度', '主葉方向'],
+                tips: '測量從開口到頂點的距離',
+                landmark: 'Bicaval view 定位'
+            },
+            { 
+                angle: '135°', 
+                view: '後葉切面',
+                desc: '後葉最佳視角',
+                measures: ['後葉結構', '最大開口直徑 (常見)'],
+                tips: '橢圓形開口常在此角度測得最大值',
+                landmark: '左肺靜脈作為標誌'
+            },
+        ];
+
+        const WATCHMAN_SIZING = {
+            title: 'Watchman FLX',
+            color: '#3182ce',
+            landingZone: {
+                range: '17-31 mm',
+                method: '從 LCx 頂部到 LUPV limbus 尖端下方約 2 cm',
+            },
+            depth: {
+                requirement: '≥ 最大開口直徑',
+                note: '深度不能小於最大開口直徑'
+            },
+            oversizing: '8-20%',
+            sizes: [
+                { size: 21, range: '14-17' },
+                { size: 24, range: '16-19' },
+                { size: 27, range: '18-22' },
+                { size: 31, range: '22-27' },
+                { size: 35, range: '27-31' },
+            ]
+        };
+
+        const AMULET_SIZING = {
+            title: 'Amplatzer Amulet',
+            color: '#9f7aea',
+            ostium: {
+                definition: '從肺靜脈嵴 (PV ridge) 到 LCx 的連線',
+            },
+            landingZone: {
+                range: '11-31 mm',
+                method: '在開口遠端 10-12 mm 處測量，垂直於頸部軸線',
+            },
+            depth: {
+                requirement: '≥ 10 mm 或 12 mm (依器械尺寸)',
+                note: '測量方向垂直於 LAA 開口平面'
+            },
+            sizes: [
+                { size: 16, range: '11-13', depth: 10 },
+                { size: 18, range: '13-15', depth: 10 },
+                { size: 20, range: '15-17', depth: 10 },
+                { size: 22, range: '17-19', depth: 10 },
+                { size: 25, range: '19-22', depth: 12 },
+                { size: 28, range: '22-25', depth: 12 },
+                { size: 31, range: '25-28', depth: 12 },
+                { size: 34, range: '28-31', depth: 12 },
+            ]
+        };
+
+        const PASS_CRITERIA = [
+            { letter: 'P', title: 'Position', desc: '位置正確', detail: '器械位於 Landing Zone，最大徑處或稍遠端' },
+            { letter: 'A', title: 'Anchor', desc: '錨定穩固', detail: '輕拉測試 (tug test) 穩定，無移位' },
+            { letter: 'S', title: 'Size', desc: '尺寸適當', detail: '壓縮率 10-30%，無過度壓縮或不足' },
+            { letter: 'S', title: 'Seal', desc: '密封完整', detail: 'Peri-device leak < 3 mm 為可接受' },
+        ];
+
+        const CLOSE_CRITERIA = [
+            { letter: 'C', title: 'Circumflex', desc: '位置確認', detail: '至少 2/3 的 device lobe 位於 LCx 遠端' },
+            { letter: 'L', title: 'Lobe', desc: '葉片壓縮', detail: 'Lobe 輕微壓縮' },
+            { letter: 'O', title: 'Orientation', desc: '方向對齊', detail: '與預定 Landing Zone 軸線一致' },
+            { letter: 'S', title: 'Separated', desc: '分離確認', detail: 'Disc 與 Lobe 分離' },
+            { letter: 'E', title: 'Elliptical', desc: '形狀確認', detail: 'Disc 呈凹面橢圓形' },
+        ];
+
+        const EXCLUSION_CRITERIA = [
+            { item: '心包積液', threshold: '> 2 mm', severity: 'high' },
+            { item: 'ASD / PFO', threshold: '大分流', severity: 'high' },
+            { item: '心房中膈動脈瘤', threshold: '突出 > 15 mm', severity: 'medium' },
+            { item: '二尖瓣狹窄', threshold: '面積 < 1.5 cm²', severity: 'high' },
+            { item: '主動脈斑塊', threshold: '厚度 > 4 mm + 活動性', severity: 'medium' },
+            { item: 'LA/LAA 血栓', threshold: '任何存在', severity: 'critical' },
+            { item: '濃密 SEC', threshold: '顯著存在', severity: 'high' },
+        ];
+
+        const CHECKLIST_ITEMS = [
+            { category: '術前基本', items: [
+                { id: 'thrombus', text: '排除 LA/LAA 血栓', critical: true },
+                { id: 'sec', text: '評估 SEC (自發性超音波對比)', critical: true },
+                { id: 'pef', text: '排除心包積液 (> 2mm)', critical: true },
+                { id: 'morphology', text: '確認 LAA 形態分類', critical: false },
+            ]},
+            { category: '尺寸測量', items: [
+                { id: 'angle0', text: '0° 角度測量', critical: true },
+                { id: 'angle45', text: '45° 角度測量', critical: true },
+                { id: 'angle90', text: '90° 角度測量', critical: true },
+                { id: 'angle135', text: '135° 角度測量', critical: true },
+                { id: 'depth', text: 'LAA 深度測量', critical: true },
+                { id: 'maxd', text: '記錄最大開口直徑', critical: true },
+            ]},
+            { category: '解剖評估', items: [
+                { id: 'lobes', text: '分葉數量與位置', critical: false },
+                { id: 'lupv', text: 'LUPV 關係評估', critical: false },
+                { id: 'lcx', text: 'LCx 位置確認', critical: true },
+                { id: 'mv', text: '二尖瓣關係', critical: false },
+            ]},
+            { category: 'TSP 導引', items: [
+                { id: 'bicaval', text: 'Bicaval view 定位', critical: true },
+                { id: 'sax', text: 'Short-axis view 確認', critical: true },
+                { id: 'tenting', text: '確認 Tenting', critical: true },
+                { id: 'position', text: '下後方穿刺點', critical: true },
+            ]},
+            { category: '釋放前確認', items: [
+                { id: 'position_final', text: '位置正確 (Position)', critical: true },
+                { id: 'anchor', text: '錨定穩固 (Anchor/Tug test)', critical: true },
+                { id: 'size_final', text: '壓縮率適當 (Size)', critical: true },
+                { id: 'seal', text: '密封 < 3mm (Seal)', critical: true },
+                { id: 'mv_clear', text: '無干擾二尖瓣', critical: true },
+                { id: 'pv_clear', text: '無干擾肺靜脈', critical: true },
+            ]},
+        ];
+
+        // ========== Components ==========
+        const Header = ({ currentSection, onBack }) => (
+            <header style={{
+                background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)',
+                padding: '16px 20px',
+                position: 'sticky',
+                top: 0,
+                zIndex: 100,
+                boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    {currentSection !== 'home' && (
+                        <button onClick={onBack} style={{
+                            background: 'rgba(255,255,255,0.15)',
+                            border: 'none',
+                            borderRadius: '10px',
+                            padding: '8px 12px',
+                            color: 'white',
+                            fontSize: '18px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                        }}>
+                            ←
+                        </button>
+                    )}
+                    <div>
+                        <h1 style={{ 
+                            fontSize: currentSection === 'home' ? '22px' : '18px', 
+                            fontWeight: 700,
+                            letterSpacing: '0.5px'
+                        }}>
+                            {currentSection === 'home' ? '🫀 LAAO TEE 評估指引' : SECTIONS.find(s => s.id === currentSection)?.title || ''}
+                        </h1>
+                        {currentSection === 'home' && (
+                            <p style={{ fontSize: '12px', opacity: 0.8, marginTop: '4px' }}>
+                                Left Atrial Appendage Occlusion
+                            </p>
+                        )}
+                    </div>
+                </div>
+            </header>
+        );
+
+        const MenuCard = ({ section, onClick, index }) => (
+            <div 
+                onClick={onClick}
+                className="fade-in"
+                style={{
+                    background: `linear-gradient(135deg, var(--bg-card) 0%, ${section.color}22 100%)`,
+                    borderRadius: '16px',
+                    padding: '20px',
+                    cursor: 'pointer',
+                    border: `1px solid ${section.color}44`,
+                    transition: 'all 0.3s ease',
+                    animationDelay: `${index * 0.05}s`,
+                }}
+                onMouseEnter={e => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = `0 8px 30px ${section.color}33`;
+                }}
+                onMouseLeave={e => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                }}
+            >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                    <span style={{ 
+                        fontSize: '32px',
+                        filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))'
+                    }}>{section.icon}</span>
+                    <div>
+                        <h3 style={{ fontSize: '17px', fontWeight: 600, color: section.color }}>
+                            {section.title}
+                        </h3>
+                    </div>
+                    <span style={{ marginLeft: 'auto', opacity: 0.5 }}>→</span>
+                </div>
+            </div>
+        );
+
+        const InfoCard = ({ title, children, color = 'var(--accent)', icon }) => (
+            <div className="fade-in" style={{
+                background: 'var(--bg-card)',
+                borderRadius: '16px',
+                padding: '20px',
+                marginBottom: '16px',
+                borderLeft: `4px solid ${color}`,
+            }}>
+                {title && (
+                    <h3 style={{ 
+                        fontSize: '16px', 
+                        fontWeight: 600, 
+                        marginBottom: '14px',
+                        color: color,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px'
+                    }}>
+                        {icon && <span>{icon}</span>}
+                        {title}
+                    </h3>
+                )}
+                {children}
+            </div>
+        );
+
+        const AlertBox = ({ type = 'info', children }) => {
+            const styles = {
+                critical: { bg: '#e53e3e22', border: '#e53e3e', icon: '🚨' },
+                warning: { bg: '#d69e2e22', border: '#d69e2e', icon: '⚠️' },
+                success: { bg: '#38a16922', border: '#38a169', icon: '✅' },
+                info: { bg: '#3182ce22', border: '#3182ce', icon: 'ℹ️' },
+            };
+            const s = styles[type];
+            return (
+                <div style={{
+                    background: s.bg,
+                    borderLeft: `4px solid ${s.border}`,
+                    borderRadius: '8px',
+                    padding: '14px',
+                    marginBottom: '12px',
+                    display: 'flex',
+                    gap: '10px',
+                    alignItems: 'flex-start',
+                }}>
+                    <span>{s.icon}</span>
+                    <div style={{ fontSize: '14px', lineHeight: 1.6 }}>{children}</div>
+                </div>
+            );
+        };
+
+        const DataRow = ({ label, value, highlight }) => (
+            <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '10px 0',
+                borderBottom: '1px solid var(--border)',
+            }}>
+                <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>{label}</span>
+                <span style={{ 
+                    fontWeight: 600, 
+                    color: highlight ? 'var(--accent)' : 'var(--text-primary)',
+                    fontSize: '15px'
+                }}>{value}</span>
+            </div>
+        );
+
+        const Badge = ({ text, color }) => (
+            <span style={{
+                background: `${color}22`,
+                color: color,
+                padding: '4px 10px',
+                borderRadius: '20px',
+                fontSize: '12px',
+                fontWeight: 500,
+            }}>{text}</span>
+        );
+
+        // ========== Section Components ==========
+        const OverviewSection = () => (
+            <div style={{ padding: '20px' }}>
+                <InfoCard title="LAAO 術前 TEE 評估要點" icon="🎯" color="#ed8936">
+                    <div style={{ fontSize: '14px', lineHeight: 1.8 }}>
+                        <p style={{ marginBottom: '12px' }}>
+                            經皮左心耳封堵術 (LAAO) 需要完整的基線 TEE 評估，以確保手術成功與安全。
+                        </p>
+                        <div style={{ 
+                            background: 'var(--bg-dark)', 
+                            borderRadius: '12px', 
+                            padding: '16px',
+                            marginTop: '12px'
+                        }}>
+                            <div style={{ fontWeight: 600, marginBottom: '10px', color: 'var(--accent)' }}>
+                                核心評估項目：
+                            </div>
+                            <ul style={{ paddingLeft: '20px', color: 'var(--text-secondary)' }}>
+                                <li style={{ marginBottom: '8px' }}>血栓排除 (Thrombus Exclusion)</li>
+                                <li style={{ marginBottom: '8px' }}>LAA 解剖與形態評估</li>
+                                <li style={{ marginBottom: '8px' }}>多角度尺寸測量 (0°, 45°, 90°, 135°)</li>
+                                <li style={{ marginBottom: '8px' }}>器械選擇與尺寸決定</li>
+                                <li>排除標準確認</li>
+                            </ul>
+                        </div>
+                    </div>
+                </InfoCard>
+
+                <InfoCard title="TEE vs CCT 比較" icon="⚖️" color="#3182ce">
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                        <div style={{ 
+                            background: 'var(--bg-dark)', 
+                            borderRadius: '10px', 
+                            padding: '14px',
+                            textAlign: 'center'
+                        }}>
+                            <div style={{ fontSize: '24px', marginBottom: '8px' }}>🔊</div>
+                            <div style={{ fontWeight: 600, marginBottom: '6px' }}>TEE</div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                                即時成像、血栓排除金標準、術中導引
+                            </div>
+                        </div>
+                        <div style={{ 
+                            background: 'var(--bg-dark)', 
+                            borderRadius: '10px', 
+                            padding: '14px',
+                            textAlign: 'center'
+                        }}>
+                            <div style={{ fontSize: '24px', marginBottom: '8px' }}>📷</div>
+                            <div style={{ fontWeight: 600, marginBottom: '6px' }}>CCT</div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                                高空間解析度、3D重建、TSP規劃
+                            </div>
+                        </div>
+                    </div>
+                </InfoCard>
+
+                <AlertBox type="info">
+                    <strong>建議：</strong>3D-TEE 的 MPR (多平面重建) 是測量 LAA 開口和深度最準確的方法，測量值與實際器械尺寸相關性更佳。
+                </AlertBox>
+
+                <InfoCard title="測量時機" icon="⏱️" color="#38a169">
+                    <AlertBox type="success">
+                        測量應在 <strong>收縮末期 (End-systole)</strong> 進行，此時 LAA 尺寸最大。
+                        建議 LA 壓力 {'>'} 12 mmHg 時測量。
+                    </AlertBox>
+                </InfoCard>
+            </div>
+        );
+
+        const PreproceduralSection = () => (
+            <div style={{ padding: '20px' }}>
+                <AlertBox type="critical">
+                    <strong>首要任務：</strong>TEE 必須確認 LA/LAA 內<strong>無血栓</strong>或濃密 SEC，血栓存在將導致手術取消。
+                </AlertBox>
+
+                <InfoCard title="血栓評估" icon="🔍" color="#e53e3e">
+                    <DataRow label="LAA 排空速度 (高危)" value="< 20 cm/s" highlight />
+                    <DataRow label="LAA 排空速度 (降低)" value="< 40 cm/s" />
+                    <DataRow label="測量方法" value="Pulsed-wave Doppler" />
+                    <DataRow label="探頭位置" value="LAA 內" />
+                    
+                    <div style={{ 
+                        marginTop: '16px', 
+                        padding: '14px',
+                        background: 'var(--bg-dark)',
+                        borderRadius: '10px'
+                    }}>
+                        <div style={{ fontWeight: 600, marginBottom: '10px', fontSize: '14px' }}>
+                            血栓分級 (Thrombus Staging):
+                        </div>
+                        <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                            <div style={{ marginBottom: '4px' }}>Stage 0: 無自發性超音波對比</div>
+                            <div style={{ marginBottom: '4px' }}>Stage 1-4: 不同程度 SEC</div>
+                            <div>Stage 5: 明確血栓</div>
+                        </div>
+                    </div>
+                </InfoCard>
+
+                <InfoCard title="區分血栓 vs 梳狀肌" icon="🔬" color="#d69e2e">
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '13px' }}>
+                        <div style={{ background: 'var(--bg-dark)', padding: '14px', borderRadius: '10px' }}>
+                            <div style={{ fontWeight: 600, color: '#38a169', marginBottom: '8px' }}>
+                                梳狀肌 (Pectinate)
+                            </div>
+                            <ul style={{ paddingLeft: '16px', color: 'var(--text-secondary)' }}>
+                                <li>沿 LAA 內壁分布</li>
+                                <li>多條、線狀、平行</li>
+                                <li>等迴聲或輕度高迴聲</li>
+                                <li>固定不動</li>
+                            </ul>
+                        </div>
+                        <div style={{ background: 'var(--bg-dark)', padding: '14px', borderRadius: '10px' }}>
+                            <div style={{ fontWeight: 600, color: '#e53e3e', marginBottom: '8px' }}>
+                                血栓 (Thrombus)
+                            </div>
+                            <ul style={{ paddingLeft: '16px', color: 'var(--text-secondary)' }}>
+                                <li>常見於 LAA 頂端</li>
+                                <li>圓形或不規則</li>
+                                <li>較血液高迴聲</li>
+                                <li>可能活動 (pedunculated)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <AlertBox type="info">
+                        使用 biplane imaging、3D 重建和放大視圖有助於鑑別診斷
+                    </AlertBox>
+                </InfoCard>
+
+                <InfoCard title="LAA 形態分類" icon="🫀" color="#9f7aea">
+                    {LAA_MORPHOLOGIES.map((m, i) => (
+                        <div key={i} style={{
+                            background: 'var(--bg-dark)',
+                            borderRadius: '12px',
+                            padding: '14px',
+                            marginBottom: '10px',
+                            borderLeft: `4px solid ${m.color}`,
+                        }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                <span style={{ fontWeight: 600, fontSize: '14px' }}>{m.name}</span>
+                                <div style={{ display: 'flex', gap: '8px' }}>
+                                    <Badge text={m.percent} color="#3182ce" />
+                                    <Badge text={`風險: ${m.risk}`} color={m.color} />
+                                </div>
+                            </div>
+                            <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{m.desc}</p>
+                        </div>
+                    ))}
+                    
+                    <AlertBox type="info">
+                        <strong>新分類 (LAA-L vs LAA-H):</strong><br/>
+                        LAA-L: Chicken wing 彎折角度 {'<'} 90°（低風險）<br/>
+                        LAA-H: 其他所有形態（高風險）
+                    </AlertBox>
+                </InfoCard>
+
+                <InfoCard title="排除標準" icon="🚫" color="#e53e3e">
+                    {EXCLUSION_CRITERIA.map((c, i) => (
+                        <div key={i} style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '12px',
+                            background: 'var(--bg-dark)',
+                            borderRadius: '8px',
+                            marginBottom: '8px',
+                            borderLeft: `3px solid ${
+                                c.severity === 'critical' ? '#e53e3e' :
+                                c.severity === 'high' ? '#ed8936' : '#d69e2e'
+                            }`,
+                        }}>
+                            <span style={{ fontSize: '14px' }}>{c.item}</span>
+                            <span style={{ 
+                                fontSize: '13px', 
+                                fontWeight: 600,
+                                color: c.severity === 'critical' ? '#e53e3e' : 'var(--accent)'
+                            }}>{c.threshold}</span>
+                        </div>
+                    ))}
+                </InfoCard>
+            </div>
+        );
+
+        const TEEAnglesSection = () => (
+            <div style={{ padding: '20px' }}>
+                <AlertBox type="info">
+                    TEE 標準測量需在 <strong>4 個主要角度</strong> 進行，選擇最大值決定器械尺寸
+                </AlertBox>
+
+                {TEE_ANGLES.map((angle, i) => (
+                    <InfoCard 
+                        key={i} 
+                        title={`${angle.angle} - ${angle.view}`} 
+                        icon="📐" 
+                        color={['#3182ce', '#38a169', '#ed8936', '#9f7aea'][i]}
+                    >
+                        <p style={{ fontSize: '14px', marginBottom: '14px', color: 'var(--text-secondary)' }}>
+                            {angle.desc}
+                        </p>
+                        
+                        <div style={{ 
+                            background: 'var(--bg-dark)', 
+                            borderRadius: '10px', 
+                            padding: '14px',
+                            marginBottom: '12px'
+                        }}>
+                            <div style={{ fontWeight: 600, fontSize: '13px', marginBottom: '8px', color: 'var(--accent)' }}>
+                                📏 測量項目：
+                            </div>
+                            {angle.measures.map((m, j) => (
+                                <div key={j} style={{ 
+                                    fontSize: '13px', 
+                                    color: 'var(--text-secondary)',
+                                    padding: '4px 0',
+                                    paddingLeft: '12px',
+                                    borderLeft: '2px solid var(--accent)'
+                                }}>
+                                    {m}
+                                </div>
+                            ))}
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '13px' }}>
+                            <div style={{ background: 'rgba(56,161,105,0.15)', padding: '10px', borderRadius: '8px' }}>
+                                <span style={{ color: '#38a169' }}>💡 技巧：</span>
+                                <div style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>{angle.tips}</div>
+                            </div>
+                            <div style={{ background: 'rgba(49,130,206,0.15)', padding: '10px', borderRadius: '8px' }}>
+                                <span style={{ color: '#3182ce' }}>🎯 標誌：</span>
+                                <div style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>{angle.landmark}</div>
+                            </div>
+                        </div>
+                    </InfoCard>
+                ))}
+
+                <InfoCard title="測量要點整理" icon="📝" color="#d69e2e">
+                    <AlertBox type="warning">
+                        <strong>開口常呈橢圓形</strong>，最大直徑常在 120°-135° 測得
+                    </AlertBox>
+                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.8 }}>
+                        <p>• 使用 biplane views 同時觀察兩個垂直平面</p>
+                        <p>• 3D-MPR 為最準確的測量方法</p>
+                        <p>• 測量時機：收縮末期 (End-systole)</p>
+                        <p>• 記錄 4 個角度的最大值</p>
+                    </div>
+                </InfoCard>
+            </div>
+        );
+
+        const SizingSection = () => {
+            const [selectedDevice, setSelectedDevice] = useState('watchman');
+
+            return (
+                <div style={{ padding: '20px' }}>
+                    {/* Device Toggle */}
+                    <div style={{ 
+                        display: 'flex', 
+                        gap: '10px', 
+                        marginBottom: '20px',
+                        background: 'var(--bg-card)',
+                        padding: '6px',
+                        borderRadius: '12px'
+                    }}>
+                        <button
+                            onClick={() => setSelectedDevice('watchman')}
+                            style={{
+                                flex: 1,
+                                padding: '14px',
+                                border: 'none',
+                                borderRadius: '10px',
+                                background: selectedDevice === 'watchman' 
+                                    ? 'linear-gradient(135deg, #3182ce 0%, #2c5282 100%)' 
+                                    : 'transparent',
+                                color: 'white',
+                                fontWeight: 600,
+                                fontSize: '14px',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s',
+                            }}
+                        >
+                            Watchman FLX
+                        </button>
+                        <button
+                            onClick={() => setSelectedDevice('amulet')}
+                            style={{
+                                flex: 1,
+                                padding: '14px',
+                                border: 'none',
+                                borderRadius: '10px',
+                                background: selectedDevice === 'amulet' 
+                                    ? 'linear-gradient(135deg, #9f7aea 0%, #805ad5 100%)' 
+                                    : 'transparent',
+                                color: 'white',
+                                fontWeight: 600,
+                                fontSize: '14px',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s',
+                            }}
+                        >
+                            Amulet
+                        </button>
+                    </div>
+
+                    {selectedDevice === 'watchman' ? (
+                        <>
+                            <InfoCard title="Watchman FLX 測量重點" icon="📏" color="#3182ce">
+                                <DataRow label="Landing Zone 範圍" value={WATCHMAN_SIZING.landingZone.range} highlight />
+                                <DataRow label="深度要求" value={WATCHMAN_SIZING.depth.requirement} />
+                                <DataRow label="超規比例" value={WATCHMAN_SIZING.oversizing} highlight />
+                                
+                                <div style={{ 
+                                    marginTop: '16px', 
+                                    padding: '14px', 
+                                    background: 'var(--bg-dark)', 
+                                    borderRadius: '10px',
+                                    fontSize: '13px'
+                                }}>
+                                    <div style={{ fontWeight: 600, marginBottom: '10px', color: '#3182ce' }}>
+                                        🎯 Landing Zone 測量方法：
+                                    </div>
+                                    <p style={{ color: 'var(--text-secondary)' }}>
+                                        從 <strong>LCx 頂部</strong> 到 <strong>LUPV limbus 尖端下方約 1-2 cm</strong> 處測量
+                                    </p>
+                                </div>
+                            </InfoCard>
+
+                            <InfoCard title="器械尺寸對照表" icon="📊" color="#3182ce">
+                                <div style={{ overflowX: 'auto' }}>
+                                    <table style={{ width: '100%', fontSize: '13px', borderCollapse: 'collapse' }}>
+                                        <thead>
+                                            <tr style={{ background: 'var(--bg-dark)' }}>
+                                                <th style={{ padding: '12px', textAlign: 'left', borderRadius: '8px 0 0 0' }}>器械尺寸</th>
+                                                <th style={{ padding: '12px', textAlign: 'center', borderRadius: '0 8px 0 0' }}>LAA 直徑範圍 (mm)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {WATCHMAN_SIZING.sizes.map((s, i) => (
+                                                <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
+                                                    <td style={{ padding: '12px', fontWeight: 600, color: '#3182ce' }}>
+                                                        {s.size} mm
+                                                    </td>
+                                                    <td style={{ padding: '12px', textAlign: 'center' }}>
+                                                        {s.range} mm
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </InfoCard>
+                        </>
+                    ) : (
+                        <>
+                            <InfoCard title="Amulet 測量重點" icon="📏" color="#9f7aea">
+                                <AlertBox type="info">
+                                    Amulet 需區分 <strong>Ostium</strong> 和 <strong>Landing Zone</strong> 兩個測量平面
+                                </AlertBox>
+
+                                <div style={{ 
+                                    padding: '14px', 
+                                    background: 'var(--bg-dark)', 
+                                    borderRadius: '10px',
+                                    marginBottom: '12px',
+                                    fontSize: '13px'
+                                }}>
+                                    <div style={{ fontWeight: 600, marginBottom: '8px', color: '#9f7aea' }}>
+                                        Ostium (開口) 定義：
+                                    </div>
+                                    <p style={{ color: 'var(--text-secondary)' }}>
+                                        從 <strong>肺靜脈嵴 (PV ridge)</strong> 到 <strong>LCx</strong> 的連線
+                                    </p>
+                                </div>
+
+                                <div style={{ 
+                                    padding: '14px', 
+                                    background: 'var(--bg-dark)', 
+                                    borderRadius: '10px',
+                                    fontSize: '13px'
+                                }}>
+                                    <div style={{ fontWeight: 600, marginBottom: '8px', color: '#9f7aea' }}>
+                                        Landing Zone 測量：
+                                    </div>
+                                    <p style={{ color: 'var(--text-secondary)' }}>
+                                        在開口遠端 <strong>10-12 mm</strong> 處測量，<strong>垂直於頸部軸線</strong>
+                                    </p>
+                                </div>
+
+                                <DataRow label="Landing Zone 範圍" value={AMULET_SIZING.landingZone.range} highlight />
+                                <DataRow label="深度要求" value={AMULET_SIZING.depth.requirement} />
+                            </InfoCard>
+
+                            <InfoCard title="器械尺寸對照表" icon="📊" color="#9f7aea">
+                                <div style={{ overflowX: 'auto' }}>
+                                    <table style={{ width: '100%', fontSize: '13px', borderCollapse: 'collapse' }}>
+                                        <thead>
+                                            <tr style={{ background: 'var(--bg-dark)' }}>
+                                                <th style={{ padding: '10px', textAlign: 'left' }}>尺寸</th>
+                                                <th style={{ padding: '10px', textAlign: 'center' }}>LZ 範圍</th>
+                                                <th style={{ padding: '10px', textAlign: 'center' }}>最小深度</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {AMULET_SIZING.sizes.map((s, i) => (
+                                                <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
+                                                    <td style={{ padding: '10px', fontWeight: 600, color: '#9f7aea' }}>
+                                                        {s.size} mm
+                                                    </td>
+                                                    <td style={{ padding: '10px', textAlign: 'center' }}>
+                                                        {s.range} mm
+                                                    </td>
+                                                    <td style={{ padding: '10px', textAlign: 'center', color: 'var(--accent)' }}>
+                                                        {s.depth} mm
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </InfoCard>
+                        </>
+                    )}
+
+                    <InfoCard title="器械選擇考量" icon="🤔" color="#d69e2e">
+                        <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.8 }}>
+                            <p style={{ marginBottom: '10px' }}>
+                                <strong style={{ color: '#9f7aea' }}>Amulet 適合：</strong>
+                                多葉或近端分葉、較小 LAA (11-31 mm)、Chicken Wing 早期嚴重彎折 (Sandwich technique)
+                            </p>
+                            <p>
+                                <strong style={{ color: '#3182ce' }}>Watchman 適合：</strong>
+                                較大 LAA (14-36 mm)、需要深度超過最大開口直徑
+                            </p>
+                        </div>
+                    </InfoCard>
+                </div>
+            );
+        };
+
+        const TSPSection = () => (
+            <div style={{ padding: '20px' }}>
+                <AlertBox type="critical">
+                    <strong>關鍵：</strong>TSP 必須選擇<strong>下後方 (inferior and posterior)</strong> 穿刺點，這是到達前外側 LAA 的最直接路徑
+                </AlertBox>
+
+                <InfoCard title="TEE 導引視圖" icon="👁️" color="#e53e3e">
+                    <div style={{ marginBottom: '16px' }}>
+                        <div style={{ 
+                            background: 'var(--bg-dark)', 
+                            borderRadius: '12px', 
+                            padding: '16px',
+                            marginBottom: '12px'
+                        }}>
+                            <div style={{ fontWeight: 600, color: '#3182ce', marginBottom: '10px' }}>
+                                Bicaval View (90-120°)
+                            </div>
+                            <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                                確認 <strong>上下 (Superior-Inferior)</strong> 位置<br/>
+                                參考：SVC 和 IVC 為標誌
+                            </p>
+                        </div>
+                        
+                        <div style={{ 
+                            background: 'var(--bg-dark)', 
+                            borderRadius: '12px', 
+                            padding: '16px'
+                        }}>
+                            <div style={{ fontWeight: 600, color: '#38a169', marginBottom: '10px' }}>
+                                Short-Axis View (~45°)
+                            </div>
+                            <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                                確認 <strong>前後 (Anteroposterior)</strong> 位置<br/>
+                                參考：主動脈瓣為前方標誌
+                            </p>
+                        </div>
+                    </div>
+
+                    <AlertBox type="success">
+                        <strong>Biplane imaging</strong> 可同時觀察兩個垂直平面，提高穿刺精確度
+                    </AlertBox>
+                </InfoCard>
+
+                <InfoCard title="穿刺確認要點" icon="✅" color="#38a169">
+                    <div style={{ fontSize: '14px' }}>
+                        <DataRow label="Tenting 確認" value="必須可見" highlight />
+                        <DataRow label="穿刺位置" value="下後方 (Inferior-Posterior)" />
+                        <DataRow label="避免位置" value="上方或 PFO 穿過" />
+                        
+                        <div style={{ 
+                            marginTop: '16px',
+                            padding: '14px',
+                            background: 'rgba(56,161,105,0.15)',
+                            borderRadius: '10px'
+                        }}>
+                            <div style={{ fontWeight: 600, marginBottom: '8px', color: '#38a169' }}>
+                                特殊情況調整：
+                            </div>
+                            <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                                複雜 LAA 解剖（如 reverse chicken wing 或後方彎折）時，可考慮更中央或前下方穿刺
+                            </p>
+                        </div>
+                    </div>
+                </InfoCard>
+
+                <InfoCard title="IAS 解剖評估" icon="🔍" color="#3182ce">
+                    <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.8 }}>
+                        <p style={{ marginBottom: '8px' }}>術前 TEE 應評估：</p>
+                        <ul style={{ paddingLeft: '20px' }}>
+                            <li>Fossa ovalis 大小</li>
+                            <li>Septum secundum 厚度</li>
+                            <li>PFO / ASD 存在</li>
+                            <li>心房中膈動脈瘤</li>
+                            <li>Eustachian valve / Chiari network</li>
+                        </ul>
+                    </div>
+                </InfoCard>
+            </div>
+        );
+
+        const IntraproceduralSection = () => (
+            <div style={{ padding: '20px' }}>
+                <InfoCard title="TEE 術中導引步驟" icon="⚙️" color="#d69e2e">
+                    <div style={{ fontSize: '14px' }}>
+                        {[
+                            { step: 1, title: 'Wire 置入', desc: '導引 extra-stiff wire 進入 LSPV' },
+                            { step: 2, title: 'Sheath 推進', desc: '追蹤 dilator 和 sheath 推進' },
+                            { step: 3, title: '血管攝影', desc: 'Pigtail 注射對比劑確認 LAA 解剖' },
+                            { step: 4, title: '器械部署', desc: 'TEE 導引下釋放器械' },
+                            { step: 5, title: '位置確認', desc: '多角度 (0°, 45°, 90°, 135°) 評估' },
+                            { step: 6, title: '穩定測試', desc: '輕拉測試 (Tug test)' },
+                            { step: 7, title: '釋放', desc: '確認後 detach 器械' },
+                        ].map((item, i) => (
+                            <div key={i} style={{
+                                display: 'flex',
+                                gap: '14px',
+                                padding: '14px',
+                                background: i % 2 === 0 ? 'var(--bg-dark)' : 'transparent',
+                                borderRadius: '10px',
+                                marginBottom: '4px',
+                            }}>
+                                <div style={{
+                                    width: '32px',
+                                    height: '32px',
+                                    borderRadius: '50%',
+                                    background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontWeight: 700,
+                                    fontSize: '14px',
+                                    flexShrink: 0,
+                                }}>
+                                    {item.step}
+                                </div>
+                                <div>
+                                    <div style={{ fontWeight: 600, marginBottom: '2px' }}>{item.title}</div>
+                                    <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{item.desc}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </InfoCard>
+
+                <InfoCard title="Peri-device Leak 評估" icon="💧" color="#3182ce">
+                    <AlertBox type="warning">
+                        使用 <strong>低 Nyquist limit ({'<'}40 cm/s)</strong> 的彩色血流評估
+                    </AlertBox>
+                    
+                    <DataRow label="可接受 leak" value="< 3 mm" highlight />
+                    <DataRow label="次佳結果" value="< 5 mm" />
+                    <DataRow label="失敗" value="≥ 5 mm 或未覆蓋葉" />
+
+                    <div style={{ 
+                        marginTop: '16px',
+                        padding: '14px',
+                        background: 'var(--bg-dark)',
+                        borderRadius: '10px',
+                        fontSize: '13px'
+                    }}>
+                        <div style={{ fontWeight: 600, marginBottom: '8px' }}>PDL 分級：</div>
+                        <div style={{ color: 'var(--text-secondary)' }}>
+                            <p>Grade 0: 完全封閉</p>
+                            <p>Grade 1: 持續 LAA 血流，無 PDL</p>
+                            <p>Grade 2: 小 PDL ({'<'} 3 mm)</p>
+                            <p>Grade 3A: 大 PDL (≥ 3 mm)</p>
+                            <p>Grade 3B: 未覆蓋葉</p>
+                        </div>
+                    </div>
+                </InfoCard>
+
+                <InfoCard title="釋放前最終確認" icon="🔍" color="#38a169">
+                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.8 }}>
+                        <p>☑️ 器械位置正確</p>
+                        <p>☑️ 錨定穩固 (Tug test)</p>
+                        <p>☑️ 壓縮率適當</p>
+                        <p>☑️ PDL {'<'} 3 mm</p>
+                        <p>☑️ 無干擾 LSPV</p>
+                        <p>☑️ 無干擾二尖瓣</p>
+                        <p>☑️ 無新發心包積液</p>
+                    </div>
+                </InfoCard>
+            </div>
+        );
+
+        const ReleaseSection = () => {
+            const [selectedCriteria, setSelectedCriteria] = useState('pass');
+
+            return (
+                <div style={{ padding: '20px' }}>
+                    {/* Criteria Toggle */}
+                    <div style={{ 
+                        display: 'flex', 
+                        gap: '10px', 
+                        marginBottom: '20px',
+                        background: 'var(--bg-card)',
+                        padding: '6px',
+                        borderRadius: '12px'
+                    }}>
+                        <button
+                            onClick={() => setSelectedCriteria('pass')}
+                            style={{
+                                flex: 1,
+                                padding: '14px',
+                                border: 'none',
+                                borderRadius: '10px',
+                                background: selectedCriteria === 'pass' 
+                                    ? 'linear-gradient(135deg, #3182ce 0%, #2c5282 100%)' 
+                                    : 'transparent',
+                                color: 'white',
+                                fontWeight: 600,
+                                fontSize: '14px',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s',
+                            }}
+                        >
+                            PASS (Watchman)
+                        </button>
+                        <button
+                            onClick={() => setSelectedCriteria('close')}
+                            style={{
+                                flex: 1,
+                                padding: '14px',
+                                border: 'none',
+                                borderRadius: '10px',
+                                background: selectedCriteria === 'close' 
+                                    ? 'linear-gradient(135deg, #9f7aea 0%, #805ad5 100%)' 
+                                    : 'transparent',
+                                color: 'white',
+                                fontWeight: 600,
+                                fontSize: '14px',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s',
+                            }}
+                        >
+                            CLOSE (Amulet)
+                        </button>
+                    </div>
+
+                    {selectedCriteria === 'pass' ? (
+                        <InfoCard title="PASS 標準 (Watchman FLX)" icon="✅" color="#3182ce">
+                            {PASS_CRITERIA.map((c, i) => (
+                                <div key={i} style={{
+                                    background: 'var(--bg-dark)',
+                                    borderRadius: '12px',
+                                    padding: '16px',
+                                    marginBottom: '12px',
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
+                                        <div style={{
+                                            width: '40px',
+                                            height: '40px',
+                                            borderRadius: '10px',
+                                            background: 'linear-gradient(135deg, #3182ce 0%, #2c5282 100%)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontWeight: 700,
+                                            fontSize: '18px',
+                                        }}>
+                                            {c.letter}
+                                        </div>
+                                        <div>
+                                            <div style={{ fontWeight: 600, fontSize: '15px' }}>{c.title}</div>
+                                            <div style={{ fontSize: '13px', color: 'var(--accent)' }}>{c.desc}</div>
+                                        </div>
+                                    </div>
+                                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', paddingLeft: '52px' }}>
+                                        {c.detail}
+                                    </p>
+                                </div>
+                            ))}
+
+                            <AlertBox type="info">
+                                <strong>壓縮率計算：</strong><br/>
+                                (1 - 植入後直徑 / 器械原始尺寸) × 100%<br/>
+                                目標：<strong>10-30%</strong>
+                            </AlertBox>
+                        </InfoCard>
+                    ) : (
+                        <InfoCard title="CLOSE 標準 (Amplatzer Amulet)" icon="✅" color="#9f7aea">
+                            {CLOSE_CRITERIA.map((c, i) => (
+                                <div key={i} style={{
+                                    background: 'var(--bg-dark)',
+                                    borderRadius: '12px',
+                                    padding: '16px',
+                                    marginBottom: '12px',
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
+                                        <div style={{
+                                            width: '40px',
+                                            height: '40px',
+                                            borderRadius: '10px',
+                                            background: 'linear-gradient(135deg, #9f7aea 0%, #805ad5 100%)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontWeight: 700,
+                                            fontSize: '18px',
+                                        }}>
+                                            {c.letter}
+                                        </div>
+                                        <div>
+                                            <div style={{ fontWeight: 600, fontSize: '15px' }}>{c.title}</div>
+                                            <div style={{ fontSize: '13px', color: 'var(--accent)' }}>{c.desc}</div>
+                                        </div>
+                                    </div>
+                                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', paddingLeft: '52px' }}>
+                                        {c.detail}
+                                    </p>
+                                </div>
+                            ))}
+                        </InfoCard>
+                    )}
+                </div>
+            );
+        };
+
+        const ComplicationsSection = () => (
+            <div style={{ padding: '20px' }}>
+                <InfoCard title="Device-Related Thrombosis (DRT)" icon="🔴" color="#e53e3e">
+                    <AlertBox type="critical">
+                        DRT 發生率：約 <strong>3-5%</strong>，與較高栓塞風險相關
+                    </AlertBox>
+
+                    <DataRow label="發現方式" value="TEE 或 CCT" />
+                    <DataRow label="最佳檢查時機" value="術後 45 天" />
+                    <DataRow label="處置" value="開始抗凝治療" />
+
+                    <div style={{ 
+                        marginTop: '16px',
+                        padding: '14px',
+                        background: 'var(--bg-dark)',
+                        borderRadius: '10px',
+                        fontSize: '13px'
+                    }}>
+                        <div style={{ fontWeight: 600, marginBottom: '8px', color: '#e53e3e' }}>
+                            HAT 分級 (Hypo-attenuated Thickening):
+                        </div>
+                        <div style={{ color: 'var(--text-secondary)' }}>
+                            <p>Grade 0-1: 低級別 (非 DRT)</p>
+                            <p>Grade 2-3: 高級別 (視為 DRT，需抗凝)</p>
+                        </div>
+                    </div>
+
+                    <div style={{ 
+                        marginTop: '12px',
+                        padding: '14px',
+                        background: 'rgba(237,137,54,0.15)',
+                        borderRadius: '10px',
+                        fontSize: '13px'
+                    }}>
+                        <div style={{ fontWeight: 600, marginBottom: '8px', color: '#ed8936' }}>
+                            DRT 風險因子：
+                        </div>
+                        <div style={{ color: 'var(--text-secondary)' }}>
+                            <p>• 器械位置過深 ({'>'}5 mm from PV ridge)</p>
+                            <p>• 不完整的開口覆蓋</p>
+                            <p>• 較大的殘餘 leak</p>
+                        </div>
+                    </div>
+                </InfoCard>
+
+                <InfoCard title="Peri-device Leak (PDL)" icon="💧" color="#3182ce">
+                    <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.8, marginBottom: '14px' }}>
+                        <p>• TEE 檢測率：約 26%</p>
+                        <p>• CCT 檢測率：約 57% (更敏感)</p>
+                        <p>• 僅 TEE 檢測的 PDL 與不良預後相關</p>
+                    </div>
+
+                    <AlertBox type="warning">
+                        <strong>劑量反應關係：</strong>TEE 上 leak 越大，栓塞風險越高
+                    </AlertBox>
+
+                    <div style={{ 
+                        padding: '14px',
+                        background: 'var(--bg-dark)',
+                        borderRadius: '10px',
+                        fontSize: '13px'
+                    }}>
+                        <div style={{ fontWeight: 600, marginBottom: '8px' }}>PDL 風險因子：</div>
+                        <ul style={{ paddingLeft: '16px', color: 'var(--text-secondary)' }}>
+                            <li>LAA 解剖變異</li>
+                            <li>器械尺寸不足</li>
+                            <li>非同軸或位置不佳</li>
+                            <li>不對稱壓縮</li>
+                            <li>側方隱窩或分葉</li>
+                        </ul>
+                    </div>
+                </InfoCard>
+
+                <InfoCard title="其他併發症監測" icon="⚠️" color="#d69e2e">
+                    <div style={{ fontSize: '14px' }}>
+                        <div style={{
+                            padding: '12px',
+                            background: 'var(--bg-dark)',
+                            borderRadius: '10px',
+                            marginBottom: '10px',
+                        }}>
+                            <div style={{ fontWeight: 600, marginBottom: '6px', color: '#e53e3e' }}>心包積液</div>
+                            <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                                術中及術後需監測，ICE 導引時發生率可能較高
+                            </p>
+                        </div>
+
+                        <div style={{
+                            padding: '12px',
+                            background: 'var(--bg-dark)',
+                            borderRadius: '10px',
+                            marginBottom: '10px',
+                        }}>
+                            <div style={{ fontWeight: 600, marginBottom: '6px', color: '#ed8936' }}>器械移位/栓塞</div>
+                            <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                                發生率 {'<'}1%，多移位至主動脈弓或左心室
+                            </p>
+                        </div>
+
+                        <div style={{
+                            padding: '12px',
+                            background: 'var(--bg-dark)',
+                            borderRadius: '10px',
+                        }}>
+                            <div style={{ fontWeight: 600, marginBottom: '6px', color: '#3182ce' }}>醫源性 ASD</div>
+                            <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                                術後 1 個月約 37% 可見，多數自發閉合
+                            </p>
+                        </div>
+                    </div>
+                </InfoCard>
+            </div>
+        );
+
+        const ChecklistSection = () => {
+            const [checkedItems, setCheckedItems] = useState({});
+
+            const toggleItem = (id) => {
+                setCheckedItems(prev => ({ ...prev, [id]: !prev[id] }));
+            };
+
+            const resetChecklist = () => {
+                setCheckedItems({});
+            };
+
+            const totalItems = CHECKLIST_ITEMS.reduce((sum, cat) => sum + cat.items.length, 0);
+            const checkedCount = Object.values(checkedItems).filter(Boolean).length;
+            const progress = (checkedCount / totalItems) * 100;
+
+            return (
+                <div style={{ padding: '20px' }}>
+                    {/* Progress Bar */}
+                    <div style={{
+                        background: 'var(--bg-card)',
+                        borderRadius: '16px',
+                        padding: '20px',
+                        marginBottom: '20px',
+                    }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                            <span style={{ fontWeight: 600 }}>完成進度</span>
+                            <span style={{ color: 'var(--accent)', fontWeight: 600 }}>
+                                {checkedCount} / {totalItems}
+                            </span>
+                        </div>
+                        <div style={{
+                            height: '10px',
+                            background: 'var(--bg-dark)',
+                            borderRadius: '5px',
+                            overflow: 'hidden',
+                        }}>
+                            <div style={{
+                                height: '100%',
+                                width: `${progress}%`,
+                                background: progress === 100 
+                                    ? 'linear-gradient(90deg, #38a169 0%, #68d391 100%)'
+                                    : 'linear-gradient(90deg, var(--accent) 0%, var(--accent-light) 100%)',
+                                transition: 'width 0.3s ease',
+                                borderRadius: '5px',
+                            }} />
+                        </div>
+                        {progress === 100 && (
+                            <div style={{ 
+                                marginTop: '12px', 
+                                textAlign: 'center', 
+                                color: '#38a169',
+                                fontWeight: 600,
+                                fontSize: '14px'
+                            }}>
+                                ✅ 所有項目已完成！
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Reset Button */}
+                    <button
+                        onClick={resetChecklist}
+                        style={{
+                            width: '100%',
+                            padding: '14px',
+                            background: 'var(--bg-card)',
+                            border: '1px solid var(--border)',
+                            borderRadius: '12px',
+                            color: 'var(--text-secondary)',
+                            fontSize: '14px',
+                            cursor: 'pointer',
+                            marginBottom: '20px',
+                            transition: 'all 0.2s',
+                        }}
+                    >
+                        🔄 重置清單
+                    </button>
+
+                    {/* Checklist Categories */}
+                    {CHECKLIST_ITEMS.map((category, catIndex) => (
+                        <InfoCard 
+                            key={catIndex} 
+                            title={category.category} 
+                            icon="📋" 
+                            color={['#3182ce', '#38a169', '#9f7aea', '#e53e3e', '#d69e2e'][catIndex % 5]}
+                        >
+                            {category.items.map((item, itemIndex) => (
+                                <div
+                                    key={item.id}
+                                    onClick={() => toggleItem(item.id)}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px',
+                                        padding: '14px',
+                                        background: checkedItems[item.id] ? 'rgba(56,161,105,0.15)' : 'var(--bg-dark)',
+                                        borderRadius: '10px',
+                                        marginBottom: '8px',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s',
+                                        border: item.critical && !checkedItems[item.id] 
+                                            ? '1px solid rgba(237,137,54,0.5)' 
+                                            : '1px solid transparent',
+                                    }}
+                                >
+                                    <div style={{
+                                        width: '24px',
+                                        height: '24px',
+                                        borderRadius: '6px',
+                                        border: `2px solid ${checkedItems[item.id] ? '#38a169' : 'var(--border)'}`,
+                                        background: checkedItems[item.id] ? '#38a169' : 'transparent',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        transition: 'all 0.2s',
+                                        flexShrink: 0,
+                                    }}>
+                                        {checkedItems[item.id] && (
+                                            <span style={{ color: 'white', fontSize: '14px' }}>✓</span>
+                                        )}
+                                    </div>
+                                    <span style={{
+                                        fontSize: '14px',
+                                        textDecoration: checkedItems[item.id] ? 'line-through' : 'none',
+                                        color: checkedItems[item.id] ? 'var(--text-muted)' : 'var(--text-primary)',
+                                        flex: 1,
+                                    }}>
+                                        {item.text}
+                                    </span>
+                                    {item.critical && !checkedItems[item.id] && (
+                                        <Badge text="必要" color="#ed8936" />
+                                    )}
+                                </div>
+                            ))}
+                        </InfoCard>
+                    ))}
+                </div>
+            );
+        };
+
+        // ========== Main App ==========
+        const App = () => {
+            const [currentSection, setCurrentSection] = useState('home');
+
+            const renderSection = () => {
+                switch (currentSection) {
+                    case 'overview': return <OverviewSection />;
+                    case 'preprocedural': return <PreproceduralSection />;
+                    case 'tee-angles': return <TEEAnglesSection />;
+                    case 'sizing': return <SizingSection />;
+                    case 'tsp': return <TSPSection />;
+                    case 'intraprocedural': return <IntraproceduralSection />;
+                    case 'release': return <ReleaseSection />;
+                    case 'complications': return <ComplicationsSection />;
+                    case 'checklist': return <ChecklistSection />;
+                    default: return null;
+                }
+            };
+
+            return (
+                <div style={{ minHeight: '100vh', paddingBottom: '80px' }}>
+                    <Header 
+                        currentSection={currentSection}
+                        onBack={() => setCurrentSection('home')}
+                    />
+
+                    {currentSection === 'home' ? (
+                        <div style={{ padding: '20px' }}>
+                            {/* Quick Stats */}
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(3, 1fr)',
+                                gap: '10px',
+                                marginBottom: '24px',
+                            }}>
+                                {[
+                                    { label: 'TEE 角度', value: '4', unit: '個' },
+                                    { label: 'Watchman', value: '17-31', unit: 'mm' },
+                                    { label: 'Amulet', value: '11-31', unit: 'mm' },
+                                ].map((stat, i) => (
+                                    <div key={i} style={{
+                                        background: 'var(--bg-card)',
+                                        borderRadius: '12px',
+                                        padding: '14px',
+                                        textAlign: 'center',
+                                    }}>
+                                        <div style={{ 
+                                            fontSize: '20px', 
+                                            fontWeight: 700, 
+                                            color: 'var(--accent)',
+                                            marginBottom: '2px'
+                                        }}>
+                                            {stat.value}
+                                        </div>
+                                        <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
+                                            {stat.unit}
+                                        </div>
+                                        <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                                            {stat.label}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Menu Grid */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                {SECTIONS.map((section, index) => (
+                                    <MenuCard
+                                        key={section.id}
+                                        section={section}
+                                        index={index}
+                                        onClick={() => setCurrentSection(section.id)}
+                                    />
+                                ))}
+                            </div>
+
+                            {/* Footer Info */}
+                            <div style={{
+                                marginTop: '24px',
+                                padding: '16px',
+                                background: 'var(--bg-card)',
+                                borderRadius: '12px',
+                                textAlign: 'center',
+                                fontSize: '12px',
+                                color: 'var(--text-muted)',
+                            }}>
+                                <p>參考資料：2025 JASE LAAC Image Evaluation</p>
+                                <p style={{ marginTop: '4px' }}>Progress in Cardiovascular Diseases 92 (2025) 80–96</p>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="fade-in">
+                            {renderSection()}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
