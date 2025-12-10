@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAOD 周邊動脈阻塞疾病 - 護理照護教學</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e8e8e8;
+        }
+        
+        .app-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding-bottom: 80px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(233, 69, 96, 0.4);
+        }
+        
+        .header h1 {
+            font-size: 1.4em;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 0.85em;
+            opacity: 0.95;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            overflow-x: auto;
+            background: rgba(22, 33, 62, 0.95);
+            padding: 10px;
+            gap: 8px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            border-bottom: 2px solid #e94560;
+        }
+        
+        .nav-tabs::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .nav-tab {
+            flex-shrink: 0;
+            padding: 10px 16px;
+            border-radius: 25px;
+            border: none;
+            background: rgba(233, 69, 96, 0.2);
+            color: #e8e8e8;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .nav-tab.active {
+            background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
+        }
+        
+        .content {
+            padding: 15px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(233, 69, 96, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(233, 69, 96, 0.2);
+        }
+        
+        .card-title {
+            color: #ff6b6b;
+            font-size: 1.1em;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(233, 69, 96, 0.3);
+        }
+        
+        .card-icon {
+            font-size: 1.3em;
+        }
+        
+        .info-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: rgba(233, 69, 96, 0.08);
+            border-radius: 10px;
+            border-left: 4px solid #e94560;
+        }
+        
+        .info-label {
+            color: #ff8a8a;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        
+        .info-content {
+            color: #e8e8e8;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.15) 0%, rgba(255, 152, 0, 0.15) 100%);
+            border: 1px solid #ffc107;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 12px 0;
+        }
+        
+        .warning-title {
+            color: #ffc107;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .danger-box {
+            background: linear-gradient(135deg, rgba(244, 67, 54, 0.15) 0%, rgba(233, 30, 99, 0.15) 100%);
+            border: 1px solid #f44336;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 12px 0;
+        }
+        
+        .danger-title {
+            color: #f44336;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .success-box {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.15) 0%, rgba(102, 187, 106, 0.15) 100%);
+            border: 1px solid #4caf50;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 12px 0;
+        }
+        
+        .success-title {
+            color: #4caf50;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px;
+            margin: 8px 0;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .checklist-item:hover {
+            background: rgba(233, 69, 96, 0.1);
+        }
+        
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #e94560;
+            border-radius: 6px;
+            margin-right: 12px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .checkbox.checked {
+            background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+        }
+        
+        .checklist-text {
+            flex: 1;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-weight: bold;
+            color: #ff8a8a;
+            margin-bottom: 5px;
+        }
+        
+        .medication-card {
+            background: linear-gradient(135deg, rgba(63, 81, 181, 0.15) 0%, rgba(103, 58, 183, 0.15) 100%);
+            border: 1px solid #5c6bc0;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .med-name {
+            color: #7986cb;
+            font-weight: bold;
+            font-size: 1em;
+            margin-bottom: 5px;
+        }
+        
+        .med-detail {
+            color: #b0bec5;
+            font-size: 0.85em;
+            line-height: 1.5;
+        }
+        
+        .assessment-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 15px 0;
+        }
+        
+        .assessment-item {
+            background: rgba(233, 69, 96, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(233, 69, 96, 0.3);
+        }
+        
+        .assessment-icon {
+            font-size: 2em;
+            margin-bottom: 8px;
+        }
+        
+        .assessment-label {
+            color: #ff8a8a;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        
+        .assessment-desc {
+            color: #b0bec5;
+            font-size: 0.8em;
+        }
+        
+        .quiz-option {
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(233, 69, 96, 0.3);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .quiz-option:hover {
+            background: rgba(233, 69, 96, 0.15);
+            border-color: #e94560;
+        }
+        
+        .quiz-option.selected {
+            background: rgba(233, 69, 96, 0.2);
+            border-color: #e94560;
+        }
+        
+        .quiz-option.correct {
+            background: rgba(76, 175, 80, 0.2);
+            border-color: #4caf50;
+        }
+        
+        .quiz-option.incorrect {
+            background: rgba(244, 67, 54, 0.2);
+            border-color: #f44336;
+        }
+        
+        .quiz-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .quiz-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(233, 69, 96, 0.4);
+        }
+        
+        .quiz-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+            transition: width 0.5s ease;
+        }
+        
+        .score-display {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(233, 69, 96, 0.2) 0%, rgba(255, 107, 107, 0.2) 100%);
+            border-radius: 20px;
+            margin: 20px 0;
+        }
+        
+        .score-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+        
+        .score-label {
+            color: #b0bec5;
+            margin-top: 10px;
+        }
+        
+        .expand-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 15px;
+            background: rgba(233, 69, 96, 0.15);
+            border: 1px solid rgba(233, 69, 96, 0.3);
+            border-radius: 12px;
+            color: #ff8a8a;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 10px 0;
+        }
+        
+        .expand-btn:hover {
+            background: rgba(233, 69, 96, 0.25);
+        }
+        
+        .expand-content {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0 0 12px 12px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+        
+        .timeline-item {
+            display: flex;
+            padding: 15px 0;
+            border-left: 3px solid #e94560;
+            margin-left: 15px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 18px;
+            width: 14px;
+            height: 14px;
+            background: #e94560;
+            border-radius: 50%;
+        }
+        
+        .rutherford-stage {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .stage-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: rgba(233, 69, 96, 0.1);
+            border-radius: 10px;
+            gap: 12px;
+        }
+        
+        .stage-number {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+            border-radius: 50%;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .act-flow {
+            text-align: center;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .act-box {
+            display: inline-block;
+            padding: 15px 25px;
+            background: linear-gradient(135deg, rgba(233, 69, 96, 0.2) 0%, rgba(255, 107, 107, 0.2) 100%);
+            border: 2px solid #e94560;
+            border-radius: 12px;
+            margin: 5px;
+            font-weight: bold;
+        }
+        
+        .act-arrow {
+            display: block;
+            color: #ff6b6b;
+            font-size: 1.5em;
+            margin: 10px 0;
+        }
+        
+        .search-box {
+            padding: 12px 18px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(233, 69, 96, 0.3);
+            border-radius: 25px;
+            color: #e8e8e8;
+            font-size: 0.95em;
+            margin-bottom: 15px;
+        }
+        
+        .search-box::placeholder {
+            color: #888;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #e94560;
+            box-shadow: 0 0 15px rgba(233, 69, 96, 0.3);
+        }
+        
+        .tab-section {
+            margin-bottom: 20px;
+        }
+        
+        .sub-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        
+        .sub-tab {
+            padding: 8px 16px;
+            background: rgba(233, 69, 96, 0.15);
+            border: 1px solid rgba(233, 69, 96, 0.3);
+            border-radius: 20px;
+            color: #e8e8e8;
+            cursor: pointer;
+            font-size: 0.85em;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+        
+        .sub-tab.active {
+            background: #e94560;
+            color: white;
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, rgba(255, 235, 59, 0.2) 0%, rgba(255, 193, 7, 0.2) 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #ffc107;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85em;
+        }
+        
+        .data-table th {
+            background: rgba(233, 69, 96, 0.3);
+            padding: 12px 10px;
+            text-align: left;
+            color: #ff8a8a;
+            font-weight: bold;
+        }
+        
+        .data-table td {
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .data-table tr:hover {
+            background: rgba(233, 69, 96, 0.1);
+        }
+        
+        /* WIfI Score Styles */
+        .wifi-section {
+            margin: 15px 0;
+        }
+        
+        .wifi-category {
+            margin-bottom: 20px;
+        }
+        
+        .wifi-category-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: linear-gradient(135deg, rgba(233, 69, 96, 0.3) 0%, rgba(255, 107, 107, 0.2) 100%);
+            border-radius: 12px 12px 0 0;
+            font-weight: bold;
+            color: #ff8a8a;
+        }
+        
+        .wifi-category-icon {
+            font-size: 1.5em;
+        }
+        
+        .wifi-options {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0 0 12px 12px;
+            padding: 10px;
+        }
+        
+        .wifi-option {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px;
+            margin: 8px 0;
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .wifi-option:hover {
+            background: rgba(233, 69, 96, 0.1);
+            border-color: rgba(233, 69, 96, 0.3);
+        }
+        
+        .wifi-option.selected {
+            background: rgba(233, 69, 96, 0.2);
+            border-color: #e94560;
+        }
+        
+        .wifi-grade {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(233, 69, 96, 0.3);
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .wifi-option.selected .wifi-grade {
+            background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+        }
+        
+        .wifi-desc {
+            flex: 1;
+        }
+        
+        .wifi-desc-title {
+            font-weight: bold;
+            color: #ff8a8a;
+            margin-bottom: 5px;
+        }
+        
+        .wifi-desc-detail {
+            color: #b0bec5;
+            font-size: 0.85em;
+            line-height: 1.5;
+        }
+        
+        .wifi-result {
+            background: linear-gradient(135deg, rgba(103, 58, 183, 0.2) 0%, rgba(63, 81, 181, 0.2) 100%);
+            border: 2px solid #7c4dff;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .wifi-result-title {
+            color: #b388ff;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+        
+        .wifi-score-display {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .wifi-score-item {
+            background: rgba(124, 77, 255, 0.2);
+            border-radius: 12px;
+            padding: 15px 20px;
+            text-align: center;
+            min-width: 80px;
+        }
+        
+        .wifi-score-letter {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #b388ff;
+        }
+        
+        .wifi-score-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #7c4dff;
+        }
+        
+        .wifi-clinical-stage {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+        
+        .wifi-stage-title {
+            color: #ffc107;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .wifi-stage-risk {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .risk-item {
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .risk-label {
+            font-size: 0.8em;
+            color: #b0bec5;
+            margin-bottom: 5px;
+        }
+        
+        .risk-value {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .risk-low { color: #4caf50; }
+        .risk-moderate { color: #ffc107; }
+        .risk-high { color: #ff9800; }
+        .risk-very-high { color: #f44336; }
+        
+        .reset-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: #e8e8e8;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .reset-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.2em;
+            }
+            
+            .assessment-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            .wifi-score-display {
+                gap: 10px;
+            }
+            
+            .wifi-score-item {
+                min-width: 70px;
+                padding: 10px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        
+        // Main App Component
+        function App() {
+            const [activeTab, setActiveTab] = useState('basics');
+            const [searchTerm, setSearchTerm] = useState('');
+            
+            const tabs = [
+                { id: 'basics', label: '📚 基礎知識', icon: '📚' },
+                { id: 'diagnosis', label: '🔍 診斷評估', icon: '🔍' },
+                { id: 'wifi', label: '📊 WIfI評分', icon: '📊' },
+                { id: 'precath', label: '💊 術前準備', icon: '💊' },
+                { id: 'cathlab', label: '🏥 導管室', icon: '🏥' },
+                { id: 'postcath', label: '🩹 術後照護', icon: '🩹' },
+                { id: 'wound', label: '🩺 傷口照護', icon: '🩺' },
+                { id: 'quiz', label: '📝 自我測驗', icon: '📝' }
+            ];
+            
+            return (
+                <div className="app-container">
+                    <header className="header">
+                        <h1>🦵 PAOD 周邊動脈阻塞疾病</h1>
+                        <p>護理照護完整教學指南</p>
+                    </header>
+                    
+                    <nav className="nav-tabs">
+                        {tabs.map(tab => (
+                            <button
+                                key={tab.id}
+                                className={`nav-tab ${activeTab === tab.id ? 'active' : ''}`}
+                                onClick={() => setActiveTab(tab.id)}
+                            >
+                                {tab.label}
+                            </button>
+                        ))}
+                    </nav>
+                    
+                    <main className="content">
+                        <input
+                            type="text"
+                            className="search-box"
+                            placeholder="🔍 搜尋關鍵字..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                        
+                        {activeTab === 'basics' && <BasicsSection searchTerm={searchTerm} />}
+                        {activeTab === 'diagnosis' && <DiagnosisSection searchTerm={searchTerm} />}
+                        {activeTab === 'wifi' && <WIfISection />}
+                        {activeTab === 'precath' && <PreCathSection searchTerm={searchTerm} />}
+                        {activeTab === 'cathlab' && <CathLabSection searchTerm={searchTerm} />}
+                        {activeTab === 'postcath' && <PostCathSection searchTerm={searchTerm} />}
+                        {activeTab === 'wound' && <WoundCareSection searchTerm={searchTerm} />}
+                        {activeTab === 'quiz' && <QuizSection />}
+                    </main>
+                </div>
+            );
+        }
+        
+        // Expandable Section Component
+        function ExpandableSection({ title, children, defaultOpen = false }) {
+            const [isOpen, setIsOpen] = useState(defaultOpen);
+            
+            return (
+                <div>
+                    <button className="expand-btn" onClick={() => setIsOpen(!isOpen)}>
+                        <span>{title}</span>
+                        <span>{isOpen ? '▼' : '▶'}</span>
+                    </button>
+                    {isOpen && <div className="expand-content">{children}</div>}
+                </div>
+            );
+        }
+        
+        // WIfI Section - NEW
+        function WIfISection() {
+            const [woundGrade, setWoundGrade] = useState(null);
+            const [ischemiaGrade, setIschemiaGrade] = useState(null);
+            const [infectionGrade, setInfectionGrade] = useState(null);
+            
+            const woundOptions = [
+                {
+                    grade: 0,
+                    title: '無傷口 / 休息痛',
+                    detail: '無潰瘍或壞疽（可能有缺血性休息痛）'
+                },
+                {
+                    grade: 1,
+                    title: '小型淺層潰瘍',
+                    detail: '遠端下肢或足部小型淺層潰瘍；無壞疽'
+                },
+                {
+                    grade: 2,
+                    title: '深層潰瘍',
+                    detail: '深層潰瘍，暴露骨骼、關節或肌腱；壞疽僅限於腳趾'
+                },
+                {
+                    grade: 3,
+                    title: '廣泛潰瘍/壞疽',
+                    detail: '廣泛深層潰瘍；涉及前足或中足的壞疽；跟骨受累'
+                }
+            ];
+            
+            const ischemiaOptions = [
+                {
+                    grade: 0,
+                    title: '無缺血',
+                    detail: 'ABI ≥ 0.80、踝壓 > 100 mmHg、趾壓/TcPO₂ ≥ 60 mmHg'
+                },
+                {
+                    grade: 1,
+                    title: '輕度缺血',
+                    detail: 'ABI 0.6-0.79、踝壓 70-100 mmHg、趾壓/TcPO₂ 40-59 mmHg'
+                },
+                {
+                    grade: 2,
+                    title: '中度缺血',
+                    detail: 'ABI 0.4-0.59、踝壓 50-70 mmHg、趾壓/TcPO₂ 30-39 mmHg'
+                },
+                {
+                    grade: 3,
+                    title: '重度缺血',
+                    detail: 'ABI < 0.4、踝壓 < 50 mmHg、趾壓/TcPO₂ < 30 mmHg'
+                }
+            ];
+            
+            const infectionOptions = [
+                {
+                    grade: 0,
+                    title: '無感染',
+                    detail: '無感染症狀或徵象'
+                },
+                {
+                    grade: 1,
+                    title: '輕度感染',
+                    detail: '局部感染僅涉及皮膚和皮下組織；潰瘍周圍紅腫 > 0.5cm 但 ≤ 2cm；排除其他原因導致的發炎反應'
+                },
+                {
+                    grade: 2,
+                    title: '中度感染',
+                    detail: '局部感染紅腫 > 2cm 或涉及比皮膚更深層結構（膿瘍、骨髓炎、敗血性關節炎、筋膜炎）；無全身性發炎反應徵象'
+                },
+                {
+                    grade: 3,
+                    title: '重度感染',
+                    detail: '局部感染合併 SIRS 徵象（體溫 > 38°C 或 < 36°C、HR > 90、RR > 20、WBC > 12000 或 < 4000）'
+                }
+            ];
+            
+            // Clinical Stage calculation based on WIfI
+            const getClinicalStage = () => {
+                if (woundGrade === null || ischemiaGrade === null || infectionGrade === null) {
+                    return null;
+                }
+                
+                // Simplified WIfI staging matrix
+                const w = woundGrade;
+                const i = ischemiaGrade;
+                const f = infectionGrade;
+                
+                // Very Low Risk (Stage 1)
+                if (w === 0 && i <= 1 && f === 0) return { stage: 1, risk: 'very-low', amputation: '極低', benefit: '低' };
+                
+                // Low Risk (Stage 2)
+                if ((w === 1 && i <= 1 && f <= 1) || (w === 0 && i <= 2 && f <= 1)) {
+                    return { stage: 2, risk: 'low', amputation: '低', benefit: '中' };
+                }
+                
+                // Moderate Risk (Stage 3)
+                if ((w === 2 && i <= 2 && f <= 1) || (w === 1 && i === 2 && f <= 1) || (w <= 1 && i <= 2 && f === 2)) {
+                    return { stage: 3, risk: 'moderate', amputation: '中', benefit: '中-高' };
+                }
+                
+                // High Risk (Stage 4)
+                if ((w === 3) || (i === 3) || (f === 3) || (w === 2 && f === 2) || (w === 2 && i === 2 && f >= 1)) {
+                    return { stage: 4, risk: 'high', amputation: '高', benefit: '高' };
+                }
+                
+                // Default moderate
+                return { stage: 3, risk: 'moderate', amputation: '中', benefit: '中' };
+            };
+            
+            const resetScores = () => {
+                setWoundGrade(null);
+                setIschemiaGrade(null);
+                setInfectionGrade(null);
+            };
+            
+            const clinicalStage = getClinicalStage();
+            
+            return (
+                <div className="tab-section">
+                    <div className="card">
+                        <div className="card-title">
+                            <span className="card-icon">📊</span>
+                            WIfI 分類系統簡介
+                        </div>
+                        
+                        <div className="info-item">
+                            <div className="info-label">什麼是 WIfI？</div>
+                            <div className="info-content">
+                                <strong>W</strong>ound (傷口) + <strong>I</strong>schemia (缺血) + <strong>f</strong>oot <strong>I</strong>nfection (足部感染)<br/><br/>
+                                由 SVS (Society for Vascular Surgery) 於 2014 年提出，用於評估<span className="highlight">慢性肢體威脅性缺血 (CLTI)</span> 的嚴重程度，預測截肢風險及血管重建效益。
+                            </div>
+                        </div>
+                        
+                        <div className="success-box">
+                            <div className="success-title">✅ 臨床應用</div>
+                            <div className="info-content">
+                                • 預測 1 年內截肢風險<br/>
+                                • 評估血管重建手術效益<br/>
+                                • 出院病摘中需記錄 WIfI Classification<br/>
+                                • 標準化傷口評估與交班
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="card">
+                        <div className="card-title">
+                            <span className="card-icon">✏️</span>
+                            WIfI 互動評分表
+                        </div>
+                        <p style={{ color: '#b0bec5', marginBottom: '15px', fontSize: '0.9em' }}>
+                            請依序選擇病患的傷口、缺血、感染程度，系統將自動計算臨床分期與風險
+                        </p>
+                        
+                        {/* Wound Grade */}
+                        <div className="wifi-category">
+                            <div className="wifi-category-title">
+                                <span className="wifi-category-icon">🩹</span>
+                                <span>W - Wound 傷口分級</span>
+                                {woundGrade !== null && <span style={{ marginLeft: 'auto', color: '#4caf50' }}>已選擇: Grade {woundGrade}</span>}
+                            </div>
+                            <div className="wifi-options">
+                                {woundOptions.map((opt) => (
+                                    <div 
+                                        key={opt.grade}
+                                        className={`wifi-option ${woundGrade === opt.grade ? 'selected' : ''}`}
+                                        onClick={() => setWoundGrade(opt.grade)}
+                                    >
+                                        <div className="wifi-grade">{opt.grade}</div>
+                                        <div className="wifi-desc">
+                                            <div className="wifi-desc-title">{opt.title}</div>
+                                            <div className="wifi-desc-detail">{opt.detail}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        
+                        {/* Ischemia Grade */}
+                        <div className="wifi-category">
+                            <div className="wifi-category-title">
+                                <span className="wifi-category-icon">🩸</span>
+                                <span>I - Ischemia 缺血分級</span>
+                                {ischemiaGrade !== null && <span style={{ marginLeft: 'auto', color: '#4caf50' }}>已選擇: Grade {ischemiaGrade}</span>}
+                            </div>
+                            <div className="wifi-options">
+                                {ischemiaOptions.map((opt) => (
+                                    <div 
+                                        key={opt.grade}
+                                        className={`wifi-option ${ischemiaGrade === opt.grade ? 'selected' : ''}`}
+                                        onClick={() => setIschemiaGrade(opt.grade)}
+                                    >
+                                        <div className="wifi-grade">{opt.grade}</div>
+                                        <div className="wifi-desc">
+                                            <div className="wifi-desc-title">{opt.title}</div>
+                                            <div className="wifi-desc-detail">{opt.detail}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        
+                        {/* Infection Grade */}
+                        <div className="wifi-category">
+                            <div className="wifi-category-title">
+                                <span className="wifi-category-icon">🦠</span>
+                                <span>fI - foot Infection 足部感染分級</span>
+                                {infectionGrade !== null && <span style={{ marginLeft: 'auto', color: '#4caf50' }}>已選擇: Grade {infectionGrade}</span>}
+                            </div>
+                            <div className="wifi-options">
+                                {infectionOptions.map((opt) => (
+                                    <div 
+                                        key={opt.grade}
+                                        className={`wifi-option ${infectionGrade === opt.grade ? 'selected' : ''}`}
+                                        onClick={() => setInfectionGrade(opt.grade)}
+                                    >
+                                        <div className="wifi-grade">{opt.grade}</div>
+                                        <div className="wifi-desc">
+                                            <div className="wifi-desc-title">{opt.title}</div>
+                                            <div className="wifi-desc-detail">{opt.detail}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        
+                        {/* Results */}
+                        <div className="wifi-result">
+                            <div className="wifi-result-title">📋 WIfI 評分結果</div>
+                            
+                            <div className="wifi-score-display">
+                                <div className="wifi-score-item">
+                                    <div className="wifi-score-letter">W</div>
+                                    <div className="wifi-score-value">{woundGrade !== null ? woundGrade : '-'}</div>
+                                </div>
+                                <div className="wifi-score-item">
+                                    <div className="wifi-score-letter">I</div>
+                                    <div className="wifi-score-value">{ischemiaGrade !== null ? ischemiaGrade : '-'}</div>
+                                </div>
+                                <div className="wifi-score-item">
+                                    <div className="wifi-score-letter">fI</div>
+                                    <div className="wifi-score-value">{infectionGrade !== null ? infectionGrade : '-'}</div>
+                                </div>
+                            </div>
+                            
+                            {clinicalStage ? (
+                                <div className="wifi-clinical-stage">
+                                    <div className="wifi-stage-title">
+                                        🎯 臨床分期: Stage {clinicalStage.stage}
+                                    </div>
+                                    <div className="wifi-stage-risk">
+                                        <div className="risk-item">
+                                            <div className="risk-label">1年截肢風險</div>
+                                            <div className={`risk-value risk-${clinicalStage.risk}`}>
+                                                {clinicalStage.amputation}
+                                            </div>
+                                        </div>
+                                        <div className="risk-item">
+                                            <div className="risk-label">血管重建效益</div>
+                                            <div className={`risk-value risk-${clinicalStage.risk === 'very-low' ? 'low' : clinicalStage.risk}`}>
+                                                {clinicalStage.benefit}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {clinicalStage.stage === 1 && (
+                                        <div className="success-box" style={{ marginTop: '15px' }}>
+                                            <div className="info-content">
+                                                <strong>Stage 1 (極低風險)：</strong>傷口癒合機率高，可先嘗試保守治療
+                                            </div>
+                                        </div>
+                                    )}
+                                    {clinicalStage.stage === 2 && (
+                                        <div className="info-item" style={{ marginTop: '15px' }}>
+                                            <div className="info-content">
+                                                <strong>Stage 2 (低風險)：</strong>大多數傷口可癒合，建議積極藥物治療
+                                            </div>
+                                        </div>
+                                    )}
+                                    {clinicalStage.stage === 3 && (
+                                        <div className="warning-box" style={{ marginTop: '15px' }}>
+                                            <div className="info-content">
+                                                <strong>Stage 3 (中度風險)：</strong>建議考慮血管重建介入治療
+                                            </div>
+                                        </div>
+                                    )}
+                                    {clinicalStage.stage === 4 && (
+                                        <div className="danger-box" style={{ marginTop: '15px' }}>
+                                            <div className="info-content">
+                                                <strong>Stage 4 (高風險)：</strong>迫切需要血管重建，截肢風險高
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <div style={{ color: '#888', marginTop: '15px' }}>
+                                    請完成所有三項評估以獲得臨床分期結果
+                                </div>
+                            )}
+                            
+                            <button className="reset-btn" onClick={resetScores}>
+                                🔄 重新評估
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div className="card">
+                        <div className="card-title">
+                            <span className="card-icon">📑</span>
+                            WIfI 臨床分期對照表
+                        </div>
+                        
+                        <div className="table-responsive">
+                            <table className="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>臨床分期</th>
+                                        <th>1年截肢風險</th>
+                                        <th>血管重建效益</th>
+                                        <th>建議處置</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span className="highlight">Stage 1</span></td>
+                                        <td style={{ color: '#4caf50' }}>極低 (&lt;5%)</td>
+                                        <td>低</td>
+                                        <td>藥物治療/觀察</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span className="highlight">Stage 2</span></td>
+                                        <td style={{ color: '#8bc34a' }}>低 (5-20%)</td>
+                                        <td>中</td>
+                                        <td>積極藥物治療</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span className="highlight">Stage 3</span></td>
+                                        <td style={{ color: '#ffc107' }}>中 (20-50%)</td>
+                                        <td>中-高</td>
+                                        <td>考慮血管重建</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span className="highlight">Stage 4</span></td>
+                                        <td style={{ color: '#f44336' }}>高 (&gt;50%)</td>
+                                        <td>高</td>
+                                        <td>迫切血管重建</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div className="card">
+                        <div className="card-title">
+                            <span className="card-icon">📝</span>
+                            病歷記錄範例
+                        </div>
+                        
+                        <div className="info-item">
+                            <div className="info-label">WIfI Classification 記錄格式</div>
+                            <div className="info-content">
+                                <code style={{ 
+                                    background: 'rgba(0,0,0,0.3)', 
+                                    padding: '10px', 
+                                    borderRadius: '8px', 
+                                    display: 'block',
+                                    marginTop: '10px'
+                                }}>
+                                    WIfI Classification: W2-I2-fI1, Clinical Stage 3<br/>
+                                    - Wound: Grade 2 (deep ulcer with toe gangrene)<br/>
+                                    - Ischemia: Grade 2 (ABI 0.45, ankle pressure 55 mmHg)<br/>
+                                    - foot Infection: Grade 1 (local cellulitis &lt; 2cm)
+                                </code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
+        // Basics Section
+        function BasicsSection({ searchTerm }) {
+            return (
+                <div className="tab-section">
+                    <div className="card">
+                        <div className="card-title">
+                            <span className="card-icon">📖</span>
+                            定義與縮寫
+                        </div>
+                        
+                        <div className="info-item">
+                            <div className="info-label">週邊血管疾病 (PAD/PAOD/LEAD)</div>
+                            <div className="info-content">
+                                <strong>PAD</strong> = Peripheral Artery Disease<br/>
+                                <strong>PAOD</strong> = Peripheral Arterial Occlusive Disease<br/>
+                                <strong>LEAD</strong> = Lower Extremity Arterial Disease<br/><br/>
+                                <span className="highlight">診斷標準：ABI ≤ 0.9 或血管超音波確認狹窄/阻塞</span>
+                            </div>
+                        </div>
+                        
+                        <div className="info-item">
+                            <div className="info-label">血管內治療術語</div>
+                            <div className="info-content">
+                                <strong>PTA</strong> = Percutaneous Transluminal Angioplasty (週邊血管氣球擴張術)<br/>
+                                <strong>PTAS</strong> = PTA + Stenting (氣球擴張術併支架置放)<br/>
+                                <strong>CAG</strong> = Coronary Angiography (冠狀動脈攝影)<br/><br/>
+                                ⚠️ 注意：PTA 也代表 Posterior Tibial Artery (後脛骨動脈)
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="card">
+                        <div className="card-title">
+                            <span className="card-icon">⚡</span>
+                            CLI vs ALI 鑑別
+                        </div>
+                        
+                        <div className="warning-box">
+                            <div className="warning-title">⚠️ Critical Limb Ischemia (CLI) - 危急肢端缺血</div>
+                            <div className="info-content">
+                                • <strong>特點：</strong>慢性下肢動脈狹窄<br/>
+                                • <strong>進展：</strong>遠端足部緩慢漸進壞死<br/>
+                                • <strong>症狀：</strong>產生不易癒合的傷口<br/>
+                                • <strong>病程：</strong>病患通常自己換藥超過一個月才就診（中位數約3個月）
+                            </div>
+                        </div>
+                        
+                        <div className="danger-box">
+                            <div className="danger-title">🚨 Acute Limb Ischemia (ALI) - 急性肢端缺血</div>
+                            <div className="info-content">
+                                • <strong>特點：</strong>兩週內新發生且快速惡化<br/>
+                                • <strong>進展：</strong>一天內快速產生麻痛無力<br/>
+                                • <strong>嚴重度：</strong>三天內可導致下肢壞死<br/>
+                                • <strong>危險：</strong>一週內可導致死亡<br/>
+                                <span className="highlight">⚠️ 屬於急症，需緊急處理！</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="card">
+                        <div className="card-title">
+                            <span className="card-icon">📊</span>
+                            Rutherford 分類
+                        </div>
+                        
+                        <ExpandableSection title="CLI 分類 (Stage 1-6)" defaultOpen={true}>
+                            <div className="rutherford-stage">
+                                <div className="stage-item">
+                                    <div className="stage-number">1</div>
+                                    <div>輕度間歇性跛行</div>
+                                </div>
+                                <div className="stage-item">
+                                    <div className="stage-number">2</div>
+                                    <div>中度間歇性跛行</div>
+                                </div>
+                                <div className="stage-item">
+                                    <div className="stage-number">3</div>
+                                    <div>重度間歇性跛行</div>
+                                </div>
+                                <div className="stage-item">
+                                    <div className="stage-number">4</div>
+                                    <div><strong>休息痛 (Resting Pain)</strong> - 不走路腳就痛</div>
+                                </div>
+                                <div className="stage-item">
+                                    <div className="stage-number">5</div>
+                                    <div><strong>組織壞死 (Tissue Loss)</strong> - 腳趾有組織壞死脫落</div>
+                                </div>
+                                <div className="stage-item">
+                                    <div className="stage-number">6</div>
+                                    <div><strong>廣泛壞死</strong> - 超過腳趾以上部位壞死、發黑或傷口</div>
+                                </div>
+                            </div>
+                        </ExpandableSection>
+                        
+                        <ExpandableSection title="ALI 分類 (1, 2A, 2B, 3)">
+                            <div className="rutherford-stage">
+                                <div className="stage-item">
+                                    <div className="stage-number">1</div>
+                                    <div>可存活 - 無立即威脅</div>
+                                </div>
+                                <div className="stage-item">
+                                    <div className="stage-number">2A</div>
+                                    <div>邊緣性威脅 - 可挽救，如果及時治療</div>
+                                </div>
+                                <div className="stage-item">
+                                    <div className="stage-number">2B</div>
+                                    <div>立即威脅 - 如果不立即血管重建將喪失肢體</div>
+                                </div>
+                                <div className="stage-item">
+                                    <div className="stage-number">3</div>
+                                    <div>不可逆 - 主要組織壞死或永久神經損傷</div>
+                                </div>
+                            </div>
+                        </ExpandableSection>
+                    </div>
+                    
+                    <div className="card">
+                        <div className="card-title">
+                            <span className="card-icon">📈</span>
+                            不治療的風險
+                        </div>
+                        
+                        <div className="danger-box">
+                            <div className="danger-title">🚨 CLI 不治療的後果</div>
+                            <div className="info-content">
+                                研究追蹤 1527 名下肢有傷口的病患：<br/>
+                                • 12個月後<span className="highlight">死亡率 22%</span><br/>
+                                • 傷口<span className="highlight">35% 惡化</span><br/>
+                                • 洗腎/糖尿病患者預後更差<br/><br/>
+                                <strong>vs. 治療併發症 &lt;0.5%</strong><br/>
+                                不治療風險是治療風險的 <span className="highlight">220 倍</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
+        // Diagnosis Section
+        function DiagnosisSection({ searchTerm }) {
+            const [checkedItems, setCheckedItems] = useState({});
+            
+            const toggleCheck = (id) => {
+                setCheckedItems(prev => ({...prev, [id]: !prev[id]}));
+            };
+            
+            return (
+                <div className="tab-section">
+                    <div className="card">
+                        <div className="card-title">
+                            <span className="card-icon">📏</span>
+                            ABI 肱踝指數測量
+                        </div>
+                        
+                        <div className="info-item">
+                            <div className="info-label">測量方法</div>
+                            <div className="info-content">
+                                1. 雙手肘量測血壓，取<strong>較高值當分母</strong><br/>
+                                2. 測量雙腳：<br/>
+                                   • DPA (足背動脈 - Dorsalis Pedis Artery)<br/>
+                                   • PTA (後脛骨動脈 - Posterior Tibial Artery)<br/>
+                                3. 右腳 DPA/PTA 取高值當分子，左腳亦同<br/>
+                                4. 相除得 ABI 指數
+                            </div>
+                        </div>
+                        
+                        <div className="success-box">
+                            <div className="success-title">✅ 測量工具</div>
+                            <div className="info-content">
+                                • 標準 ABI 機器<br/>
+                                • 或：水銀加壓血壓計 + ICU Doppler
+                            </div>
+                        </div>
+                        
+                        <div className="warning-box">
+                            <div className="warning-title">📊 ABI 判讀</div>
+                            <div className="info-content">
+                                <span className="highlight">ABI ≤ 0.9 = 診斷週邊血管疾病</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="card">
+                        <div className="card-title">
+                            <span className="card-icon">👁️</span>
+                            下肢循環評估四步驟
+                        </div>
+                        
+                        <div className="assessment-grid">
+                            <div className="assessment-item">
+                                <div className="assessment-icon">👁️</div>
+                                <div className="assessment-label">看</div>
+                                <div className="assessment-desc">顏色、傷口、乾濕</div>
+                            </div>
+                            <div className="assessment-item">
+                                <div className="assessment-icon">🤲</div>
+                                <div className="assessment-label">摸</div>
+                                <div className="assessment-desc">溫度比較</div>
+                            </div>
+                            <div className="assessment-item">
+                                <div className="assessment-icon">👆</div>
+                                <div className="assessment-label">觸</div>
+                                <div className="assessment-desc">脈搏觸診</div>
+                            </div>
+                            <div className="assessment-item">
+                                <div className="assessment-icon">💬</div>
+                                <div className="assessment-label">問</div>
+                                <div className="assessment-desc">症狀詢問</div>
+                            </div>
+                        </div>
+                        
+                        <ExpandableSection title="📋 詳細評估項目" defaultOpen={true}>
+                            <div className="checklist-item" onClick={() => toggleCheck('look')}>
+                                <div className={`checkbox ${checkedItems['look'] ? 'checked' : ''}`}>
+                                    {checkedItems['look'] && '✓'}
+                                </div>
+                                <div className="checklist-text">
+                                    <strong>👁️ 看</strong><br/>
+                                    • 是否藍、紫、白？<br/>
+                                    • 有無傷口？傷口乾或濕？<br/>
+                                    • 有無髒污？傷口大小？
+                                </div>
+                            </div>
+                            
+                            <div className="checklist-item" onClick={() => toggleCheck('touch')}>
+                                <div className={`checkbox ${checkedItems['touch'] ? 'checked' : ''}`}>
+                                    {checkedItems['touch'] && '✓'}
+                                </div>
+                                <div className="checklist-text">
+                                    <strong>🤲 摸</strong><br/>
+                                    • 雙手觸摸足底、足背<br/>
+                                    • 小腿到大腿溫度<br/>
+                                    • <span className="highlight">是否有單側溫度降低？</span>
+                                </div>
+                            </div>
+                            
+                            <div className="checklist-item" onClick={() => toggleCheck('palpate')}>
+                                <div className={`checkbox ${checkedItems['palpate'] ? 'checked' : ''}`}>
+                                    {checkedItems['palpate'] && '✓'}
+                                </div>
+                                <div className="checklist-text">
+                                    <strong>👆 觸診</strong><br/>
+                                    • DPA (足背動脈)<br/>
+                                    • PTA (後脛骨動脈)<br/>
+                                    • Popliteal artery (膝蓋後)
+                                </div>
+                            </div>
+                            
+                            <div className="checklist-item" onClick={() => toggleCheck('ask')}>
+                                <div className={`checkbox ${checkedItems['ask'] ? 'checked' : ''}`}>
+                                    {checkedItems['ask'] && '✓'}
+                                </div>
+                                <div className="checklist-text">
+                                    <strong>💬 問診</strong><br/>
+                                    不能只問痛，要問到：<br/>
+                                    • <span className="highlight">痛、麻、酸、無力</span><br/>
+                                    • 疼痛指數？<br/>
+                                    • 夜間是否麻痛？
+                                </div>
+                            </div>
+                        </ExpandableSection>
+                    </div>
+                    
+                    <div className="card">
+                        <div className="card-title">
+                            <span className="card-icon">📝</span>
+                            病歷紀錄重點
+                        </div>
+                        
+                        <div className="checklist-item" onClick={() => toggleCheck('record1')}>
+                            <div className={`checkbox ${checkedItems['record1'] ? 'checked' : ''}`}>
+                                {checkedItems['record1'] && '✓'}
+                            </div>
+                            <div className="checklist-text">
+                                何時開始有症狀？傷口在哪？
+                            </div>
+                        </div>
+                        
+                        <div className="checklist-item" onClick={() => toggleCheck('record2')}>
+                            <div className={`checkbox ${checkedItems['record2'] ? 'checked' : ''}`}>
+                                {checkedItems['record2'] && '✓'}
+                            </div>
+                            <div className="checklist-text">
+                                接受過哪些治療？(換藥？開刀？血管治療？)
+                            </div>
+                        </div>
+                        
+                        <div className="checklist-item" onClick={() => toggleCheck('record3')}>
+                            <div className={`checkbox ${checkedItems['record3'] ? 'checked' : ''}`}>
+                                {checkedItems['record3'] && '✓'}
+                            </div>
+                            <div className="checklist-text">
+                                下肢理學檢查：Rutherford stage、傷口、溫度、脈搏、感覺與運動
+                            </div>
+                        </div>
+                        
+                        <div className="checklist-item" onClick={() => toggleCheck('record4')}>
+                            <div className={`checkbox ${checkedItems['record4'] ? 'checked' : ''}`}>
+                                {checkedItems['record4'] && '✓'}
+                            </div>
+                            <div className="checklist-text">
+                                心血管疾病風險：AMI、old MI、缺血性/出血性中風
+                            </div>
+                        </div>
+                        
+                        <div className="checklist-item" onClick={() => toggleCheck('record5')}>
+                            <div className={`checkbox ${checkedItems['record5'] ? 'checked' : ''}`}>
+                                {checkedItems['record5'] && '✓'}
+                            </div>
+                            <div className="checklist-text">
+                                腎功能
+                            </div>
+                        </div>
+                        
+                        <div className="checklist-item" onClick={() => toggleCheck('record6')}>
+                            <div className={`checkbox ${checkedItems['record6'] ? 'checked' : ''}`}>
+                                {checkedItems['record6'] && '✓'}
+                            </div>
+                            <div className="checklist-text">
+                                感染狀況 (WBC/DC, CRP, wound pus)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
+        // Pre-Cath Section
+        function PreCathSection({ searchTerm }) {
+            const [subTab, setSubTab] = useState('admission');
+            
+            return (
+                <div className="tab-section">
+                    <div className="sub-tabs">
+                        <button 
+                            className={`sub-tab ${subTab === 'admission' ? 'active' : ''}`}
+                            onClick={() => setSubTab('admission')}
+                        >
+                            住院準備
+                        </button>
+                        <button 
+                            className={`sub-tab ${subTab === 'medication' ? 'active' : ''}`}
+                            onClick={() => setSubTab('medication')}
+                        >
+                            藥物治療
+                        </button>
+                        <button 
+                            className={`sub-tab ${subTab === 'precath' ? 'active' : ''}`}
+                            onClick={() => setSubTab('precath')}
+                        >
+                            導管前醫囑
+                        </button>
+                    </div>
+                    
+                    {subTab === 'admission' && (
+                        <>
+                            <div className="card">
+                                <div className="card-title">
+                                    <span className="card-icon">🏥</span>
+                                    住院當下須注意事項
+                                </div>
+                                
+                                <div className="info-item">
+                                    <div className="info-label">❤️ ECG 判讀</div>
+                                    <div className="info-content">
+                                        若心電圖有 Q 波、QS 波、或 R wave poor progression，<br/>
+                                        且胸部 X 光有心臟擴大 → <span className="highlight">需做心臟超音波</span>
+                                    </div>
+                                </div>
+                                
+                                <div className="info-item">
+                                    <div className="info-label">🦵 周邊血管檢查</div>
+                                    <div className="info-content">
+                                        住院時<strong>必須</strong>完成：<br/>
+                                        • ABI 測量<br/>
+                                        • 血管超音波<br/>
+                                        <span className="highlight">⚠️ 兩者起碼要執行其一！</span>
+                                    </div>
+                                </div>
+                                
+                                <div className="warning-box">
+                                    <div className="warning-title">⚠️ 敗血症風險評估</div>
+                                    <div className="info-content">
+                                        若以下指標升高：<br/>
+                                        • WBC &gt; 15,000/uL<br/>
+                                        • CRP &gt; 5 mg/dL<br/><br/>
+                                        建議：延長抗生素治療 或 逕行清創/截肢
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
+                    
+                    {subTab === 'medication' && (
+                        <>
+                            <div className="card">
+                                <div className="card-title">
+                                    <span className="card-icon">💊</span>
+                                    CLI 用藥
+                                </div>
+                                
+                                <div className="medication-card">
+                                    <div className="med-name">Aspirin (Bokey)</div>
+                                    <div className="med-detail">
+                                        標準用藥<br/>
+                                        ⚠️ 若合併 upper GI bleeding 徵兆則不開立
+                                    </div>
+                                </div>
+                                
+                                <div className="medication-card">
+                                    <div className="med-name">Cilostazol (Pletaal)</div>
+                                    <div className="med-detail">
+                                        100 mg PO BID<br/>
+                                        洗腎/CKD (eGFR &lt; 30) <span className="highlight">不用調整劑量</span>
+                                    </div>
+                                </div>
+                                
+                                <div className="medication-card">
+                                    <div className="med-name">Clopidogrel (Plavix)</div>
+                                    <div className="med-detail">
+                                        • ALI 診斷：需開立<br/>
+                                        • CLI 合併下肢循環惡化：需開立
+                                    </div>
+                                </div>
+                                
+                                <div className="medication-card">
+                                    <div className="med-name">PPI (胃藥保護)</div>
+                                    <div className="med-detail">
+                                        自費：Nexium, Takepron, Pariet<br/>
+                                        ⚠️ 只有 Nexium 可用於 NG tube 病人
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="card">
+                                <div className="card-title">
+                                    <span className="card-icon">🚨</span>
+                                    ALI 額外用藥
+                                </div>
+                                
+                                <div className="medication-card">
+                                    <div className="med-name">Alprostadil (Promostan)</div>
+                                    <div className="med-detail">
+                                        6 amp in N/S 500 mL<br/>
+                                        Pump <span className="highlight">21 mL/hour</span>
+                                    </div>
+                                </div>
+                                
+                                <div className="medication-card">
+                                    <div className="med-name">Anticoagulant</div>
+                                    <div className="med-detail">
+                                        Heparin 或 Enoxaparin (Clexane)
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
+                    
+                    {subTab === 'precath' && (
+                        <>
+                            <div className="card">
+                                <div className="card-title">
+                                    <span className="card-icon">📋</span>
+                                    導管前醫囑
+                                </div>
+                                
+                                <div className="success-box">
+                                    <div className="success-title">✅ 本院採用策略</div>
+                                    <div className="info-content">
+                                        1. <strong>全部局部麻醉</strong> - 可與病患溝通<br/>
+                                        2. <strong>超音波導引穿刺</strong> - 降低併發症<br/>
+                                        3. <strong>DSA</strong> - 減少顯影劑用量<br/>
+                                        4. <strong>心臟內科醫師執行</strong> - 術中可直接處理心臟問題
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
+                </div>
+            );
+        }
+        
+        // Cath Lab Section
+        function CathLabSection({ searchTerm }) {
+            return (
+                <div className="tab-section">
+                    <div className="card">
+                        <div className="card-title">
+                            <span className="card-icon">🏥</span>
+                            導管室工作內容
+                        </div>
+                        
+                        <div className="info-item">
+                            <div className="info-label">📺 影像技術</div>
+                            <div className="info-content">
+                                全部使用 <span className="highlight">DSA (Digital Subtraction Angiography)</span>
+                            </div>
+                        </div>
+                        
+                        <div className="info-item">
+                            <div className="info-label">🎯 穿刺方向</div>
+                            <div className="info-content">
+                                <strong>Antegrade：</strong>右進作右、左進作左<br/>
+                                <strong>Retrograde：</strong>右進作左、左進作右
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="card">
+                        <div className="card-title">
+                            <span className="card-icon">✅</span>
+                            成功定義
+                        </div>
+                        
+                        <div className="info-item">
+                            <div className="info-label">Technical Success</div>
+                            <div className="info-content">殘餘狹窄 <span className="highlight">&lt; 30%</span></div>
+                        </div>
+                        
+                        <div className="info-item">
+                            <div className="info-label">Hemodynamic Success</div>
+                            <div className="info-content">病灶壓力差 <span className="highlight">&lt; 10 mmHg</span></div>
+                        </div>
+                        
+                        <div className="info-item">
+                            <div className="info-label">ABI 改善</div>
+                            <div className="info-content">ABI 增加 <span className="highlight">≥ 0.10 ~ 0.15</span></div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
+        // Post-Cath Section
+        function PostCathSection({ searchTerm }) {
+            const [checkedItems, setCheckedItems] = useState({});
+            
+            const toggleCheck = (id) => {
+                setCheckedItems(prev => ({...prev, [id]: !prev[id]}));
+            };
+            
+            return (
+                <div className="tab-section">
+                    <div className="card">
+                        <div className="card-title">
+                            <span className="card-icon">⏱️</span>
+                            ACT 監測與移除流程
+                        </div>
+                        
+                        <div className="act-flow">
+                            <div className="act-box">Check ACT</div>
+                            <span className="act-arrow">↓</span>
+                            
+                            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                                <div className="success-box" style={{ flex: '1', minWidth: '100px' }}>
+                                    <div className="success-title">&lt; 150 秒</div>
+                                    <div className="info-content">✅ 可移除</div>
+                                </div>
+                                
+                                <div className="warning-box" style={{ flex: '1', minWidth: '100px' }}>
+                                    <div className="warning-title">150-200 秒</div>
+                                    <div className="info-content">⏰ 30分鐘後 recheck</div>
+                                </div>
+                                
+                                <div className="danger-box" style={{ flex: '1', minWidth: '100px' }}>
+                                    <div className="danger-title">≥ 200 秒</div>
+                                    <div className="info-content">⏰ 60分鐘後 recheck</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="danger-box">
+                            <div className="danger-title">🚨 重要警告</div>
+                            <div className="info-content">
+                                若 sheath 反抽沒有回血：<br/>
+                                <span className="highlight">絕對不能打 Normal Saline 進去！</span><br/>
+                                會把血塊往腳底沖，造成 gangrene
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="card">
+                        <div className="card-title">
+                            <span className="card-icon">📋</span>
+                            交班重點
+                        </div>
+                        
+                        <div className="checklist-item" onClick={() => toggleCheck('h1')}>
+                            <div className={`checkbox ${checkedItems['h1'] ? 'checked' : ''}`}>
+                                {checkedItems['h1'] && '✓'}
+                            </div>
+                            <div className="checklist-text">Sheath 位置與粗細</div>
+                        </div>
+                        
+                        <div className="checklist-item" onClick={() => toggleCheck('h2')}>
+                            <div className={`checkbox ${checkedItems['h2'] ? 'checked' : ''}`}>
+                                {checkedItems['h2'] && '✓'}
+                            </div>
+                            <div className="checklist-text">何時拔除？續用 heparin？</div>
+                        </div>
+                        
+                        <div className="checklist-item" onClick={() => toggleCheck('h3')}>
+                            <div className={`checkbox ${checkedItems['h3'] ? 'checked' : ''}`}>
+                                {checkedItems['h3'] && '✓'}
+                            </div>
+                            <div className="checklist-text">遠端動脈搏動</div>
+                        </div>
+                        
+                        <div className="checklist-item" onClick={() => toggleCheck('h4')}>
+                            <div className={`checkbox ${checkedItems['h4'] ? 'checked' : ''}`}>
+                                {checkedItems['h4'] && '✓'}
+                            </div>
+                            <div className="checklist-text">
+                                <span className="highlight">打 sheath 的腳不可在 hip joint 彎曲</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="card">
+                        <div className="card-title">
+                            <span className="card-icon">💊</span>
+                            出院帶藥
+                        </div>
+                        
+                        <div className="medication-card">
+                            <div className="med-name">Aspirin (Bokey)</div>
+                        </div>
+                        <div className="medication-card">
+                            <div className="med-name">Cilostazol (Pletaal)</div>
+                        </div>
+                        <div className="medication-card">
+                            <div className="med-name">Clopidogrel (Plavix)</div>
+                            <div className="med-detail">有支架者，健保給付一個月</div>
+                        </div>
+                        <div className="medication-card">
+                            <div className="med-name">PPI</div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
+        // Wound Care Section
+        function WoundCareSection({ searchTerm }) {
+            return (
+                <div className="tab-section">
+                    <div className="card">
+                        <div className="card-title">
+                            <span className="card-icon">🔍</span>
+                            導管手術後評估重點
+                        </div>
+                        
+                        <div className="assessment-grid">
+                            <div className="assessment-item">
+                                <div className="assessment-icon">🌡️</div>
+                                <div className="assessment-label">Temperature</div>
+                                <div className="assessment-desc">是否變得更暖？</div>
+                            </div>
+                            <div className="assessment-item">
+                                <div className="assessment-icon">💓</div>
+                                <div className="assessment-label">Pulses</div>
+                                <div className="assessment-desc">是否可以被摸到？</div>
+                            </div>
+                            <div className="assessment-item">
+                                <div className="assessment-icon">🎨</div>
+                                <div className="assessment-label">Color</div>
+                                <div className="assessment-desc">顏色是否變好？</div>
+                            </div>
+                            <div className="assessment-item">
+                                <div className="assessment-icon">✋</div>
+                                <div className="assessment-label">Sensory/Motor</div>
+                                <div className="assessment-desc">知覺與運動能力</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="card">
+                        <div className="card-title">
+                            <span className="card-icon">📸</span>
+                            傷口記錄與交班
+                        </div>
+                        
+                        <div className="info-item">
+                            <div className="info-label">出院前傷口評估</div>
+                            <div className="info-content">
+                                由住院醫師、專科護理師、護理師一起看過傷口<br/>
+                                在病房予以<span className="highlight">照相記錄</span>
+                            </div>
+                        </div>
+                        
+                        <div className="warning-box">
+                            <div className="warning-title">⚠️ 重要</div>
+                            <div className="info-content">
+                                出院前應確認傷口範圍，在出院病摘中交代<br/>
+                                <span className="highlight">記錄 WIfI Classification</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="card">
+                        <div className="card-title">
+                            <span className="card-icon">🏥</span>
+                            後續治療選項
+                        </div>
+                        
+                        <ExpandableSection title="🫁 高壓氧治療">
+                            <div className="info-content">
+                                竹苗地區：台北榮總竹東分院、頭份為恭醫院
+                            </div>
+                        </ExpandableSection>
+                        
+                        <ExpandableSection title="🔴 遠紅外線治療">
+                            <div className="info-content">促進末梢循環的輔助治療</div>
+                        </ExpandableSection>
+                        
+                        <ExpandableSection title="📌 針灸治療">
+                            <div className="info-content">中醫輔助治療選項</div>
+                        </ExpandableSection>
+                        
+                        <ExpandableSection title="🩺 整型外科">
+                            <div className="info-content">傷口清創、皮瓣重建等</div>
+                        </ExpandableSection>
+                    </div>
+                </div>
+            );
+        }
+        
+        // Quiz Section
+        function QuizSection() {
+            const [currentQuestion, setCurrentQuestion] = useState(0);
+            const [selectedAnswer, setSelectedAnswer] = useState(null);
+            const [showResult, setShowResult] = useState(false);
+            const [score, setScore] = useState(0);
+            const [answered, setAnswered] = useState(false);
+            
+            const questions = [
+                {
+                    question: "PAOD 的診斷標準 ABI 值為何？",
+                    options: ["≤ 0.7", "≤ 0.8", "≤ 0.9", "≤ 1.0"],
+                    correct: 2,
+                    explanation: "ABI ≤ 0.9 為週邊血管疾病的診斷標準"
+                },
+                {
+                    question: "WIfI 分類系統中的「I」代表什麼？",
+                    options: ["Inflammation (發炎)", "Infection (感染)", "Ischemia (缺血)", "Injury (損傷)"],
+                    correct: 2,
+                    explanation: "WIfI = Wound(傷口) + Ischemia(缺血) + foot Infection(足部感染)"
+                },
+                {
+                    question: "移除 Sheath 前，ACT 必須小於多少秒？",
+                    options: ["100 秒", "150 秒", "200 秒", "250 秒"],
+                    correct: 1,
+                    explanation: "ACT 必須小於 150 秒才可以移除 sheath"
+                },
+                {
+                    question: "WIfI 評分中，Wound Grade 2 代表？",
+                    options: ["無傷口", "小型淺層潰瘍", "深層潰瘍/腳趾壞疽", "廣泛深層潰瘍"],
+                    correct: 2,
+                    explanation: "W2 = 深層潰瘍，暴露骨骼、關節或肌腱；壞疽僅限於腳趾"
+                },
+                {
+                    question: "Rutherford Stage 5 代表什麼？",
+                    options: ["輕度間歇性跛行", "休息痛", "腳趾有組織壞死脫落", "廣泛壞死超過腳趾以上"],
+                    correct: 2,
+                    explanation: "Stage 5 表示腳趾有 tissue loss，組織壞死脫落"
+                },
+                {
+                    question: "WIfI Clinical Stage 4 的 1 年截肢風險為？",
+                    options: ["極低 (<5%)", "低 (5-20%)", "中 (20-50%)", "高 (>50%)"],
+                    correct: 3,
+                    explanation: "Stage 4 為高風險，1年截肢風險 >50%，迫切需要血管重建"
+                },
+                {
+                    question: "下肢循環評估的四個步驟是？",
+                    options: ["看、聽、問、切", "看、摸、觸診、問診", "視、觸、叩、聽", "望、聞、問、切"],
+                    correct: 1,
+                    explanation: "正確順序為：看（顏色傷口）、摸（溫度）、觸診（脈搏）、問診（痛麻酸無力）"
+                },
+                {
+                    question: "WIfI 中的 Ischemia Grade 3 對應的 ABI 範圍是？",
+                    options: ["≥ 0.80", "0.6-0.79", "0.4-0.59", "< 0.4"],
+                    correct: 3,
+                    explanation: "Ischemia Grade 3 (重度缺血)：ABI < 0.4、踝壓 < 50 mmHg"
+                },
+                {
+                    question: "移除 Sheath 後，沙包應加壓多久？",
+                    options: ["2 小時", "4 小時", "6 小時", "8 小時"],
+                    correct: 3,
+                    explanation: "移除 sheath 後以 2 kg 沙包加壓 8 小時"
+                },
+                {
+                    question: "WIfI foot Infection Grade 3 的特徵是？",
+                    options: ["無感染", "局部感染紅腫 ≤ 2cm", "局部感染紅腫 > 2cm", "局部感染合併 SIRS 徵象"],
+                    correct: 3,
+                    explanation: "fI Grade 3 = 局部感染合併全身性發炎反應徵象 (SIRS)"
+                }
+            ];
+            
+            const handleAnswer = (index) => {
+                if (answered) return;
+                setSelectedAnswer(index);
+            };
+            
+            const submitAnswer = () => {
+                if (selectedAnswer === null) return;
+                setAnswered(true);
+                if (selectedAnswer === questions[currentQuestion].correct) {
+                    setScore(score + 1);
+                }
+            };
+            
+            const nextQuestion = () => {
+                if (currentQuestion < questions.length - 1) {
+                    setCurrentQuestion(currentQuestion + 1);
+                    setSelectedAnswer(null);
+                    setAnswered(false);
+                } else {
+                    setShowResult(true);
+                }
+            };
+            
+            const restartQuiz = () => {
+                setCurrentQuestion(0);
+                setSelectedAnswer(null);
+                setShowResult(false);
+                setScore(0);
+                setAnswered(false);
+            };
+            
+            if (showResult) {
+                const percentage = Math.round((score / questions.length) * 100);
+                return (
+                    <div className="tab-section">
+                        <div className="score-display">
+                            <div className="score-number">{percentage}%</div>
+                            <div className="score-label">
+                                {score} / {questions.length} 題正確
+                            </div>
+                            <div style={{ marginTop: '15px', color: '#b0bec5' }}>
+                                {percentage >= 80 ? '🎉 優秀！您對 PAOD 與 WIfI 掌握得很好！' :
+                                 percentage >= 60 ? '👍 不錯！再複習一下可以更好！' :
+                                 '📚 建議再仔細閱讀各章節內容'}
+                            </div>
+                        </div>
+                        <button className="quiz-btn" onClick={restartQuiz}>
+                            🔄 重新測驗
+                        </button>
+                    </div>
+                );
+            }
+            
+            const q = questions[currentQuestion];
+            
+            return (
+                <div className="tab-section">
+                    <div className="card">
+                        <div className="progress-bar">
+                            <div 
+                                className="progress-fill" 
+                                style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
+                            />
+                        </div>
+                        
+                        <div style={{ textAlign: 'center', marginBottom: '15px', color: '#b0bec5' }}>
+                            第 {currentQuestion + 1} / {questions.length} 題
+                        </div>
+                        
+                        <div className="card-title" style={{ borderBottom: 'none', paddingBottom: 0 }}>
+                            {q.question}
+                        </div>
+                        
+                        <div style={{ marginTop: '20px' }}>
+                            {q.options.map((option, index) => (
+                                <div
+                                    key={index}
+                                    className={`quiz-option 
+                                        ${selectedAnswer === index ? 'selected' : ''}
+                                        ${answered && index === q.correct ? 'correct' : ''}
+                                        ${answered && selectedAnswer === index && index !== q.correct ? 'incorrect' : ''}
+                                    `}
+                                    onClick={() => handleAnswer(index)}
+                                >
+                                    {String.fromCharCode(65 + index)}. {option}
+                                </div>
+                            ))}
+                        </div>
+                        
+                        {answered && (
+                            <div className={selectedAnswer === q.correct ? 'success-box' : 'danger-box'}>
+                                <div className={selectedAnswer === q.correct ? 'success-title' : 'danger-title'}>
+                                    {selectedAnswer === q.correct ? '✅ 正確！' : '❌ 錯誤'}
+                                </div>
+                                <div className="info-content">{q.explanation}</div>
+                            </div>
+                        )}
+                        
+                        {!answered ? (
+                            <button 
+                                className="quiz-btn" 
+                                onClick={submitAnswer}
+                                disabled={selectedAnswer === null}
+                            >
+                                確認答案
+                            </button>
+                        ) : (
+                            <button className="quiz-btn" onClick={nextQuestion}>
+                                {currentQuestion < questions.length - 1 ? '下一題 →' : '查看結果'}
+                            </button>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+        
+        // Render the app
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
