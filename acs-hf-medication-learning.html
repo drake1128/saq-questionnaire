@@ -1,0 +1,2545 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ACS/HF 藥物學習系統 | 心臟科護理教育</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0f1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a2234;
+            --bg-elevated: #243044;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --accent-purple: #a855f7;
+            --accent-orange: #f97316;
+            --border-color: #334155;
+            --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+            --gradient-danger: linear-gradient(135deg, #f43f5e 0%, #f97316 100%);
+            --gradient-success: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            --shadow-glow: 0 0 40px rgba(59, 130, 246, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        #root {
+            min-height: 100vh;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            14% { transform: scale(1.15); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.15); }
+            70% { transform: scale(1); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(244, 63, 94, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(244, 63, 94, 0.8), 0 0 30px rgba(244, 63, 94, 0.4); }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .stagger-1 { animation-delay: 0.1s; opacity: 0; }
+        .stagger-2 { animation-delay: 0.2s; opacity: 0; }
+        .stagger-3 { animation-delay: 0.3s; opacity: 0; }
+        .stagger-4 { animation-delay: 0.4s; opacity: 0; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* App Container */
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--bg-primary);
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-secondary);
+            padding: 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .back-btn {
+            background: var(--bg-elevated);
+            border: none;
+            color: var(--text-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: var(--bg-card);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            padding: 12px 20px;
+            background: var(--bg-secondary);
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: var(--bg-elevated);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        /* Home Screen */
+        .hero-section {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .hero-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+
+        .hero-title {
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        /* Alert Banner */
+        .alert-banner {
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.15) 0%, rgba(249, 115, 22, 0.15) 100%);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 24px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        .alert-banner-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .alert-banner-icon {
+            font-size: 24px;
+        }
+
+        .alert-banner-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--accent-rose);
+        }
+
+        .alert-banner-content {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .alert-banner-highlight {
+            color: var(--accent-amber);
+            font-weight: 600;
+        }
+
+        /* Category Cards */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .category-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--card-accent, var(--accent-blue));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--card-accent, var(--accent-blue));
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .category-card:hover::before {
+            opacity: 1;
+        }
+
+        .category-card.featured {
+            grid-column: span 2;
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.1) 0%, rgba(249, 115, 22, 0.1) 100%);
+            border-color: rgba(244, 63, 94, 0.3);
+        }
+
+        .category-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .category-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .category-count {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .category-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--accent-rose);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 20px;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 24px 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title-icon {
+            font-size: 20px;
+        }
+
+        /* Drug List */
+        .drug-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .drug-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .drug-card:hover {
+            border-color: var(--accent-blue);
+            transform: translateX(4px);
+        }
+
+        .drug-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .drug-chinese-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .drug-code {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            background: rgba(6, 182, 212, 0.15);
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .drug-generic-name {
+            font-size: 13px;
+            color: var(--accent-blue);
+            margin-bottom: 6px;
+        }
+
+        .drug-brand-name {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .drug-warning-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--accent-rose);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-top: 10px;
+        }
+
+        /* Drug Detail */
+        .drug-detail-header {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .drug-detail-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .drug-detail-name {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .drug-detail-generic {
+            font-size: 14px;
+            color: var(--accent-cyan);
+            margin-bottom: 8px;
+        }
+
+        .drug-detail-brand {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Info Cards */
+        .info-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .info-card-header {
+            background: var(--bg-elevated);
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .info-card-icon {
+            font-size: 20px;
+        }
+
+        .info-card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .info-card-toggle {
+            color: var(--text-muted);
+            transition: transform 0.3s;
+        }
+
+        .info-card-toggle.open {
+            transform: rotate(180deg);
+        }
+
+        .info-card-content {
+            padding: 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .info-card-content.collapsed {
+            display: none;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.15) 0%, rgba(249, 115, 22, 0.1) 100%);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .warning-box-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .warning-box-icon {
+            font-size: 24px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .warning-box-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--accent-rose);
+        }
+
+        .warning-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .warning-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .warning-list li::before {
+            content: '⚠️';
+            position: absolute;
+            left: 0;
+            font-size: 12px;
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .highlight-box-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .highlight-box-content {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Quiz Section */
+        .quiz-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .quiz-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .quiz-progress-text {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .quiz-progress-score {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-emerald);
+        }
+
+        .quiz-question {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .quiz-option {
+            background: var(--bg-elevated);
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px;
+            font-size: 15px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+
+        .quiz-option:hover:not(.disabled) {
+            border-color: var(--accent-blue);
+            transform: translateX(4px);
+        }
+
+        .quiz-option.selected {
+            border-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.15);
+        }
+
+        .quiz-option.correct {
+            border-color: var(--accent-emerald);
+            background: rgba(16, 185, 129, 0.15);
+        }
+
+        .quiz-option.incorrect {
+            border-color: var(--accent-rose);
+            background: rgba(244, 63, 94, 0.15);
+            animation: shake 0.4s ease;
+        }
+
+        .quiz-option.disabled {
+            cursor: default;
+            opacity: 0.7;
+        }
+
+        .quiz-explanation {
+            margin-top: 20px;
+            padding: 16px;
+            background: var(--bg-elevated);
+            border-radius: 14px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .quiz-explanation-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quiz-explanation-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Quiz Result */
+        .quiz-result {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .quiz-result-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .quiz-result-score {
+            font-size: 48px;
+            font-weight: 900;
+            background: var(--gradient-success);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .quiz-result-label {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .quiz-result-message {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 30px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .btn-next {
+            margin-top: 20px;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 12px 20px;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom));
+            display: flex;
+            justify-content: space-around;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        .nav-item.active {
+            color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-item:hover:not(.active) {
+            color: var(--text-secondary);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* Search */
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 14px 16px;
+            padding-left: 44px;
+            font-size: 15px;
+            color: var(--text-primary);
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: var(--text-muted);
+        }
+
+        /* Tabs */
+        .tabs-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab-btn {
+            flex-shrink: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .tab-btn.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: white;
+        }
+
+        .tab-btn:hover:not(.active) {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Drug Class Badge */
+        .drug-class-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .drug-class-badge.beta-blocker {
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--accent-rose);
+        }
+
+        .drug-class-badge.ace-arb {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .drug-class-badge.sglt2i {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-emerald);
+        }
+
+        .drug-class-badge.antiplatelet {
+            background: rgba(168, 85, 247, 0.15);
+            color: var(--accent-purple);
+        }
+
+        .drug-class-badge.anticoagulant {
+            background: rgba(249, 115, 22, 0.15);
+            color: var(--accent-orange);
+        }
+
+        .drug-class-badge.statin {
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--accent-cyan);
+        }
+
+        .drug-class-badge.mra {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-amber);
+        }
+
+        .drug-class-badge.arni {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%);
+            color: var(--accent-purple);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .checklist-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .checklist-text strong {
+            color: var(--text-primary);
+        }
+
+        /* Key Point */
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px;
+            background: var(--bg-elevated);
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .key-point-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content {
+            flex: 1;
+        }
+
+        .key-point-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .key-point-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Dosing Table */
+        .dosing-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 13px;
+        }
+
+        .dosing-table th,
+        .dosing-table td {
+            padding: 10px 8px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .dosing-table th {
+            background: var(--bg-elevated);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .dosing-table td {
+            color: var(--text-secondary);
+        }
+
+        .dosing-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // ==================== 藥物資料 ====================
+        const drugData = {
+            betaBlocker: {
+                name: 'Beta-Blocker',
+                displayName: 'β-阻斷劑',
+                icon: '💓',
+                color: 'var(--accent-rose)',
+                description: '阻斷β腎上腺素受體，降低心跳速率和心肌收縮力',
+                drugs: [
+                    { code: 'ATE4DB11', chinese: '壓平樂膠衣錠', generic: 'Atenolol', brand: 'Ateol F.C. Tablet 100 mg/tab', dose: '100mg' },
+                    { code: 'CON4DB41', chinese: '康肯', generic: 'Bisoprolol Fumarate', brand: 'Concor Tablet 5 mg bisoprolol/tab', dose: '5mg' },
+                    { code: 'CON4DBA7', chinese: '康肯', generic: 'Bisoprolol Fumarate', brand: 'Concor Tablet 1.25 mg bisoprolol/tab', dose: '1.25mg' },
+                    { code: 'BET4DB42', chinese: '舒壓寧控釋錠', generic: 'Metoprolol Succinate', brand: 'Betaloc ZOK Tablet 100 mg/tab', dose: '100mg' },
+                    { code: 'NEB4DBD2', chinese: '耐比洛錠', generic: 'Nebivolol HCl', brand: 'Nebilet 5 mg/tab', dose: '5mg' },
+                    { code: 'IND4DD05', chinese: '恩特來錠', generic: 'Propranolol HCl', brand: 'Inderal Tablet 10 mg', dose: '10mg' },
+                    { code: 'DIL4DB61', chinese: '達利全錠', generic: 'Carvedilol', brand: 'Dilatrend Tablet 25 mg/tab', dose: '25mg' },
+                    { code: 'DIL4DB84', chinese: '達利全錠', generic: 'Carvedilol', brand: 'Dilatrend Tablet 6.25 mg/tab', dose: '6.25mg' },
+                    { code: 'TRA4DB18', chinese: '湍泰低錠', generic: 'Labetalol HCl', brand: 'Trandate Tablet 200 mg/tab', dose: '200mg' }
+                ],
+                keyPoints: [
+                    { icon: '❤️', title: '降低心跳', desc: '這是最重要的作用！所有Beta-blocker都會降低心跳，給藥前後務必監測HR' },
+                    { icon: '📉', title: '降低血壓', desc: '減少心輸出量和抑制腎素分泌，導致血壓下降' },
+                    { icon: '💪', title: '減少心肌耗氧', desc: '降低心肌收縮力，減少心臟做功和氧氣需求' },
+                    { icon: '⚡', title: '抗心律不整', desc: '抑制竇房結和房室結傳導，可控制心房顫動心率' }
+                ],
+                warnings: [
+                    '給藥前必須測量心跳和血壓',
+                    'HR < 50-55 bpm 應暫停給藥並通知醫師',
+                    'SBP < 90 mmHg 應暫停給藥並通知醫師',
+                    '觀察是否有頭暈、疲倦、四肢冰冷等症狀',
+                    '不可突然停藥，需逐漸減量',
+                    '氣喘/COPD 患者使用需特別小心'
+                ],
+                monitoringChecklist: [
+                    { icon: '💓', text: '<strong>心跳 (HR)</strong>：給藥前後監測，目標50-70 bpm，<55需通知醫師' },
+                    { icon: '🩺', text: '<strong>血壓 (BP)</strong>：給藥前後監測，SBP<90 mmHg需通知醫師' },
+                    { icon: '😵', text: '<strong>症狀</strong>：頭暈、疲倦、四肢冰冷、喘' },
+                    { icon: '📊', text: '<strong>心電圖</strong>：注意PR interval延長、心律不整' },
+                    { icon: '🫁', text: '<strong>呼吸</strong>：氣喘患者注意支氣管痙攣' }
+                ]
+            },
+            aceArb: {
+                name: 'ACEi/ARB',
+                displayName: 'ACEi / ARB',
+                icon: '🫀',
+                color: 'var(--accent-blue)',
+                description: '抑制RAAS系統，降低血壓，減少心臟負荷，延緩心臟重塑',
+                drugs: [
+                    { code: 'EDA4DBB7', chinese: '易得平錠', generic: 'Azilsartan Medoxomil', brand: 'Edarbi Tablet 40 mg/tab', dose: '40mg', type: 'ARB' },
+                    { code: 'APR4DB88', chinese: '安普諾維膜衣錠', generic: 'Irbesartan', brand: 'Aprovel Film-coated Tablet 150 mg/tab', dose: '150mg', type: 'ARB' },
+                    { code: 'COZ4DB62', chinese: '可悅您膜衣錠', generic: 'Losartan Potassium', brand: 'Cozaar F.C. Tablet 50 mg/tab', dose: '50mg', type: 'ARB' },
+                    { code: 'OL 4DB93', chinese: '雅脈膜衣錠', generic: 'Olmesartan Medoxomil', brand: 'Olmetec Film Coated Tablet 20 mg/tab', dose: '20mg', type: 'ARB' },
+                    { code: 'DIO4DB23', chinese: '得安穩膜衣錠', generic: 'Valsartan', brand: 'Diovan Film-Coated Tablets 160 mg/tab', dose: '160mg', type: 'ARB' },
+                    { code: 'DIO4DBC6', chinese: '得安穩膜衣錠', generic: 'Valsartan', brand: 'Diovan Film-Coated Tablets 40 mg/tab', dose: '40mg', type: 'ARB' },
+                    { code: 'CEP4DB21', chinese: '血樂平錠', generic: 'Captopril', brand: 'Ceporin Tablet 25 mg/tab', dose: '25mg', type: 'ACEi' },
+                    { code: 'SYN4DB17', chinese: '欣保錠', generic: 'Enalapril Maleate', brand: 'Synbot Tablet 5 mg/tab', dose: '5mg', type: 'ACEi' },
+                    { code: 'TAN4DB65', chinese: '田納滋錠', generic: 'Imidapril HCL', brand: 'Tanatril Tablet 5 mg/tab', dose: '5mg', type: 'ACEi' },
+                    { code: 'TRI4DB55', chinese: '心達舒錠', generic: 'Ramipril', brand: 'Tritace Tablet 10 mg/tab', dose: '10mg', type: 'ACEi' }
+                ],
+                keyPoints: [
+                    { icon: '📉', title: '降低血壓', desc: 'ACEi抑制ACE；ARB阻斷AT1受體，減少血管收縮' },
+                    { icon: '💧', title: '減少水腫', desc: '抑制Aldosterone分泌，減少鈉水滯留' },
+                    { icon: '🔄', title: '延緩心臟重塑', desc: '減少心肌纖維化，改善心衰預後' },
+                    { icon: '🛡️', title: '腎臟保護', desc: '降低腎絲球內壓力，減少蛋白尿' }
+                ],
+                warnings: [
+                    'ACEi可能引起乾咳（5-20%），可換ARB',
+                    '注意血鉀升高，特別是腎功能不全患者',
+                    '監測腎功能（Cr, eGFR），起始或加量後追蹤',
+                    'SBP < 90 mmHg 需暫停給藥',
+                    '禁用於雙側腎動脈狹窄',
+                    '禁用於孕婦（致畸胎）'
+                ],
+                monitoringChecklist: [
+                    { icon: '🩺', text: '<strong>血壓</strong>：給藥前後監測，首劑可能低血壓' },
+                    { icon: '🧪', text: '<strong>腎功能</strong>：Cr, eGFR，起始後1-2週追蹤' },
+                    { icon: '⚡', text: '<strong>血鉀</strong>：K+，特別是併用保鉀利尿劑時' },
+                    { icon: '😷', text: '<strong>乾咳</strong>：ACEi副作用，需評估是否換藥' }
+                ]
+            },
+            sglt2i: {
+                name: 'SGLT2i',
+                displayName: 'SGLT2i',
+                icon: '💊',
+                color: 'var(--accent-emerald)',
+                description: '抑制腎臟近曲小管SGLT2，增加糖尿排出，同時有心腎保護作用',
+                drugs: [
+                    { code: 'CAN4LBA4', chinese: '可拿糖膜衣錠', generic: 'Canagliflozin Hydrate', brand: 'Canaglu Film-coated Tablets 100 mg/tab', dose: '100mg' },
+                    { code: 'FOR4LB99', chinese: '福適佳膜衣錠', generic: 'Dapagliflozin', brand: 'Forxiga Film-coated Tablets 10 mg/tab', dose: '10mg' },
+                    { code: 'JAR4LB97', chinese: '恩排糖膜衣錠', generic: 'Empagliflozin', brand: 'Jardiance Film-coated Tablets 10 mg/tab', dose: '10mg' },
+                    { code: 'JAR4LB98', chinese: '恩排糖膜衣錠', generic: 'Empagliflozin', brand: 'Jardiance Film-coated Tablets 25 mg/tab', dose: '25mg' }
+                ],
+                keyPoints: [
+                    { icon: '💧', title: '利尿作用', desc: '滲透性利尿，減少容積負荷，改善心衰症狀' },
+                    { icon: '❤️', title: '心臟保護', desc: '減少心衰住院率，改善心衰預後（即使非糖尿病）' },
+                    { icon: '🫘', title: '腎臟保護', desc: '減緩腎功能惡化，減少蛋白尿' },
+                    { icon: '📉', title: '降血糖', desc: '不依賴胰島素，低血糖風險低' }
+                ],
+                warnings: [
+                    '注意泌尿道感染/生殖器黴菌感染',
+                    '有脫水風險，監測容積狀態',
+                    '可能引起血壓下降',
+                    '罕見但嚴重：Euglycemic DKA（正常血糖的酮酸中毒）',
+                    '手術或急性疾病時可能需暫停',
+                    'eGFR < 20-25 效果降低'
+                ],
+                monitoringChecklist: [
+                    { icon: '💧', text: '<strong>脫水症狀</strong>：口渴、頭暈、尿量減少' },
+                    { icon: '🦠', text: '<strong>感染</strong>：泌尿道症狀、生殖器搔癢' },
+                    { icon: '🩺', text: '<strong>血壓</strong>：注意姿勢性低血壓' },
+                    { icon: '🧪', text: '<strong>腎功能</strong>：定期監測eGFR' }
+                ]
+            },
+            antiplatelet: {
+                name: 'Antiplatelet',
+                displayName: '抗血小板藥',
+                icon: '🩸',
+                color: 'var(--accent-purple)',
+                description: '抑制血小板凝集，預防動脈血栓形成',
+                drugs: [
+                    { code: 'ASP4GB14', chinese: '阿斯匹林膜衣錠', generic: 'Aspirin', brand: 'Aspirin F.C. Tablet 100 mg/tab', dose: '100mg' },
+                    { code: 'BOK4EA38', chinese: '伯基腸溶微粒膠囊', generic: 'Aspirin', brand: 'Bokey Enteric-Microencapsulated Capsule 100 mg/cap', dose: '100mg' },
+                    { code: 'PLA4DH21', chinese: '保栓通膜衣錠', generic: 'Clopidogrel', brand: 'Plavix Film-Coated Tablet 75 mg/tab', dose: '75mg' },
+                    { code: 'PLA4DH23', chinese: '保栓通膜衣錠', generic: 'Clopidogrel', brand: 'Plavix Film-Coated Tablet 300 mg/tab (限急診開方)', dose: '300mg Loading' },
+                    { code: 'EFI4DH28', chinese: '抑凝安膜衣錠', generic: 'Prasugrel', brand: 'Efient F.C. Tablets 3.75 mg/tab', dose: '3.75mg' },
+                    { code: 'EFI4DH29', chinese: '抑凝安膜衣錠', generic: 'Prasugrel', brand: 'Efient F.C. Tablets 5 mg/tab', dose: '5mg' },
+                    { code: 'BRI4DH24', chinese: '百無凝膜衣錠', generic: 'Ticagrelor', brand: 'Brilinta Film-Coated Tablets 90 mg/tab', dose: '90mg' },
+                    { code: 'PLE4DH26', chinese: '普達錠', generic: 'Cilostazol', brand: 'Pletaal Tablet 100 mg/tab', dose: '100mg' }
+                ],
+                keyPoints: [
+                    { icon: '🛡️', title: 'ACS必備', desc: 'DAPT（雙重抗血小板）是ACS標準治療' },
+                    { icon: '⏱️', title: 'P2Y12抑制劑選擇', desc: 'Ticagrelor較快起效，Prasugrel較強效' },
+                    { icon: '⚠️', title: '出血風險', desc: '最常見副作用，需監測出血徵象' },
+                    { icon: '📅', title: 'DAPT療程', desc: 'PCI後通常維持6-12個月' }
+                ],
+                warnings: [
+                    '監測出血徵象：牙齦出血、瘀青、黑便、血尿',
+                    'Ticagrelor可能引起呼吸困難',
+                    'Prasugrel禁用於曾中風/TIA',
+                    '手術前需停藥（視藥物而定5-7天）',
+                    '避免與NSAIDs併用（增加出血風險）'
+                ],
+                monitoringChecklist: [
+                    { icon: '🩸', text: '<strong>出血</strong>：牙齦、皮膚、消化道、泌尿道' },
+                    { icon: '😮‍💨', text: '<strong>呼吸困難</strong>：Ticagrelor副作用' },
+                    { icon: '🧪', text: '<strong>血紅素</strong>：定期監測Hb' },
+                    { icon: '💊', text: '<strong>藥物遵從性</strong>：絕對不可漏藥' }
+                ]
+            },
+            anticoagulant: {
+                name: 'Anticoagulant',
+                displayName: '抗凝血藥',
+                icon: '💉',
+                color: 'var(--accent-orange)',
+                description: '干擾凝血因子，預防靜脈血栓及心房顫動相關栓塞',
+                drugs: [
+                    { code: 'ELI4EA49', chinese: '艾必克凝膜衣錠', generic: 'Apixaban', brand: 'Eliquis Film-Coated Tablet 5 mg/tab', dose: '5mg', type: 'DOAC' },
+                    { code: 'PRA4EA45', chinese: '普栓達膠囊', generic: 'Dabigatran', brand: 'Pradaxa Capsule 110 mg/cap', dose: '110mg', type: 'DOAC' },
+                    { code: 'PRA4EA50', chinese: '普栓達膠囊', generic: 'Dabigatran', brand: 'Pradaxa Capsule 150 mg/cap', dose: '150mg', type: 'DOAC' },
+                    { code: 'LIX4EA53', chinese: '里先安膜衣錠', generic: 'Edoxaban', brand: 'Lixiana F.C. Tablets 60 mg/tab', dose: '60mg', type: 'DOAC' },
+                    { code: 'LIX4EA54', chinese: '里先安膜衣錠', generic: 'Edoxaban', brand: 'Lixiana F.C. Tablets 30 mg/tab', dose: '30mg', type: 'DOAC' },
+                    { code: 'XAR4EA44', chinese: '拜瑞妥膜衣錠', generic: 'Rivaroxaban', brand: 'Xarelto Film-Coated Tablet 10 mg/tab', dose: '10mg', type: 'DOAC' },
+                    { code: 'XAR4EA51', chinese: '拜瑞妥膜衣錠', generic: 'Rivaroxaban', brand: 'Xarelto Film-Coated Tablet 15 mg/tab', dose: '15mg', type: 'DOAC' },
+                    { code: 'COA4EA03', chinese: '可化凝錠', generic: 'Warfarin', brand: 'Cofarin Tablet 5 mg/tab', dose: '5mg', type: 'VKA' },
+                    { code: 'COA4EA19', chinese: '可化凝錠', generic: 'Warfarin', brand: 'Cofarin Tablet 1 mg/tab', dose: '1mg', type: 'VKA' },
+                    { code: 'CLE1EA30', chinese: '克立生注射劑', generic: 'Enoxaparin', brand: 'Clexane Injection 60 mg/0.6 mL/syringe', dose: '60mg', type: 'LMWH' },
+                    { code: 'HEP1EA13', chinese: '肝脂鈉注射液', generic: 'Heparin', brand: 'Heparin Injection 25000 IU/5 mL/vial', dose: '25000IU', type: 'UFH' }
+                ],
+                keyPoints: [
+                    { icon: '🎯', title: '適應症', desc: 'AF預防中風、VTE治療/預防、機械瓣膜' },
+                    { icon: '💊', title: 'DOAC優勢', desc: '不需常規監測INR，藥物交互作用較少' },
+                    { icon: '⚖️', title: 'Warfarin特點', desc: '機械瓣膜首選，需監測INR（目標2-3）' },
+                    { icon: '🔄', title: '解毒劑', desc: 'Warfarin用Vit K；Dabigatran用Idarucizumab' }
+                ],
+                warnings: [
+                    '出血是最主要風險，需密切監測',
+                    'Warfarin需監測INR，注意食物/藥物交互作用',
+                    'DOAC需依腎功能調整劑量',
+                    'Dabigatran腎功能不佳時禁用',
+                    '手術前需評估停藥時機',
+                    '跌倒風險高的患者需謹慎使用'
+                ],
+                monitoringChecklist: [
+                    { icon: '🩸', text: '<strong>出血徵象</strong>：牙齦、瘀青、血尿、黑便、咳血' },
+                    { icon: '📊', text: '<strong>INR</strong>：Warfarin目標2-3（瓣膜2.5-3.5）' },
+                    { icon: '🧪', text: '<strong>腎功能</strong>：DOAC劑量調整依據' },
+                    { icon: '💊', text: '<strong>藥物交互</strong>：Warfarin與維他命K食物' }
+                ]
+            },
+            statin: {
+                name: 'Statin',
+                displayName: 'Statin 降血脂',
+                icon: '🧬',
+                color: 'var(--accent-cyan)',
+                description: '抑制HMG-CoA還原酶，降低LDL-C，穩定斑塊',
+                drugs: [
+                    { code: 'LIP4FD35', chinese: '立普妥膜衣錠', generic: 'Atorvastatin', brand: 'Lipitor Film-Coated Tablet 20 mg/tab', dose: '20mg' },
+                    { code: 'LES4FD32', chinese: '益脂可長效緩釋膜衣錠', generic: 'Fluvastatin', brand: 'Lescol XL Tablet 80 mg/tab', dose: '80mg' },
+                    { code: 'LIV4FD36', chinese: '力清之膜衣錠', generic: 'Pitavastatin', brand: 'Livalo Tablet 2 mg/tab', dose: '2mg' },
+                    { code: 'MEV4FD34', chinese: '美百樂鎮錠', generic: 'Pravastatin', brand: 'Mevalotin Protect Tablet 40 mg/tab', dose: '40mg' },
+                    { code: 'CRE4FD29', chinese: '冠脂妥膜衣錠', generic: 'Rosuvastatin', brand: 'Crestor Film-coated Tablet 10 mg/tab', dose: '10mg' }
+                ],
+                keyPoints: [
+                    { icon: '📉', title: '降LDL-C', desc: 'ACS患者目標LDL-C < 55 mg/dL' },
+                    { icon: '🛡️', title: '穩定斑塊', desc: '抗發炎、抗氧化，減少斑塊破裂' },
+                    { icon: '⚡', title: 'ACS高強度', desc: '急性期應使用高強度statin' },
+                    { icon: '🌙', title: '服藥時間', desc: '建議睡前服用（肝臟夜間合成膽固醇）' }
+                ],
+                warnings: [
+                    '監測肌肉痠痛（橫紋肌溶解症風險）',
+                    '定期追蹤肝功能',
+                    '與某些藥物交互作用（如fibrate）',
+                    '嚴重肝病禁用',
+                    '懷孕禁用'
+                ],
+                monitoringChecklist: [
+                    { icon: '💪', text: '<strong>肌肉症狀</strong>：痠痛、無力、深色尿' },
+                    { icon: '🧪', text: '<strong>肝功能</strong>：AST, ALT' },
+                    { icon: '📊', text: '<strong>血脂</strong>：LDL-C, TC, HDL-C, TG' },
+                    { icon: '💉', text: '<strong>CK</strong>：肌肉症狀時檢測' }
+                ]
+            },
+            mra: {
+                name: 'MRA',
+                displayName: 'MRA 醛固酮拮抗劑',
+                icon: '⚗️',
+                color: 'var(--accent-amber)',
+                description: '阻斷醛固酮受體，減少鈉水滯留，抗心臟重塑',
+                drugs: [
+                    { code: 'INS4DA49', chinese: '迎甦心膜衣錠', generic: 'Eplerenone', brand: 'Inspra F.C. 50 mg/tab', dose: '50mg' },
+                    { code: 'ALD4DA06', chinese: '安達通錠', generic: 'Spironolactone', brand: 'Aldactone Tablet 25 mg/tab', dose: '25mg' }
+                ],
+                keyPoints: [
+                    { icon: '❤️', title: '心衰適應症', desc: 'HFrEF標準治療之一，改善預後' },
+                    { icon: '⚡', title: '血鉀上升', desc: '主要副作用，需密切監測' },
+                    { icon: '👤', title: 'Spironolactone', desc: '可能引起男性女乳症' },
+                    { icon: '✨', title: 'Eplerenone', desc: '選擇性較高，副作用較少' }
+                ],
+                warnings: [
+                    '高血鉀風險！定期監測K+',
+                    '腎功能不全時風險更高',
+                    '避免與ACEi/ARB三者併用（triple blockade）',
+                    'K+ > 5.5 mEq/L需減量或停藥',
+                    'eGFR < 30 需特別謹慎'
+                ],
+                monitoringChecklist: [
+                    { icon: '⚡', text: '<strong>血鉀</strong>：起始後1週、1個月監測，之後定期追蹤' },
+                    { icon: '🧪', text: '<strong>腎功能</strong>：Cr, eGFR' },
+                    { icon: '🩺', text: '<strong>血壓</strong>：可能降低血壓' },
+                    { icon: '👤', text: '<strong>男性女乳</strong>：Spironolactone副作用' }
+                ]
+            },
+            arni: {
+                name: 'ARNI',
+                displayName: 'ARNI',
+                icon: '💎',
+                color: 'var(--accent-purple)',
+                description: 'Sacubitril/Valsartan複方，抑制腦啡肽酶並阻斷AT1受體',
+                drugs: [
+                    { code: 'ENT4DBD0', chinese: '健安心膜衣錠', generic: 'Sacubitril/Valsartan', brand: 'Entresto 100 mg/tab (49/51 mg)', dose: '100mg' },
+                    { code: 'ENT4DBD1', chinese: '健安心膜衣錠', generic: 'Sacubitril/Valsartan', brand: 'Entresto 200 mg/tab (97/103 mg)', dose: '200mg' }
+                ],
+                keyPoints: [
+                    { icon: '🎯', title: '心衰首選', desc: 'HFrEF優於ACEi/ARB，是目前guideline推薦首選' },
+                    { icon: '🔄', title: '雙重機轉', desc: '增加利鈉胜肽 + 阻斷RAAS' },
+                    { icon: '⏰', title: '轉換注意', desc: '從ACEi轉換需間隔36小時（washout）' },
+                    { icon: '📈', title: '滴定', desc: '每2-4週增量，目標200mg BID' }
+                ],
+                warnings: [
+                    '從ACEi轉換需washout 36小時',
+                    '可能引起低血壓，注意起始劑量',
+                    '監測腎功能和血鉀',
+                    '禁用於血管性水腫病史',
+                    '禁用於孕婦'
+                ],
+                monitoringChecklist: [
+                    { icon: '🩺', text: '<strong>血壓</strong>：低血壓是常見副作用' },
+                    { icon: '🧪', text: '<strong>腎功能</strong>：Cr, eGFR' },
+                    { icon: '⚡', text: '<strong>血鉀</strong>：K+' },
+                    { icon: '😷', text: '<strong>血管性水腫</strong>：嘴唇、舌頭腫脹' }
+                ]
+            }
+        };
+
+        // ==================== 測驗題庫 ====================
+        const quizQuestions = [
+            // Beta-blocker 相關題目
+            {
+                category: 'betaBlocker',
+                question: '護理師發現病人正在使用 Nebilet (耐比洛錠)，以下何者是這個藥物最重要的作用？',
+                options: ['降低血糖', '降低心跳', '增加排尿', '降低膽固醇'],
+                correct: 1,
+                explanation: 'Nebilet 是 Beta-blocker，最主要的作用是「降低心跳」。所有 Beta-blocker 都會降低心跳速率，這是護理人員給藥前後必須監測的重要指標！'
+            },
+            {
+                category: 'betaBlocker',
+                question: '給予 Beta-blocker 前，心跳低於多少應暫停給藥並通知醫師？',
+                options: ['70 bpm', '60 bpm', '50-55 bpm', '40 bpm'],
+                correct: 2,
+                explanation: '當心跳 < 50-55 bpm 時，應暫停給藥並通知醫師。Beta-blocker 會顯著降低心跳，給藥前後監測HR是必要的護理評估。'
+            },
+            {
+                category: 'betaBlocker',
+                question: '關於 Beta-blocker 的敘述，下列何者「錯誤」？',
+                options: ['會降低心跳', '會降低血壓', '可以突然停藥', '可能引起四肢冰冷'],
+                correct: 2,
+                explanation: 'Beta-blocker「不可突然停藥」，需逐漸減量。突然停藥可能導致反彈性高血壓、心絞痛惡化，甚至心肌梗塞。'
+            },
+            {
+                category: 'betaBlocker',
+                question: '下列哪一種藥物同時具有 α 和 β 阻斷作用？',
+                options: ['Atenolol (壓平樂)', 'Bisoprolol (康肯)', 'Carvedilol (達利全)', 'Nebivolol (耐比洛)'],
+                correct: 2,
+                explanation: 'Carvedilol (達利全) 是非選擇性 beta-blocker 且具有 α1 阻斷作用，因此有更強的血管擴張效果，是心衰病人常用藥物。'
+            },
+            {
+                category: 'betaBlocker',
+                question: '使用 Beta-blocker 時，以下哪類病人需要特別注意？',
+                options: ['高血壓病人', '心衰病人', '氣喘/COPD 病人', '糖尿病病人'],
+                correct: 2,
+                explanation: '氣喘/COPD 病人使用 Beta-blocker 需特別小心，因為可能引起支氣管痙攣。若必須使用，應選擇β1選擇性較高的藥物如 Bisoprolol。'
+            },
+            // ACEi/ARB 相關題目
+            {
+                category: 'aceArb',
+                question: 'ACEi 最常見的副作用是什麼？',
+                options: ['頭痛', '乾咳', '腹瀉', '皮膚疹'],
+                correct: 1,
+                explanation: 'ACEi 最常見的副作用是「乾咳」，發生率約 5-20%。這是因為 ACEi 會增加 bradykinin 堆積。如果乾咳無法忍受，可改用 ARB。'
+            },
+            {
+                category: 'aceArb',
+                question: '使用 ACEi/ARB 時需要監測以下哪個電解質？',
+                options: ['鈉 (Na)', '鉀 (K)', '鈣 (Ca)', '氯 (Cl)'],
+                correct: 1,
+                explanation: 'ACEi/ARB 會抑制 aldosterone 分泌，導致鉀離子排出減少，可能引起「高血鉀」。特別是腎功能不全的病人，需密切監測血鉀。'
+            },
+            {
+                category: 'aceArb',
+                question: 'ACEi/ARB 禁用於以下哪種狀況？',
+                options: ['高血壓', '心衰竭', '懷孕', '糖尿病'],
+                correct: 2,
+                explanation: 'ACEi/ARB「禁用於孕婦」，因為具有致畸胎性，可能導致胎兒腎臟發育異常、羊水過少等嚴重問題。'
+            },
+            // SGLT2i 相關題目
+            {
+                category: 'sglt2i',
+                question: 'SGLT2i 除了降血糖外，還有什麼重要作用？',
+                options: ['增加食慾', '心腎保護', '增加體重', '升高血壓'],
+                correct: 1,
+                explanation: 'SGLT2i 具有顯著的「心腎保護」作用，可減少心衰住院率和延緩腎功能惡化，即使在非糖尿病患者也有效。這是目前心衰治療的重要藥物。'
+            },
+            {
+                category: 'sglt2i',
+                question: '使用 SGLT2i 時需要特別注意哪種感染風險？',
+                options: ['肺炎', '泌尿道/生殖器感染', '腸胃炎', '蜂窩性組織炎'],
+                correct: 1,
+                explanation: 'SGLT2i 會增加尿糖，容易引起「泌尿道感染」和「生殖器黴菌感染」。護理師應評估病人是否有相關症狀並衛教預防措施。'
+            },
+            // 抗血小板藥相關題目
+            {
+                category: 'antiplatelet',
+                question: 'ACS 病人使用雙重抗血小板治療 (DAPT) 通常維持多久？',
+                options: ['1-3 個月', '6-12 個月', '2-3 年', '終身使用'],
+                correct: 1,
+                explanation: 'ACS 經 PCI 後，DAPT（Aspirin + P2Y12 抑制劑）通常維持「6-12 個月」，之後可轉為單一抗血小板藥物。實際療程依病人出血/缺血風險調整。'
+            },
+            {
+                category: 'antiplatelet',
+                question: 'Ticagrelor (百無凝) 可能引起的特殊副作用是？',
+                options: ['乾咳', '呼吸困難', '肌肉痠痛', '乾眼症'],
+                correct: 1,
+                explanation: 'Ticagrelor 的特殊副作用是「呼吸困難」，發生率約 14-15%。這與 adenosine 相關機轉有關，通常是暫時性且可耐受的。'
+            },
+            {
+                category: 'antiplatelet',
+                question: 'Prasugrel (抑凝安) 禁用於哪類病人？',
+                options: ['糖尿病病人', '曾中風/TIA 病人', '高血壓病人', '腎功能不全病人'],
+                correct: 1,
+                explanation: 'Prasugrel「禁用於曾中風或 TIA 的病人」，因為在這類病人會增加出血性中風的風險。這是處方 Prasugrel 前必須確認的禁忌症。'
+            },
+            // 抗凝血藥相關題目
+            {
+                category: 'anticoagulant',
+                question: 'Warfarin 的 INR 目標值通常是多少？',
+                options: ['1.0-1.5', '2.0-3.0', '3.5-4.0', '4.5-5.0'],
+                correct: 1,
+                explanation: 'Warfarin 的 INR 目標值通常是「2.0-3.0」。機械瓣膜病人可能需要更高（2.5-3.5）。INR 過高會增加出血風險，過低則無法有效抗凝。'
+            },
+            {
+                category: 'anticoagulant',
+                question: '以下哪種 DOAC 有專屬解毒劑？',
+                options: ['Apixaban (艾必克凝)', 'Rivaroxaban (拜瑞妥)', 'Dabigatran (普栓達)', 'Edoxaban (里先安)'],
+                correct: 2,
+                explanation: 'Dabigatran 有專屬解毒劑「Idarucizumab」可以完全逆轉抗凝效果。其他 Factor Xa 抑制劑可使用 Andexanet alfa。'
+            },
+            {
+                category: 'anticoagulant',
+                question: '服用 Warfarin 時需要注意與什麼食物的交互作用？',
+                options: ['高鈣食物', '高鉀食物', '維他命 K 食物', '高蛋白食物'],
+                correct: 2,
+                explanation: 'Warfarin 是維他命 K 拮抗劑，「維他命 K 含量高的食物」（如深綠色蔬菜）會減弱其效果。病人應維持穩定的維他命 K 攝取，而非完全避免。'
+            },
+            // Statin 相關題目
+            {
+                category: 'statin',
+                question: 'ACS 病人的 LDL-C 目標值是多少？',
+                options: ['< 100 mg/dL', '< 70 mg/dL', '< 55 mg/dL', '< 40 mg/dL'],
+                correct: 2,
+                explanation: '根據最新指引，ACS 病人屬於極高風險族群，LDL-C 目標應「< 55 mg/dL」，且應比基礎值降低 ≥ 50%。'
+            },
+            {
+                category: 'statin',
+                question: 'Statin 最需要監測的副作用是什麼？',
+                options: ['乾咳', '肌肉痠痛', '便秘', '頭痛'],
+                correct: 1,
+                explanation: 'Statin 最重要的副作用是「肌肉痠痛」，嚴重時可能發展成橫紋肌溶解症。病人出現不明原因肌肉痠痛、無力時應通知醫師並檢測 CK。'
+            },
+            // MRA 相關題目
+            {
+                category: 'mra',
+                question: '使用 MRA（如 Aldactone）最需要監測的電解質是？',
+                options: ['鈉 (Na)', '鉀 (K)', '鈣 (Ca)', '鎂 (Mg)'],
+                correct: 1,
+                explanation: 'MRA 會抑制醛固酮，導致「血鉀上升」。這是最重要的副作用，需定期監測。K+ > 5.5 mEq/L 時需減量或停藥。'
+            },
+            {
+                category: 'mra',
+                question: 'Spironolactone（安達通）可能引起的特殊副作用是？',
+                options: ['落髮', '男性女乳症', '視力模糊', '耳鳴'],
+                correct: 1,
+                explanation: 'Spironolactone 因為抗雄性素作用，可能引起「男性女乳症」和性功能障礙。如果無法耐受，可改用選擇性較高的 Eplerenone。'
+            },
+            // ARNI 相關題目
+            {
+                category: 'arni',
+                question: '從 ACEi 轉換到 Entresto（健安心）需要間隔多久？',
+                options: ['12 小時', '24 小時', '36 小時', '48 小時'],
+                correct: 2,
+                explanation: '從 ACEi 轉換到 ARNI 需要「間隔 36 小時」（washout period），以避免血管性水腫的風險。這是使用 Entresto 的重要注意事項。'
+            },
+            {
+                category: 'arni',
+                question: 'Entresto（健安心）的目標劑量是多少？',
+                options: ['50 mg BID', '100 mg BID', '200 mg BID', '400 mg QD'],
+                correct: 2,
+                explanation: 'Entresto 的目標劑量是「200 mg BID」（每天兩次，每次 200 mg）。應從低劑量開始，每 2-4 週逐漸增量至目標劑量。'
+            },
+            // 綜合題目
+            {
+                category: 'general',
+                question: '心衰竭病人的「四大支柱」藥物治療不包括以下哪一項？',
+                options: ['Beta-blocker', 'ACEi/ARB/ARNI', 'Statin', 'SGLT2i'],
+                correct: 2,
+                explanation: '心衰竭的四大支柱（Fantastic Four）是：Beta-blocker、ACEi/ARB/ARNI、MRA、SGLT2i。Statin 雖然對心血管重要，但不屬於心衰標準治療。'
+            },
+            {
+                category: 'general',
+                question: '以下哪種藥物給藥前「不需要」特別測量心跳？',
+                options: ['Bisoprolol（康肯）', 'Nebilet（耐比洛）', 'Atorvastatin（立普妥）', 'Metoprolol（舒壓寧）'],
+                correct: 2,
+                explanation: 'Atorvastatin（立普妥）是 Statin，不會影響心跳。而所有 Beta-blocker（康肯、耐比洛、舒壓寧）給藥前都需要測量心跳！'
+            }
+        ];
+
+        // ==================== 主應用程式 ====================
+        function App() {
+            const [currentView, setCurrentView] = useState('home');
+            const [selectedCategory, setSelectedCategory] = useState(null);
+            const [selectedDrug, setSelectedDrug] = useState(null);
+            const [quizMode, setQuizMode] = useState(null);
+            const [searchQuery, setSearchQuery] = useState('');
+            const [activeTab, setActiveTab] = useState('all');
+
+            const handleNavigation = (view, category = null, drug = null) => {
+                setCurrentView(view);
+                setSelectedCategory(category);
+                setSelectedDrug(drug);
+                window.scrollTo(0, 0);
+            };
+
+            const handleStartQuiz = (mode) => {
+                setQuizMode(mode);
+                setCurrentView('quiz');
+                window.scrollTo(0, 0);
+            };
+
+            return (
+                <div className="app-container">
+                    {currentView === 'home' && (
+                        <HomeScreen 
+                            onNavigate={handleNavigation}
+                            onStartQuiz={handleStartQuiz}
+                        />
+                    )}
+                    {currentView === 'category' && (
+                        <CategoryScreen
+                            category={selectedCategory}
+                            onBack={() => handleNavigation('home')}
+                            onSelectDrug={(drug) => handleNavigation('drug', selectedCategory, drug)}
+                        />
+                    )}
+                    {currentView === 'drug' && (
+                        <DrugDetailScreen
+                            category={selectedCategory}
+                            drug={selectedDrug}
+                            onBack={() => handleNavigation('category', selectedCategory)}
+                        />
+                    )}
+                    {currentView === 'quiz' && (
+                        <QuizScreen
+                            mode={quizMode}
+                            onBack={() => handleNavigation('home')}
+                            onComplete={() => handleNavigation('home')}
+                        />
+                    )}
+                    {currentView === 'search' && (
+                        <SearchScreen
+                            searchQuery={searchQuery}
+                            setSearchQuery={setSearchQuery}
+                            activeTab={activeTab}
+                            setActiveTab={setActiveTab}
+                            onSelectDrug={(category, drug) => handleNavigation('drug', category, drug)}
+                            onBack={() => handleNavigation('home')}
+                        />
+                    )}
+                    {currentView === 'betaBlockerLesson' && (
+                        <BetaBlockerLessonScreen
+                            onBack={() => handleNavigation('home')}
+                            onStartQuiz={() => handleStartQuiz('betaBlocker')}
+                        />
+                    )}
+
+                    <BottomNav 
+                        currentView={currentView}
+                        onNavigate={handleNavigation}
+                    />
+                </div>
+            );
+        }
+
+        // ==================== 首頁 ====================
+        function HomeScreen({ onNavigate, onStartQuiz }) {
+            return (
+                <>
+                    <header className="header">
+                        <div className="header-content">
+                            <div>
+                                <div className="header-title">ACS/HF 藥物學習</div>
+                                <div className="header-subtitle">心臟科護理教育系統</div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="main-content">
+                        <div className="hero-section animate-in">
+                            <div className="hero-icon">🫀</div>
+                            <h1 className="hero-title">藥物教學平台</h1>
+                            <p className="hero-subtitle">專為心臟科護理人員設計的學習工具</p>
+                        </div>
+
+                        {/* 重要警示 */}
+                        <div className="alert-banner animate-in stagger-1">
+                            <div className="alert-banner-header">
+                                <span className="alert-banner-icon">🚨</span>
+                                <span className="alert-banner-title">重要提醒</span>
+                            </div>
+                            <div className="alert-banner-content">
+                                <span className="alert-banner-highlight">Nebilet（耐比洛）</span> 是 Beta-blocker，
+                                <span className="alert-banner-highlight">會降低心跳</span>！
+                                給藥前後務必監測 HR。所有 Beta-blocker 都有此作用。
+                                <br /><br />
+                                👉 點擊下方「Beta-blocker 特訓」了解更多
+                            </div>
+                        </div>
+
+                        {/* 藥物分類 */}
+                        <div className="section-title animate-in stagger-2">
+                            <span className="section-title-icon">📚</span>
+                            藥物分類
+                        </div>
+
+                        <div className="category-grid">
+                            {/* Beta-blocker 特訓 (置頂) */}
+                            <div 
+                                className="category-card featured animate-in stagger-2"
+                                style={{'--card-accent': 'var(--accent-rose)'}}
+                                onClick={() => onNavigate('betaBlockerLesson')}
+                            >
+                                <span className="category-badge">必讀</span>
+                                <div className="category-icon">💓</div>
+                                <div className="category-name">Beta-blocker 特訓</div>
+                                <div className="category-count">為什麼要監測心跳？</div>
+                            </div>
+
+                            {Object.entries(drugData).map(([key, category], index) => (
+                                <div 
+                                    key={key}
+                                    className={`category-card animate-in stagger-${Math.min(index + 3, 4)}`}
+                                    style={{'--card-accent': category.color}}
+                                    onClick={() => onNavigate('category', key)}
+                                >
+                                    <div className="category-icon">{category.icon}</div>
+                                    <div className="category-name">{category.displayName}</div>
+                                    <div className="category-count">{category.drugs.length} 種藥物</div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* 自我測驗 */}
+                        <div className="section-title animate-in stagger-3">
+                            <span className="section-title-icon">📝</span>
+                            自我測驗
+                        </div>
+
+                        <div className="drug-list">
+                            <div 
+                                className="drug-card animate-in stagger-3"
+                                onClick={() => onStartQuiz('betaBlocker')}
+                            >
+                                <div className="drug-card-header">
+                                    <span className="drug-chinese-name">🎯 Beta-blocker 測驗</span>
+                                    <span className="drug-code">5 題</span>
+                                </div>
+                                <div className="drug-brand-name">專注測試 Beta-blocker 相關知識</div>
+                            </div>
+
+                            <div 
+                                className="drug-card animate-in stagger-4"
+                                onClick={() => onStartQuiz('all')}
+                            >
+                                <div className="drug-card-header">
+                                    <span className="drug-chinese-name">📋 綜合測驗</span>
+                                    <span className="drug-code">10 題</span>
+                                </div>
+                                <div className="drug-brand-name">隨機測試所有 ACS/HF 藥物知識</div>
+                            </div>
+                        </div>
+                    </main>
+                </>
+            );
+        }
+
+        // ==================== Beta-blocker 特訓課程 ====================
+        function BetaBlockerLessonScreen({ onBack, onStartQuiz }) {
+            const [expandedSection, setExpandedSection] = useState(new Set(['mechanism']));
+
+            const toggleSection = (section) => {
+                const newSet = new Set(expandedSection);
+                if (newSet.has(section)) {
+                    newSet.delete(section);
+                } else {
+                    newSet.add(section);
+                }
+                setExpandedSection(newSet);
+            };
+
+            return (
+                <>
+                    <header className="header">
+                        <div className="header-content">
+                            <button className="back-btn" onClick={onBack}>←</button>
+                            <div>
+                                <div className="header-title">Beta-blocker 特訓</div>
+                                <div className="header-subtitle">護理必備知識</div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="main-content">
+                        {/* 警示標題 */}
+                        <div className="warning-box animate-in">
+                            <div className="warning-box-header">
+                                <span className="warning-box-icon">💓</span>
+                                <span className="warning-box-title">核心重點</span>
+                            </div>
+                            <div style={{fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '12px'}}>
+                                Beta-blocker 會降低心跳！
+                            </div>
+                            <p style={{color: 'var(--text-secondary)', fontSize: '14px', lineHeight: 1.6}}>
+                                這不只是「可能」的副作用，而是 Beta-blocker 的<strong style={{color: 'var(--accent-amber)'}}>主要藥理作用</strong>。
+                                給藥前後監測心跳是<strong style={{color: 'var(--accent-amber)'}}>必要的護理評估</strong>。
+                            </p>
+                        </div>
+
+                        {/* 作用機轉 */}
+                        <div className="info-card animate-in stagger-1">
+                            <div className="info-card-header" onClick={() => toggleSection('mechanism')}>
+                                <span className="info-card-icon">🔬</span>
+                                <span className="info-card-title">作用機轉</span>
+                                <span className={`info-card-toggle ${expandedSection.has('mechanism') ? 'open' : ''}`}>▼</span>
+                            </div>
+                            <div className={`info-card-content ${expandedSection.has('mechanism') ? '' : 'collapsed'}`}>
+                                <p><strong>Beta-blocker 阻斷心臟上的 β1 腎上腺素受體</strong></p>
+                                <br />
+                                <p>當 β1 受體被阻斷時：</p>
+                                <ul className="checklist" style={{marginTop: '12px'}}>
+                                    <li className="checklist-item">
+                                        <span className="checklist-icon">❤️</span>
+                                        <span className="checklist-text"><strong>降低心跳速率</strong>：減慢竇房結發電頻率</span>
+                                    </li>
+                                    <li className="checklist-item">
+                                        <span className="checklist-icon">💪</span>
+                                        <span className="checklist-text"><strong>降低心肌收縮力</strong>：減少心臟做功</span>
+                                    </li>
+                                    <li className="checklist-item">
+                                        <span className="checklist-icon">⚡</span>
+                                        <span className="checklist-text"><strong>減慢傳導</strong>：延長 AV node 傳導時間</span>
+                                    </li>
+                                    <li className="checklist-item">
+                                        <span className="checklist-icon">📉</span>
+                                        <span className="checklist-text"><strong>降低血壓</strong>：減少心輸出量、抑制腎素分泌</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        {/* 常見藥物 */}
+                        <div className="info-card animate-in stagger-2">
+                            <div className="info-card-header" onClick={() => toggleSection('drugs')}>
+                                <span className="info-card-icon">💊</span>
+                                <span className="info-card-title">常見 Beta-blocker 藥物</span>
+                                <span className={`info-card-toggle ${expandedSection.has('drugs') ? 'open' : ''}`}>▼</span>
+                            </div>
+                            <div className={`info-card-content ${expandedSection.has('drugs') ? '' : 'collapsed'}`}>
+                                <table className="dosing-table">
+                                    <thead>
+                                        <tr>
+                                            <th>中文名</th>
+                                            <th>學名</th>
+                                            <th>特點</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>耐比洛</strong></td>
+                                            <td>Nebivolol</td>
+                                            <td>β1選擇性，可釋放NO</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>康肯</strong></td>
+                                            <td>Bisoprolol</td>
+                                            <td>高β1選擇性，心衰首選</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>舒壓寧</strong></td>
+                                            <td>Metoprolol</td>
+                                            <td>中度β1選擇性</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>達利全</strong></td>
+                                            <td>Carvedilol</td>
+                                            <td>非選擇性，有α阻斷</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>壓平樂</strong></td>
+                                            <td>Atenolol</td>
+                                            <td>β1選擇性，不過BBB</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>恩特來</strong></td>
+                                            <td>Propranolol</td>
+                                            <td>非選擇性，過BBB</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div className="highlight-box" style={{marginTop: '16px'}}>
+                                    <div className="highlight-box-title">💡 記憶口訣</div>
+                                    <div className="highlight-box-content">
+                                        看到藥名結尾是 <strong>-olol</strong> 的，都是 Beta-blocker！<br />
+                                        例如：Nebivol<strong>ol</strong>、Bisoprol<strong>ol</strong>、Metoprol<strong>ol</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 護理監測重點 */}
+                        <div className="info-card animate-in stagger-3">
+                            <div className="info-card-header" onClick={() => toggleSection('monitoring')}>
+                                <span className="info-card-icon">📋</span>
+                                <span className="info-card-title">護理監測重點</span>
+                                <span className={`info-card-toggle ${expandedSection.has('monitoring') ? 'open' : ''}`}>▼</span>
+                            </div>
+                            <div className={`info-card-content ${expandedSection.has('monitoring') ? '' : 'collapsed'}`}>
+                                <div className="key-point">
+                                    <span className="key-point-icon">💓</span>
+                                    <div className="key-point-content">
+                                        <div className="key-point-title">給藥前測量心跳</div>
+                                        <div className="key-point-desc">
+                                            HR &lt; 50-55 bpm → 暫停給藥，通知醫師<br />
+                                            目標心跳：50-70 bpm（因人而異）
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="key-point">
+                                    <span className="key-point-icon">🩺</span>
+                                    <div className="key-point-content">
+                                        <div className="key-point-title">給藥前測量血壓</div>
+                                        <div className="key-point-desc">
+                                            SBP &lt; 90 mmHg → 暫停給藥，通知醫師<br />
+                                            注意姿勢性低血壓
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="key-point">
+                                    <span className="key-point-icon">👀</span>
+                                    <div className="key-point-content">
+                                        <div className="key-point-title">觀察症狀</div>
+                                        <div className="key-point-desc">
+                                            頭暈、疲倦、四肢冰冷、喘<br />
+                                            心衰症狀加重跡象
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="key-point">
+                                    <span className="key-point-icon">⚠️</span>
+                                    <div className="key-point-content">
+                                        <div className="key-point-title">不可突然停藥</div>
+                                        <div className="key-point-desc">
+                                            突然停藥可能引起反彈性心跳過速、<br />
+                                            高血壓、心絞痛惡化
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 禁忌症與注意事項 */}
+                        <div className="info-card animate-in stagger-4">
+                            <div className="info-card-header" onClick={() => toggleSection('contraindication')}>
+                                <span className="info-card-icon">⛔</span>
+                                <span className="info-card-title">禁忌症與注意事項</span>
+                                <span className={`info-card-toggle ${expandedSection.has('contraindication') ? 'open' : ''}`}>▼</span>
+                            </div>
+                            <div className={`info-card-content ${expandedSection.has('contraindication') ? '' : 'collapsed'}`}>
+                                <p><strong>絕對禁忌：</strong></p>
+                                <ul className="warning-list" style={{marginTop: '8px'}}>
+                                    <li>嚴重心搏過緩（HR &lt; 50 bpm）</li>
+                                    <li>二度以上房室傳導阻滯（無 pacemaker）</li>
+                                    <li>急性失代償性心衰（急性期）</li>
+                                    <li>心因性休克</li>
+                                </ul>
+                                <br />
+                                <p><strong>相對禁忌/需謹慎：</strong></p>
+                                <ul className="warning-list" style={{marginTop: '8px'}}>
+                                    <li>氣喘/COPD（可用β1選擇性藥物）</li>
+                                    <li>周邊動脈疾病</li>
+                                    <li>糖尿病（可能掩蓋低血糖症狀）</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        {/* 臨床情境 */}
+                        <div className="highlight-box animate-in stagger-4">
+                            <div className="highlight-box-title">💡 臨床情境練習</div>
+                            <div className="highlight-box-content">
+                                <p style={{marginBottom: '12px'}}>
+                                    <strong>情境：</strong>病人使用 Nebilet 5mg QD，給藥前測得 HR 52 bpm, BP 100/62 mmHg
+                                </p>
+                                <p style={{marginBottom: '12px'}}>
+                                    <strong>正確處置：</strong>
+                                </p>
+                                <ol style={{paddingLeft: '20px', color: 'var(--text-secondary)'}}>
+                                    <li style={{marginBottom: '8px'}}>暫停給藥</li>
+                                    <li style={{marginBottom: '8px'}}>通知醫師（HR 接近 50 bpm 下限）</li>
+                                    <li style={{marginBottom: '8px'}}>記錄生命徵象及處置</li>
+                                    <li>持續監測病人狀況</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        {/* 開始測驗按鈕 */}
+                        <button className="btn btn-primary btn-full btn-next animate-in stagger-4" onClick={onStartQuiz}>
+                            📝 開始 Beta-blocker 測驗
+                        </button>
+                    </main>
+                </>
+            );
+        }
+
+        // ==================== 藥物分類頁面 ====================
+        function CategoryScreen({ category, onBack, onSelectDrug }) {
+            const categoryData = drugData[category];
+            const [expandedSection, setExpandedSection] = useState(new Set(['keyPoints']));
+
+            const toggleSection = (section) => {
+                const newSet = new Set(expandedSection);
+                if (newSet.has(section)) {
+                    newSet.delete(section);
+                } else {
+                    newSet.add(section);
+                }
+                setExpandedSection(newSet);
+            };
+
+            if (!categoryData) return null;
+
+            return (
+                <>
+                    <header className="header">
+                        <div className="header-content">
+                            <button className="back-btn" onClick={onBack}>←</button>
+                            <div>
+                                <div className="header-title">{categoryData.displayName}</div>
+                                <div className="header-subtitle">{categoryData.drugs.length} 種藥物</div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="main-content">
+                        {/* 分類介紹 */}
+                        <div className="drug-detail-header animate-in">
+                            <div className="drug-detail-icon">{categoryData.icon}</div>
+                            <div className="drug-detail-name">{categoryData.displayName}</div>
+                            <div className="drug-detail-brand">{categoryData.description}</div>
+                        </div>
+
+                        {/* 重要警示（Beta-blocker 特別顯示） */}
+                        {category === 'betaBlocker' && (
+                            <div className="warning-box animate-in stagger-1">
+                                <div className="warning-box-header">
+                                    <span className="warning-box-icon">⚠️</span>
+                                    <span className="warning-box-title">給藥前必做！</span>
+                                </div>
+                                <ul className="warning-list">
+                                    {categoryData.warnings.slice(0, 4).map((warning, index) => (
+                                        <li key={index}>{warning}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
+                        {/* 重點摘要 */}
+                        <div className="info-card animate-in stagger-1">
+                            <div className="info-card-header" onClick={() => toggleSection('keyPoints')}>
+                                <span className="info-card-icon">🎯</span>
+                                <span className="info-card-title">藥理重點</span>
+                                <span className={`info-card-toggle ${expandedSection.has('keyPoints') ? 'open' : ''}`}>▼</span>
+                            </div>
+                            <div className={`info-card-content ${expandedSection.has('keyPoints') ? '' : 'collapsed'}`}>
+                                {categoryData.keyPoints.map((point, index) => (
+                                    <div key={index} className="key-point">
+                                        <span className="key-point-icon">{point.icon}</span>
+                                        <div className="key-point-content">
+                                            <div className="key-point-title">{point.title}</div>
+                                            <div className="key-point-desc">{point.desc}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* 監測清單 */}
+                        <div className="info-card animate-in stagger-2">
+                            <div className="info-card-header" onClick={() => toggleSection('monitoring')}>
+                                <span className="info-card-icon">📋</span>
+                                <span className="info-card-title">監測重點</span>
+                                <span className={`info-card-toggle ${expandedSection.has('monitoring') ? 'open' : ''}`}>▼</span>
+                            </div>
+                            <div className={`info-card-content ${expandedSection.has('monitoring') ? '' : 'collapsed'}`}>
+                                <ul className="checklist">
+                                    {categoryData.monitoringChecklist.map((item, index) => (
+                                        <li key={index} className="checklist-item">
+                                            <span className="checklist-icon">{item.icon}</span>
+                                            <span className="checklist-text" dangerouslySetInnerHTML={{__html: item.text}}></span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+
+                        {/* 藥物列表 */}
+                        <div className="section-title animate-in stagger-3">
+                            <span className="section-title-icon">💊</span>
+                            藥物清單
+                        </div>
+
+                        <div className="drug-list">
+                            {categoryData.drugs.map((drug, index) => (
+                                <div 
+                                    key={drug.code}
+                                    className="drug-card animate-in stagger-3"
+                                    onClick={() => onSelectDrug(drug)}
+                                >
+                                    <div className="drug-card-header">
+                                        <span className="drug-chinese-name">{drug.chinese}</span>
+                                        <span className="drug-code">{drug.code}</span>
+                                    </div>
+                                    <div className="drug-generic-name">{drug.generic}</div>
+                                    <div className="drug-brand-name">{drug.brand}</div>
+                                    {category === 'betaBlocker' && (
+                                        <span className="drug-warning-tag">
+                                            💓 會降心跳
+                                        </span>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </main>
+                </>
+            );
+        }
+
+        // ==================== 藥物詳細頁面 ====================
+        function DrugDetailScreen({ category, drug, onBack }) {
+            const categoryData = drugData[category];
+
+            if (!categoryData || !drug) return null;
+
+            return (
+                <>
+                    <header className="header">
+                        <div className="header-content">
+                            <button className="back-btn" onClick={onBack}>←</button>
+                            <div>
+                                <div className="header-title">{drug.chinese}</div>
+                                <div className="header-subtitle">{drug.code}</div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="main-content">
+                        <div className="drug-detail-header animate-in">
+                            <div className="drug-detail-icon">{categoryData.icon}</div>
+                            <div className="drug-detail-name">{drug.chinese}</div>
+                            <div className="drug-detail-generic">{drug.generic}</div>
+                            <div className="drug-detail-brand">{drug.brand}</div>
+                            <div className={`drug-class-badge ${category === 'betaBlocker' ? 'beta-blocker' : 
+                                category === 'aceArb' ? 'ace-arb' : 
+                                category === 'sglt2i' ? 'sglt2i' : 
+                                category === 'antiplatelet' ? 'antiplatelet' : 
+                                category === 'anticoagulant' ? 'anticoagulant' : 
+                                category === 'statin' ? 'statin' : 
+                                category === 'mra' ? 'mra' : 'arni'}`}>
+                                {categoryData.displayName}
+                            </div>
+                        </div>
+
+                        {/* Beta-blocker 特別警示 */}
+                        {category === 'betaBlocker' && (
+                            <div className="warning-box animate-in stagger-1">
+                                <div className="warning-box-header">
+                                    <span className="warning-box-icon">💓</span>
+                                    <span className="warning-box-title">會降低心跳！</span>
+                                </div>
+                                <ul className="warning-list">
+                                    <li>給藥前測量 HR 和 BP</li>
+                                    <li>HR &lt; 50-55 bpm 暫停給藥並通知醫師</li>
+                                    <li>SBP &lt; 90 mmHg 暫停給藥並通知醫師</li>
+                                    <li>不可突然停藥</li>
+                                </ul>
+                            </div>
+                        )}
+
+                        {/* 藥物資訊 */}
+                        <div className="highlight-box animate-in stagger-2">
+                            <div className="highlight-box-title">📋 藥物資訊</div>
+                            <div className="highlight-box-content">
+                                <p><strong>學名：</strong>{drug.generic}</p>
+                                <p style={{marginTop: '8px'}}><strong>劑量：</strong>{drug.dose}</p>
+                                <p style={{marginTop: '8px'}}><strong>八碼：</strong>{drug.code}</p>
+                                {drug.type && <p style={{marginTop: '8px'}}><strong>類型：</strong>{drug.type}</p>}
+                            </div>
+                        </div>
+
+                        {/* 藥理作用 */}
+                        <div className="info-card animate-in stagger-3">
+                            <div className="info-card-header">
+                                <span className="info-card-icon">🔬</span>
+                                <span className="info-card-title">藥理作用</span>
+                            </div>
+                            <div className="info-card-content">
+                                {categoryData.keyPoints.map((point, index) => (
+                                    <div key={index} className="key-point">
+                                        <span className="key-point-icon">{point.icon}</span>
+                                        <div className="key-point-content">
+                                            <div className="key-point-title">{point.title}</div>
+                                            <div className="key-point-desc">{point.desc}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* 護理監測 */}
+                        <div className="info-card animate-in stagger-4">
+                            <div className="info-card-header">
+                                <span className="info-card-icon">👩‍⚕️</span>
+                                <span className="info-card-title">護理監測</span>
+                            </div>
+                            <div className="info-card-content">
+                                <ul className="checklist">
+                                    {categoryData.monitoringChecklist.map((item, index) => (
+                                        <li key={index} className="checklist-item">
+                                            <span className="checklist-icon">{item.icon}</span>
+                                            <span className="checklist-text" dangerouslySetInnerHTML={{__html: item.text}}></span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+
+                        {/* 注意事項 */}
+                        <div className="warning-box animate-in stagger-4">
+                            <div className="warning-box-header">
+                                <span className="warning-box-icon">⚠️</span>
+                                <span className="warning-box-title">注意事項</span>
+                            </div>
+                            <ul className="warning-list">
+                                {categoryData.warnings.map((warning, index) => (
+                                    <li key={index}>{warning}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    </main>
+                </>
+            );
+        }
+
+        // ==================== 測驗頁面 ====================
+        function QuizScreen({ mode, onBack, onComplete }) {
+            const [questions, setQuestions] = useState([]);
+            const [currentQuestion, setCurrentQuestion] = useState(0);
+            const [selectedAnswer, setSelectedAnswer] = useState(null);
+            const [showExplanation, setShowExplanation] = useState(false);
+            const [score, setScore] = useState(0);
+            const [isComplete, setIsComplete] = useState(false);
+
+            useEffect(() => {
+                let filteredQuestions;
+                if (mode === 'betaBlocker') {
+                    filteredQuestions = quizQuestions.filter(q => q.category === 'betaBlocker');
+                } else {
+                    filteredQuestions = [...quizQuestions].sort(() => Math.random() - 0.5).slice(0, 10);
+                }
+                setQuestions(filteredQuestions);
+            }, [mode]);
+
+            const handleSelectAnswer = (index) => {
+                if (showExplanation) return;
+                setSelectedAnswer(index);
+                setShowExplanation(true);
+                if (index === questions[currentQuestion].correct) {
+                    setScore(score + 1);
+                }
+            };
+
+            const handleNext = () => {
+                if (currentQuestion < questions.length - 1) {
+                    setCurrentQuestion(currentQuestion + 1);
+                    setSelectedAnswer(null);
+                    setShowExplanation(false);
+                } else {
+                    setIsComplete(true);
+                }
+            };
+
+            if (questions.length === 0) {
+                return (
+                    <div className="loading">
+                        <div className="loading-spinner"></div>
+                    </div>
+                );
+            }
+
+            if (isComplete) {
+                const percentage = Math.round((score / questions.length) * 100);
+                let message = '';
+                let icon = '';
+                if (percentage >= 80) {
+                    message = '太棒了！你對 ACS/HF 藥物有很好的理解！';
+                    icon = '🎉';
+                } else if (percentage >= 60) {
+                    message = '不錯！但還有進步空間，繼續加油！';
+                    icon = '💪';
+                } else {
+                    message = '建議再複習一下教材內容喔！';
+                    icon = '📚';
+                }
+
+                return (
+                    <>
+                        <header className="header">
+                            <div className="header-content">
+                                <button className="back-btn" onClick={onBack}>←</button>
+                                <div>
+                                    <div className="header-title">測驗結果</div>
+                                    <div className="header-subtitle">{mode === 'betaBlocker' ? 'Beta-blocker 測驗' : '綜合測驗'}</div>
+                                </div>
+                            </div>
+                        </header>
+
+                        <main className="main-content">
+                            <div className="quiz-container animate-in">
+                                <div className="quiz-result">
+                                    <div className="quiz-result-icon">{icon}</div>
+                                    <div className="quiz-result-score">{percentage}%</div>
+                                    <div className="quiz-result-label">答對 {score} / {questions.length} 題</div>
+                                    <div className="quiz-result-message">{message}</div>
+                                    <button className="btn btn-primary btn-full" onClick={onComplete}>
+                                        返回首頁
+                                    </button>
+                                </div>
+                            </div>
+                        </main>
+                    </>
+                );
+            }
+
+            const question = questions[currentQuestion];
+
+            return (
+                <>
+                    <header className="header">
+                        <div className="header-content">
+                            <button className="back-btn" onClick={onBack}>←</button>
+                            <div>
+                                <div className="header-title">{mode === 'betaBlocker' ? 'Beta-blocker' : '綜合'} 測驗</div>
+                                <div className="header-subtitle">第 {currentQuestion + 1} / {questions.length} 題</div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div className="progress-container">
+                        <div className="progress-bar">
+                            <div 
+                                className="progress-fill" 
+                                style={{width: `${((currentQuestion + 1) / questions.length) * 100}%`}}
+                            ></div>
+                        </div>
+                        <div className="progress-text">
+                            <span>進度 {currentQuestion + 1}/{questions.length}</span>
+                            <span>目前得分 {score} 分</span>
+                        </div>
+                    </div>
+
+                    <main className="main-content">
+                        <div className="quiz-container animate-in">
+                            <div className="quiz-question">{question.question}</div>
+                            
+                            <div className="quiz-options">
+                                {question.options.map((option, index) => {
+                                    let className = 'quiz-option';
+                                    if (showExplanation) {
+                                        className += ' disabled';
+                                        if (index === question.correct) {
+                                            className += ' correct';
+                                        } else if (index === selectedAnswer && index !== question.correct) {
+                                            className += ' incorrect';
+                                        }
+                                    } else if (selectedAnswer === index) {
+                                        className += ' selected';
+                                    }
+                                    
+                                    return (
+                                        <button
+                                            key={index}
+                                            className={className}
+                                            onClick={() => handleSelectAnswer(index)}
+                                        >
+                                            {String.fromCharCode(65 + index)}. {option}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            {showExplanation && (
+                                <div className="quiz-explanation">
+                                    <div className="quiz-explanation-title">
+                                        {selectedAnswer === question.correct ? '✅ 答對了！' : '❌ 答錯了'}
+                                    </div>
+                                    <div className="quiz-explanation-text">
+                                        {question.explanation}
+                                    </div>
+                                </div>
+                            )}
+
+                            {showExplanation && (
+                                <button className="btn btn-primary btn-full btn-next" onClick={handleNext}>
+                                    {currentQuestion < questions.length - 1 ? '下一題 →' : '查看結果'}
+                                </button>
+                            )}
+                        </div>
+                    </main>
+                </>
+            );
+        }
+
+        // ==================== 搜尋頁面 ====================
+        function SearchScreen({ searchQuery, setSearchQuery, activeTab, setActiveTab, onSelectDrug, onBack }) {
+            const allDrugs = useMemo(() => {
+                const drugs = [];
+                Object.entries(drugData).forEach(([categoryKey, category]) => {
+                    category.drugs.forEach(drug => {
+                        drugs.push({
+                            ...drug,
+                            categoryKey,
+                            categoryName: category.displayName,
+                            categoryIcon: category.icon
+                        });
+                    });
+                });
+                return drugs;
+            }, []);
+
+            const filteredDrugs = useMemo(() => {
+                let filtered = allDrugs;
+                
+                if (activeTab !== 'all') {
+                    filtered = filtered.filter(d => d.categoryKey === activeTab);
+                }
+                
+                if (searchQuery.trim()) {
+                    const query = searchQuery.toLowerCase();
+                    filtered = filtered.filter(d => 
+                        d.chinese.toLowerCase().includes(query) ||
+                        d.generic.toLowerCase().includes(query) ||
+                        d.brand.toLowerCase().includes(query) ||
+                        d.code.toLowerCase().includes(query)
+                    );
+                }
+                
+                return filtered;
+            }, [allDrugs, activeTab, searchQuery]);
+
+            const tabs = [
+                { key: 'all', label: '全部' },
+                { key: 'betaBlocker', label: 'β-blocker' },
+                { key: 'aceArb', label: 'ACEi/ARB' },
+                { key: 'sglt2i', label: 'SGLT2i' },
+                { key: 'antiplatelet', label: '抗血小板' },
+                { key: 'anticoagulant', label: '抗凝血' },
+                { key: 'statin', label: 'Statin' },
+                { key: 'mra', label: 'MRA' },
+                { key: 'arni', label: 'ARNI' }
+            ];
+
+            return (
+                <>
+                    <header className="header">
+                        <div className="header-content">
+                            <button className="back-btn" onClick={onBack}>←</button>
+                            <div>
+                                <div className="header-title">藥物搜尋</div>
+                                <div className="header-subtitle">{allDrugs.length} 種藥物</div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="main-content">
+                        <div className="search-container animate-in">
+                            <div className="search-wrapper">
+                                <span className="search-icon">🔍</span>
+                                <input
+                                    type="text"
+                                    className="search-input"
+                                    placeholder="搜尋藥物名稱、學名或八碼..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="tabs-container animate-in stagger-1">
+                            {tabs.map(tab => (
+                                <button
+                                    key={tab.key}
+                                    className={`tab-btn ${activeTab === tab.key ? 'active' : ''}`}
+                                    onClick={() => setActiveTab(tab.key)}
+                                >
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        {filteredDrugs.length === 0 ? (
+                            <div className="empty-state animate-in stagger-2">
+                                <div className="empty-state-icon">🔍</div>
+                                <p>找不到符合的藥物</p>
+                            </div>
+                        ) : (
+                            <div className="drug-list">
+                                {filteredDrugs.map((drug, index) => (
+                                    <div 
+                                        key={`${drug.categoryKey}-${drug.code}`}
+                                        className="drug-card animate-in stagger-2"
+                                        onClick={() => onSelectDrug(drug.categoryKey, drug)}
+                                    >
+                                        <div className="drug-card-header">
+                                            <span className="drug-chinese-name">
+                                                {drug.categoryIcon} {drug.chinese}
+                                            </span>
+                                            <span className="drug-code">{drug.code}</span>
+                                        </div>
+                                        <div className="drug-generic-name">{drug.generic}</div>
+                                        <div className="drug-brand-name">{drug.brand}</div>
+                                        {drug.categoryKey === 'betaBlocker' && (
+                                            <span className="drug-warning-tag">💓 會降心跳</span>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </main>
+                </>
+            );
+        }
+
+        // ==================== 底部導航 ====================
+        function BottomNav({ currentView, onNavigate }) {
+            return (
+                <nav className="bottom-nav">
+                    <button 
+                        className={`nav-item ${currentView === 'home' || currentView === 'category' || currentView === 'drug' || currentView === 'betaBlockerLesson' ? 'active' : ''}`}
+                        onClick={() => onNavigate('home')}
+                    >
+                        <span className="nav-icon">📚</span>
+                        <span className="nav-label">學習</span>
+                    </button>
+                    <button 
+                        className={`nav-item ${currentView === 'search' ? 'active' : ''}`}
+                        onClick={() => onNavigate('search')}
+                    >
+                        <span className="nav-icon">🔍</span>
+                        <span className="nav-label">搜尋</span>
+                    </button>
+                    <button 
+                        className={`nav-item ${currentView === 'quiz' ? 'active' : ''}`}
+                        onClick={() => onNavigate('quiz')}
+                    >
+                        <span className="nav-icon">📝</span>
+                        <span className="nav-label">測驗</span>
+                    </button>
+                </nav>
+            );
+        }
+
+        // ==================== 渲染應用程式 ====================
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
