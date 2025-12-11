@@ -115,6 +115,7 @@
         // ========== Data ==========
         const SECTIONS = [
             { id: 'overview', title: '總覽', icon: '❤️', color: '#ef4444' },
+            { id: 'nhi-coverage', title: '健保給付規定', icon: '🏛️', color: '#0891b2' },
             { id: 'tee-eval', title: 'TEE 評估參數', icon: '📊', color: '#3b82f6' },
             { id: 'mr-grading', title: 'MR 分級標準', icon: '📈', color: '#8b5cf6' },
             { id: 'anatomy', title: '解剖評估', icon: '🫀', color: '#ec4899' },
@@ -122,9 +123,242 @@
             { id: 'pre-procedure', title: '術前準備階段', icon: '⚙️', color: '#f59e0b' },
             { id: 'surgery-day', title: '手術當日', icon: '🏥', color: '#ef4444' },
             { id: 'post-procedure', title: '術後處置', icon: '✅', color: '#10b981' },
+            { id: 'follow-up', title: '追蹤時程', icon: '📅', color: '#8b5cf6' },
             { id: 'equipment', title: '設備交接', icon: '🔧', color: '#6366f1' },
             { id: 'checklist', title: '完整檢核表', icon: '☑️', color: '#14b8a6' },
         ];
+
+        // 健保給付規定資料
+        const NHI_COVERAGE = {
+            procedureCode: '68060B',
+            points: 99428,
+            effectiveDate: '2025/5/1',
+            materials: [
+                { code: 'FHV06MCSG4AB', description: '1支 Clip', points: 510000, effectiveDate: '2025/12/1' },
+                { code: 'FHV06MCSG2AB', description: '2支 Clip', points: 750000, effectiveDate: '2025/12/1' },
+                { code: 'FHV06MCSG3AB', description: '3支 Clip', points: 850000, effectiveDate: '2025/12/1' },
+            ],
+            hospitalRequirements: [
+                '過去3年每年平均或近一年 ≥300例心導管（含≥100例介入）',
+                '≥100例經食道心臟超音波（TEE）',
+                '連續五年每年≥30例二尖瓣膜修復或置換手術',
+            ],
+            equipmentRequirements: [
+                '心導管X光攝影機',
+                'HEPA-10000等級複合式（Hybrid）手術室',
+                '具3D/4D影像功能之心臟超音波設備',
+                '體外循環設備',
+                '64切片以上CT或MRI',
+            ],
+            physicianRequirements: {
+                general: '心臟專科醫師五年以上資格',
+                cardiology: ['≥50例心臟結構疾病手術', '≥20例心房中隔穿刺術'],
+                intervention: ['≥300例心臟介入治療（PTCA）'],
+                surgery: ['≥20例二尖瓣膜手術'],
+            },
+            indications: {
+                severeMR: {
+                    title: '(A) 重度二尖瓣逆流標準',
+                    criteria: [
+                        'Central jet MR > 40% LA area 或 Holosystolic eccentric jet',
+                        'Vena contracta ≥ 0.7 cm',
+                        'Regurgitant volume ≥ 60 mL',
+                        'Regurgitant fraction ≥ 50%',
+                        'EROA ≥ 0.40 cm²',
+                    ]
+                },
+                primaryMR: {
+                    title: '(B) Primary MR 適應症',
+                    criteria: [
+                        '經多科別心臟團隊評估二尖瓣解剖結構適合',
+                        '臨床判定病人至少有一年以上存活機率',
+                        '現有伴隨疾病不至妨礙預期效益',
+                        '高手術風險且兩位心臟外科醫師判定無法接受傳統手術',
+                    ],
+                    riskFactors: [
+                        'STS score: MV Replacement ≥10% 或 MV Repair ≥10%',
+                        'Porcelain aorta',
+                        'Hostile chest 或 pulmonary dysfunction (FEV1 < 1L)',
+                        'Severe liver disease / Cirrhosis (MELD Score > 12)',
+                        'Severe pulmonary hypertension (SPAP > 2/3 SBP)',
+                        'Unusual frailty (RV dysfunction, severe TR, chemotherapy等)',
+                    ]
+                },
+                secondaryMR: {
+                    title: '(B) Secondary MR 適應症',
+                    criteria: [
+                        '經多科別心臟團隊評估',
+                        '已接受 GDMT 達六個月以上，症狀仍持續',
+                        'LVEF 介於 35~50%',
+                        'LVESD ≤ 70mm',
+                        'SPAP ≤ 70mmHg',
+                    ]
+                },
+                anatomy: {
+                    title: '(C) MitraClip Eligible Anatomy',
+                    ideal: ['Pathology in segment 2', 'Valve area > 4.0 cm²'],
+                    complex: [
+                        'Pathology in segment 1 or 3',
+                        'Posterior leaflet length < 7.0 mm',
+                        "Barlow's syndrome",
+                        'Mitral valve cleft',
+                        'Severe calcification',
+                        'Prior annuloplasty',
+                        'Rheumatic leaflet thickening',
+                    ],
+                    inappropriate: [
+                        'Leaflet perforation',
+                        'Active infective endocarditis',
+                        'Moderate-to-severe mitral stenosis (MVA ≤ 2.0 cm²)',
+                        'Left atrial thrombus',
+                    ]
+                }
+            },
+            exclusions: [
+                'End-stage HF',
+                'Cardiogenic shock (LVEF < 20%)',
+                'Severe AS/AR/TR',
+            ],
+            notes: [
+                '須事前審查',
+                '申報時應檢附手術中心臟超音波及X光影像',
+                '須於手術後30天及12個月登錄追蹤狀況',
+                '未如期登錄將核刪申請之特材費用',
+                '不得同時申報：心臟中膈穿刺術(29031B)、心內超音波(18047B)',
+                '一般材料費得另加計3%',
+            ]
+        };
+
+        // NOAC 停藥指引
+        const NOAC_GUIDELINES = {
+            title: 'NOAC 術前停藥指引',
+            note: 'No bridging with LMWH/UFH needed',
+            dabigatran: {
+                name: 'Dabigatran',
+                lowRisk: [
+                    { crcl: 'CrCl ≥80 mL/min', hours: '≥24h' },
+                    { crcl: 'CrCl 50-79 mL/min', hours: '≥36h' },
+                    { crcl: 'CrCl 30-49 mL/min', hours: '≥48h' },
+                    { crcl: 'CrCl 15-29 mL/min', hours: 'Not indicated' },
+                ],
+                highRisk: [
+                    { crcl: 'CrCl ≥80 mL/min', hours: '≥48h' },
+                    { crcl: 'CrCl 50-79 mL/min', hours: '≥72h' },
+                    { crcl: 'CrCl 30-49 mL/min', hours: '≥96h' },
+                    { crcl: 'CrCl 15-29 mL/min', hours: 'Not indicated' },
+                ]
+            },
+            otherNOAC: {
+                name: 'Apixaban / Edoxaban / Rivaroxaban',
+                lowRisk: [
+                    { crcl: 'CrCl ≥80 mL/min', hours: '≥24h' },
+                    { crcl: 'CrCl 50-79 mL/min', hours: '≥24h' },
+                    { crcl: 'CrCl 30-49 mL/min', hours: '≥24h' },
+                    { crcl: 'CrCl 15-29 mL/min', hours: '≥36h' },
+                ],
+                highRisk: [
+                    { crcl: 'CrCl ≥80 mL/min', hours: '≥48h' },
+                    { crcl: 'CrCl 50-79 mL/min', hours: '≥48h' },
+                    { crcl: 'CrCl 30-49 mL/min', hours: '≥48h' },
+                    { crcl: 'CrCl 15-29 mL/min', hours: '≥48h' },
+                ]
+            },
+            resumeNote: 'Resume full dose of NOAC ≥24h post-low bleeding risk interventions and 48(-72)h post-high-bleeding risk interventions'
+        };
+
+        // 術前醫囑模板
+        const ORDER_TEMPLATES = {
+            preOp: {
+                title: '術前醫囑 (Pre-OP)',
+                orders: [
+                    'Admission Note (including medical hx)',
+                    'Take BW QD and V/S QID',
+                    'ECG、CXR',
+                    'Blood test: Check-up panel、CBC＆DC、NT-Pro BNP、hs-CRP、TSH/fT4、PT＆APTT、blood group (prep for blood transfusion)',
+                    'PFT (CM)',
+                    'Carotid Doppler scan',
+                    '6-min walk test',
+                    'Consultation: Rehab program for MitraClip',
+                    'Consultation: Dental (scaling)',
+                ],
+                dayBefore: [
+                    'NPO post MN',
+                    'Skin prepare (Hibiscrub)',
+                    'Set IV lock',
+                    'Sent patient to OR on call',
+                ],
+                oneTimeOrders: [
+                    '1/2S 500 CC IVD st',
+                    'Cefazolin 1gm st (bring to OR)',
+                    'Pantoloc iv 1 amp st',
+                    'Tai. No 5 800cc for 8 hrs (before operation since NPO)',
+                ],
+                cautions: [
+                    'Informed consent (OP, Anes, CCE, GW, MitraClip procedure and self-pay)',
+                    'Heart team discussion',
+                ]
+            },
+            postOp: {
+                title: '術後醫囑 (CCU Care)',
+                orders: [
+                    'Extubation ASAP',
+                    'Check medication (pre-set)',
+                    'Incision compression 2hrs (sand bag)',
+                    'NTG pump if SBP > 130 mmHg',
+                    '⚠️ AVOID PERDIPINE PUMP!',
+                    'Cefazolin 1gm q8h (if CCR>50) for 48hrs',
+                    'DAPT (ASA, Plavix) if no Af, loading if no use before',
+                    'If Af → keep NOAC or warfarin',
+                    'Routine post-op lab: CBC, electrolyte and renal function',
+                    'CXR 2-4 hrs after extubation',
+                    'Transfer to ordinary ward coming morning',
+                    'Remove stitches on Day OP+1 and apply Steri-Strips',
+                    'Inform VS if any conditions change',
+                    'Consult Dietitian',
+                ]
+            }
+        };
+
+        // 追蹤時程
+        const FOLLOW_UP_SCHEDULE = {
+            oneWeek: {
+                title: '1 週追蹤 (Optional)',
+                items: [
+                    { text: 'Labs (Creatinine and Hemoglobin)', critical: false },
+                    { text: 'Groin Site Check', critical: true },
+                    { text: 'Medication Adjustment', critical: false },
+                    { text: 'Document Readmission / Complication', critical: true },
+                ]
+            },
+            thirtyDay: {
+                title: '30 天追蹤 (23-75 Days Post-Procedure)',
+                items: [
+                    { text: 'Transthoracic Echocardiogram (TTE)', critical: true },
+                    { text: 'Electrocardiogram (ECG)', critical: true },
+                    { text: 'Labs (Creatinine and Hemoglobin)', critical: true },
+                    { text: 'Kansas City Cardiomyopathy Questionnaire (KCCQ)', critical: true },
+                    { text: 'NYHA Heart Failure Class 評估', critical: true },
+                    { text: 'Entered Into TVT Registry', critical: true },
+                    { text: 'Office Notes, TTE, and Labs → Referring Physician', critical: false },
+                    { text: 'Office Notes, TTE, and Labs → Primary Care Provider', critical: false },
+                    { text: 'Document Readmission / Complication', critical: true },
+                ]
+            },
+            oneYear: {
+                title: '1 年追蹤 (305-425 Days Post-Procedure)',
+                items: [
+                    { text: 'Transthoracic Echocardiogram (TTE)', critical: true },
+                    { text: 'Electrocardiogram (ECG)', critical: true },
+                    { text: 'Labs (Creatinine and Hemoglobin)', critical: true },
+                    { text: 'Kansas City Cardiomyopathy Questionnaire (KCCQ)', critical: true },
+                    { text: 'NYHA Heart Failure Class 評估', critical: true },
+                    { text: 'Entered Into TVT Registry', critical: true },
+                    { text: 'Office Notes, TTE, and Labs → Referring Physician', critical: false },
+                    { text: 'Office Notes, TTE, and Labs → Primary Care Provider', critical: false },
+                    { text: 'Document Readmission / Complication', critical: true },
+                ]
+            }
+        };
 
         const TEE_EVAL_PARAMS = [
             { 
@@ -227,8 +461,8 @@
                 id: 'mv_area',
                 name: 'Mitral Valve Area',
                 nameTW: '僧帽瓣面積',
-                example: '5.95 cm² (by PHT)',
-                note: 'AP diameter > 35 mm → XT/XTW\nAP diameter ≤ 35 mm → NT/NTW',
+                example: '5.95 cm² (by MPR)',
+                note: '⚠️ MR 病人用 PHT 量測較易失真\n✓ 推薦用 MPR 重組 mitral valve opening area\n✓ TEER 需要 MVA > 3.5 cm²\n\nAP diameter > 35 mm → XT/XTW\nAP diameter ≤ 35 mm → NT/NTW',
                 color: '#a855f7'
             },
             { 
@@ -286,23 +520,75 @@
             ]
         };
 
+        const CLIP_SELECTION_CRITERIA = {
+            title: 'MitraClip G4 選擇參考指標',
+            criteria: [
+                {
+                    category: 'Leaflet Insertion',
+                    question: 'Length of mobile leaflet in grasping zone?',
+                    options: [
+                        { condition: 'Leaflet Length < 9 mm', favors: ['NTW', 'NT'] },
+                        { condition: 'Leaflet Length ≥ 9 mm', favors: ['XTW', 'XT'] }
+                    ]
+                },
+                {
+                    category: 'Jet Width',
+                    question: 'Width of the jet?',
+                    options: [
+                        { condition: 'Broad jet', favors: ['NTW', 'XTW'] }
+                    ]
+                },
+                {
+                    category: 'MVA',
+                    question: 'Area of valve?',
+                    options: [
+                        { condition: 'Smaller Valve', favors: ['NT'] },
+                        { condition: 'Larger Valve', favors: ['NTW', 'XTW', 'XT'] }
+                    ]
+                }
+            ],
+            mvaNote: {
+                title: 'MVA 量測注意事項',
+                points: [
+                    'MR 病人用 PHT 量測較容易失真',
+                    '較推薦用 MPR 重組 mitral valve opening area',
+                    '確保 MVA 符合 TEER 需要 (> 3.5 cm²)'
+                ]
+            }
+        };
+
         const PRE_ASSESSMENT_ITEMS = [
             { 
                 category: '病人篩選與評估',
                 items: [
-                    { id: 'pa1', text: '病人已接受 optimal medical treatment > 3 months', critical: true },
-                    { id: 'pa2', text: '評估病人是否符合 Inclusion criteria', critical: true },
-                    { id: 'pa3', text: '完成病人收案 (enrollment)', critical: true },
-                    { id: 'pa4', text: '組織團隊 CV-CVS 評估會議', critical: true },
-                    { id: 'pa5', text: '病情說明，團隊與家屬會議', critical: true },
+                    { id: 'pa1', text: '確認 NYHA Heart Failure Class (II-IV)', critical: true },
+                    { id: 'pa2', text: '病人已接受 GDMT 最大容許劑量 > 3-6 months (SMR需6個月)', critical: true },
+                    { id: 'pa3', text: '評估病人是否符合健保 Inclusion criteria', critical: true },
+                    { id: 'pa4', text: '確認 Primary MR 或 Secondary MR 分類', critical: true },
+                    { id: 'pa5', text: '完成病人收案 (enrollment)', critical: true },
+                    { id: 'pa6', text: '組織多科別心臟團隊 (Heart Team) 評估會議', critical: true },
+                    { id: 'pa7', text: '病情說明，團隊與家屬會議', critical: true },
+                    { id: 'pa8', text: 'Permanent Pacemaker / AICD 確認', critical: false },
                 ]
             },
             { 
-                category: '醫療團隊溝通',
+                category: '影像與心導管檢查',
                 items: [
-                    { id: 'mc1', text: '與 Abbott 確認時間', critical: true },
-                    { id: 'mc2', text: '通知 CVS、麻醉科、導管室', critical: true },
-                    { id: 'mc3', text: '排定團隊會議時間 (Teams or Google Meet)', critical: false },
+                    { id: 'img1', text: 'Transthoracic Echocardiogram (TTE)', critical: true },
+                    { id: 'img2', text: 'Transesophageal Echocardiogram (TEE) - 6個月內為佳', critical: true },
+                    { id: 'img3', text: 'TEE 影像上傳供 MitraClip Rep Review', critical: true },
+                    { id: 'img4', text: 'Echo Review Received from MitraClip Rep', critical: true },
+                    { id: 'img5', text: 'Ischemic Evaluation (Left and Right Cardiac Catheterization)', critical: true },
+                    { id: 'img6', text: 'Carotid Doppler scan', critical: false },
+                ]
+            },
+            { 
+                category: '臨床資料',
+                items: [
+                    { id: 'clin1', text: 'STS Score 計算 (PMR: MV Repair / MV Replace)', critical: true },
+                    { id: 'clin2', text: 'Kansas City Cardiomyopathy Questionnaire (KCCQ)', critical: true },
+                    { id: 'clin3', text: '6-min walk test', critical: false },
+                    { id: 'clin4', text: 'PFT 肺功能檢查', critical: false },
                 ]
             },
             { 
@@ -310,16 +596,38 @@
                 items: [
                     { id: 'lab1', text: 'CBC/DC, Na, K, BUN/Cre 檢查', critical: true },
                     { id: 'lab2', text: 'CXR, ECG 檢查', critical: true },
-                    { id: 'lab3', text: 'Lactate, Fibrinogen 檢測', critical: false },
-                    { id: 'lab4', text: 'PT/APTT, Albumin, Pro-BNP 檢測', critical: true },
+                    { id: 'lab3', text: 'NT-Pro BNP, hs-CRP', critical: true },
+                    { id: 'lab4', text: 'PT/APTT, TSH/fT4', critical: true },
+                    { id: 'lab5', text: 'Lactate, Fibrinogen, Albumin', critical: false },
+                    { id: 'lab6', text: 'Blood group (prep for blood transfusion)', critical: true },
+                ]
+            },
+            { 
+                category: '醫療團隊溝通',
+                items: [
+                    { id: 'mc1', text: '與 Abbott 確認時間與 Rep availability', critical: true },
+                    { id: 'mc2', text: '通知 CVS、麻醉科、導管室', critical: true },
+                    { id: 'mc3', text: '排定團隊會議時間 (Teams or Google Meet)', critical: false },
+                ]
+            },
+            { 
+                category: 'Face-to-Face Consult',
+                items: [
+                    { id: 'consult1', text: 'Interventional Cardiologist 會診', critical: true },
+                    { id: 'consult2', text: 'Cardiac Surgeon 會診 (PMR需兩位CVS判定)', critical: true },
+                    { id: 'consult3', text: 'Heart Failure Cardiologist 會診 (SMR)', critical: false },
+                    { id: 'consult4', text: 'Dental consultation (scaling)', critical: false },
+                    { id: 'consult5', text: 'Rehab program for MitraClip', critical: false },
                 ]
             },
             { 
                 category: '藥物處置',
                 items: [
-                    { id: 'med1', text: '藥物治療開始', critical: false },
-                    { id: 'med2', text: '確認需停用的藥物清單', critical: true },
-                    { id: 'med3', text: 'SGLT2i 抑制劑停用（術前四天）', critical: true },
+                    { id: 'med1', text: '確認需停用的藥物清單', critical: true },
+                    { id: 'med2', text: 'Anticoagulant Held - 記錄停藥日期', critical: true },
+                    { id: 'med3', text: 'NOAC停藥：Dabigatran停2天，其他NOAC停1天', critical: true },
+                    { id: 'med4', text: 'SGLT2i 抑制劑停用（術前四天）', critical: true },
+                    { id: 'med5', text: '⚠️ NOAC 不需 bridge Clexane', critical: false },
                 ]
             },
             { 
@@ -327,6 +635,8 @@
                 items: [
                     { id: 'appt1', text: '安排麻醉科門診', critical: true },
                     { id: 'appt2', text: '麻醉科評估與建議完成', critical: true },
+                    { id: 'appt3', text: '健保事前審查送件', critical: true },
+                    { id: 'appt4', text: 'Insurance Approval 確認', critical: true },
                 ]
             },
         ];
@@ -347,6 +657,8 @@
                     { id: 'sch1', text: '麻醉科排程確認', critical: true },
                     { id: 'sch2', text: '開刀房上刀表確認', critical: true },
                     { id: 'sch3', text: '手術日期與時間最終確認', critical: true },
+                    { id: 'sch4', text: 'Confirm MitraClip Rep Availability', critical: true },
+                    { id: 'sch5', text: 'Confirm Patient Availability', critical: true },
                 ]
             },
             { 
@@ -354,6 +666,7 @@
                 items: [
                     { id: 'team1', text: '團隊會議 (CCU HN, 2A HN, NP, VS)', critical: true },
                     { id: 'team2', text: '照護人員納入 briefing: CCU 護理師及 NP, 2A 護理師及 NP', critical: false },
+                    { id: 'team3', text: '發送 confirmation email 給 Heart Team 和 Abbott support staff', critical: false },
                 ]
             },
             { 
@@ -361,6 +674,33 @@
                 items: [
                     { id: 'blood1', text: '備血 PRBC 6 單位', critical: true },
                     { id: 'blood2', text: '血小板 (Platelet) 24 單位', critical: true },
+                ]
+            },
+            { 
+                category: '術前一天醫囑 (Day Before OP)',
+                items: [
+                    { id: 'dayb1', text: 'NPO post MN (午夜後禁食)', critical: true },
+                    { id: 'dayb2', text: 'Skin prepare (Hibiscrub)', critical: true },
+                    { id: 'dayb3', text: 'Set IV lock', critical: true },
+                    { id: 'dayb4', text: 'Sent patient to OR on call', critical: true },
+                ]
+            },
+            { 
+                category: 'One-time Order (術前給藥)',
+                items: [
+                    { id: 'oto1', text: '1/2S 500 CC IVD st', critical: true },
+                    { id: 'oto2', text: 'Cefazolin 1gm st (bring to OR)', critical: true },
+                    { id: 'oto3', text: 'Pantoloc iv 1 amp st', critical: false },
+                    { id: 'oto4', text: 'Tai. No 5 800cc for 8 hrs (before operation since NPO)', critical: false },
+                ]
+            },
+            { 
+                category: 'Informed Consent',
+                items: [
+                    { id: 'ic1', text: '手術同意書 (OP)', critical: true },
+                    { id: 'ic2', text: '麻醉同意書 (Anes)', critical: true },
+                    { id: 'ic3', text: '心導管同意書 (CCE)', critical: true },
+                    { id: 'ic4', text: '自費同意書 (GW, MitraClip procedure and self-pay)', critical: true },
                 ]
             },
         ];
@@ -379,6 +719,9 @@
                 items: [
                     { id: 'sd4', text: '術中 TEE 記錄', critical: true },
                     { id: 'sd5', text: '監測生命徵象', critical: true },
+                    { id: 'sd6', text: '🔴 LA Pressure 監測 (接 pressure line 記錄 LA pressure 變化)', critical: true },
+                    { id: 'sd7', text: 'X光影像存檔（健保申報用）', critical: true },
+                    { id: 'sd8', text: '心臟超音波影像存檔（健保申報用）', critical: true },
                 ]
             },
         ];
@@ -394,11 +737,43 @@
                 ]
             },
             { 
-                category: '術後監測',
+                category: 'CCU Care - 呼吸道管理',
                 items: [
-                    { id: 'pp5', text: '安排術後超音波檢查評估', critical: true },
-                    { id: 'pp6', text: '監測生命徵象與可能併發症', critical: true },
-                    { id: 'pp7', text: '收縮血壓控制在 < 120 mmHg', critical: true },
+                    { id: 'ccu1', text: 'Extubation ASAP (盡快拔管)', critical: true },
+                    { id: 'ccu2', text: 'Check medication (pre-set)', critical: true },
+                ]
+            },
+            { 
+                category: 'CCU Care - 傷口與血壓',
+                items: [
+                    { id: 'ccu3', text: 'Incision compression 2hrs (sand bag)', critical: true },
+                    { id: 'ccu4', text: 'NTG pump if SBP > 130 mmHg', critical: true },
+                    { id: 'ccu5', text: '⚠️ AVOID PERDIPINE PUMP!', critical: true },
+                ]
+            },
+            { 
+                category: 'CCU Care - 藥物',
+                items: [
+                    { id: 'ccu6', text: 'Cefazolin 1gm q8h (if CCR>50) for 48hrs', critical: true },
+                    { id: 'ccu7', text: 'DAPT (ASA, Plavix) if no Af, loading if no use before', critical: true },
+                    { id: 'ccu8', text: 'If Af → keep NOAC or warfarin', critical: true },
+                ]
+            },
+            { 
+                category: 'CCU Care - 檢查與監測',
+                items: [
+                    { id: 'ccu9', text: 'Routine post-op lab: CBC, electrolyte and renal function', critical: true },
+                    { id: 'ccu10', text: 'CXR 2-4 hrs after extubation', critical: true },
+                    { id: 'ccu11', text: '監測生命徵象與可能併發症', critical: true },
+                ]
+            },
+            { 
+                category: 'CCU Care - 後續處置',
+                items: [
+                    { id: 'ccu12', text: 'Transfer to ordinary ward coming morning', critical: true },
+                    { id: 'ccu13', text: 'Remove stitches on Day OP+1 and apply Steri-Strips', critical: true },
+                    { id: 'ccu14', text: 'Inform VS if any conditions change', critical: true },
+                    { id: 'ccu15', text: 'Consult Dietitian', critical: false },
                 ]
             },
         ];
@@ -708,6 +1083,192 @@
             </div>
         );
 
+        // 健保給付規定頁面
+        const NHICoverageSection = () => (
+            <div style={{ padding: '20px' }}>
+                {/* 診療項目代碼 */}
+                <InfoCard title="診療項目代碼" icon="🏛️" color="#0891b2">
+                    <div style={{ 
+                        background: 'var(--bg-dark)', 
+                        borderRadius: '10px', 
+                        padding: '16px',
+                        marginBottom: '12px'
+                    }}>
+                        <DataRow label="代碼" value="68060B" highlight />
+                        <DataRow label="支付點數" value="99,428 點" />
+                        <DataRow label="生效日" value="2025/5/1" />
+                    </div>
+                </InfoCard>
+
+                {/* 特材給付 */}
+                <InfoCard title="MitraClip 特材給付" icon="💰" color="#10b981">
+                    <div style={{ overflowX: 'auto' }}>
+                        <table style={{ width: '100%', fontSize: '12px', borderCollapse: 'collapse' }}>
+                            <thead>
+                                <tr style={{ background: '#10b981' }}>
+                                    <th style={{ padding: '10px', textAlign: 'left', color: 'white' }}>特材代碼</th>
+                                    <th style={{ padding: '10px', textAlign: 'center', color: 'white' }}>使用</th>
+                                    <th style={{ padding: '10px', textAlign: 'right', color: 'white' }}>支付點數</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {NHI_COVERAGE.materials.map((m, i) => (
+                                    <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
+                                        <td style={{ padding: '10px', fontFamily: 'monospace', fontSize: '11px' }}>{m.code}</td>
+                                        <td style={{ padding: '10px', textAlign: 'center' }}>{m.description}</td>
+                                        <td style={{ padding: '10px', textAlign: 'right', fontWeight: 600, color: '#10b981' }}>{m.points.toLocaleString()}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '10px' }}>
+                        生效日：2025/12/1 | 一般材料費得另加計3%
+                    </div>
+                </InfoCard>
+
+                {/* 適應症 - 重度MR標準 */}
+                <InfoCard title="(A) 重度二尖瓣逆流標準" icon="🔴" color="#ef4444">
+                    <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.9 }}>
+                        <p style={{ marginBottom: '8px', fontWeight: 600 }}>超音波檢查符合下列任一條件：</p>
+                        {NHI_COVERAGE.indications.severeMR.criteria.map((c, i) => (
+                            <p key={i}>• {c}</p>
+                        ))}
+                    </div>
+                </InfoCard>
+
+                {/* 適應症 - Primary MR */}
+                <InfoCard title="(B) Primary MR 適應症" icon="🟠" color="#f59e0b">
+                    <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.9 }}>
+                        <p style={{ marginBottom: '8px', fontWeight: 600 }}>基本條件：</p>
+                        {NHI_COVERAGE.indications.primaryMR.criteria.map((c, i) => (
+                            <p key={i}>• {c}</p>
+                        ))}
+                        <div style={{ 
+                            marginTop: '14px', 
+                            padding: '12px', 
+                            background: 'rgba(239, 68, 68, 0.15)',
+                            borderRadius: '8px',
+                            border: '1px solid rgba(239, 68, 68, 0.3)'
+                        }}>
+                            <p style={{ fontWeight: 600, color: '#ef4444', marginBottom: '8px' }}>高手術風險因子（至少一項）：</p>
+                            {NHI_COVERAGE.indications.primaryMR.riskFactors.map((r, i) => (
+                                <p key={i} style={{ fontSize: '12px' }}>• {r}</p>
+                            ))}
+                        </div>
+                    </div>
+                </InfoCard>
+
+                {/* 適應症 - Secondary MR */}
+                <InfoCard title="(B) Secondary MR 適應症" icon="🔵" color="#3b82f6">
+                    <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.9 }}>
+                        {NHI_COVERAGE.indications.secondaryMR.criteria.map((c, i) => (
+                            <p key={i}>• {c}</p>
+                        ))}
+                    </div>
+                </InfoCard>
+
+                {/* 解剖適用度 */}
+                <InfoCard title="(C) MitraClip Eligible Anatomy" icon="🫀" color="#8b5cf6">
+                    <div style={{ display: 'grid', gap: '12px' }}>
+                        {/* Ideal */}
+                        <div style={{ 
+                            background: 'rgba(16, 185, 129, 0.15)', 
+                            borderRadius: '10px', 
+                            padding: '12px',
+                            border: '1px solid rgba(16, 185, 129, 0.3)'
+                        }}>
+                            <div style={{ fontWeight: 600, color: '#10b981', marginBottom: '8px' }}>✅ Ideal</div>
+                            {NHI_COVERAGE.indications.anatomy.ideal.map((item, i) => (
+                                <p key={i} style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>• {item}</p>
+                            ))}
+                        </div>
+                        {/* Complex */}
+                        <div style={{ 
+                            background: 'rgba(245, 158, 11, 0.15)', 
+                            borderRadius: '10px', 
+                            padding: '12px',
+                            border: '1px solid rgba(245, 158, 11, 0.3)'
+                        }}>
+                            <div style={{ fontWeight: 600, color: '#f59e0b', marginBottom: '8px' }}>⚠️ Complex</div>
+                            {NHI_COVERAGE.indications.anatomy.complex.map((item, i) => (
+                                <p key={i} style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>• {item}</p>
+                            ))}
+                        </div>
+                        {/* Inappropriate */}
+                        <div style={{ 
+                            background: 'rgba(239, 68, 68, 0.15)', 
+                            borderRadius: '10px', 
+                            padding: '12px',
+                            border: '1px solid rgba(239, 68, 68, 0.3)'
+                        }}>
+                            <div style={{ fontWeight: 600, color: '#ef4444', marginBottom: '8px' }}>❌ Inappropriate</div>
+                            {NHI_COVERAGE.indications.anatomy.inappropriate.map((item, i) => (
+                                <p key={i} style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>• {item}</p>
+                            ))}
+                        </div>
+                    </div>
+                </InfoCard>
+
+                {/* 排除條件 */}
+                <InfoCard title="排除條件" icon="🚫" color="#64748b">
+                    <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.9 }}>
+                        {NHI_COVERAGE.exclusions.map((e, i) => (
+                            <p key={i}>• {e}</p>
+                        ))}
+                    </div>
+                </InfoCard>
+
+                {/* 醫院條件 */}
+                <InfoCard title="醫院條件" icon="🏥" color="#6366f1">
+                    <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.9 }}>
+                        <p style={{ fontWeight: 600, marginBottom: '8px' }}>醫院經歷條件：</p>
+                        {NHI_COVERAGE.hospitalRequirements.map((r, i) => (
+                            <p key={i}>• {r}</p>
+                        ))}
+                        <p style={{ fontWeight: 600, marginTop: '12px', marginBottom: '8px' }}>設備要求：</p>
+                        {NHI_COVERAGE.equipmentRequirements.map((r, i) => (
+                            <p key={i}>• {r}</p>
+                        ))}
+                    </div>
+                </InfoCard>
+
+                {/* 醫師資格 */}
+                <InfoCard title="醫師資格" icon="👨‍⚕️" color="#ec4899">
+                    <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.9 }}>
+                        <p><strong>基本資格：</strong>{NHI_COVERAGE.physicianRequirements.general}</p>
+                        <div style={{ marginTop: '12px' }}>
+                            <p style={{ fontWeight: 600, marginBottom: '6px' }}>心臟內科/兒童心臟科：</p>
+                            {NHI_COVERAGE.physicianRequirements.cardiology.map((r, i) => (
+                                <p key={i} style={{ fontSize: '12px' }}>• {r}</p>
+                            ))}
+                        </div>
+                        <div style={{ marginTop: '10px' }}>
+                            <p style={{ fontWeight: 600, marginBottom: '6px' }}>心臟介入專科：</p>
+                            {NHI_COVERAGE.physicianRequirements.intervention.map((r, i) => (
+                                <p key={i} style={{ fontSize: '12px' }}>• {r}</p>
+                            ))}
+                        </div>
+                        <div style={{ marginTop: '10px' }}>
+                            <p style={{ fontWeight: 600, marginBottom: '6px' }}>心臟外科：</p>
+                            {NHI_COVERAGE.physicianRequirements.surgery.map((r, i) => (
+                                <p key={i} style={{ fontSize: '12px' }}>• {r}</p>
+                            ))}
+                        </div>
+                    </div>
+                </InfoCard>
+
+                {/* 注意事項 */}
+                <InfoCard title="申報注意事項" icon="📝" color="#14b8a6">
+                    <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.9 }}>
+                        {NHI_COVERAGE.notes.map((n, i) => (
+                            <p key={i}>• {n}</p>
+                        ))}
+                    </div>
+                </InfoCard>
+            </div>
+        );
+
         const TEEEvalSection = () => (
             <div style={{ padding: '20px' }}>
                 <AlertBox type="info">
@@ -822,7 +1383,106 @@
 
         const AnatomySection = () => (
             <div style={{ padding: '20px' }}>
-                <InfoCard title="MitraClip 尺寸選擇" icon="📏" color="#8b5cf6">
+                {/* New Clip Selection Criteria */}
+                <InfoCard title="MitraClip G4 選擇參考指標" icon="🎯" color="#0d9488">
+                    <AlertBox type="info">
+                        根據 <strong>Leaflet Length</strong>、<strong>Jet Width</strong>、<strong>MVA</strong> 綜合判斷 Clip 類型
+                    </AlertBox>
+                    
+                    <div style={{ overflowX: 'auto', marginBottom: '16px' }}>
+                        <table style={{ width: '100%', fontSize: '12px', borderCollapse: 'collapse' }}>
+                            <thead>
+                                <tr style={{ background: '#0d9488' }}>
+                                    <th style={{ padding: '10px', textAlign: 'left', color: 'white', borderRadius: '6px 0 0 0' }}>解剖考量</th>
+                                    <th style={{ padding: '10px', textAlign: 'left', color: 'white' }}>條件</th>
+                                    <th style={{ padding: '10px', textAlign: 'center', color: 'white' }}>G4 NTW</th>
+                                    <th style={{ padding: '10px', textAlign: 'center', color: 'white' }}>G4 NT</th>
+                                    <th style={{ padding: '10px', textAlign: 'center', color: 'white' }}>G4 XTW</th>
+                                    <th style={{ padding: '10px', textAlign: 'center', color: 'white', borderRadius: '0 6px 0 0' }}>G4 XT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {/* Leaflet Insertion */}
+                                <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                                    <td rowSpan="2" style={{ padding: '10px', fontWeight: 600, background: 'var(--bg-dark)' }}>
+                                        1. Leaflet Insertion<br/>
+                                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 400 }}>Length of mobile leaflet in grasping zone?</span>
+                                    </td>
+                                    <td style={{ padding: '10px' }}>Leaflet Length {'<'} 9 mm</td>
+                                    <td style={{ padding: '10px', textAlign: 'center', color: '#10b981', fontWeight: 700 }}>+</td>
+                                    <td style={{ padding: '10px', textAlign: 'center', color: '#10b981', fontWeight: 700 }}>+</td>
+                                    <td style={{ padding: '10px', textAlign: 'center' }}></td>
+                                    <td style={{ padding: '10px', textAlign: 'center' }}></td>
+                                </tr>
+                                <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                                    <td style={{ padding: '10px' }}>Leaflet Length ≥ 9 mm</td>
+                                    <td style={{ padding: '10px', textAlign: 'center' }}></td>
+                                    <td style={{ padding: '10px', textAlign: 'center' }}></td>
+                                    <td style={{ padding: '10px', textAlign: 'center', color: '#10b981', fontWeight: 700 }}>+</td>
+                                    <td style={{ padding: '10px', textAlign: 'center', color: '#10b981', fontWeight: 700 }}>+</td>
+                                </tr>
+                                {/* Jet Width */}
+                                <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                                    <td style={{ padding: '10px', fontWeight: 600, background: 'var(--bg-dark)' }}>
+                                        2. Jet Width<br/>
+                                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 400 }}>Width of the jet?</span>
+                                    </td>
+                                    <td style={{ padding: '10px' }}>Broad jet</td>
+                                    <td style={{ padding: '10px', textAlign: 'center', color: '#10b981', fontWeight: 700 }}>+</td>
+                                    <td style={{ padding: '10px', textAlign: 'center' }}></td>
+                                    <td style={{ padding: '10px', textAlign: 'center', color: '#10b981', fontWeight: 700 }}>+</td>
+                                    <td style={{ padding: '10px', textAlign: 'center' }}></td>
+                                </tr>
+                                {/* MVA */}
+                                <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                                    <td rowSpan="2" style={{ padding: '10px', fontWeight: 600, background: 'var(--bg-dark)' }}>
+                                        3. MVA<br/>
+                                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 400 }}>Area of valve?</span>
+                                    </td>
+                                    <td style={{ padding: '10px' }}>Smaller Valve</td>
+                                    <td style={{ padding: '10px', textAlign: 'center' }}></td>
+                                    <td style={{ padding: '10px', textAlign: 'center', color: '#10b981', fontWeight: 700 }}>+</td>
+                                    <td style={{ padding: '10px', textAlign: 'center' }}></td>
+                                    <td style={{ padding: '10px', textAlign: 'center' }}></td>
+                                </tr>
+                                <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                                    <td style={{ padding: '10px' }}>Larger Valve</td>
+                                    <td style={{ padding: '10px', textAlign: 'center', color: '#10b981', fontWeight: 700 }}>+</td>
+                                    <td style={{ padding: '10px', textAlign: 'center' }}></td>
+                                    <td style={{ padding: '10px', textAlign: 'center', color: '#10b981', fontWeight: 700 }}>+</td>
+                                    <td style={{ padding: '10px', textAlign: 'center', color: '#10b981', fontWeight: 700 }}>+</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* MVA Note */}
+                    <div style={{
+                        background: 'rgba(245, 158, 11, 0.15)',
+                        border: '1px solid rgba(245, 158, 11, 0.4)',
+                        borderRadius: '10px',
+                        padding: '14px',
+                    }}>
+                        <div style={{ 
+                            fontWeight: 700, 
+                            color: '#f59e0b', 
+                            marginBottom: '10px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            fontSize: '14px'
+                        }}>
+                            ⚠️ MVA 量測注意事項
+                        </div>
+                        <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.8 }}>
+                            <p>• MR 病人用 <strong style={{ color: '#ef4444' }}>PHT 量測較容易失真</strong></p>
+                            <p>• 較推薦用 <strong style={{ color: '#10b981' }}>MPR 重組 mitral valve opening area</strong></p>
+                            <p>• 確保 MVA 符合 TEER 需要：<strong style={{ color: '#f59e0b' }}>{'>'}3.5 cm²</strong></p>
+                        </div>
+                    </div>
+                </InfoCard>
+
+                <InfoCard title="MitraClip 尺寸選擇 (依 AP 直徑)" icon="📏" color="#8b5cf6">
                     <AlertBox type="info">
                         根據 <strong>AP diameter</strong> (前後徑) 選擇 Clip 類型
                     </AlertBox>
@@ -932,6 +1592,137 @@
                             ))}
                         </InfoCard>
                     ))}
+                </div>
+            );
+        };
+
+        // 追蹤時程頁面
+        const FollowUpSection = () => {
+            const [followUpChecks, setFollowUpChecks] = useState({});
+            
+            const toggleItem = (id) => {
+                setFollowUpChecks(prev => ({ ...prev, [id]: !prev[id] }));
+            };
+
+            return (
+                <div style={{ padding: '20px' }}>
+                    <AlertBox type="info">
+                        <strong>重要：</strong>須於手術後30天及12個月登錄追蹤狀況，未如期登錄將核刪申請之特材費用
+                    </AlertBox>
+
+                    {/* NOAC 停藥指引 */}
+                    <InfoCard title="NOAC 術前停藥指引" icon="💊" color="#ef4444">
+                        <AlertBox type="warning">
+                            <strong>No bridging with LMWH/UFH needed!</strong>
+                        </AlertBox>
+                        
+                        {/* Dabigatran */}
+                        <div style={{ marginBottom: '16px' }}>
+                            <div style={{ fontWeight: 600, color: '#ef4444', marginBottom: '10px' }}>
+                                Dabigatran
+                            </div>
+                            <div style={{ overflowX: 'auto' }}>
+                                <table style={{ width: '100%', fontSize: '11px', borderCollapse: 'collapse' }}>
+                                    <thead>
+                                        <tr style={{ background: 'var(--bg-dark)' }}>
+                                            <th style={{ padding: '8px', textAlign: 'left' }}>CrCl</th>
+                                            <th style={{ padding: '8px', textAlign: 'center', color: '#10b981' }}>Low Risk</th>
+                                            <th style={{ padding: '8px', textAlign: 'center', color: '#ef4444' }}>High Risk</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {NOAC_GUIDELINES.dabigatran.lowRisk.map((item, i) => (
+                                            <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
+                                                <td style={{ padding: '8px' }}>{item.crcl}</td>
+                                                <td style={{ padding: '8px', textAlign: 'center' }}>{item.hours}</td>
+                                                <td style={{ padding: '8px', textAlign: 'center' }}>{NOAC_GUIDELINES.dabigatran.highRisk[i].hours}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        {/* Other NOACs */}
+                        <div>
+                            <div style={{ fontWeight: 600, color: '#3b82f6', marginBottom: '10px' }}>
+                                Apixaban / Edoxaban / Rivaroxaban
+                            </div>
+                            <div style={{ overflowX: 'auto' }}>
+                                <table style={{ width: '100%', fontSize: '11px', borderCollapse: 'collapse' }}>
+                                    <thead>
+                                        <tr style={{ background: 'var(--bg-dark)' }}>
+                                            <th style={{ padding: '8px', textAlign: 'left' }}>CrCl</th>
+                                            <th style={{ padding: '8px', textAlign: 'center', color: '#10b981' }}>Low Risk</th>
+                                            <th style={{ padding: '8px', textAlign: 'center', color: '#ef4444' }}>High Risk</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {NOAC_GUIDELINES.otherNOAC.lowRisk.map((item, i) => (
+                                            <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
+                                                <td style={{ padding: '8px' }}>{item.crcl}</td>
+                                                <td style={{ padding: '8px', textAlign: 'center' }}>{item.hours}</td>
+                                                <td style={{ padding: '8px', textAlign: 'center' }}>{NOAC_GUIDELINES.otherNOAC.highRisk[i].hours}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div style={{ 
+                            marginTop: '14px', 
+                            padding: '10px', 
+                            background: 'rgba(16, 185, 129, 0.15)',
+                            borderRadius: '8px',
+                            fontSize: '12px',
+                            color: '#10b981'
+                        }}>
+                            💡 Resume: ≥24h post-low bleeding risk interventions, 48(-72)h post-high-bleeding risk
+                        </div>
+                    </InfoCard>
+
+                    {/* 1 Week Follow-up */}
+                    <InfoCard title={FOLLOW_UP_SCHEDULE.oneWeek.title} icon="📅" color="#f59e0b">
+                        {FOLLOW_UP_SCHEDULE.oneWeek.items.map((item, i) => (
+                            <ChecklistItem
+                                key={`1w-${i}`}
+                                item={{ id: `1w-${i}`, text: item.text, critical: item.critical }}
+                                checked={followUpChecks[`1w-${i}`]}
+                                onToggle={() => toggleItem(`1w-${i}`)}
+                            />
+                        ))}
+                    </InfoCard>
+
+                    {/* 30 Day Follow-up */}
+                    <InfoCard title={FOLLOW_UP_SCHEDULE.thirtyDay.title} icon="📅" color="#3b82f6">
+                        <AlertBox type="warning">
+                            <strong>必須登錄！</strong>未如期登錄將核刪申請之特材費用
+                        </AlertBox>
+                        {FOLLOW_UP_SCHEDULE.thirtyDay.items.map((item, i) => (
+                            <ChecklistItem
+                                key={`30d-${i}`}
+                                item={{ id: `30d-${i}`, text: item.text, critical: item.critical }}
+                                checked={followUpChecks[`30d-${i}`]}
+                                onToggle={() => toggleItem(`30d-${i}`)}
+                            />
+                        ))}
+                    </InfoCard>
+
+                    {/* 1 Year Follow-up */}
+                    <InfoCard title={FOLLOW_UP_SCHEDULE.oneYear.title} icon="📅" color="#8b5cf6">
+                        <AlertBox type="warning">
+                            <strong>必須登錄！</strong>未如期登錄將核刪申請之特材費用
+                        </AlertBox>
+                        {FOLLOW_UP_SCHEDULE.oneYear.items.map((item, i) => (
+                            <ChecklistItem
+                                key={`1y-${i}`}
+                                item={{ id: `1y-${i}`, text: item.text, critical: item.critical }}
+                                checked={followUpChecks[`1y-${i}`]}
+                                onToggle={() => toggleItem(`1y-${i}`)}
+                            />
+                        ))}
+                    </InfoCard>
                 </div>
             );
         };
@@ -1236,6 +2027,7 @@
             const renderSection = () => {
                 switch (currentSection) {
                     case 'overview': return <OverviewSection />;
+                    case 'nhi-coverage': return <NHICoverageSection />;
                     case 'tee-eval': return <TEEEvalSection />;
                     case 'mr-grading': return <MRGradingSection />;
                     case 'anatomy': return <AnatomySection />;
@@ -1267,6 +2059,7 @@
                             checkedItems={postProcedureChecks}
                             setCheckedItems={setPostProcedureChecks}
                         />;
+                    case 'follow-up': return <FollowUpSection />;
                     case 'equipment': return <EquipmentSection />;
                     case 'checklist': return <FullChecklistSection />;
                     default: return null;
@@ -1291,8 +2084,8 @@
                             }}>
                                 {[
                                     { label: 'TEE 參數', value: '16', unit: '項' },
-                                    { label: '檢核項目', value: '35+', unit: '項' },
-                                    { label: '手術階段', value: '4', unit: '階段' },
+                                    { label: '檢核項目', value: '80+', unit: '項' },
+                                    { label: '追蹤時程', value: '3', unit: '階段' },
                                 ].map((stat, i) => (
                                     <div key={i} style={{
                                         background: 'var(--bg-card)',
@@ -1341,7 +2134,7 @@
                                 color: 'var(--text-muted)',
                             }}>
                                 <p>TEER TEE Evaluation Checklist</p>
-                                <p style={{ marginTop: '4px' }}>心血管中心 | 版本 1.0 | 2025-12-11</p>
+                                <p style={{ marginTop: '4px' }}>心血管中心 | 版本 2.0 | 2025-12-11</p>
                             </div>
                         </div>
                     ) : (
