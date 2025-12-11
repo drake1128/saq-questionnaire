@@ -3,976 +3,701 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>西雅圖心絞痛問卷 (SAQ)</title>
+    <title>心血管照護教學資源中心</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
+        :root {
+            --primary: #e74c3c;
+            --primary-dark: #c0392b;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --purple: #9b59b6;
+            --teal: #1abc9c;
+            --dark: #2c3e50;
+            --gray: #7f8c8d;
+            --light: #ecf0f1;
+        }
+        
         body {
-            font-family: "Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Microsoft JhengHei', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             padding: 20px;
             line-height: 1.6;
         }
-
+        
         .container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            overflow: hidden;
         }
-
+        
+        /* Header */
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
             text-align: center;
-        }
-
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            font-size: 16px;
-            opacity: 0.9;
-        }
-
-        .info-box {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            margin: 20px 30px;
-            border-radius: 5px;
-        }
-
-        .info-box strong {
-            color: #856404;
-        }
-
-        .content {
-            padding: 30px;
-        }
-
-        .patient-info {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
+            color: white;
+            padding: 40px 20px;
             margin-bottom: 30px;
         }
-
-        .patient-info h3 {
-            color: #667eea;
+        
+        .header-icon {
+            font-size: 4rem;
             margin-bottom: 15px;
+            animation: pulse 2s ease-in-out infinite;
         }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 15px;
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
+        
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
-
-        .form-group label {
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #333;
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
         }
-
-        .form-group input {
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s;
+        
+        /* Search Bar */
+        .search-container {
+            max-width: 500px;
+            margin: 0 auto 30px;
         }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .section {
-            background: #f8f9fa;
-            padding: 25px;
-            margin-bottom: 25px;
-            border-radius: 10px;
-            border-left: 5px solid #667eea;
-        }
-
-        .section h2 {
-            color: #667eea;
-            font-size: 20px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-
-        .section-number {
-            background: #667eea;
-            color: white;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-            font-size: 18px;
-        }
-
-        .question {
-            background: white;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .question-text {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 15px;
-        }
-
-        .table-question {
-            overflow-x: auto;
-        }
-
-        table {
+        
+        .search-box {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
+            padding: 15px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            outline: none;
         }
-
-        th {
-            background: #667eea;
-            color: white;
-            padding: 12px;
-            text-align: center;
-            font-weight: 600;
-            font-size: 14px;
+        
+        .search-box::placeholder {
+            color: #999;
         }
-
-        td {
-            padding: 12px;
-            border: 1px solid #e0e0e0;
-            text-align: center;
-        }
-
-        tr:nth-child(even) {
-            background: #f8f9fa;
-        }
-
-        .activity-name {
-            text-align: left !important;
-            font-weight: 500;
-        }
-
-        .radio-group {
+        
+        /* Stats Bar */
+        .stats-bar {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .radio-option {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .radio-option:hover {
-            background: #f0f4ff;
-            border-color: #667eea;
-        }
-
-        .radio-option input[type="radio"] {
-            margin-right: 12px;
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-        }
-
-        .radio-option label {
-            cursor: pointer;
-            flex: 1;
-        }
-
-        .radio-option input[type="radio"]:checked + label {
-            color: #667eea;
-            font-weight: 600;
-        }
-
-        input[type="radio"] {
-            accent-color: #667eea;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 15px;
             justify-content: center;
-            margin: 30px 0;
+            gap: 30px;
+            margin-bottom: 30px;
             flex-wrap: wrap;
         }
-
-        .btn {
-            padding: 15px 40px;
+        
+        .stat-item {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 25px;
+            border-radius: 50px;
+            color: white;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-number {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        /* Category Section */
+        .category {
+            margin-bottom: 30px;
+        }
+        
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .category-icon {
+            font-size: 1.8rem;
+        }
+        
+        .category-title {
+            font-size: 1.3rem;
+            color: var(--dark);
+            font-weight: bold;
+        }
+        
+        .category-count {
+            margin-left: auto;
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        /* App Cards Grid */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        
+        .app-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            text-decoration: none;
+            color: var(--dark);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary);
+        }
+        
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .app-card.cath::before { background: var(--primary); }
+        .app-card.ward::before { background: var(--secondary); }
+        .app-card.intervention::before { background: var(--purple); }
+        .app-card.medication::before { background: var(--success); }
+        .app-card.patient::before { background: var(--warning); }
+        .app-card.learning::before { background: var(--teal); }
+        
+        .app-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+        
+        .app-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+        
+        .app-desc {
+            font-size: 0.9rem;
+            color: var(--gray);
+            flex-grow: 1;
+        }
+        
+        .app-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 12px;
+        }
+        
+        .tag {
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: var(--light);
+            color: var(--gray);
+        }
+        
+        .tag.staff { background: #e3f2fd; color: #1565c0; }
+        .tag.patient { background: #fff3e0; color: #e65100; }
+        .tag.new { background: #ffebee; color: #c62828; }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 30px 20px;
+            margin-top: 20px;
+            opacity: 0.9;
+        }
+        
+        .footer p {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .footer-links {
+            margin-top: 15px;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            transition: background 0.3s;
+        }
+        
+        .footer-links a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .header-icon {
+                font-size: 3rem;
+            }
+            
+            .stats-bar {
+                gap: 15px;
+            }
+            
+            .stat-item {
+                padding: 8px 15px;
+                font-size: 0.8rem;
+            }
+            
+            .app-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .category-header {
+                padding: 10px 15px;
+            }
+            
+            .category-title {
+                font-size: 1.1rem;
+            }
+        }
+        
+        /* Hidden class for search filter */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Quick Access Buttons */
+        .quick-access {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .quick-btn {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.9);
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 25px;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: var(--dark);
         }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-        }
-
-        .btn-secondary {
+        
+        .quick-btn:hover, .quick-btn.active {
             background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-
-        .btn-secondary:hover {
-            background: #667eea;
+        
+        .quick-btn.active {
+            background: var(--primary);
             color: white;
-        }
-
-        .results {
-            display: none;
-            background: #e8f5e9;
-            padding: 30px;
-            border-radius: 10px;
-            margin-top: 30px;
-            border-left: 5px solid #4caf50;
-        }
-
-        .results h2 {
-            color: #2e7d32;
-            margin-bottom: 20px;
-        }
-
-        .score-card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .score-label {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .score-value {
-            font-size: 28px;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .interpretation {
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            border-left: 4px solid #ffc107;
-        }
-
-        .interpretation h4 {
-            color: #856404;
-            margin-bottom: 10px;
-        }
-
-        .footer {
-            background: #f8f9fa;
-            padding: 20px;
-            text-align: center;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e0e0e0;
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 20px 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            width: 0%;
-            transition: width 0.3s;
-        }
-
-        @media print {
-            body {
-                background: white;
-            }
-            .container {
-                box-shadow: none;
-            }
-            .btn, .progress-bar {
-                display: none;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                border-radius: 0;
-            }
-            .content {
-                padding: 15px;
-            }
-            .section {
-                padding: 15px;
-            }
-            table {
-                font-size: 12px;
-            }
-            th, td {
-                padding: 8px 4px;
-            }
-        }
-
-        .required {
-            color: red;
-        }
-
-        .error-message {
-            background: #ffebee;
-            color: #c62828;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border-left: 4px solid #c62828;
-            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>西雅圖心絞痛問卷</h1>
-            <p>Seattle Angina Questionnaire (SAQ)</p>
+        <!-- Header -->
+        <header class="header">
+            <div class="header-icon">🫀</div>
+            <h1>心血管照護教學資源中心</h1>
+            <p>Cardiovascular Care Education Hub</p>
+        </header>
+        
+        <!-- Search -->
+        <div class="search-container">
+            <input type="text" class="search-box" id="searchInput" placeholder="🔍 搜尋教學資源..." oninput="filterApps()">
         </div>
-
-        <div class="info-box">
-            <strong>📋 填寫說明：</strong>
-            請根據<strong>過去4週</strong>的情況回答所有問題。您的回答將協助醫療團隊提供更好的照護。
+        
+        <!-- Quick Access Filters -->
+        <div class="quick-access">
+            <button class="quick-btn active" onclick="filterByCategory('all')">全部</button>
+            <button class="quick-btn" onclick="filterByCategory('staff')">👨‍⚕️ 醫護人員</button>
+            <button class="quick-btn" onclick="filterByCategory('patient')">👥 病人衛教</button>
         </div>
-
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
+        
+        <!-- Stats -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-number" id="totalApps">14</span> 個教學資源
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">6</span> 大類別
+            </div>
+            <div class="stat-item">
+                📱 支援手機瀏覽
+            </div>
         </div>
-
-        <div class="content">
-            <form id="saqForm">
-                <!-- 基本資料 -->
-                <div class="patient-info">
-                    <h3>📝 基本資料</h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>姓名 <span class="required">*</span></label>
-                            <input type="text" id="patientName" required>
-                        </div>
-                        <div class="form-group">
-                            <label>病歷號</label>
-                            <input type="text" id="patientID">
-                        </div>
-                        <div class="form-group">
-                            <label>填寫日期 <span class="required">*</span></label>
-                            <input type="date" id="fillDate" required>
-                        </div>
+        
+        <!-- Category: 導管室 Cath Lab -->
+        <section class="category" data-category="staff">
+            <div class="category-header">
+                <span class="category-icon">🏥</span>
+                <span class="category-title">導管室照護 Cath Lab</span>
+                <span class="category-count">3</span>
+            </div>
+            <div class="app-grid">
+                <a href="cath-handoff-teaching-app.html" class="app-card cath" data-tags="staff cath">
+                    <div class="app-icon">📋</div>
+                    <div class="app-title">導管室交班教學</div>
+                    <div class="app-desc">心導管室病人交班流程與注意事項教學</div>
+                    <div class="app-tags">
+                        <span class="tag staff">醫護人員</span>
+                        <span class="tag">交班</span>
                     </div>
-                </div>
-
-                <div class="error-message" id="errorMessage">
-                    ⚠️ 請回答所有必填問題
-                </div>
-
-                <!-- 第一部分：身體活動限制 -->
-                <div class="section">
-                    <h2><span class="section-number">1</span>身體活動限制</h2>
-                    <p style="margin-bottom: 15px; color: #666;">在<strong>過去4週內</strong>，由於胸痛、胸悶或心絞痛，您在進行以下活動時受到多少限制？</p>
-                    
-                    <div class="question table-question">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>活動項目</th>
-                                    <th>嚴重限制</th>
-                                    <th>中度限制</th>
-                                    <th>輕微限制</th>
-                                    <th>未受限制</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="activity-name">1. 自己穿衣服</td>
-                                    <td><input type="radio" name="q1" value="1" required></td>
-                                    <td><input type="radio" name="q1" value="2"></td>
-                                    <td><input type="radio" name="q1" value="3"></td>
-                                    <td><input type="radio" name="q1" value="4"></td>
-                                </tr>
-                                <tr>
-                                    <td class="activity-name">2. 在室內走動</td>
-                                    <td><input type="radio" name="q2" value="1" required></td>
-                                    <td><input type="radio" name="q2" value="2"></td>
-                                    <td><input type="radio" name="q2" value="3"></td>
-                                    <td><input type="radio" name="q2" value="4"></td>
-                                </tr>
-                                <tr>
-                                    <td class="activity-name">3. 淋浴</td>
-                                    <td><input type="radio" name="q3" value="1" required></td>
-                                    <td><input type="radio" name="q3" value="2"></td>
-                                    <td><input type="radio" name="q3" value="3"></td>
-                                    <td><input type="radio" name="q3" value="4"></td>
-                                </tr>
-                                <tr>
-                                    <td class="activity-name">4. 爬一段樓梯(不休息)</td>
-                                    <td><input type="radio" name="q4" value="1" required></td>
-                                    <td><input type="radio" name="q4" value="2"></td>
-                                    <td><input type="radio" name="q4" value="3"></td>
-                                    <td><input type="radio" name="q4" value="4"></td>
-                                </tr>
-                                <tr>
-                                    <td class="activity-name">5. 園藝工作或做家事</td>
-                                    <td><input type="radio" name="q5" value="1" required></td>
-                                    <td><input type="radio" name="q5" value="2"></td>
-                                    <td><input type="radio" name="q5" value="3"></td>
-                                    <td><input type="radio" name="q5" value="4"></td>
-                                </tr>
-                                <tr>
-                                    <td class="activity-name">6. 在平地快走(約100公尺)</td>
-                                    <td><input type="radio" name="q6" value="1" required></td>
-                                    <td><input type="radio" name="q6" value="2"></td>
-                                    <td><input type="radio" name="q6" value="3"></td>
-                                    <td><input type="radio" name="q6" value="4"></td>
-                                </tr>
-                                <tr>
-                                    <td class="activity-name">7. 跑步或慢跑(約1公里)</td>
-                                    <td><input type="radio" name="q7" value="1" required></td>
-                                    <td><input type="radio" name="q7" value="2"></td>
-                                    <td><input type="radio" name="q7" value="3"></td>
-                                    <td><input type="radio" name="q7" value="4"></td>
-                                </tr>
-                                <tr>
-                                    <td class="activity-name">8. 提重物或搬重物</td>
-                                    <td><input type="radio" name="q8" value="1" required></td>
-                                    <td><input type="radio" name="q8" value="2"></td>
-                                    <td><input type="radio" name="q8" value="3"></td>
-                                    <td><input type="radio" name="q8" value="4"></td>
-                                </tr>
-                                <tr>
-                                    <td class="activity-name">9. 參與劇烈運動(如游泳、網球)</td>
-                                    <td><input type="radio" name="q9" value="1" required></td>
-                                    <td><input type="radio" name="q9" value="2"></td>
-                                    <td><input type="radio" name="q9" value="3"></td>
-                                    <td><input type="radio" name="q9" value="4"></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                </a>
+                
+                <a href="cath-wound-care-app.html" class="app-card cath" data-tags="staff cath">
+                    <div class="app-icon">🩹</div>
+                    <div class="app-title">導管傷口照護</div>
+                    <div class="app-desc">心導管術後傷口照護與止血流程指引</div>
+                    <div class="app-tags">
+                        <span class="tag staff">醫護人員</span>
+                        <span class="tag">傷口照護</span>
                     </div>
-                </div>
-
-                <!-- 第二部分：心絞痛穩定度 -->
-                <div class="section">
-                    <h2><span class="section-number">2</span>心絞痛穩定度</h2>
-                    
-                    <div class="question">
-                        <div class="question-text">10. 與4週前相比，您認為您的胸痛、胸悶或心絞痛的頻率：</div>
-                        <div class="radio-group">
-                            <div class="radio-option">
-                                <input type="radio" id="q10_1" name="q10" value="1" required>
-                                <label for="q10_1">比4週前好很多 (發作次數減少很多)</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q10_2" name="q10" value="2">
-                                <label for="q10_2">比4週前稍微好一點 (發作次數稍微減少)</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q10_3" name="q10" value="3">
-                                <label for="q10_3">沒有改變 (發作次數差不多)</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q10_4" name="q10" value="4">
-                                <label for="q10_4">比4週前稍微差一點 (發作次數稍微增加)</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q10_5" name="q10" value="5">
-                                <label for="q10_5">比4週前差很多 (發作次數增加很多)</label>
-                            </div>
-                        </div>
+                </a>
+                
+                <a href="cv_center_checklist.html" class="app-card cath" data-tags="staff cath">
+                    <div class="app-icon">✅</div>
+                    <div class="app-title">心血管中心檢查表</div>
+                    <div class="app-desc">CV Center 流程檢查與確認清單</div>
+                    <div class="app-tags">
+                        <span class="tag staff">醫護人員</span>
+                        <span class="tag">檢查表</span>
                     </div>
-                </div>
-
-                <!-- 第三部分：心絞痛發作頻率 -->
-                <div class="section">
-                    <h2><span class="section-number">3</span>心絞痛發作頻率</h2>
-                    
-                    <div class="question">
-                        <div class="question-text">11. 在過去4週內，您平均多久發生一次胸痛、胸悶或心絞痛？</div>
-                        <div class="radio-group">
-                            <div class="radio-option">
-                                <input type="radio" id="q11_1" name="q11" value="1" required>
-                                <label for="q11_1">每天發作4次或更多</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q11_2" name="q11" value="2">
-                                <label for="q11_2">每天發作1-3次</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q11_3" name="q11" value="3">
-                                <label for="q11_3">每週發作3次或更多 (但不是每天)</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q11_4" name="q11" value="4">
-                                <label for="q11_4">每週發作1-2次</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q11_5" name="q11" value="5">
-                                <label for="q11_5">每週發作少於1次</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q11_6" name="q11" value="6">
-                                <label for="q11_6">過去4週內完全沒有發作</label>
-                            </div>
-                        </div>
+                </a>
+            </div>
+        </section>
+        
+        <!-- Category: 病房教學 Ward -->
+        <section class="category" data-category="staff">
+            <div class="category-header">
+                <span class="category-icon">🛏️</span>
+                <span class="category-title">病房照護教學 Ward Teaching</span>
+                <span class="category-count">2</span>
+            </div>
+            <div class="app-grid">
+                <a href="af-ward-teaching-app.html" class="app-card ward" data-tags="staff ward af">
+                    <div class="app-icon">💓</div>
+                    <div class="app-title">心房顫動病房教學</div>
+                    <div class="app-desc">AF 病人照護、抗凝血治療與衛教指引</div>
+                    <div class="app-tags">
+                        <span class="tag staff">醫護人員</span>
+                        <span class="tag">心房顫動</span>
                     </div>
-
-                    <div class="question">
-                        <div class="question-text">12. 在過去4週內，您平均多久使用一次硝酸甘油 (舌下含片或噴劑)？</div>
-                        <div class="radio-group">
-                            <div class="radio-option">
-                                <input type="radio" id="q12_1" name="q12" value="1" required>
-                                <label for="q12_1">每天使用4次或更多</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q12_2" name="q12" value="2">
-                                <label for="q12_2">每天使用1-3次</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q12_3" name="q12" value="3">
-                                <label for="q12_3">每週使用3次或更多 (但不是每天)</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q12_4" name="q12" value="4">
-                                <label for="q12_4">每週使用1-2次</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q12_5" name="q12" value="5">
-                                <label for="q12_5">每週使用少於1次</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q12_6" name="q12" value="6">
-                                <label for="q12_6">過去4週內完全沒有使用</label>
-                            </div>
-                        </div>
+                </a>
+                
+                <a href="heart-failure-ward-app.html" class="app-card ward" data-tags="staff ward hf">
+                    <div class="app-icon">❤️‍🩹</div>
+                    <div class="app-title">心衰竭病房教學</div>
+                    <div class="app-desc">心衰竭病人照護、藥物治療與出院準備</div>
+                    <div class="app-tags">
+                        <span class="tag staff">醫護人員</span>
+                        <span class="tag">心衰竭</span>
                     </div>
-                </div>
-
-                <!-- 第四部分：治療滿意度 -->
-                <div class="section">
-                    <h2><span class="section-number">4</span>治療滿意度</h2>
-                    
-                    <div class="question">
-                        <div class="question-text">13. 對於治療您的心絞痛的藥物，您有多滿意？</div>
-                        <div class="radio-group">
-                            <div class="radio-option">
-                                <input type="radio" id="q13_1" name="q13" value="1" required>
-                                <label for="q13_1">非常不滿意</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q13_2" name="q13" value="2">
-                                <label for="q13_2">大多不滿意</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q13_3" name="q13" value="3">
-                                <label for="q13_3">大多滿意</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q13_4" name="q13" value="4">
-                                <label for="q13_4">非常滿意</label>
-                            </div>
-                        </div>
+                </a>
+            </div>
+        </section>
+        
+        <!-- Category: 介入性心臟學 Intervention -->
+        <section class="category" data-category="staff">
+            <div class="category-header">
+                <span class="category-icon">🔬</span>
+                <span class="category-title">介入性心臟學 Structural Heart</span>
+                <span class="category-count">3</span>
+            </div>
+            <div class="app-grid">
+                <a href="laao-tee-evaluation-app.html" class="app-card intervention" data-tags="staff intervention laao">
+                    <div class="app-icon">🫀</div>
+                    <div class="app-title">LAAO TEE 評估</div>
+                    <div class="app-desc">左心耳封堵術經食道超音波評估指引</div>
+                    <div class="app-tags">
+                        <span class="tag staff">醫護人員</span>
+                        <span class="tag">LAAO</span>
+                        <span class="tag new">新增</span>
                     </div>
-
-                    <div class="question">
-                        <div class="question-text">14. 服用心絞痛的藥物，對您來說有多麻煩或不方便？</div>
-                        <div class="radio-group">
-                            <div class="radio-option">
-                                <input type="radio" id="q14_1" name="q14" value="4" required>
-                                <label for="q14_1">非常麻煩</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q14_2" name="q14" value="3">
-                                <label for="q14_2">有點麻煩</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q14_3" name="q14" value="2">
-                                <label for="q14_3">不太麻煩</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q14_4" name="q14" value="1">
-                                <label for="q14_4">完全不麻煩</label>
-                            </div>
-                        </div>
+                </a>
+                
+                <a href="teer-tee-checklist-app.html" class="app-card intervention" data-tags="staff intervention teer">
+                    <div class="app-icon">🔧</div>
+                    <div class="app-title">TEER TEE 檢查表</div>
+                    <div class="app-desc">經導管二尖瓣修補術 TEE 評估清單</div>
+                    <div class="app-tags">
+                        <span class="tag staff">醫護人員</span>
+                        <span class="tag">TEER</span>
+                        <span class="tag new">新增</span>
                     </div>
-
-                    <div class="question">
-                        <div class="question-text">15. 對於醫療人員向您解釋為什麼要服用心絞痛的藥物，您有多滿意？</div>
-                        <div class="radio-group">
-                            <div class="radio-option">
-                                <input type="radio" id="q15_1" name="q15" value="1" required>
-                                <label for="q15_1">非常不滿意</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q15_2" name="q15" value="2">
-                                <label for="q15_2">大多不滿意</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q15_3" name="q15" value="3">
-                                <label for="q15_3">大多滿意</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q15_4" name="q15" value="4">
-                                <label for="q15_4">非常滿意</label>
-                            </div>
-                        </div>
+                </a>
+                
+                <a href="paod-care-app.html" class="app-card intervention" data-tags="staff intervention paod">
+                    <div class="app-icon">🦵</div>
+                    <div class="app-title">周邊動脈疾病照護</div>
+                    <div class="app-desc">PAOD 診斷、治療與照護流程指引</div>
+                    <div class="app-tags">
+                        <span class="tag staff">醫護人員</span>
+                        <span class="tag">PAOD</span>
                     </div>
-
-                    <div class="question">
-                        <div class="question-text">16. 整體而言，對於目前的治療如何控制您的心絞痛症狀，您有多滿意？</div>
-                        <div class="radio-group">
-                            <div class="radio-option">
-                                <input type="radio" id="q16_1" name="q16" value="1" required>
-                                <label for="q16_1">非常不滿意</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q16_2" name="q16" value="2">
-                                <label for="q16_2">大多不滿意</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q16_3" name="q16" value="3">
-                                <label for="q16_3">大多滿意</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q16_4" name="q16" value="4">
-                                <label for="q16_4">非常滿意</label>
-                            </div>
-                        </div>
+                </a>
+            </div>
+        </section>
+        
+        <!-- Category: 藥物學習 Medication -->
+        <section class="category" data-category="staff">
+            <div class="category-header">
+                <span class="category-icon">💊</span>
+                <span class="category-title">藥物學習 Medication</span>
+                <span class="category-count">1</span>
+            </div>
+            <div class="app-grid">
+                <a href="acs-hf-medication-learning.html" class="app-card medication" data-tags="staff medication acs hf">
+                    <div class="app-icon">💉</div>
+                    <div class="app-title">ACS/HF 藥物學習</div>
+                    <div class="app-desc">急性冠心症與心衰竭藥物治療指引</div>
+                    <div class="app-tags">
+                        <span class="tag staff">醫護人員</span>
+                        <span class="tag">ACS</span>
+                        <span class="tag">心衰竭</span>
                     </div>
-                </div>
-
-                <!-- 第五部分：對疾病的認知 -->
-                <div class="section">
-                    <h2><span class="section-number">5</span>對疾病的認知</h2>
-                    
-                    <div class="question">
-                        <div class="question-text">17. 您對自己的心臟病了解多少？</div>
-                        <div class="radio-group">
-                            <div class="radio-option">
-                                <input type="radio" id="q17_1" name="q17" value="1" required>
-                                <label for="q17_1">完全不了解</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q17_2" name="q17" value="2">
-                                <label for="q17_2">了解一點</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q17_3" name="q17" value="3">
-                                <label for="q17_3">有些了解</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q17_4" name="q17" value="4">
-                                <label for="q17_4">相當了解</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q17_5" name="q17" value="5">
-                                <label for="q17_5">非常了解</label>
-                            </div>
-                        </div>
+                </a>
+            </div>
+        </section>
+        
+        <!-- Category: 病人衛教 Patient Education -->
+        <section class="category" data-category="patient">
+            <div class="category-header">
+                <span class="category-icon">👥</span>
+                <span class="category-title">病人與家屬衛教 Patient Education</span>
+                <span class="category-count">3</span>
+            </div>
+            <div class="app-grid">
+                <a href="hypertension-education-app.html" class="app-card patient" data-tags="patient education hypertension">
+                    <div class="app-icon">🩺</div>
+                    <div class="app-title">高血壓衛教指南</div>
+                    <div class="app-desc">722 血壓測量、S-ABCDE 生活調整與藥物須知</div>
+                    <div class="app-tags">
+                        <span class="tag patient">病人衛教</span>
+                        <span class="tag">高血壓</span>
+                        <span class="tag new">新增</span>
                     </div>
-
-                    <div class="question">
-                        <div class="question-text">18. 您覺得未來會發生心臟問題 (如心臟病發作) 的機會有多大？</div>
-                        <div class="radio-group">
-                            <div class="radio-option">
-                                <input type="radio" id="q18_1" name="q18" value="1" required>
-                                <label for="q18_1">非常有可能</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q18_2" name="q18" value="2">
-                                <label for="q18_2">有些可能</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q18_3" name="q18" value="3">
-                                <label for="q18_3">不太可能</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q18_4" name="q18" value="2">
-                                <label for="q18_4">不太確定</label>
-                            </div>
-                        </div>
+                </a>
+                
+                <a href="seattle-saq.html" class="app-card patient" data-tags="patient questionnaire angina">
+                    <div class="app-icon">📝</div>
+                    <div class="app-title">Seattle 心絞痛問卷</div>
+                    <div class="app-desc">Seattle Angina Questionnaire 心絞痛評估</div>
+                    <div class="app-tags">
+                        <span class="tag patient">病人衛教</span>
+                        <span class="tag">問卷評估</span>
                     </div>
-
-                    <div class="question">
-                        <div class="question-text">19. 整體而言，您的心臟病對您的生活影響有多大？</div>
-                        <div class="radio-group">
-                            <div class="radio-option">
-                                <input type="radio" id="q19_1" name="q19" value="1" required>
-                                <label for="q19_1">影響非常大 (幾乎無法正常生活)</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q19_2" name="q19" value="2">
-                                <label for="q19_2">影響很大 (嚴重限制我的生活)</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q19_3" name="q19" value="3">
-                                <label for="q19_3">有中度影響 (我的生活受到一些限制)</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q19_4" name="q19" value="4">
-                                <label for="q19_4">影響不大 (我可以做大部分想做的事)</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="q19_5" name="q19" value="5">
-                                <label for="q19_5">完全沒有影響 (我可以正常生活)</label>
-                            </div>
-                        </div>
+                </a>
+                
+                <a href="kccq.html" class="app-card patient" data-tags="patient questionnaire hf heart failure">
+                    <div class="app-icon">❤️‍🩹</div>
+                    <div class="app-title">KCCQ 心衰竭問卷</div>
+                    <div class="app-desc">堪薩斯城心肌病問卷，評估心衰竭病人生活品質</div>
+                    <div class="app-tags">
+                        <span class="tag patient">病人衛教</span>
+                        <span class="tag">心衰竭</span>
+                        <span class="tag">問卷評估</span>
                     </div>
-                </div>
-
-                <!-- 按鈕 -->
-                <div class="button-group">
-                    <button type="button" class="btn btn-secondary" onclick="resetForm()">🔄 重新填寫</button>
-                    <button type="submit" class="btn btn-primary">📊 計算分數</button>
-                </div>
-
-                <!-- 結果顯示 -->
-                <div class="results" id="results">
-                    <h2>📈 評估結果</h2>
-                    
-                    <div class="score-card">
-                        <span class="score-label">身體限制分數 (Physical Limitation)</span>
-                        <span class="score-value" id="plScore">--</span>
+                </a>
+            </div>
+        </section>
+        
+        <!-- Category: 學習資源 Learning -->
+        <section class="category" data-category="staff">
+            <div class="category-header">
+                <span class="category-icon">📚</span>
+                <span class="category-title">學習資源 Learning Resources</span>
+                <span class="category-count">2</span>
+            </div>
+            <div class="app-grid">
+                <a href="troponin-lecture.html" class="app-card learning" data-tags="staff learning troponin">
+                    <div class="app-icon">🧪</div>
+                    <div class="app-title">Troponin 教學講座</div>
+                    <div class="app-desc">心肌旋轉蛋白判讀與臨床應用</div>
+                    <div class="app-tags">
+                        <span class="tag staff">醫護人員</span>
+                        <span class="tag">講座</span>
                     </div>
-
-                    <div class="score-card">
-                        <span class="score-label">心絞痛穩定度 (Angina Stability)</span>
-                        <span class="score-value" id="asScore">--</span>
+                </a>
+                
+                <a href="tsoc-echo-learning-2025.html" class="app-card learning" data-tags="staff learning echo">
+                    <div class="app-icon">📊</div>
+                    <div class="app-title">TSOC 心臟超音波學習</div>
+                    <div class="app-desc">2025 台灣心臟學會心臟超音波指引學習</div>
+                    <div class="app-tags">
+                        <span class="tag staff">醫護人員</span>
+                        <span class="tag">Echo</span>
                     </div>
-
-                    <div class="score-card">
-                        <span class="score-label">心絞痛頻率 (Angina Frequency)</span>
-                        <span class="score-value" id="afScore">--</span>
-                    </div>
-
-                    <div class="score-card">
-                        <span class="score-label">治療滿意度 (Treatment Satisfaction)</span>
-                        <span class="score-value" id="tsScore">--</span>
-                    </div>
-
-                    <div class="score-card">
-                        <span class="score-label">疾病認知 (Disease Perception)</span>
-                        <span class="score-value" id="dpScore">--</span>
-                    </div>
-
-                    <div class="score-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                        <span class="score-label" style="color: white; font-size: 20px;">✨ SAQ 總分 (SAQSS)</span>
-                        <span class="score-value" style="color: white; font-size: 36px;" id="saqss">--</span>
-                    </div>
-
-                    <div class="interpretation" id="interpretation">
-                        <h4>💡 結果解釋</h4>
-                        <p id="interpretationText"></p>
-                    </div>
-
-                    <div class="button-group">
-                        <button type="button" class="btn btn-primary" onclick="window.print()">🖨️ 列印結果</button>
-                        <button type="button" class="btn btn-secondary" onclick="copyResults()">📋 複製結果</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <div class="footer">
-            <p>西雅圖心絞痛問卷 (SAQ) © 2025</p>
-            <p>本問卷僅供醫療專業人員使用，不可作為自我診斷工具</p>
-        </div>
+                </a>
+            </div>
+        </section>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <p>❤️ 心血管照護教學資源中心</p>
+            <p>持續更新中 · 歡迎提供建議</p>
+            <p style="margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">
+                參考資料：TSOC Guidelines · ACC/AHA Guidelines · ESC Guidelines
+            </p>
+            <div class="footer-links">
+                <a href="#" onclick="scrollToTop()">⬆️ 回到頂部</a>
+            </div>
+        </footer>
     </div>
-
+    
     <script>
-        // 設定今天日期為預設值
-        document.getElementById('fillDate').valueAsDate = new Date();
-
-        // 計算進度
-        const form = document.getElementById('saqForm');
-        const totalQuestions = 19;
-
-        form.addEventListener('change', updateProgress);
-
-        function updateProgress() {
-            let answered = 0;
-            for (let i = 1; i <= totalQuestions; i++) {
-                if (document.querySelector(`input[name="q${i}"]:checked`)) {
-                    answered++;
-                }
-            }
-            const progress = (answered / totalQuestions) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-        }
-
-        // 表單提交
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
+        // Search functionality
+        function filterApps() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.app-card');
+            const categories = document.querySelectorAll('.category');
             
-            // 檢查基本資料
-            if (!document.getElementById('patientName').value) {
-                alert('請填寫姓名');
-                return;
-            }
-
-            // 計算分數
-            calculateScores();
-        });
-
-        function calculateScores() {
-            // 身體限制 (Q1-Q9)
-            let plSum = 0;
-            for (let i = 1; i <= 9; i++) {
-                const value = parseInt(document.querySelector(`input[name="q${i}"]:checked`).value);
-                plSum += value;
-            }
-            const plScore = ((plSum - 9) / 27) * 100;
-
-            // 心絞痛穩定度 (Q10)
-            const asValue = parseInt(document.querySelector('input[name="q10"]:checked').value);
-            const asScore = ((asValue - 1) / 4) * 100;
-
-            // 心絞痛頻率 (Q11-Q12)
-            const q11 = parseInt(document.querySelector('input[name="q11"]:checked').value);
-            const q12 = parseInt(document.querySelector('input[name="q12"]:checked').value);
-            const afScore = ((q11 + q12 - 2) / 10) * 100;
-
-            // 治療滿意度 (Q13-Q16) - 注意Q14是反向計分
-            const q13 = parseInt(document.querySelector('input[name="q13"]:checked').value);
-            const q14 = parseInt(document.querySelector('input[name="q14"]:checked').value);
-            const q15 = parseInt(document.querySelector('input[name="q15"]:checked').value);
-            const q16 = parseInt(document.querySelector('input[name="q16"]:checked').value);
-            const tsSum = q13 + q14 + q15 + q16;
-            const tsScore = ((tsSum - 4) / 12) * 100;
-
-            // 疾病認知 (Q17-Q19)
-            const q17 = parseInt(document.querySelector('input[name="q17"]:checked').value);
-            const q18 = parseInt(document.querySelector('input[name="q18"]:checked').value);
-            const q19 = parseInt(document.querySelector('input[name="q19"]:checked').value);
-            const dpSum = q17 + q18 + q19;
-            const dpScore = ((dpSum - 3) / 10) * 100;
-
-            // SAQSS (平均身體限制和心絞痛頻率)
-            const saqss = (plScore + afScore) / 2;
-
-            // 顯示結果
-            document.getElementById('plScore').textContent = plScore.toFixed(1);
-            document.getElementById('asScore').textContent = asScore.toFixed(1);
-            document.getElementById('afScore').textContent = afScore.toFixed(1);
-            document.getElementById('tsScore').textContent = tsScore.toFixed(1);
-            document.getElementById('dpScore').textContent = dpScore.toFixed(1);
-            document.getElementById('saqss').textContent = saqss.toFixed(1);
-
-            // 解釋
-            let interpretation = '';
-            if (saqss >= 75) {
-                interpretation = '✅ <strong>輕微/無症狀：</strong>您的心絞痛症狀對日常生活影響很小，身體功能良好。請繼續維持現有治療和健康的生活型態。';
-            } else if (saqss >= 50) {
-                interpretation = '⚠️ <strong>輕度至中度：</strong>您的某些活動受到限制。建議與醫師討論是否需要調整治療計畫。';
-            } else if (saqss >= 25) {
-                interpretation = '🚨 <strong>中度至重度：</strong>您的日常活動顯著受限，生活品質明顯下降。建議盡快與醫療團隊討論治療調整方案。';
-            } else {
-                interpretation = '🆘 <strong>極重度：</strong>您有嚴重的活動限制。請立即告知您的醫療團隊，可能需要積極的治療介入。';
-            }
-
-            document.getElementById('interpretationText').innerHTML = interpretation;
-            document.getElementById('results').style.display = 'block';
-            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function resetForm() {
-            if (confirm('確定要重新填寫問卷嗎？所有資料將會清除。')) {
-                form.reset();
-                document.getElementById('fillDate').valueAsDate = new Date();
-                document.getElementById('results').style.display = 'none';
-                document.getElementById('progressFill').style.width = '0%';
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-        function copyResults() {
-            const name = document.getElementById('patientName').value;
-            const date = document.getElementById('fillDate').value;
-            const pl = document.getElementById('plScore').textContent;
-            const as = document.getElementById('asScore').textContent;
-            const af = document.getElementById('afScore').textContent;
-            const ts = document.getElementById('tsScore').textContent;
-            const dp = document.getElementById('dpScore').textContent;
-            const saqss = document.getElementById('saqss').textContent;
-
-            const text = `
-西雅圖心絞痛問卷 (SAQ) 結果
-
-姓名：${name}
-日期：${date}
-
-評估結果：
-- 身體限制：${pl}
-- 心絞痛穩定度：${as}
-- 心絞痛頻率：${af}
-- 治療滿意度：${ts}
-- 疾病認知：${dp}
-- SAQ總分 (SAQSS)：${saqss}
-            `.trim();
-
-            navigator.clipboard.writeText(text).then(() => {
-                alert('✅ 結果已複製到剪貼簿！');
-            }).catch(() => {
-                alert('❌ 複製失敗，請手動複製結果');
+            cards.forEach(card => {
+                const title = card.querySelector('.app-title').textContent.toLowerCase();
+                const desc = card.querySelector('.app-desc').textContent.toLowerCase();
+                const tags = card.dataset.tags.toLowerCase();
+                
+                if (title.includes(searchTerm) || desc.includes(searchTerm) || tags.includes(searchTerm)) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
             });
+            
+            // Hide empty categories
+            categories.forEach(category => {
+                const visibleCards = category.querySelectorAll('.app-card:not(.hidden)');
+                if (visibleCards.length === 0) {
+                    category.classList.add('hidden');
+                } else {
+                    category.classList.remove('hidden');
+                }
+            });
+            
+            updateStats();
         }
+        
+        // Filter by category (staff/patient)
+        function filterByCategory(type) {
+            const buttons = document.querySelectorAll('.quick-btn');
+            const categories = document.querySelectorAll('.category');
+            const cards = document.querySelectorAll('.app-card');
+            
+            // Update button states
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Clear search
+            document.getElementById('searchInput').value = '';
+            
+            if (type === 'all') {
+                categories.forEach(cat => cat.classList.remove('hidden'));
+                cards.forEach(card => card.classList.remove('hidden'));
+            } else {
+                categories.forEach(category => {
+                    if (category.dataset.category === type) {
+                        category.classList.remove('hidden');
+                    } else {
+                        category.classList.add('hidden');
+                    }
+                });
+                
+                cards.forEach(card => {
+                    if (card.dataset.tags.includes(type)) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+            }
+            
+            updateStats();
+        }
+        
+        // Update statistics
+        function updateStats() {
+            const visibleCards = document.querySelectorAll('.app-card:not(.hidden)');
+            document.getElementById('totalApps').textContent = visibleCards.length;
+        }
+        
+        // Scroll to top
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+        });
+        
+        /* 
+        ============================================
+        📝 如何新增教學資源：
+        ============================================
+        
+        1. 找到對應的類別 <section class="category">
+        
+        2. 在該類別的 <div class="app-grid"> 內新增：
+        
+        <a href="your-new-app.html" class="app-card [類別顏色]" data-tags="[標籤]">
+            <div class="app-icon">[emoji圖示]</div>
+            <div class="app-title">[標題]</div>
+            <div class="app-desc">[描述]</div>
+            <div class="app-tags">
+                <span class="tag staff">醫護人員</span>  或  <span class="tag patient">病人衛教</span>
+                <span class="tag">[其他標籤]</span>
+                <span class="tag new">新增</span>  <!-- 可選：標記為新內容 -->
+            </div>
+        </a>
+        
+        3. 類別顏色選項：
+           - cath (紅色) - 導管室
+           - ward (藍色) - 病房
+           - intervention (紫色) - 介入性
+           - medication (綠色) - 藥物
+           - patient (橘色) - 病人衛教
+           - learning (青色) - 學習資源
+        
+        4. 更新類別的 <span class="category-count"> 數字
+        
+        5. 如需新增類別，複製整個 <section class="category"> 區塊並修改
+        
+        ============================================
+        */
     </script>
 </body>
 </html>
