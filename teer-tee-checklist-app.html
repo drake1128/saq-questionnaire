@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TEER TEE 評估與檢核表</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #7c3aed;
+            --primary-light: #8b5cf6;
+            --primary-dark: #5b21b6;
+            --accent: #f59e0b;
+            --accent-light: #fbbf24;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --bg-dark: #0f0f1a;
+            --bg-card: #1a1a2e;
+            --bg-card-hover: #252542;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        #root {
+            min-height: 100vh;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(124, 58, 237, 0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        input[type="text"], input[type="number"], textarea {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback } = React;
+
+        // ========== Data ==========
+        const SECTIONS = [
+            { id: 'overview', title: '總覽', icon: '❤️', color: '#ef4444' },
+            { id: 'tee-eval', title: 'TEE 評估參數', icon: '📊', color: '#3b82f6' },
+            { id: 'mr-grading', title: 'MR 分級標準', icon: '📈', color: '#8b5cf6' },
+            { id: 'anatomy', title: '解剖評估', icon: '🫀', color: '#ec4899' },
+            { id: 'pre-assessment', title: '術前評估階段', icon: '📋', color: '#10b981' },
+            { id: 'pre-procedure', title: '術前準備階段', icon: '⚙️', color: '#f59e0b' },
+            { id: 'surgery-day', title: '手術當日', icon: '🏥', color: '#ef4444' },
+            { id: 'post-procedure', title: '術後處置', icon: '✅', color: '#10b981' },
+            { id: 'equipment', title: '設備交接', icon: '🔧', color: '#6366f1' },
+            { id: 'checklist', title: '完整檢核表', icon: '☑️', color: '#14b8a6' },
+        ];
+
+        const TEE_EVAL_PARAMS = [
+            { 
+                id: 'mr_etiology',
+                name: 'MR Etiology',
+                nameTW: 'MR 病因',
+                example: 'SMR (Carpenter Type I) / Degenerative MR',
+                note: 'SMR = Secondary MR = Functional MR\nPMR = Primary MR = Degenerative MR',
+                color: '#ef4444'
+            },
+            { 
+                id: 'mr_grade',
+                name: 'MR Grade',
+                nameTW: 'MR 嚴重度',
+                example: '4+',
+                note: '1+ 輕度, 2+ 輕中度, 3+ 中度, 4+ 重度',
+                color: '#f59e0b'
+            },
+            { 
+                id: 'jet_origin',
+                name: 'Jet Origin',
+                nameTW: 'Jet 起源位置',
+                example: 'A2/P2',
+                note: 'Jet 可有多個 origin\n順序: Color mapping → X-plane → 3D imaging',
+                color: '#8b5cf6'
+            },
+            { 
+                id: 'jet_direction',
+                name: 'Jet Direction',
+                nameTW: 'Jet 方向',
+                example: 'Posterior eccentric',
+                note: 'Central / Anterior / Posterior / Eccentric',
+                color: '#3b82f6'
+            },
+            { 
+                id: 'pisa_radius',
+                name: 'PISA Radius',
+                nameTW: 'PISA 半徑',
+                example: '9 mm',
+                note: '> 9 mm 提示重度 MR',
+                color: '#10b981'
+            },
+            { 
+                id: 'vc_width',
+                name: 'VC Width',
+                nameTW: '靜脈收縮寬度',
+                example: '6 to 4 mm',
+                note: 'Vena Contracta Width\n≥ 7 mm 為重度 MR',
+                color: '#06b6d4'
+            },
+            { 
+                id: 'eroa',
+                name: 'EROA',
+                nameTW: '有效逆流面積',
+                example: '0.35 cm²',
+                note: 'Effective Regurgitant Orifice Area\n需記錄 MR VTI 和 Nyquist',
+                color: '#ec4899'
+            },
+            { 
+                id: 'mr_volume',
+                name: 'MR Volume',
+                nameTW: '逆流容量',
+                example: '51 ml',
+                note: 'Mitral Regurgitation Volume\n需記錄 MR VTI 和 Nyquist',
+                color: '#f43f5e'
+            },
+            { 
+                id: 'la_lv',
+                name: 'LA/LV',
+                nameTW: '左心房/左心室',
+                example: 'Dilated LA/LV, preserved LVEF',
+                note: '評估腔室大小與功能',
+                color: '#8b5cf6'
+            },
+            { 
+                id: 'pulmonary_flow',
+                name: 'Pulmonary Flow',
+                nameTW: '肺靜脈血流',
+                example: 'Systolic flow reversal',
+                note: '重度 MR 可見收縮期逆流',
+                color: '#14b8a6'
+            },
+            { 
+                id: 'calcification',
+                name: 'Calcification',
+                nameTW: '鈣化評估',
+                example: 'Suspected MAC over posterior annulus',
+                note: 'MAC = Mitral Annular Calcification\n僧帽瓣環鈣化',
+                color: '#64748b'
+            },
+            { 
+                id: 'transmitral_gradient',
+                name: 'Transmitral Gradient',
+                nameTW: '跨瓣壓差',
+                example: 'Mean/Max 5/22 mmHg',
+                note: '平均/最大跨瓣梯度',
+                color: '#f97316'
+            },
+            { 
+                id: 'mv_area',
+                name: 'Mitral Valve Area',
+                nameTW: '僧帽瓣面積',
+                example: '5.95 cm² (by PHT)',
+                note: 'AP diameter > 35 mm → XT/XTW\nAP diameter ≤ 35 mm → NT/NTW',
+                color: '#a855f7'
+            },
+            { 
+                id: 'leaflet_length',
+                name: 'Leaflet Length',
+                nameTW: '瓣葉長度',
+                example: 'PML: 7.8-8.4 mm\nAML: 19.2-20 mm',
+                note: 'Leaflet-to-Annulus Index\nAML = 前瓣葉, PML = 後瓣葉',
+                color: '#0ea5e9'
+            },
+            { 
+                id: 'atrial_septum',
+                name: 'Atrial Septum',
+                nameTW: '心房中隔',
+                example: 'NIL / PFO / ASD',
+                note: '評估 TSP 穿刺位置',
+                color: '#6366f1'
+            },
+            { 
+                id: 'others',
+                name: 'Others',
+                nameTW: '其他發現',
+                example: 'TR, PHTN (TR Vmax = 3.88 m/s)',
+                note: 'TR = 三尖瓣逆流\nPHTN = 肺高壓',
+                color: '#78716c'
+            },
+        ];
+
+        const MR_GRADING_CRITERIA = {
+            primary: {
+                title: 'Primary MR (Degenerative)',
+                criteria: [
+                    { param: 'EROA', mild: '< 0.20', moderate: '0.20-0.39', severe: '≥ 0.40', unit: 'cm²' },
+                    { param: 'Regurgitant Volume', mild: '< 30', moderate: '30-59', severe: '≥ 60', unit: 'ml' },
+                    { param: 'Vena Contracta', mild: '< 3', moderate: '3-6', severe: '≥ 7', unit: 'mm' },
+                ]
+            },
+            secondary: {
+                title: 'Secondary MR (Functional)',
+                criteria: [
+                    { param: 'EROA', mild: '< 0.20', moderate: '0.20-0.29', severe: '≥ 0.30', unit: 'cm²' },
+                    { param: 'Regurgitant Volume', mild: '< 30', moderate: '30-44', severe: '≥ 45', unit: 'ml' },
+                    { param: 'Vena Contracta', mild: '< 3', moderate: '3-6', severe: '≥ 7', unit: 'mm' },
+                ]
+            }
+        };
+
+        const CLIP_SIZING = {
+            title: 'MitraClip 尺寸選擇',
+            types: [
+                { name: 'NT', fullName: 'NTR', width: '較窄', apDiameter: '≤ 35 mm', indication: '較小瓣葉' },
+                { name: 'NTW', fullName: 'NTW', width: '較窄加寬', apDiameter: '≤ 35 mm', indication: '較小瓣葉但需更寬夾持' },
+                { name: 'XT', fullName: 'XTR', width: '標準', apDiameter: '> 35 mm', indication: '標準瓣葉' },
+                { name: 'XTW', fullName: 'XTW', width: '標準加寬', apDiameter: '> 35 mm', indication: '標準瓣葉需更寬夾持' },
+            ]
+        };
+
+        const PRE_ASSESSMENT_ITEMS = [
+            { 
+                category: '病人篩選與評估',
+                items: [
+                    { id: 'pa1', text: '病人已接受 optimal medical treatment > 3 months', critical: true },
+                    { id: 'pa2', text: '評估病人是否符合 Inclusion criteria', critical: true },
+                    { id: 'pa3', text: '完成病人收案 (enrollment)', critical: true },
+                    { id: 'pa4', text: '組織團隊 CV-CVS 評估會議', critical: true },
+                    { id: 'pa5', text: '病情說明，團隊與家屬會議', critical: true },
+                ]
+            },
+            { 
+                category: '醫療團隊溝通',
+                items: [
+                    { id: 'mc1', text: '與 Abbott 確認時間', critical: true },
+                    { id: 'mc2', text: '通知 CVS、麻醉科、導管室', critical: true },
+                    { id: 'mc3', text: '排定團隊會議時間 (Teams or Google Meet)', critical: false },
+                ]
+            },
+            { 
+                category: '檢查與檢驗',
+                items: [
+                    { id: 'lab1', text: 'CBC/DC, Na, K, BUN/Cre 檢查', critical: true },
+                    { id: 'lab2', text: 'CXR, ECG 檢查', critical: true },
+                    { id: 'lab3', text: 'Lactate, Fibrinogen 檢測', critical: false },
+                    { id: 'lab4', text: 'PT/APTT, Albumin, Pro-BNP 檢測', critical: true },
+                ]
+            },
+            { 
+                category: '藥物處置',
+                items: [
+                    { id: 'med1', text: '藥物治療開始', critical: false },
+                    { id: 'med2', text: '確認需停用的藥物清單', critical: true },
+                    { id: 'med3', text: 'SGLT2i 抑制劑停用（術前四天）', critical: true },
+                ]
+            },
+            { 
+                category: '預約安排',
+                items: [
+                    { id: 'appt1', text: '安排麻醉科門診', critical: true },
+                    { id: 'appt2', text: '麻醉科評估與建議完成', critical: true },
+                ]
+            },
+        ];
+
+        const PRE_PROCEDURE_ITEMS = [
+            { 
+                category: '設備與資源準備',
+                items: [
+                    { id: 'eq1', text: '借用六樓心臟超音波機器', critical: true },
+                    { id: 'eq2', text: '確認導管室準備完成 (鋼架消毒，排程)', critical: true },
+                    { id: 'eq3', text: '確認 TEER 醫材準備就緒', critical: true },
+                    { id: 'eq4', text: '聯絡 Philips 工程師確認影像連線', critical: true },
+                ]
+            },
+            { 
+                category: '排程確認',
+                items: [
+                    { id: 'sch1', text: '麻醉科排程確認', critical: true },
+                    { id: 'sch2', text: '開刀房上刀表確認', critical: true },
+                    { id: 'sch3', text: '手術日期與時間最終確認', critical: true },
+                ]
+            },
+            { 
+                category: '團隊準備',
+                items: [
+                    { id: 'team1', text: '團隊會議 (CCU HN, 2A HN, NP, VS)', critical: true },
+                    { id: 'team2', text: '照護人員納入 briefing: CCU 護理師及 NP, 2A 護理師及 NP', critical: false },
+                ]
+            },
+            { 
+                category: '血液準備',
+                items: [
+                    { id: 'blood1', text: '備血 PRBC 6 單位', critical: true },
+                    { id: 'blood2', text: '血小板 (Platelet) 24 單位', critical: true },
+                ]
+            },
+        ];
+
+        const SURGERY_DAY_ITEMS = [
+            { 
+                category: '術前準備',
+                items: [
+                    { id: 'sd1', text: '病人抵達並準備就緒', critical: true },
+                    { id: 'sd2', text: '麻醉科全麻準備', critical: true },
+                    { id: 'sd3', text: '術中 TEE 設備準備，TEE 影像連線', critical: true },
+                ]
+            },
+            { 
+                category: '手術進行',
+                items: [
+                    { id: 'sd4', text: '術中 TEE 記錄', critical: true },
+                    { id: 'sd5', text: '監測生命徵象', critical: true },
+                ]
+            },
+        ];
+
+        const POST_PROCEDURE_ITEMS = [
+            { 
+                category: '交班與溝通',
+                items: [
+                    { id: 'pp1', text: '與 CCU 專責醫師交班', critical: true },
+                    { id: 'pp2', text: '與專科護理師交班', critical: true },
+                    { id: 'pp3', text: '完成與家屬病情說明', critical: true },
+                    { id: 'pp4', text: '通知心超室機器歸還，與探頭清潔', critical: true },
+                ]
+            },
+            { 
+                category: '術後監測',
+                items: [
+                    { id: 'pp5', text: '安排術後超音波檢查評估', critical: true },
+                    { id: 'pp6', text: '監測生命徵象與可能併發症', critical: true },
+                    { id: 'pp7', text: '收縮血壓控制在 < 120 mmHg', critical: true },
+                ]
+            },
+        ];
+
+        const EQUIPMENT_CHECKLIST = {
+            mainEquipment: [
+                { name: 'Epiq 7C', unit: '台' },
+                { name: 'Epiq 7G', unit: '台' },
+                { name: 'Siemens', unit: '台' },
+            ],
+            teeProbes: [
+                { name: 'X7-2t', unit: '隻' },
+                { name: 'X8-2t', unit: '隻' },
+                { name: 'S7-3t', unit: '隻' },
+                { name: 'Siemens TEE', unit: '隻' },
+            ],
+            anesthesia: [
+                { name: 'Xylocaine Spray 10%', unit: '瓶' },
+                { name: 'Xylocaine 白色噴頭', unit: '隻' },
+                { name: 'Xylocaine jelly 2%', unit: '條' },
+            ],
+            supplies: [
+                { name: 'BITE 成人/小孩', unit: '個' },
+                { name: '酵素空針', unit: '隻' },
+                { name: '量杯', unit: '個' },
+            ],
+            cables: [
+                { name: '黑色轉接線', numbers: [1, 2, 3, 4, 5, 6] },
+            ],
+            documents: [
+                { name: '交班本', unit: '本' },
+            ],
+        };
+
+        // ========== Components ==========
+        const Header = ({ currentSection, onBack }) => (
+            <header style={{
+                background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)',
+                padding: '16px 20px',
+                position: 'sticky',
+                top: 0,
+                zIndex: 100,
+                boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    {currentSection !== 'home' && (
+                        <button onClick={onBack} style={{
+                            background: 'rgba(255,255,255,0.15)',
+                            border: 'none',
+                            borderRadius: '10px',
+                            padding: '8px 12px',
+                            color: 'white',
+                            fontSize: '18px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                        }}>
+                            ←
+                        </button>
+                    )}
+                    <div>
+                        <h1 style={{ 
+                            fontSize: currentSection === 'home' ? '22px' : '18px', 
+                            fontWeight: 700,
+                            letterSpacing: '0.5px'
+                        }}>
+                            {currentSection === 'home' ? '❤️ TEER TEE 評估與檢核表' : SECTIONS.find(s => s.id === currentSection)?.title || ''}
+                        </h1>
+                        {currentSection === 'home' && (
+                            <p style={{ fontSize: '12px', opacity: 0.8, marginTop: '4px' }}>
+                                Transcatheter Edge-to-Edge Repair
+                            </p>
+                        )}
+                    </div>
+                </div>
+            </header>
+        );
+
+        const MenuCard = ({ section, onClick, index }) => (
+            <div 
+                onClick={onClick}
+                className="fade-in"
+                style={{
+                    background: `linear-gradient(135deg, var(--bg-card) 0%, ${section.color}22 100%)`,
+                    borderRadius: '16px',
+                    padding: '20px',
+                    cursor: 'pointer',
+                    border: `1px solid ${section.color}44`,
+                    transition: 'all 0.3s ease',
+                    animationDelay: `${index * 0.05}s`,
+                }}
+                onMouseEnter={e => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = `0 8px 30px ${section.color}33`;
+                }}
+                onMouseLeave={e => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                }}
+            >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                    <span style={{ 
+                        fontSize: '32px',
+                        filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))'
+                    }}>{section.icon}</span>
+                    <div>
+                        <h3 style={{ fontSize: '17px', fontWeight: 600, color: section.color }}>
+                            {section.title}
+                        </h3>
+                    </div>
+                    <span style={{ marginLeft: 'auto', opacity: 0.5 }}>→</span>
+                </div>
+            </div>
+        );
+
+        const InfoCard = ({ title, children, color = 'var(--accent)', icon }) => (
+            <div className="fade-in" style={{
+                background: 'var(--bg-card)',
+                borderRadius: '16px',
+                padding: '20px',
+                marginBottom: '16px',
+                borderLeft: `4px solid ${color}`,
+            }}>
+                {title && (
+                    <h3 style={{ 
+                        fontSize: '16px', 
+                        fontWeight: 600, 
+                        marginBottom: '14px',
+                        color: color,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px'
+                    }}>
+                        {icon && <span>{icon}</span>}
+                        {title}
+                    </h3>
+                )}
+                {children}
+            </div>
+        );
+
+        const AlertBox = ({ type = 'info', children }) => {
+            const styles = {
+                critical: { bg: '#ef444422', border: '#ef4444', icon: '🚨' },
+                warning: { bg: '#f59e0b22', border: '#f59e0b', icon: '⚠️' },
+                success: { bg: '#10b98122', border: '#10b981', icon: '✅' },
+                info: { bg: '#3b82f622', border: '#3b82f6', icon: 'ℹ️' },
+            };
+            const s = styles[type];
+            return (
+                <div style={{
+                    background: s.bg,
+                    borderLeft: `4px solid ${s.border}`,
+                    borderRadius: '8px',
+                    padding: '14px',
+                    marginBottom: '12px',
+                    display: 'flex',
+                    gap: '10px',
+                    alignItems: 'flex-start',
+                }}>
+                    <span>{s.icon}</span>
+                    <div style={{ fontSize: '14px', lineHeight: 1.6 }}>{children}</div>
+                </div>
+            );
+        };
+
+        const DataRow = ({ label, value, highlight }) => (
+            <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '10px 0',
+                borderBottom: '1px solid var(--border)',
+            }}>
+                <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>{label}</span>
+                <span style={{ 
+                    fontWeight: 600, 
+                    color: highlight ? 'var(--accent)' : 'var(--text-primary)',
+                    fontSize: '15px'
+                }}>{value}</span>
+            </div>
+        );
+
+        const Badge = ({ text, color }) => (
+            <span style={{
+                background: `${color}22`,
+                color: color,
+                padding: '4px 10px',
+                borderRadius: '20px',
+                fontSize: '12px',
+                fontWeight: 500,
+            }}>{text}</span>
+        );
+
+        const ChecklistItem = ({ item, checked, onToggle }) => (
+            <div
+                onClick={onToggle}
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '14px',
+                    background: checked ? 'rgba(16,185,129,0.15)' : 'var(--bg-dark)',
+                    borderRadius: '10px',
+                    marginBottom: '8px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    border: item.critical && !checked 
+                        ? '1px solid rgba(239,68,68,0.5)' 
+                        : '1px solid transparent',
+                }}
+            >
+                <div style={{
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '6px',
+                    border: `2px solid ${checked ? '#10b981' : 'var(--border)'}`,
+                    background: checked ? '#10b981' : 'transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s',
+                    flexShrink: 0,
+                }}>
+                    {checked && <span style={{ color: 'white', fontSize: '14px' }}>✓</span>}
+                </div>
+                <span style={{
+                    fontSize: '14px',
+                    textDecoration: checked ? 'line-through' : 'none',
+                    color: checked ? 'var(--text-muted)' : 'var(--text-primary)',
+                    flex: 1,
+                }}>
+                    {item.text}
+                </span>
+                {item.critical && !checked && (
+                    <Badge text="必要" color="#ef4444" />
+                )}
+            </div>
+        );
+
+        // ========== Section Components ==========
+        const OverviewSection = () => (
+            <div style={{ padding: '20px' }}>
+                <InfoCard title="TEER 簡介" icon="❤️" color="#ef4444">
+                    <div style={{ fontSize: '14px', lineHeight: 1.8 }}>
+                        <p style={{ marginBottom: '12px' }}>
+                            <strong>經導管緣對緣修復術 (TEER)</strong> 是一種微創手術，用於治療二尖瓣逆流 (MR)，通過夾合二尖瓣前後葉來減少逆流。
+                        </p>
+                        <div style={{ 
+                            background: 'var(--bg-dark)', 
+                            borderRadius: '12px', 
+                            padding: '16px',
+                            marginTop: '12px'
+                        }}>
+                            <div style={{ fontWeight: 600, marginBottom: '10px', color: 'var(--accent)' }}>
+                                TEE 在 TEER 中的角色：
+                            </div>
+                            <ul style={{ paddingLeft: '20px', color: 'var(--text-secondary)' }}>
+                                <li style={{ marginBottom: '8px' }}>術前：MR 嚴重度評估、解剖適應性</li>
+                                <li style={{ marginBottom: '8px' }}>術中：引導穿刺、Clip 定位與釋放</li>
+                                <li>術後：評估殘餘 MR 與併發症</li>
+                            </ul>
+                        </div>
+                    </div>
+                </InfoCard>
+
+                <InfoCard title="MR 病因分類" icon="📊" color="#3b82f6">
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                        <div style={{ 
+                            background: 'var(--bg-dark)', 
+                            borderRadius: '10px', 
+                            padding: '14px',
+                        }}>
+                            <div style={{ fontSize: '24px', marginBottom: '8px' }}>🔴</div>
+                            <div style={{ fontWeight: 600, marginBottom: '6px', color: '#ef4444' }}>Primary MR</div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                                = Degenerative MR<br/>
+                                瓣葉本身病變
+                            </div>
+                        </div>
+                        <div style={{ 
+                            background: 'var(--bg-dark)', 
+                            borderRadius: '10px', 
+                            padding: '14px',
+                        }}>
+                            <div style={{ fontSize: '24px', marginBottom: '8px' }}>🟠</div>
+                            <div style={{ fontWeight: 600, marginBottom: '6px', color: '#f59e0b' }}>Secondary MR</div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                                = Functional MR<br/>
+                                心室擴大導致
+                            </div>
+                        </div>
+                    </div>
+                </InfoCard>
+
+                <AlertBox type="info">
+                    <strong>評估順序：</strong>Color mapping → X-plane interrogation → 3D imaging
+                </AlertBox>
+
+                <InfoCard title="適應症" icon="✅" color="#10b981">
+                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.8 }}>
+                        <p>• 重度 MR (Grade 3-4+)</p>
+                        <p>• 最佳藥物治療 {'>'} 3 個月仍有症狀</p>
+                        <p>• 外科手術高風險或不適合</p>
+                        <p>• 解剖條件適合 TEER</p>
+                    </div>
+                </InfoCard>
+            </div>
+        );
+
+        const TEEEvalSection = () => (
+            <div style={{ padding: '20px' }}>
+                <AlertBox type="info">
+                    以下為 TEER 術前 TEE 必須評估的參數，點擊可查看詳細說明
+                </AlertBox>
+
+                {TEE_EVAL_PARAMS.map((param, i) => (
+                    <InfoCard 
+                        key={i} 
+                        title={`${param.name} (${param.nameTW})`}
+                        icon="📋"
+                        color={param.color}
+                    >
+                        <div style={{ 
+                            background: 'var(--bg-dark)', 
+                            borderRadius: '10px', 
+                            padding: '14px',
+                            marginBottom: '12px'
+                        }}>
+                            <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                                範例：
+                            </div>
+                            <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--accent)' }}>
+                                {param.example}
+                            </div>
+                        </div>
+                        <div style={{ 
+                            fontSize: '13px', 
+                            color: 'var(--text-secondary)',
+                            whiteSpace: 'pre-line',
+                            lineHeight: 1.7
+                        }}>
+                            {param.note}
+                        </div>
+                    </InfoCard>
+                ))}
+            </div>
+        );
+
+        const MRGradingSection = () => (
+            <div style={{ padding: '20px' }}>
+                <AlertBox type="warning">
+                    <strong>注意：</strong>Primary MR 與 Secondary MR 的嚴重度標準不同！
+                </AlertBox>
+
+                {/* Primary MR */}
+                <InfoCard title="Primary MR (Degenerative) 分級標準" icon="🔴" color="#ef4444">
+                    <div style={{ overflowX: 'auto' }}>
+                        <table style={{ width: '100%', fontSize: '13px', borderCollapse: 'collapse' }}>
+                            <thead>
+                                <tr style={{ background: 'var(--bg-dark)' }}>
+                                    <th style={{ padding: '10px', textAlign: 'left' }}>參數</th>
+                                    <th style={{ padding: '10px', textAlign: 'center', color: '#10b981' }}>輕度</th>
+                                    <th style={{ padding: '10px', textAlign: 'center', color: '#f59e0b' }}>中度</th>
+                                    <th style={{ padding: '10px', textAlign: 'center', color: '#ef4444' }}>重度</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {MR_GRADING_CRITERIA.primary.criteria.map((c, i) => (
+                                    <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
+                                        <td style={{ padding: '10px', fontWeight: 500 }}>{c.param}<br/><span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>({c.unit})</span></td>
+                                        <td style={{ padding: '10px', textAlign: 'center' }}>{c.mild}</td>
+                                        <td style={{ padding: '10px', textAlign: 'center' }}>{c.moderate}</td>
+                                        <td style={{ padding: '10px', textAlign: 'center', fontWeight: 600, color: '#ef4444' }}>{c.severe}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </InfoCard>
+
+                {/* Secondary MR */}
+                <InfoCard title="Secondary MR (Functional) 分級標準" icon="🟠" color="#f59e0b">
+                    <div style={{ overflowX: 'auto' }}>
+                        <table style={{ width: '100%', fontSize: '13px', borderCollapse: 'collapse' }}>
+                            <thead>
+                                <tr style={{ background: 'var(--bg-dark)' }}>
+                                    <th style={{ padding: '10px', textAlign: 'left' }}>參數</th>
+                                    <th style={{ padding: '10px', textAlign: 'center', color: '#10b981' }}>輕度</th>
+                                    <th style={{ padding: '10px', textAlign: 'center', color: '#f59e0b' }}>中度</th>
+                                    <th style={{ padding: '10px', textAlign: 'center', color: '#ef4444' }}>重度</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {MR_GRADING_CRITERIA.secondary.criteria.map((c, i) => (
+                                    <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
+                                        <td style={{ padding: '10px', fontWeight: 500 }}>{c.param}<br/><span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>({c.unit})</span></td>
+                                        <td style={{ padding: '10px', textAlign: 'center' }}>{c.mild}</td>
+                                        <td style={{ padding: '10px', textAlign: 'center' }}>{c.moderate}</td>
+                                        <td style={{ padding: '10px', textAlign: 'center', fontWeight: 600, color: '#ef4444' }}>{c.severe}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <AlertBox type="info">
+                        Secondary MR 的 EROA 和 RVol 閾值較 Primary MR 低
+                    </AlertBox>
+                </InfoCard>
+
+                {/* Additional Criteria */}
+                <InfoCard title="其他嚴重度指標" icon="📈" color="#8b5cf6">
+                    <div style={{ fontSize: '14px' }}>
+                        <DataRow label="PISA Radius (重度)" value="≥ 9 mm" highlight />
+                        <DataRow label="LA/LV 擴大" value="提示慢性重度 MR" />
+                        <DataRow label="肺靜脈收縮期逆流" value="提示重度 MR" />
+                        <DataRow label="E-wave dominant" value="提示重度 MR" />
+                    </div>
+                </InfoCard>
+            </div>
+        );
+
+        const AnatomySection = () => (
+            <div style={{ padding: '20px' }}>
+                <InfoCard title="MitraClip 尺寸選擇" icon="📏" color="#8b5cf6">
+                    <AlertBox type="info">
+                        根據 <strong>AP diameter</strong> (前後徑) 選擇 Clip 類型
+                    </AlertBox>
+                    
+                    <div style={{ overflowX: 'auto' }}>
+                        <table style={{ width: '100%', fontSize: '13px', borderCollapse: 'collapse' }}>
+                            <thead>
+                                <tr style={{ background: 'var(--bg-dark)' }}>
+                                    <th style={{ padding: '10px', textAlign: 'left' }}>類型</th>
+                                    <th style={{ padding: '10px', textAlign: 'center' }}>AP 直徑</th>
+                                    <th style={{ padding: '10px', textAlign: 'center' }}>特點</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {CLIP_SIZING.types.map((t, i) => (
+                                    <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
+                                        <td style={{ padding: '10px', fontWeight: 600, color: '#8b5cf6' }}>{t.name}</td>
+                                        <td style={{ padding: '10px', textAlign: 'center' }}>{t.apDiameter}</td>
+                                        <td style={{ padding: '10px', textAlign: 'center', fontSize: '12px', color: 'var(--text-secondary)' }}>{t.indication}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </InfoCard>
+
+                <InfoCard title="瓣葉長度評估" icon="📐" color="#3b82f6">
+                    <div style={{ 
+                        background: 'var(--bg-dark)', 
+                        borderRadius: '10px', 
+                        padding: '14px',
+                        marginBottom: '12px'
+                    }}>
+                        <div style={{ fontWeight: 600, marginBottom: '10px', color: '#3b82f6' }}>
+                            Leaflet-to-Annulus Index
+                        </div>
+                        <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                            評估瓣葉是否足夠長以進行 TEER
+                        </p>
+                    </div>
+                    
+                    <DataRow label="AML (前瓣葉)" value="典型 19-20 mm" />
+                    <DataRow label="PML (後瓣葉)" value="典型 7.8-8.4 mm" />
+                    <DataRow label="最小抓取長度" value="需足夠組織供 Clip 抓取" />
+                </InfoCard>
+
+                <InfoCard title="Jet 位置評估" icon="🎯" color="#ec4899">
+                    <div style={{ 
+                        display: 'grid', 
+                        gridTemplateColumns: 'repeat(3, 1fr)', 
+                        gap: '8px',
+                        marginBottom: '14px'
+                    }}>
+                        {['A1/P1', 'A2/P2', 'A3/P3'].map((pos, i) => (
+                            <div key={i} style={{
+                                background: pos === 'A2/P2' ? 'rgba(236,72,153,0.2)' : 'var(--bg-dark)',
+                                borderRadius: '8px',
+                                padding: '12px',
+                                textAlign: 'center',
+                                border: pos === 'A2/P2' ? '2px solid #ec4899' : '1px solid var(--border)',
+                            }}>
+                                <div style={{ fontWeight: 600, fontSize: '14px' }}>{pos}</div>
+                                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                                    {i === 0 ? '外側' : i === 1 ? '中央 (最常見)' : '內側'}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    
+                    <AlertBox type="success">
+                        <strong>A2/P2</strong> 是最常見的 Jet origin，也是 TEER 最理想的位置
+                    </AlertBox>
+                </InfoCard>
+
+                <InfoCard title="心房中隔評估" icon="🫀" color="#6366f1">
+                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.8 }}>
+                        <p>• 評估最佳 TSP 穿刺位置</p>
+                        <p>• 穿刺高度：距離二尖瓣環約 4-4.5 cm</p>
+                        <p>• 確認無 PFO、ASD 或中隔動脈瘤</p>
+                        <p>• 評估中隔厚度與活動性</p>
+                    </div>
+                </InfoCard>
+            </div>
+        );
+
+        const ChecklistSectionComponent = ({ title, items, checkedItems, setCheckedItems }) => {
+            const toggleItem = (id) => {
+                setCheckedItems(prev => ({ ...prev, [id]: !prev[id] }));
+            };
+
+            return (
+                <div style={{ padding: '20px' }}>
+                    {items.map((category, catIndex) => (
+                        <InfoCard 
+                            key={catIndex} 
+                            title={category.category} 
+                            icon="📋" 
+                            color={['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'][catIndex % 5]}
+                        >
+                            {category.items.map((item) => (
+                                <ChecklistItem
+                                    key={item.id}
+                                    item={item}
+                                    checked={checkedItems[item.id]}
+                                    onToggle={() => toggleItem(item.id)}
+                                />
+                            ))}
+                        </InfoCard>
+                    ))}
+                </div>
+            );
+        };
+
+        const EquipmentSection = () => {
+            const [departureChecks, setDepartureChecks] = useState({});
+            const [returnChecks, setReturnChecks] = useState({});
+            const [teeCondition, setTeeCondition] = useState({ departure: '', return: '' });
+
+            return (
+                <div style={{ padding: '20px' }}>
+                    <AlertBox type="warning">
+                        <strong>去程：</strong>設備送出時填寫 | <strong>回程：</strong>設備送回時填寫
+                    </AlertBox>
+
+                    <InfoCard title="主要設備" icon="🖥️" color="#6366f1">
+                        {EQUIPMENT_CHECKLIST.mainEquipment.map((eq, i) => (
+                            <div key={i} style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                padding: '12px',
+                                background: 'var(--bg-dark)',
+                                borderRadius: '8px',
+                                marginBottom: '8px',
+                            }}>
+                                <span style={{ fontWeight: 500 }}>{eq.name}</span>
+                                <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{eq.unit}</span>
+                            </div>
+                        ))}
+                    </InfoCard>
+
+                    <InfoCard title="TEE 探頭" icon="🔊" color="#ec4899">
+                        {EQUIPMENT_CHECKLIST.teeProbes.map((probe, i) => (
+                            <div key={i} style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                padding: '12px',
+                                background: 'var(--bg-dark)',
+                                borderRadius: '8px',
+                                marginBottom: '8px',
+                            }}>
+                                <span style={{ fontWeight: 500, color: '#ec4899' }}>{probe.name}</span>
+                                <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{probe.unit}</span>
+                            </div>
+                        ))}
+                    </InfoCard>
+
+                    <InfoCard title="麻醉用品" icon="💉" color="#10b981">
+                        {EQUIPMENT_CHECKLIST.anesthesia.map((item, i) => (
+                            <div key={i} style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                padding: '12px',
+                                background: 'var(--bg-dark)',
+                                borderRadius: '8px',
+                                marginBottom: '8px',
+                            }}>
+                                <span>{item.name}</span>
+                                <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{item.unit}</span>
+                            </div>
+                        ))}
+                    </InfoCard>
+
+                    <InfoCard title="檢查用品" icon="🧪" color="#f59e0b">
+                        {EQUIPMENT_CHECKLIST.supplies.map((item, i) => (
+                            <div key={i} style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                padding: '12px',
+                                background: 'var(--bg-dark)',
+                                borderRadius: '8px',
+                                marginBottom: '8px',
+                            }}>
+                                <span>{item.name}</span>
+                                <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{item.unit}</span>
+                            </div>
+                        ))}
+                    </InfoCard>
+
+                    <InfoCard title="連接線材" icon="🔌" color="#3b82f6">
+                        <div style={{ 
+                            background: 'var(--bg-dark)', 
+                            borderRadius: '10px', 
+                            padding: '14px',
+                        }}>
+                            <div style={{ fontWeight: 500, marginBottom: '10px' }}>黑色轉接線</div>
+                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                {[1, 2, 3, 4, 5, 6].map(num => (
+                                    <div key={num} style={{
+                                        width: '40px',
+                                        height: '40px',
+                                        borderRadius: '8px',
+                                        background: 'var(--bg-card)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontWeight: 600,
+                                        border: '1px solid var(--border)',
+                                    }}>
+                                        {num}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </InfoCard>
+
+                    <InfoCard title="TEE 探頭狀態檢查" icon="🔍" color="#ef4444">
+                        <div style={{ 
+                            background: 'var(--bg-dark)', 
+                            borderRadius: '10px', 
+                            padding: '14px',
+                        }}>
+                            <div style={{ fontWeight: 500, marginBottom: '10px' }}>咬痕外觀檢查</div>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <button style={{
+                                    flex: 1,
+                                    padding: '12px',
+                                    borderRadius: '8px',
+                                    border: 'none',
+                                    background: 'rgba(16,185,129,0.2)',
+                                    color: '#10b981',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                }}>
+                                    ✓ 正常
+                                </button>
+                                <button style={{
+                                    flex: 1,
+                                    padding: '12px',
+                                    borderRadius: '8px',
+                                    border: 'none',
+                                    background: 'rgba(239,68,68,0.2)',
+                                    color: '#ef4444',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                }}>
+                                    ✗ 異常
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div style={{ 
+                            marginTop: '12px',
+                            padding: '14px',
+                            background: 'rgba(245,158,11,0.15)',
+                            borderRadius: '10px',
+                        }}>
+                            <div style={{ fontWeight: 500, marginBottom: '8px', color: '#f59e0b' }}>
+                                酵素擦消
+                            </div>
+                            <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                                使用後需進行酵素擦消並記錄執行人員
+                            </p>
+                        </div>
+                    </InfoCard>
+                </div>
+            );
+        };
+
+        const FullChecklistSection = () => {
+            const [checkedItems, setCheckedItems] = useState({});
+            
+            const allItems = [
+                ...PRE_ASSESSMENT_ITEMS,
+                ...PRE_PROCEDURE_ITEMS,
+                ...SURGERY_DAY_ITEMS,
+                ...POST_PROCEDURE_ITEMS,
+            ];
+
+            const totalItems = allItems.reduce((sum, cat) => sum + cat.items.length, 0);
+            const checkedCount = Object.values(checkedItems).filter(Boolean).length;
+            const progress = (checkedCount / totalItems) * 100;
+
+            const toggleItem = (id) => {
+                setCheckedItems(prev => ({ ...prev, [id]: !prev[id] }));
+            };
+
+            const resetChecklist = () => {
+                setCheckedItems({});
+            };
+
+            const stages = [
+                { title: '1️⃣ 術前評估階段', items: PRE_ASSESSMENT_ITEMS, color: '#10b981' },
+                { title: '2️⃣ 術前準備階段', items: PRE_PROCEDURE_ITEMS, color: '#f59e0b' },
+                { title: '3️⃣ 手術當日', items: SURGERY_DAY_ITEMS, color: '#ef4444' },
+                { title: '4️⃣ 術後處置', items: POST_PROCEDURE_ITEMS, color: '#3b82f6' },
+            ];
+
+            return (
+                <div style={{ padding: '20px' }}>
+                    {/* Progress Bar */}
+                    <div style={{
+                        background: 'var(--bg-card)',
+                        borderRadius: '16px',
+                        padding: '20px',
+                        marginBottom: '20px',
+                    }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                            <span style={{ fontWeight: 600 }}>整體完成進度</span>
+                            <span style={{ color: 'var(--accent)', fontWeight: 600 }}>
+                                {checkedCount} / {totalItems}
+                            </span>
+                        </div>
+                        <div style={{
+                            height: '12px',
+                            background: 'var(--bg-dark)',
+                            borderRadius: '6px',
+                            overflow: 'hidden',
+                        }}>
+                            <div style={{
+                                height: '100%',
+                                width: `${progress}%`,
+                                background: progress === 100 
+                                    ? 'linear-gradient(90deg, #10b981 0%, #34d399 100%)'
+                                    : 'linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%)',
+                                transition: 'width 0.3s ease',
+                                borderRadius: '6px',
+                            }} />
+                        </div>
+                        {progress === 100 && (
+                            <div style={{ 
+                                marginTop: '12px', 
+                                textAlign: 'center', 
+                                color: '#10b981',
+                                fontWeight: 600,
+                                fontSize: '14px'
+                            }}>
+                                ✅ 所有項目已完成！準備就緒！
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Reset Button */}
+                    <button
+                        onClick={resetChecklist}
+                        style={{
+                            width: '100%',
+                            padding: '14px',
+                            background: 'var(--bg-card)',
+                            border: '1px solid var(--border)',
+                            borderRadius: '12px',
+                            color: 'var(--text-secondary)',
+                            fontSize: '14px',
+                            cursor: 'pointer',
+                            marginBottom: '20px',
+                            transition: 'all 0.2s',
+                        }}
+                    >
+                        🔄 重置所有清單
+                    </button>
+
+                    {/* All Stages */}
+                    {stages.map((stage, stageIndex) => (
+                        <div key={stageIndex} style={{ marginBottom: '24px' }}>
+                            <h2 style={{ 
+                                fontSize: '18px', 
+                                fontWeight: 700, 
+                                marginBottom: '16px',
+                                color: stage.color,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}>
+                                {stage.title}
+                            </h2>
+                            
+                            {stage.items.map((category, catIndex) => (
+                                <InfoCard 
+                                    key={catIndex} 
+                                    title={category.category} 
+                                    icon="📋" 
+                                    color={stage.color}
+                                >
+                                    {category.items.map((item) => (
+                                        <ChecklistItem
+                                            key={item.id}
+                                            item={item}
+                                            checked={checkedItems[item.id]}
+                                            onToggle={() => toggleItem(item.id)}
+                                        />
+                                    ))}
+                                </InfoCard>
+                            ))}
+                        </div>
+                    ))}
+                </div>
+            );
+        };
+
+        // ========== Main App ==========
+        const App = () => {
+            const [currentSection, setCurrentSection] = useState('home');
+            const [preAssessmentChecks, setPreAssessmentChecks] = useState({});
+            const [preProcedureChecks, setPreProcedureChecks] = useState({});
+            const [surgeryDayChecks, setSurgeryDayChecks] = useState({});
+            const [postProcedureChecks, setPostProcedureChecks] = useState({});
+
+            const renderSection = () => {
+                switch (currentSection) {
+                    case 'overview': return <OverviewSection />;
+                    case 'tee-eval': return <TEEEvalSection />;
+                    case 'mr-grading': return <MRGradingSection />;
+                    case 'anatomy': return <AnatomySection />;
+                    case 'pre-assessment': 
+                        return <ChecklistSectionComponent 
+                            title="術前評估階段" 
+                            items={PRE_ASSESSMENT_ITEMS} 
+                            checkedItems={preAssessmentChecks}
+                            setCheckedItems={setPreAssessmentChecks}
+                        />;
+                    case 'pre-procedure': 
+                        return <ChecklistSectionComponent 
+                            title="術前準備階段" 
+                            items={PRE_PROCEDURE_ITEMS} 
+                            checkedItems={preProcedureChecks}
+                            setCheckedItems={setPreProcedureChecks}
+                        />;
+                    case 'surgery-day': 
+                        return <ChecklistSectionComponent 
+                            title="手術當日" 
+                            items={SURGERY_DAY_ITEMS} 
+                            checkedItems={surgeryDayChecks}
+                            setCheckedItems={setSurgeryDayChecks}
+                        />;
+                    case 'post-procedure': 
+                        return <ChecklistSectionComponent 
+                            title="術後處置" 
+                            items={POST_PROCEDURE_ITEMS} 
+                            checkedItems={postProcedureChecks}
+                            setCheckedItems={setPostProcedureChecks}
+                        />;
+                    case 'equipment': return <EquipmentSection />;
+                    case 'checklist': return <FullChecklistSection />;
+                    default: return null;
+                }
+            };
+
+            return (
+                <div style={{ minHeight: '100vh', paddingBottom: '80px' }}>
+                    <Header 
+                        currentSection={currentSection}
+                        onBack={() => setCurrentSection('home')}
+                    />
+
+                    {currentSection === 'home' ? (
+                        <div style={{ padding: '20px' }}>
+                            {/* Quick Stats */}
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(3, 1fr)',
+                                gap: '10px',
+                                marginBottom: '24px',
+                            }}>
+                                {[
+                                    { label: 'TEE 參數', value: '16', unit: '項' },
+                                    { label: '檢核項目', value: '35+', unit: '項' },
+                                    { label: '手術階段', value: '4', unit: '階段' },
+                                ].map((stat, i) => (
+                                    <div key={i} style={{
+                                        background: 'var(--bg-card)',
+                                        borderRadius: '12px',
+                                        padding: '14px',
+                                        textAlign: 'center',
+                                    }}>
+                                        <div style={{ 
+                                            fontSize: '20px', 
+                                            fontWeight: 700, 
+                                            color: 'var(--accent)',
+                                            marginBottom: '2px'
+                                        }}>
+                                            {stat.value}
+                                        </div>
+                                        <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
+                                            {stat.unit}
+                                        </div>
+                                        <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                                            {stat.label}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Menu Grid */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                {SECTIONS.map((section, index) => (
+                                    <MenuCard
+                                        key={section.id}
+                                        section={section}
+                                        index={index}
+                                        onClick={() => setCurrentSection(section.id)}
+                                    />
+                                ))}
+                            </div>
+
+                            {/* Footer Info */}
+                            <div style={{
+                                marginTop: '24px',
+                                padding: '16px',
+                                background: 'var(--bg-card)',
+                                borderRadius: '12px',
+                                textAlign: 'center',
+                                fontSize: '12px',
+                                color: 'var(--text-muted)',
+                            }}>
+                                <p>TEER TEE Evaluation Checklist</p>
+                                <p style={{ marginTop: '4px' }}>心血管中心 | 版本 1.0 | 2025-12-11</p>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="fade-in">
+                            {renderSection()}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
