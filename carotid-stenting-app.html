@@ -1203,6 +1203,7 @@
             const NASCETPage = () => {
                 const [stenosisInput, setStenosisInput] = useState({ narrow: '', reference: '' });
                 const [calcResult, setCalcResult] = useState(null);
+                const [calcMethod, setCalcMethod] = useState('nascet');
 
                 const calculateStenosis = () => {
                     const narrow = parseFloat(stenosisInput.narrow);
@@ -1213,10 +1214,229 @@
                     }
                 };
 
+                // SVG 頸動脈圖解組件
+                const CarotidDiagram = () => (
+                    <svg viewBox="0 0 320 400" style={{ width: '100%', maxWidth: '320px', margin: '0 auto', display: 'block' }}>
+                        {/* 背景 */}
+                        <defs>
+                            <linearGradient id="vesselGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style={{ stopColor: '#4a5568', stopOpacity: 1 }} />
+                                <stop offset="50%" style={{ stopColor: '#718096', stopOpacity: 1 }} />
+                                <stop offset="100%" style={{ stopColor: '#4a5568', stopOpacity: 1 }} />
+                            </linearGradient>
+                            <linearGradient id="stenosisGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style={{ stopColor: '#c53030', stopOpacity: 0.8 }} />
+                                <stop offset="50%" style={{ stopColor: '#9b2c2c', stopOpacity: 0.9 }} />
+                                <stop offset="100%" style={{ stopColor: '#c53030', stopOpacity: 0.8 }} />
+                            </linearGradient>
+                        </defs>
+                        
+                        {/* 標題 */}
+                        <text x="160" y="25" textAnchor="middle" fill="#e2e8f0" fontSize="14" fontWeight="600">
+                            NASCET vs ECST 測量差異
+                        </text>
+                        
+                        {/* 總頸動脈 (CCA) */}
+                        <path 
+                            d="M 130 380 L 130 280 Q 130 250 140 230 L 140 230" 
+                            stroke="url(#vesselGradient)" 
+                            strokeWidth="50" 
+                            fill="none"
+                            strokeLinecap="round"
+                        />
+                        <path 
+                            d="M 130 380 L 130 280 Q 130 250 140 230 L 140 230" 
+                            stroke="#2d3748" 
+                            strokeWidth="35" 
+                            fill="none"
+                            strokeLinecap="round"
+                        />
+                        
+                        {/* 外頸動脈 (ECA) - 左邊 */}
+                        <path 
+                            d="M 140 230 Q 100 200 80 120 L 70 60" 
+                            stroke="url(#vesselGradient)" 
+                            strokeWidth="30" 
+                            fill="none"
+                            strokeLinecap="round"
+                        />
+                        <path 
+                            d="M 140 230 Q 100 200 80 120 L 70 60" 
+                            stroke="#2d3748" 
+                            strokeWidth="18" 
+                            fill="none"
+                            strokeLinecap="round"
+                        />
+                        
+                        {/* 內頸動脈 (ICA) - 右邊，有狹窄 */}
+                        {/* 下段 */}
+                        <path 
+                            d="M 140 230 Q 170 210 185 190" 
+                            stroke="url(#vesselGradient)" 
+                            strokeWidth="35" 
+                            fill="none"
+                            strokeLinecap="round"
+                        />
+                        <path 
+                            d="M 140 230 Q 170 210 185 190" 
+                            stroke="#2d3748" 
+                            strokeWidth="22" 
+                            fill="none"
+                            strokeLinecap="round"
+                        />
+                        
+                        {/* 狹窄處 - 斑塊 */}
+                        <ellipse cx="195" cy="165" rx="22" ry="30" fill="url(#stenosisGradient)" opacity="0.9"/>
+                        <ellipse cx="195" cy="165" rx="8" ry="25" fill="#2d3748"/>
+                        
+                        {/* 上段 (遠端正常 ICA) */}
+                        <path 
+                            d="M 200 135 Q 210 100 220 60" 
+                            stroke="url(#vesselGradient)" 
+                            strokeWidth="28" 
+                            fill="none"
+                            strokeLinecap="round"
+                        />
+                        <path 
+                            d="M 200 135 Q 210 100 220 60" 
+                            stroke="#2d3748" 
+                            strokeWidth="16" 
+                            fill="none"
+                            strokeLinecap="round"
+                        />
+                        
+                        {/* 測量線 A - 遠端正常 ICA (NASCET 參考) */}
+                        <line x1="235" y1="95" x2="280" y2="95" stroke="#38a169" strokeWidth="2" strokeDasharray="4,2"/>
+                        <line x1="235" y1="95" x2="235" y2="85" stroke="#38a169" strokeWidth="2"/>
+                        <line x1="235" y1="95" x2="235" y2="105" stroke="#38a169" strokeWidth="2"/>
+                        <circle cx="280" cy="95" r="12" fill="#38a169"/>
+                        <text x="280" y="99" textAnchor="middle" fill="white" fontSize="14" fontWeight="bold">A</text>
+                        
+                        {/* 測量線 B - 最窄處 */}
+                        <line x1="217" y1="165" x2="280" y2="165" stroke="#e53e3e" strokeWidth="2" strokeDasharray="4,2"/>
+                        <line x1="217" y1="165" x2="217" y2="155" stroke="#e53e3e" strokeWidth="2"/>
+                        <line x1="217" y1="165" x2="217" y2="175" stroke="#e53e3e" strokeWidth="2"/>
+                        <circle cx="280" cy="165" r="12" fill="#e53e3e"/>
+                        <text x="280" y="169" textAnchor="middle" fill="white" fontSize="14" fontWeight="bold">B</text>
+                        
+                        {/* 測量線 C - 預估原本血管直徑 (ECST 參考) */}
+                        <line x1="217" y1="165" x2="217" y2="200" stroke="#3182ce" strokeWidth="1" strokeDasharray="2,2"/>
+                        <line x1="173" y1="165" x2="173" y2="200" stroke="#3182ce" strokeWidth="1" strokeDasharray="2,2"/>
+                        <line x1="173" y1="200" x2="280" y2="200" stroke="#3182ce" strokeWidth="2" strokeDasharray="4,2"/>
+                        <circle cx="280" cy="200" r="12" fill="#3182ce"/>
+                        <text x="280" y="204" textAnchor="middle" fill="white" fontSize="14" fontWeight="bold">C</text>
+                        
+                        {/* 虛線框 - 預估原本血管壁位置 */}
+                        <ellipse cx="195" cy="165" rx="22" ry="30" fill="none" stroke="#3182ce" strokeWidth="1.5" strokeDasharray="4,3"/>
+                        
+                        {/* 標籤 */}
+                        <text x="50" y="55" fill="#a0aec0" fontSize="11">External</text>
+                        <text x="50" y="68" fill="#a0aec0" fontSize="11">carotid</text>
+                        <text x="50" y="81" fill="#a0aec0" fontSize="11">artery</text>
+                        
+                        <text x="230" y="45" fill="#a0aec0" fontSize="11">Internal</text>
+                        <text x="230" y="58" fill="#a0aec0" fontSize="11">carotid</text>
+                        <text x="230" y="71" fill="#a0aec0" fontSize="11">artery</text>
+                        
+                        <text x="60" y="320" fill="#a0aec0" fontSize="11">Common</text>
+                        <text x="60" y="333" fill="#a0aec0" fontSize="11">carotid</text>
+                        <text x="60" y="346" fill="#a0aec0" fontSize="11">artery</text>
+                        
+                        {/* 狹窄標示 */}
+                        <text x="130" y="165" fill="#feb2b2" fontSize="10" fontWeight="500">狹窄處</text>
+                        <text x="130" y="178" fill="#feb2b2" fontSize="10">(斑塊)</text>
+                        
+                        {/* 圖例 */}
+                        <rect x="15" y="360" width="290" height="35" rx="6" fill="rgba(45,55,72,0.8)"/>
+                        <circle cx="35" cy="377" r="6" fill="#38a169"/>
+                        <text x="45" y="381" fill="#9ae6b4" fontSize="10">A: 遠端正常ICA</text>
+                        <circle cx="130" cy="377" r="6" fill="#e53e3e"/>
+                        <text x="140" y="381" fill="#feb2b2" fontSize="10">B: 最窄處</text>
+                        <circle cx="210" cy="377" r="6" fill="#3182ce"/>
+                        <text x="220" y="381" fill="#90cdf4" fontSize="10">C: 預估原本</text>
+                    </svg>
+                );
+
+                // 公式圖解組件
+                const FormulaBox = () => (
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '12px',
+                        marginTop: '16px'
+                    }}>
+                        <div style={{
+                            background: 'rgba(56, 161, 105, 0.15)',
+                            border: '2px solid #38a169',
+                            borderRadius: '12px',
+                            padding: '14px',
+                            textAlign: 'center'
+                        }}>
+                            <div style={{ color: '#9ae6b4', fontSize: '13px', marginBottom: '8px', fontWeight: '600' }}>NASCET</div>
+                            <div style={{ 
+                                fontFamily: 'monospace', 
+                                fontSize: '18px',
+                                color: '#38a169',
+                                fontWeight: 'bold'
+                            }}>
+                                <span style={{ borderBottom: '2px solid #38a169', paddingBottom: '2px' }}>A - B</span>
+                                <div style={{ marginTop: '4px' }}>A</div>
+                            </div>
+                        </div>
+                        <div style={{
+                            background: 'rgba(49, 130, 206, 0.15)',
+                            border: '2px solid #3182ce',
+                            borderRadius: '12px',
+                            padding: '14px',
+                            textAlign: 'center'
+                        }}>
+                            <div style={{ color: '#90cdf4', fontSize: '13px', marginBottom: '8px', fontWeight: '600' }}>ECST</div>
+                            <div style={{ 
+                                fontFamily: 'monospace', 
+                                fontSize: '18px',
+                                color: '#3182ce',
+                                fontWeight: 'bold'
+                            }}>
+                                <span style={{ borderBottom: '2px solid #3182ce', paddingBottom: '2px' }}>C - B</span>
+                                <div style={{ marginTop: '4px' }}>C</div>
+                            </div>
+                        </div>
+                    </div>
+                );
+
+                // 更新後的換算表格數據
+                const conversionTable = [
+                    { nascet: '30%', ecst: '65%' },
+                    { nascet: '40%', ecst: '70%' },
+                    { nascet: '50%', ecst: '75%' },
+                    { nascet: '60%', ecst: '80%' },
+                    { nascet: '70%', ecst: '85%' },
+                    { nascet: '80%', ecst: '91%' },
+                    { nascet: '90%', ecst: '97%' }
+                ];
+
                 return (
                     <div>
                         <Header title="NASCET vs ECST" subtitle="狹窄程度測量教學" onBack={() => setCurrentPage('home')} />
                         <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+                            
+                            {/* 圖解卡片 */}
+                            <Card>
+                                <SectionTitle icon="🎨" title="頸動脈狹窄測量圖解" color="#ed8936" />
+                                <CarotidDiagram />
+                                <FormulaBox />
+                                <AlertBox type="info">
+                                    <div style={{ fontSize: '13px' }}>
+                                        <strong>測量要點：</strong>
+                                        <ul style={{ marginTop: '8px', paddingLeft: '20px' }}>
+                                            <li><strong style={{ color: '#9ae6b4' }}>A</strong> = 狹窄遠端的正常 ICA 直徑</li>
+                                            <li><strong style={{ color: '#feb2b2' }}>B</strong> = 最窄處的殘餘管腔直徑</li>
+                                            <li><strong style={{ color: '#90cdf4' }}>C</strong> = 狹窄處預估的原本血管直徑</li>
+                                        </ul>
+                                    </div>
+                                </AlertBox>
+                            </Card>
+
                             {/* NASCET */}
                             <Card>
                                 <SectionTitle icon="🔬" title={nascetEcstData.nascet.name} color="#38a169" />
@@ -1271,60 +1491,106 @@
                                 </div>
                             </Card>
 
-                            {/* 換算表 */}
+                            {/* 換算表 - 使用更新後的數據 */}
                             <Card>
-                                <SectionTitle icon="🔄" title={nascetEcstData.conversion.title} />
-                                <div style={{
-                                    background: 'var(--bg-card-light)',
-                                    padding: '16px',
-                                    borderRadius: '12px',
-                                    marginBottom: '14px',
-                                    fontFamily: 'monospace'
-                                }}>
-                                    {nascetEcstData.conversion.formula}
-                                </div>
+                                <SectionTitle icon="🔄" title="NASCET ↔ ECST 對照表" />
+                                <AlertBox type="warning">
+                                    <strong>注意：</strong>相同的狹窄，ECST 測量值會比 NASCET 高！
+                                </AlertBox>
                                 <div style={{ overflowX: 'auto' }}>
                                     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                                         <thead>
                                             <tr style={{ background: 'var(--bg-card-light)' }}>
-                                                <th style={{ padding: '12px', textAlign: 'center', borderRadius: '8px 0 0 0' }}>ECST</th>
-                                                <th style={{ padding: '12px', textAlign: 'center', borderRadius: '0 8px 0 0' }}>≈ NASCET</th>
+                                                <th style={{ padding: '12px', textAlign: 'center', borderRadius: '8px 0 0 0', color: '#9ae6b4' }}>NASCET</th>
+                                                <th style={{ padding: '12px', textAlign: 'center', borderRadius: '0 8px 0 0', color: '#90cdf4' }}>ECST</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {nascetEcstData.conversion.table.map((row, idx) => (
-                                                <tr key={idx} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                                            {conversionTable.map((row, idx) => (
+                                                <tr key={idx} style={{ 
+                                                    borderBottom: '1px solid var(--border-color)',
+                                                    background: row.nascet === '50%' || row.nascet === '70%' ? 'rgba(237, 137, 54, 0.1)' : 'transparent'
+                                                }}>
+                                                    <td style={{ 
+                                                        padding: '12px', 
+                                                        textAlign: 'center',
+                                                        fontWeight: row.nascet === '50%' || row.nascet === '70%' ? '600' : '400',
+                                                        color: row.nascet === '50%' || row.nascet === '70%' ? '#ed8936' : 'inherit'
+                                                    }}>
+                                                        {row.nascet}
+                                                        {row.nascet === '50%' && <span style={{ fontSize: '10px', marginLeft: '4px' }}>⚠️</span>}
+                                                        {row.nascet === '70%' && <span style={{ fontSize: '10px', marginLeft: '4px' }}>🔴</span>}
+                                                    </td>
                                                     <td style={{ padding: '12px', textAlign: 'center' }}>{row.ecst}</td>
-                                                    <td style={{ padding: '12px', textAlign: 'center', color: 'var(--success)' }}>{row.nascet}</td>
                                                 </tr>
                                             ))}
                                         </tbody>
                                     </table>
                                 </div>
+                                <div style={{ marginTop: '12px', fontSize: '13px', color: 'var(--text-muted)' }}>
+                                    <p>⚠️ 有症狀 ≥50% 建議介入 | 🔴 強烈建議介入</p>
+                                </div>
                             </Card>
 
                             {/* 計算機 */}
                             <Card>
-                                <SectionTitle icon="🧮" title="狹窄程度計算機 (NASCET)" />
+                                <SectionTitle icon="🧮" title="狹窄程度計算機" />
+                                <div style={{ marginBottom: '14px' }}>
+                                    <label style={{ fontSize: '13px', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>
+                                        選擇計算方法：
+                                    </label>
+                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                        <button
+                                            onClick={() => setCalcMethod('nascet')}
+                                            style={{
+                                                flex: 1,
+                                                padding: '10px',
+                                                background: calcMethod === 'nascet' ? '#38a169' : 'var(--bg-card-light)',
+                                                border: 'none',
+                                                borderRadius: '8px',
+                                                color: 'white',
+                                                cursor: 'pointer',
+                                                fontSize: '14px'
+                                            }}
+                                        >
+                                            NASCET
+                                        </button>
+                                        <button
+                                            onClick={() => setCalcMethod('ecst')}
+                                            style={{
+                                                flex: 1,
+                                                padding: '10px',
+                                                background: calcMethod === 'ecst' ? '#3182ce' : 'var(--bg-card-light)',
+                                                border: 'none',
+                                                borderRadius: '8px',
+                                                color: 'white',
+                                                cursor: 'pointer',
+                                                fontSize: '14px'
+                                            }}
+                                        >
+                                            ECST
+                                        </button>
+                                    </div>
+                                </div>
                                 <div style={{ display: 'flex', gap: '12px', marginBottom: '14px' }}>
                                     <div style={{ flex: 1 }}>
                                         <label style={{ fontSize: '13px', color: 'var(--text-muted)', display: 'block', marginBottom: '6px' }}>
-                                            最窄處直徑 (mm)
+                                            最窄處直徑 B (mm)
                                         </label>
                                         <input
                                             type="number"
-                                            placeholder="A"
+                                            placeholder="B"
                                             value={stenosisInput.narrow}
                                             onChange={(e) => setStenosisInput(prev => ({ ...prev, narrow: e.target.value }))}
                                         />
                                     </div>
                                     <div style={{ flex: 1 }}>
                                         <label style={{ fontSize: '13px', color: 'var(--text-muted)', display: 'block', marginBottom: '6px' }}>
-                                            遠端正常 ICA (mm)
+                                            {calcMethod === 'nascet' ? '遠端正常 ICA A (mm)' : '預估原本直徑 C (mm)'}
                                         </label>
                                         <input
                                             type="number"
-                                            placeholder="B"
+                                            placeholder={calcMethod === 'nascet' ? 'A' : 'C'}
                                             value={stenosisInput.reference}
                                             onChange={(e) => setStenosisInput(prev => ({ ...prev, reference: e.target.value }))}
                                         />
@@ -1335,7 +1601,7 @@
                                     style={{
                                         width: '100%',
                                         padding: '14px',
-                                        background: 'var(--success)',
+                                        background: calcMethod === 'nascet' ? '#38a169' : '#3182ce',
                                         border: 'none',
                                         borderRadius: '10px',
                                         color: 'white',
@@ -1344,29 +1610,29 @@
                                         cursor: 'pointer'
                                     }}
                                 >
-                                    計算
+                                    計算 {calcMethod.toUpperCase()} 狹窄程度
                                 </button>
                                 {calcResult && (
                                     <div style={{
                                         marginTop: '16px',
                                         padding: '16px',
-                                        background: calcResult >= 50 ? 'rgba(229, 62, 62, 0.15)' : 'rgba(56, 161, 105, 0.15)',
+                                        background: parseFloat(calcResult) >= 50 ? 'rgba(229, 62, 62, 0.15)' : 'rgba(56, 161, 105, 0.15)',
                                         borderRadius: '12px',
                                         textAlign: 'center'
                                     }}>
-                                        <div style={{ fontSize: '14px', marginBottom: '6px' }}>NASCET 狹窄程度</div>
+                                        <div style={{ fontSize: '14px', marginBottom: '6px' }}>{calcMethod.toUpperCase()} 狹窄程度</div>
                                         <div style={{
                                             fontSize: '2.5rem',
                                             fontWeight: '700',
-                                            color: calcResult >= 50 ? '#e53e3e' : 'var(--success)'
+                                            color: parseFloat(calcResult) >= 50 ? '#e53e3e' : 'var(--success)'
                                         }}>
                                             {calcResult}%
                                         </div>
-                                        {calcResult >= 70 && (
-                                            <div style={{ color: '#e53e3e', marginTop: '8px' }}>⚠️ 強烈建議介入治療</div>
+                                        {calcMethod === 'nascet' && parseFloat(calcResult) >= 70 && (
+                                            <div style={{ color: '#e53e3e', marginTop: '8px' }}>🔴 強烈建議介入治療</div>
                                         )}
-                                        {calcResult >= 50 && calcResult < 70 && (
-                                            <div style={{ color: '#ed8936', marginTop: '8px' }}>建議評估介入治療</div>
+                                        {calcMethod === 'nascet' && parseFloat(calcResult) >= 50 && parseFloat(calcResult) < 70 && (
+                                            <div style={{ color: '#ed8936', marginTop: '8px' }}>⚠️ 有症狀者建議介入治療</div>
                                         )}
                                     </div>
                                 )}
