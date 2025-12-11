@@ -1,0 +1,1759 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>頸動脈支架教學 - Carotid Artery Stenting</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #1a365d;
+            --primary-light: #2c5282;
+            --accent: #c53030;
+            --success: #276749;
+            --warning: #c05621;
+            --info: #2b6cb0;
+            --purple: #6b46c1;
+            --teal: #285e61;
+            --bg-dark: #0d1b2a;
+            --bg-card: #1b2838;
+            --bg-card-light: #243447;
+            --text-light: #e2e8f0;
+            --text-muted: #a0aec0;
+            --border-color: #2d3748;
+            --shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a2744 100%);
+            color: var(--text-light);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        #root { min-height: 100vh; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        .slide-in { animation: slideIn 0.3s ease-out forwards; }
+        .pulse { animation: pulse 2s infinite; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 3px; }
+        
+        input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            accent-color: var(--success);
+            cursor: pointer;
+        }
+        
+        select, input[type="text"], input[type="number"] {
+            background: var(--bg-card-light);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: var(--text-light);
+            font-size: 15px;
+            width: 100%;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--info);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // ==================== SVG ICONS ====================
+        const Icons = {
+            Brain: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M13 3c-1.09 0-2.14.19-3.1.55.56.42 1.09.91 1.56 1.45.5-.1 1.01-.15 1.54-.15 4.41 0 8 3.59 8 8s-3.59 8-8 8c-.53 0-1.04-.05-1.54-.15-.47.54-1 1.03-1.56 1.45.96.36 2.01.55 3.1.55 5.52 0 10-4.48 10-10S18.52 3 13 3zM7 9c0-1.1-.9-2-2-2s-2 .9-2 2 .9 2 2 2 2-.9 2-2zm-5 4c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm5 4c0-1.1-.9-2-2-2s-2 .9-2 2 .9 2 2 2 2-.9 2-2zm4-1c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
+                </svg>
+            ),
+            Artery: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                </svg>
+            ),
+            Stent: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M7 2v11h3v9l7-12h-4l4-8z"/>
+                </svg>
+            ),
+            Check: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                </svg>
+            ),
+            Back: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+            ),
+            Warning: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                </svg>
+            ),
+            Quiz: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/>
+                </svg>
+            ),
+            Medical: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M19 3H5c-1.1 0-1.99.9-1.99 2L3 19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 11h-4v4h-4v-4H6v-4h4V6h4v4h4v4z"/>
+                </svg>
+            ),
+            Checklist: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+            ),
+            Person: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+            ),
+            Nurse: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M17.5 12c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5 3.5-1.57 3.5-3.5-1.57-3.5-3.5-3.5zM12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                </svg>
+            ),
+            CathLab: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14h-2V9h2v8zm4 0h-2V5h2v12zm-8 0H6v-6h2v6z"/>
+                </svg>
+            ),
+            Ruler: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H3V8h2v4h2V8h2v4h2V8h2v4h2V8h2v4h2V8h2v8z"/>
+                </svg>
+            ),
+            Family: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5L20 8.5c-.3-.72-1-1.5-2-1.5s-1.5.5-2 1.5L14 12v10h2v-5h2v5h2zM12.5 11.5c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5-1.5.67-1.5 1.5.67 1.5 1.5 1.5zM5.5 6c1.11 0 2-.89 2-2s-.89-2-2-2-2 .89-2 2 .89 2 2 2zm2 16v-7H9V9c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v6h1.5v7h4zm6.5 0v-4h1v-4c0-.82-.68-1.5-1.5-1.5h-2c-.82 0-1.5.68-1.5 1.5v4h1v4h3z"/>
+                </svg>
+            ),
+            Info: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                </svg>
+            ),
+            Search: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+            )
+        };
+
+        // ==================== DATA ====================
+        const wardAssessmentData = {
+            preOp: [
+                { id: 'history', label: '確認病史：中風史、TIA、頸動脈狹窄程度', required: true },
+                { id: 'nihss', label: 'NIHSS 神經學評估', required: true },
+                { id: 'imaging', label: '影像檢查：Carotid Duplex / CTA / MRA', required: true },
+                { id: 'labs', label: '檢驗：CBC, BCS, PT/APTT, Cr', required: true },
+                { id: 'consent', label: '手術同意書已簽署', required: true },
+                { id: 'antiplatelet', label: '確認抗血小板藥物：Aspirin + Plavix', required: true },
+                { id: 'statin', label: '確認 Statin (Lipitor 80mg) 負荷劑量', required: false },
+                { id: 'allergy', label: '過敏史評估（顯影劑）', required: true },
+                { id: 'kidney', label: '腎功能評估 (Cr, eGFR)', required: true },
+                { id: 'npo', label: 'NPO 6-8小時', required: true }
+            ],
+            postOp: [
+                { id: 'bp_goal', label: '確認血壓目標範圍 (Goal BP)', required: true },
+                { id: 'neuro_check', label: '神經學檢查 Q1H x 24小時', required: true },
+                { id: 'puncture', label: '穿刺傷口評估', required: true },
+                { id: 'pedal_pulse', label: '下肢脈搏檢查', required: true },
+                { id: 'hydration', label: '水分補充 (預防 CIN)', required: true },
+                { id: 'antiplatelet_cont', label: '持續雙抗血小板藥物', required: true }
+            ]
+        };
+
+        const orderProtocol = {
+            hypotension: [
+                'Hydration 速度: 250-500 ml/hour',
+                'Saline hydration 與 Levophed/Dopamine 並行',
+                'Hydration 停止條件: I/O positive > 3000 或 SpO2 <95% 或病人主訴變喘'
+            ],
+            monitoring: [
+                '血壓持續在控制區間外 > 15 分鐘，call 值班主治醫師',
+                '新的神經學異常立即回報：手腳感覺/運動、臉部表情、表達能力、視力視野變化'
+            ],
+            bpGoals: {
+                default: 'SBP 120-150 mmHg',
+                notes: '目標血壓依導管報告明載之 goal BP range'
+            }
+        };
+
+        const cathLabChecklist = {
+            equipment: [
+                { item: '0.014-inch Wire (冠脈系統)', specs: 'Fielder FC, Sion, UB3', status: 'pending' },
+                { item: '0.035-inch Wire (週邊)', specs: 'Terumo GlideWire 180/260cm', status: 'pending' },
+                { item: 'Guide catheter 8 Fr JR4', specs: '8 Fr', status: 'pending' },
+                { item: 'Sheath 6 Fr 90 cm', specs: 'Cook/Terumo/Biotronik', status: 'pending' },
+                { item: 'Distal Protection (Filter)', specs: 'FilterWire EZ / Spider', status: 'pending' },
+                { item: 'Proximal Protection (Balloon)', specs: 'MoMa / Cello', status: 'pending' },
+                { item: 'Post-dilatation Balloon', specs: 'Sterling', status: 'pending' },
+                { item: 'Carotid Stent', specs: 'WallStent / XAct / Precise', status: 'pending' }
+            ],
+            angiographyAngles: [
+                { level: 'Arch level', view: 'True AP + LAO 60°', purpose: '看 Innominate, Lt CCA, Lt SCA 開口' },
+                { level: 'Mandible level', view: 'True AP + True Lat / AP Caudal 15-20° + ipsilateral AO 10-15°', purpose: '評估 ICA 狹窄' },
+                { level: 'Supratentorial level', view: 'AP Cranial 15-30° + True Lat', purpose: '評估顱內血管' }
+            ],
+            procedurePhases: [
+                { phase: '術前準備', tasks: ['確認 Clopidogrel 600mg load (術前6小時)', 'Lipitor 80mg + 40mg (術前12小時開始)'] },
+                { phase: 'Access phase', tasks: ['建立動脈通路', '放置導管鞘'] },
+                { phase: 'Protection device', tasks: ['展開遠端保護裝置', '確認位置正確'] },
+                { phase: 'Predilation', tasks: ['Open cell stent 須先預擴', '評估病灶回彈'] },
+                { phase: 'Stent deployment', tasks: ['WallStent 注意會縮短', '病灶定位在支架 1/3-2/3 處'] },
+                { phase: 'Post-dilatation', tasks: ['視需要後擴張', '避免過度擴張'] },
+                { phase: '收傘回收', tasks: ['緩慢回收保護裝置', '檢查有無碎屑'] }
+            ]
+        };
+
+        // Table 12: 頸動脈支架查核表 (來自 carotid_protocol.pdf)
+        const carotidStentingChecklist = [
+            {
+                category: '術前準備',
+                items: [
+                    {
+                        id: 'pre_family',
+                        item: '住院前溝通查核',
+                        content: '病患所有的家屬是否都已經一起聽取治療說明？',
+                        checker: '手術當天所有家屬到場',
+                        note: '',
+                        phase: 'pre'
+                    },
+                    {
+                        id: 'pre_medication',
+                        item: '住院後藥物查核',
+                        content: '已經吃 Plavix, Bokey, Lipitor 缺一不可，急性中風則不限',
+                        checker: '病房 NP 執行',
+                        note: '',
+                        phase: 'pre'
+                    },
+                    {
+                        id: 'pre_equipment',
+                        item: '準備器材',
+                        content: '執行前一天確認器材是否備妥 (shuttle sheath, EPD, and stent)',
+                        checker: '導管室前一天由書記執行',
+                        note: '',
+                        phase: 'pre'
+                    },
+                    {
+                        id: 'pre_ns_notify',
+                        item: '通知 NS and Neuro',
+                        content: '治療前一小時確認 NS 有人值班',
+                        checker: '病房 NP 與 NS NP 確認',
+                        note: '',
+                        phase: 'pre'
+                    },
+                    {
+                        id: 'pre_consent',
+                        item: '文件查核',
+                        content: '有沒有簽立手術同意書及加護病房入住同意書？',
+                        checker: '導管室與病房交班時執行',
+                        note: '',
+                        phase: 'pre'
+                    },
+                    {
+                        id: 'pre_icu_bed',
+                        item: 'CCU/ICU 床位',
+                        content: '做完一定會去 ICU, 除非只有診斷，病患是否洗腎?',
+                        checker: '導管室 1st assistant 與 Pruka 跟台人員確認',
+                        note: '若沒有洗腎床，提醒 VS 跟家屬解釋隔日再洗',
+                        phase: 'pre'
+                    }
+                ]
+            },
+            {
+                category: '術中管理',
+                items: [
+                    {
+                        id: 'intra_bp',
+                        item: '血壓控制',
+                        content: 'Perdipine 4 amp (病房開) or Levophed (導管室)',
+                        checker: '術中 SBP 140-160 mmHg',
+                        note: '',
+                        phase: 'intra'
+                    },
+                    {
+                        id: 'intra_heparin',
+                        item: '抗凝血劑使用',
+                        content: 'Heparin 3000 units, 5 min 後 recheck，再補',
+                        checker: 'Pruka 人員執行',
+                        note: 'ACT 250-300 秒之間微調，每三十分鐘 recheck 一次',
+                        phase: 'intra'
+                    },
+                    {
+                        id: 'intra_protection',
+                        item: '保護裝置置放',
+                        content: '是否單套 (filter or MoMa?) 或是用雙套保護?',
+                        checker: '病患同時雙側狹窄則只能用 filter',
+                        note: '狹窄再加血塊或是正在中風中，考慮雙套保護裝置',
+                        phase: 'intra'
+                    },
+                    {
+                        id: 'intra_pre_stent',
+                        item: '支架放置前',
+                        content: '有開 saline flush',
+                        checker: '1st assistant 確認',
+                        note: '',
+                        phase: 'intra'
+                    },
+                    {
+                        id: 'intra_stent_deploy',
+                        item: '支架進入中',
+                        content: '有預先給 atropine 0.5 mg, 有確認是否暫停 Perdipine',
+                        checker: '1st assistant 與 Pruka 確認',
+                        note: '',
+                        phase: 'intra'
+                    },
+                    {
+                        id: 'intra_post_stent',
+                        item: '支架放置後',
+                        content: '是否開回 Perdipine',
+                        checker: '1st assistant 與 Pruka 確認',
+                        note: '',
+                        phase: 'intra'
+                    },
+                    {
+                        id: 'intra_neuro',
+                        item: '神經學檢查',
+                        content: '術中每 15 分鐘，確認病人表情與瞳孔大小',
+                        checker: 'Pruka 執行',
+                        note: '',
+                        phase: 'intra'
+                    }
+                ]
+            },
+            {
+                category: '術後照護',
+                items: [
+                    {
+                        id: 'post_bp',
+                        item: '術後血壓控制',
+                        content: '以 N/S 500 ml 加上 Levophed infusion 治療低血壓。目標值如上。以 Perdipine 控制高血壓。',
+                        checker: 'CCU/ICU NP and nurses',
+                        note: '血壓過高加上 heparin → ICH，血壓太低 → stent thrombosis',
+                        phase: 'post'
+                    }
+                ]
+            }
+        ];
+
+        const nascetEcstData = {
+            nascet: {
+                name: 'NASCET',
+                fullName: 'North American Symptomatic Carotid Endarterectomy Trial',
+                formula: '% Stenosis = (1 - 最窄處直徑 / 遠端正常ICA直徑) × 100',
+                description: '以狹窄遠端的正常內頸動脈 (ICA) 作為參考',
+                advantages: ['較符合血流動力學意義', '國際上較常使用', '與手術適應症對應較佳'],
+                diagram: 'A / B',
+                note: 'A = 最窄處直徑, B = 遠端正常 ICA 直徑'
+            },
+            ecst: {
+                name: 'ECST',
+                fullName: 'European Carotid Surgery Trial',
+                formula: '% Stenosis = (1 - 最窄處直徑 / 預估原本血管直徑) × 100',
+                description: '以狹窄處預估的原本血管直徑作為參考',
+                advantages: ['計算較直觀', '考慮局部解剖變異'],
+                diagram: 'A / C',
+                note: 'A = 最窄處直徑, C = 預估原本血管直徑'
+            },
+            conversion: {
+                title: 'NASCET 與 ECST 換算',
+                formula: 'NASCET % = (ECST % - 40) × 1.67',
+                example: 'ECST 70% ≈ NASCET 50%',
+                table: [
+                    { ecst: '50%', nascet: '~17%' },
+                    { ecst: '60%', nascet: '~33%' },
+                    { ecst: '70%', nascet: '~50%' },
+                    { ecst: '80%', nascet: '~67%' },
+                    { ecst: '90%', nascet: '~83%' }
+                ]
+            },
+            clinicalSignificance: {
+                symptomatic: {
+                    indication: '有症狀 (TIA/Stroke) 且 NASCET ≥ 50%',
+                    strongIndication: 'NASCET ≥ 70% 強烈建議介入',
+                    timing: '症狀發生後 2 週內進行血管重建'
+                },
+                asymptomatic: {
+                    indication: '無症狀且 NASCET ≥ 70%',
+                    consideration: '需評估手術風險 < 3%'
+                }
+            }
+        };
+
+        const patientEducation = {
+            whatIs: {
+                title: '什麼是頸動脈狹窄？',
+                content: [
+                    '頸動脈是脖子送血液至腦部的樞紐，負責供應大腦約 80% 的血流',
+                    '當頸動脈因粥狀硬化產生斑塊，造成血管狹窄，稱為頸動脈狹窄',
+                    '嚴重狹窄可能導致腦部血流不足，或斑塊脫落造成中風'
+                ]
+            },
+            symptoms: {
+                title: '可能的症狀',
+                content: [
+                    '暫時性腦缺血發作 (TIA)：暫時性單側肢體無力、麻木',
+                    '單眼視力暫時模糊或喪失',
+                    '說話困難、理解困難',
+                    '嚴重者可能中風，造成永久性神經損傷'
+                ]
+            },
+            treatment: {
+                title: '治療方式：頸動脈支架',
+                content: [
+                    '導管手術不是開刀，是在鼠蹊部打針的微創手術',
+                    '先進行血管攝影確認狹窄程度',
+                    '使用保護裝置防止碎屑進入腦部',
+                    '置放支架將血管撐開',
+                    '手術時間約 90 分鐘'
+                ]
+            },
+            risks: {
+                title: '手術風險',
+                content: [
+                    '手術中風風險：約 3%',
+                    '使用保護裝置前，風險曾高達 10-13%',
+                    '成功率：98-99%'
+                ]
+            },
+            recovery: {
+                title: '術後照護',
+                content: [
+                    '術後在加護病房觀察 24 小時，監測血壓與神經狀態',
+                    '血壓穩定後轉普通病房，觀察 2-3 天',
+                    '總住院時間約 5-7 天',
+                    '需持續服用抗血小板藥物 (Aspirin + Plavix)',
+                    '定期追蹤頸動脈超音波：術後 1、6、12 個月，之後每年一次'
+                ]
+            },
+            followUp: {
+                title: '追蹤檢查',
+                content: [
+                    '術後 3-6 個月：頸動脈超音波追蹤',
+                    '1 年後：逐年追蹤',
+                    '若有任何神經學症狀立即就醫'
+                ]
+            },
+            cost: {
+                title: '費用說明',
+                content: [
+                    '支架與保護裝置：健保給付 90%',
+                    '病患自付約 10% (約 1.2-1.5 萬元)',
+                    '血管封阻器 (AngioSeal) 自費 $10,800，可縮短臥床時間'
+                ]
+            },
+            faq: [
+                { q: '支架可以過飛機安檢嗎？', a: '可以，支架不會被金屬探測器偵測到' },
+                { q: '需要用塗藥支架嗎？', a: '頸動脈血管較粗，不需要塗藥支架，一般裸金屬支架即可' },
+                { q: '藥物能治好嗎？', a: '藥物可以抑制血小板、減少血栓，但無法打開已狹窄的血管' }
+            ]
+        };
+
+        const quizQuestions = [
+            {
+                q: 'NASCET 測量法以什麼作為參考直徑？',
+                options: ['狹窄處預估原本直徑', '遠端正常 ICA 直徑', '總頸動脈直徑', '外頸動脈直徑'],
+                correct: 1,
+                explanation: 'NASCET 使用狹窄遠端的正常內頸動脈 (ICA) 作為參考'
+            },
+            {
+                q: '有症狀的頸動脈狹窄，NASCET 達多少以上建議介入？',
+                options: ['30%', '50%', '70%', '90%'],
+                correct: 1,
+                explanation: '有症狀且 NASCET ≥ 50% 建議介入，≥ 70% 強烈建議'
+            },
+            {
+                q: '頸動脈支架術前，Clopidogrel 負荷劑量為多少？',
+                options: ['75mg', '150mg', '300mg', '600mg'],
+                correct: 3,
+                explanation: 'ARMYDA-9 研究顯示 600mg 負荷劑量優於 300mg'
+            },
+            {
+                q: 'WallStent 的特性是什麼？',
+                options: ['會膨脹', '會縮短', '會延長', '不會變形'],
+                correct: 1,
+                explanation: 'WallStent 會縮短，所以病灶應定位在支架 1/3-2/3 處'
+            },
+            {
+                q: '術後血壓監測，若 SBP 持續在目標外多久需通報？',
+                options: ['5 分鐘', '10 分鐘', '15 分鐘', '30 分鐘'],
+                correct: 2,
+                explanation: '血壓持續在控制區間外 > 15 分鐘需 call 值班主治醫師'
+            },
+            {
+                q: '頸動脈支架手術的中風風險約為多少？',
+                options: ['1%', '3%', '5%', '10%'],
+                correct: 1,
+                explanation: '使用保護裝置後，手術中風風險約 3%'
+            },
+            {
+                q: '術後頸動脈超音波追蹤，一年內建議多久做一次？',
+                options: ['每月', '每 3 個月', '每 6 個月', '每年'],
+                correct: 2,
+                explanation: '一年內以 6 個月週期追蹤，一年後逐年追蹤'
+            },
+            {
+                q: 'Open cell carotid stent 放置前應該？',
+                options: ['直接放置', '先預擴張病灶', '先放保護裝置', '以上皆非'],
+                correct: 1,
+                explanation: 'Open cell stent 應先 predilate 病灶，避免 stent strut 突出'
+            },
+            {
+                q: 'ECST 70% 約等於 NASCET 多少？',
+                options: ['30%', '50%', '70%', '90%'],
+                correct: 1,
+                explanation: '使用換算公式：NASCET % = (ECST % - 40) × 1.67'
+            },
+            {
+                q: '術後低血壓時，Hydration 的停止條件不包括？',
+                options: ['I/O positive > 3000', 'SpO2 < 95%', '病人變喘', 'HR > 100'],
+                correct: 3,
+                explanation: '停止條件：I/O > 3000、SpO2 < 95%、病人變喘'
+            }
+        ];
+
+        const mrsScale = [
+            { score: 0, description: '無症狀，沒有後遺症', economic: '-' },
+            { score: 1, description: '有症狀但無殘障，能執行日常生活', economic: '-' },
+            { score: 2, description: '輕度殘障，不能進行所有發病前活動，但能自理', economic: '-' },
+            { score: 3, description: '中度殘障，需要人幫忙但能走路', economic: '可能需部分照護' },
+            { score: 4, description: '中至重度殘障，需要人幫忙照顧', economic: '看護：約 36 萬/年' },
+            { score: 5, description: '重度殘障，臥床，無法自理', economic: '護理之家：42-60 萬/年' },
+            { score: 6, description: '死亡', economic: '-' }
+        ];
+
+        // ==================== MAIN APP ====================
+        const App = () => {
+            const [currentPage, setCurrentPage] = useState('home');
+            const [searchTerm, setSearchTerm] = useState('');
+            const [wardChecks, setWardChecks] = useState({});
+            const [cathLabChecks, setCathLabChecks] = useState({});
+            const [quizState, setQuizState] = useState({
+                currentQ: 0,
+                score: 0,
+                selected: null,
+                showResult: false,
+                completed: false
+            });
+
+            const menuItems = [
+                { id: 'ward', icon: <Icons.Nurse />, title: '病房評估與開單', subtitle: 'Ward Assessment & Orders', color: '#3182ce' },
+                { id: 'cathlab', icon: <Icons.CathLab />, title: '導管室查檢表', subtitle: 'Cath Lab Checklist', color: '#805ad5' },
+                { id: 'nascet', icon: <Icons.Ruler />, title: 'NASCET vs ECST', subtitle: '狹窄程度測量教學', color: '#38a169' },
+                { id: 'education', icon: <Icons.Family />, title: '病患家屬衛教', subtitle: 'Patient & Family Education', color: '#dd6b20' },
+                { id: 'mrs', icon: <Icons.Info />, title: 'mRS 量表', subtitle: 'Modified Rankin Scale', color: '#e53e3e' },
+                { id: 'quiz', icon: <Icons.Quiz />, title: '自我測驗', subtitle: 'Knowledge Quiz', color: '#d53f8c' }
+            ];
+
+            // ==================== COMPONENTS ====================
+            const Header = ({ title, subtitle, onBack }) => (
+                <div style={{
+                    background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)',
+                    padding: '20px',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 100
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        {onBack && (
+                            <button onClick={onBack} style={{
+                                background: 'rgba(255,255,255,0.1)',
+                                border: 'none',
+                                borderRadius: '50%',
+                                width: '40px',
+                                height: '40px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: 'white',
+                                cursor: 'pointer'
+                            }}>
+                                <Icons.Back />
+                            </button>
+                        )}
+                        <div>
+                            <h1 style={{ fontSize: '1.3rem', fontWeight: '600', color: 'white' }}>{title}</h1>
+                            {subtitle && <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.8)' }}>{subtitle}</p>}
+                        </div>
+                    </div>
+                </div>
+            );
+
+            const Card = ({ children, style = {}, onClick }) => (
+                <div onClick={onClick} style={{
+                    background: 'var(--bg-card)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    marginBottom: '16px',
+                    boxShadow: 'var(--shadow)',
+                    cursor: onClick ? 'pointer' : 'default',
+                    transition: 'transform 0.2s',
+                    ...style
+                }} className="fade-in">
+                    {children}
+                </div>
+            );
+
+            const SectionTitle = ({ icon, title, color = 'var(--info)' }) => (
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    marginBottom: '16px'
+                }}>
+                    <span style={{ color, fontSize: '24px' }}>{icon}</span>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: '600' }}>{title}</h3>
+                </div>
+            );
+
+            const AlertBox = ({ type = 'info', children }) => {
+                const colors = {
+                    warning: { bg: 'rgba(237, 137, 54, 0.15)', border: '#ed8936', text: '#fbd38d' },
+                    danger: { bg: 'rgba(229, 62, 62, 0.15)', border: '#e53e3e', text: '#feb2b2' },
+                    info: { bg: 'rgba(49, 130, 206, 0.15)', border: '#3182ce', text: '#90cdf4' },
+                    success: { bg: 'rgba(56, 161, 105, 0.15)', border: '#38a169', text: '#9ae6b4' }
+                };
+                return (
+                    <div style={{
+                        background: colors[type].bg,
+                        borderLeft: `4px solid ${colors[type].border}`,
+                        padding: '14px',
+                        borderRadius: '0 8px 8px 0',
+                        marginBottom: '16px',
+                        color: colors[type].text
+                    }}>
+                        {children}
+                    </div>
+                );
+            };
+
+            const ChecklistItem = ({ id, label, checked, onChange, required = false }) => (
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '12px',
+                    padding: '12px',
+                    background: checked ? 'rgba(56, 161, 105, 0.1)' : 'var(--bg-card-light)',
+                    borderRadius: '10px',
+                    marginBottom: '10px',
+                    cursor: 'pointer',
+                    border: checked ? '1px solid var(--success)' : '1px solid transparent'
+                }} onClick={() => onChange(id, !checked)}>
+                    <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => {}}
+                        style={{ marginTop: '2px' }}
+                    />
+                    <div style={{ flex: 1 }}>
+                        <span style={{ color: checked ? 'var(--success)' : 'var(--text-light)' }}>
+                            {label}
+                        </span>
+                        {required && <span style={{ color: 'var(--accent)', marginLeft: '6px', fontSize: '12px' }}>*必要</span>}
+                    </div>
+                    {checked && <span style={{ color: 'var(--success)' }}>✓</span>}
+                </div>
+            );
+
+            const ProgressBar = ({ current, total }) => (
+                <div style={{ marginBottom: '20px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '14px' }}>
+                        <span>完成進度</span>
+                        <span>{current} / {total}</span>
+                    </div>
+                    <div style={{
+                        height: '8px',
+                        background: 'var(--bg-card-light)',
+                        borderRadius: '4px',
+                        overflow: 'hidden'
+                    }}>
+                        <div style={{
+                            width: `${(current / total) * 100}%`,
+                            height: '100%',
+                            background: current === total ? 'var(--success)' : 'var(--info)',
+                            transition: 'width 0.3s'
+                        }} />
+                    </div>
+                </div>
+            );
+
+            // ==================== PAGES ====================
+            const HomePage = () => (
+                <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+                    <div style={{ textAlign: 'center', padding: '30px 0' }}>
+                        <div style={{ fontSize: '4rem', marginBottom: '15px' }}>🩺</div>
+                        <h1 style={{ fontSize: '1.8rem', fontWeight: '700', marginBottom: '8px' }}>頸動脈支架教學</h1>
+                        <p style={{ color: 'var(--text-muted)' }}>Carotid Artery Stenting</p>
+                    </div>
+
+                    <div style={{ position: 'relative', marginBottom: '25px' }}>
+                        <input
+                            type="text"
+                            placeholder="搜尋內容..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            style={{
+                                width: '100%',
+                                padding: '14px 14px 14px 45px',
+                                borderRadius: '12px',
+                                fontSize: '16px'
+                            }}
+                        />
+                        <span style={{
+                            position: 'absolute',
+                            left: '14px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            color: 'var(--text-muted)'
+                        }}>
+                            <Icons.Search />
+                        </span>
+                    </div>
+
+                    {menuItems
+                        .filter(item => 
+                            item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            item.subtitle.toLowerCase().includes(searchTerm.toLowerCase())
+                        )
+                        .map((item, idx) => (
+                        <Card
+                            key={item.id}
+                            onClick={() => setCurrentPage(item.id)}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '16px',
+                                borderLeft: `4px solid ${item.color}`,
+                                animationDelay: `${idx * 0.1}s`
+                            }}
+                        >
+                            <div style={{
+                                background: `${item.color}20`,
+                                borderRadius: '12px',
+                                padding: '12px',
+                                color: item.color
+                            }}>
+                                {item.icon}
+                            </div>
+                            <div>
+                                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '4px' }}>{item.title}</h3>
+                                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{item.subtitle}</p>
+                            </div>
+                            <span style={{ marginLeft: 'auto', color: 'var(--text-muted)' }}>›</span>
+                        </Card>
+                    ))}
+
+                    <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)', fontSize: '14px' }}>
+                        <p>參考資料：台大醫院新竹分院心血管中心</p>
+                        <p>Carotid Stenting Protocol</p>
+                    </div>
+                </div>
+            );
+
+            const WardPage = () => {
+                const [activeTab, setActiveTab] = useState('preOp');
+                const preOpChecked = Object.keys(wardChecks).filter(k => k.startsWith('preOp_') && wardChecks[k]).length;
+                const postOpChecked = Object.keys(wardChecks).filter(k => k.startsWith('postOp_') && wardChecks[k]).length;
+
+                const handleCheck = (id, checked) => {
+                    setWardChecks(prev => ({ ...prev, [id]: checked }));
+                };
+
+                return (
+                    <div>
+                        <Header title="病房評估與開單" subtitle="Ward Assessment & Orders" onBack={() => setCurrentPage('home')} />
+                        <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+                            {/* Tab 切換 */}
+                            <div style={{
+                                display: 'flex',
+                                gap: '10px',
+                                marginBottom: '20px'
+                            }}>
+                                {[
+                                    { id: 'preOp', label: '術前準備', count: preOpChecked },
+                                    { id: 'postOp', label: '術後照護', count: postOpChecked },
+                                    { id: 'orders', label: '醫囑組套' }
+                                ].map(tab => (
+                                    <button
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id)}
+                                        style={{
+                                            flex: 1,
+                                            padding: '12px',
+                                            background: activeTab === tab.id ? 'var(--info)' : 'var(--bg-card)',
+                                            border: 'none',
+                                            borderRadius: '10px',
+                                            color: 'white',
+                                            cursor: 'pointer',
+                                            fontSize: '14px'
+                                        }}
+                                    >
+                                        {tab.label}
+                                        {tab.count !== undefined && ` (${tab.count})`}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {activeTab === 'preOp' && (
+                                <Card>
+                                    <SectionTitle icon="📋" title="術前評估查檢表" />
+                                    <ProgressBar current={preOpChecked} total={wardAssessmentData.preOp.length} />
+                                    {wardAssessmentData.preOp.map(item => (
+                                        <ChecklistItem
+                                            key={item.id}
+                                            id={`preOp_${item.id}`}
+                                            label={item.label}
+                                            checked={wardChecks[`preOp_${item.id}`] || false}
+                                            onChange={handleCheck}
+                                            required={item.required}
+                                        />
+                                    ))}
+                                </Card>
+                            )}
+
+                            {activeTab === 'postOp' && (
+                                <Card>
+                                    <SectionTitle icon="🏥" title="術後照護查檢表" />
+                                    <ProgressBar current={postOpChecked} total={wardAssessmentData.postOp.length} />
+                                    {wardAssessmentData.postOp.map(item => (
+                                        <ChecklistItem
+                                            key={item.id}
+                                            id={`postOp_${item.id}`}
+                                            label={item.label}
+                                            checked={wardChecks[`postOp_${item.id}`] || false}
+                                            onChange={handleCheck}
+                                            required={item.required}
+                                        />
+                                    ))}
+                                </Card>
+                            )}
+
+                            {activeTab === 'orders' && (
+                                <>
+                                    <Card>
+                                        <SectionTitle icon="🎯" title="血壓目標" color="var(--accent)" />
+                                        <AlertBox type="warning">
+                                            <strong>Goal BP：{orderProtocol.bpGoals.default}</strong>
+                                            <p style={{ marginTop: '8px', fontSize: '14px' }}>{orderProtocol.bpGoals.notes}</p>
+                                        </AlertBox>
+                                    </Card>
+
+                                    <Card>
+                                        <SectionTitle icon="💧" title="低血壓處置" />
+                                        <AlertBox type="info">
+                                            <strong>若 SBP 低於 Goal BP, LVEF > 55%, 無 CKD stage > 3：</strong>
+                                        </AlertBox>
+                                        <ul style={{ paddingLeft: '20px' }}>
+                                            {orderProtocol.hypotension.map((item, idx) => (
+                                                <li key={idx} style={{ marginBottom: '10px', lineHeight: '1.5' }}>{item}</li>
+                                            ))}
+                                        </ul>
+                                    </Card>
+
+                                    <Card>
+                                        <SectionTitle icon="⚠️" title="通報時機" color="var(--accent)" />
+                                        <AlertBox type="danger">
+                                            <strong>以下情況請 Call 值班主治醫師：</strong>
+                                        </AlertBox>
+                                        <ul style={{ paddingLeft: '20px' }}>
+                                            {orderProtocol.monitoring.map((item, idx) => (
+                                                <li key={idx} style={{ marginBottom: '10px', lineHeight: '1.5' }}>{item}</li>
+                                            ))}
+                                        </ul>
+                                    </Card>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                );
+            };
+
+            const CathLabPage = () => {
+                const [activeTab, setActiveTab] = useState('checklist');
+                const [checklistChecks, setChecklistChecks] = useState({});
+
+                const handleEquipmentCheck = (idx) => {
+                    setCathLabChecks(prev => ({ ...prev, [`equip_${idx}`]: !prev[`equip_${idx}`] }));
+                };
+
+                const handleChecklistCheck = (id) => {
+                    setChecklistChecks(prev => ({ ...prev, [id]: !prev[id] }));
+                };
+
+                const equipmentChecked = Object.keys(cathLabChecks).filter(k => k.startsWith('equip_') && cathLabChecks[k]).length;
+                const totalChecklistItems = carotidStentingChecklist.reduce((acc, cat) => acc + cat.items.length, 0);
+                const checklistCheckedCount = Object.values(checklistChecks).filter(Boolean).length;
+
+                return (
+                    <div>
+                        <Header title="導管室查檢表" subtitle="Cath Lab Checklist" onBack={() => setCurrentPage('home')} />
+                        <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+                            <div style={{
+                                display: 'flex',
+                                gap: '8px',
+                                marginBottom: '20px',
+                                flexWrap: 'wrap'
+                            }}>
+                                {[
+                                    { id: 'checklist', label: '📋 查核表' },
+                                    { id: 'equipment', label: '🔧 醫材' },
+                                    { id: 'angles', label: '📐 角度' },
+                                    { id: 'phases', label: '📝 流程' }
+                                ].map(tab => (
+                                    <button
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id)}
+                                        style={{
+                                            flex: 1,
+                                            padding: '10px 8px',
+                                            background: activeTab === tab.id ? 'var(--purple)' : 'var(--bg-card)',
+                                            border: 'none',
+                                            borderRadius: '10px',
+                                            color: 'white',
+                                            cursor: 'pointer',
+                                            fontSize: '13px',
+                                            minWidth: '70px'
+                                        }}
+                                    >
+                                        {tab.label}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {activeTab === 'checklist' && (
+                                <>
+                                    <Card>
+                                        <SectionTitle icon="📋" title="頸動脈支架查核表 (Table 12)" color="var(--accent)" />
+                                        <ProgressBar current={checklistCheckedCount} total={totalChecklistItems} />
+                                        <AlertBox type="info">
+                                            <strong>來源：</strong>carotid_protocol.pdf - 心血管中心/急重症中心文件
+                                        </AlertBox>
+                                    </Card>
+
+                                    {carotidStentingChecklist.map((category, catIdx) => (
+                                        <Card key={catIdx}>
+                                            <div style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '10px',
+                                                marginBottom: '16px',
+                                                paddingBottom: '12px',
+                                                borderBottom: '1px solid var(--border-color)'
+                                            }}>
+                                                <span style={{
+                                                    fontSize: '1.5rem'
+                                                }}>
+                                                    {catIdx === 0 ? '🏥' : catIdx === 1 ? '⚡' : '🩺'}
+                                                </span>
+                                                <h3 style={{ fontSize: '1.1rem', fontWeight: '600' }}>{category.category}</h3>
+                                                <span style={{
+                                                    marginLeft: 'auto',
+                                                    background: 'var(--bg-card-light)',
+                                                    padding: '4px 10px',
+                                                    borderRadius: '12px',
+                                                    fontSize: '12px'
+                                                }}>
+                                                    {category.items.filter(item => checklistChecks[item.id]).length}/{category.items.length}
+                                                </span>
+                                            </div>
+
+                                            {category.items.map((item, idx) => (
+                                                <div
+                                                    key={item.id}
+                                                    onClick={() => handleChecklistCheck(item.id)}
+                                                    style={{
+                                                        padding: '14px',
+                                                        background: checklistChecks[item.id] ? 'rgba(56, 161, 105, 0.1)' : 'var(--bg-card-light)',
+                                                        borderRadius: '12px',
+                                                        marginBottom: '12px',
+                                                        cursor: 'pointer',
+                                                        border: checklistChecks[item.id] ? '1px solid var(--success)' : '1px solid transparent',
+                                                        transition: 'all 0.2s'
+                                                    }}
+                                                >
+                                                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={checklistChecks[item.id] || false}
+                                                            onChange={() => {}}
+                                                            style={{ marginTop: '2px', flexShrink: 0 }}
+                                                        />
+                                                        <div style={{ flex: 1 }}>
+                                                            <div style={{
+                                                                fontWeight: '600',
+                                                                marginBottom: '6px',
+                                                                color: checklistChecks[item.id] ? 'var(--success)' : 'var(--text-light)'
+                                                            }}>
+                                                                {item.item}
+                                                            </div>
+                                                            <div style={{
+                                                                fontSize: '14px',
+                                                                marginBottom: '8px',
+                                                                lineHeight: '1.5'
+                                                            }}>
+                                                                {item.content}
+                                                            </div>
+                                                            <div style={{
+                                                                display: 'flex',
+                                                                flexWrap: 'wrap',
+                                                                gap: '8px',
+                                                                marginTop: '8px'
+                                                            }}>
+                                                                <span style={{
+                                                                    background: 'rgba(49, 130, 206, 0.2)',
+                                                                    color: '#90cdf4',
+                                                                    padding: '4px 10px',
+                                                                    borderRadius: '6px',
+                                                                    fontSize: '12px'
+                                                                }}>
+                                                                    ✓ {item.checker}
+                                                                </span>
+                                                            </div>
+                                                            {item.note && (
+                                                                <div style={{
+                                                                    marginTop: '10px',
+                                                                    padding: '10px',
+                                                                    background: 'rgba(237, 137, 54, 0.1)',
+                                                                    borderRadius: '8px',
+                                                                    fontSize: '13px',
+                                                                    color: '#fbd38d',
+                                                                    borderLeft: '3px solid #ed8936'
+                                                                }}>
+                                                                    💡 {item.note}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </Card>
+                                    ))}
+
+                                    <Card>
+                                        <AlertBox type="danger">
+                                            <strong>⚠️ 重要提醒</strong>
+                                            <ul style={{ marginTop: '10px', paddingLeft: '20px' }}>
+                                                <li style={{ marginBottom: '6px' }}>血壓過高 + Heparin → ICH (顱內出血)</li>
+                                                <li>血壓太低 → Stent Thrombosis (支架血栓)</li>
+                                            </ul>
+                                        </AlertBox>
+                                    </Card>
+                                </>
+                            )}
+
+                            {activeTab === 'equipment' && (
+                                <Card>
+                                    <SectionTitle icon="🔧" title="頸動脈支架醫材列表" />
+                                    <ProgressBar current={equipmentChecked} total={cathLabChecklist.equipment.length} />
+                                    {cathLabChecklist.equipment.map((item, idx) => (
+                                        <div
+                                            key={idx}
+                                            onClick={() => handleEquipmentCheck(idx)}
+                                            style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '12px',
+                                                padding: '14px',
+                                                background: cathLabChecks[`equip_${idx}`] ? 'rgba(56, 161, 105, 0.1)' : 'var(--bg-card-light)',
+                                                borderRadius: '10px',
+                                                marginBottom: '10px',
+                                                cursor: 'pointer',
+                                                border: cathLabChecks[`equip_${idx}`] ? '1px solid var(--success)' : '1px solid transparent'
+                                            }}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={cathLabChecks[`equip_${idx}`] || false}
+                                                onChange={() => {}}
+                                            />
+                                            <div style={{ flex: 1 }}>
+                                                <div style={{ fontWeight: '500', marginBottom: '4px' }}>{item.item}</div>
+                                                <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{item.specs}</div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </Card>
+                            )}
+
+                            {activeTab === 'angles' && (
+                                <Card>
+                                    <SectionTitle icon="📐" title="血管攝影角度" />
+                                    {cathLabChecklist.angiographyAngles.map((angle, idx) => (
+                                        <div key={idx} style={{
+                                            padding: '16px',
+                                            background: 'var(--bg-card-light)',
+                                            borderRadius: '12px',
+                                            marginBottom: '12px'
+                                        }}>
+                                            <div style={{
+                                                display: 'inline-block',
+                                                padding: '4px 12px',
+                                                background: 'var(--info)',
+                                                borderRadius: '20px',
+                                                fontSize: '13px',
+                                                marginBottom: '10px'
+                                            }}>
+                                                {angle.level}
+                                            </div>
+                                            <div style={{ fontWeight: '500', marginBottom: '6px' }}>{angle.view}</div>
+                                            <div style={{ fontSize: '14px', color: 'var(--text-muted)' }}>{angle.purpose}</div>
+                                        </div>
+                                    ))}
+                                </Card>
+                            )}
+
+                            {activeTab === 'phases' && (
+                                <Card>
+                                    <SectionTitle icon="📝" title="手術流程步驟" />
+                                    {cathLabChecklist.procedurePhases.map((phase, idx) => (
+                                        <div key={idx} style={{
+                                            position: 'relative',
+                                            paddingLeft: '30px',
+                                            paddingBottom: idx < cathLabChecklist.procedurePhases.length - 1 ? '20px' : '0',
+                                            borderLeft: idx < cathLabChecklist.procedurePhases.length - 1 ? '2px solid var(--border-color)' : 'none',
+                                            marginLeft: '10px'
+                                        }}>
+                                            <div style={{
+                                                position: 'absolute',
+                                                left: '-10px',
+                                                width: '20px',
+                                                height: '20px',
+                                                background: 'var(--purple)',
+                                                borderRadius: '50%',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                fontSize: '12px',
+                                                fontWeight: '600'
+                                            }}>
+                                                {idx + 1}
+                                            </div>
+                                            <div style={{
+                                                background: 'var(--bg-card-light)',
+                                                borderRadius: '12px',
+                                                padding: '14px'
+                                            }}>
+                                                <div style={{ fontWeight: '600', marginBottom: '8px', color: 'var(--purple)' }}>
+                                                    {phase.phase}
+                                                </div>
+                                                <ul style={{ paddingLeft: '20px', margin: 0 }}>
+                                                    {phase.tasks.map((task, tidx) => (
+                                                        <li key={tidx} style={{ fontSize: '14px', marginBottom: '4px' }}>{task}</li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </Card>
+                            )}
+
+                            <Card>
+                                <AlertBox type="warning">
+                                    <strong>⚠️ WallStent 注意事項：</strong>
+                                    <p style={{ marginTop: '8px' }}>WallStent 會縮短！病灶應定位在支架 1/3-2/3 處，不要置中。Proximal 支架較多會將角度拉直，避免嚴重 vessel distortion。</p>
+                                </AlertBox>
+                            </Card>
+                        </div>
+                    </div>
+                );
+            };
+
+            const NASCETPage = () => {
+                const [stenosisInput, setStenosisInput] = useState({ narrow: '', reference: '' });
+                const [calcResult, setCalcResult] = useState(null);
+
+                const calculateStenosis = () => {
+                    const narrow = parseFloat(stenosisInput.narrow);
+                    const ref = parseFloat(stenosisInput.reference);
+                    if (narrow && ref && ref > 0) {
+                        const stenosis = ((1 - narrow / ref) * 100).toFixed(1);
+                        setCalcResult(stenosis);
+                    }
+                };
+
+                return (
+                    <div>
+                        <Header title="NASCET vs ECST" subtitle="狹窄程度測量教學" onBack={() => setCurrentPage('home')} />
+                        <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+                            {/* NASCET */}
+                            <Card>
+                                <SectionTitle icon="🔬" title={nascetEcstData.nascet.name} color="#38a169" />
+                                <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                                    {nascetEcstData.nascet.fullName}
+                                </p>
+                                <div style={{
+                                    background: 'rgba(56, 161, 105, 0.1)',
+                                    padding: '16px',
+                                    borderRadius: '12px',
+                                    marginBottom: '14px',
+                                    fontFamily: 'monospace',
+                                    fontSize: '15px'
+                                }}>
+                                    {nascetEcstData.nascet.formula}
+                                </div>
+                                <p style={{ marginBottom: '12px' }}>{nascetEcstData.nascet.description}</p>
+                                <div style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
+                                    <strong>優點：</strong>
+                                    <ul style={{ paddingLeft: '20px', marginTop: '6px' }}>
+                                        {nascetEcstData.nascet.advantages.map((adv, idx) => (
+                                            <li key={idx}>{adv}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </Card>
+
+                            {/* ECST */}
+                            <Card>
+                                <SectionTitle icon="🔬" title={nascetEcstData.ecst.name} color="#3182ce" />
+                                <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                                    {nascetEcstData.ecst.fullName}
+                                </p>
+                                <div style={{
+                                    background: 'rgba(49, 130, 206, 0.1)',
+                                    padding: '16px',
+                                    borderRadius: '12px',
+                                    marginBottom: '14px',
+                                    fontFamily: 'monospace',
+                                    fontSize: '15px'
+                                }}>
+                                    {nascetEcstData.ecst.formula}
+                                </div>
+                                <p style={{ marginBottom: '12px' }}>{nascetEcstData.ecst.description}</p>
+                                <div style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
+                                    <strong>優點：</strong>
+                                    <ul style={{ paddingLeft: '20px', marginTop: '6px' }}>
+                                        {nascetEcstData.ecst.advantages.map((adv, idx) => (
+                                            <li key={idx}>{adv}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </Card>
+
+                            {/* 換算表 */}
+                            <Card>
+                                <SectionTitle icon="🔄" title={nascetEcstData.conversion.title} />
+                                <div style={{
+                                    background: 'var(--bg-card-light)',
+                                    padding: '16px',
+                                    borderRadius: '12px',
+                                    marginBottom: '14px',
+                                    fontFamily: 'monospace'
+                                }}>
+                                    {nascetEcstData.conversion.formula}
+                                </div>
+                                <div style={{ overflowX: 'auto' }}>
+                                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                        <thead>
+                                            <tr style={{ background: 'var(--bg-card-light)' }}>
+                                                <th style={{ padding: '12px', textAlign: 'center', borderRadius: '8px 0 0 0' }}>ECST</th>
+                                                <th style={{ padding: '12px', textAlign: 'center', borderRadius: '0 8px 0 0' }}>≈ NASCET</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {nascetEcstData.conversion.table.map((row, idx) => (
+                                                <tr key={idx} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                                                    <td style={{ padding: '12px', textAlign: 'center' }}>{row.ecst}</td>
+                                                    <td style={{ padding: '12px', textAlign: 'center', color: 'var(--success)' }}>{row.nascet}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </Card>
+
+                            {/* 計算機 */}
+                            <Card>
+                                <SectionTitle icon="🧮" title="狹窄程度計算機 (NASCET)" />
+                                <div style={{ display: 'flex', gap: '12px', marginBottom: '14px' }}>
+                                    <div style={{ flex: 1 }}>
+                                        <label style={{ fontSize: '13px', color: 'var(--text-muted)', display: 'block', marginBottom: '6px' }}>
+                                            最窄處直徑 (mm)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            placeholder="A"
+                                            value={stenosisInput.narrow}
+                                            onChange={(e) => setStenosisInput(prev => ({ ...prev, narrow: e.target.value }))}
+                                        />
+                                    </div>
+                                    <div style={{ flex: 1 }}>
+                                        <label style={{ fontSize: '13px', color: 'var(--text-muted)', display: 'block', marginBottom: '6px' }}>
+                                            遠端正常 ICA (mm)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            placeholder="B"
+                                            value={stenosisInput.reference}
+                                            onChange={(e) => setStenosisInput(prev => ({ ...prev, reference: e.target.value }))}
+                                        />
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={calculateStenosis}
+                                    style={{
+                                        width: '100%',
+                                        padding: '14px',
+                                        background: 'var(--success)',
+                                        border: 'none',
+                                        borderRadius: '10px',
+                                        color: 'white',
+                                        fontSize: '16px',
+                                        fontWeight: '600',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    計算
+                                </button>
+                                {calcResult && (
+                                    <div style={{
+                                        marginTop: '16px',
+                                        padding: '16px',
+                                        background: calcResult >= 50 ? 'rgba(229, 62, 62, 0.15)' : 'rgba(56, 161, 105, 0.15)',
+                                        borderRadius: '12px',
+                                        textAlign: 'center'
+                                    }}>
+                                        <div style={{ fontSize: '14px', marginBottom: '6px' }}>NASCET 狹窄程度</div>
+                                        <div style={{
+                                            fontSize: '2.5rem',
+                                            fontWeight: '700',
+                                            color: calcResult >= 50 ? '#e53e3e' : 'var(--success)'
+                                        }}>
+                                            {calcResult}%
+                                        </div>
+                                        {calcResult >= 70 && (
+                                            <div style={{ color: '#e53e3e', marginTop: '8px' }}>⚠️ 強烈建議介入治療</div>
+                                        )}
+                                        {calcResult >= 50 && calcResult < 70 && (
+                                            <div style={{ color: '#ed8936', marginTop: '8px' }}>建議評估介入治療</div>
+                                        )}
+                                    </div>
+                                )}
+                            </Card>
+
+                            {/* 臨床意義 */}
+                            <Card>
+                                <SectionTitle icon="📊" title="臨床適應症" color="var(--accent)" />
+                                <div style={{
+                                    background: 'rgba(229, 62, 62, 0.1)',
+                                    padding: '16px',
+                                    borderRadius: '12px',
+                                    marginBottom: '14px'
+                                }}>
+                                    <div style={{ fontWeight: '600', marginBottom: '8px', color: '#e53e3e' }}>🔴 有症狀 (TIA/Stroke)</div>
+                                    <ul style={{ paddingLeft: '20px', margin: 0 }}>
+                                        <li>{nascetEcstData.clinicalSignificance.symptomatic.indication}</li>
+                                        <li>{nascetEcstData.clinicalSignificance.symptomatic.strongIndication}</li>
+                                        <li>{nascetEcstData.clinicalSignificance.symptomatic.timing}</li>
+                                    </ul>
+                                </div>
+                                <div style={{
+                                    background: 'rgba(237, 137, 54, 0.1)',
+                                    padding: '16px',
+                                    borderRadius: '12px'
+                                }}>
+                                    <div style={{ fontWeight: '600', marginBottom: '8px', color: '#ed8936' }}>🟡 無症狀</div>
+                                    <ul style={{ paddingLeft: '20px', margin: 0 }}>
+                                        <li>{nascetEcstData.clinicalSignificance.asymptomatic.indication}</li>
+                                        <li>{nascetEcstData.clinicalSignificance.asymptomatic.consideration}</li>
+                                    </ul>
+                                </div>
+                            </Card>
+                        </div>
+                    </div>
+                );
+            };
+
+            const EducationPage = () => {
+                const [expandedSection, setExpandedSection] = useState('whatIs');
+
+                const sections = [
+                    { id: 'whatIs', icon: '❓', data: patientEducation.whatIs },
+                    { id: 'symptoms', icon: '⚠️', data: patientEducation.symptoms },
+                    { id: 'treatment', icon: '🩺', data: patientEducation.treatment },
+                    { id: 'risks', icon: '📊', data: patientEducation.risks },
+                    { id: 'recovery', icon: '🏥', data: patientEducation.recovery },
+                    { id: 'followUp', icon: '📅', data: patientEducation.followUp },
+                    { id: 'cost', icon: '💰', data: patientEducation.cost }
+                ];
+
+                return (
+                    <div>
+                        <Header title="病患家屬衛教" subtitle="Patient & Family Education" onBack={() => setCurrentPage('home')} />
+                        <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+                            <AlertBox type="info">
+                                <strong>📖 衛教說明</strong>
+                                <p style={{ marginTop: '6px', fontSize: '14px' }}>以下資訊可協助您與家人了解頸動脈支架治療</p>
+                            </AlertBox>
+
+                            {sections.map((section) => (
+                                <Card
+                                    key={section.id}
+                                    onClick={() => setExpandedSection(expandedSection === section.id ? null : section.id)}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between'
+                                    }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                            <span style={{ fontSize: '1.5rem' }}>{section.icon}</span>
+                                            <h3 style={{ fontSize: '1rem', fontWeight: '600' }}>{section.data.title}</h3>
+                                        </div>
+                                        <span style={{
+                                            transform: expandedSection === section.id ? 'rotate(180deg)' : 'rotate(0)',
+                                            transition: 'transform 0.3s'
+                                        }}>▼</span>
+                                    </div>
+                                    {expandedSection === section.id && (
+                                        <ul style={{
+                                            paddingLeft: '20px',
+                                            marginTop: '16px',
+                                            animation: 'fadeIn 0.3s ease-out'
+                                        }}>
+                                            {section.data.content.map((item, idx) => (
+                                                <li key={idx} style={{ marginBottom: '10px', lineHeight: '1.6' }}>{item}</li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </Card>
+                            ))}
+
+                            {/* FAQ */}
+                            <Card>
+                                <SectionTitle icon="💬" title="常見問題" />
+                                {patientEducation.faq.map((faq, idx) => (
+                                    <div key={idx} style={{
+                                        padding: '14px',
+                                        background: 'var(--bg-card-light)',
+                                        borderRadius: '10px',
+                                        marginBottom: '12px'
+                                    }}>
+                                        <div style={{ fontWeight: '600', marginBottom: '8px', color: 'var(--info)' }}>
+                                            Q: {faq.q}
+                                        </div>
+                                        <div style={{ fontSize: '14px' }}>
+                                            A: {faq.a}
+                                        </div>
+                                    </div>
+                                ))}
+                            </Card>
+
+                            {/* 參考連結 */}
+                            <Card>
+                                <SectionTitle icon="🔗" title="更多資訊" />
+                                <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                                    搜尋關鍵字：
+                                </p>
+                                <div style={{ fontSize: '14px' }}>
+                                    <p style={{ marginBottom: '8px' }}>• 內頸動脈狹窄腦中風學會 (腦中風學會)</p>
+                                    <p>• 頸動脈血流重建 (台北榮總)</p>
+                                </div>
+                            </Card>
+                        </div>
+                    </div>
+                );
+            };
+
+            const MRSPage = () => (
+                <div>
+                    <Header title="mRS 量表" subtitle="Modified Rankin Scale" onBack={() => setCurrentPage('home')} />
+                    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+                        <AlertBox type="info">
+                            <strong>Modified Rankin Scale (mRS)</strong>
+                            <p style={{ marginTop: '6px', fontSize: '14px' }}>評估中風後遺症嚴重程度的標準量表</p>
+                        </AlertBox>
+
+                        <Card>
+                            <SectionTitle icon="📋" title="各級評分說明" />
+                            {mrsScale.map((item) => (
+                                <div key={item.score} style={{
+                                    display: 'flex',
+                                    gap: '14px',
+                                    padding: '14px',
+                                    background: item.score >= 4 ? 'rgba(229, 62, 62, 0.1)' : 'var(--bg-card-light)',
+                                    borderRadius: '10px',
+                                    marginBottom: '10px',
+                                    alignItems: 'flex-start'
+                                }}>
+                                    <div style={{
+                                        width: '36px',
+                                        height: '36px',
+                                        background: item.score >= 4 ? '#e53e3e' : item.score >= 2 ? '#ed8936' : 'var(--success)',
+                                        borderRadius: '50%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontWeight: '700',
+                                        flexShrink: 0
+                                    }}>
+                                        {item.score}
+                                    </div>
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ marginBottom: '6px' }}>{item.description}</div>
+                                        {item.economic !== '-' && (
+                                            <div style={{ fontSize: '13px', color: '#ed8936' }}>
+                                                💰 {item.economic}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </Card>
+
+                        <Card>
+                            <AlertBox type="warning">
+                                <strong>頸動脈狹窄惡化的影響</strong>
+                                <p style={{ marginTop: '8px', fontSize: '14px' }}>
+                                    頸動脈狹窄若進展至全阻塞導致中風，mRS 4-6 分的比例較高。
+                                    及早治療可降低嚴重殘障風險。
+                                </p>
+                            </AlertBox>
+                        </Card>
+                    </div>
+                </div>
+            );
+
+            const QuizPage = () => {
+                const currentQuestion = quizQuestions[quizState.currentQ];
+
+                const handleAnswer = (idx) => {
+                    if (quizState.selected !== null) return;
+                    setQuizState(prev => ({
+                        ...prev,
+                        selected: idx,
+                        score: idx === currentQuestion.correct ? prev.score + 1 : prev.score,
+                        showResult: true
+                    }));
+                };
+
+                const nextQuestion = () => {
+                    if (quizState.currentQ < quizQuestions.length - 1) {
+                        setQuizState(prev => ({
+                            ...prev,
+                            currentQ: prev.currentQ + 1,
+                            selected: null,
+                            showResult: false
+                        }));
+                    } else {
+                        setQuizState(prev => ({ ...prev, completed: true }));
+                    }
+                };
+
+                const resetQuiz = () => {
+                    setQuizState({
+                        currentQ: 0,
+                        score: 0,
+                        selected: null,
+                        showResult: false,
+                        completed: false
+                    });
+                };
+
+                if (quizState.completed) {
+                    const percentage = Math.round((quizState.score / quizQuestions.length) * 100);
+                    return (
+                        <div>
+                            <Header title="測驗結果" onBack={() => setCurrentPage('home')} />
+                            <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
+                                <Card>
+                                    <div style={{ fontSize: '5rem', marginBottom: '20px' }}>
+                                        {percentage >= 80 ? '🎉' : percentage >= 60 ? '👍' : '📚'}
+                                    </div>
+                                    <h2 style={{ fontSize: '1.5rem', marginBottom: '10px' }}>
+                                        {percentage >= 80 ? '太棒了！' : percentage >= 60 ? '不錯喔！' : '繼續加油！'}
+                                    </h2>
+                                    <div style={{
+                                        fontSize: '3rem',
+                                        fontWeight: '700',
+                                        color: percentage >= 80 ? 'var(--success)' : percentage >= 60 ? '#ed8936' : 'var(--accent)',
+                                        marginBottom: '10px'
+                                    }}>
+                                        {quizState.score} / {quizQuestions.length}
+                                    </div>
+                                    <p style={{ color: 'var(--text-muted)', marginBottom: '30px' }}>
+                                        正確率：{percentage}%
+                                    </p>
+                                    <button
+                                        onClick={resetQuiz}
+                                        style={{
+                                            padding: '14px 40px',
+                                            background: 'var(--info)',
+                                            border: 'none',
+                                            borderRadius: '10px',
+                                            color: 'white',
+                                            fontSize: '16px',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        重新測驗
+                                    </button>
+                                </Card>
+                            </div>
+                        </div>
+                    );
+                }
+
+                return (
+                    <div>
+                        <Header 
+                            title="自我測驗" 
+                            subtitle={`第 ${quizState.currentQ + 1} / ${quizQuestions.length} 題`}
+                            onBack={() => setCurrentPage('home')} 
+                        />
+                        <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+                            <ProgressBar current={quizState.currentQ + 1} total={quizQuestions.length} />
+                            
+                            <Card>
+                                <h3 style={{ fontSize: '1.1rem', marginBottom: '20px', lineHeight: '1.6' }}>
+                                    {currentQuestion.q}
+                                </h3>
+                                {currentQuestion.options.map((option, idx) => (
+                                    <div
+                                        key={idx}
+                                        onClick={() => handleAnswer(idx)}
+                                        style={{
+                                            padding: '16px',
+                                            background: quizState.showResult
+                                                ? idx === currentQuestion.correct
+                                                    ? 'rgba(56, 161, 105, 0.2)'
+                                                    : idx === quizState.selected
+                                                        ? 'rgba(229, 62, 62, 0.2)'
+                                                        : 'var(--bg-card-light)'
+                                                : 'var(--bg-card-light)',
+                                            borderRadius: '10px',
+                                            marginBottom: '10px',
+                                            cursor: quizState.selected === null ? 'pointer' : 'default',
+                                            border: quizState.showResult
+                                                ? idx === currentQuestion.correct
+                                                    ? '2px solid var(--success)'
+                                                    : idx === quizState.selected
+                                                        ? '2px solid var(--accent)'
+                                                        : '2px solid transparent'
+                                                : '2px solid transparent',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '12px'
+                                        }}
+                                    >
+                                        <span style={{
+                                            width: '28px',
+                                            height: '28px',
+                                            background: 'var(--bg-card)',
+                                            borderRadius: '50%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontWeight: '600',
+                                            fontSize: '14px'
+                                        }}>
+                                            {String.fromCharCode(65 + idx)}
+                                        </span>
+                                        <span>{option}</span>
+                                    </div>
+                                ))}
+
+                                {quizState.showResult && (
+                                    <div style={{
+                                        marginTop: '20px',
+                                        padding: '16px',
+                                        background: 'rgba(49, 130, 206, 0.1)',
+                                        borderRadius: '10px',
+                                        borderLeft: '4px solid var(--info)'
+                                    }}>
+                                        <strong>💡 說明：</strong>
+                                        <p style={{ marginTop: '8px' }}>{currentQuestion.explanation}</p>
+                                    </div>
+                                )}
+
+                                {quizState.showResult && (
+                                    <button
+                                        onClick={nextQuestion}
+                                        style={{
+                                            width: '100%',
+                                            padding: '14px',
+                                            background: 'var(--info)',
+                                            border: 'none',
+                                            borderRadius: '10px',
+                                            color: 'white',
+                                            fontSize: '16px',
+                                            fontWeight: '600',
+                                            cursor: 'pointer',
+                                            marginTop: '20px'
+                                        }}
+                                    >
+                                        {quizState.currentQ < quizQuestions.length - 1 ? '下一題 →' : '查看結果'}
+                                    </button>
+                                )}
+                            </Card>
+                        </div>
+                    </div>
+                );
+            };
+
+            // ==================== RENDER ====================
+            const renderPage = () => {
+                switch (currentPage) {
+                    case 'ward': return <WardPage />;
+                    case 'cathlab': return <CathLabPage />;
+                    case 'nascet': return <NASCETPage />;
+                    case 'education': return <EducationPage />;
+                    case 'mrs': return <MRSPage />;
+                    case 'quiz': return <QuizPage />;
+                    default: return <HomePage />;
+                }
+            };
+
+            return (
+                <div style={{ minHeight: '100vh' }}>
+                    {renderPage()}
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
