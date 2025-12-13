@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>心臟手術術前藥物評估 | 自學教材</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Noto Sans TC', sans-serif; }
+        .gradient-continue { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .gradient-optional { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .gradient-stop { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+        .gradient-header { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); }
+        .card-shadow { box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .timeline-line { 
+            background: linear-gradient(90deg, #3b82f6 0%, #ef4444 100%);
+            height: 4px;
+        }
+        .drug-tag {
+            transition: all 0.2s ease;
+        }
+        .drug-tag:active {
+            transform: scale(0.95);
+        }
+        .quiz-option {
+            transition: all 0.2s ease;
+        }
+        .quiz-option:active {
+            transform: scale(0.98);
+        }
+        .section-enter {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 min-h-screen">
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect, useCallback } = React;
+
+        // 藥物資料庫
+        const MEDICATION_DATA = {
+            continue: {
+                title: "手術當天繼續給",
+                color: "green",
+                icon: "✓",
+                description: "這些藥物對維持心血管穩定至關重要，突然停藥可能造成反彈性高血壓或心肌缺血",
+                categories: [
+                    {
+                        name: "Beta-blockers",
+                        suffix: "-lol",
+                        reason: "預防術中心律不整、控制心率、減少心肌耗氧",
+                        drugs: [
+                            { brand: "Betaloc", generic: "Metoprolol", code: "" },
+                            { brand: "Concor", generic: "Bisoprolol", code: "" },
+                            { brand: "Dilatrend", generic: "Carvedilol", code: "" },
+                            { brand: "Nebilet", generic: "Nebivolol", code: "" }
+                        ]
+                    },
+                    {
+                        name: "Alpha-2 Agonists",
+                        suffix: "",
+                        reason: "突然停藥可能導致嚴重反彈性高血壓",
+                        drugs: [
+                            { brand: "Catapres", generic: "Clonidine HCl", code: "" }
+                        ]
+                    },
+                    {
+                        name: "Statins",
+                        suffix: "-vastatin",
+                        reason: "具有抗發炎、穩定斑塊作用，術前使用可降低心血管事件",
+                        drugs: [
+                            { brand: "Lipitor", generic: "Atorvastatin", code: "" },
+                            { brand: "Livalo", generic: "Pitavastatin", code: "" },
+                            { brand: "Crestor", generic: "Rosuvastatin", code: "" }
+                        ]
+                    },
+                    {
+                        name: "抗血小板藥物",
+                        suffix: "",
+                        reason: "低劑量Aspirin通常可繼續使用（依術式及醫師判斷）",
+                        drugs: [
+                            { brand: "Aspirin / Bokey", generic: "Acetylsalicylic acid", code: "" }
+                        ]
+                    }
+                ]
+            },
+            optional: {
+                title: "手術當天可給可不給",
+                color: "yellow",
+                icon: "?",
+                description: "依病人狀況及麻醉醫師判斷，通常會hold以避免術中低血壓或電解質不平衡",
+                categories: [
+                    {
+                        name: "利尿劑 Diuretics",
+                        suffix: "",
+                        reason: "可能造成術中低血容、電解質不平衡",
+                        drugs: [
+                            { brand: "Frusemide", generic: "Furosemide", code: "" },
+                            { brand: "Burinex", generic: "Bumetanide", code: "" },
+                            { brand: "Aldactone", generic: "Spironolactone", code: "" },
+                            { brand: "Fluitran", generic: "Trichlormethiazide", code: "" }
+                        ]
+                    },
+                    {
+                        name: "CCB 鈣離子阻斷劑",
+                        suffix: "-dipine",
+                        reason: "可能增強麻醉藥物的低血壓效果",
+                        drugs: [
+                            { brand: "Norvasc", generic: "Amlodipine", code: "" },
+                            { brand: "Nifedipine", generic: "Nifedipine", code: "" },
+                            { brand: "Zanidip", generic: "Lercanidipine", code: "" }
+                        ]
+                    }
+                ]
+            },
+            stop: {
+                title: "手術必須停",
+                color: "red",
+                icon: "✗",
+                description: "這些藥物會影響腎素-血管張力素系統或有特殊代謝風險，必須提前停用",
+                categories: [
+                    {
+                        name: "ACEi 血管張力素轉化酶抑制劑",
+                        suffix: "-pril",
+                        reason: "可能導致麻醉誘導後難治性低血壓",
+                        drugs: [
+                            { brand: "Ceporin", generic: "Captopril", code: "" },
+                            { brand: "Tritace", generic: "Ramipril", code: "" },
+                            { brand: "Synbot", generic: "Enalapril", code: "" }
+                        ]
+                    },
+                    {
+                        name: "ARB 血管張力素受體阻斷劑",
+                        suffix: "-artan / -sartan",
+                        reason: "同ACEi，影響RAS系統導致低血壓風險",
+                        drugs: [
+                            { brand: "Aprovel", generic: "Irbesartan", code: "" },
+                            { brand: "Cozaar", generic: "Losartan", code: "" },
+                            { brand: "Diovan", generic: "Valsartan", code: "" },
+                            { brand: "Edarbi", generic: "Azilsartan", code: "" },
+                            { brand: "Olmetec", generic: "Olmesartan", code: "" }
+                        ]
+                    },
+                    {
+                        name: "SGLT2i 鈉-葡萄糖共同轉運蛋白2抑制劑",
+                        suffix: "-gliflozin",
+                        reason: "⚠️ 術前4天停用！可能導致正常血糖酮酸中毒(euglycemic DKA)，即使血糖正常也可能發生",
+                        drugs: [
+                            { brand: "Forxiga", generic: "Dapagliflozin", code: "" },
+                            { brand: "Jardiance", generic: "Empagliflozin", code: "" },
+                            { brand: "Canaglu", generic: "Canagliflozin", code: "" },
+                            { brand: "Glyxambi", generic: "Empagliflozin + Linagliptin", code: "" },
+                            { brand: "Steglujan", generic: "Ertugliflozin + Sitagliptin", code: "" },
+                            { brand: "Qtern", generic: "Saxagliptin + Dapagliflozin", code: "" },
+                            { brand: "Xigduo XR", generic: "Dapagliflozin + Metformin", code: "" }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // 停藥時間線資料
+        const TIMELINE_DATA = [
+            {
+                day: "Day -10",
+                dayNum: -10,
+                color: "#3b82f6",
+                category: "P2Y12 受體阻斷劑",
+                reason: "作用時間最長的P2Y12抑制劑，需要最長停藥時間讓血小板功能恢復",
+                drugs: [
+                    { brand: "Licodin", generic: "Ticlopidine" }
+                ]
+            },
+            {
+                day: "Day -7",
+                dayNum: -7,
+                color: "#6366f1",
+                category: "P2Y12 受體阻斷劑",
+                reason: "不可逆的P2Y12抑制劑，藥效持續時間較長",
+                drugs: [
+                    { brand: "Efient", generic: "Prasugrel" }
+                ]
+            },
+            {
+                day: "Day -5",
+                dayNum: -5,
+                color: "#8b5cf6",
+                category: "P2Y12 受體阻斷劑 / VKA",
+                reason: "Clopidogrel為不可逆抑制劑；Warfarin需時間讓凝血因子恢復正常",
+                drugs: [
+                    { brand: "Plavix", generic: "Clopidogrel" },
+                    { brand: "Brilinta", generic: "Ticagrelor" },
+                    { brand: "Cofarin", generic: "Warfarin" }
+                ]
+            },
+            {
+                day: "Day -4",
+                dayNum: -4,
+                color: "#a855f7",
+                category: "SGLT2 抑制劑",
+                reason: "避免術中酮酸中毒(DKA)風險，即使血糖正常也可能發生euglycemic DKA",
+                drugs: [
+                    { brand: "Forxiga", generic: "Dapagliflozin" },
+                    { brand: "Jardiance", generic: "Empagliflozin" },
+                    { brand: "Canaglu", generic: "Canagliflozin" },
+                    { brand: "Glyxambi", generic: "Empagliflozin + Linagliptin" },
+                    { brand: "Steglujan", generic: "Ertugliflozin + Sitagliptin" },
+                    { brand: "Qtern", generic: "Saxagliptin + Dapagliflozin" },
+                    { brand: "Xigduo XR", generic: "Dapagliflozin + Metformin" }
+                ]
+            },
+            {
+                day: "Day -3",
+                dayNum: -3,
+                color: "#d946ef",
+                category: "其他抗血小板藥物",
+                reason: "影響血小板功能，需在術前停用以降低出血風險",
+                drugs: [
+                    { brand: "Pletaal", generic: "Cilostazol" },
+                    { brand: "Sandel", generic: "Dipyridamole" }
+                ]
+            },
+            {
+                day: "Day -2",
+                dayNum: -2,
+                color: "#ec4899",
+                category: "NOAC / 其他",
+                reason: "新型口服抗凝血劑半衰期較短，通常停2天即可；銀杏會影響凝血功能",
+                drugs: [
+                    { brand: "Eliquis", generic: "Apixaban" },
+                    { brand: "Pradaxa", generic: "Dabigatran" },
+                    { brand: "Lixiana", generic: "Edoxaban" },
+                    { brand: "Xarelto", generic: "Rivaroxaban" },
+                    { brand: "Gincare", generic: "Ginkgo Biloba 銀杏" }
+                ]
+            },
+            {
+                day: "24H",
+                dayNum: -1,
+                color: "#f43f5e",
+                category: "非Statin降血脂藥 / 肝素",
+                reason: "Fibrates可能增加橫紋肌溶解風險；LMWH需在術前24小時停用",
+                drugs: [
+                    { brand: "Lipanthyl", generic: "Fenofibrate" },
+                    { brand: "Lopid", generic: "Gemfibrozil" },
+                    { brand: "Clexane", generic: "Enoxaparin (LMWH)" }
+                ]
+            },
+            {
+                day: "12H",
+                dayNum: -0.5,
+                color: "#ef4444",
+                category: "肝素",
+                reason: "普通肝素半衰期短，術前12小時停用即可",
+                drugs: [
+                    { brand: "Heparin", generic: "Unfractionated Heparin" }
+                ]
+            }
+        ];
+
+        // 測驗題庫
+        const QUIZ_QUESTIONS = [
+            {
+                id: 1,
+                question: "病患使用 Concor (Bisoprolol)，手術當天應如何處理？",
+                options: [
+                    "手術當天繼續給予",
+                    "手術當天暫停",
+                    "術前3天停藥",
+                    "術前7天停藥"
+                ],
+                correct: 0,
+                explanation: "Concor 是 Beta-blocker（字尾 -lol），屬於手術當天繼續給予的藥物。突然停用可能造成反彈性高血壓或心肌缺血。"
+            },
+            {
+                id: 2,
+                question: "Cozaar (Losartan) 在心臟手術前應該？",
+                options: [
+                    "手術當天繼續服用",
+                    "可給可不給",
+                    "手術當天必須停用",
+                    "術前5天停用"
+                ],
+                correct: 2,
+                explanation: "Cozaar 是 ARB（字尾 -artan），屬於手術當天必須停用的藥物。因為ARB會影響腎素-血管張力素系統，可能導致麻醉後難治性低血壓。"
+            },
+            {
+                id: 3,
+                question: "Plavix (Clopidogrel) 應於術前幾天停用？",
+                options: [
+                    "術前10天",
+                    "術前7天",
+                    "術前5天",
+                    "術前3天"
+                ],
+                correct: 2,
+                explanation: "Plavix 是 P2Y12 受體阻斷劑，為不可逆的血小板抑制劑，建議術前5天停用，讓血小板功能恢復。"
+            },
+            {
+                id: 4,
+                question: "下列何者是辨識 Beta-blocker 的藥名特徵？",
+                options: [
+                    "字尾 -pril",
+                    "字尾 -artan",
+                    "字尾 -lol",
+                    "字尾 -vastatin"
+                ],
+                correct: 2,
+                explanation: "Beta-blocker 的藥名通常以 -lol 結尾，例如 Metoprolol、Bisoprolol、Carvedilol、Nebivolol。"
+            },
+            {
+                id: 5,
+                question: "Jardiance (Empagliflozin) 屬於哪類藥物，應於術前幾天停用？",
+                options: [
+                    "NOAC，術前2天",
+                    "SGLT2抑制劑，術前4天",
+                    "P2Y12抑制劑，術前5天",
+                    "利尿劑，手術當天可給可不給"
+                ],
+                correct: 1,
+                explanation: "Jardiance 是 SGLT2 抑制劑，應於術前4天停用，以避免術中發生酮酸中毒（euglycemic DKA）的風險。"
+            },
+            {
+                id: 6,
+                question: "Eliquis (Apixaban) 應於術前多久停用？",
+                options: [
+                    "術前5天",
+                    "術前4天",
+                    "術前2天",
+                    "術前12小時"
+                ],
+                correct: 2,
+                explanation: "Eliquis 是 NOAC（新型口服抗凝血劑），半衰期較短，建議術前2天停用即可。"
+            },
+            {
+                id: 7,
+                question: "關於 Norvasc (Amlodipine)，手術當天應如何處理？",
+                options: [
+                    "必須繼續給予",
+                    "必須停用",
+                    "可給可不給",
+                    "術前3天停用"
+                ],
+                correct: 2,
+                explanation: "Norvasc 是 CCB（鈣離子阻斷劑），屬於手術當天可給可不給的藥物。通常會暫停以避免術中低血壓。"
+            },
+            {
+                id: 8,
+                question: "字尾為 -pril 的藥物屬於哪一類？",
+                options: [
+                    "Beta-blocker",
+                    "ACEi",
+                    "ARB",
+                    "Statin"
+                ],
+                correct: 1,
+                explanation: "-pril 結尾的藥物是 ACEi（血管張力素轉化酶抑制劑），例如 Captopril、Ramipril、Enalapril。這類藥物在手術當天必須停用。"
+            },
+            {
+                id: 9,
+                question: "Efient (Prasugrel) 應於術前幾天停用？",
+                options: [
+                    "術前10天",
+                    "術前7天",
+                    "術前5天",
+                    "術前3天"
+                ],
+                correct: 1,
+                explanation: "Efient 是 P2Y12 受體阻斷劑中作用較強且不可逆的藥物，建議術前7天停用。"
+            },
+            {
+                id: 10,
+                question: "Lipitor (Atorvastatin) 手術當天應？",
+                options: [
+                    "繼續給予",
+                    "暫停給予",
+                    "術前3天停用",
+                    "術前7天停用"
+                ],
+                correct: 0,
+                explanation: "Lipitor 是 Statin（字尾 -vastatin），屬於手術當天繼續給予的藥物。Statin具有抗發炎、穩定斑塊的作用，術前使用可降低心血管事件風險。"
+            },
+            {
+                id: 11,
+                question: "Cofarin (Warfarin) 應於術前幾天停用？",
+                options: [
+                    "術前2天",
+                    "術前3天",
+                    "術前5天",
+                    "術前7天"
+                ],
+                correct: 2,
+                explanation: "Warfarin 是 VKA（維他命K拮抗劑），需要術前5天停用，讓凝血因子（II, VII, IX, X）恢復正常。"
+            },
+            {
+                id: 12,
+                question: "Clexane (Enoxaparin) 應於術前多久停用？",
+                options: [
+                    "術前12小時",
+                    "術前24小時",
+                    "術前2天",
+                    "術前3天"
+                ],
+                correct: 1,
+                explanation: "Clexane 是 LMWH（低分子量肝素），建議術前24小時停用。"
+            },
+            {
+                id: 13,
+                question: "下列何者屬於「手術當天必須停用」的藥物？",
+                options: [
+                    "Nebilet (Nebivolol)",
+                    "Diovan (Valsartan)",
+                    "Crestor (Rosuvastatin)",
+                    "Aldactone (Spironolactone)"
+                ],
+                correct: 1,
+                explanation: "Diovan 是 ARB（字尾 -artan），屬於手術當天必須停用的藥物。Nebilet是Beta-blocker需繼續給，Crestor是Statin需繼續給，Aldactone是利尿劑屬可給可不給。"
+            },
+            {
+                id: 14,
+                question: "SGLT2抑制劑術前停用的主要原因是？",
+                options: [
+                    "避免低血壓",
+                    "避免出血風險",
+                    "避免酮酸中毒(DKA)",
+                    "避免心律不整"
+                ],
+                correct: 2,
+                explanation: "SGLT2抑制劑可能在禁食及手術壓力下導致酮酸中毒（euglycemic DKA），即使血糖正常也可能發生，因此需術前4天停用。"
+            },
+            {
+                id: 15,
+                question: "Catapres (Clonidine) 手術當天應？",
+                options: [
+                    "繼續給予",
+                    "暫停給予",
+                    "術前3天停用",
+                    "術前5天停用"
+                ],
+                correct: 0,
+                explanation: "Catapres 是 Alpha-2 agonist，屬於手術當天繼續給予的藥物。突然停用可能導致嚴重的反彈性高血壓。"
+            },
+            {
+                id: 16,
+                question: "Licodin (Ticlopidine) 需要在術前幾天停用？",
+                options: [
+                    "術前5天",
+                    "術前7天",
+                    "術前10天",
+                    "術前14天"
+                ],
+                correct: 2,
+                explanation: "Licodin 是作用時間最長的P2Y12抑制劑，需要術前10天停用，是所有P2Y12抑制劑中停藥時間最長的。"
+            },
+            {
+                id: 17,
+                question: "下列哪種藥物的停藥時間最短（術前12小時）？",
+                options: [
+                    "Clexane (Enoxaparin)",
+                    "Heparin (普通肝素)",
+                    "Eliquis (Apixaban)",
+                    "Plavix (Clopidogrel)"
+                ],
+                correct: 1,
+                explanation: "普通肝素（Unfractionated Heparin）半衰期最短，僅需術前12小時停用即可。"
+            },
+            {
+                id: 18,
+                question: "Gincare (銀杏) 應於術前多久停用？",
+                options: [
+                    "不需停用",
+                    "術前12小時",
+                    "術前2天",
+                    "術前5天"
+                ],
+                correct: 2,
+                explanation: "銀杏製劑會影響凝血功能，建議術前2天停用，與NOAC的停藥時間相同。"
+            },
+            {
+                id: 19,
+                question: "ACEi和ARB術前需停用的主要原因是？",
+                options: [
+                    "增加出血風險",
+                    "可能導致麻醉後難治性低血壓",
+                    "會造成心律不整",
+                    "影響肝腎功能"
+                ],
+                correct: 1,
+                explanation: "ACEi和ARB影響腎素-血管張力素系統(RAS)，可能導致麻醉誘導後的難治性低血壓，因此手術當天必須停用。"
+            },
+            {
+                id: 20,
+                question: "Brilinta (Ticagrelor) 應於術前幾天停用？",
+                options: [
+                    "術前3天",
+                    "術前5天",
+                    "術前7天",
+                    "術前10天"
+                ],
+                correct: 1,
+                explanation: "Brilinta 是 P2Y12 受體阻斷劑，與 Plavix 相同，建議術前5天停用。雖然Ticagrelor是可逆性抑制劑，但考量安全性仍建議5天停藥。"
+            }
+        ];
+
+        // 主應用程式
+        function App() {
+            const [currentSection, setCurrentSection] = useState('home');
+            const [expandedCategory, setExpandedCategory] = useState(null);
+            const [quizState, setQuizState] = useState({
+                started: false,
+                currentQuestion: 0,
+                answers: [],
+                showResult: false,
+                selectedAnswer: null,
+                showExplanation: false,
+                questions: []
+            });
+            const [searchTerm, setSearchTerm] = useState('');
+            const [selectedDrug, setSelectedDrug] = useState(null);
+
+            // 開始測驗
+            const startQuiz = (count = 10) => {
+                const shuffled = [...QUIZ_QUESTIONS].sort(() => Math.random() - 0.5);
+                const selected = shuffled.slice(0, count);
+                setQuizState({
+                    started: true,
+                    currentQuestion: 0,
+                    answers: [],
+                    showResult: false,
+                    selectedAnswer: null,
+                    showExplanation: false,
+                    questions: selected
+                });
+            };
+
+            // 回答問題
+            const answerQuestion = (answerIndex) => {
+                if (quizState.showExplanation) return;
+                setQuizState(prev => ({
+                    ...prev,
+                    selectedAnswer: answerIndex,
+                    showExplanation: true,
+                    answers: [...prev.answers, {
+                        questionId: prev.questions[prev.currentQuestion].id,
+                        selected: answerIndex,
+                        correct: prev.questions[prev.currentQuestion].correct
+                    }]
+                }));
+            };
+
+            // 下一題
+            const nextQuestion = () => {
+                if (quizState.currentQuestion < quizState.questions.length - 1) {
+                    setQuizState(prev => ({
+                        ...prev,
+                        currentQuestion: prev.currentQuestion + 1,
+                        selectedAnswer: null,
+                        showExplanation: false
+                    }));
+                } else {
+                    setQuizState(prev => ({
+                        ...prev,
+                        showResult: true
+                    }));
+                }
+            };
+
+            // 計算分數
+            const calculateScore = () => {
+                const correct = quizState.answers.filter(a => a.selected === a.correct).length;
+                return {
+                    correct,
+                    total: quizState.questions.length,
+                    percentage: Math.round((correct / quizState.questions.length) * 100)
+                };
+            };
+
+            // 搜尋藥物
+            const searchDrugs = (term) => {
+                if (!term) return [];
+                const results = [];
+                const searchLower = term.toLowerCase();
+                
+                Object.entries(MEDICATION_DATA).forEach(([type, data]) => {
+                    data.categories.forEach(cat => {
+                        cat.drugs.forEach(drug => {
+                            if (drug.brand.toLowerCase().includes(searchLower) ||
+                                drug.generic.toLowerCase().includes(searchLower)) {
+                                results.push({
+                                    ...drug,
+                                    category: cat.name,
+                                    type: data.title,
+                                    typeKey: type,
+                                    color: data.color
+                                });
+                            }
+                        });
+                    });
+                });
+
+                TIMELINE_DATA.forEach(item => {
+                    item.drugs.forEach(drug => {
+                        if (drug.brand.toLowerCase().includes(searchLower) ||
+                            drug.generic.toLowerCase().includes(searchLower)) {
+                            const exists = results.find(r => r.brand === drug.brand);
+                            if (!exists) {
+                                results.push({
+                                    ...drug,
+                                    category: item.category,
+                                    type: `術前${item.day}停用`,
+                                    stopTime: item.day,
+                                    color: 'blue'
+                                });
+                            }
+                        }
+                    });
+                });
+
+                return results;
+            };
+
+            // 導航元件
+            const Navigation = () => (
+                <nav className="fixed top-0 left-0 right-0 bg-gray-800 border-b border-gray-700 z-50 shadow-lg">
+                    <div className="flex justify-around py-2">
+                        {[
+                            { id: 'home', icon: '🏠', label: '首頁' },
+                            { id: 'categories', icon: '💊', label: '藥物分類' },
+                            { id: 'timeline', icon: '⏰', label: '停藥時間' },
+                            { id: 'quiz', icon: '📝', label: '自我測驗' },
+                            { id: 'search', icon: '🔍', label: '搜尋' }
+                        ].map(item => (
+                            <button
+                                key={item.id}
+                                onClick={() => setCurrentSection(item.id)}
+                                className={`flex flex-col items-center px-3 py-1 rounded-lg transition-colors ${
+                                    currentSection === item.id
+                                        ? 'text-blue-400 bg-gray-700'
+                                        : 'text-gray-400'
+                                }`}
+                            >
+                                <span className="text-xl">{item.icon}</span>
+                                <span className="text-xs mt-1">{item.label}</span>
+                            </button>
+                        ))}
+                    </div>
+                </nav>
+            );
+
+            // 首頁
+            const HomePage = () => (
+                <div className="section-enter pt-16 pb-6">
+                    <div className="gradient-header p-6 rounded-b-3xl mb-6">
+                        <h1 className="text-2xl font-bold text-white text-center mb-2">
+                            心臟手術術前藥物評估
+                        </h1>
+                        <p className="text-blue-100 text-center text-sm">
+                            心血管中心 / 2A病房 自學教材
+                        </p>
+                        <p className="text-blue-200 text-center text-xs mt-2">
+                            113.04.29 修訂版
+                        </p>
+                    </div>
+
+                    <div className="px-4 space-y-4">
+                        <div className="bg-gray-800 rounded-2xl p-4 card-shadow">
+                            <h2 className="text-lg font-bold text-white mb-3 flex items-center">
+                                <span className="mr-2">📋</span> 學習目標
+                            </h2>
+                            <ul className="space-y-2 text-gray-300 text-sm">
+                                <li className="flex items-start">
+                                    <span className="text-green-400 mr-2">✓</span>
+                                    辨識手術當天需繼續、可選擇、必須停用的藥物
+                                </li>
+                                <li className="flex items-start">
+                                    <span className="text-green-400 mr-2">✓</span>
+                                    了解各類藥物的停藥時間（Day -10 至 12H）
+                                </li>
+                                <li className="flex items-start">
+                                    <span className="text-green-400 mr-2">✓</span>
+                                    學會藥名字尾辨識技巧（-lol, -pril, -artan等）
+                                </li>
+                                <li className="flex items-start">
+                                    <span className="text-green-400 mr-2">✓</span>
+                                    理解各類藥物停/續用的臨床原因
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-3">
+                            <button
+                                onClick={() => setCurrentSection('categories')}
+                                className="gradient-continue rounded-xl p-4 text-center"
+                            >
+                                <div className="text-2xl mb-1">✓</div>
+                                <div className="text-white text-xs font-medium">繼續給予</div>
+                            </button>
+                            <button
+                                onClick={() => setCurrentSection('categories')}
+                                className="gradient-optional rounded-xl p-4 text-center"
+                            >
+                                <div className="text-2xl mb-1">?</div>
+                                <div className="text-white text-xs font-medium">可給可不給</div>
+                            </button>
+                            <button
+                                onClick={() => setCurrentSection('categories')}
+                                className="gradient-stop rounded-xl p-4 text-center"
+                            >
+                                <div className="text-2xl mb-1">✗</div>
+                                <div className="text-white text-xs font-medium">必須停用</div>
+                            </button>
+                        </div>
+
+                        <div className="bg-gray-800 rounded-2xl p-4 card-shadow">
+                            <h2 className="text-lg font-bold text-white mb-3 flex items-center">
+                                <span className="mr-2">💡</span> 快速記憶口訣
+                            </h2>
+                            <div className="space-y-3">
+                                <div className="bg-green-900/30 rounded-lg p-3 border border-green-700">
+                                    <p className="text-green-300 font-medium text-sm">繼續給：</p>
+                                    <p className="text-gray-300 text-sm">「<span className="text-green-400 font-bold">-lol</span> 要吃、<span className="text-green-400 font-bold">Statin</span> 要吃、<span className="text-green-400 font-bold">Clonidine</span> 不能停」</p>
+                                </div>
+                                <div className="bg-red-900/30 rounded-lg p-3 border border-red-700">
+                                    <p className="text-red-300 font-medium text-sm">必須停：</p>
+                                    <p className="text-gray-300 text-sm">「<span className="text-red-400 font-bold">-pril</span> 和 <span className="text-red-400 font-bold">-artan</span> 當天停」</p>
+                                </div>
+                                <div className="bg-orange-900/30 rounded-lg p-3 border border-orange-500">
+                                    <p className="text-orange-300 font-medium text-sm">⚠️ 特別注意 SGLT2i：</p>
+                                    <p className="text-gray-300 text-sm">「<span className="text-orange-400 font-bold">Forxiga、Jardiance</span> 術前<span className="text-orange-400 font-bold">4天</span>停！」</p>
+                                    <p className="text-gray-400 text-xs mt-1">避免正常血糖酮酸中毒 (euglycemic DKA)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => {
+                                setCurrentSection('quiz');
+                                startQuiz(10);
+                            }}
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold text-lg flex items-center justify-center"
+                        >
+                            <span className="mr-2">📝</span> 開始自我測驗
+                        </button>
+                    </div>
+                </div>
+            );
+
+            // 藥物分類頁面
+            const CategoriesPage = () => (
+                <div className="section-enter pt-16 pb-6">
+                    <div className="gradient-header p-4">
+                        <h1 className="text-xl font-bold text-white text-center">
+                            藥物分類總覽
+                        </h1>
+                    </div>
+
+                    <div className="px-4 py-4 space-y-4">
+                        {Object.entries(MEDICATION_DATA).map(([key, data]) => (
+                            <div
+                                key={key}
+                                className={`rounded-2xl overflow-hidden card-shadow ${
+                                    key === 'continue' ? 'bg-green-900/40 border border-green-700' :
+                                    key === 'optional' ? 'bg-yellow-900/40 border border-yellow-700' :
+                                    'bg-red-900/40 border border-red-700'
+                                }`}
+                            >
+                                <button
+                                    onClick={() => setExpandedCategory(expandedCategory === key ? null : key)}
+                                    className="w-full p-4 flex items-center justify-between"
+                                >
+                                    <div className="flex items-center">
+                                        <span className={`text-2xl mr-3 ${
+                                            key === 'continue' ? 'gradient-continue' :
+                                            key === 'optional' ? 'gradient-optional' :
+                                            'gradient-stop'
+                                        } w-10 h-10 rounded-full flex items-center justify-center text-white`}>
+                                            {data.icon}
+                                        </span>
+                                        <div className="text-left">
+                                            <h2 className="text-white font-bold">{data.title}</h2>
+                                            <p className="text-gray-400 text-xs">
+                                                {data.categories.reduce((acc, cat) => acc + cat.drugs.length, 0)} 種藥物
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <span className="text-gray-400 text-xl">
+                                        {expandedCategory === key ? '−' : '+'}
+                                    </span>
+                                </button>
+
+                                {expandedCategory === key && (
+                                    <div className="px-4 pb-4 space-y-3">
+                                        <p className="text-gray-300 text-sm bg-gray-800/50 rounded-lg p-3">
+                                            {data.description}
+                                        </p>
+                                        {data.categories.map((cat, idx) => (
+                                            <div key={idx} className="bg-gray-800/50 rounded-xl p-3">
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <h3 className="text-white font-medium text-sm">{cat.name}</h3>
+                                                    {cat.suffix && (
+                                                        <span className={`text-xs px-2 py-1 rounded-full ${
+                                                            key === 'continue' ? 'bg-green-700 text-green-200' :
+                                                            key === 'optional' ? 'bg-yellow-700 text-yellow-200' :
+                                                            'bg-red-700 text-red-200'
+                                                        }`}>
+                                                            字尾 {cat.suffix}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <p className="text-gray-400 text-xs mb-2">{cat.reason}</p>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {cat.drugs.map((drug, dIdx) => (
+                                                        <button
+                                                            key={dIdx}
+                                                            onClick={() => setSelectedDrug({...drug, category: cat.name, type: data.title})}
+                                                            className={`drug-tag text-xs px-3 py-1.5 rounded-full ${
+                                                                key === 'continue' ? 'bg-green-800 text-green-200 border border-green-600' :
+                                                                key === 'optional' ? 'bg-yellow-800 text-yellow-200 border border-yellow-600' :
+                                                                'bg-red-800 text-red-200 border border-red-600'
+                                                            }`}
+                                                        >
+                                                            {drug.brand}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+
+            // 停藥時間線頁面
+            const TimelinePage = () => (
+                <div className="section-enter pt-16 pb-6">
+                    <div className="gradient-header p-4">
+                        <h1 className="text-xl font-bold text-white text-center">
+                            術前停藥時間建議
+                        </h1>
+                        <p className="text-blue-200 text-center text-xs mt-1">
+                            由遠到近排列 (Day -10 → 手術日)
+                        </p>
+                    </div>
+
+                    <div className="px-4 py-4">
+                        <div className="relative">
+                            {/* 時間線 */}
+                            <div className="absolute left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 via-purple-500 to-red-500 rounded-full"></div>
+
+                            <div className="space-y-4">
+                                {TIMELINE_DATA.map((item, idx) => (
+                                    <div key={idx} className="relative pl-14">
+                                        {/* 時間點 */}
+                                        <div 
+                                            className="absolute left-4 w-5 h-5 rounded-full border-4 border-gray-900 pulse-dot"
+                                            style={{ backgroundColor: item.color }}
+                                        ></div>
+
+                                        <div className="bg-gray-800 rounded-xl p-4 card-shadow border-l-4" style={{ borderColor: item.color }}>
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span 
+                                                    className="text-lg font-bold px-3 py-1 rounded-lg"
+                                                    style={{ backgroundColor: item.color, color: 'white' }}
+                                                >
+                                                    {item.day}
+                                                </span>
+                                                <span className="text-gray-400 text-xs">{item.category}</span>
+                                            </div>
+                                            
+                                            <p className="text-gray-400 text-xs mb-3 bg-gray-700/50 rounded p-2">
+                                                {item.reason}
+                                            </p>
+
+                                            <div className="flex flex-wrap gap-2">
+                                                {item.drugs.map((drug, dIdx) => (
+                                                    <button
+                                                        key={dIdx}
+                                                        onClick={() => setSelectedDrug({
+                                                            ...drug,
+                                                            category: item.category,
+                                                            type: `術前 ${item.day} 停用`,
+                                                            stopTime: item.day,
+                                                            reason: item.reason
+                                                        })}
+                                                        className="drug-tag bg-gray-700 hover:bg-gray-600 text-gray-200 text-xs px-3 py-1.5 rounded-full border border-gray-600"
+                                                    >
+                                                        {drug.brand}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+
+                                {/* 手術日 */}
+                                <div className="relative pl-14">
+                                    <div className="absolute left-4 w-5 h-5 rounded-full border-4 border-gray-900 bg-white pulse-dot"></div>
+                                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-4 card-shadow">
+                                        <div className="text-center">
+                                            <span className="text-2xl">🏥</span>
+                                            <h3 className="text-white font-bold text-lg mt-1">手術日 (OP Day)</h3>
+                                            <p className="text-blue-100 text-sm">Midnight NPO</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // 測驗頁面
+            const QuizPage = () => {
+                if (!quizState.started) {
+                    return (
+                        <div className="section-enter pt-16 pb-6">
+                            <div className="gradient-header p-4">
+                                <h1 className="text-xl font-bold text-white text-center">
+                                    自我測驗
+                                </h1>
+                            </div>
+
+                            <div className="px-4 py-6 space-y-4">
+                                <div className="bg-gray-800 rounded-2xl p-6 text-center card-shadow">
+                                    <div className="text-5xl mb-4">📝</div>
+                                    <h2 className="text-white text-xl font-bold mb-2">準備好測試你的知識了嗎？</h2>
+                                    <p className="text-gray-400 text-sm mb-6">
+                                        題庫共 {QUIZ_QUESTIONS.length} 題，隨機抽取進行測驗
+                                    </p>
+
+                                    <div className="space-y-3">
+                                        <button
+                                            onClick={() => startQuiz(5)}
+                                            className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-medium"
+                                        >
+                                            快速測驗 (5題)
+                                        </button>
+                                        <button
+                                            onClick={() => startQuiz(10)}
+                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-medium"
+                                        >
+                                            標準測驗 (10題)
+                                        </button>
+                                        <button
+                                            onClick={() => startQuiz(QUIZ_QUESTIONS.length)}
+                                            className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-medium"
+                                        >
+                                            完整測驗 ({QUIZ_QUESTIONS.length}題)
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="bg-gray-800 rounded-2xl p-4 card-shadow">
+                                    <h3 className="text-white font-bold mb-2">測驗涵蓋範圍：</h3>
+                                    <ul className="text-gray-400 text-sm space-y-1">
+                                        <li>• 藥物分類判斷（繼續/可選/必停）</li>
+                                        <li>• 停藥時間（Day -10 至 12H）</li>
+                                        <li>• 藥名字尾辨識</li>
+                                        <li>• 停/續用原因</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                }
+
+                if (quizState.showResult) {
+                    const score = calculateScore();
+                    const isPassed = score.percentage >= 80;
+
+                    return (
+                        <div className="section-enter pt-16 pb-6">
+                            <div className={`p-6 ${isPassed ? 'gradient-continue' : 'gradient-stop'}`}>
+                                <h1 className="text-xl font-bold text-white text-center">
+                                    測驗結果
+                                </h1>
+                            </div>
+
+                            <div className="px-4 py-6 space-y-4">
+                                <div className="bg-gray-800 rounded-2xl p-6 text-center card-shadow">
+                                    <div className="text-6xl mb-4">
+                                        {isPassed ? '🎉' : '💪'}
+                                    </div>
+                                    <div className={`text-5xl font-bold mb-2 ${
+                                        isPassed ? 'text-green-400' : 'text-red-400'
+                                    }`}>
+                                        {score.percentage}%
+                                    </div>
+                                    <p className="text-gray-400 mb-4">
+                                        答對 {score.correct} / {score.total} 題
+                                    </p>
+                                    <p className={`text-lg font-medium ${
+                                        isPassed ? 'text-green-300' : 'text-red-300'
+                                    }`}>
+                                        {isPassed ? '太棒了！你已掌握這個主題！' : '繼續加油！建議複習後再測驗一次'}
+                                    </p>
+                                </div>
+
+                                <div className="bg-gray-800 rounded-2xl p-4 card-shadow">
+                                    <h3 className="text-white font-bold mb-3">答題詳情：</h3>
+                                    <div className="space-y-2 max-h-60 overflow-y-auto">
+                                        {quizState.answers.map((answer, idx) => {
+                                            const question = quizState.questions[idx];
+                                            const isCorrect = answer.selected === answer.correct;
+                                            return (
+                                                <div
+                                                    key={idx}
+                                                    className={`p-3 rounded-lg ${
+                                                        isCorrect ? 'bg-green-900/30 border border-green-700' : 'bg-red-900/30 border border-red-700'
+                                                    }`}
+                                                >
+                                                    <div className="flex items-start">
+                                                        <span className={`mr-2 ${isCorrect ? 'text-green-400' : 'text-red-400'}`}>
+                                                            {isCorrect ? '✓' : '✗'}
+                                                        </span>
+                                                        <div>
+                                                            <p className="text-gray-300 text-sm">{question.question}</p>
+                                                            {!isCorrect && (
+                                                                <p className="text-green-400 text-xs mt-1">
+                                                                    正確答案：{question.options[question.correct]}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-3">
+                                    <button
+                                        onClick={() => startQuiz(quizState.questions.length)}
+                                        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-medium"
+                                    >
+                                        再測一次
+                                    </button>
+                                    <button
+                                        onClick={() => setQuizState({
+                                            started: false,
+                                            currentQuestion: 0,
+                                            answers: [],
+                                            showResult: false,
+                                            selectedAnswer: null,
+                                            showExplanation: false,
+                                            questions: []
+                                        })}
+                                        className="w-full bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl font-medium"
+                                    >
+                                        返回測驗選單
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                }
+
+                const currentQ = quizState.questions[quizState.currentQuestion];
+                const progress = ((quizState.currentQuestion) / quizState.questions.length) * 100;
+
+                return (
+                    <div className="section-enter pt-16 pb-6">
+                        <div className="gradient-header p-4">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-white text-sm">
+                                    第 {quizState.currentQuestion + 1} / {quizState.questions.length} 題
+                                </span>
+                                <span className="text-blue-200 text-sm">
+                                    {quizState.answers.filter(a => a.selected === a.correct).length} 答對
+                                </span>
+                            </div>
+                            <div className="w-full bg-gray-700 rounded-full h-2">
+                                <div
+                                    className="bg-blue-400 h-2 rounded-full transition-all duration-300"
+                                    style={{ width: `${progress}%` }}
+                                ></div>
+                            </div>
+                        </div>
+
+                        <div className="px-4 py-6 space-y-4">
+                            <div className="bg-gray-800 rounded-2xl p-5 card-shadow">
+                                <p className="text-white text-lg leading-relaxed">
+                                    {currentQ.question}
+                                </p>
+                            </div>
+
+                            <div className="space-y-3">
+                                {currentQ.options.map((option, idx) => {
+                                    let buttonClass = 'bg-gray-800 border-gray-600 text-gray-200';
+                                    
+                                    if (quizState.showExplanation) {
+                                        if (idx === currentQ.correct) {
+                                            buttonClass = 'bg-green-900/50 border-green-500 text-green-200';
+                                        } else if (idx === quizState.selectedAnswer && idx !== currentQ.correct) {
+                                            buttonClass = 'bg-red-900/50 border-red-500 text-red-200';
+                                        } else {
+                                            buttonClass = 'bg-gray-800/50 border-gray-700 text-gray-500';
+                                        }
+                                    }
+
+                                    return (
+                                        <button
+                                            key={idx}
+                                            onClick={() => answerQuestion(idx)}
+                                            disabled={quizState.showExplanation}
+                                            className={`quiz-option w-full p-4 rounded-xl border-2 text-left ${buttonClass}`}
+                                        >
+                                            <div className="flex items-center">
+                                                <span className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
+                                                    quizState.showExplanation && idx === currentQ.correct
+                                                        ? 'bg-green-600 text-white'
+                                                        : quizState.showExplanation && idx === quizState.selectedAnswer && idx !== currentQ.correct
+                                                        ? 'bg-red-600 text-white'
+                                                        : 'bg-gray-700 text-gray-300'
+                                                }`}>
+                                                    {String.fromCharCode(65 + idx)}
+                                                </span>
+                                                <span>{option}</span>
+                                            </div>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            {quizState.showExplanation && (
+                                <div className={`rounded-xl p-4 ${
+                                    quizState.selectedAnswer === currentQ.correct
+                                        ? 'bg-green-900/30 border border-green-700'
+                                        : 'bg-red-900/30 border border-red-700'
+                                }`}>
+                                    <div className="flex items-center mb-2">
+                                        <span className={`text-xl mr-2 ${
+                                            quizState.selectedAnswer === currentQ.correct
+                                                ? 'text-green-400'
+                                                : 'text-red-400'
+                                        }`}>
+                                            {quizState.selectedAnswer === currentQ.correct ? '✓ 答對了！' : '✗ 答錯了'}
+                                        </span>
+                                    </div>
+                                    <p className="text-gray-300 text-sm">
+                                        {currentQ.explanation}
+                                    </p>
+                                </div>
+                            )}
+
+                            {quizState.showExplanation && (
+                                <button
+                                    onClick={nextQuestion}
+                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold text-lg"
+                                >
+                                    {quizState.currentQuestion < quizState.questions.length - 1 ? '下一題 →' : '查看結果'}
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                );
+            };
+
+            // 搜尋頁面
+            const SearchPage = () => {
+                const results = searchDrugs(searchTerm);
+
+                return (
+                    <div className="section-enter pt-16 pb-6">
+                        <div className="gradient-header p-4">
+                            <h1 className="text-xl font-bold text-white text-center mb-3">
+                                藥物搜尋
+                            </h1>
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    placeholder="輸入藥名（商品名或學名）"
+                                    className="w-full bg-gray-800 text-white placeholder-gray-500 rounded-xl px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                                    🔍
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="px-4 py-4">
+                            {!searchTerm ? (
+                                <div className="text-center py-12">
+                                    <div className="text-5xl mb-4">💊</div>
+                                    <p className="text-gray-400">輸入藥名開始搜尋</p>
+                                    <p className="text-gray-500 text-sm mt-2">
+                                        例如：Plavix、Eliquis、Jardiance
+                                    </p>
+                                </div>
+                            ) : results.length === 0 ? (
+                                <div className="text-center py-12">
+                                    <div className="text-5xl mb-4">🔍</div>
+                                    <p className="text-gray-400">找不到符合的藥物</p>
+                                    <p className="text-gray-500 text-sm mt-2">
+                                        請嘗試其他關鍵字
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="space-y-3">
+                                    {results.map((drug, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => setSelectedDrug(drug)}
+                                            className={`w-full p-4 rounded-xl text-left card-shadow ${
+                                                drug.typeKey === 'continue' ? 'bg-green-900/40 border border-green-700' :
+                                                drug.typeKey === 'optional' ? 'bg-yellow-900/40 border border-yellow-700' :
+                                                drug.typeKey === 'stop' ? 'bg-red-900/40 border border-red-700' :
+                                                'bg-blue-900/40 border border-blue-700'
+                                            }`}
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <h3 className="text-white font-bold">{drug.brand}</h3>
+                                                    <p className="text-gray-400 text-sm">{drug.generic}</p>
+                                                </div>
+                                                <span className={`text-xs px-3 py-1 rounded-full ${
+                                                    drug.typeKey === 'continue' ? 'bg-green-700 text-green-200' :
+                                                    drug.typeKey === 'optional' ? 'bg-yellow-700 text-yellow-200' :
+                                                    drug.typeKey === 'stop' ? 'bg-red-700 text-red-200' :
+                                                    'bg-blue-700 text-blue-200'
+                                                }`}>
+                                                    {drug.stopTime || drug.type}
+                                                </span>
+                                            </div>
+                                            <p className="text-gray-500 text-xs mt-2">{drug.category}</p>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                );
+            };
+
+            // 藥物詳情彈窗
+            const DrugModal = () => {
+                if (!selectedDrug) return null;
+
+                return (
+                    <div 
+                        className="fixed inset-0 bg-black/80 z-50 flex items-end justify-center"
+                        onClick={() => setSelectedDrug(null)}
+                    >
+                        <div 
+                            className="bg-gray-800 rounded-t-3xl w-full max-w-lg p-6 pb-8"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="w-12 h-1 bg-gray-600 rounded-full mx-auto mb-4"></div>
+                            
+                            <div className="text-center mb-4">
+                                <h2 className="text-2xl font-bold text-white">{selectedDrug.brand}</h2>
+                                <p className="text-gray-400">{selectedDrug.generic}</p>
+                            </div>
+
+                            <div className="space-y-3">
+                                <div className="bg-gray-700 rounded-xl p-4">
+                                    <p className="text-gray-400 text-sm">藥物分類</p>
+                                    <p className="text-white font-medium">{selectedDrug.category}</p>
+                                </div>
+
+                                <div className={`rounded-xl p-4 ${
+                                    selectedDrug.typeKey === 'continue' ? 'bg-green-900/50' :
+                                    selectedDrug.typeKey === 'optional' ? 'bg-yellow-900/50' :
+                                    selectedDrug.typeKey === 'stop' ? 'bg-red-900/50' :
+                                    'bg-blue-900/50'
+                                }`}>
+                                    <p className="text-gray-400 text-sm">術前處置</p>
+                                    <p className={`font-bold ${
+                                        selectedDrug.typeKey === 'continue' ? 'text-green-300' :
+                                        selectedDrug.typeKey === 'optional' ? 'text-yellow-300' :
+                                        selectedDrug.typeKey === 'stop' ? 'text-red-300' :
+                                        'text-blue-300'
+                                    }`}>
+                                        {selectedDrug.stopTime ? `術前 ${selectedDrug.stopTime} 停用` : selectedDrug.type}
+                                    </p>
+                                </div>
+
+                                {selectedDrug.reason && (
+                                    <div className="bg-gray-700 rounded-xl p-4">
+                                        <p className="text-gray-400 text-sm">處置原因</p>
+                                        <p className="text-gray-200 text-sm">{selectedDrug.reason}</p>
+                                    </div>
+                                )}
+                            </div>
+
+                            <button
+                                onClick={() => setSelectedDrug(null)}
+                                className="w-full bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl font-medium mt-4"
+                            >
+                                關閉
+                            </button>
+                        </div>
+                    </div>
+                );
+            };
+
+            return (
+                <div className="min-h-screen bg-gray-900 text-white max-w-lg mx-auto">
+                    {currentSection === 'home' && <HomePage />}
+                    {currentSection === 'categories' && <CategoriesPage />}
+                    {currentSection === 'timeline' && <TimelinePage />}
+                    {currentSection === 'quiz' && <QuizPage />}
+                    {currentSection === 'search' && <SearchPage />}
+                    
+                    <Navigation />
+                    <DrugModal />
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
