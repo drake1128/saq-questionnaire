@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>血流動力學監測與休克 - CCU教學</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #1a365d;
+            --primary-light: #2c5282;
+            --accent: #e53e3e;
+            --success: #38a169;
+            --warning: #d69e2e;
+            --info: #3182ce;
+            --purple: #805ad5;
+            --teal: #319795;
+            --orange: #dd6b20;
+            --bg-dark: #1a202c;
+            --bg-card: #2d3748;
+            --bg-card-light: #4a5568;
+            --text-light: #f7fafc;
+            --text-muted: #a0aec0;
+            --shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            color: var(--text-light);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        #root { min-height: 100vh; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.05); }
+        }
+        
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        .slide-in { animation: slideIn 0.3s ease-out forwards; }
+        .pulse { animation: pulse 2s infinite; }
+        .heartbeat { animation: heartbeat 1.5s infinite; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 3px; }
+        
+        .shock-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .shock-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+        
+        .param-up { color: #fc8181; }
+        .param-down { color: #68d391; }
+        .param-normal { color: #a0aec0; }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // ==================== SVG ICONS ====================
+        const Icons = {
+            Heart: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+            ),
+            Activity: () => (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+            ),
+            Check: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                </svg>
+            ),
+            Arrow: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"/>
+                </svg>
+            ),
+            Back: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+            ),
+            Warning: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                </svg>
+            ),
+            Quiz: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/>
+                </svg>
+            ),
+            Medical: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M19 3H5c-1.1 0-1.99.9-1.99 2L3 19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 11h-4v4h-4v-4H6v-4h4V6h4v4h4v4z"/>
+                </svg>
+            ),
+            Lungs: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                </svg>
+            ),
+            Droplet: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12 2c-5.33 4.55-8 8.48-8 11.8 0 4.98 3.8 8.2 8 8.2s8-3.22 8-8.2c0-3.32-2.67-7.25-8-11.8z"/>
+                </svg>
+            ),
+            Virus: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm0 2a8 8 0 11-8 8 8 8 0 018-8zm-1 3v2H9v2h2v2H9v2h2v2h2v-2h2v-2h-2v-2h2V9h-2V7z"/>
+                </svg>
+            ),
+            Books: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/>
+                </svg>
+            ),
+            Chart: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
+                </svg>
+            ),
+            Translate: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
+                </svg>
+            ),
+            Case: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                </svg>
+            ),
+            Emergency: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 11h-4v4h-4v-4H6v-4h4V6h4v4h4v4z"/>
+                </svg>
+            )
+        };
+
+        // ==================== DATA ====================
+        const normalValues = [
+            { param: 'CO', english: 'Cardiac Output', chinese: '心輸出量', normal: '4-8 L/min', meaning: '心臟每分鐘打出的血量' },
+            { param: 'CI', english: 'Cardiac Index', chinese: '心臟指數', normal: '2.5-4 L/min/m²', meaning: '校正體表面積後的心輸出量' },
+            { param: 'SVR', english: 'Systemic Vascular Resistance', chinese: '全身血管阻力', normal: '800-1200 dyne·s/cm⁵', meaning: '後負荷，代表血管緊縮程度' },
+            { param: 'RAP/CVP', english: 'Right Atrial Pressure / Central Venous Pressure', chinese: '右心房壓/中心靜脈壓', normal: '2-8 mmHg', meaning: '右心前負荷' },
+            { param: 'PAOP/PCWP', english: 'Pulmonary Artery Occlusion Pressure', chinese: '肺動脈楔壓', normal: '6-12 mmHg', meaning: '左心前負荷' },
+            { param: 'SvO₂', english: 'Mixed Venous Oxygen Saturation', chinese: '混合靜脈血氧飽和度', normal: '65-75%', meaning: '組織氧合狀態指標' },
+            { param: 'mPAP', english: 'Mean Pulmonary Artery Pressure', chinese: '平均肺動脈壓', normal: '10-20 mmHg', meaning: '肺循環壓力' },
+            { param: 'Lactate', english: 'Lactate', chinese: '乳酸', normal: '<2 mmol/L', meaning: '組織缺氧與灌流不足指標' }
+        ];
+
+        const shockTypes = [
+            { type: 'Cardiogenic', chinese: '心因性休克', co: '⇓⇓', svr: '⇑⇑', cvp: '⇑', pcwp: '⇑⇑', svo2: '⇓', mechanism: 'Pump failure (泵衰竭)' },
+            { type: 'Hypovolemic', chinese: '低血容休克', co: '⇓', svr: '⇑⇑', cvp: '⇓⇓', pcwp: '⇓⇓', svo2: '⇓', mechanism: 'Volume loss (容積不足)' },
+            { type: 'Septic (early)', chinese: '敗血性休克(早期)', co: '⇑', svr: '⇓⇓', cvp: '⇓/N', pcwp: 'N', svo2: '⇑/N', mechanism: 'Vasoplegia (血管麻痺)' },
+            { type: 'Septic (late)', chinese: '敗血性休克(晚期)', co: '⇓', svr: '⇓', cvp: '⇓/N', pcwp: 'N', svo2: '⇓', mechanism: 'Mixed (混合)' },
+            { type: 'Obstructive (PE)', chinese: '阻塞性休克(PE)', co: '⇓⇓', svr: '⇑⇑', cvp: '⇑⇑', pcwp: '⇓/N', svo2: '⇓⇓', mechanism: 'RV failure (右心衰竭)' }
+        ];
+
+        const glossary = [
+            { english: 'Hemodynamic Monitoring', chinese: '血流動力學監測' },
+            { english: 'Cardiogenic Shock', chinese: '心因性休克' },
+            { english: 'Septic Shock', chinese: '敗血性休克' },
+            { english: 'Hypovolemic Shock', chinese: '低血容休克' },
+            { english: 'Obstructive Shock', chinese: '阻塞性休克' },
+            { english: 'Pulmonary Embolism', chinese: '肺栓塞' },
+            { english: 'Cardiac Output (CO)', chinese: '心輸出量' },
+            { english: 'Cardiac Index (CI)', chinese: '心臟指數' },
+            { english: 'Stroke Volume (SV)', chinese: '每搏輸出量' },
+            { english: 'Stroke Volume Index (SVI)', chinese: '每搏量指數' },
+            { english: 'Stroke Volume Variation (SVV)', chinese: '每搏量變異' },
+            { english: 'Systemic Vascular Resistance (SVR)', chinese: '全身血管阻力' },
+            { english: 'ClearSight / Nexfin', chinese: '可立視（非侵入性連續血壓監測）' },
+            { english: 'Volume Clamp Technique', chinese: '容積箝位法' },
+            { english: 'Noninvasive Continuous BP (NICP)', chinese: '非侵入性連續血壓' },
+            { english: 'Finger Cuff', chinese: '指套' },
+            { english: 'Goal-Directed Fluid Therapy (GDFT)', chinese: '目標導向液體治療' },
+            { english: 'Fluid Responsiveness', chinese: '輸液反應性' },
+            { english: 'Passive Leg Raise (PLR)', chinese: '被動抬腿試驗' },
+            { english: 'Pulmonary Artery Catheter (PAC)', chinese: '肺動脈導管' },
+            { english: 'Swan-Ganz Catheter', chinese: '乾乾氏導管' },
+            { english: 'Central Venous Pressure (CVP)', chinese: '中心靜脈壓' },
+            { english: 'Pulmonary Capillary Wedge Pressure (PCWP)', chinese: '肺微血管楔壓' },
+            { english: 'Afterload', chinese: '後負荷' },
+            { english: 'Preload', chinese: '前負荷' },
+            { english: 'Vasoplegia', chinese: '血管麻痺' },
+            { english: 'Vasopressor', chinese: '升壓劑' },
+            { english: 'Inotrope', chinese: '強心劑' },
+            { english: 'Norepinephrine', chinese: '去甲腎上腺素' },
+            { english: 'Dobutamine', chinese: '多巴酚丁胺' },
+            { english: 'Milrinone', chinese: '米力農' },
+            { english: 'Fluid Resuscitation', chinese: '液體復甦' },
+            { english: 'Lactate Clearance', chinese: '乳酸清除率' },
+            { english: 'Tissue Perfusion', chinese: '組織灌流' },
+            { english: 'Oxygen Extraction', chinese: '氧氣萃取' },
+            { english: 'Mixed Venous Oxygen Saturation (SvO₂)', chinese: '混合靜脈血氧飽和度' },
+            { english: 'Mechanical Circulatory Support (MCS)', chinese: '機械循環支持' },
+            { english: 'IABP (Intra-aortic Balloon Pump)', chinese: '主動脈內乳球幫浦' },
+            { english: 'Impella', chinese: '微型心臟泵' },
+            { english: 'ECMO', chinese: '葉克膜' },
+            { english: 'Thrombolysis', chinese: '血栓溶解治療' },
+            { english: 'Right Ventricular Failure', chinese: '右心衰竭' },
+            { english: 'McConnell Sign', chinese: '麥康奈爾徵象' },
+            { english: 'D-shaped LV', chinese: 'D形左心室' },
+            { english: 'IVC Collapsibility', chinese: '下腔靜脈塌陷度' },
+            { english: 'Cold & Wet', chinese: '冷濕型' },
+            { english: 'Cold & Dry', chinese: '冷乾型' },
+            { english: 'Warm & Wet', chinese: '暖濕型' },
+            { english: 'Warm & Dry', chinese: '暖乾型' },
+            { english: 'Primary PCI', chinese: '緊急冠狀動脈介入' },
+            { english: 'Sepsis Bundle', chinese: '敗血症組合治療' },
+            { english: 'Mean Arterial Pressure (MAP)', chinese: '平均動脈壓' },
+            { english: 'Frank-Starling Curve', chinese: '乳蘭-史達林曲線' }
+        ];
+
+        const cases = [
+            {
+                id: 1,
+                title: 'Cardiogenic Shock',
+                chinese: '心因性休克',
+                color: '#e53e3e',
+                icon: '❤️',
+                patient: {
+                    age: 65,
+                    gender: '男性',
+                    chief: '胸痛6小時，呼吸困難',
+                    history: '急性前壁心肌梗塞',
+                    vitals: { bp: '85/60', hr: 110, rr: 28 }
+                },
+                exam: [
+                    '冷汗、皮膚濕冷、末梢發紺',
+                    '頸靜脈怒張 (JVP升高)',
+                    '雙側肺底囉音',
+                    '心音S3 gallop',
+                    '尿量 < 0.5 mL/kg/hr'
+                ],
+                hemodynamics: {
+                    co: { value: '3.2 L/min', status: 'down', label: '⇓⇓' },
+                    ci: { value: '1.8 L/min/m²', status: 'down', label: '⇓⇓' },
+                    svr: { value: '1850 dyne·s/cm⁵', status: 'up', label: '⇑⇑' },
+                    cvp: { value: '14 mmHg', status: 'up', label: '⇑' },
+                    pcwp: { value: '24 mmHg', status: 'up', label: '⇑⇑' },
+                    svo2: { value: '52%', status: 'down', label: '⇓⇓' }
+                },
+                labs: ['Lactate: 4.5 mmol/L ⇑', 'Troponin-I: 25 ng/mL ⇑⇑', 'BNP: 1200 pg/mL ⇑', 'Creatinine: 1.8 mg/dL ⇑'],
+                echo: ['LVEF: 25%', 'Akinetic anterior wall', 'Moderate MR'],
+                analysis: {
+                    features: [
+                        '低心輸出量 (CI 1.8) - 心臟泵血功能嚴重受損',
+                        '高充填壓 (PCWP 24, RAP 14) - 肺水腫與右心衰竭',
+                        '高SVR (1850) - 代償性血管收縮',
+                        '低SvO₂ (52%) - 組織氧合不足',
+                        '高Lactate - 組織缺氧與代謝性酸中毒'
+                    ],
+                    profile: 'Cold & Wet (冷濕型)',
+                    meaning: '嚴重的左心收縮功能不全，肺充血與體循環灌流不足'
+                },
+                treatment: [
+                    { priority: 1, action: 'Primary PCI', detail: '緊急冠狀動脈介入治療' },
+                    { priority: 2, action: 'Inotropic support', detail: 'Dobutamine 5-10 mcg/kg/min 或 Milrinone' },
+                    { priority: 3, action: '利尿劑', detail: 'Furosemide IV 降低PCWP' },
+                    { priority: 4, action: 'Vasopressor', detail: 'Norepinephrine 若MAP < 65 mmHg' },
+                    { priority: 5, action: 'MCS', detail: 'IABP或Impella若藥物反應不佳' }
+                ],
+                goals: ['CI > 2.2 L/min/m²', 'PCWP 15-18 mmHg', 'MAP > 65 mmHg', 'SvO₂ > 60%', 'Lactate clearance > 10%/hr']
+            },
+            {
+                id: 2,
+                title: 'Septic Shock',
+                chinese: '敗血性休克',
+                color: '#dd6b20',
+                icon: '🦠',
+                patient: {
+                    age: 58,
+                    gender: '女性',
+                    chief: '發燒、意識改變2天',
+                    history: '尿路感染史、糖尿病、高血壓',
+                    vitals: { bp: '78/45', hr: 125, rr: 24, temp: '39.2°C' }
+                },
+                exam: [
+                    '皮膚溫暖、潮紅 (warm shock)',
+                    'Bounding pulse',
+                    '肺部清晰',
+                    '意識混亂 (GCS 13)',
+                    '尿量 0.3 mL/kg/hr'
+                ],
+                hemodynamics: {
+                    co: { value: '8.5 L/min', status: 'up', label: '⇑⇑' },
+                    ci: { value: '4.8 L/min/m²', status: 'up', label: '⇑' },
+                    svr: { value: '450 dyne·s/cm⁵', status: 'down', label: '⇓⇓' },
+                    cvp: { value: '6 mmHg', status: 'normal', label: 'N' },
+                    pcwp: { value: '10 mmHg', status: 'normal', label: 'N' },
+                    svo2: { value: '78%', status: 'up', label: '⇑' }
+                },
+                labs: ['Lactate: 5.2 mmol/L ⇑⇑', 'WBC: 22,000/µL ⇑', 'Procalcitonin: 15 ng/mL ⇑⇑', 'U/C: E. coli > 100,000 CFU'],
+                echo: ['Hyperdynamic LV', 'LVEF: 70%', 'IVC plethoric'],
+                analysis: {
+                    features: [
+                        '高心輸出量 (CI 4.8) - 代償性心搏增加',
+                        '極低SVR (450) - 病理性血管擴張',
+                        '正常充填壓 - 但相對性血容不足',
+                        '高SvO₂ (78%) - 氧氣萃取障礙 (O₂ extraction defect)',
+                        '高Lactate - 細胞代謝障礙，非單純缺氧'
+                    ],
+                    profile: 'Warm Shock / Hyperdynamic Phase',
+                    meaning: 'Distributive Shock - 血管擴張導致相對性低血容，CO雖高但effective perfusion不足'
+                },
+                treatment: [
+                    { priority: 1, action: '早期抗生素', detail: 'Broad-spectrum within 1 hour' },
+                    { priority: 2, action: '液體復甦', detail: '評估fluid responsiveness (PLR test)' },
+                    { priority: 3, action: 'Vasopressor', detail: 'Norepinephrine 0.05-0.3 mcg/kg/min (最重要！)' },
+                    { priority: 4, action: 'Source control', detail: '移除感染源' },
+                    { priority: 5, action: 'Lactate監測', detail: '追蹤clearance' }
+                ],
+                goals: ['MAP ≥ 65 mmHg', 'Lactate clearance ≥ 10%/2hr', '尿量 > 0.5 mL/kg/hr', 'Mental status改善']
+            },
+            {
+                id: 3,
+                title: 'Hypovolemic Shock',
+                chinese: '低血容休克',
+                color: '#3182ce',
+                icon: '💧',
+                patient: {
+                    age: 72,
+                    gender: '男性',
+                    chief: '解黑便3天，暈眩',
+                    history: '長期服用NSAIDs (膝關節炎)',
+                    vitals: { bp: '88/55', hr: 118, rr: 24, orthostatic: '+' }
+                },
+                exam: [
+                    '皮膚冰冷、蒼白、濕冷',
+                    'Capillary refill time > 3秒',
+                    '頸靜脈平坦 (JVP降低)',
+                    '肺部清晰，心音正常',
+                    '尿量 < 0.3 mL/kg/hr'
+                ],
+                hemodynamics: {
+                    co: { value: '3.8 L/min', status: 'down', label: '⇓' },
+                    ci: { value: '2.1 L/min/m²', status: 'down', label: '⇓' },
+                    svr: { value: '1650 dyne·s/cm⁵', status: 'up', label: '⇑⇑' },
+                    cvp: { value: '2 mmHg', status: 'down', label: '⇓⇓' },
+                    pcwp: { value: '5 mmHg', status: 'down', label: '⇓⇓' },
+                    svo2: { value: '58%', status: 'down', label: '⇓' }
+                },
+                labs: ['Hb: 7.2 g/dL ⇓⇓', 'Hct: 22% ⇓⇓', 'Lactate: 3.8 mmol/L ⇑', 'BUN/Cr: 48/1.5 (ratio 32)'],
+                echo: ['Hyperdynamic but small LV cavity', 'LVEF: 65%', 'IVC < 1.5 cm, collapsing'],
+                analysis: {
+                    features: [
+                        '低充填壓 (CVP 2, PCWP 5) - 血容量不足的直接證據',
+                        '低心輸出量 (CI 2.1) - 前負荷不足影響CO',
+                        '高SVR (1650) - 代償性血管收縮維持血壓',
+                        '低SvO₂ (58%) - 組織氧合不足',
+                        'IVC collapsing - 容積反應性佳'
+                    ],
+                    profile: 'Cold & Dry (冷乾型)',
+                    meaning: '低充填壓 + fluid responsive 是診斷要點'
+                },
+                treatment: [
+                    { priority: 1, action: '積極輸液復甦', detail: 'Crystalloid bolus 500-1000 mL，目標CVP 8-12' },
+                    { priority: 2, action: '輸血', detail: 'pRBC transfusion (Hb < 7 + shock)' },
+                    { priority: 3, action: '止血', detail: '緊急內視鏡、PPI infusion' },
+                    { priority: 4, action: 'Vasopressor', detail: '只在充分輸液後仍低血壓時考慮' }
+                ],
+                goals: ['BP穩定', 'CVP 8-12 mmHg', 'Hb > 7-8 g/dL', '尿量恢復', 'Lactate下降'],
+                outcome: {
+                    title: '治療後2小時',
+                    hemodynamics: { co: '5.2 L/min ⇑', ci: '2.9 L/min/m² ⇑', cvp: '9 mmHg ⇑', svr: '1200 ⇓', svo2: '68% ⇑' },
+                    clinical: ['BP: 110/70 mmHg', 'HR: 92 bpm', '皮膚溫暖', '尿量 > 0.5 mL/kg/hr', 'Lactate: 2.1']
+                }
+            },
+            {
+                id: 4,
+                title: 'Mixed: Hypovolemic + Cardiogenic',
+                chinese: '混合型：低血容+心因性',
+                color: '#805ad5',
+                icon: '🔀',
+                patient: {
+                    age: 78,
+                    gender: '女性',
+                    chief: '腹瀉、嘔吐3天後呼吸困難',
+                    history: '慢性心衰竭 (LVEF 30%)、急性腸胃炎導致脫水',
+                    vitals: { bp: '82/50', hr: 108, rr: 26 }
+                },
+                exam: [
+                    '皮膚乾燥、turgor差 (脫水徵象)',
+                    'JVP難評估 (低血容 vs 心衰？)',
+                    '雙側肺底囉音',
+                    '水腫 (+) - 原本就有',
+                    '尿量 < 0.4 mL/kg/hr'
+                ],
+                hemodynamics: {
+                    co: { value: '3.0 L/min', status: 'down', label: '⇓⇓' },
+                    ci: { value: '1.7 L/min/m²', status: 'down', label: '⇓⇓' },
+                    svr: { value: '1900 dyne·s/cm⁵', status: 'up', label: '⇑⇑' },
+                    cvp: { value: '8 mmHg', status: 'normal', label: 'N-low' },
+                    pcwp: { value: '16 mmHg', status: 'normal', label: '中等' },
+                    svo2: { value: '48%', status: 'down', label: '⇓⇓' }
+                },
+                labs: ['Lactate: 4.2 mmol/L ⇑', 'BUN/Cr: 52/2.0 (ratio 26)', 'Na: 148 mEq/L ⇑', 'BNP: 850 pg/mL ⇑'],
+                echo: ['LVEF: 28% (baseline 30%)', 'Small LV cavity', 'IVC 1.2 cm, 呼吸變異大'],
+                analysis: {
+                    features: [
+                        '極低CO/CI (1.7) - 心臟功能本身就差',
+                        'PCWP 16 mmHg - 對正常人是高的，但對心衰病人？',
+                        'CVP 8 mmHg - 不算高也不算低（灰色地帶）',
+                        'IVC變異大 - 提示fluid responsive',
+                        '極低SvO₂ (48%) - 嚴重組織缺氧'
+                    ],
+                    profile: '診斷困境：充填壓數值在灰色地帶！',
+                    meaning: '兼具慢性心臟衰竭(基礎pump failure) + 急性脫水(前負荷不足)'
+                },
+                treatment: [
+                    { priority: 1, action: '謹慎輸液挑戰', detail: 'Crystalloid 250 mL/15 min，評估CO與PCWP變化' },
+                    { priority: 2, action: 'Inotropic Support', detail: 'Dobutamine 3-5 mcg/kg/min' },
+                    { priority: 3, action: '微調', detail: '若BP仍低加NE；若PCWP > 18給小劑量Furosemide' }
+                ],
+                goals: ['CI > 2.0', 'PCWP 15-18 mmHg', 'SvO₂改善', 'Lactate下降'],
+                keyPoints: [
+                    'Mixed shock需要個別化治療策略',
+                    '不能只看單一數值，要看整體trend',
+                    'Fluid challenge要謹慎且分次給予',
+                    '密切監測是成功的關鍵'
+                ]
+            },
+            {
+                id: 5,
+                title: 'Mixed: Septic + Cardiogenic',
+                chinese: '混合型：敗血性+心因性',
+                color: '#d69e2e',
+                icon: '⚡',
+                patient: {
+                    age: 68,
+                    gender: '男性',
+                    chief: '發燒、呼吸困難3天',
+                    history: '冠心病(LVEF 35%)、社區型肺炎',
+                    vitals: { bp: '75/48', hr: 128, rr: 28, temp: '38.8°C' }
+                },
+                exam: [
+                    '皮膚溫暖但末梢發紺',
+                    'JVP升高',
+                    '右肺囉音(肺炎) + 雙側肺底囉音(肺水腫)',
+                    'S3 gallop',
+                    '意識躁動 (GCS 14)'
+                ],
+                hemodynamics: {
+                    co: { value: '3.5 L/min', status: 'down', label: '⇓' },
+                    ci: { value: '1.9 L/min/m²', status: 'down', label: '⇓' },
+                    svr: { value: '750 dyne·s/cm⁵', status: 'down', label: '⇓' },
+                    cvp: { value: '16 mmHg', status: 'up', label: '⇑' },
+                    pcwp: { value: '22 mmHg', status: 'up', label: '⇑' },
+                    svo2: { value: '68%', status: 'normal', label: 'N-high' }
+                },
+                labs: ['Lactate: 6.5 mmol/L ⇑⇑', 'WBC: 18,500 (左移)', 'Procalcitonin: 8.2 ng/mL', 'Troponin-I: 0.8 ng/mL ⇑', 'BNP: 1100 pg/mL ⇑'],
+                echo: ['LVEF: 30% (worse from 35%)', 'Global hypokinesia'],
+                analysis: {
+                    features: [
+                        '來自Septic的特徵：低SVR (750)、SvO₂正常偏高(68%)、極高Lactate',
+                        '來自Cardiogenic的特徵：低CO/CI、高CVP與PCWP、S3 gallop',
+                        '病理機轉：Sepsis導致myocardial depression + 原本心臟功能就差'
+                    ],
+                    profile: '最複雜的組合：血管擴張 + 低CO = 災難性低血壓',
+                    meaning: '治療面臨多重矛盾：低SVR需要vasopressor但會增加afterload；低CO需要inotrope但會增加心肌耗氧'
+                },
+                treatment: [
+                    { priority: 1, action: '抗生素', detail: 'Ceftriaxone + Azithromycin (CAP) within 1 hour' },
+                    { priority: 2, action: 'Vasopressor', detail: 'Norepinephrine 0.1-0.3 mcg/kg/min 恢復血管張力' },
+                    { priority: 3, action: 'Inotropic Support', detail: 'Dobutamine 3-7 mcg/kg/min 改善心臟功能' },
+                    { priority: 4, action: '謹慎利尿', detail: 'Small dose Furosemide降低PCWP，但避免過度' }
+                ],
+                goals: ['MAP ≥ 65 mmHg', 'CI > 2.0', 'PCWP 15-18', 'Lactate改善'],
+                keyPoints: [
+                    '優先順序：先穩定血壓(NE) → 再改善CO(Dobutamine)',
+                    '劑量平衡：都用適中劑量，避免單一藥物過量',
+                    '持續評估：每1-2小時重新評估血流動力學',
+                    '目標務實：不追求正常值，接受CI 2.0-2.5即可',
+                    '治療sepsis-induced cardiomyopathy需要時間與耐心'
+                ]
+            },
+            {
+                id: 6,
+                title: 'Pulmonary Embolism (Obstructive)',
+                chinese: '肺栓塞(阻塞性休克)',
+                color: '#319795',
+                icon: '🫁',
+                patient: {
+                    age: 55,
+                    gender: '女性',
+                    chief: '突發性呼吸困難、胸悶2小時',
+                    history: '5天前右膝關節置換手術，今晨下床活動後突發',
+                    vitals: { bp: '78/52', hr: 125, rr: 32, spo2: '82% (room air)' }
+                },
+                exam: [
+                    '冷汗、焦躁不安、發紺',
+                    '頸靜脈明顯怒張 (JVP顯著升高)',
+                    '肺部清晰 (無囉音)',
+                    '心音：P2亢進，右心S3/S4',
+                    '右下肢輕度腫脹'
+                ],
+                hemodynamics: {
+                    co: { value: '2.8 L/min', status: 'down', label: '⇓⇓' },
+                    ci: { value: '1.6 L/min/m²', status: 'down', label: '⇓⇓' },
+                    svr: { value: '2100 dyne·s/cm⁵', status: 'up', label: '⇑⇑' },
+                    cvp: { value: '18 mmHg', status: 'up', label: '⇑⇑' },
+                    pcwp: { value: '8 mmHg', status: 'normal', label: 'N/⇓' },
+                    svo2: { value: '45%', status: 'down', label: '⇓⇓' },
+                    mpap: { value: '42 mmHg', status: 'up', label: '⇑⇑' }
+                },
+                labs: ['Lactate: 5.8 mmol/L ⇑⇑', 'D-dimer: 8500 ng/mL ⇑⇑', 'Troponin-I: 1.2 ng/mL ⇑', 'BNP: 850 pg/mL ⇑', 'ABG: pH 7.28, PaO₂ 52 mmHg'],
+                echo: ['RV明顯擴大 (RV/LV > 1.0)', 'RV hypokinesia (McConnell\'s sign)', 'D-shaped LV (septal flattening)', 'TAPSE: 12 mm ⇓', 'TR with RVSP 65 mmHg'],
+                analysis: {
+                    features: [
+                        '極低CO/CI (1.6) - 肺動脈阻塞導致RV failure',
+                        '極高CVP (18) + 正常/低PCWP (8) - 這是關鍵！',
+                        '高SVR (2100) - 代償性血管收縮',
+                        '極低SvO₂ (45%) - 嚴重組織缺氧',
+                        'RV dysfunction on Echo - McConnell\'s sign, D-shaped LV'
+                    ],
+                    profile: 'CVP-PCWP gradient增大是PE的特徵！',
+                    meaning: '肺動脈血栓阻塞 → RV afterload急遽上升 → RV急性擴張衰竭 → LV preload不足 → CO急遽下降'
+                },
+                treatment: [
+                    { priority: 1, action: '氧氣與呼吸支持', detail: 'High-flow O₂，準備intubation（注意：正壓呼吸可能惡化血流動力學）' },
+                    { priority: 2, action: 'Vasopressor支持', detail: 'Norepinephrine 0.1-0.5 mcg/kg/min，維持冠狀動脈灌流壓' },
+                    { priority: 3, action: '再灌流治療', detail: 'Alteplase 100 mg/2hr 或 CDT 或手術取栓（最重要！）' },
+                    { priority: 4, action: '謹慎輸液', detail: '小量250-500 mL試驗，過多會使RV更擴張壓迫LV' }
+                ],
+                goals: ['MAP ≥ 65 mmHg', '氧合改善', 'RV function恢復', 'Lactate下降'],
+                keyPoints: [
+                    'PE休克處理原則：「壓住血壓、溶掉血栓、小心輸液」',
+                    'CVP高 + PCWP正常/低 是與cardiogenic shock最大差異',
+                    'Inotrope效果有限，因為問題是afterload而非contractility',
+                    '根本治療是移除血栓！'
+                ],
+                comparison: {
+                    title: 'PE vs Cardiogenic vs RV Infarct 鑑別',
+                    headers: ['Parameter', 'PE', 'Cardiogenic', 'RV Infarct'],
+                    rows: [
+                        ['CVP/RAP', '⇑⇑', '⇑', '⇑⇑'],
+                        ['PCWP', 'N/⇓', '⇑⇑', 'N/⇓'],
+                        ['mPAP', '⇑⇑', 'Variable', 'N/⇓'],
+                        ['Echo RV', 'Dilated, D-sign', 'Variable', 'Dilated, Infarct']
+                    ]
+                }
+            }
+        ];
+
+        const questions = [
+            {
+                q: 'Cardiogenic shock的典型血流動力學特徵為何？',
+                options: ['高CO、低SVR、低PCWP', '低CO、高SVR、高PCWP', '高CO、高SVR、正常PCWP', '低CO、低SVR、低PCWP'],
+                correct: 1,
+                explanation: 'Cardiogenic shock的特徵是：低CO/CI（泵衰竭）、高SVR（代償性血管收縮）、高PCWP（左心充血）。這代表典型的「cold & wet」profile。'
+            },
+            {
+                q: 'Septic shock早期（hyperdynamic phase）的SvO₂為何會升高？',
+                options: ['心輸出量增加', '組織氧氣萃取障礙', '血紅素增加', '氧氣供給增加'],
+                correct: 1,
+                explanation: '敗血症導致細胞線粒體功能障礙，組織無法有效利用氧氣（oxygen extraction defect），所以靜脈血的氧氣含量反而偏高，但Lactate仍升高，表示細胞代謝障礙。'
+            },
+            {
+                q: '以下哪個是Hypovolemic shock與Cardiogenic shock的主要鑑別點？',
+                options: ['SVR高低', 'CO/CI數值', 'CVP/PCWP高低', 'SvO₂數值'],
+                correct: 2,
+                explanation: 'Hypovolemic shock的CVP/PCWP都很低（⇓⇓）；而Cardiogenic shock的CVP/PCWP都升高（⇑至⇑⇑）。這是最重要的鑑別點，因為兩者的SVR都會升高作為代償。'
+            },
+            {
+                q: 'Massive PE（阻塞性休克）的血流動力學特徵是？',
+                options: ['CVP高、PCWP高', 'CVP低、PCWP低', 'CVP高、PCWP正常/低', 'CVP低、PCWP高'],
+                correct: 2,
+                explanation: 'PE造成RV afterload急升，導致RV衰竭（CVP升高），但因為血液無法通過肺循環到達LV，所以PCWP反而正常或偏低。這個「CVP-PCWP gradient增大」是PE的特徵。'
+            },
+            {
+                q: '對於Massive PE的病人，大量輸液會造成什麼後果？',
+                options: ['改善心輸出量', '降低肺動脈壓', 'RV更擴張壓迫LV，CO更低', '改善組織灌流'],
+                correct: 2,
+                explanation: 'PE時RV已經過度擴張，給更多液體會使RV更膨脹，心室間隔左偏壓迫LV，導致CO反而更低（paradoxical worsening）。這與hypovolemic shock的處理完全相反！'
+            },
+            {
+                q: 'Septic shock的首選vasopressor是？',
+                options: ['Dopamine', 'Vasopressin', 'Norepinephrine', 'Epinephrine'],
+                correct: 2,
+                explanation: '根據Surviving Sepsis Campaign指引，Norepinephrine是septic shock的first-line vasopressor，因為它主要作用在α受體，能有效恢復血管張力（提高SVR）並維持MAP。'
+            },
+            {
+                q: '混合型休克（Hypovolemic + Cardiogenic）病人的輸液策略應該如何？',
+                options: ['大量快速輸液', '完全不輸液', '謹慎分次輸液，密切監測反應', '只給利尿劑'],
+                correct: 2,
+                explanation: '混合型休克需要balance：給太多水會惡化肺水腫，給太少水CO更低。策略是小量（250 mL）謹慎挑戰，評估CO與PCWP變化，若CO上升且PCWP未超過18，可再給；若PCWP上升或肺囉音惡化則停止。'
+            },
+            {
+                q: '以下哪個Echo發現最支持Massive PE的診斷？',
+                options: ['LVEF 25%', 'Akinetic anterior wall', 'McConnell\'s sign + D-shaped LV', 'Moderate MR'],
+                correct: 2,
+                explanation: 'McConnell\'s sign（RV游離壁運動減弱但apex保留）和D-shaped LV（心室間隔因RV擴張而左偏）是PE的特徵性Echo發現。LVEF下降和anterior wall akinesis則提示AMI。'
+            },
+            {
+                q: 'Cardiogenic shock合併AMI的病人，最優先的治療是？',
+                options: ['開始Dobutamine', '大量輸液', 'Primary PCI', '利尿劑'],
+                correct: 2,
+                explanation: 'AMI導致的cardiogenic shock，根本問題是冠狀動脈阻塞，最重要的治療是緊急PCI恢復血流。藥物治療（inotrope、vasopressor）只是支持性治療。'
+            },
+            {
+                q: 'Septic + Cardiogenic混合型休克，治療的優先順序為何？',
+                options: ['Inotrope → Vasopressor → 抗生素', '抗生素 → Vasopressor → Inotrope', '利尿劑 → Inotrope → 抗生素', 'Vasopressor → 利尿劑 → Inotrope'],
+                correct: 1,
+                explanation: '1) 抗生素必須在1小時內給予（根本治療感染）；2) Vasopressor穩定血壓（因為SVR低）；3) Inotrope改善心臟功能。順序很重要：先穩定血壓，再處理CO。'
+            },
+            {
+                q: 'SvO₂ 45%代表什麼意義？',
+                options: ['組織氧合良好', '嚴重組織缺氧', '心輸出量過高', '氧氣供給過多'],
+                correct: 1,
+                explanation: '正常SvO₂是65-75%。45%表示組織大量萃取氧氣（因為供給不足），反映嚴重的組織缺氧與灌流不足。這通常見於cardiogenic shock或massive PE。'
+            },
+            {
+                q: '以下關於Lactate的敘述，何者正確？',
+                options: ['Lactate只在缺氧時升高', 'Septic shock的高Lactate純粹因為組織缺氧', 'Lactate clearance比單一數值更重要', 'Lactate正常代表沒有休克'],
+                correct: 2,
+                explanation: 'Lactate clearance（下降速度）比單一數值更能反映治療反應。Septic shock的Lactate升高不只是缺氧，還有細胞代謝障礙。治療目標是clearance ≥ 10%/2hr。'
+            },
+            {
+                q: 'PE病人使用Dobutamine的效果有限，主要原因是？',
+                options: ['Dobutamine會降低血壓', '問題是afterload而非contractility', 'Dobutamine會惡化心律不整', 'Dobutamine會增加肺動脈壓'],
+                correct: 1,
+                explanation: 'PE的RV衰竭主要是因為afterload（肺動脈阻塞）過高，而不是RV本身contractility的問題。Dobutamine可稍微改善RV收縮，但根本治療是移除血栓降低afterload。'
+            },
+            {
+                q: '區分Distributive shock與其他類型休克的關鍵參數是？',
+                options: ['CO/CI', 'SVR', 'CVP', 'PCWP'],
+                correct: 1,
+                explanation: 'SVR是區分distributive shock（septic、anaphylactic等）與其他類型休克的關鍵：Distributive shock的SVR很低（血管麻痺），而cardiogenic、hypovolemic、obstructive shock的SVR都會代償性升高。'
+            },
+            {
+                q: '「Cold & Wet」profile代表？',
+                options: ['Hypovolemic shock', 'Septic shock (early)', 'Cardiogenic shock with congestion', 'PE'],
+                correct: 2,
+                explanation: 'Cold & Wet指的是：Cold（末梢灌流差，因為低CO）+ Wet（肺水腫，因為高PCWP）。這是典型的cardiogenic shock with congestion的表現。'
+            },
+            {
+                q: 'ClearSight非侵入性血流動力學監測的工作原理是？',
+                options: ['胸阻抗法', '脈波傳遞時間法', 'Volume clamp容積箝位法', '超音波都卜勒法'],
+                correct: 2,
+                explanation: 'ClearSight使用Volume clamp（容積箝位法）技術，透過指套內的光學感測器偵測血管容積變化，並動態調整氣囊壓力維持恆定容積，從而連續測量血壓波形並計算心輸出量。'
+            },
+            {
+                q: '根據研究，傳統間歇性袖帶血壓監測相較於連續監測，每小時平均遺漏多少分鐘的低血壓？',
+                options: ['約2分鐘', '約5分鐘', '約7分鐘', '約10分鐘'],
+                correct: 2,
+                explanation: '研究顯示傳統間歇性血壓測量平均每小時遺漏約7分鐘的低血壓。Cleveland Clinic研究也顯示，連續非侵入性監測使術中低血壓的發生率減少了近50%。'
+            },
+            {
+                q: 'PREMIUM研究中，哪個ClearSight參數是預測急診病患30天死亡率的最佳指標？',
+                options: ['心輸出量 (CO)', '每搏量指數 (SVI)', '平均動脈壓 (MAP)', '全身血管阻力 (SVR)'],
+                correct: 1,
+                explanation: 'PREMIUM研究分析514位急診病患發現，SVI（每搏量指數）是預測30天死亡率的最佳指標。急性心衰竭SVI<24.2、敗血症SVI<35.3、中風SVI<22.16 mL/m²時死亡風險顯著增加。'
+            },
+            {
+                q: '關於ClearSight在敗血性休克的應用，以下何者正確？',
+                options: ['只能在ICU使用，不適用於急診', '無法評估輸液反應性', '可配合PLR試驗評估輸液反應性，指導復甦治療', '準確度不如傳統袖帶血壓'],
+                correct: 2,
+                explanation: 'ClearSight可透過連續SV監測配合被動抬腿試驗(PLR)評估輸液反應性（SV增加>10%表示有反應性），指導個人化的液體復甦策略，避免過度或不足的輸液治療。'
+            },
+            {
+                q: '一位65歲男性因急性心肌梗塞入院，血壓78/50 mmHg，心跳112次/分，四肢冰冷濕黏，肺部有囉音。血流動力學監測顯示CI 1.8 L/min/m²、PCWP 24 mmHg、SVR升高。此病患屬於哪種血流動力學型態？',
+                options: ['暖濕型 (Warm & Wet)', '冷乾型 (Cold & Dry)', '冷濕型 (Cold & Wet)', '暖乾型 (Warm & Dry)'],
+                correct: 2,
+                explanation: '此病患表現為心因性休克的典型「冷濕型」：低心輸出量(CI<2.2)導致四肢冰冷（冷），加上PCWP升高(>18)表示肺部充血（濕）。治療需強心劑改善心輸出量，可能需要利尿劑或血管擴張劑減少肺充血，必要時考慮機械循環支持。'
+            }
+        ];
+
+        // ==================== MAIN APP ====================
+        const App = () => {
+            const [currentPage, setCurrentPage] = useState('home');
+            const [selectedCase, setSelectedCase] = useState(null);
+            const [quizState, setQuizState] = useState({
+                currentQ: 0,
+                score: 0,
+                selected: null,
+                showResult: false,
+                completed: false
+            });
+
+            const menuItems = [
+                { id: 'basics', icon: <Icons.Activity />, title: '血流動力學基礎', subtitle: 'Hemodynamic Basics', color: '#3182ce' },
+                { id: 'shock-types', icon: <Icons.Emergency />, title: '休克分類比較', subtitle: 'Shock Classification', color: '#e53e3e' },
+                { id: 'cases', icon: <Icons.Case />, title: '六大案例分析', subtitle: 'Case Studies', color: '#805ad5' },
+                { id: 'glossary', icon: <Icons.Translate />, title: '中英對照表', subtitle: 'Terminology', color: '#319795' },
+                { id: 'quiz', icon: <Icons.Quiz />, title: '自我測驗', subtitle: 'Self Assessment', color: '#d69e2e' }
+            ];
+
+            // ==================== HEADER ====================
+            const Header = ({ title, subtitle, showBack = false }) => (
+                <div style={{
+                    background: 'linear-gradient(135deg, #1a365d 0%, #2c5282 100%)',
+                    padding: '20px 16px',
+                    paddingTop: '40px',
+                    marginBottom: '20px',
+                    position: 'relative'
+                }}>
+                    {showBack && (
+                        <button
+                            onClick={() => { setCurrentPage('home'); setSelectedCase(null); }}
+                            style={{
+                                position: 'absolute',
+                                top: '12px',
+                                left: '12px',
+                                background: 'rgba(255,255,255,0.2)',
+                                border: 'none',
+                                borderRadius: '50%',
+                                width: '36px',
+                                height: '36px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                color: 'white'
+                            }}
+                        >
+                            <Icons.Back />
+                        </button>
+                    )}
+                    <div style={{ textAlign: 'center' }}>
+                        <h1 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '4px' }}>{title}</h1>
+                        {subtitle && <p style={{ fontSize: '13px', opacity: 0.8 }}>{subtitle}</p>}
+                    </div>
+                </div>
+            );
+
+            // ==================== HOME PAGE ====================
+            const HomePage = () => (
+                <div className="fade-in">
+                    <div style={{
+                        background: 'linear-gradient(135deg, #1a365d 0%, #2c5282 50%, #2d3748 100%)',
+                        padding: '40px 20px 30px',
+                        textAlign: 'center',
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}>
+                        <div style={{ position: 'relative', zIndex: 1 }}>
+                            <div style={{ marginBottom: '16px' }} className="heartbeat">
+                                <Icons.Activity />
+                            </div>
+                            <h1 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '8px' }}>
+                                血流動力學監測與休克
+                            </h1>
+                            <p style={{ fontSize: '14px', opacity: 0.9, marginBottom: '4px' }}>
+                                Hemodynamic Monitoring in ADHF & Shock
+                            </p>
+                            <p style={{ fontSize: '12px', opacity: 0.7 }}>
+                                CCU教學 | NTUH新竹分院心血管中心
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style={{ padding: '0 16px', marginTop: '-20px' }}>
+                        {menuItems.map((item, idx) => (
+                            <button
+                                key={item.id}
+                                onClick={() => setCurrentPage(item.id)}
+                                className="shock-card slide-in"
+                                style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '16px',
+                                    cursor: 'pointer',
+                                    textAlign: 'left',
+                                    animationDelay: `${idx * 0.1}s`
+                                }}
+                            >
+                                <div style={{
+                                    width: '50px',
+                                    height: '50px',
+                                    borderRadius: '12px',
+                                    background: `linear-gradient(135deg, ${item.color}, ${item.color}88)`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: 'white',
+                                    flexShrink: 0
+                                }}>
+                                    {item.icon}
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '2px', color: 'white' }}>
+                                        {item.title}
+                                    </h3>
+                                    <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                                        {item.subtitle}
+                                    </p>
+                                </div>
+                                <Icons.Arrow />
+                            </button>
+                        ))}
+                    </div>
+                    
+                    <div style={{ padding: '20px 16px', textAlign: 'center' }}>
+                        <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                            Drake | December 2025
+                        </p>
+                    </div>
+                </div>
+            );
+
+            // ==================== BASICS PAGE ====================
+            const BasicsPage = () => (
+                <div className="fade-in">
+                    <Header title="血流動力學基礎" subtitle="Key Hemodynamic Parameters" showBack />
+                    <div style={{ padding: '0 16px' }}>
+                        <div className="shock-card" style={{ marginBottom: '20px' }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px', color: '#63b3ed' }}>
+                                📊 為什麼需要監測？
+                            </h3>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                                {['評估心輸出量與組織灌流', '區分不同類型的休克', '指引液體與升壓劑使用', '監測治療反應'].map((item, idx) => (
+                                    <div key={idx} style={{ 
+                                        background: 'rgba(99,179,237,0.1)', 
+                                        padding: '10px', 
+                                        borderRadius: '8px',
+                                        fontSize: '13px'
+                                    }}>
+                                        {item}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="shock-card" style={{ marginBottom: '20px' }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px', color: '#68d391' }}>
+                                🔧 監測工具
+                            </h3>
+                            <div style={{ fontSize: '14px', lineHeight: '1.8' }}>
+                                <div><span style={{ color: '#68d391' }}>●</span> <strong>Non-invasive:</strong> 臨床評估, Echo, ClearSight</div>
+                                <div><span style={{ color: '#f6e05e' }}>●</span> <strong>Minimally invasive:</strong> Arterial line</div>
+                                <div><span style={{ color: '#fc8181' }}>●</span> <strong>Invasive:</strong> Central line, PAC</div>
+                                <div><span style={{ color: '#b794f4' }}>●</span> <strong>Advanced:</strong> PiCCO, FloTrac</div>
+                            </div>
+                        </div>
+
+                        <div className="shock-card" style={{ 
+                            marginBottom: '20px',
+                            background: 'linear-gradient(135deg, rgba(49,130,206,0.2), rgba(49,130,206,0.05))',
+                            borderColor: 'rgba(49,130,206,0.3)'
+                        }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px', color: '#63b3ed' }}>
+                                🖐️ ClearSight 非侵入性血流動力學監測
+                            </h3>
+                            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                                Volume-clamp技術 | 指套式連續監測 | Edwards/BD
+                            </p>
+                            
+                            <div style={{ marginBottom: '12px' }}>
+                                <div style={{ fontSize: '13px', fontWeight: '600', marginBottom: '6px', color: '#90cdf4' }}>📊 監測參數</div>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                                    {['連續BP (SBP/DBP/MAP)', 'CO/CI', 'SV/SVI', 'SVV', 'SVR/SVRI'].map((param, idx) => (
+                                        <span key={idx} style={{ 
+                                            background: 'rgba(99,179,237,0.2)',
+                                            padding: '4px 8px',
+                                            borderRadius: '6px',
+                                            fontSize: '11px'
+                                        }}>{param}</span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div style={{ marginBottom: '12px' }}>
+                                <div style={{ fontSize: '13px', fontWeight: '600', marginBottom: '6px', color: '#90cdf4' }}>🎯 工作原理</div>
+                                <div style={{ fontSize: '12px', lineHeight: '1.6', color: 'var(--text-muted)' }}>
+                                    <div>• <strong>Volume Clamp:</strong> 指套內充氣維持血管容積恆定</div>
+                                    <div>• <strong>Physiocal:</strong> 動態校正演算法</div>
+                                    <div>• <strong>Brachial Matching:</strong> 轉換為肱動脈波形</div>
+                                    <div>• <strong>3-element Windkessel:</strong> 計算心輸出量</div>
+                                </div>
+                            </div>
+
+                            <div style={{ marginBottom: '12px' }}>
+                                <div style={{ fontSize: '13px', fontWeight: '600', marginBottom: '6px', color: '#90cdf4' }}>✅ 臨床優勢</div>
+                                <div style={{ fontSize: '12px', lineHeight: '1.6', color: 'var(--text-muted)' }}>
+                                    <div>• 連續監測不遺漏低血壓（傳統袖套每小時遺漏約7分鐘低血壓）</div>
+                                    <div>• MAP準確度符合ISO標準，與Arterial line相當</div>
+                                    <div>• 非侵入性，無出血/感染風險</div>
+                                    <div>• 即時治療反應回饋</div>
+                                    <div>• 適用於急診早期監測（入ICU前即可使用）</div>
+                                </div>
+                            </div>
+
+                            <div style={{ marginBottom: '12px' }}>
+                                <div style={{ fontSize: '13px', fontWeight: '600', marginBottom: '6px', color: '#90cdf4' }}>🏥 急診五大適用族群</div>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                                    {[
+                                        { name: '敗血症/敗血性休克', desc: '指導液體復甦與升壓劑' },
+                                        { name: '急性心臟衰竭', desc: '區分CO狀態' },
+                                        { name: '創傷病患', desc: '快速評估休克類型' },
+                                        { name: '中風', desc: '維持腦灌流壓' },
+                                        { name: '未分類休克', desc: '快速鑑別休克類型' }
+                                    ].map((item, idx) => (
+                                        <div key={idx} style={{ 
+                                            background: 'rgba(99,179,237,0.1)',
+                                            padding: '8px',
+                                            borderRadius: '8px',
+                                            fontSize: '11px'
+                                        }}>
+                                            <div style={{ fontWeight: '600', color: '#90cdf4' }}>{item.name}</div>
+                                            <div style={{ color: 'var(--text-muted)', marginTop: '2px' }}>{item.desc}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div style={{ marginBottom: '12px' }}>
+                                <div style={{ fontSize: '13px', fontWeight: '600', marginBottom: '6px', color: '#90cdf4' }}>📈 臨床實證 (PREMIUM研究)</div>
+                                <div style={{ fontSize: '12px', lineHeight: '1.6', color: 'var(--text-muted)' }}>
+                                    <div>• 514位急診病患，30天死亡率預測</div>
+                                    <div>• <strong>SVI</strong> 為最佳預測指標：</div>
+                                    <div style={{ paddingLeft: '12px' }}>
+                                        - 急性心衰竭: SVI &lt;24.2 mL/m² (AUC 0.730)<br/>
+                                        - 敗血症: SVI &lt;35.3 mL/m² (AUC 0.687)<br/>
+                                        - 中風: SVI &lt;22.16 mL/m² (AUC 0.741)
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style={{ 
+                                background: 'rgba(56,161,105,0.2)',
+                                padding: '10px',
+                                borderRadius: '8px',
+                                borderLeft: '3px solid #68d391'
+                            }}>
+                                <div style={{ fontSize: '12px', fontWeight: '600', color: '#68d391', marginBottom: '4px' }}>
+                                    💰 台灣健保給付 (18049B)
+                                </div>
+                                <div style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
+                                    <div>• 給付點數: 11,467點</div>
+                                    <div>• 適用: 心因性休克(R57.0)、低血容休克(R57.1)、其他休克(R57.8)、敗血性休克(R65.21)</div>
+                                    <div>• 限制: 每次住院申報一次，48小時內不得同時申報其他侵入性監測</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px', padding: '0 4px' }}>
+                            📋 關鍵參數與正常值
+                        </h3>
+                        
+                        {normalValues.map((item, idx) => (
+                            <div key={idx} className="shock-card" style={{ animationDelay: `${idx * 0.05}s` }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                                    <div>
+                                        <span style={{ 
+                                            fontWeight: '700', 
+                                            fontSize: '15px',
+                                            color: '#63b3ed'
+                                        }}>
+                                            {item.param}
+                                        </span>
+                                        <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                                            {item.english}
+                                        </div>
+                                    </div>
+                                    <span style={{ 
+                                        background: 'rgba(104, 211, 145, 0.2)',
+                                        color: '#68d391',
+                                        padding: '4px 10px',
+                                        borderRadius: '12px',
+                                        fontSize: '12px',
+                                        fontWeight: '600'
+                                    }}>
+                                        {item.normal}
+                                    </span>
+                                </div>
+                                <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                                    <strong>{item.chinese}</strong> - {item.meaning}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+
+            // ==================== SHOCK TYPES PAGE ====================
+            const ShockTypesPage = () => (
+                <div className="fade-in">
+                    <Header title="休克分類比較" subtitle="Hemodynamic Classification" showBack />
+                    <div style={{ padding: '0 16px' }}>
+                        <div className="shock-card" style={{ 
+                            background: 'linear-gradient(135deg, rgba(229,62,62,0.2), rgba(229,62,62,0.05))',
+                            borderColor: 'rgba(229,62,62,0.3)',
+                            marginBottom: '20px'
+                        }}>
+                            <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '8px', color: '#fc8181' }}>
+                                🔑 Key Point
+                            </h3>
+                            <p style={{ fontSize: '14px', lineHeight: '1.6' }}>
+                                混合型休克需要仔細評估各個參數，不能只看單一數值！
+                            </p>
+                        </div>
+
+                        <div style={{ overflowX: 'auto', marginBottom: '20px' }}>
+                            <table style={{ 
+                                width: '100%', 
+                                minWidth: '600px',
+                                borderCollapse: 'collapse',
+                                fontSize: '12px'
+                            }}>
+                                <thead>
+                                    <tr style={{ background: 'rgba(255,255,255,0.1)' }}>
+                                        <th style={{ padding: '12px 8px', textAlign: 'left', borderBottom: '1px solid rgba(255,255,255,0.2)' }}>類型</th>
+                                        <th style={{ padding: '12px 8px', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.2)' }}>CO/CI</th>
+                                        <th style={{ padding: '12px 8px', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.2)' }}>SVR</th>
+                                        <th style={{ padding: '12px 8px', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.2)' }}>CVP</th>
+                                        <th style={{ padding: '12px 8px', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.2)' }}>PCWP</th>
+                                        <th style={{ padding: '12px 8px', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.2)' }}>SvO₂</th>
+                                        <th style={{ padding: '12px 8px', textAlign: 'left', borderBottom: '1px solid rgba(255,255,255,0.2)' }}>機轉</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {shockTypes.map((shock, idx) => (
+                                        <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                                            <td style={{ padding: '12px 8px' }}>
+                                                <div style={{ fontWeight: '600', color: '#63b3ed' }}>{shock.type}</div>
+                                                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{shock.chinese}</div>
+                                            </td>
+                                            <td style={{ padding: '12px 8px', textAlign: 'center', color: shock.co.includes('⇓') ? '#fc8181' : '#68d391', fontWeight: '600' }}>{shock.co}</td>
+                                            <td style={{ padding: '12px 8px', textAlign: 'center', color: shock.svr.includes('⇑') ? '#fc8181' : '#68d391', fontWeight: '600' }}>{shock.svr}</td>
+                                            <td style={{ padding: '12px 8px', textAlign: 'center', color: shock.cvp.includes('⇑') ? '#fc8181' : shock.cvp.includes('⇓') ? '#68d391' : '#a0aec0', fontWeight: '600' }}>{shock.cvp}</td>
+                                            <td style={{ padding: '12px 8px', textAlign: 'center', color: shock.pcwp.includes('⇑') ? '#fc8181' : shock.pcwp.includes('⇓') ? '#68d391' : '#a0aec0', fontWeight: '600' }}>{shock.pcwp}</td>
+                                            <td style={{ padding: '12px 8px', textAlign: 'center', color: shock.svo2.includes('⇓') ? '#fc8181' : shock.svo2.includes('⇑') ? '#68d391' : '#a0aec0', fontWeight: '600' }}>{shock.svo2}</td>
+                                            <td style={{ padding: '12px 8px', fontSize: '11px' }}>{shock.mechanism}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div className="shock-card" style={{ marginBottom: '16px' }}>
+                            <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '12px', color: '#f6e05e' }}>
+                                🎯 Pattern Recognition 要點
+                            </h3>
+                            <div style={{ fontSize: '14px', lineHeight: '1.8' }}>
+                                <p style={{ marginBottom: '8px' }}>
+                                    <span style={{ color: '#fc8181' }}>●</span> <strong>PE的特徵：</strong>CVP高 + PCWP正常/低（gradient增大）
+                                </p>
+                                <p style={{ marginBottom: '8px' }}>
+                                    <span style={{ color: '#68d391' }}>●</span> <strong>SVR</strong>是區分distributive vs. other shock的關鍵
+                                </p>
+                                <p>
+                                    <span style={{ color: '#63b3ed' }}>●</span> <strong>Filling pressure</strong>幫助區分不同機轉
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="shock-card">
+                            <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '12px', color: '#b794f4' }}>
+                                🩺 Forrester分類（心衰）
+                            </h3>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                                <div style={{ background: 'rgba(104,211,145,0.15)', padding: '12px', borderRadius: '8px', textAlign: 'center' }}>
+                                    <div style={{ fontWeight: '600', marginBottom: '4px' }}>Warm & Dry</div>
+                                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>CI正常, PCWP正常</div>
+                                </div>
+                                <div style={{ background: 'rgba(246,224,94,0.15)', padding: '12px', borderRadius: '8px', textAlign: 'center' }}>
+                                    <div style={{ fontWeight: '600', marginBottom: '4px' }}>Warm & Wet</div>
+                                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>CI正常, PCWP高</div>
+                                </div>
+                                <div style={{ background: 'rgba(99,179,237,0.15)', padding: '12px', borderRadius: '8px', textAlign: 'center' }}>
+                                    <div style={{ fontWeight: '600', marginBottom: '4px' }}>Cold & Dry</div>
+                                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>CI低, PCWP正常</div>
+                                </div>
+                                <div style={{ background: 'rgba(252,129,129,0.15)', padding: '12px', borderRadius: '8px', textAlign: 'center' }}>
+                                    <div style={{ fontWeight: '600', marginBottom: '4px' }}>Cold & Wet</div>
+                                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>CI低, PCWP高</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // ==================== CASES LIST PAGE ====================
+            const CasesPage = () => (
+                <div className="fade-in">
+                    <Header title="六大案例分析" subtitle="Case-Based Learning" showBack />
+                    <div style={{ padding: '0 16px' }}>
+                        {cases.map((c, idx) => (
+                            <button
+                                key={c.id}
+                                onClick={() => { setSelectedCase(c); setCurrentPage('case-detail'); }}
+                                className="shock-card slide-in"
+                                style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '16px',
+                                    cursor: 'pointer',
+                                    textAlign: 'left',
+                                    animationDelay: `${idx * 0.1}s`
+                                }}
+                            >
+                                <div style={{
+                                    width: '50px',
+                                    height: '50px',
+                                    borderRadius: '12px',
+                                    background: `linear-gradient(135deg, ${c.color}, ${c.color}88)`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '24px',
+                                    flexShrink: 0
+                                }}>
+                                    {c.icon}
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <div style={{ 
+                                        fontSize: '12px', 
+                                        color: c.color,
+                                        fontWeight: '600',
+                                        marginBottom: '2px'
+                                    }}>
+                                        Case {c.id}
+                                    </div>
+                                    <h3 style={{ fontSize: '15px', fontWeight: '600', color: 'white', marginBottom: '2px' }}>
+                                        {c.title}
+                                    </h3>
+                                    <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                                        {c.chinese}
+                                    </p>
+                                </div>
+                                <Icons.Arrow />
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            );
+
+            // ==================== CASE DETAIL PAGE ====================
+            const CaseDetailPage = () => {
+                const c = selectedCase;
+                if (!c) return null;
+
+                const [activeTab, setActiveTab] = useState('presentation');
+                const tabs = [
+                    { id: 'presentation', label: '臨床表現' },
+                    { id: 'hemodynamics', label: '血流動力學' },
+                    { id: 'analysis', label: '診斷分析' },
+                    { id: 'treatment', label: '治療策略' }
+                ];
+
+                return (
+                    <div className="fade-in">
+                        <div style={{
+                            background: `linear-gradient(135deg, ${c.color}dd, ${c.color}88)`,
+                            padding: '20px 16px',
+                            paddingTop: '50px',
+                            position: 'relative'
+                        }}>
+                            <button
+                                onClick={() => { setCurrentPage('cases'); setSelectedCase(null); }}
+                                style={{
+                                    position: 'absolute',
+                                    top: '12px',
+                                    left: '12px',
+                                    background: 'rgba(255,255,255,0.2)',
+                                    border: 'none',
+                                    borderRadius: '50%',
+                                    width: '36px',
+                                    height: '36px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    cursor: 'pointer',
+                                    color: 'white'
+                                }}
+                            >
+                                <Icons.Back />
+                            </button>
+                            <div style={{ textAlign: 'center' }}>
+                                <div style={{ fontSize: '40px', marginBottom: '8px' }}>{c.icon}</div>
+                                <div style={{ fontSize: '13px', opacity: 0.9, marginBottom: '4px' }}>Case {c.id}</div>
+                                <h1 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '4px' }}>{c.title}</h1>
+                                <p style={{ fontSize: '14px', opacity: 0.9 }}>{c.chinese}</p>
+                            </div>
+                        </div>
+
+                        <div style={{ 
+                            display: 'flex', 
+                            background: 'rgba(0,0,0,0.3)',
+                            overflow: 'auto',
+                            padding: '8px'
+                        }}>
+                            {tabs.map(tab => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    style={{
+                                        flex: '0 0 auto',
+                                        padding: '8px 16px',
+                                        background: activeTab === tab.id ? c.color : 'transparent',
+                                        border: 'none',
+                                        borderRadius: '8px',
+                                        color: 'white',
+                                        fontSize: '13px',
+                                        fontWeight: activeTab === tab.id ? '600' : '400',
+                                        cursor: 'pointer',
+                                        whiteSpace: 'nowrap'
+                                    }}
+                                >
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div style={{ padding: '16px' }}>
+                            {activeTab === 'presentation' && (
+                                <div className="fade-in">
+                                    <div className="shock-card">
+                                        <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '12px', color: '#63b3ed' }}>
+                                            👤 病人資訊
+                                        </h3>
+                                        <div style={{ fontSize: '14px', lineHeight: '1.8' }}>
+                                            <p><strong>年齡/性別：</strong>{c.patient.age}歲 {c.patient.gender}</p>
+                                            <p><strong>主訴：</strong>{c.patient.chief}</p>
+                                            <p><strong>病史：</strong>{c.patient.history}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="shock-card">
+                                        <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '12px', color: '#fc8181' }}>
+                                            📊 生命徵象
+                                        </h3>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                            <span className="badge" style={{ background: 'rgba(252,129,129,0.2)', color: '#fc8181' }}>
+                                                BP: {c.patient.vitals.bp} mmHg
+                                            </span>
+                                            <span className="badge" style={{ background: 'rgba(246,224,94,0.2)', color: '#f6e05e' }}>
+                                                HR: {c.patient.vitals.hr} bpm
+                                            </span>
+                                            <span className="badge" style={{ background: 'rgba(99,179,237,0.2)', color: '#63b3ed' }}>
+                                                RR: {c.patient.vitals.rr}/min
+                                            </span>
+                                            {c.patient.vitals.temp && (
+                                                <span className="badge" style={{ background: 'rgba(221,107,32,0.2)', color: '#dd6b20' }}>
+                                                    Temp: {c.patient.vitals.temp}
+                                                </span>
+                                            )}
+                                            {c.patient.vitals.spo2 && (
+                                                <span className="badge" style={{ background: 'rgba(49,151,149,0.2)', color: '#319795' }}>
+                                                    SpO₂: {c.patient.vitals.spo2}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="shock-card">
+                                        <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '12px', color: '#68d391' }}>
+                                            🩺 理學檢查
+                                        </h3>
+                                        {c.exam.map((item, idx) => (
+                                            <div key={idx} style={{ 
+                                                display: 'flex', 
+                                                alignItems: 'flex-start', 
+                                                gap: '8px',
+                                                marginBottom: '8px',
+                                                fontSize: '14px'
+                                            }}>
+                                                <span style={{ color: '#68d391' }}>●</span>
+                                                <span>{item}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'hemodynamics' && (
+                                <div className="fade-in">
+                                    <div className="shock-card">
+                                        <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '16px', color: '#b794f4' }}>
+                                            📈 Invasive Monitoring (PAC)
+                                        </h3>
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                                            {Object.entries(c.hemodynamics).map(([key, data]) => (
+                                                <div key={key} style={{
+                                                    background: 'rgba(255,255,255,0.05)',
+                                                    padding: '12px',
+                                                    borderRadius: '10px',
+                                                    borderLeft: `3px solid ${data.status === 'up' ? '#fc8181' : data.status === 'down' ? '#68d391' : '#a0aec0'}`
+                                                }}>
+                                                    <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                                                        {key.toUpperCase()}
+                                                    </div>
+                                                    <div style={{ 
+                                                        fontSize: '15px', 
+                                                        fontWeight: '600',
+                                                        color: data.status === 'up' ? '#fc8181' : data.status === 'down' ? '#68d391' : '#a0aec0'
+                                                    }}>
+                                                        {data.value} {data.label}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="shock-card">
+                                        <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '12px', color: '#f6e05e' }}>
+                                            🧪 Laboratory
+                                        </h3>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                            {c.labs.map((lab, idx) => (
+                                                <span key={idx} className="badge" style={{ 
+                                                    background: 'rgba(246,224,94,0.15)', 
+                                                    color: '#f6e05e',
+                                                    fontSize: '12px'
+                                                }}>
+                                                    {lab}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="shock-card">
+                                        <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '12px', color: '#63b3ed' }}>
+                                            🫀 Echo Findings
+                                        </h3>
+                                        {c.echo.map((item, idx) => (
+                                            <div key={idx} style={{ 
+                                                display: 'flex', 
+                                                alignItems: 'center', 
+                                                gap: '8px',
+                                                marginBottom: '6px',
+                                                fontSize: '14px'
+                                            }}>
+                                                <span style={{ color: '#63b3ed' }}>●</span>
+                                                <span>{item}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'analysis' && (
+                                <div className="fade-in">
+                                    <div className="shock-card" style={{
+                                        background: `linear-gradient(145deg, ${c.color}22, ${c.color}11)`,
+                                        borderColor: `${c.color}44`
+                                    }}>
+                                        <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '12px', color: c.color }}>
+                                            🎯 診斷特徵
+                                        </h3>
+                                        {c.analysis.features.map((feature, idx) => (
+                                            <div key={idx} style={{ 
+                                                display: 'flex', 
+                                                alignItems: 'flex-start', 
+                                                gap: '8px',
+                                                marginBottom: '10px',
+                                                fontSize: '14px',
+                                                lineHeight: '1.5'
+                                            }}>
+                                                <span style={{ 
+                                                    background: c.color,
+                                                    color: 'white',
+                                                    width: '20px',
+                                                    height: '20px',
+                                                    borderRadius: '50%',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    fontSize: '12px',
+                                                    fontWeight: '600',
+                                                    flexShrink: 0
+                                                }}>
+                                                    {idx + 1}
+                                                </span>
+                                                <span>{feature}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="shock-card" style={{
+                                        background: 'linear-gradient(145deg, rgba(252,129,129,0.15), rgba(252,129,129,0.05))',
+                                        borderColor: 'rgba(252,129,129,0.3)'
+                                    }}>
+                                        <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '8px', color: '#fc8181' }}>
+                                            📋 Profile
+                                        </h3>
+                                        <p style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}>
+                                            {c.analysis.profile}
+                                        </p>
+                                        <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: '1.6' }}>
+                                            {c.analysis.meaning}
+                                        </p>
+                                    </div>
+
+                                    {c.keyPoints && (
+                                        <div className="shock-card">
+                                            <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '12px', color: '#f6e05e' }}>
+                                                💡 Key Learning Points
+                                            </h3>
+                                            {c.keyPoints.map((point, idx) => (
+                                                <div key={idx} style={{ 
+                                                    display: 'flex', 
+                                                    alignItems: 'flex-start', 
+                                                    gap: '8px',
+                                                    marginBottom: '8px',
+                                                    fontSize: '14px'
+                                                }}>
+                                                    <span style={{ color: '#f6e05e' }}>✓</span>
+                                                    <span>{point}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {c.comparison && (
+                                        <div className="shock-card">
+                                            <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '12px', color: '#b794f4' }}>
+                                                📊 {c.comparison.title}
+                                            </h3>
+                                            <div style={{ overflowX: 'auto' }}>
+                                                <table style={{ width: '100%', fontSize: '12px', borderCollapse: 'collapse' }}>
+                                                    <thead>
+                                                        <tr>
+                                                            {c.comparison.headers.map((h, idx) => (
+                                                                <th key={idx} style={{ 
+                                                                    padding: '8px', 
+                                                                    textAlign: 'center',
+                                                                    borderBottom: '1px solid rgba(255,255,255,0.2)',
+                                                                    background: 'rgba(255,255,255,0.05)'
+                                                                }}>
+                                                                    {h}
+                                                                </th>
+                                                            ))}
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {c.comparison.rows.map((row, idx) => (
+                                                            <tr key={idx}>
+                                                                {row.map((cell, cidx) => (
+                                                                    <td key={cidx} style={{ 
+                                                                        padding: '8px', 
+                                                                        textAlign: 'center',
+                                                                        borderBottom: '1px solid rgba(255,255,255,0.1)'
+                                                                    }}>
+                                                                        {cell}
+                                                                    </td>
+                                                                ))}
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {activeTab === 'treatment' && (
+                                <div className="fade-in">
+                                    <div className="shock-card">
+                                        <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '16px', color: '#68d391' }}>
+                                            💊 治療策略
+                                        </h3>
+                                        {c.treatment.map((tx, idx) => (
+                                            <div key={idx} style={{
+                                                display: 'flex',
+                                                gap: '12px',
+                                                marginBottom: '12px',
+                                                padding: '12px',
+                                                background: 'rgba(255,255,255,0.05)',
+                                                borderRadius: '10px'
+                                            }}>
+                                                <div style={{
+                                                    width: '28px',
+                                                    height: '28px',
+                                                    borderRadius: '50%',
+                                                    background: `linear-gradient(135deg, ${c.color}, ${c.color}88)`,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    fontWeight: '700',
+                                                    fontSize: '14px',
+                                                    flexShrink: 0
+                                                }}>
+                                                    {tx.priority}
+                                                </div>
+                                                <div>
+                                                    <div style={{ fontWeight: '600', marginBottom: '4px' }}>{tx.action}</div>
+                                                    <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{tx.detail}</div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="shock-card" style={{
+                                        background: 'linear-gradient(145deg, rgba(104,211,145,0.15), rgba(104,211,145,0.05))',
+                                        borderColor: 'rgba(104,211,145,0.3)'
+                                    }}>
+                                        <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '12px', color: '#68d391' }}>
+                                            🎯 治療目標
+                                        </h3>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                            {c.goals.map((goal, idx) => (
+                                                <span key={idx} className="badge" style={{ 
+                                                    background: 'rgba(104,211,145,0.2)', 
+                                                    color: '#68d391' 
+                                                }}>
+                                                    {goal}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {c.outcome && (
+                                        <div className="shock-card">
+                                            <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '12px', color: '#63b3ed' }}>
+                                                📈 {c.outcome.title}
+                                            </h3>
+                                            <div style={{ marginBottom: '12px' }}>
+                                                <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px' }}>血流動力學改善：</div>
+                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                                                    {Object.entries(c.outcome.hemodynamics).map(([key, val]) => (
+                                                        <span key={key} className="badge" style={{ 
+                                                            background: 'rgba(99,179,237,0.15)', 
+                                                            color: '#63b3ed',
+                                                            fontSize: '11px'
+                                                        }}>
+                                                            {key.toUpperCase()}: {val}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px' }}>臨床改善：</div>
+                                                {c.outcome.clinical.map((item, idx) => (
+                                                    <div key={idx} style={{ fontSize: '13px', marginBottom: '4px' }}>
+                                                        <span style={{ color: '#68d391' }}>✓</span> {item}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                );
+            };
+
+            // ==================== GLOSSARY PAGE ====================
+            const GlossaryPage = () => {
+                const [searchTerm, setSearchTerm] = useState('');
+                const filteredGlossary = glossary.filter(item => 
+                    item.english.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    item.chinese.includes(searchTerm)
+                );
+
+                return (
+                    <div className="fade-in">
+                        <Header title="中英對照表" subtitle="Medical Terminology" showBack />
+                        <div style={{ padding: '0 16px' }}>
+                            <div style={{ marginBottom: '16px' }}>
+                                <input
+                                    type="text"
+                                    placeholder="搜尋中文或英文..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    style={{
+                                        width: '100%',
+                                        padding: '12px 16px',
+                                        background: 'rgba(255,255,255,0.1)',
+                                        border: '1px solid rgba(255,255,255,0.2)',
+                                        borderRadius: '12px',
+                                        color: 'white',
+                                        fontSize: '15px',
+                                        outline: 'none'
+                                    }}
+                                />
+                            </div>
+
+                            <div className="shock-card" style={{ marginBottom: '16px' }}>
+                                <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                                    共 {filteredGlossary.length} 個詞彙
+                                </p>
+                            </div>
+
+                            {filteredGlossary.map((item, idx) => (
+                                <div key={idx} className="shock-card" style={{ animationDelay: `${idx * 0.02}s` }}>
+                                    <div style={{ 
+                                        fontSize: '15px', 
+                                        fontWeight: '600', 
+                                        color: '#63b3ed',
+                                        marginBottom: '4px'
+                                    }}>
+                                        {item.english}
+                                    </div>
+                                    <div style={{ fontSize: '14px', color: 'white' }}>
+                                        {item.chinese}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            };
+
+            // ==================== QUIZ PAGE ====================
+            const QuizPage = () => {
+                const { currentQ, score, selected, showResult, completed } = quizState;
+
+                const handleAnswer = (idx) => {
+                    if (showResult) return;
+                    setQuizState(prev => ({ ...prev, selected: idx, showResult: true }));
+                    if (idx === questions[currentQ].correct) {
+                        setQuizState(prev => ({ ...prev, score: prev.score + 1 }));
+                    }
+                };
+
+                const nextQuestion = () => {
+                    if (currentQ < questions.length - 1) {
+                        setQuizState(prev => ({
+                            ...prev,
+                            currentQ: prev.currentQ + 1,
+                            selected: null,
+                            showResult: false
+                        }));
+                    } else {
+                        setQuizState(prev => ({ ...prev, completed: true }));
+                    }
+                };
+
+                const restartQuiz = () => {
+                    setQuizState({
+                        currentQ: 0,
+                        score: 0,
+                        selected: null,
+                        showResult: false,
+                        completed: false
+                    });
+                };
+
+                if (completed) {
+                    const percentage = Math.round((score / questions.length) * 100);
+                    return (
+                        <div className="fade-in">
+                            <Header title="測驗結果" subtitle="Quiz Results" showBack />
+                            <div style={{ padding: '20px 16px', textAlign: 'center' }}>
+                                <div style={{
+                                    width: '120px',
+                                    height: '120px',
+                                    borderRadius: '50%',
+                                    background: `conic-gradient(${percentage >= 80 ? '#68d391' : percentage >= 60 ? '#f6e05e' : '#fc8181'} ${percentage * 3.6}deg, rgba(255,255,255,0.1) 0deg)`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    margin: '0 auto 24px'
+                                }}>
+                                    <div style={{
+                                        width: '100px',
+                                        height: '100px',
+                                        borderRadius: '50%',
+                                        background: 'var(--bg-dark)',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                    }}>
+                                        <div style={{ fontSize: '28px', fontWeight: '700' }}>{percentage}%</div>
+                                        <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{score}/{questions.length}</div>
+                                    </div>
+                                </div>
+
+                                <h2 style={{ fontSize: '20px', marginBottom: '8px' }}>
+                                    {percentage >= 80 ? '🎉 優秀！' : percentage >= 60 ? '👍 不錯！' : '💪 繼續加油！'}
+                                </h2>
+                                <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>
+                                    {percentage >= 80 ? '你對血流動力學有很好的掌握！' : 
+                                     percentage >= 60 ? '再複習一下可以更進步！' : 
+                                     '建議重新閱讀教材後再測驗'}
+                                </p>
+
+                                <button
+                                    onClick={restartQuiz}
+                                    style={{
+                                        padding: '14px 32px',
+                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '12px',
+                                        fontSize: '16px',
+                                        fontWeight: '600',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    重新測驗
+                                </button>
+                            </div>
+                        </div>
+                    );
+                }
+
+                const q = questions[currentQ];
+
+                return (
+                    <div className="fade-in">
+                        <Header title="自我測驗" subtitle={`問題 ${currentQ + 1} / ${questions.length}`} showBack />
+                        <div style={{ padding: '0 16px' }}>
+                            <div style={{ 
+                                height: '6px', 
+                                background: 'rgba(255,255,255,0.1)', 
+                                borderRadius: '3px',
+                                marginBottom: '20px',
+                                overflow: 'hidden'
+                            }}>
+                                <div style={{
+                                    height: '100%',
+                                    width: `${((currentQ + 1) / questions.length) * 100}%`,
+                                    background: 'linear-gradient(90deg, #667eea, #764ba2)',
+                                    transition: 'width 0.3s ease'
+                                }}/>
+                            </div>
+
+                            <div className="shock-card" style={{ marginBottom: '16px' }}>
+                                <h3 style={{ fontSize: '16px', fontWeight: '600', lineHeight: '1.6' }}>
+                                    {q.q}
+                                </h3>
+                            </div>
+
+                            {q.options.map((opt, idx) => {
+                                let bgColor = 'rgba(255,255,255,0.05)';
+                                let borderColor = 'rgba(255,255,255,0.1)';
+
+                                if (showResult) {
+                                    if (idx === q.correct) {
+                                        bgColor = 'rgba(104,211,145,0.2)';
+                                        borderColor = '#68d391';
+                                    } else if (idx === selected) {
+                                        bgColor = 'rgba(252,129,129,0.2)';
+                                        borderColor = '#fc8181';
+                                    }
+                                } else if (idx === selected) {
+                                    borderColor = '#667eea';
+                                    bgColor = 'rgba(102,126,234,0.2)';
+                                }
+
+                                return (
+                                    <button
+                                        key={idx}
+                                        onClick={() => handleAnswer(idx)}
+                                        disabled={showResult}
+                                        style={{
+                                            width: '100%',
+                                            padding: '14px 16px',
+                                            marginBottom: '10px',
+                                            background: bgColor,
+                                            border: `2px solid ${borderColor}`,
+                                            borderRadius: '12px',
+                                            textAlign: 'left',
+                                            fontSize: '14px',
+                                            cursor: showResult ? 'default' : 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '12px',
+                                            color: 'white',
+                                            transition: 'all 0.2s ease'
+                                        }}
+                                    >
+                                        <span style={{
+                                            width: '26px',
+                                            height: '26px',
+                                            borderRadius: '50%',
+                                            background: showResult && idx === q.correct ? '#68d391' : 'rgba(255,255,255,0.1)',
+                                            color: showResult && idx === q.correct ? 'white' : 'var(--text-muted)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontWeight: '600',
+                                            fontSize: '12px',
+                                            flexShrink: 0
+                                        }}>
+                                            {String.fromCharCode(65 + idx)}
+                                        </span>
+                                        <span style={{ lineHeight: '1.4' }}>{opt}</span>
+                                    </button>
+                                );
+                            })}
+
+                            {showResult && (
+                                <div style={{
+                                    padding: '16px',
+                                    background: selected === q.correct ? 'rgba(104,211,145,0.15)' : 'rgba(246,224,94,0.15)',
+                                    borderRadius: '12px',
+                                    borderLeft: `4px solid ${selected === q.correct ? '#68d391' : '#f6e05e'}`,
+                                    marginBottom: '16px'
+                                }} className="fade-in">
+                                    <div style={{ fontWeight: '600', marginBottom: '8px' }}>
+                                        {selected === q.correct ? '✓ 正確！' : '✗ 答錯了'}
+                                    </div>
+                                    <div style={{ fontSize: '14px', lineHeight: '1.6', color: 'var(--text-muted)' }}>
+                                        {q.explanation}
+                                    </div>
+                                </div>
+                            )}
+
+                            {showResult && (
+                                <button
+                                    onClick={nextQuestion}
+                                    style={{
+                                        width: '100%',
+                                        padding: '14px',
+                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '12px',
+                                        fontSize: '16px',
+                                        fontWeight: '600',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '8px'
+                                    }}
+                                >
+                                    {currentQ < questions.length - 1 ? '下一題' : '查看結果'}
+                                    <Icons.Arrow />
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                );
+            };
+
+            // ==================== RENDER PAGE ====================
+            const renderPage = () => {
+                switch(currentPage) {
+                    case 'home': return <HomePage />;
+                    case 'basics': return <BasicsPage />;
+                    case 'shock-types': return <ShockTypesPage />;
+                    case 'cases': return <CasesPage />;
+                    case 'case-detail': return <CaseDetailPage />;
+                    case 'glossary': return <GlossaryPage />;
+                    case 'quiz': return <QuizPage />;
+                    default: return <HomePage />;
+                }
+            };
+
+            return (
+                <div style={{ 
+                    maxWidth: '480px', 
+                    margin: '0 auto',
+                    minHeight: '100vh',
+                    background: 'linear-gradient(180deg, #1a202c 0%, #2d3748 100%)',
+                    paddingBottom: '30px'
+                }}>
+                    {renderPage()}
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
