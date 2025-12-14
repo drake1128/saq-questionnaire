@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>胸腔超音波教學 | Thoracic Ultrasound</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary: #0f4c75; --primary-light: #3282b8; --primary-dark: #0b2545;
+            --accent: #e63946; --success: #2a9d8f; --warning: #e9c46a;
+            --bg-dark: #1a1a2e; --bg-card: #16213e; --bg-elevated: #1f2b47;
+            --text-primary: #edf2f7; --text-secondary: #a0aec0; --text-muted: #718096;
+            --border: rgba(255,255,255,0.1); --shadow: 0 4px 20px rgba(0,0,0,0.3);
+            --radius: 16px; --radius-sm: 10px;
+        }
+        body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-dark); color: var(--text-primary); min-height: 100vh; line-height: 1.6; }
+        .app { max-width: 480px; margin: 0 auto; min-height: 100vh; background: linear-gradient(180deg, var(--bg-dark) 0%, #0d1b2a 100%); }
+        .header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); padding: 20px; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow); }
+        .header-title { font-size: 1.3rem; font-weight: 700; color: white; }
+        .header-sub { font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-top: 4px; }
+        .nav { display: flex; background: var(--bg-card); padding: 8px; gap: 6px; overflow-x: auto; }
+        .nav::-webkit-scrollbar { display: none; }
+        .nav-tab { flex: 0 0 auto; padding: 10px 16px; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 500; cursor: pointer; white-space: nowrap; background: transparent; color: var(--text-secondary); border: none; transition: all 0.3s; }
+        .nav-tab.active { background: var(--primary); color: white; }
+        .content { padding: 16px; padding-bottom: 100px; }
+        .tab { display: none; animation: fadeIn 0.3s; }
+        .tab.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; border: 1px solid var(--border); box-shadow: var(--shadow); }
+        .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .card-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .card-title { font-size: 1.1rem; font-weight: 600; }
+        .card-sub { font-size: 0.8rem; color: var(--text-secondary); }
+        .section-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        .badge { font-size: 0.7rem; padding: 4px 10px; border-radius: 20px; background: var(--primary); color: white; }
+        .expand { background: var(--bg-elevated); border-radius: var(--radius-sm); margin-bottom: 12px; border: 1px solid var(--border); overflow: hidden; }
+        .expand-header { padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .expand-header:hover { background: rgba(255,255,255,0.05); }
+        .expand-title { font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; gap: 10px; }
+        .expand-arrow { transition: transform 0.3s; color: var(--text-muted); }
+        .expand.open .expand-arrow { transform: rotate(180deg); }
+        .expand-content { display: none; padding: 0 16px 16px; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.8; }
+        .expand.open .expand-content { display: block; }
+        .key-point { display: flex; gap: 12px; padding: 12px; background: rgba(15, 76, 117, 0.3); border-radius: var(--radius-sm); margin-bottom: 10px; border-left: 3px solid var(--primary-light); }
+        .key-icon { font-size: 1.2rem; flex-shrink: 0; }
+        .critical { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: linear-gradient(135deg, rgba(230,57,70,0.2), rgba(230,57,70,0.1)); border-radius: var(--radius-sm); margin-bottom: 8px; border: 1px solid rgba(230,57,70,0.3); }
+        .critical-label { font-weight: 600; color: var(--accent); min-width: 100px; }
+        .critical-value { font-weight: 700; }
+        .profile { background: linear-gradient(135deg, var(--bg-elevated), var(--bg-card)); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); }
+        .profile-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .profile-num { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; }
+        .profile-name { font-weight: 600; }
+        .profile-name-en { font-size: 0.8rem; color: var(--text-secondary); }
+        .findings { list-style: none; }
+        .findings li { padding: 8px 0 8px 24px; position: relative; font-size: 0.9rem; color: var(--text-secondary); border-bottom: 1px solid var(--border); }
+        .findings li:last-child { border-bottom: none; }
+        .findings li::before { content: "•"; position: absolute; left: 8px; color: var(--primary-light); }
+        .tx-box { margin-top: 12px; padding: 12px; border-radius: var(--radius-sm); font-size: 0.85rem; }
+        .tx-box.positive { background: rgba(42,157,143,0.2); border: 1px solid rgba(42,157,143,0.3); color: var(--success); }
+        .tx-box.negative { background: rgba(230,57,70,0.15); border: 1px solid rgba(230,57,70,0.3); color: var(--accent); }
+        .tx-box.warning { background: rgba(233,196,106,0.15); border: 1px solid rgba(233,196,106,0.3); color: var(--warning); }
+        .step { display: flex; gap: 16px; margin-bottom: 20px; position: relative; }
+        .step:not(:last-child)::after { content: ""; position: absolute; left: 19px; top: 44px; width: 2px; height: calc(100% - 20px); background: var(--primary-light); }
+        .step-num { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; flex-shrink: 0; z-index: 1; }
+        .step-content { flex: 1; background: var(--bg-elevated); border-radius: var(--radius-sm); padding: 14px; border: 1px solid var(--border); }
+        .step-title { font-weight: 600; margin-bottom: 8px; }
+        .step-desc { font-size: 0.85rem; color: var(--text-secondary); }
+        .zone-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 16px 0; }
+        .zone-item { background: var(--bg-elevated); border-radius: var(--radius-sm); padding: 12px; text-align: center; border: 1px solid var(--border); }
+        .zone-num { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-weight: 700; font-size: 0.9rem; color: white; }
+        .zone-label { font-size: 0.8rem; color: var(--text-secondary); }
+        .ref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+        .ref-item { background: var(--bg-elevated); border-radius: var(--radius-sm); padding: 14px; border-left: 3px solid var(--primary-light); }
+        .ref-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
+        .ref-value { font-weight: 600; font-size: 0.9rem; }
+        .quiz-progress { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .progress-bar { flex: 1; height: 8px; background: var(--bg-elevated); border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light)); border-radius: 4px; transition: width 0.3s; }
+        .progress-text { font-size: 0.85rem; color: var(--text-secondary); min-width: 60px; text-align: right; }
+        .q-card { background: var(--bg-card); border-radius: var(--radius); padding: 24px 20px; margin-bottom: 16px; border: 1px solid var(--border); }
+        .q-num { display: inline-block; padding: 4px 12px; background: var(--primary); border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 12px; }
+        .q-text { font-size: 1.05rem; font-weight: 500; line-height: 1.7; margin-bottom: 20px; }
+        .option { display: block; width: 100%; padding: 14px 16px; background: var(--bg-elevated); border: 2px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 10px; cursor: pointer; text-align: left; font-size: 0.95rem; color: var(--text-primary); font-family: inherit; transition: all 0.2s; }
+        .option:hover:not(:disabled) { border-color: var(--primary-light); background: rgba(50,130,184,0.1); }
+        .option.correct { border-color: var(--success); background: rgba(42,157,143,0.2); }
+        .option.incorrect { border-color: var(--accent); background: rgba(230,57,70,0.15); }
+        .option:disabled { cursor: default; }
+        .explain { margin-top: 16px; padding: 16px; border-radius: var(--radius-sm); font-size: 0.9rem; line-height: 1.7; }
+        .explain.correct { background: rgba(42,157,143,0.15); border: 1px solid rgba(42,157,143,0.3); }
+        .explain.incorrect { background: rgba(230,57,70,0.1); border: 1px solid rgba(230,57,70,0.3); }
+        .btn { display: block; width: 100%; padding: 14px 28px; border-radius: var(--radius-sm); font-size: 1rem; font-weight: 600; cursor: pointer; border: none; font-family: inherit; background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; transition: all 0.2s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(50,130,184,0.4); }
+        .score-display { text-align: center; padding: 40px 20px; }
+        .score-circle { width: 160px; height: 160px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-light)); display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 8px 32px rgba(50,130,184,0.4); }
+        .score-num { font-size: 3rem; font-weight: 700; color: white; }
+        .score-label { font-size: 0.9rem; color: rgba(255,255,255,0.8); }
+        .score-msg { font-size: 1.2rem; margin-bottom: 8px; font-weight: 600; }
+        .score-detail { color: var(--text-secondary); margin-bottom: 24px; }
+        .bilingual { color: var(--text-secondary); font-size: 0.85em; }
+    </style>
+</head>
+<body>
+<div class="app">
+    <header class="header">
+        <div class="header-title">🩺 胸腔超音波教學</div>
+        <div class="header-sub">Thoracic Ultrasound for Shock & Dyspnea</div>
+    </header>
+    <nav class="nav">
+        <button class="nav-tab active" data-tab="overview">📖 總覽</button>
+        <button class="nav-tab" data-tab="shock">💓 休克</button>
+        <button class="nav-tab" data-tab="dyspnea">🫁 呼吸困難</button>
+        <button class="nav-tab" data-tab="technique">🔍 技術</button>
+        <button class="nav-tab" data-tab="reference">📋 速查</button>
+        <button class="nav-tab" data-tab="quiz">✏️ 測驗</button>
+    </nav>
+    <main class="content">
+        <!-- Overview -->
+        <div id="overview" class="tab active">
+            <div class="section-title">課程簡介 <span class="badge">Introduction</span></div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon" style="background:linear-gradient(135deg,#e63946,#f4a261)">⚡</div>
+                    <div><div class="card-title">ICU 中未被認識的痛苦</div><div class="card-sub">The Unrecognized Suffering in ICU</div></div>
+                </div>
+                <p style="color:var(--text-secondary)">當病人狀況惡化，臨床表現模糊，時間緊迫——我們面對的是兩個根本危機：<strong style="color:var(--accent)">休克</strong> 與 <strong style="color:var(--primary-light)">呼吸困難</strong>。</p>
+                <div class="key-point" style="margin-top:16px">
+                    <span class="key-icon">💡</span>
+                    <div>呼吸困難「可能比疼痛更糟」，因為它喚起原始的恐懼反應。必須在每位病人身上識別、預防和緩解。<br><span class="bilingual">— ERS/ESICM Statement on Dyspnoea</span></div>
+                </div>
+            </div>
+            <div class="expand open">
+                <div class="expand-header" onclick="toggleExpand(this)">
+                    <div class="expand-title"><span>🫀</span> 整合性胸腔檢查</div>
+                    <span class="expand-arrow">▼</span>
+                </div>
+                <div class="expand-content">
+                    <p style="margin-bottom:12px">胸腔超音波不是兩個獨立的檢查，而是結合 <strong>TTE</strong>（經胸心臟超音波）與 <strong>LUS</strong>（肺部超音波）的單一整合評估。</p>
+                    <div class="key-point"><span class="key-icon">✅</span><div><strong>提高診斷準確度</strong><br>快速區分五種休克類型及呼吸衰竭的主要原因</div></div>
+                    <div class="key-point"><span class="key-icon">⏱️</span><div><strong>加速決策</strong><br>縮短從診斷到適當治療的時間</div></div>
+                    <div class="key-point"><span class="key-icon">🔄</span><div><strong>非侵入性且可重複</strong><br>即時監測病人對介入措施的反應</div></div>
+                </div>
+            </div>
+            <div class="expand">
+                <div class="expand-header" onclick="toggleExpand(this)">
+                    <div class="expand-title"><span>🔀</span> 兩條診斷路徑</div>
+                    <span class="expand-arrow">▼</span>
+                </div>
+                <div class="expand-content">
+                    <div class="step"><div class="step-num" style="background:#e63946">1</div><div class="step-content"><div class="step-title">休克路徑 Shock Pathway</div><div class="step-desc">評估：容量反應性？左心衰竭？右心衰竭？心包填塞？LVOTO？</div></div></div>
+                    <div class="step"><div class="step-num" style="background:#3282b8">2</div><div class="step-content"><div class="step-title">呼吸困難路徑 Dyspnea Pathway</div><div class="step-desc">評估：Lung sliding？B-lines？Consolidation？積液？</div></div></div>
+                </div>
+            </div>
+            <div class="expand">
+                <div class="expand-header" onclick="toggleExpand(this)">
+                    <div class="expand-title"><span>🎯</span> 整合診斷案例</div>
+                    <span class="expand-arrow">▼</span>
+                </div>
+                <div class="expand-content">
+                    <p>休克與呼吸困難「經常相關」。整合性超音波的真正力量在於找出單一的統一病因。</p>
+                    <div style="background:var(--bg-elevated);border-radius:var(--radius-sm);padding:16px;margin-top:12px;border-left:3px solid var(--primary-light)">
+                        <strong>案例：65歲低血壓 + 呼吸窘迫</strong>
+                        <p style="margin-top:8px;font-size:0.9rem;color:var(--text-secondary)">TTE: LVEF 30%, SubAo VTI 12 cm, E/E' 18<br>LUS: 雙側瀰漫性 B-lines + 平滑肋膜線</p>
+                        <div class="tx-box positive" style="margin-top:12px">統一診斷：左心性心因性休克 + 急性心因性肺水腫<br>→ Inotropes + Diuretics，避免積極輸液</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shock -->
+        <div id="shock" class="tab">
+            <div class="section-title">休克評估路徑 <span class="badge">Shock Pathway</span></div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon" style="background:linear-gradient(135deg,#e63946,#9b2335)">💓</div>
+                    <div><div class="card-title">四大關鍵問題</div><div class="card-sub">The Four Critical Questions</div></div>
+                </div>
+                <div class="step" style="margin-top:16px"><div class="step-num">Q1</div><div class="step-content"><div class="step-title">容量反應性？ Fluid Responsive?</div><div class="step-desc">評估 IVC 變異、VTI 變化、PLR 測試</div></div></div>
+                <div class="step"><div class="step-num">Q2</div><div class="step-content"><div class="step-title">左心衰竭？ LV Failure?</div><div class="step-desc">評估 LVEF、MAPSE、S'、E/E' ratio</div></div></div>
+                <div class="step"><div class="step-num">Q3</div><div class="step-content"><div class="step-title">右心衰竭？ RV Failure?</div><div class="step-desc">評估 RV/LV ratio、TAPSE、D-shaped LV</div></div></div>
+                <div class="step"><div class="step-num">Q4</div><div class="step-content"><div class="step-title">心包填塞？ Tamponade?</div><div class="step-desc">評估積液量、腔室塌陷、IVC 狀態</div></div></div>
+            </div>
+            <div class="expand open">
+                <div class="expand-header" onclick="toggleExpand(this)"><div class="expand-title"><span>💧</span> 低血容量性休克</div><span class="expand-arrow">▼</span></div>
+                <div class="expand-content">
+                    <div class="profile"><div class="profile-header"><div class="profile-num" style="background:#e63946">1</div><div><div class="profile-name">低血容量性休克</div><div class="profile-name-en">Hypovolemic Shock</div></div></div>
+                    <ul class="findings"><li>LV systolic collapse ('kissing LV')</li><li>IVC 呼吸變異度 > 40%</li><li>Sub-aortic VTI < 14 cm</li><li>Mitral E-wave < 0.7 m/s</li></ul>
+                    <div class="tx-box positive"><strong>處置：</strong> 輸液復甦 (Fluid resuscitation)</div></div>
+                </div>
+            </div>
+            <div class="expand">
+                <div class="expand-header" onclick="toggleExpand(this)"><div class="expand-title"><span>❤️</span> 左心性心因性休克</div><span class="expand-arrow">▼</span></div>
+                <div class="expand-content">
+                    <div class="profile"><div class="profile-header"><div class="profile-num" style="background:#0f4c75">2</div><div><div class="profile-name">左心性心因性休克</div><div class="profile-name-en">LV Cardiogenic Shock</div></div></div>
+                    <ul class="findings"><li>LVEF < 40%</li><li>MAPSE < 7 mm 或 S' < 6 cm/s</li><li>Sub-aortic VTI < 14 cm</li><li>E/E' ratio > 14</li></ul>
+                    <div class="tx-box warning" style="margin-bottom:8px"><strong>Profile 2A:</strong> 無肺水腫 (A-lines) → Inotropes</div>
+                    <div class="tx-box warning"><strong>Profile 2B:</strong> 有肺水腫 (B-lines) → Inotropes + Diuretics</div></div>
+                </div>
+            </div>
+            <div class="expand">
+                <div class="expand-header" onclick="toggleExpand(this)"><div class="expand-title"><span>💜</span> 急性右心室衰竭</div><span class="expand-arrow">▼</span></div>
+                <div class="expand-content">
+                    <div class="profile"><div class="profile-header"><div class="profile-num" style="background:#f4a261">3</div><div><div class="profile-name">急性右心室衰竭</div><div class="profile-name-en">Acute RV Failure</div></div></div>
+                    <ul class="findings"><li>RV/LV ratio > 0.8</li><li>矛盾性中隔運動 (D-shaped LV)</li><li>TAPSE < 14 cm</li></ul>
+                    <div class="tx-box negative"><strong>處置：</strong> 懷疑肺栓塞，考慮緊急再灌流</div></div>
+                </div>
+            </div>
+            <div class="expand">
+                <div class="expand-header" onclick="toggleExpand(this)"><div class="expand-title"><span>💔</span> 心包填塞</div><span class="expand-arrow">▼</span></div>
+                <div class="expand-content">
+                    <div class="profile"><div class="profile-header"><div class="profile-num" style="background:#9b2335">4</div><div><div class="profile-name">心包填塞</div><div class="profile-name-en">Cardiac Tamponade</div></div></div>
+                    <ul class="findings"><li>環狀心包積液 > 2 cm</li><li>RA 收縮期或 RV 舒張期塌陷</li><li>擴張 IVC (>25 mm) 無呼吸變異</li></ul>
+                    <div class="tx-box negative"><strong>處置：</strong> Tamponade Score > 6 → 緊急心包穿刺</div></div>
+                </div>
+            </div>
+            <div class="expand">
+                <div class="expand-header" onclick="toggleExpand(this)"><div class="expand-title"><span>⚡</span> LVOTO / 高動力狀態</div><span class="expand-arrow">▼</span></div>
+                <div class="expand-content">
+                    <div class="profile"><div class="profile-header"><div class="profile-num" style="background:#2a9d8f">5</div><div><div class="profile-name">LVOTO / 高動力狀態</div><div class="profile-name-en">LVOTO / Hyperdynamic</div></div></div>
+                    <ul class="findings"><li>LVEF > 70%</li><li>SAM (Systolic Anterior Motion)</li><li>LVOT peak gradient > 50 mmHg</li><li>Saber-shaped Doppler profile</li></ul>
+                    <div class="tx-box warning"><strong>處置：</strong> 輸液 + Vasopressors，避免 Inotropes</div></div>
+                </div>
+            </div>
+            <div class="card" style="margin-top:16px">
+                <div class="card-title" style="margin-bottom:12px">💡 容量評估重點</div>
+                <div class="critical"><span class="critical-label">嚴重低血容</span><span class="critical-value">Kissing LV + IVC 變異 > 40%</span></div>
+                <div class="critical"><span class="critical-label">可能低血容</span><span class="critical-value">VTI < 14 cm + E-wave < 0.7 m/s</span></div>
+                <div class="critical"><span class="critical-label">PLR 陽性</span><span class="critical-value">VTI 增加 ≥ 10-15%</span></div>
+            </div>
+        </div>
+
+        <!-- Dyspnea -->
+        <div id="dyspnea" class="tab">
+            <div class="section-title">呼吸困難評估路徑 <span class="badge">Dyspnea Pathway</span></div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon" style="background:linear-gradient(135deg,#3282b8,#0f4c75)">🫁</div>
+                    <div><div class="card-title">系統性評估</div><div class="card-sub">Systematic Lung Assessment</div></div>
+                </div>
+                <div class="step" style="margin-top:16px"><div class="step-num" style="background:#e63946">1</div><div class="step-content"><div class="step-title">Lung Sliding 有無？</div><div class="step-desc">無 → 懷疑氣胸，找 Lung Point</div></div></div>
+                <div class="step"><div class="step-num" style="background:#f4a261">2</div><div class="step-content"><div class="step-title">有 B-lines？</div><div class="step-desc">評估分布：均勻 vs Patchy</div></div></div>
+                <div class="step"><div class="step-num" style="background:#2a9d8f">3</div><div class="step-content"><div class="step-title">有 Consolidation？</div><div class="step-desc">評估位置、air bronchogram</div></div></div>
+            </div>
+            <div class="expand open">
+                <div class="expand-header" onclick="toggleExpand(this)"><div class="expand-title"><span>💨</span> 氣胸</div><span class="expand-arrow">▼</span></div>
+                <div class="expand-content">
+                    <div class="profile"><div class="profile-header"><div class="profile-num" style="background:#e63946">1</div><div><div class="profile-name">氣胸</div><div class="profile-name-en">Pneumothorax</div></div></div>
+                    <ul class="findings"><li>Lung sliding 消失</li><li>B-lines 消失</li><li>Lung point (病理特徵)</li><li>Barcode sign (M-mode)</li></ul>
+                    <div class="tx-box negative"><strong>處置：</strong> Chest tube 或 Needle decompression</div></div>
+                </div>
+            </div>
+            <div class="expand">
+                <div class="expand-header" onclick="toggleExpand(this)"><div class="expand-title"><span>💧</span> 肋膜積液</div><span class="expand-arrow">▼</span></div>
+                <div class="expand-content">
+                    <div class="profile"><div class="profile-header"><div class="profile-num" style="background:#0f4c75">2</div><div><div class="profile-name">肋膜積液</div><div class="profile-name-en">Pleural Effusion</div></div></div>
+                    <ul class="findings"><li>無回音空間（黑色）</li><li>位於壁層與臟層肋膜間</li><li>Jellyfish sign</li><li>Balik's formula: mm × 20 = mL</li></ul>
+                    <div class="tx-box warning"><strong>處置：</strong> 大量或有症狀時考慮 Thoracentesis</div></div>
+                </div>
+            </div>
+            <div class="expand">
+                <div class="expand-header" onclick="toggleExpand(this)"><div class="expand-title"><span>❤️</span> 心因性肺水腫</div><span class="expand-arrow">▼</span></div>
+                <div class="expand-content">
+                    <div class="profile"><div class="profile-header"><div class="profile-num" style="background:#3282b8">3</div><div><div class="profile-name">心因性肺水腫</div><div class="profile-name-en">Cardiogenic Pulmonary Edema</div></div></div>
+                    <ul class="findings"><li>雙側瀰漫性 B-lines</li><li>均勻、重力依賴分布</li><li>平滑規則肋膜線</li><li>TTE: E/E' > 14</li></ul>
+                    <div class="tx-box positive"><strong>處置：</strong> 利尿劑 + 硝酸鹽類</div></div>
+                </div>
+            </div>
+            <div class="expand">
+                <div class="expand-header" onclick="toggleExpand(this)"><div class="expand-title"><span>🔥</span> ARDS</div><span class="expand-arrow">▼</span></div>
+                <div class="expand-content">
+                    <div class="profile"><div class="profile-header"><div class="profile-num" style="background:#f4a261">4</div><div><div class="profile-name">ARDS</div><div class="profile-name-en">Acute Respiratory Distress Syndrome</div></div></div>
+                    <ul class="findings"><li>Patchy bilateral findings</li><li>B-lines + consolidation 混合</li><li>有 spared areas</li><li>不規則增厚肋膜線</li></ul>
+                    <div class="tx-box warning"><strong>處置：</strong> 治療underlying cause + 支持療法</div></div>
+                </div>
+            </div>
+            <div class="expand">
+                <div class="expand-header" onclick="toggleExpand(this)"><div class="expand-title"><span>🦠</span> 肺炎</div><span class="expand-arrow">▼</span></div>
+                <div class="expand-content">
+                    <div class="profile"><div class="profile-header"><div class="profile-num" style="background:#2a9d8f">5</div><div><div class="profile-name">肺炎</div><div class="profile-name-en">Pneumonia</div></div></div>
+                    <ul class="findings"><li>局部 consolidation（組織樣）</li><li>Sub-pleural 位置</li><li>Dynamic air bronchogram（特異性）</li><li>可用 LUS score 追蹤</li></ul>
+                    <div class="tx-box positive"><strong>處置：</strong> 抗生素 + 呼吸支持</div></div>
+                </div>
+            </div>
+            <div class="card" style="margin-top:16px">
+                <div class="card-title" style="margin-bottom:12px">🔍 鑑別診斷要點</div>
+                <table style="width:100%;font-size:0.85rem;color:var(--text-secondary)">
+                    <tr style="border-bottom:1px solid var(--border)"><th style="padding:8px 4px;text-align:left">診斷</th><th style="padding:8px 4px;text-align:left">B-lines</th><th style="padding:8px 4px;text-align:left">肋膜線</th></tr>
+                    <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 4px">肺水腫</td><td style="padding:8px 4px;color:var(--primary-light)">均勻瀰漫</td><td style="padding:8px 4px">平滑</td></tr>
+                    <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 4px">ARDS</td><td style="padding:8px 4px;color:var(--warning)">Patchy + Spared</td><td style="padding:8px 4px">不規則</td></tr>
+                    <tr><td style="padding:8px 4px">肺炎</td><td style="padding:8px 4px;color:var(--accent)">局部</td><td style="padding:8px 4px">可能不規則</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Technique -->
+        <div id="technique" class="tab">
+            <div class="section-title">掃描技術 <span class="badge">Technique</span></div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon" style="background:linear-gradient(135deg,#2a9d8f,#3282b8)">🔍</div>
+                    <div><div class="card-title">12-Zone 掃描法</div><div class="card-sub">Systematic 12-Zone Approach</div></div>
+                </div>
+                <p style="color:var(--text-secondary);margin-bottom:16px">完整的肺部超音波檢查需要結構化方法，避免遺漏局部異常。</p>
+                <div style="background:var(--bg-elevated);border-radius:var(--radius-sm);padding:16px;margin-bottom:12px">
+                    <div style="font-weight:600;margin-bottom:8px">📡 探頭選擇</div>
+                    <div style="font-size:0.9rem;color:var(--text-secondary)">使用低頻探頭（curvilinear 或 phased array probe）以獲得較好穿透力。</div>
+                </div>
+                <div style="margin-top:16px"><strong>每側胸部 6 區域：</strong></div>
+                <div class="zone-grid">
+                    <div class="zone-item"><div class="zone-num" style="background:#3282b8">1</div><div class="zone-label">前上 Anterior Upper</div></div>
+                    <div class="zone-item"><div class="zone-num" style="background:#3282b8">2</div><div class="zone-label">前下 Anterior Lower</div></div>
+                    <div class="zone-item"><div class="zone-num" style="background:#f4a261">3</div><div class="zone-label">側上 Lateral Upper</div></div>
+                    <div class="zone-item"><div class="zone-num" style="background:#f4a261">4</div><div class="zone-label">側下 Lateral Lower</div></div>
+                    <div class="zone-item"><div class="zone-num" style="background:#2a9d8f">5</div><div class="zone-label">後上 Posterior Upper</div></div>
+                    <div class="zone-item"><div class="zone-num" style="background:#2a9d8f">6</div><div class="zone-label">後下 Posterior Lower</div></div>
+                </div>
+            </div>
+            <div class="expand open">
+                <div class="expand-header" onclick="toggleExpand(this)"><div class="expand-title"><span>📝</span> 每點評估項目</div><span class="expand-arrow">▼</span></div>
+                <div class="expand-content">
+                    <div class="key-point"><span class="key-icon">1️⃣</span><div><strong>Lung Sliding</strong><br>存在或消失？Seashore sign vs Barcode sign</div></div>
+                    <div class="key-point"><span class="key-icon">2️⃣</span><div><strong>Lung Artifacts</strong><br>A-lines（正常通氣）或 B-lines（間質症候群）</div></div>
+                    <div class="key-point"><span class="key-icon">3️⃣</span><div><strong>Consolidation</strong><br>有無「組織樣」pattern？Air bronchogram？</div></div>
+                    <div class="key-point"><span class="key-icon">4️⃣</span><div><strong>Pleural Effusion</strong><br>依賴區有無無回音液體？</div></div>
+                </div>
+            </div>
+            <div class="expand">
+                <div class="expand-header" onclick="toggleExpand(this)"><div class="expand-title"><span>⚖️</span> 正常 vs 異常徵象</div><span class="expand-arrow">▼</span></div>
+                <div class="expand-content">
+                    <div style="margin-bottom:16px"><strong style="color:var(--success)">正常徵象</strong><ul class="findings"><li>Lung sliding 存在</li><li>A-lines（水平重複線）</li><li>M-mode: Seashore sign</li></ul></div>
+                    <div><strong style="color:var(--accent)">異常徵象</strong><ul class="findings"><li>B-lines: 從肋膜延伸到螢幕底部的垂直線</li><li>Consolidation: 組織樣 echogenicity</li><li>Barcode sign: 氣胸的 M-mode 表現</li><li>Lung point: 氣胸的病理特徵</li></ul></div>
+                </div>
+            </div>
+            <div class="expand">
+                <div class="expand-header" onclick="toggleExpand(this)"><div class="expand-title"><span>🦵</span> PLR 測試技巧</div><span class="expand-arrow">▼</span></div>
+                <div class="expand-content">
+                    <div style="background:var(--bg-elevated);border-radius:var(--radius-sm);padding:16px">
+                        <div style="font-weight:600;margin-bottom:8px">Passive Leg Raise 被動抬腿測試</div>
+                        <ol style="padding-left:20px;margin-top:8px;font-size:0.9rem;color:var(--text-secondary)">
+                            <li style="margin-bottom:8px">病人從半坐姿（45°）開始</li>
+                            <li style="margin-bottom:8px">測量基線 Sub-aortic VTI</li>
+                            <li style="margin-bottom:8px">將病人放平並抬腿 45°</li>
+                            <li style="margin-bottom:8px">60-90 秒內再測 VTI</li>
+                            <li>VTI 增加 ≥10-15% = 容量反應性</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reference -->
+        <div id="reference" class="tab">
+            <div class="section-title">快速參考 <span class="badge">Quick Reference</span></div>
+            <div class="card">
+                <div class="card-title" style="margin-bottom:16px">🫀 血流動力學評估 (Shock)</div>
+                <div class="critical"><span class="critical-label">容量反應性</span><span class="critical-value">PLR後 VTI ↑ ≥10-15%</span></div>
+                <div class="critical"><span class="critical-label">LV 心因性</span><span class="critical-value">LVEF <40%, VTI <14cm, E/E' >14</span></div>
+                <div class="critical"><span class="critical-label">急性RV衰竭</span><span class="critical-value">TAPSE <14cm, RV/LV >0.8</span></div>
+                <div class="critical"><span class="critical-label">心包填塞</span><span class="critical-value">積液 >2cm, Score >6</span></div>
+                <div class="critical"><span class="critical-label">LVOTO</span><span class="critical-value">LVOT Gradient >50mmHg, LVEF >70%</span></div>
+            </div>
+            <div class="card">
+                <div class="card-title" style="margin-bottom:16px">🫁 呼吸評估 (Dyspnea)</div>
+                <div class="critical"><span class="critical-label">氣胸</span><span class="critical-value">Lung Point (病理特徵)</span></div>
+                <div class="critical"><span class="critical-label">肺水腫</span><span class="critical-value">瀰漫B-lines + 規則肋膜</span></div>
+                <div class="critical"><span class="critical-label">ARDS</span><span class="critical-value">Patchy B-lines + 不規則肋膜</span></div>
+                <div class="critical"><span class="critical-label">肺炎</span><span class="critical-value">Consolidation + Dynamic Air Bronchogram</span></div>
+                <div class="critical"><span class="critical-label">積液量估算</span><span class="critical-value">Balik: mm × 20 = mL</span></div>
+            </div>
+            <div class="card">
+                <div class="card-title" style="margin-bottom:16px">📋 關鍵數值一覽</div>
+                <div class="ref-grid">
+                    <div class="ref-item"><div class="ref-label">LVEF</div><div class="ref-value"><40% = LV failure</div></div>
+                    <div class="ref-item"><div class="ref-label">MAPSE</div><div class="ref-value"><7 mm = ↓LV</div></div>
+                    <div class="ref-item"><div class="ref-label">S'</div><div class="ref-value"><6 cm/s = ↓LV</div></div>
+                    <div class="ref-item"><div class="ref-label">E/E'</div><div class="ref-value">>14 = ↑Filling</div></div>
+                    <div class="ref-item"><div class="ref-label">SubAo VTI</div><div class="ref-value"><14 cm = ↓SV</div></div>
+                    <div class="ref-item"><div class="ref-label">TAPSE</div><div class="ref-value"><14-17 = RV↓</div></div>
+                    <div class="ref-item"><div class="ref-label">RV/LV</div><div class="ref-value">>0.8 = RV↑</div></div>
+                    <div class="ref-item"><div class="ref-label">IVC 變異</div><div class="ref-value">>40% = 低血容</div></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title" style="margin-bottom:16px">⚠️ 處置提醒</div>
+                <div class="tx-box positive"><strong>✅ LVOTO 應使用：</strong><br>輸液、Norepinephrine、Vasopressin、Beta-blockers</div>
+                <div class="tx-box negative" style="margin-top:8px"><strong>❌ LVOTO 應避免：</strong><br>Inotropes (Dobutamine) - 會加重阻塞</div>
+                <div class="tx-box warning" style="margin-top:8px"><strong>⚠️ 高風險 PE 徵象：</strong><br>RV failure + 正常肺 → 考慮緊急再灌流</div>
+            </div>
+        </div>
+
+        <!-- Quiz -->
+        <div id="quiz" class="tab">
+            <div class="section-title">自我測驗 <span class="badge">20 Questions</span></div>
+            <div id="quiz-container"></div>
+        </div>
+    </main>
+</div>
+<script>
+var quizQuestions = [
+    {id:1,question:"在評估休克患者的容量反應性時，PLR 測試後 Sub-aortic VTI 增加多少代表有反應性？",questionEn:"What increase in Sub-aortic VTI after PLR indicates fluid responsiveness?",options:["≥5-8%","≥10-15%","≥20-25%","≥30%"],correct:1,explanation:"PLR 測試後 Sub-aortic VTI 增加 ≥10-15% 代表患者對輸液有反應性。"},
+    {id:2,question:"嚴重低血容量的超音波特徵中，IVC 呼吸變異度應大於多少？",questionEn:"What IVC respiratory variation indicates severe hypovolemia?",options:[">20%",">30%",">40%",">50%"],correct:2,explanation:"嚴重低血容量的特徵包括 'kissing LV' 加上 IVC 呼吸變異度 > 40%。"},
+    {id:3,question:"左心室心因性休克的超音波診斷標準中，LVEF 應小於多少？",questionEn:"What LVEF threshold indicates LV cardiogenic shock?",options:["<50%","<45%","<40%","<35%"],correct:2,explanation:"LVEF < 40% 是左心室心因性休克的關鍵標準。替代指標包括 MAPSE < 7 mm 或 S' < 6 cm/s。"},
+    {id:4,question:"高左心室充盈壓力的超音波指標是 E/E' ratio 大於多少？",questionEn:"What E/E' ratio indicates high LV filling pressure?",options:[">8",">10",">12",">14"],correct:3,explanation:"E/E' ratio > 14 代表左心室充盈壓力升高。"},
+    {id:5,question:"急性右心室衰竭時，RV/LV ratio 應大於多少？",questionEn:"What RV/LV ratio suggests acute RV failure?",options:[">0.5",">0.6",">0.7",">0.8"],correct:3,explanation:"急性右心室擴張的標準是 RV/LV ratio > 0.8。"},
+    {id:6,question:"心包填塞時，心包積液厚度超過多少公分應考慮緊急引流？",questionEn:"What pericardial effusion thickness suggests need for drainage?",options:[">1 cm",">1.5 cm",">2 cm",">2.5 cm"],correct:2,explanation:"環狀心包積液 > 2 cm 加上腔室塌陷，應考慮緊急心包穿刺。"},
+    {id:7,question:"LVOTO 的診斷中，LVOT peak gradient 應超過多少 mmHg？",questionEn:"What LVOT gradient suggests LVOTO?",options:[">30 mmHg",">40 mmHg",">50 mmHg",">60 mmHg"],correct:2,explanation:"LVOT peak gradient > 50 mmHg 配合 LVEF > 70% 和 SAM 現象，可診斷 LVOTO。"},
+    {id:8,question:"LVOTO 患者應避免使用下列哪種藥物？",questionEn:"Which medication should be avoided in LVOTO?",options:["Norepinephrine","Vasopressin","Dobutamine","Phenylephrine"],correct:2,explanation:"LVOTO 患者應避免使用正性肌力藥如 Dobutamine，因為會加重阻塞。"},
+    {id:9,question:"氣胸的超音波診斷中，下列何者是病理特徵性徵象？",questionEn:"What is the pathognomonic sign of pneumothorax on LUS?",options:["Barcode sign","Lung point","A-lines","Seashore sign"],correct:1,explanation:"Lung point 是氣胸的病理特徵性徵象，代表氣胸的邊界。"},
+    {id:10,question:"關於肺部超音波診斷氣胸的敏感度，與仰臥胸片相比何者較高？",questionEn:"Which has higher sensitivity for pneumothorax?",options:["仰臥胸片較高","肺部超音波較高","兩者相同","取決於氣胸大小"],correct:1,explanation:"LUS 診斷氣胸的敏感度比仰臥胸片更高。"},
+    {id:11,question:"使用 Balik's formula 估算肋膜積液量，測量最大胸膜間距（mm）後應乘以多少？",questionEn:"In Balik's formula, what multiplier is used?",options:["10","15","20","25"],correct:2,explanation:"Balik's formula: Volume (mL) ≈ mm × 20。"},
+    {id:12,question:"心因性肺水腫在肺部超音波的特徵包括下列何者？",questionEn:"What LUS pattern characterizes cardiogenic pulmonary edema?",options:["Patchy B-lines + irregular pleura","Diffuse B-lines + smooth pleura","Focal consolidation + air bronchogram","Absent lung sliding + A-lines"],correct:1,explanation:"心因性肺水腫的特徵是雙側瀰漫性 B-lines，加上平滑規則的肋膜線。"},
+    {id:13,question:"ARDS 與心因性肺水腫的肺部超音波主要鑑別點是什麼？",questionEn:"What differentiates ARDS from cardiogenic edema on LUS?",options:["B-lines 數量","肋膜線特徵與分布型態","是否有肺滑動","Consolidation 大小"],correct:1,explanation:"ARDS 的特徵是 patchy bilateral findings，有 spared areas，且肋膜線不規則增厚。"},
+    {id:14,question:"肺炎在超音波下的特異性徵象是什麼？",questionEn:"What is the specific sign for pneumonia on LUS?",options:["Static air bronchogram","Dynamic air bronchogram","A-lines","Pleural sliding"],correct:1,explanation:"Dynamic air bronchogram 是肺炎的高度特異性徵象。"},
+    {id:15,question:"進行完整肺部超音波檢查時，標準掃描區域應分為幾個 zones？",questionEn:"How many zones are in a complete LUS exam?",options:["6 zones","8 zones","10 zones","12 zones"],correct:3,explanation:"標準的完整肺部超音波檢查採用 12-zone scan。"},
+    {id:16,question:"肺部超音波檢查時應使用何種探頭？",questionEn:"What probe type is preferred for LUS?",options:["高頻線性探頭","低頻凸面或相位陣列探頭","高頻hockey stick探頭","內視鏡探頭"],correct:1,explanation:"肺部超音波應使用低頻探頭（curvilinear 或 phased array probe）。"},
+    {id:17,question:"在休克患者的超音波評估中，Profile 2A（心因性休克無肺水腫）的肺部表現為何？",questionEn:"What are LUS findings in Profile 2A?",options:["Diffuse B-lines","Normal lung / A-lines","Consolidation","Pleural effusion"],correct:1,explanation:"Profile 2A 是心因性休克但無肺水腫，肺部顯示正常肺或 A-lines。"},
+    {id:18,question:"Sub-aortic VTI < 14 cm 代表什麼臨床意義？",questionEn:"What does Sub-aortic VTI < 14 cm indicate?",options:["正常心輸出量","低每搏輸出量","主動脈狹窄","二尖瓣逆流"],correct:1,explanation:"Sub-aortic VTI < 14 cm 代表低每搏輸出量（low stroke volume）。"},
+    {id:19,question:"整合性胸腔超音波結合了哪兩種檢查？",questionEn:"What two exams compose integrated thoracic ultrasound?",options:["TTE + 腹部超音波","TTE + LUS","LUS + 血管超音波","TTE + TEE"],correct:1,explanation:"整合性胸腔超音波結合經胸心臟超音波（TTE）與肺部超音波（LUS）。"},
+    {id:20,question:"急性右心室衰竭伴正常肺部表現時，應高度懷疑什麼診斷？",questionEn:"What diagnosis should be suspected with acute RV failure and normal lungs?",options:["心因性休克","心包填塞","肺栓塞","敗血性休克"],correct:2,explanation:"急性右心室擴張 + 正常肺部，應高度懷疑高風險肺栓塞。"}
+];
+var quizState = {currentQuestion:0,answers:[],showResult:false,selectedOption:null,answered:false};
+function toggleExpand(el){el.parentElement.classList.toggle('open');}
+document.querySelectorAll('.nav-tab').forEach(function(tab){
+    tab.addEventListener('click',function(){
+        var tabId=this.getAttribute('data-tab');
+        document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
+        this.classList.add('active');
+        document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+        document.getElementById(tabId).classList.add('active');
+        if(tabId==='quiz')renderQuiz();
+    });
+});
+function renderQuiz(){
+    var container=document.getElementById('quiz-container');
+    if(quizState.showResult){renderResult(container);return;}
+    var q=quizQuestions[quizState.currentQuestion];
+    var progress=((quizState.currentQuestion+1)/quizQuestions.length)*100;
+    var html='<div class="quiz-progress"><div class="progress-bar"><div class="progress-fill" style="width:'+progress+'%"></div></div><div class="progress-text">'+(quizState.currentQuestion+1)+'/'+quizQuestions.length+'</div></div>';
+    html+='<div class="q-card"><div class="q-num">第 '+q.id+' 題</div><div class="q-text">'+q.question+'</div><div class="bilingual" style="margin-bottom:16px;margin-top:-12px">'+q.questionEn+'</div>';
+    q.options.forEach(function(opt,i){
+        var cls='option';
+        if(quizState.answered){if(i===q.correct)cls+=' correct';else if(i===quizState.selectedOption)cls+=' incorrect';}
+        html+='<button class="'+cls+'" onclick="handleAnswer('+i+')" '+(quizState.answered?'disabled':'')+'>'+String.fromCharCode(65+i)+'. '+opt+'</button>';
+    });
+    if(quizState.answered){
+        var isCorrect=quizState.selectedOption===q.correct;
+        html+='<div class="explain '+(isCorrect?'correct':'incorrect')+'"><strong>'+(isCorrect?'✅ 正確！':'❌ 錯誤')+'</strong><p style="margin-top:8px">'+q.explanation+'</p></div></div>';
+        html+='<button class="btn" onclick="nextQuestion()">'+(quizState.currentQuestion<quizQuestions.length-1?'下一題 →':'查看結果')+'</button>';
+    }else{html+='</div>';}
+    container.innerHTML=html;
+}
+function handleAnswer(i){
+    if(quizState.answered)return;
+    quizState.selectedOption=i;
+    quizState.answered=true;
+    quizState.answers.push(i===quizQuestions[quizState.currentQuestion].correct);
+    renderQuiz();
+}
+function nextQuestion(){
+    if(quizState.currentQuestion<quizQuestions.length-1){quizState.currentQuestion++;quizState.selectedOption=null;quizState.answered=false;}
+    else{quizState.showResult=true;}
+    renderQuiz();
+}
+function renderResult(container){
+    var score=quizState.answers.filter(function(a){return a;}).length;
+    var pct=Math.round((score/quizQuestions.length)*100);
+    var msg,detail;
+    if(pct>=90){msg="🎉 太棒了！Excellent!";detail="你已經掌握胸腔超音波的核心概念！";}
+    else if(pct>=70){msg="👍 做得好！Good Job!";detail="大部分概念都理解了，再複習一下較弱的部分。";}
+    else if(pct>=50){msg="💪 繼續加油！Keep Going!";detail="建議重新閱讀教材內容後再測驗。";}
+    else{msg="📚 需要更多練習";detail="建議仔細閱讀各章節內容後再次挑戰。";}
+    container.innerHTML='<div class="score-display"><div class="score-circle"><div class="score-num">'+score+'/'+quizQuestions.length+'</div><div class="score-label">'+pct+'%</div></div><div class="score-msg">'+msg+'</div><div class="score-detail">'+detail+'</div><button class="btn" onclick="resetQuiz()">🔄 重新測驗</button></div>';
+}
+function resetQuiz(){quizState={currentQuestion:0,answers:[],showResult:false,selectedOption:null,answered:false};renderQuiz();}
+document.addEventListener('DOMContentLoaded',function(){renderQuiz();});
+</script>
+</body>
+</html>
