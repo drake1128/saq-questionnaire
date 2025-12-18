@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ICU POCUS 臨床查核表 | 自學系統</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0f1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a2332;
+            --bg-card-hover: #1f2a3d;
+            --accent-cyan: #00d4ff;
+            --accent-cyan-dim: rgba(0, 212, 255, 0.15);
+            --accent-emerald: #10b981;
+            --accent-emerald-dim: rgba(16, 185, 129, 0.15);
+            --accent-amber: #f59e0b;
+            --accent-amber-dim: rgba(245, 158, 11, 0.15);
+            --accent-rose: #f43f5e;
+            --accent-rose-dim: rgba(244, 63, 94, 0.15);
+            --accent-violet: #8b5cf6;
+            --accent-violet-dim: rgba(139, 92, 246, 0.15);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --success: #22c55e;
+            --warning: #eab308;
+            --error: #ef4444;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        #root {
+            min-height: 100vh;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--text-muted);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        /* Animation Keyframes */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 5px var(--accent-cyan), 0 0 10px var(--accent-cyan);
+            }
+            50% {
+                box-shadow: 0 0 15px var(--accent-cyan), 0 0 25px var(--accent-cyan);
+            }
+        }
+
+        @keyframes scan-line {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Utility Classes */
+        .animate-in {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .stagger-1 { animation-delay: 0.05s; }
+        .stagger-2 { animation-delay: 0.1s; }
+        .stagger-3 { animation-delay: 0.15s; }
+        .stagger-4 { animation-delay: 0.2s; }
+        .stagger-5 { animation-delay: 0.25s; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback, useMemo } = React;
+
+        // ==================== DATA ====================
+        const SECTIONS_DATA = {
+            basicSkills: {
+                id: 'basicSkills',
+                title: 'A. 基本技能評估',
+                subtitle: 'Level I Basic Skills',
+                icon: '🎯',
+                color: 'cyan',
+                items: [
+                    { id: 'power', label: '開關機操作', desc: 'Power on/off operation', tip: '確認設備正確開機並進入主介面' },
+                    { id: 'mode', label: '模式選擇 (B, M, Flow mode)', desc: 'Mode selection', tip: 'B-mode: 二維影像 | M-mode: 動態時序 | Flow: 血流偵測' },
+                    { id: 'bodymark', label: 'Body mark 選擇', desc: 'Body marker selection', tip: '正確標記探頭位置與方向' },
+                    { id: 'length', label: '長度測量', desc: 'Length measurement', tip: '使用卡尺功能進行精確測量' },
+                    { id: 'volume', label: '體積測量', desc: 'Volume measurement', tip: '運用橢圓或Simpson法計算' },
+                    { id: 'locate', label: '各器官及 IVC 定位', desc: 'Organ & IVC localization', tip: '系統性掃描定位各目標結構' }
+                ]
+            },
+            heart: {
+                id: 'heart',
+                title: '1. 心臟 Heart',
+                subtitle: 'Cardiac Assessment',
+                icon: '❤️',
+                color: 'rose',
+                items: [
+                    { id: 'pericardial', label: '無心包膜積液', desc: 'No pericardial effusion', tip: '檢查四腔心切面與劍突下切面' }
+                ],
+                hasIVC: true,
+                ivcInfo: {
+                    label: 'IVC 直徑測量',
+                    unit: 'cm',
+                    formula: 'CI = (IVC呼氣 - IVC吸氣) / IVC呼氣',
+                    ranges: [
+                        { range: 'CI > 50%', meaning: 'CVP 低 (脫水)', color: 'amber' },
+                        { range: 'CI 20-50%', meaning: 'CVP 正常', color: 'emerald' },
+                        { range: 'CI < 20%', meaning: 'CVP 高 (體液過多)', color: 'rose' }
+                    ]
+                }
+            },
+            lung: {
+                id: 'lung',
+                title: '2. 肺部 Lung',
+                subtitle: 'Pulmonary Assessment',
+                icon: '🫁',
+                color: 'emerald',
+                items: [
+                    { id: 'pleural', label: '無肋膜積液', desc: 'No pleural effusion', tip: '掃描PLAPS點及膈肌上方區域' },
+                    { id: 'pneumo', label: '無氣胸', desc: 'No pneumothorax', tip: '確認肋膜滑動徵 (lung sliding) 及海岸徵' }
+                ],
+                hasBLines: true
+            },
+            liver: {
+                id: 'liver',
+                title: '3. 肝臟 Liver',
+                subtitle: 'Hepatic Assessment',
+                icon: '🫀',
+                color: 'amber',
+                items: [
+                    { id: 'abscess', label: '無肝膿瘍', desc: 'No liver abscess', tip: '檢查是否有異常低回音或混合回音病灶' },
+                    { id: 'ascites', label: '無腹水', desc: 'No ascites', tip: '於Morrison pouch 及脾腎間隙確認' }
+                ]
+            },
+            kidney: {
+                id: 'kidney',
+                title: '4. 腎臟 Kidney',
+                subtitle: 'Renal Assessment',
+                icon: '🫘',
+                color: 'violet',
+                items: [
+                    { id: 'hydro', label: '無水腎', desc: 'No hydronephrosis', tip: '檢查腎盂擴張程度' },
+                    { id: 'stone', label: '無腎結石', desc: 'No renal stones', tip: '尋找高回音伴聲影的結構' },
+                    { id: 'atrophy', label: '無腎萎縮', desc: 'No renal atrophy', tip: '正常成人腎臟長度約 9-12 cm' }
+                ],
+                hasKidneySize: true
+            },
+            bladder: {
+                id: 'bladder',
+                title: '5. 膀胱 Bladder',
+                subtitle: 'Bladder Assessment',
+                icon: '💧',
+                color: 'cyan',
+                items: [
+                    { id: 'retention', label: '無明顯尿滯留', desc: 'No significant urinary retention', tip: '估算膀胱容量：長×寬×高×0.52' },
+                    { id: 'urine', label: '有尿液', desc: 'Urine present', tip: '確認膀胱內無回音液體存在' }
+                ]
+            },
+            vascular: {
+                id: 'vascular',
+                title: '6. 血管路徑定位',
+                subtitle: 'Vascular Route',
+                icon: '🩸',
+                color: 'rose',
+                items: [
+                    { id: 'femArt', label: '右股動脈定位', desc: 'Right femoral artery localization', tip: '動脈: 可壓縮性低、有搏動' },
+                    { id: 'femVein', label: '右股靜脈定位', desc: 'Right femoral vein localization', tip: '靜脈: 易壓縮、無搏動、較表淺' }
+                ]
+            },
+            fluidStatus: {
+                id: 'fluidStatus',
+                title: 'C. 初步體液評估',
+                subtitle: 'Initial Fluid Assessment',
+                icon: '💉',
+                color: 'emerald',
+                hasCalculator: true
+            },
+            clinicalUse: {
+                id: 'clinicalUse',
+                title: 'D. POCUS 臨床應用優勢',
+                subtitle: 'Clinical Advantages',
+                icon: '🏥',
+                color: 'violet',
+                items: [
+                    { id: 'cvp', label: '血管穿刺定位 (CVP, double lumen)', desc: 'Vascular access guidance', tip: '超音波導引可提高成功率、減少併發症' },
+                    { id: 'fluid', label: '體液狀態評估', desc: 'Fluid status assessment', tip: '結合IVC、肺部B-lines及心功能綜合判斷' },
+                    { id: 'abnormal', label: '異常體液蓄積評估', desc: 'Abnormal fluid accumulation', tip: '腹水、肋膜積液、心包膜積液、尿滯留' },
+                    { id: 'organ', label: '器官結構評估', desc: 'Organ structure assessment', tip: '快速篩檢結構異常' },
+                    { id: 'flow', label: '血管血流評估', desc: 'Vascular flow assessment', tip: '評估血管通暢性及血流方向' }
+                ]
+            }
+        };
+
+        // ==================== UTILITY COMPONENTS ====================
+        const GlowCard = ({ children, color = 'cyan', className = '', onClick, active = false }) => {
+            const colorMap = {
+                cyan: { bg: 'var(--accent-cyan-dim)', border: 'var(--accent-cyan)', glow: '0 0 20px rgba(0, 212, 255, 0.3)' },
+                emerald: { bg: 'var(--accent-emerald-dim)', border: 'var(--accent-emerald)', glow: '0 0 20px rgba(16, 185, 129, 0.3)' },
+                amber: { bg: 'var(--accent-amber-dim)', border: 'var(--accent-amber)', glow: '0 0 20px rgba(245, 158, 11, 0.3)' },
+                rose: { bg: 'var(--accent-rose-dim)', border: 'var(--accent-rose)', glow: '0 0 20px rgba(244, 63, 94, 0.3)' },
+                violet: { bg: 'var(--accent-violet-dim)', border: 'var(--accent-violet)', glow: '0 0 20px rgba(139, 92, 246, 0.3)' }
+            };
+
+            const colors = colorMap[color];
+
+            return (
+                <div
+                    onClick={onClick}
+                    className={className}
+                    style={{
+                        background: active ? colors.bg : 'var(--bg-card)',
+                        border: `1px solid ${active ? colors.border : 'var(--border-color)'}`,
+                        borderRadius: '16px',
+                        padding: '20px',
+                        transition: 'all 0.3s ease',
+                        cursor: onClick ? 'pointer' : 'default',
+                        boxShadow: active ? colors.glow : 'none'
+                    }}
+                >
+                    {children}
+                </div>
+            );
+        };
+
+        const ProgressRing = ({ progress, size = 120, strokeWidth = 8, color = 'cyan' }) => {
+            const radius = (size - strokeWidth) / 2;
+            const circumference = radius * 2 * Math.PI;
+            const offset = circumference - (progress / 100) * circumference;
+
+            const colorMap = {
+                cyan: 'var(--accent-cyan)',
+                emerald: 'var(--accent-emerald)',
+                amber: 'var(--accent-amber)',
+                rose: 'var(--accent-rose)',
+                violet: 'var(--accent-violet)'
+            };
+
+            return (
+                <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
+                    <circle
+                        cx={size / 2}
+                        cy={size / 2}
+                        r={radius}
+                        fill="none"
+                        stroke="var(--bg-secondary)"
+                        strokeWidth={strokeWidth}
+                    />
+                    <circle
+                        cx={size / 2}
+                        cy={size / 2}
+                        r={radius}
+                        fill="none"
+                        stroke={colorMap[color]}
+                        strokeWidth={strokeWidth}
+                        strokeLinecap="round"
+                        strokeDasharray={circumference}
+                        strokeDashoffset={offset}
+                        style={{ transition: 'stroke-dashoffset 0.5s ease' }}
+                    />
+                </svg>
+            );
+        };
+
+        const Checkbox = ({ checked, onChange, color = 'cyan', label, desc, tip }) => {
+            const [showTip, setShowTip] = useState(false);
+
+            const colorMap = {
+                cyan: 'var(--accent-cyan)',
+                emerald: 'var(--accent-emerald)',
+                amber: 'var(--accent-amber)',
+                rose: 'var(--accent-rose)',
+                violet: 'var(--accent-violet)'
+            };
+
+            return (
+                <div style={{ marginBottom: '12px' }}>
+                    <div
+                        onClick={onChange}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: '12px',
+                            cursor: 'pointer',
+                            padding: '12px',
+                            borderRadius: '12px',
+                            background: checked ? `${colorMap[color]}15` : 'transparent',
+                            border: `1px solid ${checked ? colorMap[color] : 'var(--border-color)'}`,
+                            transition: 'all 0.2s ease'
+                        }}
+                    >
+                        <div
+                            style={{
+                                width: '24px',
+                                height: '24px',
+                                borderRadius: '6px',
+                                border: `2px solid ${checked ? colorMap[color] : 'var(--text-muted)'}`,
+                                background: checked ? colorMap[color] : 'transparent',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0,
+                                transition: 'all 0.2s ease'
+                            }}
+                        >
+                            {checked && (
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--bg-primary)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                            )}
+                        </div>
+                        <div style={{ flex: 1 }}>
+                            <div style={{ 
+                                fontWeight: 500, 
+                                color: checked ? 'var(--text-primary)' : 'var(--text-secondary)',
+                                marginBottom: '2px'
+                            }}>
+                                {label}
+                            </div>
+                            <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{desc}</div>
+                        </div>
+                        {tip && (
+                            <button
+                                onClick={(e) => { e.stopPropagation(); setShowTip(!showTip); }}
+                                style={{
+                                    width: '28px',
+                                    height: '28px',
+                                    borderRadius: '8px',
+                                    border: 'none',
+                                    background: showTip ? colorMap[color] : 'var(--bg-secondary)',
+                                    color: showTip ? 'var(--bg-primary)' : 'var(--text-muted)',
+                                    cursor: 'pointer',
+                                    fontSize: '14px',
+                                    fontWeight: 600,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    transition: 'all 0.2s ease'
+                                }}
+                            >
+                                ?
+                            </button>
+                        )}
+                    </div>
+                    {showTip && tip && (
+                        <div style={{
+                            marginTop: '8px',
+                            marginLeft: '36px',
+                            padding: '12px',
+                            borderRadius: '8px',
+                            background: 'var(--bg-secondary)',
+                            fontSize: '13px',
+                            color: 'var(--text-secondary)',
+                            borderLeft: `3px solid ${colorMap[color]}`
+                        }}>
+                            💡 {tip}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const InputField = ({ label, value, onChange, unit, placeholder }) => (
+            <div style={{ marginBottom: '12px' }}>
+                <label style={{ 
+                    display: 'block', 
+                    fontSize: '13px', 
+                    color: 'var(--text-secondary)',
+                    marginBottom: '6px'
+                }}>
+                    {label}
+                </label>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <input
+                        type="number"
+                        step="0.1"
+                        value={value}
+                        onChange={(e) => onChange(e.target.value)}
+                        placeholder={placeholder}
+                        style={{
+                            flex: 1,
+                            padding: '10px 14px',
+                            borderRadius: '10px',
+                            border: '1px solid var(--border-color)',
+                            background: 'var(--bg-secondary)',
+                            color: 'var(--text-primary)',
+                            fontSize: '16px',
+                            fontFamily: 'JetBrains Mono, monospace',
+                            outline: 'none',
+                            transition: 'border-color 0.2s'
+                        }}
+                    />
+                    {unit && (
+                        <span style={{ 
+                            color: 'var(--text-muted)', 
+                            fontSize: '14px',
+                            minWidth: '30px'
+                        }}>
+                            {unit}
+                        </span>
+                    )}
+                </div>
+            </div>
+        );
+
+        // ==================== MAIN COMPONENTS ====================
+        const Header = ({ progress, onReset }) => (
+            <header style={{
+                background: 'linear-gradient(180deg, var(--bg-secondary) 0%, transparent 100%)',
+                padding: '16px 20px',
+                position: 'sticky',
+                top: 0,
+                zIndex: 100,
+                backdropFilter: 'blur(10px)'
+            }}>
+                <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    marginBottom: '12px'
+                }}>
+                    <div>
+                        <h1 style={{ 
+                            fontSize: '20px', 
+                            fontWeight: 700,
+                            background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-emerald))',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            marginBottom: '2px'
+                        }}>
+                            ICU POCUS
+                        </h1>
+                        <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                            臨床查核表 Clinical Checklist
+                        </p>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ position: 'relative', width: '50px', height: '50px' }}>
+                            <ProgressRing progress={progress} size={50} strokeWidth={4} />
+                            <span style={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                fontSize: '12px',
+                                fontWeight: 600,
+                                fontFamily: 'JetBrains Mono, monospace',
+                                color: 'var(--accent-cyan)'
+                            }}>
+                                {Math.round(progress)}%
+                            </span>
+                        </div>
+                        <button
+                            onClick={onReset}
+                            style={{
+                                padding: '8px 12px',
+                                borderRadius: '8px',
+                                border: '1px solid var(--accent-rose)',
+                                background: 'transparent',
+                                color: 'var(--accent-rose)',
+                                fontSize: '12px',
+                                fontWeight: 500,
+                                cursor: 'pointer',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            重置
+                        </button>
+                    </div>
+                </div>
+                <div style={{
+                    height: '4px',
+                    background: 'var(--bg-card)',
+                    borderRadius: '2px',
+                    overflow: 'hidden'
+                }}>
+                    <div style={{
+                        height: '100%',
+                        width: `${progress}%`,
+                        background: 'linear-gradient(90deg, var(--accent-cyan), var(--accent-emerald))',
+                        borderRadius: '2px',
+                        transition: 'width 0.5s ease'
+                    }} />
+                </div>
+            </header>
+        );
+
+        const PatientInfo = ({ info, onChange }) => (
+            <GlowCard color="cyan" style={{ margin: '16px', marginBottom: '8px' }}>
+                <h3 style={{ 
+                    fontSize: '14px', 
+                    fontWeight: 600, 
+                    color: 'var(--accent-cyan)',
+                    marginBottom: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                }}>
+                    📋 病患資訊 Patient Information
+                </h3>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <InputField
+                        label="病患姓名"
+                        value={info.name}
+                        onChange={(v) => onChange({ ...info, name: v })}
+                        placeholder="Name"
+                    />
+                    <InputField
+                        label="病歷號"
+                        value={info.chartNo}
+                        onChange={(v) => onChange({ ...info, chartNo: v })}
+                        placeholder="Chart No."
+                    />
+                    <InputField
+                        label="檢查日期"
+                        value={info.examDate}
+                        onChange={(v) => onChange({ ...info, examDate: v })}
+                        placeholder="YYYY-MM-DD"
+                    />
+                    <InputField
+                        label="檢查時間"
+                        value={info.examTime}
+                        onChange={(v) => onChange({ ...info, examTime: v })}
+                        placeholder="HH:MM"
+                    />
+                </div>
+            </GlowCard>
+        );
+
+        const SectionCard = ({ section, checkedItems, onToggle, extraData, onExtraChange }) => {
+            const [expanded, setExpanded] = useState(true);
+            const completedCount = section.items ? section.items.filter(item => checkedItems[item.id]).length : 0;
+            const totalCount = section.items ? section.items.length : 0;
+
+            return (
+                <div className="animate-in" style={{ margin: '8px 16px' }}>
+                    <GlowCard color={section.color} active={expanded}>
+                        <div 
+                            onClick={() => setExpanded(!expanded)}
+                            style={{ 
+                                display: 'flex', 
+                                justifyContent: 'space-between', 
+                                alignItems: 'center',
+                                cursor: 'pointer',
+                                marginBottom: expanded ? '16px' : 0
+                            }}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <span style={{ fontSize: '24px' }}>{section.icon}</span>
+                                <div>
+                                    <h3 style={{ fontSize: '16px', fontWeight: 600 }}>{section.title}</h3>
+                                    <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{section.subtitle}</p>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                {totalCount > 0 && (
+                                    <span style={{
+                                        padding: '4px 10px',
+                                        borderRadius: '12px',
+                                        background: completedCount === totalCount ? 'var(--accent-emerald)' : 'var(--bg-secondary)',
+                                        color: completedCount === totalCount ? 'var(--bg-primary)' : 'var(--text-secondary)',
+                                        fontSize: '12px',
+                                        fontWeight: 600,
+                                        fontFamily: 'JetBrains Mono, monospace'
+                                    }}>
+                                        {completedCount}/{totalCount}
+                                    </span>
+                                )}
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="var(--text-muted)"
+                                    strokeWidth="2"
+                                    style={{ 
+                                        transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                                        transition: 'transform 0.3s ease'
+                                    }}
+                                >
+                                    <polyline points="6 9 12 15 18 9" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        {expanded && (
+                            <div>
+                                {section.items && section.items.map(item => (
+                                    <Checkbox
+                                        key={item.id}
+                                        checked={!!checkedItems[item.id]}
+                                        onChange={() => onToggle(item.id)}
+                                        color={section.color}
+                                        label={item.label}
+                                        desc={item.desc}
+                                        tip={item.tip}
+                                    />
+                                ))}
+
+                                {/* IVC Section for Heart */}
+                                {section.hasIVC && (
+                                    <div style={{
+                                        marginTop: '16px',
+                                        padding: '16px',
+                                        borderRadius: '12px',
+                                        background: 'var(--bg-secondary)',
+                                        border: '1px solid var(--border-color)'
+                                    }}>
+                                        <h4 style={{ 
+                                            fontSize: '14px', 
+                                            fontWeight: 600, 
+                                            color: 'var(--accent-rose)',
+                                            marginBottom: '12px'
+                                        }}>
+                                            📏 IVC 評估
+                                        </h4>
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                            <InputField
+                                                label="IVC 呼氣直徑"
+                                                value={extraData.ivcExp || ''}
+                                                onChange={(v) => onExtraChange({ ...extraData, ivcExp: v })}
+                                                unit="cm"
+                                            />
+                                            <InputField
+                                                label="IVC 吸氣直徑"
+                                                value={extraData.ivcInsp || ''}
+                                                onChange={(v) => onExtraChange({ ...extraData, ivcInsp: v })}
+                                                unit="cm"
+                                            />
+                                        </div>
+                                        
+                                        {extraData.ivcExp && extraData.ivcInsp && (
+                                            <div style={{ marginTop: '12px' }}>
+                                                <div style={{
+                                                    padding: '12px',
+                                                    borderRadius: '8px',
+                                                    background: 'var(--bg-card)',
+                                                    fontFamily: 'JetBrains Mono, monospace',
+                                                    fontSize: '13px'
+                                                }}>
+                                                    <div style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>
+                                                        CI = ({extraData.ivcExp} - {extraData.ivcInsp}) / {extraData.ivcExp}
+                                                    </div>
+                                                    <div style={{ 
+                                                        fontSize: '18px', 
+                                                        fontWeight: 600,
+                                                        color: (() => {
+                                                            const ci = ((extraData.ivcExp - extraData.ivcInsp) / extraData.ivcExp) * 100;
+                                                            if (ci > 50) return 'var(--accent-amber)';
+                                                            if (ci >= 20) return 'var(--accent-emerald)';
+                                                            return 'var(--accent-rose)';
+                                                        })()
+                                                    }}>
+                                                        CI = {(((extraData.ivcExp - extraData.ivcInsp) / extraData.ivcExp) * 100).toFixed(1)}%
+                                                    </div>
+                                                </div>
+                                                
+                                                <div style={{ marginTop: '12px' }}>
+                                                    {section.ivcInfo.ranges.map((r, i) => {
+                                                        const ci = ((extraData.ivcExp - extraData.ivcInsp) / extraData.ivcExp) * 100;
+                                                        const isActive = (r.range.includes('> 50') && ci > 50) ||
+                                                                        (r.range.includes('20-50') && ci >= 20 && ci <= 50) ||
+                                                                        (r.range.includes('< 20') && ci < 20);
+                                                        const colorMap = {
+                                                            amber: 'var(--accent-amber)',
+                                                            emerald: 'var(--accent-emerald)',
+                                                            rose: 'var(--accent-rose)'
+                                                        };
+                                                        return (
+                                                            <div key={i} style={{
+                                                                display: 'flex',
+                                                                justifyContent: 'space-between',
+                                                                padding: '8px 12px',
+                                                                borderRadius: '6px',
+                                                                background: isActive ? `${colorMap[r.color]}20` : 'transparent',
+                                                                border: isActive ? `1px solid ${colorMap[r.color]}` : '1px solid transparent',
+                                                                marginBottom: '4px',
+                                                                fontSize: '13px'
+                                                            }}>
+                                                                <span style={{ color: isActive ? colorMap[r.color] : 'var(--text-muted)' }}>
+                                                                    {r.range}
+                                                                </span>
+                                                                <span style={{ color: isActive ? colorMap[r.color] : 'var(--text-secondary)' }}>
+                                                                    {r.meaning}
+                                                                </span>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* B-lines for Lung */}
+                                {section.hasBLines && (
+                                    <div style={{
+                                        marginTop: '16px',
+                                        padding: '16px',
+                                        borderRadius: '12px',
+                                        background: 'var(--bg-secondary)',
+                                        border: '1px solid var(--border-color)'
+                                    }}>
+                                        <h4 style={{ 
+                                            fontSize: '14px', 
+                                            fontWeight: 600, 
+                                            color: 'var(--accent-emerald)',
+                                            marginBottom: '12px'
+                                        }}>
+                                            📊 B-lines 評估
+                                        </h4>
+                                        <InputField
+                                            label="B-lines 數量/區域"
+                                            value={extraData.blines || ''}
+                                            onChange={(v) => onExtraChange({ ...extraData, blines: v })}
+                                            placeholder="記錄觀察到的 B-lines"
+                                        />
+                                        <div style={{ 
+                                            marginTop: '8px', 
+                                            fontSize: '12px', 
+                                            color: 'var(--text-muted)',
+                                            padding: '8px',
+                                            borderRadius: '6px',
+                                            background: 'var(--bg-card)'
+                                        }}>
+                                            💡 0-2 B-lines/區: 正常 | 3+ B-lines/區: 提示肺間質水腫
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Kidney Size */}
+                                {section.hasKidneySize && (
+                                    <div style={{
+                                        marginTop: '16px',
+                                        padding: '16px',
+                                        borderRadius: '12px',
+                                        background: 'var(--bg-secondary)',
+                                        border: '1px solid var(--border-color)'
+                                    }}>
+                                        <h4 style={{ 
+                                            fontSize: '14px', 
+                                            fontWeight: 600, 
+                                            color: 'var(--accent-violet)',
+                                            marginBottom: '12px'
+                                        }}>
+                                            📐 腎臟大小測量
+                                        </h4>
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                            <InputField
+                                                label="左腎長度"
+                                                value={extraData.leftKidney || ''}
+                                                onChange={(v) => onExtraChange({ ...extraData, leftKidney: v })}
+                                                unit="cm"
+                                            />
+                                            <InputField
+                                                label="右腎長度"
+                                                value={extraData.rightKidney || ''}
+                                                onChange={(v) => onExtraChange({ ...extraData, rightKidney: v })}
+                                                unit="cm"
+                                            />
+                                        </div>
+                                        <div style={{ 
+                                            marginTop: '8px', 
+                                            fontSize: '12px', 
+                                            color: 'var(--text-muted)',
+                                            padding: '8px',
+                                            borderRadius: '6px',
+                                            background: 'var(--bg-card)'
+                                        }}>
+                                            💡 正常成人腎臟長度：9-12 cm
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </GlowCard>
+                </div>
+            );
+        };
+
+        const FluidCalculator = ({ data, onChange }) => {
+            const [fluidStatus, setFluidStatus] = useState('');
+            
+            const calculateEBV = () => {
+                if (!data.height || !data.weight) return null;
+                // Nadler formula approximation
+                const bsa = Math.sqrt((data.height * data.weight) / 3600);
+                return Math.round(data.weight * 70); // Simplified: ~70 mL/kg
+            };
+
+            const calculateEPV = () => {
+                const ebv = calculateEBV();
+                if (!ebv || !data.hct) return null;
+                return Math.round(ebv * (1 - data.hct / 100));
+            };
+
+            return (
+                <div className="animate-in" style={{ margin: '8px 16px' }}>
+                    <GlowCard color="emerald" active={true}>
+                        <div style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '12px',
+                            marginBottom: '16px'
+                        }}>
+                            <span style={{ fontSize: '24px' }}>💉</span>
+                            <div>
+                                <h3 style={{ fontSize: '16px', fontWeight: 600 }}>C. 初步體液評估</h3>
+                                <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Initial Fluid Assessment</p>
+                            </div>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                            <InputField
+                                label="身高 Height"
+                                value={data.height || ''}
+                                onChange={(v) => onChange({ ...data, height: v })}
+                                unit="cm"
+                            />
+                            <InputField
+                                label="體重 Weight"
+                                value={data.weight || ''}
+                                onChange={(v) => onChange({ ...data, weight: v })}
+                                unit="kg"
+                            />
+                            <InputField
+                                label="Hct"
+                                value={data.hct || ''}
+                                onChange={(v) => onChange({ ...data, hct: v })}
+                                unit="%"
+                            />
+                        </div>
+
+                        {calculateEBV() && (
+                            <div style={{
+                                marginTop: '16px',
+                                padding: '16px',
+                                borderRadius: '12px',
+                                background: 'var(--bg-secondary)',
+                                border: '1px solid var(--accent-emerald)'
+                            }}>
+                                <div style={{ 
+                                    display: 'grid', 
+                                    gridTemplateColumns: '1fr 1fr', 
+                                    gap: '16px',
+                                    marginBottom: '16px'
+                                }}>
+                                    <div>
+                                        <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                                            估計血液量 EBV
+                                        </div>
+                                        <div style={{ 
+                                            fontSize: '20px', 
+                                            fontWeight: 700, 
+                                            color: 'var(--accent-cyan)',
+                                            fontFamily: 'JetBrains Mono, monospace'
+                                        }}>
+                                            {calculateEBV()} mL
+                                        </div>
+                                    </div>
+                                    {calculateEPV() && (
+                                        <div>
+                                            <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                                                估計血漿量 EPV
+                                            </div>
+                                            <div style={{ 
+                                                fontSize: '20px', 
+                                                fontWeight: 700, 
+                                                color: 'var(--accent-emerald)',
+                                                fontFamily: 'JetBrains Mono, monospace'
+                                            }}>
+                                                {calculateEPV()} mL
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        <div style={{ marginTop: '16px' }}>
+                            <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '10px' }}>
+                                目前體液狀態評估：
+                            </div>
+                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                {[
+                                    { id: 'euvolemic', label: '正常體液', desc: 'Euvolemic', color: 'emerald' },
+                                    { id: 'dehydration', label: '脫水', desc: 'Dehydration', color: 'amber' },
+                                    { id: 'overload', label: '體液過多', desc: 'Fluid overload', color: 'rose' }
+                                ].map(status => (
+                                    <button
+                                        key={status.id}
+                                        onClick={() => {
+                                            setFluidStatus(status.id);
+                                            onChange({ ...data, fluidStatus: status.id });
+                                        }}
+                                        style={{
+                                            flex: 1,
+                                            minWidth: '100px',
+                                            padding: '12px',
+                                            borderRadius: '10px',
+                                            border: `2px solid ${fluidStatus === status.id ? `var(--accent-${status.color})` : 'var(--border-color)'}`,
+                                            background: fluidStatus === status.id ? `var(--accent-${status.color}-dim)` : 'var(--bg-secondary)',
+                                            color: fluidStatus === status.id ? `var(--accent-${status.color})` : 'var(--text-secondary)',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s',
+                                            textAlign: 'center'
+                                        }}
+                                    >
+                                        <div style={{ fontWeight: 600, marginBottom: '2px' }}>{status.label}</div>
+                                        <div style={{ fontSize: '11px', opacity: 0.8 }}>{status.desc}</div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </GlowCard>
+                </div>
+            );
+        };
+
+        const SignatureSection = ({ signatures, onChange }) => (
+            <div className="animate-in" style={{ margin: '8px 16px', marginBottom: '100px' }}>
+                <GlowCard color="violet" active={true}>
+                    <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '12px',
+                        marginBottom: '16px'
+                    }}>
+                        <span style={{ fontSize: '24px' }}>✍️</span>
+                        <div>
+                            <h3 style={{ fontSize: '16px', fontWeight: 600 }}>E. 執行與指導醫師</h3>
+                            <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Trainee & Supervisors</p>
+                        </div>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <InputField
+                            label="學員醫師 Trainee"
+                            value={signatures.trainee || ''}
+                            onChange={(v) => onChange({ ...signatures, trainee: v })}
+                            placeholder="姓名"
+                        />
+                        <InputField
+                            label="指導醫師 1 Supervisor 1"
+                            value={signatures.supervisor1 || ''}
+                            onChange={(v) => onChange({ ...signatures, supervisor1: v })}
+                            placeholder="姓名"
+                        />
+                        <InputField
+                            label="指導醫師 2 Supervisor 2"
+                            value={signatures.supervisor2 || ''}
+                            onChange={(v) => onChange({ ...signatures, supervisor2: v })}
+                            placeholder="姓名"
+                        />
+                        <InputField
+                            label="指導醫師 3 Supervisor 3"
+                            value={signatures.supervisor3 || ''}
+                            onChange={(v) => onChange({ ...signatures, supervisor3: v })}
+                            placeholder="姓名"
+                        />
+                    </div>
+                </GlowCard>
+            </div>
+        );
+
+        // ==================== MAIN APP ====================
+        const App = () => {
+            const [checkedItems, setCheckedItems] = useState({});
+            const [patientInfo, setPatientInfo] = useState({
+                name: '',
+                chartNo: '',
+                examDate: new Date().toISOString().split('T')[0],
+                examTime: ''
+            });
+            const [extraData, setExtraData] = useState({});
+            const [fluidData, setFluidData] = useState({});
+            const [signatures, setSignatures] = useState({});
+
+            // Load saved data
+            useEffect(() => {
+                const saved = localStorage.getItem('icu-pocus-data');
+                if (saved) {
+                    try {
+                        const data = JSON.parse(saved);
+                        setCheckedItems(data.checkedItems || {});
+                        setPatientInfo(data.patientInfo || patientInfo);
+                        setExtraData(data.extraData || {});
+                        setFluidData(data.fluidData || {});
+                        setSignatures(data.signatures || {});
+                    } catch (e) {
+                        console.error('Failed to load saved data');
+                    }
+                }
+            }, []);
+
+            // Save data
+            useEffect(() => {
+                const data = { checkedItems, patientInfo, extraData, fluidData, signatures };
+                localStorage.setItem('icu-pocus-data', JSON.stringify(data));
+            }, [checkedItems, patientInfo, extraData, fluidData, signatures]);
+
+            const toggleItem = useCallback((id) => {
+                setCheckedItems(prev => ({ ...prev, [id]: !prev[id] }));
+            }, []);
+
+            const totalItems = useMemo(() => {
+                let count = 0;
+                Object.values(SECTIONS_DATA).forEach(section => {
+                    if (section.items) count += section.items.length;
+                });
+                return count;
+            }, []);
+
+            const completedItems = useMemo(() => {
+                return Object.values(checkedItems).filter(Boolean).length;
+            }, [checkedItems]);
+
+            const progress = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
+
+            const handleReset = () => {
+                if (window.confirm('確定要重置所有資料嗎？')) {
+                    setCheckedItems({});
+                    setPatientInfo({
+                        name: '',
+                        chartNo: '',
+                        examDate: new Date().toISOString().split('T')[0],
+                        examTime: ''
+                    });
+                    setExtraData({});
+                    setFluidData({});
+                    setSignatures({});
+                    localStorage.removeItem('icu-pocus-data');
+                }
+            };
+
+            return (
+                <div style={{ 
+                    maxWidth: '600px', 
+                    margin: '0 auto',
+                    minHeight: '100vh',
+                    background: 'var(--bg-primary)'
+                }}>
+                    <Header progress={progress} onReset={handleReset} />
+                    
+                    <PatientInfo info={patientInfo} onChange={setPatientInfo} />
+
+                    {/* Section A: Basic Skills */}
+                    <SectionCard
+                        section={SECTIONS_DATA.basicSkills}
+                        checkedItems={checkedItems}
+                        onToggle={toggleItem}
+                        extraData={extraData}
+                        onExtraChange={setExtraData}
+                    />
+
+                    {/* Section B: Organ Systems */}
+                    <div style={{ 
+                        margin: '16px',
+                        padding: '12px 16px',
+                        borderRadius: '12px',
+                        background: 'linear-gradient(135deg, var(--accent-cyan-dim), var(--accent-emerald-dim))',
+                        border: '1px solid var(--border-color)'
+                    }}>
+                        <h2 style={{ 
+                            fontSize: '14px', 
+                            fontWeight: 600, 
+                            color: 'var(--text-primary)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                        }}>
+                            🔬 B. 器官系統評估 Organ System Assessment
+                        </h2>
+                    </div>
+
+                    <SectionCard
+                        section={SECTIONS_DATA.heart}
+                        checkedItems={checkedItems}
+                        onToggle={toggleItem}
+                        extraData={extraData}
+                        onExtraChange={setExtraData}
+                    />
+                    <SectionCard
+                        section={SECTIONS_DATA.lung}
+                        checkedItems={checkedItems}
+                        onToggle={toggleItem}
+                        extraData={extraData}
+                        onExtraChange={setExtraData}
+                    />
+                    <SectionCard
+                        section={SECTIONS_DATA.liver}
+                        checkedItems={checkedItems}
+                        onToggle={toggleItem}
+                        extraData={extraData}
+                        onExtraChange={setExtraData}
+                    />
+                    <SectionCard
+                        section={SECTIONS_DATA.kidney}
+                        checkedItems={checkedItems}
+                        onToggle={toggleItem}
+                        extraData={extraData}
+                        onExtraChange={setExtraData}
+                    />
+                    <SectionCard
+                        section={SECTIONS_DATA.bladder}
+                        checkedItems={checkedItems}
+                        onToggle={toggleItem}
+                        extraData={extraData}
+                        onExtraChange={setExtraData}
+                    />
+                    <SectionCard
+                        section={SECTIONS_DATA.vascular}
+                        checkedItems={checkedItems}
+                        onToggle={toggleItem}
+                        extraData={extraData}
+                        onExtraChange={setExtraData}
+                    />
+
+                    {/* Section C: Fluid Assessment */}
+                    <FluidCalculator data={fluidData} onChange={setFluidData} />
+
+                    {/* Section D: Clinical Use */}
+                    <SectionCard
+                        section={SECTIONS_DATA.clinicalUse}
+                        checkedItems={checkedItems}
+                        onToggle={toggleItem}
+                        extraData={extraData}
+                        onExtraChange={setExtraData}
+                    />
+
+                    {/* Section E: Signatures */}
+                    <SignatureSection signatures={signatures} onChange={setSignatures} />
+
+                    {/* Completion Banner */}
+                    {progress === 100 && (
+                        <div style={{
+                            position: 'fixed',
+                            bottom: '20px',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            padding: '16px 32px',
+                            borderRadius: '16px',
+                            background: 'linear-gradient(135deg, var(--accent-emerald), var(--accent-cyan))',
+                            color: 'var(--bg-primary)',
+                            fontWeight: 700,
+                            fontSize: '16px',
+                            boxShadow: '0 10px 40px rgba(16, 185, 129, 0.4)',
+                            animation: 'float 2s ease-in-out infinite',
+                            zIndex: 200
+                        }}>
+                            ✅ 查核表完成！Checklist Complete!
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
