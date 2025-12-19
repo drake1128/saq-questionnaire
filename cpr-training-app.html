@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CPR 急救訓練與評核系統 | 台大新竹分院心血管中心</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #DC2626;
+            --primary-dark: #991B1B;
+            --secondary: #1E3A5F;
+            --accent: #F59E0B;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --bg-dark: #0F172A;
+            --bg-card: #1E293B;
+            --bg-card-hover: #334155;
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            --border: #334155;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        .header {
+            background: linear-gradient(135deg, #DC2626 0%, #991B1B 100%);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .header-content { display: flex; align-items: center; gap: 0.75rem; }
+        .logo-icon {
+            width: 44px; height: 44px;
+            background: white;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+        }
+        .logo-title { font-size: 1.1rem; font-weight: 700; }
+        .logo-subtitle { font-size: 0.7rem; opacity: 0.9; }
+        .nav-tabs {
+            display: flex; gap: 0.25rem; padding: 0.75rem;
+            background: var(--bg-card);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .nav-tabs::-webkit-scrollbar { display: none; }
+        .nav-tab {
+            padding: 0.6rem 1rem; border-radius: 8px;
+            font-size: 0.85rem; font-weight: 500;
+            cursor: pointer; white-space: nowrap;
+            background: transparent; border: none;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+        .nav-tab:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+        .nav-tab.active { background: var(--primary); color: white; }
+        .main-content { padding: 1rem; max-width: 800px; margin: 0 auto; }
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+        }
+        .card-header {
+            display: flex; align-items: center; gap: 0.75rem;
+            margin-bottom: 1rem; padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .card-icon {
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem;
+            background: linear-gradient(135deg, #DC2626 0%, #991B1B 100%);
+        }
+        .card-title { font-size: 1.1rem; font-weight: 700; }
+        .alert {
+            padding: 1rem; border-radius: 12px;
+            margin-bottom: 1rem;
+            display: flex; gap: 0.75rem;
+        }
+        .alert-danger { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); }
+        .alert-warning { background: rgba(245, 158, 11, 0.15); border: 1px solid var(--warning); }
+        .alert-success { background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success); }
+        .alert-icon { font-size: 1.25rem; }
+        .alert-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.25rem; }
+        .alert-text { font-size: 0.8rem; color: var(--text-secondary); }
+        .flow-step {
+            display: flex; gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .flow-step:last-child { border-bottom: none; }
+        .step-number {
+            width: 32px; height: 32px; min-width: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #DC2626 0%, #991B1B 100%);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.9rem;
+        }
+        .step-content h4 { font-size: 1rem; margin-bottom: 0.25rem; }
+        .step-content p { font-size: 0.85rem; color: var(--text-secondary); }
+        .step-detail { font-size: 0.8rem; color: var(--accent); margin-top: 0.25rem; font-weight: 600; }
+        .role-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+        .role-card {
+            background: var(--bg-card-hover);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .role-card:hover { border-color: var(--primary); }
+        .role-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .role-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.25rem; }
+        .role-desc { font-size: 0.75rem; color: var(--text-secondary); }
+        .checklist-item {
+            display: flex; align-items: flex-start; gap: 0.75rem;
+            padding: 0.75rem; border-radius: 8px;
+            margin-bottom: 0.5rem;
+            background: var(--bg-card-hover);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .checklist-item:hover { background: rgba(220, 38, 38, 0.1); }
+        .checklist-item.checked { background: rgba(16, 185, 129, 0.15); }
+        .checkbox {
+            width: 24px; height: 24px; min-width: 24px;
+            border: 2px solid var(--text-muted);
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+            color: white; font-size: 0.8rem;
+        }
+        .checklist-item.checked .checkbox { background: var(--success); border-color: var(--success); }
+        .checklist-label { font-size: 0.9rem; font-weight: 500; }
+        .checklist-detail { font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem; }
+        .error-item {
+            display: flex; align-items: flex-start; gap: 0.75rem;
+            padding: 0.75rem; border-radius: 8px;
+            margin-bottom: 0.5rem;
+            background: var(--bg-card-hover);
+        }
+        .error-icon {
+            width: 24px; height: 24px; min-width: 24px;
+            background: var(--danger);
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 0.8rem;
+        }
+        .scenario-tabs {
+            display: flex; gap: 0.5rem;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+        .scenario-tab {
+            padding: 0.5rem 1rem; border-radius: 8px;
+            font-size: 0.8rem; font-weight: 500;
+            cursor: pointer;
+            background: var(--bg-card-hover);
+            border: 2px solid transparent;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .scenario-tab:hover { border-color: var(--primary); }
+        .scenario-tab.active { background: var(--primary); color: white; }
+        .comparison-table { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+        .comparison-col { background: var(--bg-card-hover); border-radius: 12px; padding: 1rem; }
+        .comparison-header {
+            font-weight: 700; font-size: 0.9rem;
+            margin-bottom: 0.75rem; padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+        }
+        .comparison-item { font-size: 0.8rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+        .comparison-item:last-child { border-bottom: none; }
+        .cpc-row {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 0.75rem; border-radius: 8px;
+            margin-bottom: 0.5rem;
+            background: var(--bg-card-hover);
+        }
+        .cpc-level {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 1.1rem; color: white;
+        }
+        .cpc-1 { background: #10B981; }
+        .cpc-2 { background: #22C55E; }
+        .cpc-3 { background: #F59E0B; }
+        .cpc-4 { background: #F97316; }
+        .cpc-5 { background: #EF4444; }
+        .cpc-desc { flex: 1; font-size: 0.85rem; }
+        .drug-card {
+            background: var(--bg-card-hover);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        .drug-name { font-weight: 700; color: var(--primary); font-size: 1rem; }
+        .drug-name-en { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .drug-info { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.8rem; }
+        .drug-label { color: var(--text-secondary); }
+        .drug-value { font-weight: 500; }
+        .drug-note {
+            margin-top: 0.5rem; padding-top: 0.5rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.8rem; color: var(--warning);
+        }
+        .timer-display {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--bg-card-hover);
+            border-radius: 16px;
+            margin-bottom: 1rem;
+        }
+        .timer-value {
+            font-size: 3.5rem; font-weight: 900;
+            color: var(--primary);
+            font-variant-numeric: tabular-nums;
+        }
+        .timer-label { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem; }
+        .timer-controls { display: flex; gap: 0.75rem; justify-content: center; margin-top: 1rem; }
+        .timer-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+        .stat-box { background: var(--bg-card-hover); padding: 1rem; border-radius: 12px; text-align: center; }
+        .stat-value { font-size: 2rem; font-weight: 700; color: var(--accent); }
+        .stat-label { font-size: 0.8rem; color: var(--text-secondary); }
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: 0.5rem; padding: 0.75rem 1.5rem;
+            border-radius: 10px; font-size: 0.9rem; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+            border: none; font-family: inherit;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #DC2626 0%, #991B1B 100%);
+            color: white;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4); }
+        .btn-secondary {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+            border: 2px solid var(--border);
+        }
+        .btn-secondary:hover { border-color: var(--primary); }
+        .btn-block { width: 100%; }
+        .input-group { margin-bottom: 1rem; }
+        .input-label { display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--text-secondary); }
+        .input-field {
+            width: 100%; padding: 0.75rem 1rem;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .input-field:focus { outline: none; border-color: var(--primary); }
+        textarea.input-field { min-height: 100px; resize: vertical; }
+        .eval-section-title {
+            font-size: 1rem; font-weight: 700;
+            margin-bottom: 1rem; padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+        }
+        .eval-item {
+            background: var(--bg-card-hover);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        .eval-question { font-size: 0.9rem; font-weight: 500; margin-bottom: 0.75rem; }
+        .eval-options { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .eval-option {
+            padding: 0.5rem 1rem; border-radius: 20px;
+            font-size: 0.8rem; cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+        }
+        .eval-option:hover { border-color: var(--primary); color: var(--text-primary); }
+        .eval-option.selected-yes { background: var(--success); border-color: var(--success); color: white; }
+        .eval-option.selected-partial { background: var(--warning); border-color: var(--warning); color: black; }
+        .eval-option.selected-no { background: var(--danger); border-color: var(--danger); color: white; }
+        .target-hint { font-size: 0.75rem; color: var(--success); }
+        .score-display {
+            text-align: center; padding: 2rem;
+            background: linear-gradient(135deg, #1E3A5F 0%, #2D5A8E 100%);
+            border-radius: 16px; margin-bottom: 1.5rem;
+        }
+        .score-value { font-size: 4rem; font-weight: 900; line-height: 1; }
+        .score-label { font-size: 1rem; opacity: 0.8; margin-top: 0.5rem; }
+        .score-grade {
+            display: inline-block; padding: 0.5rem 1.5rem;
+            border-radius: 20px; margin-top: 1rem;
+            font-weight: 700; font-size: 1.1rem;
+        }
+        .grade-excellent { background: var(--success); }
+        .grade-good { background: var(--warning); color: #000; }
+        .grade-needs-improvement { background: var(--danger); }
+        .progress-bar { height: 8px; background: var(--bg-card-hover); border-radius: 4px; overflow: hidden; }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #DC2626 0%, #991B1B 100%);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        .quiz-option {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 1rem; border-radius: 12px;
+            margin-bottom: 0.5rem;
+            background: var(--bg-card-hover);
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .quiz-option:hover { border-color: var(--primary); }
+        .quiz-option.selected { border-color: var(--secondary); background: rgba(45, 90, 142, 0.2); }
+        .quiz-option.correct { border-color: var(--success); background: rgba(16, 185, 129, 0.2); }
+        .quiz-option.incorrect { border-color: var(--danger); background: rgba(239, 68, 68, 0.2); }
+        .option-letter {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            background: var(--bg-card);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.9rem;
+        }
+        .quiz-option.correct .option-letter { background: var(--success); }
+        .quiz-option.incorrect .option-letter { background: var(--danger); }
+        .explanation-box {
+            padding: 1rem; border-radius: 12px;
+            background: rgba(30, 58, 95, 0.3);
+            border-left: 4px solid var(--secondary);
+            margin-top: 1rem;
+        }
+        .explanation-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--secondary); }
+        .explanation-text { font-size: 0.85rem; color: var(--text-secondary); }
+        .signature-line {
+            display: flex; justify-content: space-between; gap: 1rem;
+            margin-top: 2rem; padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+        .signature-box { flex: 1; }
+        .signature-label { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
+        .signature-field { border-bottom: 1px solid var(--text-muted); height: 40px; }
+        .review-item { padding: 0.75rem; border-radius: 8px; margin-bottom: 0.5rem; font-size: 0.85rem; }
+        .review-item.correct { background: rgba(16, 185, 129, 0.1); }
+        .review-item.incorrect { background: rgba(239, 68, 68, 0.1); }
+        .review-question { font-weight: 500; }
+        .review-result { color: var(--text-secondary); margin-top: 0.25rem; }
+        @media (max-width: 480px) {
+            .comparison-table { grid-template-columns: 1fr; }
+            .timer-value { font-size: 2.5rem; }
+            .score-value { font-size: 3rem; }
+            .role-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-icon">❤️</div>
+                <div class="logo-text">
+                    <div class="logo-title">CPR 急救訓練系統</div>
+                    <div class="logo-subtitle">台大新竹分院心血管中心</div>
+                </div>
+            </div>
+        </header>
+        <nav class="nav-tabs" id="navTabs">
+            <button class="nav-tab active" data-tab="flow">流程教學</button>
+            <button class="nav-tab" data-tab="scenario">場景指引</button>
+            <button class="nav-tab" data-tab="drugs">藥物速查</button>
+            <button class="nav-tab" data-tab="practice">演練計時</button>
+            <button class="nav-tab" data-tab="eval">評核表</button>
+            <button class="nav-tab" data-tab="quiz">自我測驗</button>
+        </nav>
+        <main class="main-content">
+            <!-- Flow Section -->
+            <section id="flow" class="section active">
+                <div class="alert alert-danger">
+                    <span class="alert-icon">⚠️</span>
+                    <div>
+                        <div class="alert-title">核心原則</div>
+                        <div class="alert-text">快速確認心跳停止 → 立即啟動 CPR → 明確分工 → 及時通報</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📋</div>
+                        <div class="card-title">CPR 流程步驟</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>確認意識與脈搏</h4>
+                            <div class="step-detail">檢查頸動脈脈搏 &lt; 10 秒</div>
+                            <p>輕拍患者肩膀，大聲呼喊確認意識，同時以食指和中指觸摸頸動脈</p>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>啟動急救系統</h4>
+                            <div class="step-detail">呼救 + 按急救鈴 + 取 Defibrillator</div>
+                            <p>大聲呼救請求協助，啟動急救鈴，指派人員取得 Defibrillator 和急救車</p>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>開始胸外按壓</h4>
+                            <div class="step-detail">100-120 次/分，深度 5-6 cm</div>
+                            <p>雙手交疊於胸骨下半段，手臂打直，利用身體重量垂直下壓</p>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>開放氣道與通氣</h4>
+                            <div class="step-detail">C:V = 30:2 或每 6 秒通氣 1 次</div>
+                            <p>使用氣囊面罩（BVM），確保胸廓有起伏</p>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            <h4>DC Shock 除顫電擊</h4>
+                            <div class="step-detail">雙相波 120-200J，減少 peri-shock pause</div>
+                            <p>貼上電極片，依 Defibrillator 指示操作，電擊後立即恢復按壓</p>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="step-number">6</div>
+                        <div class="step-content">
+                            <h4>藥物給予</h4>
+                            <div class="step-detail">Epinephrine 1mg IV/IO q3-5min</div>
+                            <p>建立靜脈通路，依據心律給予適當藥物</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">👥</div>
+                        <div class="card-title">團隊角色分配</div>
+                    </div>
+                    <div class="role-grid">
+                        <div class="role-card"><div class="role-icon">👐</div><div class="role-name">按壓者</div><div class="role-desc">胸外按壓，每 2 分鐘輪換</div></div>
+                        <div class="role-card"><div class="role-icon">💨</div><div class="role-name">通氣者</div><div class="role-desc">BVM 通氣，每 6 秒一次</div></div>
+                        <div class="role-card"><div class="role-icon">⚡</div><div class="role-name">設備員</div><div class="role-desc">Defibrillator、急救車、Arrow Kit準備</div></div>
+                        <div class="role-card"><div class="role-icon">📋</div><div class="role-name">記錄者</div><div class="role-desc">時間、藥物、事件記錄</div></div>
+                        <div class="role-card"><div class="role-icon">👨‍⚕️</div><div class="role-name">團隊領導</div><div class="role-desc">指揮協調、決策</div></div>
+                        <div class="role-card"><div class="role-icon">💉</div><div class="role-name">給藥者</div><div class="role-desc">建立通路、給藥</div></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">❌</div>
+                        <div class="card-title">常見錯誤</div>
+                    </div>
+                    <div class="error-item"><div class="error-icon">✗</div><div><div class="checklist-label">未明確角色分配</div><div class="checklist-detail">後果：現場混亂，效率低下</div></div></div>
+                    <div class="error-item"><div class="error-icon">✗</div><div><div class="checklist-label">按壓頻率 &lt; 100 次/分</div><div class="checklist-detail">後果：心輸出量不足</div></div></div>
+                    <div class="error-item"><div class="error-icon">✗</div><div><div class="checklist-label">按壓深度 &lt; 5 cm</div><div class="checklist-detail">後果：無效按壓</div></div></div>
+                    <div class="error-item"><div class="error-icon">✗</div><div><div class="checklist-label">氣管插管準備不熟練</div><div class="checklist-detail">後果：延誤氣道建立</div></div></div>
+                    <div class="error-item"><div class="error-icon">✗</div><div><div class="checklist-label">除顫器操作延誤</div><div class="checklist-detail">後果：錯過除顫時機</div></div></div>
+                    <div class="error-item"><div class="error-icon">✗</div><div><div class="checklist-label">Arrow Kit 放置延誤</div><div class="checklist-detail">後果：建立血管通路延遲</div></div></div>
+                </div>
+            </section>
+
+            <!-- Scenario Section -->
+            <section id="scenario" class="section">
+                <div class="scenario-tabs">
+                    <button class="scenario-tab active" data-scenario="ward">🏥 病房</button>
+                    <button class="scenario-tab" data-scenario="cathLab">💓 心導管室</button>
+                    <button class="scenario-tab" data-scenario="ct">📡 CT 室</button>
+                    <button class="scenario-tab" data-scenario="er">🚑 急診</button>
+                </div>
+                <div id="ward" class="scenario-content">
+                    <div class="card">
+                        <div class="card-header"><div class="card-icon">🏥</div><div class="card-title">病房 CPR 流程</div></div>
+                        <div class="alert alert-warning"><span class="alert-icon">💡</span><div><div class="alert-title">重點提醒</div><div class="alert-text">病房 CPR 需特別注意設備準備（如 除顫器充電）及與急救團隊的交接</div></div></div>
+                        <div id="wardChecklist">
+                            <div class="checklist-item" data-id="w1"><div class="checkbox"></div><div><div class="checklist-label">確認意識與脈搏（&lt; 10 秒）</div></div></div>
+                            <div class="checklist-item" data-id="w2"><div class="checkbox"></div><div><div class="checklist-label">呼救、啟動急救鈴</div></div></div>
+                            <div class="checklist-item" data-id="w3"><div class="checkbox"></div><div><div class="checklist-label">開始胸外按壓 100-120 次/分</div></div></div>
+                            <div class="checklist-item" data-id="w4"><div class="checkbox"></div><div><div class="checklist-label">Defibrillator 就位，確認可電擊心律</div></div></div>
+                            <div class="checklist-item" data-id="w5"><div class="checkbox"></div><div><div class="checklist-label">角色明確分工</div></div></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="cathLab" class="scenario-content" style="display:none;">
+                    <div class="card">
+                        <div class="card-header"><div class="card-icon">💓</div><div class="card-title">心導管室 CPR 特殊流程</div></div>
+                        <div class="alert alert-danger"><span class="alert-icon">🎯</span><div><div class="alert-title">目標</div><div class="alert-text">心導管室 CPR 目標為 100% 恢復率，需快速整合手術與急救流程</div></div></div>
+                        <div id="cathLabChecklist">
+                            <div class="checklist-item" data-id="c1"><div class="checkbox"></div><div><div class="checklist-label">移除 X 光管（lateral tube）</div><div class="checklist-detail">環境</div></div></div>
+                            <div class="checklist-item" data-id="c2"><div class="checkbox"></div><div><div class="checklist-label">確保按壓空間充足</div><div class="checklist-detail">環境</div></div></div>
+                            <div class="checklist-item" data-id="c3"><div class="checkbox"></div><div><div class="checklist-label">IABP 準備就緒</div><div class="checklist-detail">設備</div></div></div>
+                            <div class="checklist-item" data-id="c4"><div class="checkbox"></div><div><div class="checklist-label">ECMO 戰車備便</div><div class="checklist-detail">設備</div></div></div>
+                            <div class="checklist-item" data-id="c5"><div class="checkbox"></div><div><div class="checklist-label">A-line 可用</div><div class="checklist-detail">設備</div></div></div>
+                            <div class="checklist-item" data-id="c6"><div class="checkbox"></div><div><div class="checklist-label">超音波機就位</div><div class="checklist-detail">設備</div></div></div>
+                            <div class="checklist-item" data-id="c7"><div class="checkbox"></div><div><div class="checklist-label">聯繫 ICU 主治醫師</div><div class="checklist-detail">通報</div></div></div>
+                            <div class="checklist-item" data-id="c8"><div class="checkbox"></div><div><div class="checklist-label">通知 RT（08:00-24:00 專師；00:00-08:00 護理長 53758）</div><div class="checklist-detail">通報</div></div></div>
+                            <div class="checklist-item" data-id="c9"><div class="checkbox"></div><div><div class="checklist-label">2 台幫浦準備</div><div class="checklist-detail">設備</div></div></div>
+                            <div class="checklist-item" data-id="c10"><div class="checkbox"></div><div><div class="checklist-label">手術與急救並行準備</div><div class="checklist-detail">流程</div></div></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><div class="card-icon">📊</div><div class="card-title">病房 vs 心導管室 比較</div></div>
+                        <div class="comparison-table">
+                            <div class="comparison-col">
+                                <div class="comparison-header">🏥 病房 CPR</div>
+                                <div class="comparison-item"><strong>環境：</strong>開放空間</div>
+                                <div class="comparison-item"><strong>設備：</strong>Defibrillator、急救車、Arrow Kit</div>
+                                <div class="comparison-item"><strong>角色：</strong>按壓、通氣、記錄</div>
+                                <div class="comparison-item"><strong>目標：</strong>恢復自發性循環</div>
+                            </div>
+                            <div class="comparison-col">
+                                <div class="comparison-header">💓 心導管室 CPR</div>
+                                <div class="comparison-item"><strong>環境：</strong>有限空間，需移除 X 光管</div>
+                                <div class="comparison-item"><strong>設備：</strong>IABP、ECMO、A-line</div>
+                                <div class="comparison-item"><strong>角色：</strong>手術操作員、技術員</div>
+                                <div class="comparison-item"><strong>目標：</strong>完成手術並恢復循環</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="ct" class="scenario-content" style="display:none;">
+                    <div class="card">
+                        <div class="card-header"><div class="card-icon">📡</div><div class="card-title">CT 室 CPR 指引</div></div>
+                        <div class="alert alert-warning"><span class="alert-icon">⚠️</span><div><div class="alert-title">重點提醒</div><div class="alert-text">CT 室 CPR 需快速轉移至急救環境，確保氣道管理優先</div></div></div>
+                        <p style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--text-secondary);"><strong>案例學習（2013-04-12）：</strong>患者於 CT 檢查中意識下降（GCS 由 15 降至 11）</p>
+                        <div class="error-item"><div class="error-icon">!</div><div><div class="checklist-label">問題：氣管內管置入時間過晚</div></div></div>
+                        <div class="error-item"><div class="error-icon">!</div><div><div class="checklist-label">問題：DNR 患者檢查前缺乏共識</div></div></div>
+                        <div class="checklist-item checked"><div class="checkbox" style="background: var(--success); border-color: var(--success);">✓</div><div><div class="checklist-label">建議：高風險患者提前進行氣管插管</div></div></div>
+                        <div class="checklist-item checked"><div class="checkbox" style="background: var(--success); border-color: var(--success);">✓</div><div><div class="checklist-label">建議：制定 DNR 患者的檢查流程</div></div></div>
+                    </div>
+                </div>
+                <div id="er" class="scenario-content" style="display:none;">
+                    <div class="card">
+                        <div class="card-header"><div class="card-icon">🚑</div><div class="card-title">急診 CPR 指引</div></div>
+                        <div class="alert alert-warning"><span class="alert-icon">😷</span><div><div class="alert-title">COVID-19 注意事項</div><div class="alert-text">確診患者急救需穿戴完整防護裝備，可能延遲反應時間</div></div></div>
+                        <div id="erChecklist">
+                            <div class="checklist-item" data-id="e1"><div class="checkbox"></div><div><div class="checklist-label">快速確認心跳停止</div></div></div>
+                            <div class="checklist-item" data-id="e2"><div class="checkbox"></div><div><div class="checklist-label">啟動 CPR，準備腎上腺素</div></div></div>
+                            <div class="checklist-item" data-id="e3"><div class="checkbox"></div><div><div class="checklist-label">急診護理長負責聯繫 RT 及支援</div></div></div>
+                            <div class="checklist-item" data-id="e4"><div class="checkbox"></div><div><div class="checklist-label">COVID 確診需完整防護</div><div class="checklist-detail">平衡感染控制與急救效率</div></div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><div class="card-icon">📈</div><div class="card-title">CPC 大腦表現功能分級</div></div>
+                    <div class="cpc-row"><div class="cpc-level cpc-1">1</div><div class="cpc-desc">大腦皮質功能良好，意識清楚，日常生活自理</div></div>
+                    <div class="cpc-row"><div class="cpc-level cpc-2">2</div><div class="cpc-desc">中度功能障礙，部分活動受限（如偏癱）</div></div>
+                    <div class="cpc-row"><div class="cpc-level cpc-3">3</div><div class="cpc-desc">重度功能障礙，意識不清，需他人協助</div></div>
+                    <div class="cpc-row"><div class="cpc-level cpc-4">4</div><div class="cpc-desc">深度昏迷，呈植物人狀態</div></div>
+                    <div class="cpc-row"><div class="cpc-level cpc-5">5</div><div class="cpc-desc">死亡</div></div>
+                </div>
+            </section>
+
+            <!-- Drugs Section -->
+            <section id="drugs" class="section">
+                <div class="alert alert-warning"><span class="alert-icon">💊</span><div><div class="alert-title">藥物給予注意事項</div><div class="alert-text">所有藥物需經 IV/IO 給予，注意精確計量並監測副作用</div></div></div>
+                <div class="card">
+                    <div class="card-header"><div class="card-icon">💉</div><div class="card-title">CPR 常用藥物</div></div>
+                    <div class="drug-card">
+                        <div class="drug-name">腎上腺素</div><div class="drug-name-en">Epinephrine (Bosmin)</div>
+                        <div class="drug-info"><div class="drug-label">劑量</div><div class="drug-value">1 mg IV/IO</div><div class="drug-label">頻率</div><div class="drug-value">每 3-5 分鐘</div><div class="drug-label">用途</div><div class="drug-value">提高心輸出量</div></div>
+                        <div class="drug-note">⚠️ 精確計量，避免過量</div>
+                    </div>
+                    <div class="drug-card">
+                        <div class="drug-name">胺碘酮</div><div class="drug-name-en">Amiodarone (Cordarone)</div>
+                        <div class="drug-info"><div class="drug-label">劑量</div><div class="drug-value">首劑 300 mg，追加 150 mg</div><div class="drug-label">適應</div><div class="drug-value">VF/pVT</div><div class="drug-label">用途</div><div class="drug-value">抗心律失常</div></div>
+                        <div class="drug-note">⚠️ 緩慢推注，監測血壓</div>
+                    </div>
+                    <div class="drug-card">
+                        <div class="drug-name">利多卡因</div><div class="drug-name-en">Lidocaine (Xylocaine)</div>
+                        <div class="drug-info"><div class="drug-label">劑量</div><div class="drug-value">1-1.5 mg/kg</div><div class="drug-label">追加</div><div class="drug-value">0.5-0.75 mg/kg</div><div class="drug-label">用途</div><div class="drug-value">替代胺碘酮</div></div>
+                        <div class="drug-note">⚠️ 監測神經毒性</div>
+                    </div>
+                    <div class="drug-card">
+                        <div class="drug-name">Ketamine</div><div class="drug-name-en">Ketamine</div>
+                        <div class="drug-info"><div class="drug-label">劑量</div><div class="drug-value">1-2 mg/kg IV</div><div class="drug-label">頻率</div><div class="drug-value">單次</div><div class="drug-label">用途</div><div class="drug-value">插管前鎮靜</div></div>
+                        <div class="drug-note">⚠️ 監測呼吸抑制</div>
+                    </div>
+                    <div class="drug-card">
+                        <div class="drug-name">Midazolam</div><div class="drug-name-en">Dormicum</div>
+                        <div class="drug-info"><div class="drug-label">劑量</div><div class="drug-value">0.1-0.2 mg/kg IV</div><div class="drug-label">頻率</div><div class="drug-value">單次</div><div class="drug-label">用途</div><div class="drug-value">插管前鎮靜</div></div>
+                        <div class="drug-note">⚠️ 注意劑量累積</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><div class="card-icon">⚡</div><div class="card-title">VF/pVT 藥物流程</div></div>
+                    <div class="flow-step"><div class="step-number">1</div><div class="step-content"><h4>電擊後繼續 CPR 2 分鐘</h4><p>不需等待藥物準備</p></div></div>
+                    <div class="flow-step"><div class="step-number">2</div><div class="step-content"><h4>Epinephrine 1 mg IV/IO</h4><p>第二次電擊後給予，之後每 3-5 分鐘</p></div></div>
+                    <div class="flow-step"><div class="step-number">3</div><div class="step-content"><h4>Amiodarone 300 mg IV/IO</h4><p>難治性 VF/pVT，第三次電擊後給予</p></div></div>
+                    <div class="flow-step"><div class="step-number">4</div><div class="step-content"><h4>追加 Amiodarone 150 mg</h4><p>必要時可再給予一次</p></div></div>
+                </div>
+            </section>
+
+            <!-- Practice Section -->
+            <section id="practice" class="section">
+                <div class="card">
+                    <div class="card-header"><div class="card-icon">⏱️</div><div class="card-title">CPR 演練計時器</div></div>
+                    <div class="timer-display"><div class="timer-value" id="timerValue">00:00</div><div class="timer-label">急救時間</div></div>
+                    <div class="timer-controls">
+                        <button class="btn btn-primary" id="timerStartBtn">▶️ 開始</button>
+                        <button class="btn btn-secondary" id="timerResetBtn">🔄 重置</button>
+                    </div>
+                    <div class="timer-stats">
+                        <div class="stat-box"><div class="stat-value" id="cycleCount">0</div><div class="stat-label">輪換週期 (2 min)</div></div>
+                        <div class="stat-box"><div class="stat-value" id="compressionCount">0</div><div class="stat-label">按壓次數</div></div>
+                    </div>
+                    <button class="btn btn-secondary btn-block" style="margin-top: 1rem;" id="addCompressionBtn">+30 按壓（完成一循環）</button>
+                </div>
+                <div class="card">
+                    <div class="card-header"><div class="card-icon">📝</div><div class="card-title">演練記錄</div></div>
+                    <div class="input-group"><label class="input-label">演練日期</label><input type="date" class="input-field" id="practiceDate"></div>
+                    <div class="input-group"><label class="input-label">演練場景</label><select class="input-field" id="practiceScenario"><option value="">請選擇</option><option value="ward">病房</option><option value="cathLab">心導管室</option><option value="ct">CT 室</option><option value="er">急診</option></select></div>
+                    <div class="input-group"><label class="input-label">參與人員</label><textarea class="input-field" placeholder="輸入參與人員姓名..." id="practiceParticipants"></textarea></div>
+                    <div class="input-group"><label class="input-label">演練備註</label><textarea class="input-field" placeholder="記錄演練過程中的觀察與問題..." id="practiceNotes"></textarea></div>
+                </div>
+                <div class="alert alert-success"><span class="alert-icon">💡</span><div><div class="alert-title">演練提示</div><div class="alert-text">建議每 2 分鐘輪換按壓者，以維持高品質 CPR。按壓分數目標 > 80%</div></div></div>
+            </section>
+
+            <!-- Eval Section -->
+            <section id="eval" class="section">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--primary);">
+                        <div><div style="font-size: 1.3rem; font-weight: 900;">CPR 急救評核表</div><div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Report Card: General Checklist & Quality Analysis</div></div>
+                        <div style="text-align: right; font-size: 0.8rem; color: var(--text-secondary);"><div>台大新竹分院</div><div>心血管中心</div></div>
+                    </div>
+                    <div class="eval-section-title">📋 基本資料</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="input-group"><label class="input-label">事件編號 / 日期</label><input type="text" class="input-field" placeholder="例：CPR-2025-001" id="eventId"></div>
+                        <div class="input-group"><label class="input-label">發生地點</label><select class="input-field" id="eventLocation"><option value="">請選擇</option><option value="ward">病房</option><option value="cathLab">心導管室</option><option value="ct">CT 室</option><option value="er">急診</option><option value="icu">ICU</option></select></div>
+                    </div>
+                    <div class="input-group"><label class="input-label">評核人員</label><input type="text" class="input-field" placeholder="輸入評核人員姓名" id="evaluator"></div>
+                </div>
+                <div class="card"><div class="eval-section-title">🅰️ 一般評核項目 (General Checklist)</div><div id="generalEvalItems"></div></div>
+                <div class="card"><div class="eval-section-title">🅱️ CPR 品質分析 (Quality Analysis)</div><div id="qualityEvalItems"></div></div>
+                <div class="card"><div class="eval-section-title">💬 評語與改善建議</div><textarea class="input-field" placeholder="記錄觀察到的問題與改善建議..." style="min-height: 120px;" id="evalComments"></textarea></div>
+                <button class="btn btn-primary btn-block" id="calculateScoreBtn">📊 計算評核結果</button>
+                <div id="evalResult" style="display: none; margin-top: 1rem;"></div>
+            </section>
+
+            <!-- Quiz Section -->
+            <section id="quiz" class="section">
+                <div class="card" id="quizCard">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <span style="font-size: 0.85rem; color: var(--text-secondary);" id="quizProgress">題目 1 / 8</span>
+                        <span style="font-size: 0.85rem; color: var(--success);" id="quizScore">答對：0 題</span>
+                    </div>
+                    <div class="progress-bar" style="margin-bottom: 1.5rem;"><div class="progress-fill" id="quizProgressBar" style="width: 12.5%;"></div></div>
+                    <h3 style="font-size: 1.1rem; margin-bottom: 1.5rem; line-height: 1.5;" id="quizQuestion"></h3>
+                    <div id="quizOptions"></div>
+                    <div id="quizExplanation" style="display: none;"></div>
+                    <button class="btn btn-primary btn-block" style="margin-top: 1rem; display: none;" id="nextQuestionBtn">下一題 →</button>
+                </div>
+                <div id="quizCompleted" style="display: none;"></div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        var generalEvalItems = [
+            { id: 'g1', question: '團隊領導者是否明確指定？', weight: 5 },
+            { id: 'g2', question: '現場是否有秩序且安靜？', weight: 5 },
+            { id: 'g3', question: 'Defibrillator 是否快速應用？', weight: 10 },
+            { id: 'g4', question: 'CPR 是否立即開始？', weight: 10 },
+            { id: 'g5', question: 'CPR 中斷時間是否最小化？', weight: 10 },
+            { id: 'g6', question: 'CPR 品質是否良好？', weight: 15 },
+            { id: 'g7', question: '電擊前後停頓是否最小化？', weight: 10 },
+            { id: 'g8', question: '氣道是否有效建立？', weight: 10 }
+        ];
+        var qualityEvalItems = [
+            { id: 'q1', label: '按壓分數 (Compression Fraction)', unit: '%', target: '> 80%' },
+            { id: 'q2', label: '平均按壓頻率', unit: '次/分', target: '100-120' },
+            { id: 'q3', label: '平均按壓深度', unit: 'mm', target: '50-60' },
+            { id: 'q4', label: '無胸廓回彈按壓比例', unit: '%', target: '< 10%' },
+            { id: 'q5', label: '平均通氣頻率', unit: '次/分', target: '10' }
+        ];
+        var quizQuestions = [
+            { question: '成人 CPR 的正確按壓頻率為何？', options: ['60-80 次/分', '80-100 次/分', '100-120 次/分', '120-140 次/分'], correct: 2, explanation: '根據 ACLS 指引，成人胸外按壓頻率應維持在 100-120 次/分，以確保足夠的心輸出量。' },
+            { question: '成人 CPR 的正確按壓深度為何？', options: ['3-4 cm', '4-5 cm', '5-6 cm', '6-7 cm'], correct: 2, explanation: '成人胸外按壓深度應達 5-6 cm（約 2 吋），過淺會導致無效按壓，過深可能造成肋骨骨折。' },
+            { question: 'Epinephrine 在 CPR 中的給藥間隔為何？', options: ['每 1-2 分鐘', '每 3-5 分鐘', '每 5-10 分鐘', '每 10-15 分鐘'], correct: 1, explanation: 'Epinephrine 1mg IV/IO 每 3-5 分鐘給予一次，可提高冠狀動脈和腦部灌流壓。' },
+            { question: '確認頸動脈脈搏的時間限制為何？', options: ['5 秒內', '10 秒內', '15 秒內', '20 秒內'], correct: 1, explanation: '檢查脈搏不應超過 10 秒，若無法確定是否有脈搏，應立即開始 CPR。' },
+            { question: 'VF/pVT 時，Amiodarone 的首劑劑量為何？', options: ['150 mg', '200 mg', '300 mg', '450 mg'], correct: 2, explanation: '難治性 VF/pVT 時，Amiodarone 首劑 300 mg IV/IO，必要時可追加 150 mg。' },
+            { question: '心導管室 CPR 目標恢復率為何？', options: ['70%', '80%', '90%', '100%'], correct: 3, explanation: '根據文件記載，心導管室 CPR 目標為 100% 恢復率，需快速整合手術與急救流程。' },
+            { question: '關於按壓者輪換，下列何者正確？', options: ['每 1 分鐘輪換', '每 2 分鐘輪換', '每 5 分鐘輪換', '疲勞時才輪換'], correct: 1, explanation: '為維持高品質按壓，按壓者應每 2 分鐘（約 5 個循環）輪換一次，減少疲勞造成的品質下降。' },
+            { question: '使用進階氣道後的通氣頻率為何？', options: ['每 3 秒一次', '每 6 秒一次', '每 10 秒一次', '每 15 秒一次'], correct: 1, explanation: '建立進階氣道後，通氣頻率為每 6 秒一次（約 10 次/分），按壓與通氣不需同步。' }
+        ];
+        var evalResponses = {};
+        var qualityData = {};
+        var timerSeconds = 0;
+        var timerInterval = null;
+        var isTimerRunning = false;
+        var compressionCount = 0;
+        var currentQuiz = 0;
+        var quizScoreCount = 0;
+        var quizAnswers = [];
+        var showingExplanation = false;
+
+        document.getElementById('navTabs').addEventListener('click', function(e) {
+            if (e.target.classList.contains('nav-tab')) {
+                document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+                e.target.classList.add('active');
+                var tabId = e.target.dataset.tab;
+                document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+                document.getElementById(tabId).classList.add('active');
+            }
+        });
+
+        document.querySelector('.scenario-tabs').addEventListener('click', function(e) {
+            if (e.target.classList.contains('scenario-tab')) {
+                document.querySelectorAll('.scenario-tab').forEach(function(t) { t.classList.remove('active'); });
+                e.target.classList.add('active');
+                var scenarioId = e.target.dataset.scenario;
+                document.querySelectorAll('.scenario-content').forEach(function(s) { s.style.display = 'none'; });
+                document.getElementById(scenarioId).style.display = 'block';
+            }
+        });
+
+        document.querySelectorAll('.checklist-item[data-id]').forEach(function(item) {
+            item.addEventListener('click', function() {
+                this.classList.toggle('checked');
+                var checkbox = this.querySelector('.checkbox');
+                checkbox.textContent = this.classList.contains('checked') ? '✓' : '';
+            });
+        });
+
+        function formatTime(seconds) {
+            var mins = Math.floor(seconds / 60);
+            var secs = seconds % 60;
+            return (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
+        }
+        function updateTimer() {
+            timerSeconds++;
+            document.getElementById('timerValue').textContent = formatTime(timerSeconds);
+            document.getElementById('cycleCount').textContent = Math.floor(timerSeconds / 120);
+        }
+        document.getElementById('timerStartBtn').addEventListener('click', function() {
+            if (isTimerRunning) {
+                clearInterval(timerInterval);
+                this.innerHTML = '▶️ 開始';
+                this.className = 'btn btn-primary';
+            } else {
+                timerInterval = setInterval(updateTimer, 1000);
+                this.innerHTML = '⏸️ 暫停';
+                this.className = 'btn btn-secondary';
+            }
+            isTimerRunning = !isTimerRunning;
+        });
+        document.getElementById('timerResetBtn').addEventListener('click', function() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            timerSeconds = 0;
+            compressionCount = 0;
+            document.getElementById('timerValue').textContent = '00:00';
+            document.getElementById('cycleCount').textContent = '0';
+            document.getElementById('compressionCount').textContent = '0';
+            document.getElementById('timerStartBtn').innerHTML = '▶️ 開始';
+            document.getElementById('timerStartBtn').className = 'btn btn-primary';
+        });
+        document.getElementById('addCompressionBtn').addEventListener('click', function() {
+            compressionCount += 30;
+            document.getElementById('compressionCount').textContent = compressionCount;
+        });
+
+        function initEvalForm() {
+            var generalContainer = document.getElementById('generalEvalItems');
+            generalEvalItems.forEach(function(item) {
+                generalContainer.innerHTML += '<div class="eval-item"><div class="eval-question">' + item.question + '</div><div class="eval-options"><button class="eval-option" data-id="' + item.id + '" data-value="no">No 否</button><button class="eval-option" data-id="' + item.id + '" data-value="partial">Intermediate 部分</button><button class="eval-option" data-id="' + item.id + '" data-value="yes">Yes 是</button></div></div>';
+            });
+            var qualityContainer = document.getElementById('qualityEvalItems');
+            qualityEvalItems.forEach(function(item) {
+                qualityContainer.innerHTML += '<div class="eval-item"><div class="eval-question">' + item.label + ' <span class="target-hint">目標：' + item.target + '</span></div><div style="display: flex; align-items: center; gap: 0.5rem;"><input type="number" class="input-field" style="width: 100px; text-align: center;" data-quality-id="' + item.id + '" placeholder="--"><span style="color: var(--text-secondary);">' + item.unit + '</span></div></div>';
+            });
+            document.querySelectorAll('.eval-option').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var id = this.dataset.id;
+                    var value = this.dataset.value;
+                    this.parentElement.querySelectorAll('.eval-option').forEach(function(opt) { opt.classList.remove('selected-yes', 'selected-partial', 'selected-no'); });
+                    this.classList.add('selected-' + value);
+                    evalResponses[id] = value;
+                });
+            });
+            document.querySelectorAll('[data-quality-id]').forEach(function(input) {
+                input.addEventListener('change', function() { qualityData[this.dataset.qualityId] = this.value; });
+            });
+        }
+        document.getElementById('calculateScoreBtn').addEventListener('click', function() {
+            var totalScore = 0;
+            var maxScore = 0;
+            generalEvalItems.forEach(function(item) {
+                maxScore += item.weight;
+                if (evalResponses[item.id] === 'yes') totalScore += item.weight;
+                else if (evalResponses[item.id] === 'partial') totalScore += item.weight * 0.5;
+            });
+            if (qualityData.q1 && parseInt(qualityData.q1) >= 80) totalScore += 5;
+            if (qualityData.q2 && parseInt(qualityData.q2) >= 100 && parseInt(qualityData.q2) <= 120) totalScore += 5;
+            if (qualityData.q3 && parseInt(qualityData.q3) >= 50 && parseInt(qualityData.q3) <= 60) totalScore += 5;
+            maxScore += 15;
+            var score = Math.round((totalScore / maxScore) * 100);
+            var gradeLabel, gradeClass;
+            if (score >= 90) { gradeLabel = '優良'; gradeClass = 'grade-excellent'; }
+            else if (score >= 70) { gradeLabel = '良好'; gradeClass = 'grade-good'; }
+            else { gradeLabel = '需加強'; gradeClass = 'grade-needs-improvement'; }
+            document.getElementById('evalResult').innerHTML = '<div class="card"><div class="score-display"><div class="score-value">' + score + '</div><div class="score-label">總分 / 100</div><div class="score-grade ' + gradeClass + '">' + gradeLabel + '</div></div><div class="progress-bar" style="margin-bottom: 1.5rem;"><div class="progress-fill" style="width: ' + score + '%;"></div></div><div class="signature-line"><div class="signature-box"><div class="signature-label">評核人員簽名</div><div class="signature-field"></div></div><div class="signature-box"><div class="signature-label">日期</div><div class="signature-field"></div></div></div></div>';
+            document.getElementById('evalResult').style.display = 'block';
+        });
+
+        function loadQuestion() {
+            var q = quizQuestions[currentQuiz];
+            document.getElementById('quizProgress').textContent = '題目 ' + (currentQuiz + 1) + ' / ' + quizQuestions.length;
+            document.getElementById('quizScore').textContent = '答對：' + quizScoreCount + ' 題';
+            document.getElementById('quizProgressBar').style.width = (((currentQuiz + 1) / quizQuestions.length) * 100) + '%';
+            document.getElementById('quizQuestion').textContent = q.question;
+            var optionsHtml = '';
+            q.options.forEach(function(opt, idx) {
+                optionsHtml += '<div class="quiz-option" data-index="' + idx + '"><div class="option-letter">' + String.fromCharCode(65 + idx) + '</div><div style="flex: 1;">' + opt + '</div></div>';
+            });
+            document.getElementById('quizOptions').innerHTML = optionsHtml;
+            document.getElementById('quizExplanation').style.display = 'none';
+            document.getElementById('nextQuestionBtn').style.display = 'none';
+            showingExplanation = false;
+            document.querySelectorAll('.quiz-option').forEach(function(opt) { opt.addEventListener('click', handleAnswer); });
+        }
+        function handleAnswer(e) {
+            if (showingExplanation) return;
+            var selectedIndex = parseInt(e.currentTarget.dataset.index);
+            var q = quizQuestions[currentQuiz];
+            showingExplanation = true;
+            quizAnswers.push(selectedIndex);
+            document.querySelectorAll('.quiz-option').forEach(function(opt, idx) {
+                opt.classList.remove('selected');
+                if (idx === q.correct) opt.classList.add('correct');
+                else if (idx === selectedIndex && idx !== q.correct) opt.classList.add('incorrect');
+            });
+            if (selectedIndex === q.correct) {
+                quizScoreCount++;
+                document.getElementById('quizScore').textContent = '答對：' + quizScoreCount + ' 題';
+            }
+            document.getElementById('quizExplanation').innerHTML = '<div class="explanation-box"><div class="explanation-title">' + (selectedIndex === q.correct ? '✓ 正確！' : '✗ 錯誤') + '</div><div class="explanation-text">' + q.explanation + '</div></div>';
+            document.getElementById('quizExplanation').style.display = 'block';
+            var nextBtn = document.getElementById('nextQuestionBtn');
+            nextBtn.style.display = 'block';
+            nextBtn.textContent = currentQuiz < quizQuestions.length - 1 ? '下一題 →' : '查看結果';
+        }
+        document.getElementById('nextQuestionBtn').addEventListener('click', function() {
+            if (currentQuiz < quizQuestions.length - 1) { currentQuiz++; loadQuestion(); }
+            else showQuizResult();
+        });
+        function showQuizResult() {
+            var percentage = Math.round((quizScoreCount / quizQuestions.length) * 100);
+            var gradeLabel, gradeClass;
+            if (percentage >= 80) { gradeLabel = '優良'; gradeClass = 'grade-excellent'; }
+            else if (percentage >= 60) { gradeLabel = '及格'; gradeClass = 'grade-good'; }
+            else { gradeLabel = '需加強'; gradeClass = 'grade-needs-improvement'; }
+            var reviewHtml = '';
+            quizQuestions.forEach(function(q, idx) {
+                var isCorrect = quizAnswers[idx] === q.correct;
+                reviewHtml += '<div class="review-item ' + (isCorrect ? 'correct' : 'incorrect') + '"><div class="review-question">Q' + (idx + 1) + '. ' + q.question + '</div><div class="review-result">' + (isCorrect ? '✓ 正確' : '✗ 錯誤 (正確答案：' + q.options[q.correct] + ')') + '</div></div>';
+            });
+            document.getElementById('quizCard').style.display = 'none';
+            document.getElementById('quizCompleted').style.display = 'block';
+            document.getElementById('quizCompleted').innerHTML = '<div class="card"><div class="score-display"><div class="score-value">' + quizScoreCount + '/' + quizQuestions.length + '</div><div class="score-label">答對題數</div><div class="score-grade ' + gradeClass + '">' + gradeLabel + ' (' + percentage + '%)</div></div><div style="margin-top: 1.5rem;"><h4 style="margin-bottom: 1rem;">答題回顧</h4>' + reviewHtml + '</div><button class="btn btn-primary btn-block" style="margin-top: 1.5rem;" id="resetQuizBtn">🔄 重新測驗</button></div>';
+            document.getElementById('resetQuizBtn').addEventListener('click', resetQuiz);
+        }
+        function resetQuiz() {
+            currentQuiz = 0;
+            quizScoreCount = 0;
+            quizAnswers = [];
+            showingExplanation = false;
+            document.getElementById('quizCard').style.display = 'block';
+            document.getElementById('quizCompleted').style.display = 'none';
+            loadQuestion();
+        }
+        initEvalForm();
+        loadQuestion();
+        document.getElementById('practiceDate').value = new Date().toISOString().split('T')[0];
+    </script>
+</body>
+</html>
