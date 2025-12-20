@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>心血管計算練習 | CV Calculations</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0f1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a2234;
+            --bg-card-hover: #1f2940;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-purple: #8b5cf6;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #2d3a4f;
+            --gradient-1: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+            --gradient-2: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            --gradient-3: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .app-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 16px;
+            padding-bottom: 100px;
+        }
+
+        /* Header Styles */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 15, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 0;
+            margin-bottom: 24px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 4px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            flex: 1;
+            min-width: fit-content;
+            padding: 12px 16px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .nav-tab.active {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .nav-tab:not(.active):hover {
+            background: var(--bg-card);
+        }
+
+        /* Progress Bar */
+        .progress-section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .progress-title {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-stats {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-1);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-dots {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .progress-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .progress-dot.unanswered {
+            background: var(--bg-secondary);
+            color: var(--text-muted);
+        }
+
+        .progress-dot.correct {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-green);
+            border-color: var(--accent-green);
+        }
+
+        .progress-dot.incorrect {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+            border-color: var(--accent-red);
+        }
+
+        .progress-dot.current {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Question Card */
+        .question-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .question-number {
+            background: var(--gradient-1);
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 8px 14px;
+            border-radius: 10px;
+            white-space: nowrap;
+        }
+
+        .question-category {
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            background: rgba(6, 182, 212, 0.1);
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin-top: 4px;
+        }
+
+        .question-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .question-content {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .question-data {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-item:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .data-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            color: var(--accent-cyan);
+            font-weight: 500;
+        }
+
+        /* Formula Box */
+        .formula-box {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .formula-title {
+            font-size: 0.8rem;
+            color: var(--accent-purple);
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .formula-content {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            text-align: center;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        .formula-hint {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* Answer Input */
+        .answer-section {
+            margin-top: 24px;
+        }
+
+        .answer-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .answer-input-group {
+            display: flex;
+            gap: 12px;
+            align-items: stretch;
+        }
+
+        .answer-input {
+            flex: 1;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            transition: border-color 0.2s ease;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .answer-input.correct {
+            border-color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .answer-input.incorrect {
+            border-color: var(--accent-red);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .answer-unit {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 16px 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            border: 2px solid var(--border-color);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-card);
+        }
+
+        .btn-success {
+            background: var(--accent-green);
+            color: white;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        /* Result Feedback */
+        .result-feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .result-feedback.correct {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid var(--accent-green);
+        }
+
+        .result-feedback.incorrect {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid var(--accent-red);
+        }
+
+        .result-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .result-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .result-feedback.correct .result-title {
+            color: var(--accent-green);
+        }
+
+        .result-feedback.incorrect .result-title {
+            color: var(--accent-red);
+        }
+
+        .result-answer {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        /* Solution Section */
+        .solution-section {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+            border: 1px solid var(--border-color);
+        }
+
+        .solution-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--accent-yellow);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .solution-step {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .step-number {
+            font-size: 0.75rem;
+            color: var(--accent-blue);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .step-content {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .step-formula {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            overflow-x: auto;
+        }
+
+        /* Formula Reference Page */
+        .formula-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .formula-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease;
+        }
+
+        .formula-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .formula-card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .formula-card-title .icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .formula-card-content {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--accent-cyan);
+            background: var(--bg-secondary);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow-x: auto;
+        }
+
+        .formula-card-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .formula-card-normal {
+            font-size: 0.8rem;
+            color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        /* Question List */
+        .question-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .question-list-item {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .question-list-item:hover {
+            background: var(--bg-card-hover);
+            transform: translateX(4px);
+        }
+
+        .question-list-num {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .question-list-num.unanswered {
+            background: var(--bg-secondary);
+            color: var(--text-muted);
+        }
+
+        .question-list-num.correct {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-green);
+        }
+
+        .question-list-num.incorrect {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+        }
+
+        .question-list-info {
+            flex: 1;
+        }
+
+        .question-list-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .question-list-cat {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .question-list-arrow {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-value.green { color: var(--accent-green); }
+        .stat-value.red { color: var(--accent-red); }
+        .stat-value.blue { color: var(--accent-blue); }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Floating Navigation */
+        .floating-nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            background: rgba(26, 34, 52, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
+            z-index: 100;
+        }
+
+        .floating-nav .btn {
+            padding: 12px 20px;
+            font-size: 0.9rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .empty-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .empty-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Reference Section */
+        .reference-section {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .reference-title {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .reference-text {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .answer-input-group {
+                flex-direction: column;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn-group .btn {
+                width: 100%;
+            }
+
+            .floating-nav {
+                left: 16px;
+                right: 16px;
+                transform: none;
+            }
+
+            .floating-nav .btn {
+                flex: 1;
+                padding: 12px 8px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // Question Data
+        const questions = [
+            {
+                id: 1,
+                category: "Fick公式",
+                title: "心輸出量（Cardiac Output, CO）",
+                content: "患者氧耗（VO₂）為250 mL/min，動脈氧含量（CaO₂）為20 mL/dL，混合靜脈氧含量（CvO₂）為15 mL/dL。請計算心輸出量（L/min）。",
+                data: [
+                    { label: "VO₂ (氧耗)", value: "250 mL/min" },
+                    { label: "CaO₂ (動脈氧含量)", value: "20 mL/dL" },
+                    { label: "CvO₂ (混合靜脈氧含量)", value: "15 mL/dL" }
+                ],
+                formula: "CO = VO₂ / (CaO₂ - CvO₂)",
+                hint: "注意單位轉換：氧含量單位為 mL/dL，需轉為 mL/L（×10）",
+                unit: "L/min",
+                answer: 5.00,
+                tolerance: 0.01,
+                solution: [
+                    { step: "單位轉換", content: "CaO₂ = 20 mL/dL = 200 mL/L\nCvO₂ = 15 mL/dL = 150 mL/L", formula: "1 dL = 0.1 L，所以 mL/dL × 10 = mL/L" },
+                    { step: "計算氧含量差", content: "動靜脈氧含量差", formula: "CaO₂ - CvO₂ = 200 - 150 = 50 mL/L" },
+                    { step: "代入 Fick 公式", content: "計算心輸出量", formula: "CO = 250 / 50 = 5.00 L/min" }
+                ],
+                reference: "Fick原理廣泛應用於心臟科心輸出量測量。參考：Braunwald's Heart Disease (2022)"
+            },
+            {
+                id: 2,
+                category: "Fick公式",
+                title: "肺血管阻力（PVR）",
+                content: "患者平均肺動脈壓（mPAP）為30 mmHg，肺毛細血管楔壓（PCWP）為10 mmHg，心輸出量（CO）為5 L/min。請計算肺血管阻力（Wood單位）。",
+                data: [
+                    { label: "mPAP (平均肺動脈壓)", value: "30 mmHg" },
+                    { label: "PCWP (肺毛細血管楔壓)", value: "10 mmHg" },
+                    { label: "CO (心輸出量)", value: "5 L/min" }
+                ],
+                formula: "PVR = (mPAP - PCWP) / CO",
+                hint: "Wood單位 = mmHg·min/L",
+                unit: "Wood units",
+                answer: 4.00,
+                tolerance: 0.01,
+                solution: [
+                    { step: "計算跨肺壓力差", content: "平均肺動脈壓減去楔壓", formula: "mPAP - PCWP = 30 - 10 = 20 mmHg" },
+                    { step: "代入公式計算 PVR", content: "壓力差除以心輸出量", formula: "PVR = 20 / 5 = 4.00 Wood units" }
+                ],
+                reference: "PVR計算用於評估肺高壓。參考：ESC/ERS肺高壓指南 (2016)"
+            },
+            {
+                id: 3,
+                category: "主動脈瓣面積",
+                title: "AVA - 連續性方程",
+                content: "患者主動脈瓣流速（VAo）為4 m/s，左心室流出道流速（VLVOT）為1 m/s，LVOT直徑為2 cm。請計算主動脈瓣面積（cm²）。",
+                data: [
+                    { label: "VAo (主動脈瓣流速)", value: "4 m/s" },
+                    { label: "VLVOT (LVOT流速)", value: "1 m/s" },
+                    { label: "LVOT 直徑", value: "2 cm" }
+                ],
+                formula: "AVA = (CSA_LVOT × V_LVOT) / V_Ao\nCSA_LVOT = π × (D/2)²",
+                hint: "使用 π = 3.14",
+                unit: "cm²",
+                answer: 0.79,
+                tolerance: 0.02,
+                solution: [
+                    { step: "計算 LVOT 截面積", content: "使用圓面積公式", formula: "CSA_LVOT = 3.14 × (2/2)² = 3.14 × 1 = 3.14 cm²" },
+                    { step: "應用連續性方程", content: "流量守恆原理", formula: "AVA = (3.14 × 1) / 4 = 0.785 ≈ 0.79 cm²" }
+                ],
+                reference: "連續性方程用於主動脈狹窄評估。參考：ACC/AHA瓣膜病指南 (2021)"
+            },
+            {
+                id: 4,
+                category: "二尖瓣面積",
+                title: "MVA - 壓力半減時間法",
+                content: "患者二尖瓣壓力半減時間（PHT）為220 ms。請估算二尖瓣面積（MVA, cm²）。",
+                data: [
+                    { label: "PHT (壓力半減時間)", value: "220 ms" }
+                ],
+                formula: "MVA = 220 / PHT",
+                hint: "此為經驗公式，220為常數",
+                unit: "cm²",
+                answer: 1.00,
+                tolerance: 0.01,
+                solution: [
+                    { step: "代入 PHT 公式", content: "直接計算", formula: "MVA = 220 / 220 = 1.00 cm²" }
+                ],
+                reference: "PHT法用於二尖瓣面積估算。參考：Braunwald's Heart Disease (2022)"
+            },
+            {
+                id: 5,
+                category: "分流計算",
+                title: "Qp/Qs - 氧飽和度法",
+                content: "患者肺動脈氧飽和度（SpO₂）為95%，主動脈氧飽和度（SaO₂）為98%，混合靜脈氧飽和度（SvO₂）為70%，肺靜脈氧飽和度（SpvO₂）為98%。請計算Qp/Qs比值。",
+                data: [
+                    { label: "SpO₂ (肺動脈)", value: "95%" },
+                    { label: "SaO₂ (主動脈)", value: "98%" },
+                    { label: "SvO₂ (混合靜脈)", value: "70%" },
+                    { label: "SpvO₂ (肺靜脈)", value: "98%" }
+                ],
+                formula: "Qp/Qs = (SaO₂ - SvO₂) / (SpvO₂ - SpO₂)",
+                hint: "計算時直接使用百分比數值",
+                unit: "",
+                answer: 9.33,
+                tolerance: 0.02,
+                solution: [
+                    { step: "計算分子 (系統側)", content: "主動脈與混合靜脈的差", formula: "SaO₂ - SvO₂ = 98 - 70 = 28" },
+                    { step: "計算分母 (肺側)", content: "肺靜脈與肺動脈的差", formula: "SpvO₂ - SpO₂ = 98 - 95 = 3" },
+                    { step: "計算 Qp/Qs", content: "分流比值", formula: "Qp/Qs = 28 / 3 = 9.33" }
+                ],
+                reference: "Qp/Qs比值用於分流評估。參考：Pediatric Cardiology (2016)"
+            },
+            {
+                id: 6,
+                category: "分流計算",
+                title: "Qp/Qs - 心房中隔缺損 (ASD)",
+                content: "患者肺動脈流速時間積分（VTI_PA）為20 cm，肺動脈直徑為2.5 cm；左心室流出道VTI（VTI_LVOT）為15 cm，直徑為3 cm。請計算Qp/Qs比值。",
+                data: [
+                    { label: "VTI_PA", value: "20 cm" },
+                    { label: "PA 直徑", value: "2.5 cm" },
+                    { label: "VTI_LVOT", value: "15 cm" },
+                    { label: "LVOT 直徑", value: "3 cm" }
+                ],
+                formula: "Qp/Qs = (CSA_PA × VTI_PA) / (CSA_LVOT × VTI_LVOT)\nCSA = π × (D/2)²",
+                hint: "使用 π = 3.14",
+                unit: "",
+                answer: 0.93,
+                tolerance: 0.02,
+                solution: [
+                    { step: "計算 PA 截面積", content: "肺動脈截面積", formula: "CSA_PA = 3.14 × (2.5/2)² = 3.14 × 1.5625 = 4.91 cm²" },
+                    { step: "計算 LVOT 截面積", content: "左心室流出道截面積", formula: "CSA_LVOT = 3.14 × (3/2)² = 3.14 × 2.25 = 7.07 cm²" },
+                    { step: "計算 Qp (肺血流)", content: "肺動脈血流量", formula: "Qp = 4.91 × 20 = 98.13 cm³" },
+                    { step: "計算 Qs (系統血流)", content: "系統血流量", formula: "Qs = 7.07 × 15 = 105.98 cm³" },
+                    { step: "計算 Qp/Qs", content: "分流比值", formula: "Qp/Qs = 98.13 / 105.98 = 0.93" }
+                ],
+                reference: "ASD血流比值計算。參考：ACC/AHA先天性心臟病指南 (2019)"
+            },
+            {
+                id: 7,
+                category: "分叉病變",
+                title: "Murray法則 - 支架直徑",
+                content: "分叉病變主支（MB）近端直徑為3.5 mm，遠端直徑為3.0 mm，側支（SB）直徑為2.5 mm。根據Murray法則，計算理論上的主支近端直徑（mm）。",
+                data: [
+                    { label: "MB 遠端直徑", value: "3.0 mm" },
+                    { label: "SB 直徑", value: "2.5 mm" },
+                    { label: "實際 MB 近端", value: "3.5 mm (參考)" }
+                ],
+                formula: "D³_MB近端 = D³_MB遠端 + D³_SB\nD_MB近端 = ∛(D³_MB遠端 + D³_SB)",
+                hint: "Murray法則：血管分支遵循立方定律",
+                unit: "mm",
+                answer: 3.49,
+                tolerance: 0.02,
+                solution: [
+                    { step: "計算各直徑立方", content: "遠端與側支", formula: "D³_MB遠端 = 3.0³ = 27\nD³_SB = 2.5³ = 15.625" },
+                    { step: "計算總和", content: "立方和", formula: "D³_MB近端 = 27 + 15.625 = 42.625" },
+                    { step: "開立方根", content: "求近端直徑", formula: "D_MB近端 = ∛42.625 ≈ 3.49 mm" }
+                ],
+                reference: "Murray法則用於分叉病變支架選擇。參考：EuroIntervention (2018)"
+            },
+            {
+                id: 8,
+                category: "分叉病變",
+                title: "Finet法則 - 支架直徑",
+                content: "分叉病變主支近端直徑為4.0 mm，遠端直徑為3.2 mm，側支直徑為2.8 mm。根據Finet法則，計算理論上的主支近端直徑（mm）。",
+                data: [
+                    { label: "MB 遠端直徑", value: "3.2 mm" },
+                    { label: "SB 直徑", value: "2.8 mm" },
+                    { label: "實際 MB 近端", value: "4.0 mm (參考)" }
+                ],
+                formula: "D_MB近端 = (2/3) × (D_MB遠端 + D_SB)",
+                hint: "Finet法則：經驗性簡化公式",
+                unit: "mm",
+                answer: 4.00,
+                tolerance: 0.01,
+                solution: [
+                    { step: "計算直徑和", content: "遠端加側支", formula: "D_MB遠端 + D_SB = 3.2 + 2.8 = 6.0 mm" },
+                    { step: "應用 Finet 係數", content: "乘以 2/3", formula: "D_MB近端 = (2/3) × 6.0 = 4.00 mm" }
+                ],
+                reference: "Finet法則應用於冠狀動脈分叉。參考：JACC: Cardiovascular Interventions (2017)"
+            },
+            {
+                id: 9,
+                category: "血流動力學",
+                title: "心臟指數（Cardiac Index, CI）",
+                content: "患者心輸出量（CO）為5.5 L/min，身體表面積（BSA）為1.8 m²。請計算心臟指數（L/min/m²）。",
+                data: [
+                    { label: "CO (心輸出量)", value: "5.5 L/min" },
+                    { label: "BSA (體表面積)", value: "1.8 m²" }
+                ],
+                formula: "CI = CO / BSA",
+                hint: "正常值：2.5-4.0 L/min/m²",
+                unit: "L/min/m²",
+                answer: 3.06,
+                tolerance: 0.02,
+                solution: [
+                    { step: "代入公式計算", content: "心輸出量除以體表面積", formula: "CI = 5.5 / 1.8 = 3.056 ≈ 3.06 L/min/m²" }
+                ],
+                reference: "CI用於心功能評估。參考：Braunwald's Heart Disease (2022)"
+            },
+            {
+                id: 10,
+                category: "血流動力學",
+                title: "系統血管阻力（SVR）",
+                content: "患者平均動脈壓（MAP）為90 mmHg，右心房壓（RAP）為5 mmHg，心輸出量（CO）為4.5 L/min。請計算系統血管阻力（Wood單位）。",
+                data: [
+                    { label: "MAP (平均動脈壓)", value: "90 mmHg" },
+                    { label: "RAP (右心房壓)", value: "5 mmHg" },
+                    { label: "CO (心輸出量)", value: "4.5 L/min" }
+                ],
+                formula: "SVR = (MAP - RAP) / CO",
+                hint: "正常值：10-20 Wood units（800-1600 dyn·s/cm⁵）",
+                unit: "Wood units",
+                answer: 18.89,
+                tolerance: 0.02,
+                solution: [
+                    { step: "計算壓力差", content: "平均動脈壓減右心房壓", formula: "MAP - RAP = 90 - 5 = 85 mmHg" },
+                    { step: "代入公式計算 SVR", content: "壓力差除以心輸出量", formula: "SVR = 85 / 4.5 = 18.89 Wood units" }
+                ],
+                reference: "SVR計算用於全身血流動力學。參考：ESC心衰指南 (2021)"
+            }
+        ];
+
+        // Formula Reference Data
+        const formulaReference = [
+            {
+                title: "Fick 公式 - CO",
+                icon: "❤️",
+                iconBg: "linear-gradient(135deg, #ef4444, #f97316)",
+                formula: "CO = VO₂ / (CaO₂ - CvO₂)",
+                description: "心輸出量 (L/min) = 氧耗 (mL/min) ÷ 動靜脈氧含量差 (mL/L)",
+                normal: "正常 CO: 4-8 L/min"
+            },
+            {
+                title: "肺血管阻力 PVR",
+                icon: "🫁",
+                iconBg: "linear-gradient(135deg, #3b82f6, #06b6d4)",
+                formula: "PVR = (mPAP - PCWP) / CO",
+                description: "單位：Wood units (mmHg·min/L)",
+                normal: "正常 PVR: < 3 Wood units"
+            },
+            {
+                title: "主動脈瓣面積 AVA",
+                icon: "🔴",
+                iconBg: "linear-gradient(135deg, #8b5cf6, #ec4899)",
+                formula: "AVA = (CSA_LVOT × V_LVOT) / V_Ao",
+                description: "連續性方程，基於流量守恆",
+                normal: "正常 AVA: 3-4 cm²\n嚴重狹窄: < 1.0 cm²"
+            },
+            {
+                title: "二尖瓣面積 MVA",
+                icon: "💜",
+                iconBg: "linear-gradient(135deg, #a855f7, #6366f1)",
+                formula: "MVA = 220 / PHT",
+                description: "壓力半減時間法 (PHT: ms)",
+                normal: "正常 MVA: 4-6 cm²\n嚴重狹窄: < 1.0 cm²"
+            },
+            {
+                title: "Qp/Qs (氧飽和度法)",
+                icon: "🔄",
+                iconBg: "linear-gradient(135deg, #10b981, #14b8a6)",
+                formula: "Qp/Qs = (SaO₂-SvO₂) / (SpvO₂-SpO₂)",
+                description: "用於評估心內分流",
+                normal: "正常: 1.0\n顯著左→右分流: > 1.5"
+            },
+            {
+                title: "Qp/Qs (VTI法)",
+                icon: "📊",
+                iconBg: "linear-gradient(135deg, #f59e0b, #eab308)",
+                formula: "Qp/Qs = (CSA_PA×VTI_PA) / (CSA_LVOT×VTI_LVOT)",
+                description: "超音波測量血流量比",
+                normal: "CSA = π × (D/2)²"
+            },
+            {
+                title: "Murray 法則",
+                icon: "🌿",
+                iconBg: "linear-gradient(135deg, #22c55e, #16a34a)",
+                formula: "D³近端 = D³遠端 + D³側支",
+                description: "血管分支直徑遵循立方定律",
+                normal: "用於分叉病變支架選擇"
+            },
+            {
+                title: "Finet 法則",
+                icon: "📐",
+                iconBg: "linear-gradient(135deg, #06b6d4, #0891b2)",
+                formula: "D近端 = (2/3) × (D遠端 + D側支)",
+                description: "經驗性簡化公式",
+                normal: "臨床常用近似值"
+            },
+            {
+                title: "心臟指數 CI",
+                icon: "📈",
+                iconBg: "linear-gradient(135deg, #f43f5e, #e11d48)",
+                formula: "CI = CO / BSA",
+                description: "依體表面積校正的心輸出量",
+                normal: "正常 CI: 2.5-4.0 L/min/m²"
+            },
+            {
+                title: "系統血管阻力 SVR",
+                icon: "🩸",
+                iconBg: "linear-gradient(135deg, #dc2626, #b91c1c)",
+                formula: "SVR = (MAP - RAP) / CO",
+                description: "單位：Wood units",
+                normal: "正常: 10-20 Wood units\n(800-1600 dyn·s/cm⁵)"
+            }
+        ];
+
+        // Main App Component
+        function App() {
+            const [activeTab, setActiveTab] = useState('practice');
+            const [currentQuestion, setCurrentQuestion] = useState(0);
+            const [userAnswers, setUserAnswers] = useState({});
+            const [inputValue, setInputValue] = useState('');
+            const [showSolution, setShowSolution] = useState(false);
+            const [submitted, setSubmitted] = useState(false);
+
+            const question = questions[currentQuestion];
+
+            const stats = useMemo(() => {
+                const answered = Object.keys(userAnswers).length;
+                const correct = Object.values(userAnswers).filter(a => a.correct).length;
+                const incorrect = answered - correct;
+                return { answered, correct, incorrect, total: questions.length };
+            }, [userAnswers]);
+
+            const handleSubmit = () => {
+                if (!inputValue.trim()) return;
+                
+                const userAnswer = parseFloat(inputValue);
+                const isCorrect = Math.abs(userAnswer - question.answer) <= question.tolerance;
+                
+                setUserAnswers(prev => ({
+                    ...prev,
+                    [question.id]: {
+                        value: userAnswer,
+                        correct: isCorrect
+                    }
+                }));
+                setSubmitted(true);
+            };
+
+            const handleNext = () => {
+                if (currentQuestion < questions.length - 1) {
+                    setCurrentQuestion(prev => prev + 1);
+                    setInputValue('');
+                    setShowSolution(false);
+                    setSubmitted(false);
+                }
+            };
+
+            const handlePrevious = () => {
+                if (currentQuestion > 0) {
+                    setCurrentQuestion(prev => prev - 1);
+                    setInputValue('');
+                    setShowSolution(false);
+                    setSubmitted(false);
+                }
+            };
+
+            const handleQuestionSelect = (index) => {
+                setCurrentQuestion(index);
+                setInputValue('');
+                setShowSolution(false);
+                setSubmitted(false);
+                setActiveTab('practice');
+            };
+
+            const handleReset = () => {
+                setUserAnswers({});
+                setCurrentQuestion(0);
+                setInputValue('');
+                setShowSolution(false);
+                setSubmitted(false);
+            };
+
+            const getAnswerStatus = (id) => {
+                if (!userAnswers[id]) return 'unanswered';
+                return userAnswers[id].correct ? 'correct' : 'incorrect';
+            };
+
+            return (
+                <div className="app-container">
+                    <header className="header">
+                        <div className="header-content">
+                            <div>
+                                <h1 className="header-title">心血管計算練習</h1>
+                                <p className="header-subtitle">CV Calculations Quiz</p>
+                            </div>
+                        </div>
+                    </header>
+
+                    <nav className="nav-tabs">
+                        <button 
+                            className={`nav-tab ${activeTab === 'practice' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('practice')}
+                        >
+                            📝 練習
+                        </button>
+                        <button 
+                            className={`nav-tab ${activeTab === 'questions' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('questions')}
+                        >
+                            📋 題目列表
+                        </button>
+                        <button 
+                            className={`nav-tab ${activeTab === 'formulas' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('formulas')}
+                        >
+                            📖 公式
+                        </button>
+                    </nav>
+
+                    {activeTab === 'practice' && (
+                        <>
+                            <div className="progress-section">
+                                <div className="progress-header">
+                                    <span className="progress-title">完成進度</span>
+                                    <span className="progress-stats">
+                                        {stats.correct} / {stats.total} 正確
+                                    </span>
+                                </div>
+                                <div className="progress-bar">
+                                    <div 
+                                        className="progress-fill" 
+                                        style={{ width: `${(stats.correct / stats.total) * 100}%` }}
+                                    />
+                                </div>
+                                <div className="progress-dots">
+                                    {questions.map((q, i) => (
+                                        <div
+                                            key={q.id}
+                                            className={`progress-dot ${getAnswerStatus(q.id)} ${i === currentQuestion ? 'current' : ''}`}
+                                            onClick={() => handleQuestionSelect(i)}
+                                        >
+                                            {i + 1}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="question-card">
+                                <div className="question-header">
+                                    <span className="question-number">第 {question.id} 題</span>
+                                    <span className="question-category">{question.category}</span>
+                                </div>
+
+                                <h2 className="question-title">{question.title}</h2>
+                                <p className="question-content">{question.content}</p>
+
+                                <div className="question-data">
+                                    {question.data.map((item, i) => (
+                                        <div className="data-item" key={i}>
+                                            <span className="data-label">{item.label}</span>
+                                            <span className="data-value">{item.value}</span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="formula-box">
+                                    <div className="formula-title">
+                                        <span>📐</span> 公式
+                                    </div>
+                                    <div className="formula-content">
+                                        {question.formula.split('\n').map((line, i) => (
+                                            <div key={i}>{line}</div>
+                                        ))}
+                                    </div>
+                                    {question.hint && (
+                                        <p className="formula-hint">💡 {question.hint}</p>
+                                    )}
+                                </div>
+
+                                <div className="answer-section">
+                                    <label className="answer-label">請輸入您的答案：</label>
+                                    <div className="answer-input-group">
+                                        <input
+                                            type="number"
+                                            step="0.01"
+                                            className={`answer-input ${submitted ? (userAnswers[question.id]?.correct ? 'correct' : 'incorrect') : ''}`}
+                                            placeholder="輸入數值..."
+                                            value={inputValue}
+                                            onChange={(e) => setInputValue(e.target.value)}
+                                            onKeyPress={(e) => e.key === 'Enter' && !submitted && handleSubmit()}
+                                            disabled={submitted}
+                                        />
+                                        {question.unit && (
+                                            <span className="answer-unit">{question.unit}</span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {!submitted ? (
+                                    <div className="btn-group">
+                                        <button className="btn btn-primary" onClick={handleSubmit}>
+                                            ✓ 送出答案
+                                        </button>
+                                        <button className="btn btn-secondary" onClick={() => setShowSolution(!showSolution)}>
+                                            {showSolution ? '隱藏提示' : '查看提示'}
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className={`result-feedback ${userAnswers[question.id]?.correct ? 'correct' : 'incorrect'}`}>
+                                            <div className="result-icon">
+                                                {userAnswers[question.id]?.correct ? '🎉' : '💡'}
+                                            </div>
+                                            <div className="result-title">
+                                                {userAnswers[question.id]?.correct ? '答對了！' : '再想想看'}
+                                            </div>
+                                            <div className="result-answer">
+                                                正確答案：{question.answer} {question.unit}
+                                                {!userAnswers[question.id]?.correct && (
+                                                    <span> (您的答案：{userAnswers[question.id]?.value})</span>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className="btn-group">
+                                            <button className="btn btn-secondary" onClick={() => setShowSolution(!showSolution)}>
+                                                {showSolution ? '隱藏詳解' : '📖 查看詳解'}
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
+
+                                {showSolution && (
+                                    <div className="solution-section">
+                                        <div className="solution-title">
+                                            <span>📝</span> 詳細解答
+                                        </div>
+                                        {question.solution.map((step, i) => (
+                                            <div className="solution-step" key={i}>
+                                                <div className="step-number">步驟 {i + 1}：{step.step}</div>
+                                                <div className="step-content">{step.content}</div>
+                                                <div className="step-formula">{step.formula}</div>
+                                            </div>
+                                        ))}
+                                        <div className="reference-section">
+                                            <div className="reference-title">📚 參考資料</div>
+                                            <div className="reference-text">{question.reference}</div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="floating-nav">
+                                <button 
+                                    className="btn btn-secondary" 
+                                    onClick={handlePrevious}
+                                    disabled={currentQuestion === 0}
+                                >
+                                    ← 上一題
+                                </button>
+                                <button 
+                                    className="btn btn-primary" 
+                                    onClick={handleNext}
+                                    disabled={currentQuestion === questions.length - 1}
+                                >
+                                    下一題 →
+                                </button>
+                            </div>
+                        </>
+                    )}
+
+                    {activeTab === 'questions' && (
+                        <>
+                            <div className="stats-grid">
+                                <div className="stat-card">
+                                    <div className="stat-value green">{stats.correct}</div>
+                                    <div className="stat-label">正確</div>
+                                </div>
+                                <div className="stat-card">
+                                    <div className="stat-value red">{stats.incorrect}</div>
+                                    <div className="stat-label">錯誤</div>
+                                </div>
+                                <div className="stat-card">
+                                    <div className="stat-value blue">{stats.total - stats.answered}</div>
+                                    <div className="stat-label">未作答</div>
+                                </div>
+                            </div>
+
+                            <button className="btn btn-secondary" onClick={handleReset} style={{ width: '100%', marginBottom: '20px' }}>
+                                🔄 重新開始
+                            </button>
+
+                            <div className="question-list">
+                                {questions.map((q, i) => (
+                                    <div 
+                                        className="question-list-item" 
+                                        key={q.id}
+                                        onClick={() => handleQuestionSelect(i)}
+                                    >
+                                        <div className={`question-list-num ${getAnswerStatus(q.id)}`}>
+                                            {getAnswerStatus(q.id) === 'correct' ? '✓' : 
+                                             getAnswerStatus(q.id) === 'incorrect' ? '✗' : q.id}
+                                        </div>
+                                        <div className="question-list-info">
+                                            <div className="question-list-title">{q.title}</div>
+                                            <div className="question-list-cat">{q.category}</div>
+                                        </div>
+                                        <span className="question-list-arrow">›</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    )}
+
+                    {activeTab === 'formulas' && (
+                        <div className="formula-grid">
+                            {formulaReference.map((f, i) => (
+                                <div className="formula-card" key={i}>
+                                    <div className="formula-card-title">
+                                        <span className="icon" style={{ background: f.iconBg }}>
+                                            {f.icon}
+                                        </span>
+                                        {f.title}
+                                    </div>
+                                    <div className="formula-card-content">
+                                        {f.formula}
+                                    </div>
+                                    <div className="formula-card-desc">
+                                        {f.description}
+                                    </div>
+                                    <div className="formula-card-normal">
+                                        {f.normal.split('\n').map((line, j) => (
+                                            <div key={j}>{line}</div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
