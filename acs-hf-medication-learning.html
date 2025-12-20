@@ -949,6 +949,11 @@
             color: var(--accent-purple);
         }
 
+        .drug-class-badge.ivabradine {
+            background: linear-gradient(135deg, rgba(233, 30, 99, 0.15) 0%, rgba(194, 24, 91, 0.15) 100%);
+            color: #e91e63;
+        }
+
         /* Stats Cards */
         .stats-grid {
             display: grid;
@@ -1417,6 +1422,51 @@
                     { icon: '⚡', text: '<strong>血鉀</strong>：K+' },
                     { icon: '😷', text: '<strong>血管性水腫</strong>：嘴唇、舌頭腫脹' }
                 ]
+            },
+            ivabradine: {
+                name: 'Ivabradine',
+                displayName: 'Ivabradine If通道阻斷劑',
+                icon: '💗',
+                color: '#e91e63',
+                description: '選擇性抑制竇房結If電流，單純降低心跳，不影響心肌收縮力',
+                drugs: [
+                    { code: 'COR4DBC1', chinese: '康立來膜衣錠', generic: 'Ivabradine', brand: 'Coralan F.C. Tablet 5 mg/tab', dose: '5mg' },
+                    { code: 'COR4DBC2', chinese: '康立來膜衣錠', generic: 'Ivabradine', brand: 'Coralan F.C. Tablet 7.5 mg/tab', dose: '7.5mg' }
+                ],
+                keyPoints: [
+                    { icon: '💓', title: '專一降心跳', desc: '僅作用於竇房結If電流，單純降低心跳約10 bpm' },
+                    { icon: '❤️', title: '不影響收縮力', desc: '不像Beta-blocker會減弱心肌收縮，維持血流動力學穩定' },
+                    { icon: '🏥', title: '心衰適應症', desc: 'EF≤35%、竇性心律、HR≥75 bpm，β-blocker已達最大耐受或禁忌' },
+                    { icon: '⏰', title: '劑量調整', desc: '治療2週後依心跳調整：HR>60增量、HR 50-60維持、HR<50減量' },
+                    { icon: '👁️', title: '特殊副作用', desc: '光幻視(Phosphenes)：視野中短暫強光，通常為暫時性' }
+                ],
+                warnings: [
+                    '禁用於急性或不穩定心衰竭',
+                    '治療前HR<70 bpm禁用',
+                    '病竇症候群、房室傳導阻斷禁用',
+                    '嚴重低血壓(<90/50 mmHg)禁用',
+                    '禁止與強效CYP3A4抑制劑併用（如ketoconazole、clarithromycin）',
+                    '監測心跳過慢症狀（頭暈、疲倦）',
+                    '只能用於竇性心律患者'
+                ],
+                monitoringChecklist: [
+                    { icon: '💓', text: '<strong>心跳(HR)</strong>：給藥前後監測，目標50-60 bpm，<50需減量' },
+                    { icon: '🩺', text: '<strong>血壓</strong>：監測低血壓症狀' },
+                    { icon: '📊', text: '<strong>心電圖</strong>：確認竇性心律、注意心跳過慢' },
+                    { icon: '👁️', text: '<strong>視覺症狀</strong>：光幻視（通常短暫）' },
+                    { icon: '😵', text: '<strong>心跳過慢症狀</strong>：頭暈、疲倦、虛弱' }
+                ],
+                dosingInfo: {
+                    title: '💊 Ivabradine 劑量調整',
+                    guidelines: [
+                        { condition: '起始劑量', dose: '5 mg BID，隨餐服用' },
+                        { condition: '治療2週後 HR > 60 bpm', dose: '增加至 7.5 mg BID（最大劑量）' },
+                        { condition: '治療2週後 HR 50-60 bpm', dose: '維持目前劑量' },
+                        { condition: 'HR < 50 bpm 或有症狀', dose: '減少 2.5 mg BID' },
+                        { condition: '減量後仍心跳過慢', dose: '考慮停藥' }
+                    ],
+                    notes: '台灣健保規範：NYHA II-IV、EF≤35%、竇性心律 HR≥75、已用最大耐受β-blocker≥4週或β-blocker禁忌'
+                }
             }
         };
 
@@ -1611,6 +1661,49 @@
                 options: ['50 mg BID', '100 mg BID', '200 mg BID', '400 mg QD'],
                 correct: 2,
                 explanation: 'Entresto 的目標劑量是「200 mg BID」（每天兩次，每次 200 mg）。院內有 50mg 和 200mg 兩種劑型，從 50mg BID 開始滴定，每 2-4 週逐漸增量至目標劑量。'
+            },
+            // Ivabradine 相關題目
+            {
+                category: 'ivabradine',
+                question: 'Ivabradine（康立來）的作用機轉是？',
+                options: ['阻斷 β 受體', '抑制竇房結 If 電流', '阻斷 L 型鈣離子通道', '抑制 Na/K ATPase'],
+                correct: 1,
+                explanation: 'Ivabradine 選擇性抑制竇房結的 If 電流，單純降低心跳約 10 bpm，不影響心肌收縮力、血壓或房室傳導。'
+            },
+            {
+                category: 'ivabradine',
+                question: '根據台灣健保規範，使用 Ivabradine 治療心衰竭時，心跳需達到多少？',
+                options: ['竇性心律且 HR ≥ 60 bpm', '竇性心律且 HR ≥ 70 bpm', '竇性心律且 HR ≥ 75 bpm', '任何心律且 HR ≥ 80 bpm'],
+                correct: 2,
+                explanation: '台灣健保規定 Ivabradine 用於心衰竭時，需為「竇性心律且 HR ≥ 75 bpm」，並合併 EF ≤ 35%、NYHA II-IV 級。'
+            },
+            {
+                category: 'ivabradine',
+                question: 'Ivabradine 治療 2 週後，若心跳 > 60 bpm，應如何調整劑量？',
+                options: ['維持目前劑量', '增加 2.5 mg BID', '減少 2.5 mg BID', '停藥'],
+                correct: 1,
+                explanation: '治療 2 週後：HR > 60 bpm 應增加 2.5 mg BID（最高 7.5 mg BID）；HR 50-60 bpm 維持目前劑量；HR < 50 bpm 減少劑量。'
+            },
+            {
+                category: 'ivabradine',
+                question: 'Ivabradine 可能引起的特殊視覺副作用是？',
+                options: ['視力模糊', '複視', '光幻視（Phosphenes）', '色盲'],
+                correct: 2,
+                explanation: 'Ivabradine 可能引起「光幻視（Phosphenes）」，描述為視野中短暫的強光現象。這是因為 Ivabradine 也會影響視網膜的 Ih 電流，通常為暫時性且可耐受。'
+            },
+            {
+                category: 'ivabradine',
+                question: '下列何者是 Ivabradine 的禁忌症？',
+                options: ['糖尿病', '急性或不穩定心衰竭', '輕度腎功能不全', '高血脂'],
+                correct: 1,
+                explanation: 'Ivabradine 禁用於「急性或不穩定心衰竭」，只能用於慢性穩定性心衰竭。其他禁忌還包括：治療前 HR < 70 bpm、病竇症候群、嚴重低血壓等。'
+            },
+            {
+                category: 'ivabradine',
+                question: 'Ivabradine 與 Beta-blocker 相比，最大的差異是？',
+                options: ['降心跳效果更強', '不會影響心肌收縮力', '不需監測心跳', '可用於心房顫動'],
+                correct: 1,
+                explanation: 'Ivabradine 最大特點是「不影響心肌收縮力」，只單純降低心跳。Beta-blocker 會同時降低心跳和減弱心肌收縮力。Ivabradine 只能用於竇性心律，不可用於心房顫動。'
             },
             // 綜合題目
             {
@@ -2579,7 +2672,8 @@
                 { key: 'anticoagulant', label: '抗凝血' },
                 { key: 'statin', label: 'Statin' },
                 { key: 'mra', label: 'MRA' },
-                { key: 'arni', label: 'ARNI' }
+                { key: 'arni', label: 'ARNI' },
+                { key: 'ivabradine', label: 'Ivabradine' }
             ];
 
             return (
@@ -2643,6 +2737,9 @@
                                         <div className="drug-brand-name">{drug.brand}</div>
                                         {drug.categoryKey === 'betaBlocker' && (
                                             <span className="drug-warning-tag">💓 會降心跳</span>
+                                        )}
+                                        {drug.categoryKey === 'ivabradine' && (
+                                            <span className="drug-warning-tag" style={{background: 'rgba(233, 30, 99, 0.15)', color: '#e91e63'}}>💗 純降心跳</span>
                                         )}
                                         {drug.type === '複方' && (
                                             <span className="drug-warning-tag" style={{background: 'rgba(16, 185, 129, 0.15)', color: 'var(--accent-emerald)'}}>💊 複方 SGLT2i + DPP-4i</span>
