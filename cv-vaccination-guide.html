@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心血管病患疫苗接種指引 | CV Vaccination Guide</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e8e8e8;
+            line-height: 1.7;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a2e;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4a90a4;
+            border-radius: 3px;
+        }
+
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: rgba(22, 33, 62, 0.95);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e5799 0%, #2989d8 50%, #1e5799 100%);
+            padding: 20px 16px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: rgba(26, 26, 46, 0.9);
+            padding: 8px;
+            gap: 6px;
+            position: sticky;
+            top: 76px;
+            z-index: 99;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-tab {
+            padding: 10px 14px;
+            border: none;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(74, 144, 164, 0.2);
+            color: #a8d4e6;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+
+        .nav-tab:hover {
+            background: rgba(74, 144, 164, 0.4);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #4a90a4, #2989d8);
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 2px 10px rgba(41, 137, 216, 0.4);
+        }
+
+        .content {
+            padding: 16px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #4fc3f7;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon {
+            font-size: 1.5rem;
+        }
+
+        .vaccine-card {
+            background: linear-gradient(145deg, rgba(40, 60, 90, 0.8), rgba(30, 45, 70, 0.9));
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border-left: 4px solid;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+        }
+
+        .vaccine-card:active {
+            transform: scale(0.98);
+        }
+
+        .vaccine-card.flu {
+            border-color: #2196f3;
+        }
+
+        .vaccine-card.pneumo {
+            border-color: #4caf50;
+        }
+
+        .vaccine-card.covid {
+            border-color: #ff9800;
+        }
+
+        .vaccine-card.rsv {
+            border-color: #e91e63;
+        }
+
+        .vaccine-card.shingles {
+            border-color: #9c27b0;
+        }
+
+        .vaccine-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .vaccine-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .vaccine-icon.flu { background: linear-gradient(135deg, #2196f3, #1976d2); }
+        .vaccine-icon.pneumo { background: linear-gradient(135deg, #4caf50, #388e3c); }
+        .vaccine-icon.covid { background: linear-gradient(135deg, #ff9800, #f57c00); }
+        .vaccine-icon.rsv { background: linear-gradient(135deg, #e91e63, #c2185b); }
+        .vaccine-icon.shingles { background: linear-gradient(135deg, #9c27b0, #7b1fa2); }
+
+        .vaccine-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .vaccine-eng {
+            font-size: 0.8rem;
+            color: #90caf9;
+            margin-top: 2px;
+        }
+
+        .target-group {
+            background: rgba(79, 195, 247, 0.1);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .target-label {
+            font-size: 0.75rem;
+            color: #4fc3f7;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .target-content {
+            font-size: 0.9rem;
+            color: #e0e0e0;
+        }
+
+        .recommendation-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .recommendation-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 0.88rem;
+        }
+
+        .recommendation-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .check-icon {
+            color: #4caf50;
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .stat-card {
+            background: linear-gradient(145deg, rgba(40, 60, 90, 0.9), rgba(30, 45, 70, 0.95));
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .stat-title {
+            font-size: 0.85rem;
+            color: #90caf9;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4fc3f7, #29b6f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-desc {
+            font-size: 0.85rem;
+            color: #b0bec5;
+            margin-top: 4px;
+        }
+
+        .risk-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .risk-item {
+            background: rgba(40, 60, 90, 0.6);
+            border-radius: 12px;
+            padding: 16px 12px;
+            text-align: center;
+        }
+
+        .risk-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .risk-name {
+            font-size: 0.85rem;
+            color: #e0e0e0;
+            margin-bottom: 4px;
+        }
+
+        .risk-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ff7043;
+        }
+
+        .info-section {
+            background: rgba(40, 60, 90, 0.5);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .info-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #4fc3f7;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-content {
+            font-size: 0.9rem;
+            color: #e0e0e0;
+        }
+
+        .info-content p {
+            margin-bottom: 10px;
+        }
+
+        .benefit-bar {
+            margin-bottom: 12px;
+        }
+
+        .benefit-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+
+        .benefit-name {
+            color: #e0e0e0;
+        }
+
+        .benefit-value {
+            color: #4caf50;
+            font-weight: 600;
+        }
+
+        .benefit-track {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .benefit-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.8s ease;
+        }
+
+        .benefit-fill.green { background: linear-gradient(90deg, #4caf50, #81c784); }
+        .benefit-fill.blue { background: linear-gradient(90deg, #2196f3, #64b5f6); }
+        .benefit-fill.orange { background: linear-gradient(90deg, #ff9800, #ffb74d); }
+
+        .quiz-container {
+            background: linear-gradient(145deg, rgba(40, 60, 90, 0.8), rgba(30, 45, 70, 0.9));
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .quiz-question {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .quiz-option {
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            color: #e0e0e0;
+            text-align: left;
+        }
+
+        .quiz-option:hover {
+            background: rgba(79, 195, 247, 0.1);
+            border-color: rgba(79, 195, 247, 0.3);
+        }
+
+        .quiz-option.selected {
+            background: rgba(79, 195, 247, 0.2);
+            border-color: #4fc3f7;
+        }
+
+        .quiz-option.correct {
+            background: rgba(76, 175, 80, 0.2);
+            border-color: #4caf50;
+        }
+
+        .quiz-option.wrong {
+            background: rgba(244, 67, 54, 0.2);
+            border-color: #f44336;
+        }
+
+        .quiz-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 16px;
+            font-family: inherit;
+        }
+
+        .quiz-btn.submit {
+            background: linear-gradient(135deg, #4fc3f7, #29b6f6);
+            color: #1a1a2e;
+        }
+
+        .quiz-btn.next {
+            background: linear-gradient(135deg, #4caf50, #66bb6a);
+            color: white;
+        }
+
+        .quiz-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .quiz-feedback {
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 12px;
+            font-size: 0.9rem;
+        }
+
+        .quiz-feedback.correct {
+            background: rgba(76, 175, 80, 0.2);
+            color: #a5d6a7;
+        }
+
+        .quiz-feedback.wrong {
+            background: rgba(244, 67, 54, 0.2);
+            color: #ef9a9a;
+        }
+
+        .progress-bar {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .progress-dot {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-dot.completed {
+            background: #4caf50;
+        }
+
+        .progress-dot.current {
+            background: #4fc3f7;
+        }
+
+        .score-display {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .score-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(79, 195, 247, 0.2), rgba(41, 182, 246, 0.1));
+            border: 4px solid #4fc3f7;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .score-value {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #4fc3f7;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: #90caf9;
+        }
+
+        .mode-toggle {
+            display: flex;
+            background: rgba(26, 26, 46, 0.8);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 16px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: transparent;
+            color: #90caf9;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, #4a90a4, #2989d8);
+            color: white;
+        }
+
+        .patient-card {
+            background: linear-gradient(145deg, rgba(50, 70, 100, 0.8), rgba(40, 55, 80, 0.9));
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .patient-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .simple-text {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #e0e0e0;
+        }
+
+        .highlight-box {
+            background: rgba(255, 152, 0, 0.15);
+            border-left: 3px solid #ff9800;
+            padding: 12px 16px;
+            border-radius: 0 10px 10px 0;
+            margin: 12px 0;
+        }
+
+        .highlight-box.green {
+            background: rgba(76, 175, 80, 0.15);
+            border-color: #4caf50;
+        }
+
+        .highlight-box.blue {
+            background: rgba(33, 150, 243, 0.15);
+            border-color: #2196f3;
+        }
+
+        .checklist {
+            background: rgba(40, 60, 90, 0.5);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-checkbox {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            border: 2px solid #4fc3f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .checklist-checkbox.checked {
+            background: #4fc3f7;
+            color: #1a1a2e;
+        }
+
+        .checklist-text {
+            font-size: 0.95rem;
+            color: #e0e0e0;
+        }
+
+        .tab-subtitle {
+            font-size: 0.9rem;
+            color: #90caf9;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .expand-btn {
+            background: none;
+            border: none;
+            color: #4fc3f7;
+            font-size: 0.85rem;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .detail-content {
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 12px;
+        }
+
+        .evidence-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(79, 195, 247, 0.2);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: #4fc3f7;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px 16px;
+            color: #607d8b;
+            font-size: 0.75rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer a {
+            color: #4fc3f7;
+            text-decoration: none;
+        }
+
+        @media (max-width: 360px) {
+            .nav-tab {
+                padding: 8px 10px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback } = React;
+
+        // 疫苗資料
+        const vaccineData = {
+            flu: {
+                name: '流感疫苗',
+                eng: 'Influenza Vaccine',
+                icon: '💉',
+                color: 'flu',
+                target: '心血管疾病患者、心血管疾病高風險族群、老年族群',
+                recommendations: [
+                    '慢性冠心症患者建議每年接種，以預防重大不良心血管事件',
+                    '心衰竭患者（尤其年長者）建議每年接種',
+                    '近期心肌梗塞患者建議接種，以預防重大不良心血管事件',
+                    '具有多重危險因子（高血壓、高血脂、糖尿病、慢性腎病）患者可考慮接種'
+                ],
+                patientInfo: {
+                    what: '流感疫苗是一種能幫助您的身體預防流感的注射劑。流感對心臟病患者特別危險。',
+                    why: '研究發現，流感可能讓心臟病發作或中風的風險增加2-6倍。接種流感疫苗可以降低約25%的死亡風險。',
+                    who: '如果您有心臟病、心衰竭、或曾經心肌梗塞，每年都應該接種流感疫苗。',
+                    when: '每年秋天（約10-11月）是最佳接種時機。'
+                },
+                stats: [
+                    { label: '每10名流感住院患者', value: '1人', desc: '發生急性心血管事件' },
+                    { label: '流感後14天內', value: '2倍↑', desc: '心肌梗塞或中風風險（50歲以上）' },
+                    { label: '65歲以上長者', value: '6倍↑', desc: '心肌梗塞風險' }
+                ],
+                benefits: [
+                    { name: '降低全因死亡風險', value: 25, color: 'green' },
+                    { name: '降低心血管死亡風險', value: 18, color: 'green' },
+                    { name: '降低主要心血管事件風險', value: 13, color: 'blue' }
+                ]
+            },
+            pneumo: {
+                name: '肺炎鏈球菌疫苗',
+                eng: 'Pneumococcal Vaccine',
+                icon: '🛡️',
+                color: 'pneumo',
+                target: '心血管疾病患者或心血管疾病高風險族群',
+                recommendations: [
+                    '建議用於心血管疾病高風險族群或心血管疾病患者',
+                    '以降低重大不良心血管事件風險'
+                ],
+                patientInfo: {
+                    what: '肺炎鏈球菌疫苗可以預防由肺炎鏈球菌引起的嚴重感染，包括肺炎、腦膜炎等。',
+                    why: '肺炎是台灣十大死因第三位。得到肺炎的心臟病患者，約有30%會發生心血管併發症。接種疫苗可降低約22-29%的死亡風險。',
+                    who: '65歲以上長者、有心臟病或慢性疾病的人，都應該接種。',
+                    when: '請詢問您的醫師最適合的接種時機。通常建議接種PCV13和PPSV23兩種疫苗。'
+                },
+                stats: [
+                    { label: 'IPD成人病死率', value: '2/10', desc: '十人當中即有兩人死亡' },
+                    { label: 'IPD高齡族群病死率', value: '4/10', desc: '十人當中即有四人死亡' },
+                    { label: 'CAP患者', value: '30%', desc: '可能發生嚴重心血管事件(MACE)' }
+                ],
+                benefits: [
+                    { name: '降低全因死亡率', value: 22, color: 'green' },
+                    { name: '≥65歲死亡率下降', value: 29, color: 'green' },
+                    { name: '降低心肌梗塞風險', value: 27, color: 'blue' }
+                ],
+                riskFactors: [
+                    { icon: '❤️', name: '慢性心臟疾病', risk: '~4倍' },
+                    { icon: '🫁', name: '氣喘', risk: '~4倍' },
+                    { icon: '🩸', name: '糖尿病', risk: '~4倍' },
+                    { icon: '🍺', name: '高飲酒量', risk: '~8倍' },
+                    { icon: '🚬', name: '吸菸', risk: '~5倍' },
+                    { icon: '💊', name: '免疫功能不全', risk: '~9倍' }
+                ]
+            },
+            covid: {
+                name: '新冠肺炎疫苗',
+                eng: 'COVID-19 Vaccine',
+                icon: '🦠',
+                color: 'covid',
+                target: '心血管疾病患者或心血管疾病高風險者',
+                recommendations: [
+                    '建議不論有無心血管疾病的成年人接種最新劑次',
+                    '以降低新冠病毒感染及其相關心血管併發症風險'
+                ],
+                patientInfo: {
+                    what: '新冠肺炎疫苗能幫助您的身體對抗COVID-19病毒，降低感染後重症的風險。',
+                    why: 'COVID-19不只影響肺部，也會傷害心臟。感染後一年內，心臟病發作風險增加約2.4倍，心衰竭風險增加約2倍。',
+                    who: '所有成年人，特別是有心臟病的人，都應該接種最新的疫苗。',
+                    when: '請依據疾管署的最新建議，定期接種追加劑。'
+                },
+                stats: [
+                    { label: '急性期心肌損傷', value: '21.2%', desc: '發生率' },
+                    { label: '心律不整', value: '10-15%', desc: '發生率（AF 9.2%）' },
+                    { label: '康復後一年', value: '4.4倍↑', desc: '心房顫動風險' }
+                ],
+                cvEffects: [
+                    { name: '心房顫動(AF)', risk: '4.4倍' },
+                    { name: '中風(Stroke)', risk: '2.4倍' },
+                    { name: '急性冠心病(ACD)', risk: '2.0倍' },
+                    { name: '心肌梗塞(MI)', risk: '2.0倍' },
+                    { name: '心衰竭(HF)', risk: '2.3倍' },
+                    { name: '肺栓塞(PE)', risk: '2.6倍' }
+                ]
+            },
+            rsv: {
+                name: '呼吸道融合病毒疫苗',
+                eng: 'RSV Vaccine',
+                icon: '🌬️',
+                color: 'rsv',
+                target: '年齡≥75歲，或50-74歲且患有心血管疾病或慢性肺部疾病之成人或長照機構者',
+                recommendations: [
+                    '建議接種，以預防呼吸道融合病毒感染及相關併發症'
+                ],
+                patientInfo: {
+                    what: 'RSV（呼吸道融合病毒）疫苗是一種新的疫苗，可以預防RSV感染。RSV在老年人和心臟病患者中可能造成嚴重疾病。',
+                    why: '約有45-63%感染RSV的住院病人本身有心血管疾病。RSV感染可能導致心衰竭惡化和其他心臟問題。',
+                    who: '75歲以上長者，或50-74歲有心臟病或肺部疾病的人。',
+                    when: '這是新疫苗，請詢問您的醫師是否適合接種。'
+                },
+                stats: [
+                    { label: 'RSV住院患者中', value: '45-63%', desc: '患有潛在心血管疾病' },
+                    { label: 'RSV住院成年患者', value: '14-22%', desc: '出現心血管併發症' },
+                    { label: 'RSV死亡患者中', value: '16.7%', desc: '直接死於心血管原因' }
+                ]
+            },
+            shingles: {
+                name: '帶狀疱疹疫苗',
+                eng: 'Herpes Zoster Vaccine',
+                icon: '⚡',
+                color: 'shingles',
+                target: '年齡≥50歲，或18-49歲患有心血管疾病之成人',
+                recommendations: [
+                    '建議接種，以預防帶狀疱疹及相關併發症'
+                ],
+                patientInfo: {
+                    what: '帶狀疱疹疫苗可以預防「皮蛇」，也就是帶狀疱疹。這種病毒會造成疼痛的皮疹，也可能影響心臟。',
+                    why: '研究發現，得過帶狀疱疹的心臟病患者，心肌梗塞風險增加62%，中風風險增加51%。帶狀疱疹病毒可以直接侵犯血管。',
+                    who: '50歲以上的人，或50歲以下但有心臟病的人。',
+                    when: '只需要接種一次（新型疫苗需打兩劑），保護效果可持續多年。'
+                },
+                stats: [
+                    { label: '終生風險', value: '1/3', desc: '每三人中有一人會感染帶狀疱疹' },
+                    { label: '帶狀疱疹後神經痛', value: '5-30%', desc: '發生率' },
+                    { label: '心血管病患得帶狀疱疹後', value: '62%↑', desc: '心肌梗塞風險增加' }
+                ],
+                cvRisks: [
+                    { name: '心肌梗塞', increase: '62%' },
+                    { name: '中風', increase: '51%' },
+                    { name: '心衰竭', increase: '48%' }
+                ]
+            }
+        };
+
+        // 測驗題目
+        const quizQuestions = [
+            {
+                question: '流感對50歲以上心血管疾病患者的急性心肌梗塞或中風風險增加多少？',
+                options: ['1.5倍', '2倍以上', '3倍', '10倍'],
+                correct: 1,
+                explanation: '研究指出，50歲以上相對健康的族群，在感染後14天內，急性心肌梗塞或中風風險增加2倍以上。'
+            },
+            {
+                question: '根據研究，流感疫苗可降低心血管疾病患者的全因死亡風險約多少？',
+                options: ['10%', '18%', '25%', '35%'],
+                correct: 2,
+                explanation: '一項大規模SRMA研究顯示，施打流感疫苗可顯著降低全因死亡風險25%。'
+            },
+            {
+                question: '肺炎鏈球菌性肺炎(CAP)患者發生嚴重心血管事件(MACE)的比例約為？',
+                options: ['10%', '20%', '30%', '50%'],
+                correct: 2,
+                explanation: 'MACE為IPD及CAP中常見併發症，高達3成患者可能於此期間經歷MACE，特別是在具有心血管疾病的老年患者中。'
+            },
+            {
+                question: '雙重接種肺炎鏈球菌與流感疫苗可降低65歲以上長者的心血管疾病風險約多少？',
+                options: ['10%', '20%', '超過30%', '50%'],
+                correct: 2,
+                explanation: '研究發現，接種過兩種肺炎鏈球菌疫苗(PCV13加上PPSV23)的長者，心血管疾病的風險顯著降低超過兩成。'
+            },
+            {
+                question: 'COVID-19感染後一年內，患者發生心房顫動(AF)的風險增加約多少倍？',
+                options: ['1.5倍', '2.4倍', '3.5倍', '4.4倍'],
+                correct: 3,
+                explanation: '一項大型涵蓋近70萬名新冠患者的回溯性世代研究指出，感染後一年內，心房顫動風險增加約4.4倍。'
+            },
+            {
+                question: 'RSV住院成年患者中，約有多少比例會出現心血管併發症？',
+                options: ['5-10%', '14-22%', '30-40%', '50%以上'],
+                correct: 1,
+                explanation: '研究指出，約14-22%的RSV住院成人會出現心血管併發症，包括心衰竭惡化、心律不整、急性冠心症及中風等。'
+            },
+            {
+                question: '帶狀疱疹對已有心血管疾病患者的心肌梗塞風險增加多少？',
+                options: ['32%', '48%', '51%', '62%'],
+                correct: 3,
+                explanation: '研究發現，新發生心肌梗塞、缺血性中風或心衰竭的患者，其後續需要住院治療的帶狀疱疹風險也顯著增加，MI增加住院HZ風險62%。'
+            },
+            {
+                question: '台灣65歲以上長者流感疫苗接種率約為多少？',
+                options: ['約48%', '約65%', '約73%', '約82%'],
+                correct: 0,
+                explanation: '台灣的65歲以上長者流感疫苗接種率僅約五成(48.1%)，明顯低於多數國家。衛福部目標設定至少55%的接種率。'
+            },
+            {
+                question: '下列哪一項不是心血管疾病患者建議接種的疫苗？',
+                options: ['流感疫苗', '肺炎鏈球菌疫苗', 'B型肝炎疫苗', '帶狀疱疹疫苗'],
+                correct: 2,
+                explanation: '台灣心臟學會及感染症學會共同建議五大疫苗：流感疫苗、肺炎鏈球菌疫苗、新冠肺炎疫苗、呼吸道融合病毒疫苗、帶狀疱疹疫苗。'
+            },
+            {
+                question: '流感疫苗接種後多久保護效果最為明顯？',
+                options: ['1-7天', '8-14天', '15-28天', '29-60天'],
+                correct: 2,
+                explanation: '研究分析顯示，流感疫苗接種後的120天風險期內，首次急性心血管事件發生率顯著降低，保護效果在接種後15-28天最為明顯，發生率降低近3成。'
+            }
+        ];
+
+        // 主應用元件
+        function App() {
+            const [activeTab, setActiveTab] = useState('overview');
+            const [viewMode, setViewMode] = useState('medical'); // 'medical' or 'patient'
+            const [expandedVaccine, setExpandedVaccine] = useState(null);
+            const [quizState, setQuizState] = useState({
+                currentQuestion: 0,
+                selectedAnswer: null,
+                showResult: false,
+                score: 0,
+                completed: false,
+                answers: []
+            });
+            const [checklist, setChecklist] = useState({
+                flu: false,
+                pneumo: false,
+                covid: false,
+                rsv: false,
+                shingles: false
+            });
+
+            const tabs = [
+                { id: 'overview', label: '概覽' },
+                { id: 'vaccines', label: '疫苗詳解' },
+                { id: 'evidence', label: '研究證據' },
+                { id: 'quiz', label: '自我測驗' },
+                { id: 'checklist', label: '接種清單' }
+            ];
+
+            const handleAnswerSelect = (index) => {
+                if (!quizState.showResult) {
+                    setQuizState(prev => ({ ...prev, selectedAnswer: index }));
+                }
+            };
+
+            const handleSubmitAnswer = () => {
+                const isCorrect = quizState.selectedAnswer === quizQuestions[quizState.currentQuestion].correct;
+                setQuizState(prev => ({
+                    ...prev,
+                    showResult: true,
+                    score: isCorrect ? prev.score + 1 : prev.score,
+                    answers: [...prev.answers, { selected: prev.selectedAnswer, correct: isCorrect }]
+                }));
+            };
+
+            const handleNextQuestion = () => {
+                if (quizState.currentQuestion < quizQuestions.length - 1) {
+                    setQuizState(prev => ({
+                        ...prev,
+                        currentQuestion: prev.currentQuestion + 1,
+                        selectedAnswer: null,
+                        showResult: false
+                    }));
+                } else {
+                    setQuizState(prev => ({ ...prev, completed: true }));
+                }
+            };
+
+            const resetQuiz = () => {
+                setQuizState({
+                    currentQuestion: 0,
+                    selectedAnswer: null,
+                    showResult: false,
+                    score: 0,
+                    completed: false,
+                    answers: []
+                });
+            };
+
+            const toggleChecklist = (vaccine) => {
+                setChecklist(prev => ({ ...prev, [vaccine]: !prev[vaccine] }));
+            };
+
+            const renderOverview = () => (
+                <div>
+                    <div className="section-title">
+                        <span className="icon">💉</span>
+                        五大疫苗預防心血管事件
+                    </div>
+                    
+                    <div className="tab-subtitle">
+                        台灣心臟學會及台灣感染症學會共同建議
+                    </div>
+
+                    <div className="mode-toggle">
+                        <button 
+                            className={`mode-btn ${viewMode === 'medical' ? 'active' : ''}`}
+                            onClick={() => setViewMode('medical')}
+                        >
+                            👨‍⚕️ 醫護版
+                        </button>
+                        <button 
+                            className={`mode-btn ${viewMode === 'patient' ? 'active' : ''}`}
+                            onClick={() => setViewMode('patient')}
+                        >
+                            👤 病人版
+                        </button>
+                    </div>
+
+                    {viewMode === 'medical' ? (
+                        <>
+                            {Object.entries(vaccineData).map(([key, vaccine]) => (
+                                <div key={key} className={`vaccine-card ${vaccine.color}`}>
+                                    <div className="vaccine-header">
+                                        <div className={`vaccine-icon ${vaccine.color}`}>
+                                            {vaccine.icon}
+                                        </div>
+                                        <div>
+                                            <div className="vaccine-name">{vaccine.name}</div>
+                                            <div className="vaccine-eng">{vaccine.eng}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="target-group">
+                                        <div className="target-label">📌 目標族群</div>
+                                        <div className="target-content">{vaccine.target}</div>
+                                    </div>
+                                    
+                                    <div className="recommendation-box">
+                                        {vaccine.recommendations.map((rec, idx) => (
+                                            <div key={idx} className="recommendation-item">
+                                                <span className="check-icon">✓</span>
+                                                <span>{rec}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </>
+                    ) : (
+                        <>
+                            <div className="patient-card">
+                                <div className="patient-title">
+                                    <span>🏥</span> 為什麼心臟病患者需要打疫苗？
+                                </div>
+                                <div className="simple-text">
+                                    如果您有心臟病，感染流感、肺炎或其他疾病時，
+                                    您的心臟會承受更大的壓力，可能導致心臟病發作、
+                                    中風或其他嚴重問題。
+                                </div>
+                                <div className="highlight-box">
+                                    <strong>接種疫苗可以保護您的心臟！</strong>
+                                    <br/>研究證實，接種疫苗可以降低心臟病患者的住院和死亡風險。
+                                </div>
+                            </div>
+
+                            {Object.entries(vaccineData).map(([key, vaccine]) => (
+                                <div key={key} className={`vaccine-card ${vaccine.color}`}>
+                                    <div className="vaccine-header">
+                                        <div className={`vaccine-icon ${vaccine.color}`}>
+                                            {vaccine.icon}
+                                        </div>
+                                        <div>
+                                            <div className="vaccine-name">{vaccine.name}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="simple-text">
+                                        <strong>是什麼？</strong> {vaccine.patientInfo.what}
+                                    </div>
+                                    
+                                    <div className="highlight-box green">
+                                        <strong>為什麼重要？</strong><br/>
+                                        {vaccine.patientInfo.why}
+                                    </div>
+                                    
+                                    <div className="simple-text">
+                                        <strong>誰需要打？</strong> {vaccine.patientInfo.who}
+                                    </div>
+                                    
+                                    <div className="simple-text" style={{marginTop: '8px'}}>
+                                        <strong>什麼時候打？</strong> {vaccine.patientInfo.when}
+                                    </div>
+                                </div>
+                            ))}
+
+                            <div className="patient-card">
+                                <div className="patient-title">
+                                    <span>💡</span> 給您的建議
+                                </div>
+                                <div className="simple-text">
+                                    1. 和您的醫師討論哪些疫苗適合您<br/>
+                                    2. 每年記得接種流感疫苗<br/>
+                                    3. 追蹤您的疫苗接種紀錄<br/>
+                                    4. 鼓勵家人一起接種，保護全家健康
+                                </div>
+                            </div>
+                        </>
+                    )}
+                </div>
+            );
+
+            const renderVaccineDetails = () => (
+                <div>
+                    <div className="section-title">
+                        <span className="icon">📋</span>
+                        各疫苗詳細資訊
+                    </div>
+
+                    {Object.entries(vaccineData).map(([key, vaccine]) => (
+                        <div key={key} className={`vaccine-card ${vaccine.color}`}>
+                            <div className="vaccine-header">
+                                <div className={`vaccine-icon ${vaccine.color}`}>
+                                    {vaccine.icon}
+                                </div>
+                                <div>
+                                    <div className="vaccine-name">{vaccine.name}</div>
+                                    <div className="vaccine-eng">{vaccine.eng}</div>
+                                </div>
+                            </div>
+
+                            {vaccine.stats && (
+                                <div style={{marginBottom: '12px'}}>
+                                    {vaccine.stats.map((stat, idx) => (
+                                        <div key={idx} className="stat-card" style={{marginBottom: '8px', padding: '12px'}}>
+                                            <div className="stat-title">{stat.label}</div>
+                                            <div className="stat-value" style={{fontSize: '1.8rem'}}>{stat.value}</div>
+                                            <div className="stat-desc">{stat.desc}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {vaccine.benefits && (
+                                <div className="info-section">
+                                    <div className="info-title">
+                                        <span>📊</span> 保護效益
+                                    </div>
+                                    {vaccine.benefits.map((benefit, idx) => (
+                                        <div key={idx} className="benefit-bar">
+                                            <div className="benefit-label">
+                                                <span className="benefit-name">{benefit.name}</span>
+                                                <span className="benefit-value">↓{benefit.value}%</span>
+                                            </div>
+                                            <div className="benefit-track">
+                                                <div 
+                                                    className={`benefit-fill ${benefit.color}`}
+                                                    style={{width: `${benefit.value}%`}}
+                                                ></div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {vaccine.riskFactors && (
+                                <div className="info-section">
+                                    <div className="info-title">
+                                        <span>⚠️</span> 高風險因子
+                                    </div>
+                                    <div className="risk-grid">
+                                        {vaccine.riskFactors.map((factor, idx) => (
+                                            <div key={idx} className="risk-item">
+                                                <div className="risk-icon">{factor.icon}</div>
+                                                <div className="risk-name">{factor.name}</div>
+                                                <div className="risk-value">{factor.risk}風險</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {vaccine.cvEffects && (
+                                <div className="info-section">
+                                    <div className="info-title">
+                                        <span>❤️</span> 感染後一年心血管風險
+                                    </div>
+                                    <div className="risk-grid">
+                                        {vaccine.cvEffects.map((effect, idx) => (
+                                            <div key={idx} className="risk-item">
+                                                <div className="risk-name">{effect.name}</div>
+                                                <div className="risk-value">↑{effect.risk}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {vaccine.cvRisks && (
+                                <div className="info-section">
+                                    <div className="info-title">
+                                        <span>📈</span> CVD患者帶狀疱疹後風險
+                                    </div>
+                                    {vaccine.cvRisks.map((risk, idx) => (
+                                        <div key={idx} className="benefit-bar">
+                                            <div className="benefit-label">
+                                                <span className="benefit-name">{risk.name}風險</span>
+                                                <span className="benefit-value" style={{color: '#ff7043'}}>↑{risk.increase}</span>
+                                            </div>
+                                            <div className="benefit-track">
+                                                <div 
+                                                    className="benefit-fill orange"
+                                                    style={{width: `${parseInt(risk.increase)}%`}}
+                                                ></div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            );
+
+            const renderEvidence = () => (
+                <div>
+                    <div className="section-title">
+                        <span className="icon">📚</span>
+                        研究證據摘要
+                    </div>
+
+                    <div className="info-section">
+                        <div className="info-title">
+                            <span>💉</span> 流感疫苗
+                        </div>
+                        <div>
+                            <div className="evidence-tag">SCCS研究</div>
+                            <div className="evidence-tag">n=19萬</div>
+                            <div className="evidence-tag">SRMA n=237,058</div>
+                        </div>
+                        <div className="info-content" style={{marginTop: '12px'}}>
+                            <p>• ESC發表大型自我控制病例系列(SCCS)研究，分析2008-2019年間英國19萬名40-84歲成人的電子健康紀錄</p>
+                            <p>• 流感疫苗接種後120天風險期內，首次急性心血管事件發生率顯著降低</p>
+                            <p>• 保護效果在接種後15-28天最為明顯，發生率降低近3成，且保護作用可持續至接種後91-120天</p>
+                            <p>• 對於心肌梗塞的保護效果最為突出(IR 0.60; 95% CI 0.57–0.64)</p>
+                        </div>
+                    </div>
+
+                    <div className="info-section">
+                        <div className="info-title">
+                            <span>🛡️</span> 肺炎鏈球菌疫苗
+                        </div>
+                        <div>
+                            <div className="evidence-tag">SRMA n=70萬</div>
+                            <div className="evidence-tag">回溯性研究 n=23萬</div>
+                        </div>
+                        <div className="info-content" style={{marginTop: '12px'}}>
+                            <p>• 大型SRMA涵蓋約70萬名參與者，顯示PPV23疫苗能降低心血管事件風險、全因死亡率</p>
+                            <p>• 其中65歲以上族群的保護效果更為明顯</p>
+                            <p>• 另一項SRMA顯示肺炎鏈球菌疫苗可顯著下降心肌梗塞發生風險</p>
+                            <p>• 雙重接種(PCV13+PPSV23)比單一疫苗提供更全面的心血管保護</p>
+                        </div>
+                    </div>
+
+                    <div className="info-section">
+                        <div className="info-title">
+                            <span>🦠</span> COVID-19
+                        </div>
+                        <div>
+                            <div className="evidence-tag">回溯性研究 n=70萬</div>
+                            <div className="evidence-tag">急性期+長期追蹤</div>
+                        </div>
+                        <div className="info-content" style={{marginTop: '12px'}}>
+                            <p>• COVID-19可透過ACE2受體直接侵入心肌與血管內皮細胞</p>
+                            <p>• 急性期心肌損傷發生率達2成，死亡率高達5成，康復後仍有6成患者的心臟MRI顯示心肌發炎</p>
+                            <p>• 感染後一年內，多項心血管疾病發生風險顯著增加</p>
+                            <p>• 即使無傳統危險因子者亦可能發生血栓併發症</p>
+                        </div>
+                    </div>
+
+                    <div className="info-section">
+                        <div className="info-title">
+                            <span>🌬️</span> RSV
+                        </div>
+                        <div>
+                            <div className="evidence-tag">香港研究 n=607</div>
+                            <div className="evidence-tag">雙向關聯</div>
+                        </div>
+                        <div className="info-content" style={{marginTop: '12px'}}>
+                            <p>• 每年約3-7%健康高齡者及4-10%高風險成人感染RSV</p>
+                            <p>• 確診感染RSV的成年住院患者中，潛在心血管疾病發生率很高(45-63%)</p>
+                            <p>• 約14-22%的RSV住院成人會出現心血管併發症</p>
+                            <p>• 香港研究發現RSV死亡患者中有16.7%直接死於心血管原因</p>
+                        </div>
+                    </div>
+
+                    <div className="info-section">
+                        <div className="info-title">
+                            <span>⚡</span> 帶狀疱疹
+                        </div>
+                        <div>
+                            <div className="evidence-tag">韓國研究 n=20,311</div>
+                            <div className="evidence-tag">雙向關聯</div>
+                        </div>
+                        <div className="info-content" style={{marginTop: '12px'}}>
+                            <p>• 帶狀疱疹的終生風險高達三成，且隨著年齡增加發病率快速上升</p>
+                            <p>• 水痘帶狀疱疹病毒(VZV)可直接侵犯血管，導致血管壁發炎與結構性改變</p>
+                            <p>• 韓國全民健保資料庫研究顯示，心血管疾病患者得帶狀疱疹後，心肌梗塞、中風、心衰竭風險顯著增加</p>
+                            <p>• 帶狀疱疹後的慢性疼痛可透過壓力反應和神經內分泌途徑影響心血管系統</p>
+                        </div>
+                    </div>
+
+                    <div className="highlight-box blue">
+                        <strong>關鍵訊息：</strong><br/>
+                        感染與心血管疾病存在雙向關聯，接種疫苗不僅預防感染，更能保護心血管健康。
+                    </div>
+                </div>
+            );
+
+            const renderQuiz = () => {
+                if (quizState.completed) {
+                    return (
+                        <div>
+                            <div className="section-title">
+                                <span className="icon">🎯</span>
+                                測驗結果
+                            </div>
+                            
+                            <div className="quiz-container">
+                                <div className="score-display">
+                                    <div className="score-circle">
+                                        <div className="score-value">{quizState.score}</div>
+                                        <div className="score-label">/ {quizQuestions.length}</div>
+                                    </div>
+                                    <div style={{fontSize: '1.2rem', marginBottom: '8px'}}>
+                                        {quizState.score >= 8 ? '🎉 優秀！' : 
+                                         quizState.score >= 6 ? '👍 良好！' : '💪 繼續加油！'}
+                                    </div>
+                                    <div style={{color: '#90caf9', marginBottom: '20px'}}>
+                                        答對 {quizState.score} 題，共 {quizQuestions.length} 題
+                                    </div>
+                                    <button className="quiz-btn next" onClick={resetQuiz}>
+                                        重新測驗
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="info-section">
+                                <div className="info-title">答題回顧</div>
+                                {quizQuestions.map((q, idx) => (
+                                    <div key={idx} style={{
+                                        padding: '12px',
+                                        marginBottom: '8px',
+                                        borderRadius: '8px',
+                                        background: quizState.answers[idx]?.correct 
+                                            ? 'rgba(76, 175, 80, 0.1)' 
+                                            : 'rgba(244, 67, 54, 0.1)'
+                                    }}>
+                                        <div style={{fontSize: '0.85rem', marginBottom: '4px'}}>
+                                            {quizState.answers[idx]?.correct ? '✓' : '✗'} 第 {idx + 1} 題
+                                        </div>
+                                        <div style={{fontSize: '0.9rem'}}>{q.question}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                }
+
+                const currentQ = quizQuestions[quizState.currentQuestion];
+
+                return (
+                    <div>
+                        <div className="section-title">
+                            <span className="icon">📝</span>
+                            自我測驗
+                        </div>
+
+                        <div className="progress-bar">
+                            {quizQuestions.map((_, idx) => (
+                                <div 
+                                    key={idx}
+                                    className={`progress-dot ${
+                                        idx < quizState.currentQuestion ? 'completed' :
+                                        idx === quizState.currentQuestion ? 'current' : ''
+                                    }`}
+                                ></div>
+                            ))}
+                        </div>
+
+                        <div className="quiz-container">
+                            <div style={{fontSize: '0.85rem', color: '#90caf9', marginBottom: '12px'}}>
+                                問題 {quizState.currentQuestion + 1} / {quizQuestions.length}
+                            </div>
+                            
+                            <div className="quiz-question">{currentQ.question}</div>
+                            
+                            <div className="quiz-options">
+                                {currentQ.options.map((option, idx) => (
+                                    <div
+                                        key={idx}
+                                        className={`quiz-option ${
+                                            quizState.selectedAnswer === idx ? 'selected' : ''
+                                        } ${
+                                            quizState.showResult && idx === currentQ.correct ? 'correct' : ''
+                                        } ${
+                                            quizState.showResult && 
+                                            quizState.selectedAnswer === idx && 
+                                            idx !== currentQ.correct ? 'wrong' : ''
+                                        }`}
+                                        onClick={() => handleAnswerSelect(idx)}
+                                    >
+                                        {String.fromCharCode(65 + idx)}. {option}
+                                    </div>
+                                ))}
+                            </div>
+
+                            {quizState.showResult && (
+                                <div className={`quiz-feedback ${
+                                    quizState.selectedAnswer === currentQ.correct ? 'correct' : 'wrong'
+                                }`}>
+                                    {quizState.selectedAnswer === currentQ.correct 
+                                        ? '✓ 答對了！' 
+                                        : '✗ 答錯了！'}
+                                    <br/><br/>
+                                    <strong>解說：</strong>{currentQ.explanation}
+                                </div>
+                            )}
+
+                            {!quizState.showResult ? (
+                                <button 
+                                    className="quiz-btn submit"
+                                    onClick={handleSubmitAnswer}
+                                    disabled={quizState.selectedAnswer === null}
+                                >
+                                    確認答案
+                                </button>
+                            ) : (
+                                <button 
+                                    className="quiz-btn next"
+                                    onClick={handleNextQuestion}
+                                >
+                                    {quizState.currentQuestion < quizQuestions.length - 1 
+                                        ? '下一題' 
+                                        : '查看結果'}
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                );
+            };
+
+            const renderChecklist = () => {
+                const vaccineList = [
+                    { key: 'flu', name: '流感疫苗', freq: '每年接種', icon: '💉' },
+                    { key: 'pneumo', name: '肺炎鏈球菌疫苗', freq: '依醫師建議', icon: '🛡️' },
+                    { key: 'covid', name: '新冠肺炎疫苗', freq: '依最新建議', icon: '🦠' },
+                    { key: 'rsv', name: '呼吸道融合病毒疫苗', freq: '符合條件者', icon: '🌬️' },
+                    { key: 'shingles', name: '帶狀疱疹疫苗', freq: '50歲以上', icon: '⚡' }
+                ];
+
+                const completedCount = Object.values(checklist).filter(Boolean).length;
+
+                return (
+                    <div>
+                        <div className="section-title">
+                            <span className="icon">✅</span>
+                            疫苗接種清單
+                        </div>
+
+                        <div className="stat-card">
+                            <div className="stat-title">接種進度</div>
+                            <div className="stat-value">{completedCount}/{vaccineList.length}</div>
+                            <div className="stat-desc">
+                                {completedCount === vaccineList.length 
+                                    ? '🎉 太棒了！已完成所有建議疫苗' 
+                                    : '點擊下方項目標記已接種的疫苗'}
+                            </div>
+                        </div>
+
+                        <div className="checklist">
+                            {vaccineList.map(vaccine => (
+                                <div key={vaccine.key} className="checklist-item">
+                                    <div 
+                                        className={`checklist-checkbox ${checklist[vaccine.key] ? 'checked' : ''}`}
+                                        onClick={() => toggleChecklist(vaccine.key)}
+                                    >
+                                        {checklist[vaccine.key] && '✓'}
+                                    </div>
+                                    <div style={{flex: 1}}>
+                                        <div className="checklist-text">
+                                            {vaccine.icon} {vaccine.name}
+                                        </div>
+                                        <div style={{fontSize: '0.8rem', color: '#90caf9'}}>
+                                            {vaccine.freq}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="highlight-box" style={{marginTop: '16px'}}>
+                            <strong>💡 提醒：</strong><br/>
+                            此清單僅供個人追蹤使用。實際接種時程請諮詢您的主治醫師，依個人健康狀況調整。
+                        </div>
+
+                        <div className="patient-card" style={{marginTop: '16px'}}>
+                            <div className="patient-title">
+                                <span>📞</span> 接種前諮詢
+                            </div>
+                            <div className="simple-text">
+                                接種疫苗前，請告知醫師：<br/>
+                                • 您目前的用藥（特別是抗凝血劑）<br/>
+                                • 過去的疫苗過敏史<br/>
+                                • 近期身體狀況<br/>
+                                • 是否正在接受其他治療
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            const renderContent = () => {
+                switch (activeTab) {
+                    case 'overview': return renderOverview();
+                    case 'vaccines': return renderVaccineDetails();
+                    case 'evidence': return renderEvidence();
+                    case 'quiz': return renderQuiz();
+                    case 'checklist': return renderChecklist();
+                    default: return renderOverview();
+                }
+            };
+
+            return (
+                <div className="app-container">
+                    <div className="header">
+                        <h1>💉 心血管病患疫苗接種指引</h1>
+                        <p>Vaccination Guide for CV Patients</p>
+                    </div>
+
+                    <div className="nav-tabs">
+                        {tabs.map(tab => (
+                            <button
+                                key={tab.id}
+                                className={`nav-tab ${activeTab === tab.id ? 'active' : ''}`}
+                                onClick={() => setActiveTab(tab.id)}
+                            >
+                                {tab.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="content">
+                        {renderContent()}
+                    </div>
+
+                    <div className="footer">
+                        參考資料：台灣心臟學會、台灣感染症學會共同建議<br/>
+                        <a href="#">國立台灣大學醫學院附設醫院新竹分院 心血管中心</a><br/>
+                        本應用程式僅供教育目的使用
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
