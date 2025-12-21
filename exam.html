@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>實習生訓練中心 | Trainee Education Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #273549;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-purple: #8b5cf6;
+            --accent-orange: #f97316;
+            --accent-pink: #ec4899;
+            --accent-red: #ef4444;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+        }
+
+        .header-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Category Section */
+        .category {
+            margin-bottom: 30px;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding: 14px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .category-icon {
+            font-size: 1.5rem;
+        }
+
+        .category-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .category-count {
+            background: var(--accent-blue);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Exam Cards */
+        .exam-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .exam-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exam-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .exam-card.echo::before { background: linear-gradient(90deg, #3b82f6, #8b5cf6); }
+        .exam-card.vascular::before { background: linear-gradient(90deg, #06b6d4, #10b981); }
+        .exam-card.cath::before { background: linear-gradient(90deg, #f97316, #ef4444); }
+        .exam-card.ecg::before { background: linear-gradient(90deg, #ec4899, #f97316); }
+
+        .exam-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-blue);
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.2);
+        }
+
+        .exam-icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .exam-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .exam-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            flex: 1;
+            margin-bottom: 16px;
+        }
+
+        .exam-meta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .exam-tag {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .exam-tag.questions {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+        }
+
+        .exam-tag.time {
+            background: rgba(251, 191, 36, 0.15);
+            color: #fbbf24;
+        }
+
+        .exam-tag.new {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+        }
+
+        /* Progress Section */
+        .progress-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .progress-title {
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .progress-percentage {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: var(--bg-dark);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Back Link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--accent-cyan);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+        }
+
+        /* Coming Soon */
+        .coming-soon {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .coming-soon .exam-tag.new {
+            background: rgba(100, 116, 139, 0.2);
+            color: var(--text-muted);
+        }
+
+        .coming-soon::after {
+            content: '即將推出';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            background: var(--bg-dark);
+            color: var(--text-secondary);
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 14px 10px;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .stat-label {
+                font-size: 0.75rem;
+            }
+
+            .exam-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← 返回教學資源中心</a>
+
+        <header class="header">
+            <div class="header-icon">🎓</div>
+            <h1>實習生訓練中心</h1>
+            <p>Cardiovascular Center Trainee Education</p>
+        </header>
+
+        <!-- Progress Overview -->
+        <div class="progress-section">
+            <div class="progress-header">
+                <span class="progress-title">📊 學習進度總覽</span>
+                <span class="progress-percentage" id="totalProgress">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <div class="progress-details">
+                <span id="completedCount">已完成：0 / 2 項測驗</span>
+                <span id="avgScore">平均分數：--</span>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalExams">2</div>
+                <div class="stat-label">測驗項目</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalQuestions">35</div>
+                <div class="stat-label">題目總數</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="estimatedTime">90</div>
+                <div class="stat-label">分鐘學習</div>
+            </div>
+        </div>
+
+        <!-- Echo Category -->
+        <section class="category">
+            <div class="category-header">
+                <span class="category-icon">🫀</span>
+                <span class="category-title">心臟超音波 Echocardiography</span>
+                <span class="category-count">1</span>
+            </div>
+            <div class="exam-grid">
+                <a href="exam-echo-as.html" class="exam-card echo">
+                    <div class="exam-icon">🔊</div>
+                    <div class="exam-title">主動脈瓣狹窄超音波評估</div>
+                    <div class="exam-desc">AS 超音波診斷、CW Doppler 測量技巧、嚴重度評估標準、連續性方程式應用</div>
+                    <div class="exam-meta">
+                        <span class="exam-tag questions">20 題</span>
+                        <span class="exam-tag time">45 分鐘</span>
+                        <span class="exam-tag new">新增</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Vascular Category -->
+        <section class="category">
+            <div class="category-header">
+                <span class="category-icon">🦵</span>
+                <span class="category-title">血管超音波 Vascular Ultrasound</span>
+                <span class="category-count">1</span>
+            </div>
+            <div class="exam-grid">
+                <a href="exam-vascular-abi.html" class="exam-card vascular">
+                    <div class="exam-icon">🩺</div>
+                    <div class="exam-title">ABI 與下肢血管超音波</div>
+                    <div class="exam-desc">踝肱指數測量、下肢動脈與靜脈超音波、DVT 評估、PAOD 診斷</div>
+                    <div class="exam-meta">
+                        <span class="exam-tag questions">15 題</span>
+                        <span class="exam-tag time">45 分鐘</span>
+                        <span class="exam-tag new">新增</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Coming Soon -->
+        <section class="category">
+            <div class="category-header">
+                <span class="category-icon">📚</span>
+                <span class="category-title">更多課程 More Courses</span>
+                <span class="category-count">即將推出</span>
+            </div>
+            <div class="exam-grid">
+                <div class="exam-card ecg coming-soon">
+                    <div class="exam-icon">📈</div>
+                    <div class="exam-title">心電圖判讀基礎</div>
+                    <div class="exam-desc">ECG 基本原理、正常心電圖、常見心律不整判讀</div>
+                    <div class="exam-meta">
+                        <span class="exam-tag">敬請期待</span>
+                    </div>
+                </div>
+                <div class="exam-card cath coming-soon">
+                    <div class="exam-icon">💉</div>
+                    <div class="exam-title">心導管室基礎訓練</div>
+                    <div class="exam-desc">導管室安全、術前準備、止血流程、術後照護</div>
+                    <div class="exam-meta">
+                        <span class="exam-tag">敬請期待</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p>❤️ 心血管中心實習生訓練計畫</p>
+            <p>台大醫院新竹分院 | 2025</p>
+        </footer>
+    </div>
+
+    <script>
+        // Load progress from localStorage
+        function loadProgress() {
+            const exams = ['exam-echo-as', 'exam-vascular-abi'];
+            let completed = 0;
+            let totalScore = 0;
+            let scoredExams = 0;
+
+            exams.forEach(exam => {
+                const score = localStorage.getItem(`${exam}-score`);
+                if (score !== null) {
+                    completed++;
+                    totalScore += parseInt(score);
+                    scoredExams++;
+                }
+            });
+
+            const percentage = Math.round((completed / exams.length) * 100);
+            document.getElementById('totalProgress').textContent = `${percentage}%`;
+            document.getElementById('progressFill').style.width = `${percentage}%`;
+            document.getElementById('completedCount').textContent = `已完成：${completed} / ${exams.length} 項測驗`;
+            
+            if (scoredExams > 0) {
+                const avgScore = Math.round(totalScore / scoredExams);
+                document.getElementById('avgScore').textContent = `平均分數：${avgScore}%`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadProgress);
+    </script>
+</body>
+</html>

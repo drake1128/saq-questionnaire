@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>主動脈瓣狹窄超音波評估 | AS Echo Assessment</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #273549;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-purple: #8b5cf6;
+            --accent-red: #ef4444;
+            --accent-yellow: #fbbf24;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        #root {
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // Teaching Content
+        const teachingContent = [
+            {
+                title: "AS 超音波評估概論",
+                icon: "📚",
+                content: [
+                    {
+                        subtitle: "什麼是主動脈瓣狹窄？",
+                        text: "主動脈瓣狹窄 (Aortic Stenosis, AS) 是最常見的瓣膜疾病之一，好發於老年人。主要病因包括退化性鈣化、先天性雙葉瓣膜、風濕性心臟病等。"
+                    },
+                    {
+                        subtitle: "超音波在 AS 評估的角色",
+                        text: "經胸超音波心圖 (TTE) 是評估 AS 嚴重程度的首選檢查，可評估瓣膜形態、測量跨瓣壓力梯度、計算瓣膜面積。"
+                    }
+                ],
+                keyPoints: [
+                    "AS 是老年人最常見的瓣膜疾病",
+                    "TTE 是評估 AS 的首選檢查方法",
+                    "需評估：瓣膜形態、流速、壓力梯度、瓣膜面積"
+                ]
+            },
+            {
+                title: "超音波窗口與測量技巧",
+                icon: "🔊",
+                content: [
+                    {
+                        subtitle: "最佳測量窗口",
+                        text: "心尖五腔窗口 (Apical 5-chamber view) 是最常用的窗口，因為探頭方向與主動脈瓣血流較為平行。其他可用窗口包括：胸骨右緣、胸骨上窩。"
+                    },
+                    {
+                        subtitle: "CW Doppler 測量原則",
+                        text: "使用連續多普勒 (CW Doppler) 測量最大流速。取樣線應與血流方向盡可能平行 (夾角 < 20°)，從多個窗口測量，採用最高值。"
+                    }
+                ],
+                keyPoints: [
+                    "首選：心尖五腔窗口 (A5C)",
+                    "使用 CW Doppler 測量高速血流",
+                    "取樣線與血流平行，夾角越小越準確",
+                    "多窗口測量，採用最高值"
+                ]
+            },
+            {
+                title: "AS 嚴重度分級標準",
+                icon: "📊",
+                content: [
+                    {
+                        subtitle: "ASE/ESC 診斷標準",
+                        text: "根據美國超音波心臟醫學會 (ASE) 與歐洲心臟病學會 (ESC) 指南，AS 嚴重度分為輕度、中度、重度三級。"
+                    }
+                ],
+                table: {
+                    headers: ["參數", "輕度", "中度", "重度"],
+                    rows: [
+                        ["最大流速 (Vmax)", "2.0-2.9 m/s", "3.0-3.9 m/s", "≥ 4.0 m/s"],
+                        ["平均壓力梯度", "< 20 mmHg", "20-39 mmHg", "≥ 40 mmHg"],
+                        ["瓣膜面積 (AVA)", "> 1.5 cm²", "1.0-1.5 cm²", "< 1.0 cm²"],
+                        ["面積指數 (AVAi)", "> 0.85", "0.6-0.85", "< 0.6 cm²/m²"]
+                    ]
+                },
+                keyPoints: [
+                    "重度 AS：Vmax ≥ 4.0 m/s",
+                    "重度 AS：Mean PG ≥ 40 mmHg",
+                    "重度 AS：AVA < 1.0 cm²",
+                    "三項指標應一致，不一致時需進一步評估"
+                ]
+            },
+            {
+                title: "連續性方程式",
+                icon: "🧮",
+                content: [
+                    {
+                        subtitle: "原理",
+                        text: "連續性方程式 (Continuity Equation) 基於流量守恆原理：通過 LVOT 的血流量 = 通過主動脈瓣的血流量。"
+                    },
+                    {
+                        subtitle: "公式",
+                        text: "AVA = (LVOT 面積 × LVOT VTI) ÷ AV VTI\n其中 LVOT 面積 = π × (LVOT 直徑/2)²"
+                    },
+                    {
+                        subtitle: "測量要點",
+                        text: "LVOT 直徑：在胸骨旁長軸窗口測量，位於主動脈瓣下 0.5-1.0 cm 處。LVOT VTI：使用 PW Doppler 在相同位置測量。"
+                    }
+                ],
+                keyPoints: [
+                    "需測量：LVOT 直徑、LVOT VTI、AV VTI",
+                    "LVOT 直徑測量位置：瓣環下 0.5-1.0 cm",
+                    "LVOT 直徑誤差 1mm → AVA 誤差約 10%",
+                    "LVOT VTI 用 PW Doppler，AV VTI 用 CW Doppler"
+                ]
+            },
+            {
+                title: "特殊情況處理",
+                icon: "⚠️",
+                content: [
+                    {
+                        subtitle: "低流量低梯度 AS",
+                        text: "當 LVEF 降低時，即使是重度 AS，壓力梯度也可能不高。此時應使用 Dobutamine 壓力測試來區分「真性重度 AS」與「假性重度 AS」。"
+                    },
+                    {
+                        subtitle: "高 LVOT 流速情況",
+                        text: "當 LVOT 流速 > 1.5 m/s 時（如：主動脈瓣下狹窄、高心輸出狀態），必須使用完整的 Bernoulli 方程式：ΔP = 4(V₂² - V₁²)"
+                    }
+                ],
+                keyPoints: [
+                    "Low-flow, low-gradient AS：考慮 Dobutamine 測試",
+                    "LVOT V > 1.5 m/s：用完整 Bernoulli 公式",
+                    "主動脈瓣逆流不影響收縮期順行流速測量",
+                    "探頭角度是低估流速的最常見原因"
+                ]
+            }
+        ];
+
+        // Quiz Questions
+        const quizQuestions = [
+            {
+                id: 1,
+                question: "評估主動脈瓣狹窄嚴重程度時，最常用的超音波窗口是？",
+                options: [
+                    "心尖四腔窗口 (A4C)",
+                    "心尖五腔窗口 (A5C)",
+                    "胸骨旁長軸窗口 (PLAX)",
+                    "胸骨旁短軸窗口 (PSAX)"
+                ],
+                correct: 1,
+                explanation: "心尖五腔窗口 (A5C) 是評估 AS 最常用的窗口，因為此窗口可同時顯示 LV、LVOT 及主動脈瓣，且探頭方向與血流較為平行，有利於獲得最大流速。"
+            },
+            {
+                id: 2,
+                question: "測量主動脈瓣狹窄的最大流速 (Vmax) 應使用哪種多普勒方式？",
+                options: [
+                    "脈衝多普勒 (PW Doppler)",
+                    "連續多普勒 (CW Doppler)",
+                    "組織多普勒 (TDI)",
+                    "彩色多普勒 (Color Doppler)"
+                ],
+                correct: 1,
+                explanation: "CW Doppler 可測量任何速度的血流，適合測量 AS 的高速血流 (常 > 4 m/s)。PW Doppler 有速度限制 (Nyquist limit)，無法準確測量高速血流。"
+            },
+            {
+                id: 3,
+                question: "根據 ASE 指南，重度主動脈瓣狹窄的最大流速標準為？",
+                options: [
+                    "> 2.5 m/s",
+                    "> 3.0 m/s",
+                    "> 3.5 m/s",
+                    "≥ 4.0 m/s"
+                ],
+                correct: 3,
+                explanation: "重度 AS 的診斷標準：Vmax ≥ 4.0 m/s、Mean PG ≥ 40 mmHg、AVA < 1.0 cm²。三項指標應同時評估。"
+            },
+            {
+                id: 4,
+                question: "使用 CW Doppler 測量 AS 流速時，取樣線與血流方向的最理想夾角為？",
+                options: [
+                    "0° (平行)",
+                    "30°",
+                    "45°",
+                    "60°"
+                ],
+                correct: 0,
+                explanation: "根據多普勒原理：V測量 = V實際 × cos(θ)。當 θ = 0° 時，cos(0°) = 1，測量最準確。夾角越大，流速被低估越多。"
+            },
+            {
+                id: 5,
+                question: "從心尖窗口測量 AS 流速時，CW Doppler 的頻譜應顯示為什麼顏色？",
+                options: [
+                    "紅色 (向探頭方向)",
+                    "藍色 (遠離探頭方向)",
+                    "綠色",
+                    "顏色無關緊要"
+                ],
+                correct: 1,
+                explanation: "從心尖窗口測量時，收縮期主動脈瓣血流是遠離探頭的方向，在頻譜上顯示為藍色（基線下方）。正確識別方向可避免與 AR 逆流混淆。"
+            },
+            {
+                id: 6,
+                question: "計算 AVA 使用連續性方程式時，需要測量以下哪三項參數？",
+                options: [
+                    "主動脈瓣環直徑、AV Vmax、LVOT Vmax",
+                    "LVOT 直徑、LVOT VTI、AV VTI",
+                    "主動脈根部直徑、AV VTI、LVOT VTI",
+                    "瓣環直徑、瓣膜開口面積、心輸出量"
+                ],
+                correct: 1,
+                explanation: "連續性方程式：AVA = (LVOT 面積 × LVOT VTI) ÷ AV VTI。需要測量 LVOT 直徑（計算面積）、LVOT VTI（用 PW）、AV VTI（用 CW）。"
+            },
+            {
+                id: 7,
+                question: "測量 LVOT 直徑的標準位置是？",
+                options: [
+                    "主動脈瓣葉尖端",
+                    "Sinus of Valsalva",
+                    "主動脈瓣下 0.5-1.0 cm 處",
+                    "主動脈弓"
+                ],
+                correct: 2,
+                explanation: "LVOT 直徑應在胸骨旁長軸窗口、收縮中期測量，位於主動脈瓣環下 0.5-1.0 cm 處。測量從內膜到內膜，與血管走向垂直。"
+            },
+            {
+                id: 8,
+                question: "從多個窗口測得不同 AS 流速值時，應採用哪一個？",
+                options: [
+                    "取平均值",
+                    "取最低值",
+                    "取心尖窗口的值",
+                    "取最高值"
+                ],
+                correct: 3,
+                explanation: "多普勒測量受角度影響，只有與血流平行時才能測得最大值。因此應從多窗口測量，採用最高值作為最接近實際流速的估計。"
+            },
+            {
+                id: 9,
+                question: "下列何者會導致 AS 嚴重程度被低估？",
+                options: [
+                    "探頭與血流方向不平行",
+                    "存在主動脈瓣逆流",
+                    "瓣膜嚴重鈣化",
+                    "左心室肥厚"
+                ],
+                correct: 0,
+                explanation: "探頭與血流不平行是低估 AS 最常見的原因。例如 30° 夾角會使流速低估約 13%，60° 夾角會低估 50%。應使用多窗口測量取最高值。"
+            },
+            {
+                id: 10,
+                question: "重度 AS 的平均壓力梯度 (Mean PG) 標準為？",
+                options: [
+                    "> 20 mmHg",
+                    "> 30 mmHg",
+                    "≥ 40 mmHg",
+                    "> 50 mmHg"
+                ],
+                correct: 2,
+                explanation: "重度 AS 標準：Mean PG ≥ 40 mmHg。輕度 < 20 mmHg，中度 20-39 mmHg。壓力梯度由簡化 Bernoulli 公式計算：ΔP = 4V²。"
+            },
+            {
+                id: 11,
+                question: "低流量低梯度 AS (Low-flow, low-gradient AS) 的最佳評估方法是？",
+                options: [
+                    "僅計算瓣膜面積",
+                    "Dobutamine 壓力測試",
+                    "增加超音波增益",
+                    "計算心輸出量"
+                ],
+                correct: 1,
+                explanation: "在 LVEF 降低的病人，即使重度 AS，梯度也可能不高。Dobutamine 測試可區分：真性重度 AS（流量增加但 AVA 仍小）vs 假性重度 AS（流量增加且 AVA 變大）。"
+            },
+            {
+                id: 12,
+                question: "下列何者不是重度 AS 的超音波特徵？",
+                options: [
+                    "Vmax > 4 m/s",
+                    "Mean PG > 40 mmHg",
+                    "AVA < 1.0 cm²",
+                    "瓣葉開口增加"
+                ],
+                correct: 3,
+                explanation: "重度 AS 時瓣葉開口受限而非增加。2D 超音波可見瓣葉增厚、鈣化、活動度降低、收縮期開口明顯減少呈「圓點狀」。"
+            },
+            {
+                id: 13,
+                question: "當 LVOT 流速 > 1.5 m/s 時，計算壓力梯度應使用？",
+                options: [
+                    "簡化 Bernoulli：ΔP = 4V²",
+                    "完整 Bernoulli：ΔP = 4(V₂² - V₁²)",
+                    "連續性方程式",
+                    "Gorlin 公式"
+                ],
+                correct: 1,
+                explanation: "簡化 Bernoulli 假設 LVOT 流速可忽略。當 LVOT V > 1.5 m/s 時（如亞瓣膜狹窄、高心輸出），必須使用完整公式以避免高估壓力梯度。"
+            },
+            {
+                id: 14,
+                question: "測量 AS 流速時，讓病人採取何種姿勢可提高準確度？",
+                options: [
+                    "平躺屏住呼吸",
+                    "左側臥位並舉起左手",
+                    "右側臥位",
+                    "坐姿前傾"
+                ],
+                correct: 1,
+                explanation: "左側臥位使心臟更接近胸壁，舉起左手可擴大肋間隙。這種姿勢有助於使探頭與血流更平行，減少角度誤差。"
+            },
+            {
+                id: 15,
+                question: "CW Doppler 測量 AS 時，為避免信號截斷，速度範圍應設定為？",
+                options: [
+                    "1-2 m/s",
+                    "3-4 m/s",
+                    "5-6 m/s",
+                    "7-8 m/s"
+                ],
+                correct: 2,
+                explanation: "重度 AS 流速通常在 4-6 m/s 範圍，速度範圍設為 5-6 m/s 可完整顯示高速信號。設置過低會使頻譜無法完整顯示。"
+            },
+            {
+                id: 16,
+                question: "從胸骨上窩測量 AS 流速時，探頭方向應指向？",
+                options: [
+                    "右肩",
+                    "肚臍",
+                    "左髖關節",
+                    "左肩"
+                ],
+                correct: 3,
+                explanation: "從胸骨上窩 (Suprasternal notch) 測量時，探頭指向左肩可使超音波束與升主動脈血流方向盡可能平行。這是獲取最大流速的重要補充窗口。"
+            },
+            {
+                id: 17,
+                question: "主動脈瓣逆流對 AS 最大流速測量的影響為？",
+                options: [
+                    "使流速偏高",
+                    "使流速偏低",
+                    "無直接影響",
+                    "無法測量"
+                ],
+                correct: 2,
+                explanation: "AS 順行血流發生在收縮期，AR 逆流發生在舒張期，兩者在時間上分離。因此 AR 不直接影響收縮期最大流速的測量，但嚴重 AR 可能間接影響血行動力學。"
+            },
+            {
+                id: 18,
+                question: "在病人吸氣末期測量 AS 流速會造成什麼影響？",
+                options: [
+                    "流速偏高",
+                    "流速偏低",
+                    "無影響",
+                    "無法測量"
+                ],
+                correct: 1,
+                explanation: "吸氣時右心回流增加但左心輸出暫時減少（肺血管容量增加）。建議在呼氣末期或短暫屏氣時測量，或取多個心動週期平均值。"
+            },
+            {
+                id: 19,
+                question: "重度 AS 的瓣膜面積 (AVA) 標準為？",
+                options: [
+                    "< 1.5 cm²",
+                    "< 1.2 cm²",
+                    "< 1.0 cm²",
+                    "< 0.8 cm²"
+                ],
+                correct: 2,
+                explanation: "重度 AS 標準：AVA < 1.0 cm²（或 AVAi < 0.6 cm²/m²）。正常主動脈瓣面積約 3-4 cm²，< 1.0 cm² 代表嚴重狹窄。"
+            },
+            {
+                id: 20,
+                question: "LVOT 直徑測量誤差 1 mm 對 AVA 計算的影響約為？",
+                options: [
+                    "5%",
+                    "10%",
+                    "20%",
+                    "30%"
+                ],
+                correct: 1,
+                explanation: "LVOT 面積 = π × (D/2)²，直徑是平方關係。1 mm 的測量誤差會導致 AVA 計算約 10% 的誤差。因此 LVOT 直徑測量是連續性方程式中最關鍵也最容易產生誤差的步驟。"
+            }
+        ];
+
+        // Styles
+        const styles = `
+            .app-container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 16px;
+                padding-bottom: 100px;
+            }
+
+            .back-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                color: #94a3b8;
+                text-decoration: none;
+                font-size: 0.9rem;
+                margin-bottom: 16px;
+                transition: color 0.2s;
+            }
+
+            .back-link:hover {
+                color: #06b6d4;
+            }
+
+            .header {
+                text-align: center;
+                padding: 30px 20px;
+                margin-bottom: 24px;
+            }
+
+            .header-icon {
+                font-size: 3.5rem;
+                margin-bottom: 12px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+                font-weight: 700;
+                margin-bottom: 8px;
+                background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .header p {
+                color: #94a3b8;
+                font-size: 0.9rem;
+            }
+
+            .tabs {
+                display: flex;
+                background: #1e293b;
+                border-radius: 12px;
+                padding: 4px;
+                margin-bottom: 24px;
+                border: 1px solid #334155;
+            }
+
+            .tab {
+                flex: 1;
+                padding: 12px;
+                border: none;
+                background: transparent;
+                color: #94a3b8;
+                font-size: 0.9rem;
+                font-weight: 500;
+                cursor: pointer;
+                border-radius: 8px;
+                transition: all 0.2s;
+            }
+
+            .tab.active {
+                background: #3b82f6;
+                color: white;
+            }
+
+            .tab:hover:not(.active) {
+                background: #273549;
+            }
+
+            .section-card {
+                background: #1e293b;
+                border: 1px solid #334155;
+                border-radius: 16px;
+                margin-bottom: 16px;
+                overflow: hidden;
+            }
+
+            .section-header {
+                padding: 16px 20px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                cursor: pointer;
+                transition: background 0.2s;
+            }
+
+            .section-header:hover {
+                background: #273549;
+            }
+
+            .section-icon {
+                font-size: 1.5rem;
+            }
+
+            .section-title {
+                flex: 1;
+                font-size: 1rem;
+                font-weight: 600;
+            }
+
+            .expand-icon {
+                color: #64748b;
+                transition: transform 0.3s;
+            }
+
+            .expand-icon.expanded {
+                transform: rotate(180deg);
+            }
+
+            .section-content {
+                padding: 0 20px 20px;
+                border-top: 1px solid #334155;
+            }
+
+            .content-block {
+                margin-top: 16px;
+            }
+
+            .content-subtitle {
+                font-size: 0.95rem;
+                font-weight: 600;
+                color: #06b6d4;
+                margin-bottom: 8px;
+            }
+
+            .content-text {
+                font-size: 0.9rem;
+                color: #cbd5e1;
+                line-height: 1.7;
+                white-space: pre-line;
+            }
+
+            .key-points {
+                margin-top: 16px;
+                padding: 16px;
+                background: rgba(59, 130, 246, 0.1);
+                border: 1px solid rgba(59, 130, 246, 0.2);
+                border-radius: 12px;
+            }
+
+            .key-points-title {
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: #3b82f6;
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .key-point-item {
+                font-size: 0.85rem;
+                color: #94a3b8;
+                padding: 4px 0;
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .key-point-item::before {
+                content: "✓";
+                color: #10b981;
+                font-weight: bold;
+            }
+
+            .criteria-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 12px;
+                font-size: 0.85rem;
+            }
+
+            .criteria-table th {
+                background: #0f172a;
+                padding: 10px 8px;
+                text-align: center;
+                font-weight: 600;
+                color: #f1f5f9;
+                border: 1px solid #334155;
+            }
+
+            .criteria-table td {
+                padding: 10px 8px;
+                text-align: center;
+                border: 1px solid #334155;
+                color: #cbd5e1;
+            }
+
+            .criteria-table tr:nth-child(even) {
+                background: rgba(15, 23, 42, 0.5);
+            }
+
+            /* Quiz Styles */
+            .quiz-container {
+                background: #1e293b;
+                border: 1px solid #334155;
+                border-radius: 16px;
+                padding: 24px;
+                margin-bottom: 16px;
+            }
+
+            .quiz-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+
+            .quiz-progress {
+                font-size: 0.85rem;
+                color: #94a3b8;
+            }
+
+            .quiz-question {
+                font-size: 1rem;
+                font-weight: 500;
+                color: #f1f5f9;
+                margin-bottom: 20px;
+                line-height: 1.6;
+            }
+
+            .quiz-options {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .quiz-option {
+                padding: 14px 16px;
+                background: #0f172a;
+                border: 1px solid #334155;
+                border-radius: 10px;
+                cursor: pointer;
+                transition: all 0.2s;
+                font-size: 0.9rem;
+                color: #f1f5f9;
+                text-align: left;
+            }
+
+            .quiz-option:hover:not(.disabled) {
+                border-color: #3b82f6;
+                background: rgba(59, 130, 246, 0.1);
+            }
+
+            .quiz-option.selected {
+                border-color: #3b82f6;
+                background: rgba(59, 130, 246, 0.15);
+            }
+
+            .quiz-option.correct {
+                border-color: #10b981;
+                background: rgba(16, 185, 129, 0.15);
+            }
+
+            .quiz-option.incorrect {
+                border-color: #ef4444;
+                background: rgba(239, 68, 68, 0.15);
+            }
+
+            .quiz-option.disabled {
+                pointer-events: none;
+            }
+
+            .quiz-explanation {
+                margin-top: 20px;
+                padding: 16px;
+                background: rgba(6, 182, 212, 0.1);
+                border: 1px solid rgba(6, 182, 212, 0.2);
+                border-radius: 12px;
+            }
+
+            .quiz-explanation-title {
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: #06b6d4;
+                margin-bottom: 8px;
+            }
+
+            .quiz-explanation-text {
+                font-size: 0.85rem;
+                color: #94a3b8;
+                line-height: 1.6;
+            }
+
+            .quiz-btn {
+                width: 100%;
+                padding: 14px;
+                border: none;
+                border-radius: 10px;
+                font-size: 0.95rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+                margin-top: 16px;
+            }
+
+            .quiz-btn.primary {
+                background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+                color: white;
+            }
+
+            .quiz-btn.primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            }
+
+            .quiz-btn:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+            /* Result */
+            .result-container {
+                text-align: center;
+                padding: 40px 20px;
+            }
+
+            .result-icon {
+                font-size: 4rem;
+                margin-bottom: 16px;
+            }
+
+            .result-title {
+                font-size: 1.5rem;
+                font-weight: 700;
+                margin-bottom: 8px;
+            }
+
+            .result-score {
+                font-size: 3rem;
+                font-weight: 700;
+                background: linear-gradient(135deg, #06b6d4, #3b82f6);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin-bottom: 8px;
+            }
+
+            .result-message {
+                color: #94a3b8;
+                margin-bottom: 24px;
+            }
+
+            .result-details {
+                display: flex;
+                justify-content: center;
+                gap: 24px;
+                margin-bottom: 24px;
+            }
+
+            .result-stat {
+                text-align: center;
+            }
+
+            .result-stat-value {
+                font-size: 1.5rem;
+                font-weight: 700;
+            }
+
+            .result-stat-value.correct {
+                color: #10b981;
+            }
+
+            .result-stat-value.incorrect {
+                color: #ef4444;
+            }
+
+            .result-stat-label {
+                font-size: 0.8rem;
+                color: #64748b;
+            }
+
+            /* Progress Bar */
+            .progress-container {
+                background: #1e293b;
+                border: 1px solid #334155;
+                border-radius: 12px;
+                padding: 16px 20px;
+                margin-bottom: 24px;
+            }
+
+            .progress-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 10px;
+            }
+
+            .progress-title {
+                font-size: 0.9rem;
+                color: #f1f5f9;
+            }
+
+            .progress-percentage {
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: #06b6d4;
+            }
+
+            .progress-bar {
+                height: 8px;
+                background: #0f172a;
+                border-radius: 4px;
+                overflow: hidden;
+            }
+
+            .progress-fill {
+                height: 100%;
+                background: linear-gradient(90deg, #06b6d4, #3b82f6);
+                border-radius: 4px;
+                transition: width 0.3s;
+            }
+
+            .footer {
+                text-align: center;
+                padding: 20px;
+                color: #64748b;
+                font-size: 0.8rem;
+                border-top: 1px solid #334155;
+                margin-top: 40px;
+            }
+        `;
+
+        // Teaching Section Component
+        const TeachingSection = ({ data, isOpen, onToggle }) => (
+            <div className="section-card fade-in">
+                <div className="section-header" onClick={onToggle}>
+                    <span className="section-icon">{data.icon}</span>
+                    <span className="section-title">{data.title}</span>
+                    <span className={`expand-icon ${isOpen ? 'expanded' : ''}`}>▼</span>
+                </div>
+                {isOpen && (
+                    <div className="section-content">
+                        {data.content.map((block, idx) => (
+                            <div key={idx} className="content-block">
+                                <div className="content-subtitle">{block.subtitle}</div>
+                                <div className="content-text">{block.text}</div>
+                            </div>
+                        ))}
+                        {data.table && (
+                            <table className="criteria-table">
+                                <thead>
+                                    <tr>
+                                        {data.table.headers.map((h, i) => <th key={i}>{h}</th>)}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {data.table.rows.map((row, i) => (
+                                        <tr key={i}>
+                                            {row.map((cell, j) => <td key={j}>{cell}</td>)}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+                        <div className="key-points">
+                            <div className="key-points-title">💡 重點整理</div>
+                            {data.keyPoints.map((point, idx) => (
+                                <div key={idx} className="key-point-item">{point}</div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+
+        // Quiz Component
+        const Quiz = ({ onComplete }) => {
+            const [currentQ, setCurrentQ] = useState(0);
+            const [selected, setSelected] = useState(null);
+            const [showExplanation, setShowExplanation] = useState(false);
+            const [score, setScore] = useState(0);
+            const [finished, setFinished] = useState(false);
+            const [answers, setAnswers] = useState([]);
+
+            const handleSelect = (idx) => {
+                if (showExplanation) return;
+                setSelected(idx);
+                setShowExplanation(true);
+                const isCorrect = idx === quizQuestions[currentQ].correct;
+                if (isCorrect) setScore(s => s + 1);
+                setAnswers([...answers, { q: currentQ, selected: idx, correct: isCorrect }]);
+            };
+
+            const handleNext = () => {
+                if (currentQ < quizQuestions.length - 1) {
+                    setCurrentQ(currentQ + 1);
+                    setSelected(null);
+                    setShowExplanation(false);
+                } else {
+                    setFinished(true);
+                    const finalScore = Math.round((score / quizQuestions.length) * 100);
+                    localStorage.setItem('exam-echo-as-score', finalScore);
+                    onComplete(finalScore);
+                }
+            };
+
+            const handleRestart = () => {
+                setCurrentQ(0);
+                setSelected(null);
+                setShowExplanation(false);
+                setScore(0);
+                setFinished(false);
+                setAnswers([]);
+            };
+
+            if (finished) {
+                const percentage = Math.round((score / quizQuestions.length) * 100);
+                let icon, message;
+                if (percentage >= 80) {
+                    icon = "🎉"; message = "太棒了！你對 AS 超音波評估有很好的掌握！";
+                } else if (percentage >= 60) {
+                    icon = "👍"; message = "不錯！建議複習一些重點內容。";
+                } else {
+                    icon = "📚"; message = "建議重新閱讀教學內容，加強學習！";
+                }
+
+                return (
+                    <div className="quiz-container">
+                        <div className="result-container">
+                            <div className="result-icon">{icon}</div>
+                            <div className="result-title">測驗完成！</div>
+                            <div className="result-score">{percentage}%</div>
+                            <div className="result-message">{message}</div>
+                            <div className="result-details">
+                                <div className="result-stat">
+                                    <div className="result-stat-value correct">{score}</div>
+                                    <div className="result-stat-label">答對</div>
+                                </div>
+                                <div className="result-stat">
+                                    <div className="result-stat-value incorrect">{quizQuestions.length - score}</div>
+                                    <div className="result-stat-label">答錯</div>
+                                </div>
+                            </div>
+                            <button className="quiz-btn primary" onClick={handleRestart}>
+                                重新測驗
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            const q = quizQuestions[currentQ];
+            const progress = Math.round(((currentQ + 1) / quizQuestions.length) * 100);
+
+            return (
+                <div>
+                    <div className="progress-container">
+                        <div className="progress-header">
+                            <span className="progress-title">測驗進度</span>
+                            <span className="progress-percentage">{currentQ + 1} / {quizQuestions.length}</span>
+                        </div>
+                        <div className="progress-bar">
+                            <div className="progress-fill" style={{ width: `${progress}%` }}></div>
+                        </div>
+                    </div>
+
+                    <div className="quiz-container fade-in">
+                        <div className="quiz-header">
+                            <span className="quiz-progress">第 {currentQ + 1} 題</span>
+                            <span className="quiz-progress">目前得分：{score}</span>
+                        </div>
+                        <div className="quiz-question">{q.question}</div>
+                        <div className="quiz-options">
+                            {q.options.map((opt, idx) => {
+                                let className = "quiz-option";
+                                if (showExplanation) {
+                                    className += " disabled";
+                                    if (idx === q.correct) className += " correct";
+                                    else if (idx === selected) className += " incorrect";
+                                } else if (idx === selected) {
+                                    className += " selected";
+                                }
+                                return (
+                                    <button key={idx} className={className} onClick={() => handleSelect(idx)}>
+                                        {String.fromCharCode(65 + idx)}. {opt}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        {showExplanation && (
+                            <div className="quiz-explanation">
+                                <div className="quiz-explanation-title">💡 解析</div>
+                                <div className="quiz-explanation-text">{q.explanation}</div>
+                            </div>
+                        )}
+                        {showExplanation && (
+                            <button className="quiz-btn primary" onClick={handleNext}>
+                                {currentQ < quizQuestions.length - 1 ? '下一題' : '完成測驗'}
+                            </button>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // Main App
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('teaching');
+            const [openSections, setOpenSections] = useState({ 0: true });
+            const [quizScore, setQuizScore] = useState(null);
+
+            useEffect(() => {
+                const saved = localStorage.getItem('exam-echo-as-score');
+                if (saved) setQuizScore(parseInt(saved));
+            }, []);
+
+            const toggleSection = (idx) => {
+                setOpenSections(prev => ({ ...prev, [idx]: !prev[idx] }));
+            };
+
+            return (
+                <div className="app-container">
+                    <style>{styles}</style>
+                    
+                    <a href="exam.html" className="back-link">← 返回訓練中心</a>
+
+                    <header className="header">
+                        <div className="header-icon">🫀</div>
+                        <h1>主動脈瓣狹窄超音波評估</h1>
+                        <p>Aortic Stenosis Echo Assessment</p>
+                    </header>
+
+                    <div className="tabs">
+                        <button 
+                            className={`tab ${activeTab === 'teaching' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('teaching')}
+                        >
+                            📚 教學內容
+                        </button>
+                        <button 
+                            className={`tab ${activeTab === 'quiz' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('quiz')}
+                        >
+                            ✍️ 測驗 ({quizScore !== null ? `${quizScore}%` : '未完成'})
+                        </button>
+                    </div>
+
+                    {activeTab === 'teaching' && (
+                        <div className="fade-in">
+                            {teachingContent.map((section, idx) => (
+                                <TeachingSection
+                                    key={idx}
+                                    data={section}
+                                    isOpen={openSections[idx] || false}
+                                    onToggle={() => toggleSection(idx)}
+                                />
+                            ))}
+                        </div>
+                    )}
+
+                    {activeTab === 'quiz' && (
+                        <Quiz onComplete={setQuizScore} />
+                    )}
+
+                    <footer className="footer">
+                        <p>心血管中心教育訓練 | 主動脈瓣狹窄超音波評估</p>
+                        <p>台大醫院新竹分院 | 2025</p>
+                    </footer>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
