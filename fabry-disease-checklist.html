@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fabry Disease 診斷查檢表 | FD Diagnostic Checklist</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --bg-dark: #0a0f1a;
+            --bg-card: #141b2d;
+            --bg-card-alt: #1a2340;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-yellow: #fbbf24;
+            --accent-orange: #f97316;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #1e293b;
+        }
+        body {
+            font-family: 'Noto Sans TC', 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0f1a 0%, #1a1033 50%, #0a0f1a 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        #root { min-height: 100vh; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.3s ease-out; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // 教學內容
+        const teachingContent = [
+            {
+                title: "Fabry Disease 概述",
+                icon: "🧬",
+                content: [
+                    { subtitle: "疾病定義", text: "Fabry disease (FD) 是 X 染色體連鎖遺傳的溶酶體儲積症，因 α-galactosidase A (α-GAL A) 酵素缺乏，導致 globotriaosylceramide (Gb3) 在多重器官累積。" },
+                    { subtitle: "台灣盛行率", text: "台灣新生兒篩檢顯示盛行率約 1:1600 男性。IVS4+919G>A 突變佔台灣確診病例的 82-86%，為晚發型心臟亞型的主要突變。" }
+                ],
+                keyPoints: ["X-linked 遺傳：男性較嚴重，女性表現異質性", "Classic type：多系統侵犯，兒童/青少年發病", "Late-onset (cardiac variant)：以心臟侵犯為主，40歲後發病", "台灣以 IVS4+919G>A 晚發型為主"]
+            },
+            {
+                title: "何時該懷疑 Fabry Disease？",
+                icon: "🚨",
+                content: [
+                    { subtitle: "不明原因左心室肥厚 (LVH)", text: "男性 > 30 歲、女性 > 40 歲，壁厚 ≥ 13 mm，排除高血壓、主動脈瓣狹窄等次發性原因。" },
+                    { subtitle: "心臟紅旗徵兆", text: "• Short PR interval (< 120 ms)\n• 心律不整（心房顫動、傳導阻滯）\n• Concentric LVH with normal/preserved EF\n• 心臟 MRI：Low T1 value、Basal inferolateral LGE" },
+                    { subtitle: "心臟外紅旗徵兆 (Classic type)", text: "• 周邊神經病變（肢端感覺異常）\n• 角膜渦旋 (Cornea verticillata)\n• 血管角皮瘤 (Angiokeratoma)\n• 汗腺功能異常\n• 年輕型中風 (< 55 歲)\n• 蛋白尿/腎功能下降" }
+                ],
+                keyPoints: ["不明原因 LVH 是最常見的心臟表現", "男性 > 30 歲、女性 > 40 歲出現 LVH 應篩檢", "台灣晚發型通常無明顯心臟外症狀", "同時有多系統症狀更應高度懷疑"]
+            },
+            {
+                title: "診斷流程與檢驗判讀",
+                icon: "🔬",
+                content: [
+                    { subtitle: "篩檢策略", text: "男性：先測 α-GAL A 酵素活性\n女性：先測 Lyso-Gb3（酵素活性可能正常）\n兩性皆需 GLA 基因定序確認" },
+                    { subtitle: "α-GAL A 酵素活性判讀", text: "• 正常：> 3.0 nmol/hr/mL（依實驗室而異）\n• 降低/缺乏：高度懷疑 FD\n• 注意：女性可能因 X 染色體隨機去活化而正常" },
+                    { subtitle: "Lyso-Gb3 判讀", text: "• 正常：< 1.8 ng/mL（依實驗室而異）\n• 升高：支持 FD 診斷\n• 用途：診斷、疾病活性監測、治療效果追蹤\n• 女性首選篩檢工具" },
+                    { subtitle: "基因定序結果判讀", text: "• 致病性突變 (Pathogenic)：確診 FD\n• 可能致病 (Likely pathogenic)：高度懷疑\n• 意義不明 (VUS)：需結合臨床判斷\n• 良性變異 (Benign)：排除 FD" }
+                ],
+                keyPoints: ["男性：酵素活性 → Lyso-Gb3 → 基因定序", "女性：Lyso-Gb3 → 基因定序（酵素可能偽陰性）", "IVS4+919G>A 是台灣最常見致病突變", "VUS 需結合心肌切片或 Lyso-Gb3 評估"]
+            },
+            {
+                title: "心臟分期與預後評估",
+                icon: "📊",
+                content: [
+                    { subtitle: "Stage 0：Non-hypertrophic", text: "無 LVH，可能有輕微心悸、胸痛。\nECG 可能有 PR 縮短。\n部分病人可能有 LGE 但無 LVH。" },
+                    { subtitle: "Stage I：Hypertrophic-pre-fibrotic", text: "IA：輕度 LVH (12-15 mm)\nIB：明顯 LVH (> 15 mm)\n無 LGE，收縮功能正常。\nBiomarker：Troponin 開始升高。" },
+                    { subtitle: "Stage II：Hypertrophic-fibrotic", text: "LVH 合併 LGE（典型在 basal inferolateral）\n心律不整風險增加\n心房顫動、中風風險高" },
+                    { subtitle: "Stage III：Overt dysfunction", text: "廣泛纖維化（> 3 segments 或 ≥ 15% LV mass）\nLVEF < 50% 或嚴重舒張功能不全\n心衰竭症狀明顯" }
+                ],
+                keyPoints: ["早期治療效果較佳（Stage 0-I）", "Stage II 後治療效果有限", "LGE 出現後心律不整風險顯著增加", "分期決定治療時機與預期效果"]
+            },
+            {
+                title: "治療選擇",
+                icon: "💊",
+                content: [
+                    { subtitle: "酵素替代療法 (ERT)", text: "• Agalsidase alfa (Replagal)：0.2 mg/kg Q2W IV\n• Agalsidase beta (Fabrazyme)：1.0 mg/kg Q2W IV\n• 適用於所有確診病人" },
+                    { subtitle: "口服伴護療法 (Chaperone)", text: "• Migalastat (Galafold)：123 mg QOD\n• 僅適用於 amenable 突變\n• IVS4+919G>A 不適用 migalastat" },
+                    { subtitle: "治療目標", text: "• Lyso-Gb3 下降或穩定\n• LVMI 穩定或改善\n• 腎功能穩定\n• 症狀改善、生活品質提升" }
+                ],
+                keyPoints: ["ERT 是主要治療方式", "台灣 IVS4 突變不適用 migalastat", "早期治療可逆轉 LVH", "晚期（Stage II-III）治療效果有限"]
+            }
+        ];
+
+        // 心臟紅旗徵兆
+        const cardiacRedFlags = [
+            { id: 'lvh', label: '不明原因 LVH（壁厚 ≥ 13 mm）', category: 'echo', weight: 3 },
+            { id: 'shortPR', label: 'Short PR interval (< 120 ms)', category: 'ecg', weight: 2 },
+            { id: 'bradycardia', label: '竇性心搏過緩', category: 'ecg', weight: 1 },
+            { id: 'avblock', label: '房室傳導阻滯', category: 'ecg', weight: 2 },
+            { id: 'chronotropic', label: '變時功能不全 (Chronotropic incompetence)', category: 'ecg', weight: 1 },
+            { id: 'concentricLVH', label: 'Concentric LVH（非不對稱型）', category: 'echo', weight: 2 },
+            { id: 'reducedGLS', label: 'GLS 下降（尤其 basal inferolateral）', category: 'echo', weight: 2 },
+            { id: 'aorticDilation', label: '輕中度主動脈根部擴張', category: 'echo', weight: 1 },
+            { id: 'valveThickening', label: '二尖瓣/主動脈瓣增厚伴輕度逆流', category: 'echo', weight: 1 },
+            { id: 'papillaryHypertrophy', label: '乳頭肌肥厚', category: 'cmr', weight: 2 },
+            { id: 'lowT1', label: 'CMR: Low native T1 value', category: 'cmr', weight: 3 },
+            { id: 'basalLGE', label: 'CMR: Basal inferolateral LGE', category: 'cmr', weight: 2 }
+        ];
+
+        // 心臟外紅旗徵兆
+        const extraCardiacRedFlags = [
+            { id: 'neuropathicPain', label: '神經性疼痛（手足灼熱感）', decade: '1-2', weight: 2 },
+            { id: 'giSymptoms', label: '腸胃道症狀（腹痛、腹瀉）', decade: '1-2', weight: 1 },
+            { id: 'angiokeratoma', label: '血管角皮瘤 (Angiokeratoma)', decade: '1-2', weight: 2 },
+            { id: 'cornea', label: '角膜渦旋 (Cornea verticillata)', decade: '1-2', weight: 2 },
+            { id: 'hypohidrosis', label: '無汗/少汗症', decade: '1-2', weight: 1 },
+            { id: 'heatIntolerance', label: '熱/運動不耐受', decade: '1-2', weight: 1 },
+            { id: 'albuminuria', label: '蛋白尿', decade: '3-4', weight: 2 },
+            { id: 'renalFailure', label: '腎功能下降', decade: '3-4', weight: 2 },
+            { id: 'youngStroke', label: '年輕型中風/TIA (< 55 歲)', decade: '3-4', weight: 3 },
+            { id: 'hearingLoss', label: '聽力喪失', decade: '3-4', weight: 1 },
+            { id: 'whiteMatters', label: 'Brain MRI: 白質病變', decade: '3-4', weight: 2 },
+            { id: 'lymphedema', label: '下肢淋巴水腫', decade: '3-4', weight: 1 }
+        ];
+
+        // 家族史
+        const familyHistory = [
+            { id: 'famLVH', label: '家族史：不明原因 LVH', weight: 2 },
+            { id: 'famRenal', label: '家族史：腎衰竭/透析', weight: 2 },
+            { id: 'famStroke', label: '家族史：年輕中風', weight: 2 },
+            { id: 'famMale', label: '家族男性成員傳遞（母系遺傳）', weight: 3 }
+        ];
+
+        const styles = `
+            .app-container { max-width: 900px; margin: 0 auto; padding: 16px 16px 100px; }
+            .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; margin-bottom: 16px; }
+            .back-link:hover { color: var(--accent-purple); }
+            .header { text-align: center; padding: 30px 20px; margin-bottom: 20px; }
+            .header-icon { font-size: 3.5rem; margin-bottom: 12px; }
+            .header h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 8px; background: linear-gradient(135deg, #8b5cf6, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+            .header p { color: var(--text-secondary); font-size: 0.9rem; }
+            
+            .nav-tabs { display: flex; background: var(--bg-card); border-radius: 12px; padding: 4px; margin-bottom: 20px; border: 1px solid var(--border); overflow-x: auto; }
+            .nav-tab { flex: 1; min-width: 80px; padding: 10px 8px; border: none; background: transparent; color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; cursor: pointer; border-radius: 8px; transition: all 0.2s; white-space: nowrap; }
+            .nav-tab.active { background: var(--accent-purple); color: white; }
+            .nav-tab:hover:not(.active) { background: var(--bg-card-alt); }
+            
+            .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 16px; overflow: hidden; }
+            .card-header { padding: 16px 20px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.2s; }
+            .card-header:hover { background: var(--bg-card-alt); }
+            .card-icon { font-size: 1.5rem; }
+            .card-title { flex: 1; font-size: 1rem; font-weight: 600; }
+            .card-badge { padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+            .card-badge.warning { background: rgba(251, 191, 36, 0.15); color: var(--accent-yellow); }
+            .card-badge.danger { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+            .card-badge.success { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+            .expand-icon { color: var(--text-muted); transition: transform 0.3s; }
+            .expand-icon.expanded { transform: rotate(180deg); }
+            
+            .card-content { padding: 0 20px 20px; border-top: 1px solid var(--border); }
+            .content-block { margin-top: 16px; }
+            .content-subtitle { font-size: 0.95rem; font-weight: 600; color: var(--accent-cyan); margin-bottom: 8px; }
+            .content-text { font-size: 0.9rem; color: #cbd5e1; line-height: 1.7; white-space: pre-line; }
+            
+            .key-points { margin-top: 16px; padding: 16px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 12px; }
+            .key-points-title { font-size: 0.85rem; font-weight: 600; color: var(--accent-purple); margin-bottom: 10px; }
+            .key-point-item { font-size: 0.85rem; color: var(--text-secondary); padding: 4px 0; display: flex; align-items: flex-start; gap: 8px; }
+            .key-point-item::before { content: "✓"; color: var(--accent-green); font-weight: bold; }
+            
+            .checklist-section { margin-bottom: 20px; }
+            .section-title { font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+            .section-subtitle { font-size: 0.8rem; color: var(--text-muted); margin-left: auto; }
+            
+            .checklist-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+            .checklist-item:hover { border-color: var(--accent-purple); }
+            .checklist-item.checked { background: rgba(139, 92, 246, 0.1); border-color: var(--accent-purple); }
+            .checkbox { width: 22px; height: 22px; border: 2px solid var(--border); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+            .checklist-item.checked .checkbox { background: var(--accent-purple); border-color: var(--accent-purple); }
+            .checkbox-check { color: white; font-size: 14px; opacity: 0; transition: opacity 0.2s; }
+            .checklist-item.checked .checkbox-check { opacity: 1; }
+            .item-content { flex: 1; }
+            .item-label { font-size: 0.9rem; color: var(--text-primary); }
+            .item-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+            
+            .risk-score { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 20px; text-align: center; }
+            .risk-score-title { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 8px; }
+            .risk-score-value { font-size: 3rem; font-weight: 700; margin-bottom: 8px; }
+            .risk-score-value.low { color: var(--accent-green); }
+            .risk-score-value.medium { color: var(--accent-yellow); }
+            .risk-score-value.high { color: var(--accent-orange); }
+            .risk-score-value.very-high { color: var(--accent-red); }
+            .risk-level { font-size: 1rem; font-weight: 600; margin-bottom: 16px; }
+            .risk-recommendation { font-size: 0.85rem; color: var(--text-secondary); text-align: left; padding: 16px; background: var(--bg-card-alt); border-radius: 12px; }
+            
+            .result-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+            .result-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+            .result-icon { font-size: 2rem; }
+            .result-title { font-size: 1.1rem; font-weight: 600; }
+            .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+            .result-item { padding: 12px; background: var(--bg-card-alt); border-radius: 10px; }
+            .result-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
+            .result-value { font-size: 0.9rem; font-weight: 600; }
+            .result-value.normal { color: var(--accent-green); }
+            .result-value.abnormal { color: var(--accent-red); }
+            .result-value.borderline { color: var(--accent-yellow); }
+            
+            .interpretation-box { padding: 16px; border-radius: 12px; margin-top: 16px; }
+            .interpretation-box.positive { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); }
+            .interpretation-box.negative { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); }
+            .interpretation-box.uncertain { background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.3); }
+            .interpretation-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; }
+            .interpretation-text { font-size: 0.85rem; color: var(--text-secondary); }
+            
+            .flowchart { padding: 20px; }
+            .flow-step { display: flex; gap: 16px; margin-bottom: 20px; }
+            .flow-indicator { display: flex; flex-direction: column; align-items: center; }
+            .flow-number { width: 32px; height: 32px; border-radius: 50%; background: var(--accent-purple); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 600; }
+            .flow-line { width: 2px; flex: 1; background: var(--border); margin-top: 8px; }
+            .flow-content { flex: 1; padding-top: 4px; }
+            .flow-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+            .flow-desc { font-size: 0.85rem; color: var(--text-secondary); }
+            .flow-branch { margin-top: 12px; padding: 12px; background: var(--bg-card-alt); border-radius: 10px; }
+            .flow-branch-item { font-size: 0.8rem; color: var(--text-secondary); padding: 4px 0; }
+            
+            .staging-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+            .staging-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+            .staging-badge { padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; }
+            .staging-badge.stage0 { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+            .staging-badge.stage1 { background: rgba(6, 182, 212, 0.2); color: var(--accent-cyan); }
+            .staging-badge.stage2 { background: rgba(251, 191, 36, 0.2); color: var(--accent-yellow); }
+            .staging-badge.stage3 { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+            .staging-title { font-size: 0.95rem; font-weight: 600; }
+            .staging-features { font-size: 0.85rem; color: var(--text-secondary); }
+            .staging-features li { margin-bottom: 4px; }
+            
+            .input-group { margin-bottom: 16px; }
+            .input-label { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 8px; display: block; }
+            .input-field { width: 100%; padding: 12px 16px; background: var(--bg-card-alt); border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); font-size: 0.9rem; }
+            .input-field:focus { outline: none; border-color: var(--accent-purple); }
+            .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+            
+            .btn { padding: 14px 24px; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+            .btn-primary { background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink)); color: white; }
+            .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3); }
+            .btn-secondary { background: var(--bg-card-alt); color: var(--text-primary); border: 1px solid var(--border); }
+            .btn-block { width: 100%; }
+            
+            .table-container { overflow-x: auto; }
+            .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+            .data-table th { background: var(--bg-card-alt); padding: 12px; text-align: left; font-weight: 600; border-bottom: 1px solid var(--border); }
+            .data-table td { padding: 12px; border-bottom: 1px solid var(--border); }
+            .data-table tr:last-child td { border-bottom: none; }
+            
+            .footer { text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.8rem; border-top: 1px solid var(--border); margin-top: 40px; }
+            
+            @media (max-width: 600px) {
+                .result-grid { grid-template-columns: 1fr; }
+                .input-row { grid-template-columns: 1fr; }
+                .nav-tab { font-size: 0.75rem; padding: 8px 6px; }
+            }
+        `;
+
+        // 教學區塊組件
+        const TeachingSection = ({ data, isOpen, onToggle }) => (
+            <div className="card fade-in">
+                <div className="card-header" onClick={onToggle}>
+                    <span className="card-icon">{data.icon}</span>
+                    <span className="card-title">{data.title}</span>
+                    <span className={`expand-icon ${isOpen ? 'expanded' : ''}`}>▼</span>
+                </div>
+                {isOpen && (
+                    <div className="card-content">
+                        {data.content.map((block, idx) => (
+                            <div key={idx} className="content-block">
+                                <div className="content-subtitle">{block.subtitle}</div>
+                                <div className="content-text">{block.text}</div>
+                            </div>
+                        ))}
+                        <div className="key-points">
+                            <div className="key-points-title">💡 重點整理</div>
+                            {data.keyPoints.map((point, idx) => (
+                                <div key={idx} className="key-point-item">{point}</div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+
+        // 查檢表組件
+        const ChecklistTab = () => {
+            const [cardiacFlags, setCardiacFlags] = useState({});
+            const [extraFlags, setExtraFlags] = useState({});
+            const [familyFlags, setFamilyFlags] = useState({});
+            const [patientInfo, setPatientInfo] = useState({ age: '', sex: 'male' });
+
+            const toggleCardiac = (id) => setCardiacFlags(p => ({ ...p, [id]: !p[id] }));
+            const toggleExtra = (id) => setExtraFlags(p => ({ ...p, [id]: !p[id] }));
+            const toggleFamily = (id) => setFamilyFlags(p => ({ ...p, [id]: !p[id] }));
+
+            const cardiacScore = cardiacRedFlags.reduce((sum, f) => sum + (cardiacFlags[f.id] ? f.weight : 0), 0);
+            const extraScore = extraCardiacRedFlags.reduce((sum, f) => sum + (extraFlags[f.id] ? f.weight : 0), 0);
+            const familyScore = familyHistory.reduce((sum, f) => sum + (familyFlags[f.id] ? f.weight : 0), 0);
+            const totalScore = cardiacScore + extraScore + familyScore;
+
+            const getRiskLevel = () => {
+                if (totalScore >= 10) return { level: 'very-high', text: '極高風險', color: 'var(--accent-red)' };
+                if (totalScore >= 6) return { level: 'high', text: '高風險', color: 'var(--accent-orange)' };
+                if (totalScore >= 3) return { level: 'medium', text: '中等風險', color: 'var(--accent-yellow)' };
+                return { level: 'low', text: '低風險', color: 'var(--accent-green)' };
+            };
+
+            const risk = getRiskLevel();
+
+            const getRecommendation = () => {
+                if (totalScore >= 6) {
+                    return "強烈建議進行 Fabry disease 篩檢：\n• 男性：α-GAL A 酵素活性 + Lyso-Gb3 + GLA 基因定序\n• 女性：Lyso-Gb3 + GLA 基因定序（酵素活性可能偽陰性）\n• 安排心臟 MRI 評估 T1 mapping 和 LGE";
+                }
+                if (totalScore >= 3) {
+                    return "建議考慮 Fabry disease 篩檢：\n• 男性：可先測 α-GAL A 酵素活性\n• 女性：建議直接測 Lyso-Gb3\n• 如有不明原因 LVH，建議安排心臟 MRI";
+                }
+                return "目前臨床懷疑度較低，但如有不明原因 LVH，仍應考慮 Fabry disease 可能性。\n建議持續追蹤臨床表現。";
+            };
+
+            return (
+                <div className="fade-in">
+                    {/* 病人基本資料 */}
+                    <div className="card" style={{ marginBottom: 20 }}>
+                        <div className="card-content" style={{ paddingTop: 20 }}>
+                            <div className="section-title">👤 病人資料</div>
+                            <div className="input-row">
+                                <div className="input-group">
+                                    <label className="input-label">年齡</label>
+                                    <input type="number" className="input-field" placeholder="歲" value={patientInfo.age} onChange={e => setPatientInfo(p => ({ ...p, age: e.target.value }))} />
+                                </div>
+                                <div className="input-group">
+                                    <label className="input-label">性別</label>
+                                    <select className="input-field" value={patientInfo.sex} onChange={e => setPatientInfo(p => ({ ...p, sex: e.target.value }))}>
+                                        <option value="male">男性</option>
+                                        <option value="female">女性</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* 風險分數 */}
+                    <div className="risk-score">
+                        <div className="risk-score-title">Fabry Disease 臨床懷疑度評分</div>
+                        <div className={`risk-score-value ${risk.level}`}>{totalScore}</div>
+                        <div className="risk-level" style={{ color: risk.color }}>{risk.text}</div>
+                        <div className="risk-recommendation">
+                            <strong>建議：</strong><br />
+                            <span style={{ whiteSpace: 'pre-line' }}>{getRecommendation()}</span>
+                        </div>
+                    </div>
+
+                    {/* 心臟紅旗徵兆 */}
+                    <div className="checklist-section">
+                        <div className="section-title">
+                            ❤️ 心臟紅旗徵兆
+                            <span className="section-subtitle">得分：{cardiacScore}</span>
+                        </div>
+                        {cardiacRedFlags.map(flag => (
+                            <div key={flag.id} className={`checklist-item ${cardiacFlags[flag.id] ? 'checked' : ''}`} onClick={() => toggleCardiac(flag.id)}>
+                                <div className="checkbox"><span className="checkbox-check">✓</span></div>
+                                <div className="item-content">
+                                    <div className="item-label">{flag.label}</div>
+                                    <div className="item-meta">{flag.category.toUpperCase()} | 權重：{flag.weight}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* 心臟外紅旗徵兆 */}
+                    <div className="checklist-section">
+                        <div className="section-title">
+                            🔬 心臟外紅旗徵兆（Classic type 較明顯）
+                            <span className="section-subtitle">得分：{extraScore}</span>
+                        </div>
+                        {extraCardiacRedFlags.map(flag => (
+                            <div key={flag.id} className={`checklist-item ${extraFlags[flag.id] ? 'checked' : ''}`} onClick={() => toggleExtra(flag.id)}>
+                                <div className="checkbox"><span className="checkbox-check">✓</span></div>
+                                <div className="item-content">
+                                    <div className="item-label">{flag.label}</div>
+                                    <div className="item-meta">發病年齡：第 {flag.decade} 十年 | 權重：{flag.weight}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* 家族史 */}
+                    <div className="checklist-section">
+                        <div className="section-title">
+                            👨‍👩‍👧‍👦 家族史
+                            <span className="section-subtitle">得分：{familyScore}</span>
+                        </div>
+                        {familyHistory.map(flag => (
+                            <div key={flag.id} className={`checklist-item ${familyFlags[flag.id] ? 'checked' : ''}`} onClick={() => toggleFamily(flag.id)}>
+                                <div className="checkbox"><span className="checkbox-check">✓</span></div>
+                                <div className="item-content">
+                                    <div className="item-label">{flag.label}</div>
+                                    <div className="item-meta">權重：{flag.weight}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        // 檢驗判讀組件
+        const LabInterpretationTab = () => {
+            const [enzyme, setEnzyme] = useState('');
+            const [lysoGb3, setLysoGb3] = useState('');
+            const [sex, setSex] = useState('male');
+            const [glaResult, setGlaResult] = useState('');
+
+            const getEnzymeInterpretation = () => {
+                if (!enzyme) return null;
+                const val = parseFloat(enzyme);
+                if (sex === 'male') {
+                    if (val < 1.0) return { status: 'abnormal', text: '嚴重缺乏', interpretation: '高度懷疑 Fabry disease，建議進行 Lyso-Gb3 和 GLA 基因定序確認。' };
+                    if (val < 3.0) return { status: 'borderline', text: '降低', interpretation: '可能為 Fabry disease，需結合 Lyso-Gb3 和基因檢測進一步確認。' };
+                    return { status: 'normal', text: '正常', interpretation: '酵素活性正常，但不能完全排除 Fabry disease（尤其女性）。' };
+                } else {
+                    return { status: 'borderline', text: '參考價值有限', interpretation: '女性因 X 染色體隨機去活化，酵素活性可能正常。建議以 Lyso-Gb3 和基因定序為主要診斷依據。' };
+                }
+            };
+
+            const getLysoGb3Interpretation = () => {
+                if (!lysoGb3) return null;
+                const val = parseFloat(lysoGb3);
+                if (val > 10) return { status: 'abnormal', text: '明顯升高', interpretation: '強烈支持 Fabry disease 診斷。Classic type 男性通常 > 20 ng/mL。' };
+                if (val > 1.8) return { status: 'borderline', text: '輕度升高', interpretation: '支持 Fabry disease 診斷。常見於晚發型（cardiac variant）或女性患者。' };
+                return { status: 'normal', text: '正常', interpretation: 'Lyso-Gb3 正常不能完全排除 FD，需結合基因檢測。少數病人初期 Lyso-Gb3 可能正常。' };
+            };
+
+            const getGlaInterpretation = () => {
+                if (!glaResult) return null;
+                const results = {
+                    'pathogenic': { status: 'abnormal', text: '致病性突變', interpretation: '確診 Fabry disease。\n\n台灣常見致病突變：\n• IVS4+919G>A（最常見，82-86%）：晚發型心臟亞型\n• p.R112H, p.M296I：意義不明 (VUS)，需評估\n\n建議：啟動家族篩檢、心臟/腎臟/神經評估、考慮治療' },
+                    'likely_pathogenic': { status: 'borderline', text: '可能致病', interpretation: '高度懷疑 Fabry disease。建議結合 Lyso-Gb3、心肌切片等進一步確認。建議啟動追蹤。' },
+                    'vus': { status: 'borderline', text: '意義不明 (VUS)', interpretation: '無法確定致病性。建議：\n1. 評估 Lyso-Gb3 是否升高\n2. 考慮心肌切片（可見 Gb3 沉積）\n3. 家族共分離分析\n4. 定期追蹤臨床表現' },
+                    'benign': { status: 'normal', text: '良性變異', interpretation: 'Fabry disease 診斷不成立。但如臨床高度懷疑，建議：\n1. 重新評估其他 LVH 病因\n2. 考慮其他遺傳性心肌病' }
+                };
+                return results[glaResult];
+            };
+
+            const enzymeResult = getEnzymeInterpretation();
+            const lysoResult = getLysoGb3Interpretation();
+            const glaInterpret = getGlaInterpretation();
+
+            return (
+                <div className="fade-in">
+                    {/* 性別選擇 */}
+                    <div className="card" style={{ marginBottom: 20 }}>
+                        <div className="card-content" style={{ paddingTop: 20 }}>
+                            <div className="input-group">
+                                <label className="input-label">病人性別</label>
+                                <select className="input-field" value={sex} onChange={e => setSex(e.target.value)}>
+                                    <option value="male">男性</option>
+                                    <option value="female">女性</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* α-GAL A 酵素活性 */}
+                    <div className="result-card">
+                        <div className="result-header">
+                            <span className="result-icon">🧪</span>
+                            <span className="result-title">α-GAL A 酵素活性</span>
+                        </div>
+                        <div className="input-group">
+                            <label className="input-label">數值 (nmol/hr/mL)</label>
+                            <input type="number" step="0.1" className="input-field" placeholder="輸入酵素活性值" value={enzyme} onChange={e => setEnzyme(e.target.value)} />
+                        </div>
+                        {enzymeResult && (
+                            <div className={`interpretation-box ${enzymeResult.status === 'abnormal' ? 'positive' : enzymeResult.status === 'normal' ? 'negative' : 'uncertain'}`}>
+                                <div className="interpretation-title" style={{ color: enzymeResult.status === 'abnormal' ? 'var(--accent-red)' : enzymeResult.status === 'normal' ? 'var(--accent-green)' : 'var(--accent-yellow)' }}>
+                                    判讀：{enzymeResult.text}
+                                </div>
+                                <div className="interpretation-text">{enzymeResult.interpretation}</div>
+                            </div>
+                        )}
+                        <div style={{ marginTop: 12, padding: 12, background: 'var(--bg-card-alt)', borderRadius: 10, fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                            <strong>參考值：</strong>正常 > 3.0 nmol/hr/mL（依實驗室而異）<br />
+                            <strong>注意：</strong>女性因 X 染色體隨機去活化，酵素活性可能在正常範圍
+                        </div>
+                    </div>
+
+                    {/* Lyso-Gb3 */}
+                    <div className="result-card">
+                        <div className="result-header">
+                            <span className="result-icon">📊</span>
+                            <span className="result-title">Lyso-Gb3 (Globotriaosylsphingosine)</span>
+                        </div>
+                        <div className="input-group">
+                            <label className="input-label">數值 (ng/mL)</label>
+                            <input type="number" step="0.1" className="input-field" placeholder="輸入 Lyso-Gb3 值" value={lysoGb3} onChange={e => setLysoGb3(e.target.value)} />
+                        </div>
+                        {lysoResult && (
+                            <div className={`interpretation-box ${lysoResult.status === 'abnormal' ? 'positive' : lysoResult.status === 'normal' ? 'negative' : 'uncertain'}`}>
+                                <div className="interpretation-title" style={{ color: lysoResult.status === 'abnormal' ? 'var(--accent-red)' : lysoResult.status === 'normal' ? 'var(--accent-green)' : 'var(--accent-yellow)' }}>
+                                    判讀：{lysoResult.text}
+                                </div>
+                                <div className="interpretation-text">{lysoResult.interpretation}</div>
+                            </div>
+                        )}
+                        <div style={{ marginTop: 12, padding: 12, background: 'var(--bg-card-alt)', borderRadius: 10, fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                            <strong>參考值：</strong>正常 &lt; 1.8 ng/mL<br />
+                            <strong>Classic 男性：</strong>通常 > 20 ng/mL<br />
+                            <strong>Late-onset/女性：</strong>通常 2-20 ng/mL
+                        </div>
+                    </div>
+
+                    {/* GLA 基因定序 */}
+                    <div className="result-card">
+                        <div className="result-header">
+                            <span className="result-icon">🧬</span>
+                            <span className="result-title">GLA 基因定序結果</span>
+                        </div>
+                        <div className="input-group">
+                            <label className="input-label">定序結果</label>
+                            <select className="input-field" value={glaResult} onChange={e => setGlaResult(e.target.value)}>
+                                <option value="">-- 請選擇 --</option>
+                                <option value="pathogenic">致病性突變 (Pathogenic)</option>
+                                <option value="likely_pathogenic">可能致病 (Likely Pathogenic)</option>
+                                <option value="vus">意義不明 (VUS)</option>
+                                <option value="benign">良性變異 (Benign)</option>
+                            </select>
+                        </div>
+                        {glaInterpret && (
+                            <div className={`interpretation-box ${glaInterpret.status === 'abnormal' ? 'positive' : glaInterpret.status === 'normal' ? 'negative' : 'uncertain'}`}>
+                                <div className="interpretation-title" style={{ color: glaInterpret.status === 'abnormal' ? 'var(--accent-red)' : glaInterpret.status === 'normal' ? 'var(--accent-green)' : 'var(--accent-yellow)' }}>
+                                    {glaInterpret.text}
+                                </div>
+                                <div className="interpretation-text" style={{ whiteSpace: 'pre-line' }}>{glaInterpret.interpretation}</div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // 診斷流程組件
+        const FlowchartTab = () => (
+            <div className="fade-in">
+                <div className="card">
+                    <div className="card-content" style={{ paddingTop: 20 }}>
+                        <div className="section-title">🔍 Fabry Disease 診斷流程</div>
+                        <div className="flowchart">
+                            <div className="flow-step">
+                                <div className="flow-indicator">
+                                    <div className="flow-number">1</div>
+                                    <div className="flow-line"></div>
+                                </div>
+                                <div className="flow-content">
+                                    <div className="flow-title">臨床懷疑</div>
+                                    <div className="flow-desc">不明原因 LVH（男 > 30 歲、女 > 40 歲）± 心臟/心臟外紅旗徵兆</div>
+                                </div>
+                            </div>
+                            
+                            <div className="flow-step">
+                                <div className="flow-indicator">
+                                    <div className="flow-number">2</div>
+                                    <div className="flow-line"></div>
+                                </div>
+                                <div className="flow-content">
+                                    <div className="flow-title">初步篩檢</div>
+                                    <div className="flow-branch">
+                                        <div className="flow-branch-item"><strong>男性：</strong>α-GAL A 酵素活性（DBS 或血液）</div>
+                                        <div className="flow-branch-item"><strong>女性：</strong>Lyso-Gb3（酵素活性可能偽陰性）</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="flow-step">
+                                <div className="flow-indicator">
+                                    <div className="flow-number">3</div>
+                                    <div className="flow-line"></div>
+                                </div>
+                                <div className="flow-content">
+                                    <div className="flow-title">確認檢查</div>
+                                    <div className="flow-branch">
+                                        <div className="flow-branch-item">• 酵素降低 → Lyso-Gb3 + GLA 基因定序</div>
+                                        <div className="flow-branch-item">• 酵素正常 → 若臨床懷疑仍高，進行 Lyso-Gb3 + 基因定序</div>
+                                        <div className="flow-branch-item">• Lyso-Gb3 升高 → GLA 基因定序</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="flow-step">
+                                <div className="flow-indicator">
+                                    <div className="flow-number">4</div>
+                                    <div className="flow-line"></div>
+                                </div>
+                                <div className="flow-content">
+                                    <div className="flow-title">基因結果判讀</div>
+                                    <div className="flow-branch">
+                                        <div className="flow-branch-item">• <strong>致病突變：</strong>確診 FD → 啟動治療評估</div>
+                                        <div className="flow-branch-item">• <strong>VUS：</strong>結合 Lyso-Gb3、心肌切片評估</div>
+                                        <div className="flow-branch-item">• <strong>良性變異：</strong>排除 FD → 考慮其他 LVH 病因</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="flow-step">
+                                <div className="flow-indicator">
+                                    <div className="flow-number">5</div>
+                                </div>
+                                <div className="flow-content">
+                                    <div className="flow-title">確診後評估</div>
+                                    <div className="flow-branch">
+                                        <div className="flow-branch-item">• 心臟：Echo + CMR（T1 mapping, LGE）+ Biomarkers</div>
+                                        <div className="flow-branch-item">• 腎臟：eGFR, UPCR, 尿液 Gb3</div>
+                                        <div className="flow-branch-item">• 神經：神經傳導、Brain MRI</div>
+                                        <div className="flow-branch-item">• 眼科：角膜檢查</div>
+                                        <div className="flow-branch-item">• 家族篩檢</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 心臟影像紅旗 */}
+                <div className="card">
+                    <div className="card-content" style={{ paddingTop: 20 }}>
+                        <div className="section-title">🫀 心臟 MRI 特徵性發現</div>
+                        <div className="table-container">
+                            <table className="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>檢查項目</th>
+                                        <th>Fabry Disease 特徵</th>
+                                        <th>臨床意義</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Native T1 mapping</strong></td>
+                                        <td style={{ color: 'var(--accent-cyan)' }}>Low T1 value（1.5T: &lt; 940 ms）</td>
+                                        <td>反映脂質沉積，早期即可偵測</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>LGE</strong></td>
+                                        <td style={{ color: 'var(--accent-yellow)' }}>Basal inferolateral（典型）</td>
+                                        <td>代表纖維化，Stage II 以後</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>T2 mapping</strong></td>
+                                        <td style={{ color: 'var(--accent-orange)' }}>升高（與 LGE 區域重疊）</td>
+                                        <td>反映水腫/發炎</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>乳頭肌</strong></td>
+                                        <td style={{ color: 'var(--accent-purple)' }}>肥厚</td>
+                                        <td>FD 特徵之一</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+
+        // 心臟分期組件
+        const StagingTab = () => (
+            <div className="fade-in">
+                <div className="section-title" style={{ marginBottom: 16 }}>📈 Fabry Disease 心臟分期</div>
+                
+                <div className="staging-card">
+                    <div className="staging-header">
+                        <span className="staging-badge stage0">Stage 0</span>
+                        <span className="staging-title">Non-hypertrophic</span>
+                    </div>
+                    <ul className="staging-features">
+                        <li>無 LVH（壁厚 &lt; 12 mm）</li>
+                        <li>可能有輕微症狀（心悸、胸痛）</li>
+                        <li>ECG：可能 PR 縮短</li>
+                        <li>CMR：Low T1，通常無 LGE</li>
+                        <li><strong style={{ color: 'var(--accent-green)' }}>ERT 效果最佳</strong></li>
+                    </ul>
+                </div>
+
+                <div className="staging-card">
+                    <div className="staging-header">
+                        <span className="staging-badge stage1">Stage I</span>
+                        <span className="staging-title">Hypertrophic-pre-fibrotic</span>
+                    </div>
+                    <ul className="staging-features">
+                        <li>IA：輕度 LVH（12-15 mm）</li>
+                        <li>IB：明顯 LVH（&gt; 15 mm）</li>
+                        <li>收縮功能正常，輕度舒張功能不全</li>
+                        <li>無 LGE（無纖維化）</li>
+                        <li>Troponin 開始升高</li>
+                        <li><strong style={{ color: 'var(--accent-cyan)' }}>ERT 可逆轉 LVH</strong></li>
+                    </ul>
+                </div>
+
+                <div className="staging-card">
+                    <div className="staging-header">
+                        <span className="staging-badge stage2">Stage II</span>
+                        <span className="staging-title">Hypertrophic-fibrotic</span>
+                    </div>
+                    <ul className="staging-features">
+                        <li>LVH 合併 LGE（典型：basal inferolateral）</li>
+                        <li>心律不整風險顯著增加</li>
+                        <li>心房顫動、中風風險高</li>
+                        <li>NT-proBNP、Troponin 升高</li>
+                        <li><strong style={{ color: 'var(--accent-yellow)' }}>ERT 效果有限，無法逆轉纖維化</strong></li>
+                    </ul>
+                </div>
+
+                <div className="staging-card">
+                    <div className="staging-header">
+                        <span className="staging-badge stage3">Stage III</span>
+                        <span className="staging-title">Overt dysfunction</span>
+                    </div>
+                    <ul className="staging-features">
+                        <li>廣泛纖維化（&gt; 3 segments 或 ≥ 15% LV mass）</li>
+                        <li>LVEF &lt; 50% 或嚴重舒張功能不全</li>
+                        <li>心衰竭症狀明顯</li>
+                        <li>心室心律不整、猝死風險</li>
+                        <li><strong style={{ color: 'var(--accent-red)' }}>預後差，考慮 ICD、心臟移植</strong></li>
+                    </ul>
+                </div>
+
+                {/* 治療決策表 */}
+                <div className="card" style={{ marginTop: 20 }}>
+                    <div className="card-content" style={{ paddingTop: 20 }}>
+                        <div className="section-title">💊 治療選擇</div>
+                        <div className="table-container">
+                            <table className="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>治療</th>
+                                        <th>適應症</th>
+                                        <th>台灣適用性</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Agalsidase alfa</strong><br />(Replagal)</td>
+                                        <td>所有確診 FD</td>
+                                        <td style={{ color: 'var(--accent-green)' }}>✓ 健保給付</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Agalsidase beta</strong><br />(Fabrazyme)</td>
+                                        <td>所有確診 FD</td>
+                                        <td style={{ color: 'var(--accent-green)' }}>✓ 健保給付</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Migalastat</strong><br />(Galafold)</td>
+                                        <td>Amenable 突變</td>
+                                        <td style={{ color: 'var(--accent-red)' }}>✗ IVS4+919G>A 不適用</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style={{ marginTop: 16, padding: 16, background: 'rgba(239, 68, 68, 0.1)', borderRadius: 12, border: '1px solid rgba(239, 68, 68, 0.3)' }}>
+                            <strong style={{ color: 'var(--accent-red)' }}>⚠️ 重要提醒：</strong>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: 8 }}>
+                                台灣最常見的 IVS4+919G>A 突變<strong>不適用</strong> Migalastat（口服伴護療法）。<br />
+                                台灣 FD 病人主要以 ERT 治療。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+
+        // 主應用程式
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('checklist');
+            const [openSections, setOpenSections] = useState({ 0: true });
+
+            const tabs = [
+                { id: 'teaching', label: '📚 教學', icon: '📚' },
+                { id: 'checklist', label: '✅ 查檢表', icon: '✅' },
+                { id: 'lab', label: '🔬 檢驗判讀', icon: '🔬' },
+                { id: 'flowchart', label: '📋 診斷流程', icon: '📋' },
+                { id: 'staging', label: '📊 分期', icon: '📊' }
+            ];
+
+            return (
+                <div className="app-container">
+                    <style>{styles}</style>
+                    <a href="index.html" className="back-link">← 返回教學資源中心</a>
+
+                    <header className="header">
+                        <div className="header-icon">🧬</div>
+                        <h1>Fabry Disease 診斷查檢表</h1>
+                        <p>門診篩檢、診斷、分期評估工具</p>
+                    </header>
+
+                    <nav className="nav-tabs">
+                        {tabs.map(tab => (
+                            <button key={tab.id} className={`nav-tab ${activeTab === tab.id ? 'active' : ''}`} onClick={() => setActiveTab(tab.id)}>
+                                {tab.label}
+                            </button>
+                        ))}
+                    </nav>
+
+                    {activeTab === 'teaching' && (
+                        <div className="fade-in">
+                            {teachingContent.map((section, idx) => (
+                                <TeachingSection key={idx} data={section} isOpen={openSections[idx] || false} onToggle={() => setOpenSections(p => ({ ...p, [idx]: !p[idx] }))} />
+                            ))}
+                        </div>
+                    )}
+
+                    {activeTab === 'checklist' && <ChecklistTab />}
+                    {activeTab === 'lab' && <LabInterpretationTab />}
+                    {activeTab === 'flowchart' && <FlowchartTab />}
+                    {activeTab === 'staging' && <StagingTab />}
+
+                    <footer className="footer">
+                        <p>參考資料：2024 TSOC Expert Consensus of Fabry Disease</p>
+                        <p>心血管中心教育訓練 | 台大醫院新竹分院</p>
+                    </footer>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
