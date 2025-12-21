@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>肺動脈高壓診斷查核表 | PH Diagnostic Checklist</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg-primary: #0a0f1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a2234;
+            --bg-card-hover: #1f2943;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #22d3ee;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-green: #10b981;
+            --accent-orange: #f97316;
+            --accent-red: #ef4444;
+            --accent-yellow: #fbbf24;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #2d3a52;
+            --gradient-1: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            --gradient-2: linear-gradient(135deg, #22d3ee, #3b82f6);
+            --gradient-3: linear-gradient(135deg, #ec4899, #f97316);
+            --shadow-glow: 0 0 40px rgba(59, 130, 246, 0.15);
+        }
+
+        body {
+            font-family: 'Noto Sans TC', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        #root {
+            min-height: 100vh;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+
+        /* Main Layout */
+        .app-container {
+            max-width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(180deg, var(--bg-primary) 0%, #0d1525 100%);
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(180deg, rgba(26, 34, 52, 0.98) 0%, rgba(26, 34, 52, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .header-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        /* Navigation */
+        .nav-container {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 68px;
+            z-index: 99;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .nav-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-tabs {
+            display: flex;
+            padding: 0 12px;
+            gap: 4px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .nav-tab {
+            flex: none;
+            padding: 12px 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .nav-tab:hover {
+            color: var(--text-secondary);
+        }
+
+        .nav-tab.active {
+            color: var(--accent-cyan);
+            border-bottom-color: var(--accent-cyan);
+        }
+
+        .nav-tab-icon {
+            margin-right: 6px;
+        }
+
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 20px 16px 100px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Section Cards */
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .section-card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .section-header {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .section-header:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .section-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .expand-icon {
+            color: var(--text-muted);
+            transition: transform 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .expand-icon.expanded {
+            transform: rotate(180deg);
+        }
+
+        .section-content {
+            padding: 0 20px 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Checklist Items */
+        .checklist-group {
+            margin-top: 16px;
+        }
+
+        .checklist-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(45, 58, 82, 0.5);
+            transition: all 0.2s ease;
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-checkbox {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: transparent;
+        }
+
+        .checklist-checkbox:hover {
+            border-color: var(--accent-cyan);
+        }
+
+        .checklist-checkbox.checked {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+        }
+
+        .checklist-checkbox.checked svg {
+            display: block;
+        }
+
+        .checklist-checkbox svg {
+            display: none;
+            width: 14px;
+            height: 14px;
+            color: white;
+        }
+
+        .checklist-text {
+            flex: 1;
+        }
+
+        .checklist-main {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .checklist-eng {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .checklist-item.completed .checklist-main {
+            color: var(--text-secondary);
+            text-decoration: line-through;
+        }
+
+        /* Info Boxes */
+        .info-box {
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 16px;
+        }
+
+        .info-box.blue {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .info-box.green {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .info-box.yellow {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+
+        .info-box.red {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .info-box.purple {
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .info-box-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box.blue .info-box-title { color: var(--accent-blue); }
+        .info-box.green .info-box-title { color: var(--accent-green); }
+        .info-box.yellow .info-box-title { color: var(--accent-yellow); }
+        .info-box.red .info-box-title { color: var(--accent-red); }
+        .info-box.purple .info-box-title { color: var(--accent-purple); }
+
+        .info-box-content {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Criteria Table */
+        .criteria-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 0.85rem;
+        }
+
+        .criteria-table th {
+            background: var(--bg-secondary);
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .criteria-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(45, 58, 82, 0.5);
+            color: var(--text-secondary);
+        }
+
+        .criteria-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .criteria-table .value {
+            color: var(--accent-cyan);
+            font-weight: 500;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .progress-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .progress-percentage {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-2);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Quiz Section */
+        .quiz-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .quiz-progress {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .quiz-question {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .quiz-option {
+            padding: 14px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            text-align: left;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(34, 211, 238, 0.05);
+        }
+
+        .quiz-option.selected {
+            border-color: var(--accent-cyan);
+            background: rgba(34, 211, 238, 0.1);
+        }
+
+        .quiz-option.correct {
+            border-color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.15);
+        }
+
+        .quiz-option.incorrect {
+            border-color: var(--accent-red);
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        .quiz-option.disabled {
+            pointer-events: none;
+        }
+
+        .quiz-explanation {
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+        }
+
+        .quiz-explanation-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 8px;
+        }
+
+        .quiz-explanation-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .quiz-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .quiz-btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quiz-btn.primary {
+            background: var(--gradient-2);
+            color: white;
+        }
+
+        .quiz-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(34, 211, 238, 0.3);
+        }
+
+        .quiz-btn.secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .quiz-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Quiz Result */
+        .quiz-result {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .quiz-result-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .quiz-result-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .quiz-result-score {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+        }
+
+        .quiz-result-message {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        /* WHO Classification Cards */
+        .who-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .who-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .who-card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateX(4px);
+        }
+
+        .who-card.expanded {
+            border-color: var(--accent-cyan);
+        }
+
+        .who-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .who-card-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .who-card-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .who-card-badge.g1 { background: rgba(168, 85, 247, 0.2); color: var(--accent-purple); }
+        .who-card-badge.g2 { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); }
+        .who-card-badge.g3 { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+        .who-card-badge.g4 { background: rgba(249, 115, 22, 0.2); color: var(--accent-orange); }
+        .who-card-badge.g5 { background: rgba(236, 72, 153, 0.2); color: var(--accent-pink); }
+
+        .who-card-details {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .who-card-details ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .who-card-details li {
+            padding: 6px 0;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .who-card-details li::before {
+            content: "•";
+            color: var(--accent-cyan);
+            font-weight: bold;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Overview Stats */
+        .overview-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Important Notes */
+        .notes-list {
+            margin-top: 16px;
+        }
+
+        .note-item {
+            display: flex;
+            gap: 12px;
+            padding: 14px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .note-icon {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .note-icon.warning {
+            background: rgba(251, 191, 36, 0.2);
+        }
+
+        .note-icon.danger {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .note-icon.info {
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .note-text {
+            flex: 1;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Flow Diagram */
+        .flow-diagram {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .flow-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .flow-arrow {
+            text-align: center;
+            color: var(--accent-cyan);
+            font-size: 1.2rem;
+            margin: 8px 0 8px 14px;
+        }
+
+        .flow-box {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+        }
+
+        .flow-box.highlight {
+            border-color: var(--accent-cyan);
+            background: rgba(34, 211, 238, 0.1);
+        }
+
+        /* Reset Button */
+        .reset-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 20px;
+        }
+
+        .reset-btn:hover {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+        }
+
+        .footer a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px 16px;
+            }
+
+            .header-title {
+                font-size: 1.1rem;
+            }
+
+            .nav-tab {
+                padding: 10px 12px;
+                font-size: 0.8rem;
+            }
+
+            .content {
+                padding: 16px 12px 100px;
+            }
+
+            .section-header {
+                padding: 14px 16px;
+            }
+
+            .section-content {
+                padding: 0 16px 16px;
+            }
+
+            .quiz-container {
+                padding: 20px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useCallback } = React;
+
+        // Checklist Data
+        const checklistData = {
+            stage1: {
+                title: "第一階段：初步評估與懷疑 PH",
+                subtitle: "Initial Assessment",
+                icon: "🔍",
+                iconBg: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
+                sections: [
+                    {
+                        title: "臨床懷疑指標 Clinical Suspicion Indicators",
+                        items: [
+                            { id: "s1-1", main: "不明原因呼吸困難 (NYHA II-IV)", eng: "Unexplained dyspnea" },
+                            { id: "s1-2", main: "運動耐力下降", eng: "Exercise intolerance" },
+                            { id: "s1-3", main: "暈厥或接近暈厥", eng: "Syncope or pre-syncope" },
+                            { id: "s1-4", main: "胸痛、心悸", eng: "Chest pain, palpitations" },
+                            { id: "s1-5", main: "下肢水腫", eng: "Lower extremity edema" },
+                            { id: "s1-6", main: "聽診：P2 亢進、TR murmur、RV heave", eng: "Auscultation findings" }
+                        ]
+                    },
+                    {
+                        title: "高風險族群篩檢 High-Risk Population Screening",
+                        items: [
+                            { id: "s1-7", main: "結締組織疾病 (特別是 SSc)", eng: "Connective tissue disease (especially Systemic sclerosis)" },
+                            { id: "s1-8", main: "先天性心臟病病史", eng: "Congenital heart disease" },
+                            { id: "s1-9", main: "門脈高壓/肝硬化", eng: "Portal hypertension/Cirrhosis" },
+                            { id: "s1-10", main: "HIV 感染", eng: "HIV infection" },
+                            { id: "s1-11", main: "家族史：IPAH 或 HPAH", eng: "Family history of IPAH or HPAH" },
+                            { id: "s1-12", main: "使用食慾抑制劑、甲基安非他命", eng: "Appetite suppressants, methamphetamine use" }
+                        ]
+                    }
+                ]
+            },
+            stage2: {
+                title: "第二階段：基本檢查",
+                subtitle: "Initial Workup",
+                icon: "🩺",
+                iconBg: "linear-gradient(135deg, #22d3ee, #3b82f6)",
+                sections: [
+                    {
+                        title: "1. 心電圖 ECG",
+                        items: [
+                            { id: "s2-1", main: "右心室肥大徵象 (RAD, RVH)", eng: "Right axis deviation, RV hypertrophy" },
+                            { id: "s2-2", main: "右心房擴大 (P pulmonale)", eng: "RA enlargement" },
+                            { id: "s2-3", main: "右束支傳導阻滯 (RBBB)", eng: "Right bundle branch block" }
+                        ]
+                    },
+                    {
+                        title: "2. 胸部 X 光 Chest X-ray",
+                        items: [
+                            { id: "s2-4", main: "肺動脈段突出", eng: "Prominent pulmonary artery" },
+                            { id: "s2-5", main: "右心室/右心房擴大", eng: "RV/RA enlargement" },
+                            { id: "s2-6", main: "周邊肺血管纖細", eng: "Peripheral vascular pruning" }
+                        ]
+                    },
+                    {
+                        title: "3. 經胸超音波心圖 TTE - 關鍵檢查",
+                        items: [
+                            { id: "s2-7", main: "TRPG (TR peak gradient) > 2.8 m/s", eng: "Tricuspid regurgitation peak gradient" },
+                            { id: "s2-8", main: "估計 RVSP ≥ 40 mmHg", eng: "Estimated RV systolic pressure" },
+                            { id: "s2-9", main: "RV 擴大、功能不全", eng: "RV dilatation, dysfunction" },
+                            { id: "s2-10", main: "RA 擴大", eng: "RA enlargement" },
+                            { id: "s2-11", main: "IVS 扁平化或反向運動", eng: "Septal flattening or paradoxical motion" },
+                            { id: "s2-12", main: "TAPSE < 17 mm", eng: "Tricuspid annular plane systolic excursion" },
+                            { id: "s2-13", main: "IVC 擴大且吸氣塌陷 < 50%", eng: "IVC dilatation with reduced inspiratory collapse" }
+                        ]
+                    },
+                    {
+                        title: "4. 實驗室檢查 Laboratory Tests",
+                        items: [
+                            { id: "s2-14", main: "CBC (排除貧血、紅血球增多症)", eng: "Complete blood count" },
+                            { id: "s2-15", main: "BNP/NT-proBNP (預後指標)", eng: "Prognostic marker" },
+                            { id: "s2-16", main: "LFTs (肝功能、門脈高壓)", eng: "Liver function tests" },
+                            { id: "s2-17", main: "Renal function (腎功能)", eng: "Renal function" },
+                            { id: "s2-18", main: "TSH (甲狀腺功能)", eng: "Thyroid function" },
+                            { id: "s2-19", main: "HIV serology", eng: "HIV screening" },
+                            { id: "s2-20", main: "ANA, anti-Scl-70, anti-centromere (CTD 篩檢)", eng: "CTD screening" },
+                            { id: "s2-21", main: "Thrombophilia screen (年輕患者)", eng: "For young patients" }
+                        ]
+                    },
+                    {
+                        title: "5. 肺功能與氧合 Pulmonary Function",
+                        items: [
+                            { id: "s2-22", main: "Spirometry + DLCO", eng: "Pulmonary function tests" },
+                            { id: "s2-23", main: "ABG 或 pulse oximetry", eng: "Arterial blood gas or oxygen saturation" },
+                            { id: "s2-24", main: "6-minute walk test", eng: "Baseline functional capacity" }
+                        ]
+                    },
+                    {
+                        title: "6. 影像學 Imaging",
+                        items: [
+                            { id: "s2-25", main: "V/Q scan (首選, 排除 CTEPH)", eng: "Ventilation/perfusion scan - preferred" },
+                            { id: "s2-26", main: "CTPA (若 V/Q 不可行)", eng: "CT pulmonary angiography" }
+                        ]
+                    }
+                ]
+            },
+            stage3: {
+                title: "第三階段：確診與分類",
+                subtitle: "Confirmation & Classification",
+                icon: "💉",
+                iconBg: "linear-gradient(135deg, #ec4899, #f97316)",
+                sections: [
+                    {
+                        title: "RHC 適應症 Indications",
+                        items: [
+                            { id: "s3-1", main: "TTE 高度懷疑 PH + 臨床症狀", eng: "High TTE probability + symptoms" },
+                            { id: "s3-2", main: "準備開始 PAH 標靶治療", eng: "Before initiating PAH-specific therapy" },
+                            { id: "s3-3", main: "需確認血行動力學分型", eng: "To confirm hemodynamic classification" }
+                        ]
+                    },
+                    {
+                        title: "RHC 測量項目 Measurement Checklist",
+                        items: [
+                            { id: "s3-4", main: "RA pressure (右心房壓)", eng: "Right atrial pressure" },
+                            { id: "s3-5", main: "RV pressure (右心室壓)", eng: "Right ventricular pressure" },
+                            { id: "s3-6", main: "PA pressure (systolic, diastolic, mean)", eng: "Pulmonary artery pressures" },
+                            { id: "s3-7", main: "PAWP (肺動脈楔壓)", eng: "Pulmonary arterial wedge pressure" },
+                            { id: "s3-8", main: "Cardiac output (熱稀釋或 Fick)", eng: "Thermodilution or Fick method" },
+                            { id: "s3-9", main: "計算 PVR, SVR", eng: "Calculate pulmonary/systemic vascular resistance" },
+                            { id: "s3-10", main: "SvO2 (混合靜脈血氧)", eng: "Mixed venous oxygen saturation" }
+                        ]
+                    }
+                ]
+            },
+            stage4: {
+                title: "第四階段：WHO 臨床分類",
+                subtitle: "WHO Clinical Classification",
+                icon: "📋",
+                iconBg: "linear-gradient(135deg, #10b981, #22d3ee)",
+                sections: []
+            },
+            stage5: {
+                title: "第五階段：嚴重度評估",
+                subtitle: "Severity Assessment",
+                icon: "📊",
+                iconBg: "linear-gradient(135deg, #f97316, #fbbf24)",
+                sections: [
+                    {
+                        title: "WHO Functional Class 功能分級",
+                        items: [
+                            { id: "s5-1", main: "Class I：無症狀", eng: "No limitation of physical activity" },
+                            { id: "s5-2", main: "Class II：輕度活動受限", eng: "Slight limitation of physical activity" },
+                            { id: "s5-3", main: "Class III：明顯活動受限", eng: "Marked limitation of physical activity" },
+                            { id: "s5-4", main: "Class IV：休息時即有症狀", eng: "Unable to carry out any physical activity without symptoms" }
+                        ]
+                    },
+                    {
+                        title: "風險分層評估項目 Risk Stratification",
+                        items: [
+                            { id: "s5-5", main: "WHO FC 功能分級", eng: "WHO Functional Class" },
+                            { id: "s5-6", main: "6MWT distance (6分鐘步行距離)", eng: "6-minute walk test distance" },
+                            { id: "s5-7", main: "BNP/NT-proBNP level", eng: "Natriuretic peptide levels" },
+                            { id: "s5-8", main: "TAPSE 或 RV S'", eng: "RV function parameters" },
+                            { id: "s5-9", main: "RA pressure, CI (from RHC)", eng: "Hemodynamic parameters" }
+                        ]
+                    }
+                ]
+            },
+            stage6: {
+                title: "第六階段：治療前準備",
+                subtitle: "Pre-Treatment Preparation",
+                icon: "💊",
+                iconBg: "linear-gradient(135deg, #a855f7, #ec4899)",
+                sections: [
+                    {
+                        title: "Group 1 PAH 患者專用",
+                        items: [
+                            { id: "s6-1", main: "確認無 contraindications (severe LV dysfunction, ILD)", eng: "Rule out contraindications" },
+                            { id: "s6-2", main: "Vasoreactivity test (急性血管擴張試驗)", eng: "Acute vasodilator test during RHC" }
+                        ]
+                    },
+                    {
+                        title: "轉介考量 Referral Considerations",
+                        items: [
+                            { id: "s6-3", main: "已確診 PAH → 轉介 PH 專科中心", eng: "Confirmed PAH → Refer to PH center" },
+                            { id: "s6-4", main: "CTEPH → 轉介評估 PEA 或 BPA", eng: "CTEPH → Evaluate for PEA or BPA" },
+                            { id: "s6-5", main: "Group 2/3 → 優化原發疾病治療", eng: "Group 2/3 → Optimize underlying disease" }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // WHO Classification Data
+        const whoClassification = [
+            {
+                group: "Group 1",
+                title: "肺動脈高壓 (PAH)",
+                badge: "g1",
+                details: [
+                    "IPAH (idiopathic) 原發性",
+                    "HPAH (heritable: BMPR2, ALK1 等) 遺傳性",
+                    "Drug/toxin-induced 藥物/毒素誘發",
+                    "Associated PAH：CTD, CHD, Portal HTN, HIV, Schistosomiasis"
+                ]
+            },
+            {
+                group: "Group 2",
+                title: "左心疾病相關 PH",
+                badge: "g2",
+                details: [
+                    "HFpEF (射出率保留型心衰竭)",
+                    "HFrEF (射出率下降型心衰竭)",
+                    "Valvular disease (瓣膜疾病)",
+                    "需安排：心臟超音波詳細評估、考慮左心導管"
+                ]
+            },
+            {
+                group: "Group 3",
+                title: "肺疾病/缺氧相關 PH",
+                badge: "g3",
+                details: [
+                    "COPD (慢性阻塞性肺病)",
+                    "ILD (間質性肺病)",
+                    "Sleep-disordered breathing (睡眠呼吸障礙)",
+                    "需安排：HRCT chest、sleep study"
+                ]
+            },
+            {
+                group: "Group 4",
+                title: "CTEPH 慢性血栓栓塞性肺高壓",
+                badge: "g4",
+                details: [
+                    "V/Q scan 異常 (必做！)",
+                    "唯一可能治癒的 PH 類型",
+                    "需安排：肺動脈攝影",
+                    "評估手術可行性 (PEA - Pulmonary endarterectomy)"
+                ]
+            },
+            {
+                group: "Group 5",
+                title: "多重/不明機轉",
+                badge: "g5",
+                details: [
+                    "Hematologic disorders (血液疾病)",
+                    "Systemic disorders (sarcoidosis 類肉瘤病)",
+                    "Metabolic disorders (代謝疾病)"
+                ]
+            }
+        ];
+
+        // Quiz Data
+        const quizQuestions = [
+            {
+                question: "根據 2022 ESC/ERS 定義，診斷肺高壓的 mPAP 標準為？",
+                options: [
+                    "mPAP > 25 mmHg",
+                    "mPAP > 20 mmHg",
+                    "mPAP > 30 mmHg",
+                    "mPAP > 15 mmHg"
+                ],
+                correct: 1,
+                explanation: "2022 ESC/ERS 更新將肺高壓定義從 mPAP > 25 mmHg 降至 mPAP > 20 mmHg (休息狀態)，以便更早識別疾病。"
+            },
+            {
+                question: "下列何者為診斷肺高壓的「金標準」檢查？",
+                options: [
+                    "經胸超音波心圖 (TTE)",
+                    "胸部電腦斷層 (CTPA)",
+                    "右心導管檢查 (RHC)",
+                    "V/Q scan"
+                ],
+                correct: 2,
+                explanation: "右心導管檢查 (Right Heart Catheterization) 是診斷肺高壓的金標準，可直接測量肺動脈壓力和血行動力學參數。"
+            },
+            {
+                question: "TTE 中，TRPG 多少時代表「高可能性」肺高壓？",
+                options: [
+                    "≤ 2.8 m/s",
+                    "2.9-3.4 m/s",
+                    "> 3.4 m/s",
+                    "> 4.0 m/s"
+                ],
+                correct: 2,
+                explanation: "TRPG > 3.4 m/s 代表高可能性肺高壓。TRPG 2.9-3.4 m/s 加上其他徵象也屬高可能性。"
+            },
+            {
+                question: "Pre-capillary PH 的 PAWP 標準為？",
+                options: [
+                    "PAWP > 15 mmHg",
+                    "PAWP ≤ 15 mmHg",
+                    "PAWP > 20 mmHg",
+                    "PAWP ≤ 12 mmHg"
+                ],
+                correct: 1,
+                explanation: "Pre-capillary PH 定義：mPAP > 20, PAWP ≤ 15 mmHg, PVR > 2 WU。PAWP > 15 則為 Post-capillary PH。"
+            },
+            {
+                question: "下列何者是排除 CTEPH 的首選檢查？",
+                options: [
+                    "CT pulmonary angiography",
+                    "V/Q scan",
+                    "TTE",
+                    "MRI"
+                ],
+                correct: 1,
+                explanation: "V/Q scan 是排除 CTEPH 的首選檢查，敏感度高。所有疑似 PH 患者都應做 V/Q scan。"
+            },
+            {
+                question: "急性血管擴張試驗陽性的標準為？",
+                options: [
+                    "mPAP 下降 ≥ 5 mmHg",
+                    "mPAP 下降 ≥ 10 mmHg 到 < 40 mmHg + CO 維持或增加",
+                    "PAWP 下降 > 50%",
+                    "PVR 下降 > 30%"
+                ],
+                correct: 1,
+                explanation: "Vasoreactivity test 陽性標準：mPAP 下降 ≥10 mmHg 到絕對值 < 40 mmHg，且心輸出量維持或增加。陽性者可考慮 CCB 治療。"
+            },
+            {
+                question: "下列何者是 TAPSE 的異常值？",
+                options: [
+                    "< 25 mm",
+                    "< 20 mm",
+                    "< 17 mm",
+                    "< 15 mm"
+                ],
+                correct: 2,
+                explanation: "TAPSE (Tricuspid Annular Plane Systolic Excursion) < 17 mm 代表右心室收縮功能不全，是評估 PH 的重要指標。"
+            },
+            {
+                question: "PH 最常見的原因是哪一類？",
+                options: [
+                    "Group 1 (PAH)",
+                    "Group 2 (左心疾病)",
+                    "Group 3 (肺疾病)",
+                    "Group 4 (CTEPH)"
+                ],
+                correct: 1,
+                explanation: "Group 2 (左心疾病相關 PH) 是最常見的 PH 原因，包括 HFpEF、HFrEF 和瓣膜疾病。"
+            },
+            {
+                question: "唯一可能治癒的 PH 類型是？",
+                options: [
+                    "Group 1 PAH",
+                    "Group 2 HFpEF",
+                    "Group 3 COPD",
+                    "Group 4 CTEPH"
+                ],
+                correct: 3,
+                explanation: "CTEPH 是唯一可能治癒的 PH 類型，透過 PEA (Pulmonary endarterectomy) 手術可能根治。"
+            },
+            {
+                question: "下列何者不是 Group 1 PAH 的標靶治療禁忌症？",
+                options: [
+                    "嚴重左心室功能不全",
+                    "間質性肺病 (ILD)",
+                    "輕度三尖瓣閉鎖不全",
+                    "Group 2 或 Group 3 PH"
+                ],
+                correct: 2,
+                explanation: "Group 1 PAH 標靶藥物的禁忌症包括：嚴重 LV dysfunction、ILD、Group 2/3 PH。輕度 TR 本身不是禁忌。"
+            }
+        ];
+
+        // Checkbox Component
+        const Checkbox = ({ checked, onChange }) => (
+            <div 
+                className={`checklist-checkbox ${checked ? 'checked' : ''}`}
+                onClick={onChange}
+            >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+        );
+
+        // Checklist Item Component
+        const ChecklistItem = ({ item, checked, onToggle }) => (
+            <div className={`checklist-item ${checked ? 'completed' : ''}`}>
+                <Checkbox checked={checked} onChange={onToggle} />
+                <div className="checklist-text">
+                    <div className="checklist-main">{item.main}</div>
+                    {item.eng && <div className="checklist-eng">{item.eng}</div>}
+                </div>
+            </div>
+        );
+
+        // Section Card Component
+        const SectionCard = ({ data, checkedItems, onToggleItem }) => {
+            const [expanded, setExpanded] = useState(true);
+
+            return (
+                <div className="section-card fade-in">
+                    <div className="section-header" onClick={() => setExpanded(!expanded)}>
+                        <div className="section-title-group">
+                            <div className="section-icon" style={{ background: data.iconBg }}>
+                                {data.icon}
+                            </div>
+                            <div>
+                                <div className="section-title">{data.title}</div>
+                                <div className="section-subtitle">{data.subtitle}</div>
+                            </div>
+                        </div>
+                        <span className={`expand-icon ${expanded ? 'expanded' : ''}`}>▼</span>
+                    </div>
+                    {expanded && (
+                        <div className="section-content">
+                            {data.sections.map((section, idx) => (
+                                <div key={idx} className="checklist-group">
+                                    <div className="checklist-title">
+                                        <span>📌</span> {section.title}
+                                    </div>
+                                    {section.items.map(item => (
+                                        <ChecklistItem
+                                            key={item.id}
+                                            item={item}
+                                            checked={checkedItems[item.id] || false}
+                                            onToggle={() => onToggleItem(item.id)}
+                                        />
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // WHO Classification Component
+        const WHOClassification = () => {
+            const [expandedCard, setExpandedCard] = useState(null);
+
+            return (
+                <div className="who-grid">
+                    {whoClassification.map((item, idx) => (
+                        <div 
+                            key={idx}
+                            className={`who-card ${expandedCard === idx ? 'expanded' : ''}`}
+                            onClick={() => setExpandedCard(expandedCard === idx ? null : idx)}
+                        >
+                            <div className="who-card-header">
+                                <div className="who-card-title">{item.group}: {item.title}</div>
+                                <span className={`who-card-badge ${item.badge}`}>{item.group}</span>
+                            </div>
+                            {expandedCard === idx && (
+                                <div className="who-card-details">
+                                    <ul>
+                                        {item.details.map((detail, dIdx) => (
+                                            <li key={dIdx}>{detail}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            );
+        };
+
+        // Quiz Component
+        const Quiz = ({ onComplete }) => {
+            const [currentQ, setCurrentQ] = useState(0);
+            const [selected, setSelected] = useState(null);
+            const [showExplanation, setShowExplanation] = useState(false);
+            const [score, setScore] = useState(0);
+            const [finished, setFinished] = useState(false);
+            const [answers, setAnswers] = useState([]);
+
+            const handleSelect = (idx) => {
+                if (showExplanation) return;
+                setSelected(idx);
+                setShowExplanation(true);
+                const isCorrect = idx === quizQuestions[currentQ].correct;
+                if (isCorrect) setScore(score + 1);
+                setAnswers([...answers, { question: currentQ, selected: idx, correct: isCorrect }]);
+            };
+
+            const handleNext = () => {
+                if (currentQ < quizQuestions.length - 1) {
+                    setCurrentQ(currentQ + 1);
+                    setSelected(null);
+                    setShowExplanation(false);
+                } else {
+                    setFinished(true);
+                    onComplete(score + (selected === quizQuestions[currentQ].correct ? 1 : 0));
+                }
+            };
+
+            const handleRestart = () => {
+                setCurrentQ(0);
+                setSelected(null);
+                setShowExplanation(false);
+                setScore(0);
+                setFinished(false);
+                setAnswers([]);
+            };
+
+            if (finished) {
+                const finalScore = score;
+                const percentage = Math.round((finalScore / quizQuestions.length) * 100);
+                let icon, message;
+                if (percentage >= 80) {
+                    icon = "🎉";
+                    message = "太棒了！你對肺高壓診斷有很好的掌握！";
+                } else if (percentage >= 60) {
+                    icon = "👍";
+                    message = "不錯的成績！建議複習一些重點內容。";
+                } else {
+                    icon = "📚";
+                    message = "建議重新閱讀查核表內容，加強學習！";
+                }
+
+                return (
+                    <div className="quiz-container">
+                        <div className="quiz-result">
+                            <div className="quiz-result-icon">{icon}</div>
+                            <div className="quiz-result-title">測驗完成！</div>
+                            <div className="quiz-result-score">{finalScore} / {quizQuestions.length}</div>
+                            <div className="quiz-result-message">{message}</div>
+                            <button className="quiz-btn primary" onClick={handleRestart}>
+                                重新測驗
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            const q = quizQuestions[currentQ];
+
+            return (
+                <div className="quiz-container fade-in">
+                    <div className="quiz-header">
+                        <div className="quiz-progress">
+                            題目 {currentQ + 1} / {quizQuestions.length}
+                        </div>
+                        <div className="quiz-progress">
+                            得分：{score}
+                        </div>
+                    </div>
+                    <div className="quiz-question">{q.question}</div>
+                    <div className="quiz-options">
+                        {q.options.map((option, idx) => {
+                            let className = "quiz-option";
+                            if (showExplanation) {
+                                className += " disabled";
+                                if (idx === q.correct) className += " correct";
+                                else if (idx === selected) className += " incorrect";
+                            } else if (idx === selected) {
+                                className += " selected";
+                            }
+                            return (
+                                <button
+                                    key={idx}
+                                    className={className}
+                                    onClick={() => handleSelect(idx)}
+                                >
+                                    {String.fromCharCode(65 + idx)}. {option}
+                                </button>
+                            );
+                        })}
+                    </div>
+                    {showExplanation && (
+                        <div className="quiz-explanation">
+                            <div className="quiz-explanation-title">💡 解析</div>
+                            <div className="quiz-explanation-text">{q.explanation}</div>
+                        </div>
+                    )}
+                    {showExplanation && (
+                        <div className="quiz-buttons">
+                            <button className="quiz-btn primary" onClick={handleNext}>
+                                {currentQ < quizQuestions.length - 1 ? '下一題' : '完成測驗'}
+                            </button>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // Main App Component
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('checklist');
+            const [checkedItems, setCheckedItems] = useState(() => {
+                const saved = localStorage.getItem('ph-checklist-progress');
+                return saved ? JSON.parse(saved) : {};
+            });
+            const [quizScore, setQuizScore] = useState(null);
+
+            useEffect(() => {
+                localStorage.setItem('ph-checklist-progress', JSON.stringify(checkedItems));
+            }, [checkedItems]);
+
+            const toggleItem = useCallback((id) => {
+                setCheckedItems(prev => ({
+                    ...prev,
+                    [id]: !prev[id]
+                }));
+            }, []);
+
+            const resetProgress = () => {
+                if (confirm('確定要重置所有進度嗎？')) {
+                    setCheckedItems({});
+                    setQuizScore(null);
+                }
+            };
+
+            const totalItems = useMemo(() => {
+                let count = 0;
+                Object.values(checklistData).forEach(stage => {
+                    stage.sections.forEach(section => {
+                        count += section.items.length;
+                    });
+                });
+                return count;
+            }, []);
+
+            const completedItems = Object.values(checkedItems).filter(Boolean).length;
+            const progressPercentage = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
+
+            const tabs = [
+                { id: 'checklist', label: '查核表', icon: '📋' },
+                { id: 'criteria', label: '診斷標準', icon: '📊' },
+                { id: 'quiz', label: '自我測驗', icon: '✍️' },
+                { id: 'notes', label: '重點提醒', icon: '⚠️' }
+            ];
+
+            return (
+                <div className="app-container">
+                    <header className="header">
+                        <div className="header-content">
+                            <div className="header-title">肺動脈高壓診斷查核表</div>
+                            <div className="header-subtitle">Pulmonary Hypertension Diagnostic Checklist | Based on 2022 ESC/ERS Guidelines</div>
+                        </div>
+                    </header>
+
+                    <nav className="nav-container">
+                        <div className="nav-tabs">
+                            {tabs.map(tab => (
+                                <button
+                                    key={tab.id}
+                                    className={`nav-tab ${activeTab === tab.id ? 'active' : ''}`}
+                                    onClick={() => setActiveTab(tab.id)}
+                                >
+                                    <span className="nav-tab-icon">{tab.icon}</span>
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
+                    </nav>
+
+                    <main className="content">
+                        {activeTab === 'checklist' && (
+                            <div className="tab-content">
+                                <div className="progress-container">
+                                    <div className="progress-header">
+                                        <span className="progress-title">學習進度</span>
+                                        <span className="progress-percentage">{progressPercentage}%</span>
+                                    </div>
+                                    <div className="progress-bar">
+                                        <div className="progress-fill" style={{ width: `${progressPercentage}%` }}></div>
+                                    </div>
+                                    <div className="progress-stats">
+                                        <span>已完成：{completedItems} / {totalItems}</span>
+                                        <span>剩餘：{totalItems - completedItems} 項</span>
+                                    </div>
+                                </div>
+
+                                {Object.entries(checklistData).map(([key, data]) => (
+                                    key !== 'stage4' ? (
+                                        <SectionCard
+                                            key={key}
+                                            data={data}
+                                            checkedItems={checkedItems}
+                                            onToggleItem={toggleItem}
+                                        />
+                                    ) : (
+                                        <div key={key} className="section-card fade-in">
+                                            <div className="section-header" style={{ cursor: 'default' }}>
+                                                <div className="section-title-group">
+                                                    <div className="section-icon" style={{ background: data.iconBg }}>
+                                                        {data.icon}
+                                                    </div>
+                                                    <div>
+                                                        <div className="section-title">{data.title}</div>
+                                                        <div className="section-subtitle">{data.subtitle}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="section-content">
+                                                <WHOClassification />
+                                            </div>
+                                        </div>
+                                    )
+                                ))}
+
+                                <button className="reset-btn" onClick={resetProgress}>
+                                    🔄 重置學習進度
+                                </button>
+                            </div>
+                        )}
+
+                        {activeTab === 'criteria' && (
+                            <div className="tab-content">
+                                <div className="section-card">
+                                    <div className="section-content" style={{ paddingTop: '20px' }}>
+                                        <div className="info-box blue">
+                                            <div className="info-box-title">📌 RHC 診斷標準 (2022 ESC/ERS)</div>
+                                            <div className="info-box-content">
+                                                <table className="criteria-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>參數</th>
+                                                            <th>診斷標準</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>mPAP (休息)</td>
+                                                            <td className="value">&gt; 20 mmHg</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>PVR</td>
+                                                            <td className="value">&gt; 2 WU</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <div className="info-box green" style={{ marginTop: '16px' }}>
+                                            <div className="info-box-title">🔬 血行動力學分型</div>
+                                            <div className="info-box-content">
+                                                <table className="criteria-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>分型</th>
+                                                            <th>mPAP</th>
+                                                            <th>PAWP</th>
+                                                            <th>PVR</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Pre-capillary PH</td>
+                                                            <td className="value">&gt; 20</td>
+                                                            <td className="value">≤ 15</td>
+                                                            <td className="value">&gt; 2</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>IpcPH<br/><span style={{fontSize: '0.75rem', color: 'var(--text-muted)'}}>Isolated post-capillary PH</span></td>
+                                                            <td className="value">&gt; 20</td>
+                                                            <td className="value">&gt; 15</td>
+                                                            <td className="value">≤ 2</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>CpcPH<br/><span style={{fontSize: '0.75rem', color: 'var(--text-muted)'}}>Combined pre- and post-capillary PH</span></td>
+                                                            <td className="value">&gt; 20</td>
+                                                            <td className="value">&gt; 15</td>
+                                                            <td className="value">&gt; 2</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <div className="info-box purple" style={{ marginTop: '16px' }}>
+                                            <div className="info-box-title">🫀 超音波 PH 評估等級</div>
+                                            <div className="info-box-content">
+                                                <table className="criteria-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>可能性</th>
+                                                            <th>標準</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>低可能性</td>
+                                                            <td>TRPG ≤ 2.8 m/s, 無其他 PH 徵象</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>中等可能性</td>
+                                                            <td>TRPG 2.9-3.4 m/s 或 TRPG ≤ 2.8 m/s 但有其他徵象</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>高可能性</td>
+                                                            <td>TRPG &gt; 3.4 m/s 或 TRPG 2.9-3.4 m/s 加上其他徵象</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <div className="info-box yellow" style={{ marginTop: '16px' }}>
+                                            <div className="info-box-title">💊 Vasoreactivity Test 陽性標準</div>
+                                            <div className="info-box-content">
+                                                mPAP 下降 ≥ 10 mmHg 到絕對值 &lt; 40 mmHg<br/>
+                                                + Cardiac output 維持或增加<br/><br/>
+                                                ✅ 陽性 → CCB trial<br/>
+                                                ❌ 陰性或 CCB 失敗 → PAH-specific therapy
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="section-card" style={{ marginTop: '16px' }}>
+                                    <div className="section-content" style={{ paddingTop: '20px' }}>
+                                        <div className="checklist-title">
+                                            <span>🔄</span> 診斷流程最重要原則
+                                        </div>
+                                        <div className="flow-diagram">
+                                            <div className="flow-step">
+                                                <div className="flow-box">超音波懷疑 PH</div>
+                                            </div>
+                                            <div className="flow-arrow">↓</div>
+                                            <div className="flow-step">
+                                                <div className="flow-box highlight">RHC 確診</div>
+                                            </div>
+                                            <div className="flow-arrow">↓</div>
+                                            <div className="flow-step">
+                                                <div className="flow-box">血行動力學分型</div>
+                                            </div>
+                                            <div className="flow-arrow">↓</div>
+                                            <div className="flow-step">
+                                                <div className="flow-box">WHO 分類</div>
+                                            </div>
+                                            <div className="flow-arrow">↓</div>
+                                            <div className="flow-step">
+                                                <div className="flow-box">風險評估</div>
+                                            </div>
+                                            <div className="flow-arrow">↓</div>
+                                            <div className="flow-step">
+                                                <div className="flow-box highlight">治療決策</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'quiz' && (
+                            <div className="tab-content">
+                                <div className="overview-stats">
+                                    <div className="stat-card">
+                                        <div className="stat-value">10</div>
+                                        <div className="stat-label">題目總數</div>
+                                    </div>
+                                    <div className="stat-card">
+                                        <div className="stat-value">{quizScore !== null ? `${quizScore * 10}%` : '--'}</div>
+                                        <div className="stat-label">最近成績</div>
+                                    </div>
+                                </div>
+                                <Quiz onComplete={(score) => setQuizScore(score)} />
+                            </div>
+                        )}
+
+                        {activeTab === 'notes' && (
+                            <div className="tab-content">
+                                <div className="section-card">
+                                    <div className="section-content" style={{ paddingTop: '20px' }}>
+                                        <div className="checklist-title">
+                                            <span>⚠️</span> 常見陷阱 Common Pitfalls
+                                        </div>
+                                        <div className="notes-list">
+                                            <div className="note-item">
+                                                <div className="note-icon danger">❌</div>
+                                                <div className="note-text">
+                                                    <strong>僅依 TTE 診斷 PH</strong><br/>
+                                                    TTE 只能懷疑，需 RHC 確認診斷
+                                                </div>
+                                            </div>
+                                            <div className="note-item">
+                                                <div className="note-icon warning">⚠️</div>
+                                                <div className="note-text">
+                                                    <strong>忽略 Group 2 (左心疾病)</strong><br/>
+                                                    這是最常見的 PH 原因！
+                                                </div>
+                                            </div>
+                                            <div className="note-item">
+                                                <div className="note-icon danger">❌</div>
+                                                <div className="note-text">
+                                                    <strong>未做 V/Q scan 排除 CTEPH</strong><br/>
+                                                    CTEPH 是唯一可能治癒的 PH
+                                                </div>
+                                            </div>
+                                            <div className="note-item">
+                                                <div className="note-icon warning">⚠️</div>
+                                                <div className="note-text">
+                                                    <strong>未篩檢 CTD</strong><br/>
+                                                    SSc 患者 10-15% 有 PAH
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="section-card" style={{ marginTop: '16px' }}>
+                                    <div className="section-content" style={{ paddingTop: '20px' }}>
+                                        <div className="checklist-title">
+                                            <span>💡</span> 重要提醒 Key Reminders
+                                        </div>
+                                        <div className="notes-list">
+                                            <div className="note-item">
+                                                <div className="note-icon info">📊</div>
+                                                <div className="note-text">
+                                                    <strong>BNP/NT-proBNP</strong> 是重要預後指標，追蹤必測
+                                                </div>
+                                            </div>
+                                            <div className="note-item">
+                                                <div className="note-icon info">🏥</div>
+                                                <div className="note-text">
+                                                    <strong>CTEPH</strong> 是唯一可能治癒的 PH (手術 PEA)
+                                                </div>
+                                            </div>
+                                            <div className="note-item">
+                                                <div className="note-icon danger">🚫</div>
+                                                <div className="note-text">
+                                                    <strong>Group 1 PAH 才適合標靶藥物</strong><br/>
+                                                    不可亂用於 Group 2/3
+                                                </div>
+                                            </div>
+                                            <div className="note-item">
+                                                <div className="note-icon info">📋</div>
+                                                <div className="note-text">
+                                                    <strong>所有疑似 PH 患者都應做 V/Q scan</strong><br/>
+                                                    排除 CTEPH
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="info-box red" style={{ marginTop: '16px' }}>
+                                    <div className="info-box-title">🎯 診斷流程核心原則</div>
+                                    <div className="info-box-content" style={{ fontSize: '1rem', fontWeight: '500' }}>
+                                        超音波懷疑 PH → RHC 確診 → 血行動力學分型 → WHO 分類 → 風險評估 → 治療決策
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </main>
+
+                    <footer className="footer">
+                        <p>肺動脈高壓診斷查核表 | 謝慕揚 MD, PhD, FESC</p>
+                        <p>Based on 2022 ESC/ERS Guidelines | Version 1.0</p>
+                        <p style={{ marginTop: '8px' }}>
+                            台大醫院新竹分院心血管中心 | Updated: December 2025
+                        </p>
+                    </footer>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
