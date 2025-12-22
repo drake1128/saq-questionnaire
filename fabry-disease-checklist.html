@@ -72,8 +72,8 @@
                 icon: "🔬",
                 content: [
                     { subtitle: "篩檢策略", text: "男性：先測 α-GAL A 酵素活性\n女性：先測 Lyso-Gb3（酵素活性可能正常）\n兩性皆需 GLA 基因定序確認" },
-                    { subtitle: "α-GAL A 酵素活性判讀", text: "• 正常：> 3.0 nmol/hr/mL（依實驗室而異）\n• 降低/缺乏：高度懷疑 FD\n• 注意：女性可能因 X 染色體隨機去活化而正常" },
-                    { subtitle: "Lyso-Gb3 判讀", text: "• 正常：< 1.8 ng/mL（依實驗室而異）\n• 升高：支持 FD 診斷\n• 用途：診斷、疾病活性監測、治療效果追蹤\n• 女性首選篩檢工具" },
+                    { subtitle: "α-GAL A 酵素活性判讀", text: "• Guideline 正常值：> 3.0 nmol/hr/mL\n• 台大醫院正常值：> 1.5 nmol/hr/mL\n• 降低/缺乏：高度懷疑 FD\n• 注意：女性可能因 X 染色體隨機去活化而正常" },
+                    { subtitle: "Lyso-Gb3 判讀", text: "• Guideline 正常值：< 1.8 ng/mL\n• 台大醫院正常值：< 0.8 ng/mL\n• 升高：支持 FD 診斷\n• 用途：診斷、疾病活性監測、治療效果追蹤\n• 女性首選篩檢工具" },
                     { subtitle: "基因定序結果判讀", text: "• 致病性突變 (Pathogenic)：確診 FD\n• 可能致病 (Likely pathogenic)：高度懷疑\n• 意義不明 (VUS)：需結合臨床判斷\n• 良性變異 (Benign)：排除 FD" }
                 ],
                 keyPoints: ["男性：酵素活性 → Lyso-Gb3 → 基因定序", "女性：Lyso-Gb3 → 基因定序（酵素可能偽陰性）", "IVS4+919G>A 是台灣最常見致病突變", "VUS 需結合心肌切片或 Lyso-Gb3 評估"]
@@ -431,8 +431,9 @@
                 const val = parseFloat(enzyme);
                 if (sex === 'male') {
                     if (val < 1.0) return { status: 'abnormal', text: '嚴重缺乏', interpretation: '高度懷疑 Fabry disease，建議進行 Lyso-Gb3 和 GLA 基因定序確認。' };
-                    if (val < 3.0) return { status: 'borderline', text: '降低', interpretation: '可能為 Fabry disease，需結合 Lyso-Gb3 和基因檢測進一步確認。' };
-                    return { status: 'normal', text: '正常', interpretation: '酵素活性正常，但不能完全排除 Fabry disease（尤其女性）。' };
+                    if (val < 1.5) return { status: 'abnormal', text: '缺乏（低於台大醫院正常值）', interpretation: '低於台大醫院正常值（1.5 nmol/hr/mL），高度懷疑 Fabry disease。建議進行 Lyso-Gb3 和 GLA 基因定序確認。' };
+                    if (val < 3.0) return { status: 'borderline', text: '偏低（介於兩參考值之間）', interpretation: '介於台大醫院正常值（1.5）與 Guideline 正常值（3.0）之間。建議結合 Lyso-Gb3 和基因檢測進一步確認。' };
+                    return { status: 'normal', text: '正常', interpretation: '酵素活性正常（> 3.0 nmol/hr/mL），但不能完全排除 Fabry disease（尤其女性）。' };
                 } else {
                     return { status: 'borderline', text: '參考價值有限', interpretation: '女性因 X 染色體隨機去活化，酵素活性可能正常。建議以 Lyso-Gb3 和基因定序為主要診斷依據。' };
                 }
@@ -442,8 +443,9 @@
                 if (!lysoGb3) return null;
                 const val = parseFloat(lysoGb3);
                 if (val > 10) return { status: 'abnormal', text: '明顯升高', interpretation: '強烈支持 Fabry disease 診斷。Classic type 男性通常 > 20 ng/mL。' };
-                if (val > 1.8) return { status: 'borderline', text: '輕度升高', interpretation: '支持 Fabry disease 診斷。常見於晚發型（cardiac variant）或女性患者。' };
-                return { status: 'normal', text: '正常', interpretation: 'Lyso-Gb3 正常不能完全排除 FD，需結合基因檢測。少數病人初期 Lyso-Gb3 可能正常。' };
+                if (val > 1.8) return { status: 'abnormal', text: '升高（高於 Guideline 正常值）', interpretation: '高於 Guideline 正常值（1.8 ng/mL），支持 Fabry disease 診斷。常見於晚發型（cardiac variant）或女性患者。' };
+                if (val > 0.8) return { status: 'borderline', text: '偏高（介於兩參考值之間）', interpretation: '介於台大醫院正常值（0.8）與 Guideline 正常值（1.8）之間。建議結合基因檢測及臨床表現綜合評估。' };
+                return { status: 'normal', text: '正常', interpretation: 'Lyso-Gb3 正常（< 0.8 ng/mL，台大醫院標準）。但仍不能完全排除 FD，需結合基因檢測。少數病人初期 Lyso-Gb3 可能正常。' };
             };
 
             const getGlaInterpretation = () => {
@@ -495,7 +497,9 @@
                             </div>
                         )}
                         <div style={{ marginTop: 12, padding: 12, background: 'var(--bg-card-alt)', borderRadius: 10, fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                            <strong>參考值：</strong>正常 > 3.0 nmol/hr/mL（依實驗室而異）<br />
+                            <strong>參考值：</strong><br />
+                            • Guideline：正常 > 3.0 nmol/hr/mL<br />
+                            • <span style={{ color: 'var(--accent-cyan)' }}>台大醫院：正常 > 1.5 nmol/hr/mL</span><br />
                             <strong>注意：</strong>女性因 X 染色體隨機去活化，酵素活性可能在正常範圍
                         </div>
                     </div>
@@ -519,7 +523,9 @@
                             </div>
                         )}
                         <div style={{ marginTop: 12, padding: 12, background: 'var(--bg-card-alt)', borderRadius: 10, fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                            <strong>參考值：</strong>正常 &lt; 1.8 ng/mL<br />
+                            <strong>參考值：</strong><br />
+                            • Guideline：正常 &lt; 1.8 ng/mL<br />
+                            • <span style={{ color: 'var(--accent-cyan)' }}>台大醫院：正常 &lt; 0.8 ng/mL</span><br />
                             <strong>Classic 男性：</strong>通常 > 20 ng/mL<br />
                             <strong>Late-onset/女性：</strong>通常 2-20 ng/mL
                         </div>
