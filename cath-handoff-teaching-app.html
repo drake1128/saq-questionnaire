@@ -9,64 +9,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --primary: #1e3a5f;
-            --primary-light: #2d5a87;
-            --accent: #e74c3c;
-            --success: #27ae60;
-            --warning: #f39c12;
-            --info: #3498db;
-            --purple: #9b59b6;
-            --bg-cream: #faf8f5;
-            --bg-card: #ffffff;
-            --text-dark: #2c3e50;
-            --text-muted: #7f8c8d;
+            --primary: #1e3a5f; --primary-light: #2d5a87; --accent: #e74c3c;
+            --success: #27ae60; --warning: #f39c12; --info: #3498db; --purple: #9b59b6;
+            --bg-cream: #faf8f5; --bg-card: #ffffff; --text-dark: #2c3e50; --text-muted: #7f8c8d;
             --shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
-        
         body {
             font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-cream);
-            color: var(--text-dark);
-            line-height: 1.6;
-            min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
+            background: var(--bg-cream); color: var(--text-dark); line-height: 1.6;
+            min-height: 100vh; -webkit-font-smoothing: antialiased;
         }
-        
         #root { min-height: 100vh; }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        
-        @keyframes heartbeat {
-            0%, 100% { transform: scale(1); }
-            25% { transform: scale(1.1); }
-            50% { transform: scale(1); }
-            75% { transform: scale(1.1); }
-        }
-        
-        @keyframes flash {
-            0%, 50%, 100% { opacity: 1; }
-            25%, 75% { opacity: 0.6; }
-        }
-        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes heartbeat { 0%, 100% { transform: scale(1); } 25% { transform: scale(1.1); } 50% { transform: scale(1); } 75% { transform: scale(1.1); } }
+        @keyframes flash { 0%, 50%, 100% { opacity: 1; } 25%, 75% { opacity: 0.6; } }
+        @keyframes copySuccess { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         .slide-in { animation: slideIn 0.3s ease-out forwards; }
         .flash-alert { animation: flash 2s infinite; }
-        
+        .copy-success { animation: copySuccess 0.3s ease-out; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
@@ -74,98 +38,28 @@
 </head>
 <body>
     <div id="root"></div>
-    
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState } = React;
 
-        // ==================== SVG ICONS ====================
         const Icons = {
-            Heart: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                </svg>
-            ),
-            Check: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
-                </svg>
-            ),
-            Arrow: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"/>
-                </svg>
-            ),
-            Back: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-                </svg>
-            ),
-            Warning: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
-                </svg>
-            ),
-            Quiz: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/>
-                </svg>
-            ),
-            Medical: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M19 3H5c-1.1 0-1.99.9-1.99 2L3 19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 11h-4v4h-4v-4H6v-4h4V6h4v4h4v4z"/>
-                </svg>
-            ),
-            Person: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                </svg>
-            ),
-            Bed: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z"/>
-                </svg>
-            ),
-            Checklist: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                </svg>
-            ),
-            Exchange: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/>
-                </svg>
-            ),
-            Pulse: () => (
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/>
-                </svg>
-            )
+            Check: () => (<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>),
+            Arrow: () => (<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"/></svg>),
+            Back: () => (<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>),
+            Warning: () => (<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>),
+            Quiz: () => (<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg>),
+            Medical: () => (<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M19 3H5c-1.1 0-1.99.9-1.99 2L3 19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 11h-4v4h-4v-4H6v-4h4V6h4v4h4v4z"/></svg>),
+            Person: () => (<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>),
+            Bed: () => (<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z"/></svg>),
+            Checklist: () => (<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>),
+            Exchange: () => (<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/></svg>),
+            Copy: () => (<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>),
+            Email: () => (<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>)
         };
 
-        // ==================== MAIN APP ====================
         const App = () => {
             const [currentPage, setCurrentPage] = useState('home');
-            
-            // 術前檢查清單
-            const [preCathChecks, setPreCathChecks] = useState({
-                sandbag: false,
-                consent: false,
-                allergies: false,
-                clothes: false,
-                dentures: false,
-                hearingAid: false,
-                noShaving: false,
-                ivLine: false
-            });
-
-            // 測驗狀態
-            const [quizState, setQuizState] = useState({
-                currentQ: 0,
-                score: 0,
-                selected: null,
-                showResult: false,
-                completed: false
-            });
+            const [preCathChecks, setPreCathChecks] = useState({ sandbag: false, consent: false, allergies: false, clothes: false, dentures: false, hearingAid: false, noShaving: false, ivLine: false });
+            const [quizState, setQuizState] = useState({ currentQ: 0, score: 0, selected: null, showResult: false, completed: false });
 
             const menuItems = [
                 { id: 'pre-cath', icon: <Icons.Checklist />, title: '術前準備', subtitle: 'Pre-Cath Checklist', color: '#3b82f6' },
@@ -177,1787 +71,356 @@
                 { id: 'quiz', icon: <Icons.Quiz />, title: '自我測驗', subtitle: '綜合能力評量', color: '#ec4899' }
             ];
 
-            // ==================== CRITICAL ALERT ====================
             const CriticalAlert = ({ icon, children }) => (
-                <div style={{
-                    background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
-                    borderRadius: '16px',
-                    padding: '18px',
-                    marginBottom: '20px',
-                    color: 'white',
-                    display: 'flex',
-                    gap: '14px',
-                    alignItems: 'flex-start',
-                    boxShadow: '0 4px 15px rgba(220, 38, 38, 0.3)'
-                }} className="flash-alert">
+                <div style={{ background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)', borderRadius: '16px', padding: '18px', marginBottom: '20px', color: 'white', display: 'flex', gap: '14px', alignItems: 'flex-start', boxShadow: '0 4px 15px rgba(220, 38, 38, 0.3)' }} className="flash-alert">
                     <span style={{ fontSize: '28px', flexShrink: 0 }}>{icon}</span>
                     <div style={{ flex: 1 }}>{children}</div>
                 </div>
             );
 
-            // ==================== CHECKLIST ITEM ====================
             const ChecklistItem = ({ checked, onChange, children, important = false, critical = false }) => (
-                <div 
-                    onClick={() => onChange(!checked)}
-                    style={{
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: '12px',
-                        padding: '14px 16px',
-                        background: checked ? (critical ? '#fee2e2' : important ? '#fef3c7' : '#d1fae5') : 'white',
-                        borderRadius: '12px',
-                        marginBottom: '8px',
-                        cursor: 'pointer',
-                        border: `2px solid ${checked ? (critical ? '#fca5a5' : important ? '#fcd34d' : '#6ee7b7') : '#e5e7eb'}`,
-                        transition: 'all 0.2s ease'
-                    }}
-                >
-                    <div style={{
-                        width: '24px',
-                        height: '24px',
-                        borderRadius: '6px',
-                        border: `2px solid ${checked ? (critical ? '#dc2626' : important ? '#f59e0b' : '#10b981') : '#d1d5db'}`,
-                        background: checked ? (critical ? '#dc2626' : important ? '#f59e0b' : '#10b981') : 'white',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0,
-                        marginTop: '2px',
-                        color: 'white'
-                    }}>
+                <div onClick={() => onChange(!checked)} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '14px 16px', background: checked ? (critical ? '#fee2e2' : important ? '#fef3c7' : '#d1fae5') : 'white', borderRadius: '12px', marginBottom: '8px', cursor: 'pointer', border: `2px solid ${checked ? (critical ? '#fca5a5' : important ? '#fcd34d' : '#6ee7b7') : '#e5e7eb'}`, transition: 'all 0.2s ease' }}>
+                    <div style={{ width: '24px', height: '24px', borderRadius: '6px', border: `2px solid ${checked ? (critical ? '#dc2626' : important ? '#f59e0b' : '#10b981') : '#d1d5db'}`, background: checked ? (critical ? '#dc2626' : important ? '#f59e0b' : '#10b981') : 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: '2px', color: 'white' }}>
                         {checked && <Icons.Check />}
                     </div>
-                    <div style={{ 
-                        flex: 1,
-                        color: checked ? '#374151' : '#6b7280',
-                        fontSize: '15px',
-                        lineHeight: '1.5'
-                    }}>
-                        {children}
-                    </div>
+                    <div style={{ flex: 1, color: checked ? '#374151' : '#6b7280', fontSize: '15px', lineHeight: '1.5' }}>{children}</div>
                 </div>
             );
 
-            // ==================== INFO CARD ====================
             const InfoCard = ({ title, icon, color, children }) => (
-                <div style={{
-                    background: 'white',
-                    borderRadius: '16px',
-                    padding: '20px',
-                    marginBottom: '16px',
-                    boxShadow: 'var(--shadow)',
-                    borderTop: `4px solid ${color}`
-                }}>
-                    <h3 style={{ 
-                        fontSize: '17px', 
-                        fontWeight: '600', 
-                        marginBottom: '16px',
-                        color: '#1f2937',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px'
-                    }}>
-                        <span style={{ color }}>{icon}</span>
-                        {title}
+                <div style={{ background: 'white', borderRadius: '16px', padding: '20px', marginBottom: '16px', boxShadow: 'var(--shadow)', borderTop: `4px solid ${color}` }}>
+                    <h3 style={{ fontSize: '17px', fontWeight: '600', marginBottom: '16px', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ color }}>{icon}</span>{title}
                     </h3>
                     {children}
                 </div>
             );
 
-            // ==================== NOTE BOX ====================
             const NoteBox = ({ children, color = '#6b7280', bgColor = '#f3f4f6' }) => (
-                <div style={{
-                    padding: '12px 14px',
-                    background: bgColor,
-                    borderRadius: '10px',
-                    fontSize: '13px',
-                    color: color,
-                    marginTop: '12px',
-                    borderLeft: `3px solid ${color}`
-                }}>
-                    {children}
-                </div>
+                <div style={{ padding: '12px 14px', background: bgColor, borderRadius: '10px', fontSize: '13px', color: color, marginTop: '12px', borderLeft: `3px solid ${color}` }}>{children}</div>
             );
 
-            // ==================== TOGGLE BUTTON ====================
             const ToggleButton = ({ active, onClick, children, color = '#3b82f6' }) => (
-                <button
-                    onClick={onClick}
-                    style={{
-                        padding: '12px 18px',
-                        borderRadius: '10px',
-                        border: `2px solid ${active ? color : '#e5e7eb'}`,
-                        background: active ? `${color}15` : 'white',
-                        color: active ? color : '#6b7280',
-                        fontSize: '14px',
-                        fontWeight: '500',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease'
-                    }}
-                >
+                <button onClick={onClick} style={{ padding: '12px 18px', borderRadius: '10px', border: `2px solid ${active ? color : '#e5e7eb'}`, background: active ? `${color}15` : 'white', color: active ? color : '#6b7280', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'all 0.2s ease' }}>
                     {active && '✓ '}{children}
                 </button>
             );
 
-            // ==================== HEADER ====================
             const Header = ({ title, subtitle, showBack = false }) => (
-                <div style={{
-                    background: 'linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%)',
-                    color: 'white',
-                    padding: '20px',
-                    paddingTop: '50px',
-                    borderRadius: '0 0 30px 30px',
-                    marginBottom: '20px',
-                    position: 'relative'
-                }}>
+                <div style={{ background: 'linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%)', color: 'white', padding: '20px', paddingTop: '50px', borderRadius: '0 0 30px 30px', marginBottom: '20px', position: 'relative' }}>
                     {showBack && (
-                        <button
-                            onClick={() => setCurrentPage('home')}
-                            style={{
-                                position: 'absolute',
-                                top: '50px',
-                                left: '15px',
-                                background: 'rgba(255,255,255,0.2)',
-                                border: 'none',
-                                borderRadius: '50%',
-                                width: '40px',
-                                height: '40px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                color: 'white',
-                                cursor: 'pointer'
-                            }}
-                        >
+                        <button onClick={() => setCurrentPage('home')} style={{ position: 'absolute', top: '50px', left: '15px', background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'white' }}>
                             <Icons.Back />
                         </button>
                     )}
-                    <h1 style={{ textAlign: 'center', fontSize: '20px', fontWeight: '600', marginBottom: subtitle ? '6px' : '0' }}>
-                        {title}
-                    </h1>
-                    {subtitle && (
-                        <p style={{ textAlign: 'center', fontSize: '13px', opacity: 0.85 }}>{subtitle}</p>
-                    )}
+                    <div style={{ textAlign: 'center', paddingLeft: showBack ? '40px' : '0', paddingRight: showBack ? '40px' : '0' }}>
+                        <h1 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '4px' }}>{title}</h1>
+                        {subtitle && <div style={{ opacity: 0.85, fontSize: '14px' }}>{subtitle}</div>}
+                    </div>
                 </div>
             );
 
-            // ==================== HOME PAGE ====================
             const HomePage = () => (
                 <div className="fade-in">
-                    <div style={{
-                        background: 'linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%)',
-                        color: 'white',
-                        padding: '40px 20px 50px',
-                        borderRadius: '0 0 40px 40px',
-                        marginBottom: '20px',
-                        textAlign: 'center'
-                    }}>
-                        <div style={{ 
-                            fontSize: '48px',
-                            marginBottom: '12px',
-                            animation: 'heartbeat 2s infinite'
-                        }}>🫀</div>
-                        <h1 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '10px' }}>
-                            導管室護理教學 - 整合版
-                        </h1>
-                        <div style={{
-                            padding: '10px 20px',
-                            background: 'rgba(255,255,255,0.15)',
-                            borderRadius: '20px',
-                            display: 'inline-block',
-                            fontSize: '13px'
-                        }}>
-                            📚 交班工作與術後護理 - 整合版
-                        </div>
+                    <div style={{ background: 'linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%)', color: 'white', padding: '40px 20px 50px', borderRadius: '0 0 40px 40px', marginBottom: '20px', textAlign: 'center' }}>
+                        <div style={{ fontSize: '48px', marginBottom: '12px', animation: 'heartbeat 2s infinite' }}>🫀</div>
+                        <h1 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '10px' }}>導管室護理教學 - 整合版</h1>
+                        <div style={{ padding: '10px 20px', background: 'rgba(255,255,255,0.15)', borderRadius: '20px', display: 'inline-block', fontSize: '13px' }}>📚 交班工作與術後護理</div>
                     </div>
-                    
                     <div style={{ padding: '0 16px' }}>
                         {menuItems.map((item, idx) => (
-                            <button
-                                key={item.id}
-                                onClick={() => setCurrentPage(item.id)}
-                                className="slide-in"
-                                style={{
-                                    width: '100%',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '16px',
-                                    padding: '18px 20px',
-                                    background: 'white',
-                                    border: 'none',
-                                    borderRadius: '16px',
-                                    marginBottom: '12px',
-                                    boxShadow: 'var(--shadow)',
-                                    cursor: 'pointer',
-                                    textAlign: 'left',
-                                    animationDelay: `${idx * 0.08}s`
-                                }}
-                            >
-                                <div style={{
-                                    width: '50px',
-                                    height: '50px',
-                                    borderRadius: '14px',
-                                    background: `linear-gradient(135deg, ${item.color} 0%, ${item.color}dd 100%)`,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    color: 'white',
-                                    flexShrink: 0
-                                }}>
-                                    {item.icon}
-                                </div>
+                            <button key={item.id} onClick={() => setCurrentPage(item.id)} className="slide-in" style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '16px', padding: '18px 20px', background: 'white', border: 'none', borderRadius: '16px', marginBottom: '12px', boxShadow: 'var(--shadow)', cursor: 'pointer', textAlign: 'left', animationDelay: `${idx * 0.08}s` }}>
+                                <div style={{ width: '50px', height: '50px', borderRadius: '14px', background: `linear-gradient(135deg, ${item.color} 0%, ${item.color}dd 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', flexShrink: 0 }}>{item.icon}</div>
                                 <div style={{ flex: 1 }}>
-                                    <div style={{ fontWeight: '600', fontSize: '16px', color: '#2c3e50' }}>
-                                        {item.title}
-                                    </div>
-                                    <div style={{ fontSize: '13px', color: '#7f8c8d', marginTop: '2px' }}>
-                                        {item.subtitle}
-                                    </div>
+                                    <div style={{ fontWeight: '600', fontSize: '16px', color: '#2c3e50' }}>{item.title}</div>
+                                    <div style={{ fontSize: '13px', color: '#7f8c8d', marginTop: '2px' }}>{item.subtitle}</div>
                                 </div>
-                                <div style={{ color: '#bdc3c7' }}>
-                                    <Icons.Arrow />
-                                </div>
+                                <div style={{ color: '#bdc3c7' }}><Icons.Arrow /></div>
                             </button>
                         ))}
-                        
-                        <div style={{ textAlign: 'center', padding: '20px 0', color: '#7f8c8d', fontSize: '12px' }}>
-                            心臟內科護理教學 - 整合版
-                        </div>
                     </div>
                 </div>
             );
 
-            // ==================== PRE-CATH PAGE ====================
             const PreCathPage = () => {
-                const updateCheck = (key) => {
-                    setPreCathChecks(prev => ({ ...prev, [key]: !prev[key] }));
-                };
-                
+                const updateCheck = (key) => setPreCathChecks(prev => ({ ...prev, [key]: !prev[key] }));
                 const allChecked = Object.values(preCathChecks).every(v => v);
                 const checkedCount = Object.values(preCathChecks).filter(v => v).length;
-                
                 return (
                     <div className="fade-in">
                         <Header title="術前準備 Checklist" subtitle="Pre-Catheterization Preparation" showBack />
                         <div style={{ padding: '0 16px' }}>
-                            <CriticalAlert icon="🏋️">
-                                <div style={{ fontWeight: '700', fontSize: '16px', marginBottom: '4px' }}>
-                                    請準備 2kg 砂包至導管室！
-                                </div>
-                                <div style={{ fontSize: '13px', opacity: 0.95 }}>
-                                    術後 femoral sheath 需使用砂包加壓止血
-                                </div>
-                            </CriticalAlert>
-
-                            <div style={{
-                                background: 'white',
-                                borderRadius: '12px',
-                                padding: '16px',
-                                marginBottom: '20px',
-                                boxShadow: 'var(--shadow)'
-                            }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                                    <span style={{ fontWeight: '600' }}>完成進度</span>
-                                    <span style={{ color: '#3b82f6', fontWeight: '600' }}>{checkedCount}/8</span>
-                                </div>
-                                <div style={{ height: '8px', background: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' }}>
-                                    <div style={{
-                                        height: '100%',
-                                        width: `${(checkedCount / 8) * 100}%`,
-                                        background: allChecked ? '#10b981' : 'linear-gradient(90deg, #3b82f6, #8b5cf6)',
-                                        transition: 'width 0.3s ease'
-                                    }}/>
-                                </div>
+                            <CriticalAlert icon="🏋️"><div style={{ fontWeight: '700', fontSize: '16px', marginBottom: '4px' }}>請準備 2kg 砂包至導管室！</div><div style={{ fontSize: '13px', opacity: 0.95 }}>術後 femoral sheath 需使用砂包加壓止血</div></CriticalAlert>
+                            <div style={{ background: 'white', borderRadius: '12px', padding: '16px', marginBottom: '20px', boxShadow: 'var(--shadow)' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}><span style={{ fontWeight: '600' }}>完成進度</span><span style={{ color: '#3b82f6', fontWeight: '600' }}>{checkedCount}/8</span></div>
+                                <div style={{ height: '8px', background: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' }}><div style={{ height: '100%', width: `${(checkedCount / 8) * 100}%`, background: allChecked ? '#10b981' : 'linear-gradient(90deg, #3b82f6, #8b5cf6)', transition: 'width 0.3s ease' }}/></div>
                             </div>
-                            
-                            <InfoCard title="物品準備" icon="📦" color="#dc2626">
-                                <ChecklistItem checked={preCathChecks.sandbag} onChange={() => updateCheck('sandbag')} critical>
-                                    <strong>⚠️ 準備 2kg 砂包</strong>
-                                    <div style={{ fontSize: '12px', color: '#dc2626', marginTop: '4px' }}>
-                                        【重要】攜帶至導管室，術後止血必備
-                                    </div>
-                                </ChecklistItem>
-                            </InfoCard>
-
+                            <InfoCard title="物品準備" icon="📦" color="#dc2626"><ChecklistItem checked={preCathChecks.sandbag} onChange={() => updateCheck('sandbag')} critical><strong>⚠️ 準備 2kg 砂包</strong><div style={{ fontSize: '12px', color: '#dc2626', marginTop: '4px' }}>【重要】攜帶至導管室，術後止血必備</div></ChecklistItem></InfoCard>
                             <InfoCard title="文件確認" icon="📋" color="#3b82f6">
-                                <ChecklistItem checked={preCathChecks.consent} onChange={() => updateCheck('consent')} important>
-                                    <strong>確認同意書</strong>已簽署完成
-                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                                        包含：導管檢查/治療同意書、麻醉同意書
-                                    </div>
-                                </ChecklistItem>
-                                
-                                <ChecklistItem checked={preCathChecks.allergies} onChange={() => updateCheck('allergies')} critical>
-                                    <strong>確認過敏史</strong>
-                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                                        特別注意：顯影劑過敏、Iodine 過敏
-                                    </div>
-                                </ChecklistItem>
+                                <ChecklistItem checked={preCathChecks.consent} onChange={() => updateCheck('consent')} important><strong>確認同意書</strong>已簽署完成</ChecklistItem>
+                                <ChecklistItem checked={preCathChecks.allergies} onChange={() => updateCheck('allergies')} critical><strong>確認過敏史</strong>（顯影劑/Iodine）</ChecklistItem>
                             </InfoCard>
-                            
                             <InfoCard title="病人準備" icon="👤" color="#8b5cf6">
-                                <ChecklistItem checked={preCathChecks.clothes} onChange={() => updateCheck('clothes')}>
-                                    <strong>更換手術衣</strong>
-                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                                        脫除內衣褲，穿著醫院手術衣
-                                    </div>
-                                </ChecklistItem>
-                                
-                                <ChecklistItem checked={preCathChecks.dentures} onChange={() => updateCheck('dentures')}>
-                                    <strong>取下假牙</strong>
-                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                                        確認活動假牙已取下並妥善保管
-                                    </div>
-                                </ChecklistItem>
-                                
-                                <ChecklistItem checked={preCathChecks.hearingAid} onChange={() => updateCheck('hearingAid')}>
-                                    <strong>確認助聽器</strong>
-                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                                        評估是否需保留以利術中溝通
-                                    </div>
-                                </ChecklistItem>
-                                
-                                <ChecklistItem checked={preCathChecks.noShaving} onChange={() => updateCheck('noShaving')}>
-                                    <strong>不需剃毛</strong>
-                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                                        現行規範：穿刺部位不需事先剃毛
-                                    </div>
-                                </ChecklistItem>
+                                <ChecklistItem checked={preCathChecks.clothes} onChange={() => updateCheck('clothes')}><strong>更換手術衣</strong></ChecklistItem>
+                                <ChecklistItem checked={preCathChecks.dentures} onChange={() => updateCheck('dentures')}><strong>確認假牙移除</strong></ChecklistItem>
+                                <ChecklistItem checked={preCathChecks.hearingAid} onChange={() => updateCheck('hearingAid')}><strong>確認助聽器移除</strong></ChecklistItem>
+                                <ChecklistItem checked={preCathChecks.noShaving} onChange={() => updateCheck('noShaving')} important><strong>不需常規剃毛</strong></ChecklistItem>
+                                <ChecklistItem checked={preCathChecks.ivLine} onChange={() => updateCheck('ivLine')}><strong>確認點滴通路</strong>（20G以上）</ChecklistItem>
                             </InfoCard>
-                            
-                            <InfoCard title="醫療準備" icon="💉" color="#10b981">
-                                <ChecklistItem checked={preCathChecks.ivLine} onChange={() => updateCheck('ivLine')}>
-                                    <strong>建立靜脈通路</strong>
-                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                                        首選左手：20G 或更大，避免同側 AVF
-                                    </div>
-                                </ChecklistItem>
-                            </InfoCard>
-
-                            {/* 修改：術前交班重點 - 穿刺部位改為異常抽血檢驗報告 */}
-                            <div style={{
-                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                borderRadius: '16px',
-                                padding: '20px',
-                                color: 'white',
-                                marginBottom: '20px'
-                            }}>
-                                <h3 style={{ fontWeight: '600', marginBottom: '12px' }}>📋 術前交班重點</h3>
-                                <div style={{
-                                    background: 'rgba(255,255,255,0.15)',
-                                    borderRadius: '10px',
-                                    padding: '14px',
-                                    fontSize: '14px',
-                                    lineHeight: '1.8'
-                                }}>
-                                    <div><strong>1.</strong> 異常抽血檢驗報告（含 Cr, anemia, PT）</div>
-                                    <div><strong>2.</strong> 病患過去病史</div>
-                                    <div><strong>3.</strong> 現服藥狀況</div>
-                                    <div><strong>4.</strong> <span style={{color: '#fcd34d'}}>確認 2kg 砂包已準備</span></div>
-                                </div>
-                            </div>
-
-                            {allChecked && (
-                                <div style={{
-                                    background: '#d1fae5',
-                                    borderRadius: '16px',
-                                    padding: '20px',
-                                    textAlign: 'center',
-                                    borderLeft: '4px solid #10b981'
-                                }} className="fade-in">
-                                    <div style={{ fontSize: '32px', marginBottom: '10px' }}>✅</div>
-                                    <div style={{ fontWeight: '600', color: '#065f46', fontSize: '16px' }}>
-                                        術前準備完成！
-                                    </div>
-                                    <div style={{ color: '#047857', fontSize: '14px', marginTop: '6px' }}>
-                                        可以準備送往導管室
-                                    </div>
-                                </div>
-                            )}
+                            {allChecked && (<div style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', padding: '20px', borderRadius: '16px', textAlign: 'center', marginBottom: '20px' }} className="fade-in"><div style={{ fontSize: '32px', marginBottom: '10px' }}>✓</div><div style={{ fontWeight: '700', fontSize: '18px' }}>準備完成！可以前往導管室</div></div>)}
                         </div>
                     </div>
                 );
             };
 
-            // ==================== PATIENT HANDOFF PAGE ====================
-            // 修改：新增心律不整 Arrhythmia 診斷選項
             const PatientHandoffPage = () => {
-                const [diagnosis, setDiagnosis] = useState([]);
-                const [arrhythmia, setArrhythmia] = useState([]);
-                const [valves, setValves] = useState([]);
-                const [fever, setFever] = useState(false);
-                const [kidneyConcern, setKidneyConcern] = useState(false);
-                const [lvefConcern, setLvefConcern] = useState(false);
-                
-                const toggleItem = (arr, setArr, item) => {
-                    setArr(prev => prev.includes(item) ? prev.filter(x => x !== item) : [...prev, item]);
-                };
-                
+                const [patientData, setPatientData] = useState({ diagnosis: '', egfr: '', ef: '', isUrgent: false });
                 return (
                     <div className="fade-in">
                         <Header title="病人交班" subtitle="Patient Information Handoff" showBack />
                         <div style={{ padding: '0 16px' }}>
-                            <InfoCard title="診斷分類" icon="🏥" color="#dc2626">
-                                <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '10px' }}>CAD / ACS 分類：</div>
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '16px' }}>
-                                    {['STEMI', 'NSTEMI', 'UA', 'Stable CAD', 'PAOD', 'CHF'].map(item => (
-                                        <ToggleButton
-                                            key={item}
-                                            active={diagnosis.includes(item)}
-                                            onClick={() => toggleItem(diagnosis, setDiagnosis, item)}
-                                            color="#dc2626"
-                                        >
-                                            {item}
-                                        </ToggleButton>
-                                    ))}
-                                </div>
-                                
-                                <div style={{
-                                    background: '#fef2f2',
-                                    borderRadius: '10px',
-                                    padding: '14px',
-                                    fontSize: '13px',
-                                    color: '#991b1b'
-                                }}>
-                                    <strong>⚠️ ACS 提醒：</strong>
-                                    <div style={{ marginTop: '6px' }}>
-                                        • STEMI：立即 Primary PCI 為首選治療<br/>
-                                        • NSTEMI/UA：依風險分層決定介入時機
-                                    </div>
-                                </div>
-                            </InfoCard>
-
-                            {/* 新增：心律不整診斷分類 */}
-                            <InfoCard title="心律不整診斷" icon="💓" color="#7c3aed">
-                                <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '10px' }}>Arrhythmia 分類：</div>
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '16px' }}>
-                                    {['AF', 'Aflutter', 'SVT', 'VT', 'VF', 'SSS', 'AVB', 'PSVT'].map(item => (
-                                        <ToggleButton
-                                            key={item}
-                                            active={arrhythmia.includes(item)}
-                                            onClick={() => toggleItem(arrhythmia, setArrhythmia, item)}
-                                            color="#7c3aed"
-                                        >
-                                            {item}
-                                        </ToggleButton>
-                                    ))}
-                                </div>
-                                
-                                {arrhythmia.length > 0 && (
-                                    <div style={{
-                                        background: '#f5f3ff',
-                                        borderRadius: '10px',
-                                        padding: '14px',
-                                        fontSize: '13px',
-                                        color: '#5b21b6'
-                                    }}>
-                                        <strong>📌 心律不整提醒：</strong>
-                                        <div style={{ marginTop: '6px' }}>
-                                            {arrhythmia.includes('AF') && <div>• AF：注意抗凝血藥物使用狀況</div>}
-                                            {arrhythmia.includes('VT') && <div>• VT：需密切監測，準備 defibrillator</div>}
-                                            {arrhythmia.includes('AVB') && <div>• AVB：評估是否需暫時性 pacemaker</div>}
-                                            {arrhythmia.includes('SSS') && <div>• SSS：注意心跳過緩，評估 pacemaker 需求</div>}
-                                        </div>
-                                    </div>
-                                )}
-                            </InfoCard>
-                            
-                            <InfoCard title="重要警示" icon="⚠️" color="#f59e0b">
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                    <ChecklistItem checked={fever} onChange={() => setFever(!fever)} critical>
-                                        <strong>發燒 Fever</strong>
-                                        <div style={{ fontSize: '12px', color: '#dc2626', marginTop: '4px' }}>
-                                            需評估是否延遲手術
-                                        </div>
-                                    </ChecklistItem>
-                                    
-                                    <ChecklistItem checked={kidneyConcern} onChange={() => setKidneyConcern(!kidneyConcern)} important>
-                                        <strong>腎功能異常</strong>
-                                        <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                                            eGFR &lt; 60 需注意顯影劑腎病變預防
-                                        </div>
-                                    </ChecklistItem>
-                                    
-                                    <ChecklistItem checked={lvefConcern} onChange={() => setLvefConcern(!lvefConcern)} important>
-                                        <strong>LVEF 降低</strong>
-                                        <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                                            LVEF &lt; 40% 需注意血流動力學變化
-                                        </div>
-                                    </ChecklistItem>
-                                </div>
-                            </InfoCard>
-                            
-                            <InfoCard title="心臟瓣膜問題" icon="💔" color="#ec4899">
+                            <InfoCard title="診斷分類" icon="🩺" color="#dc2626">
                                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                    {['AS', 'MR', 'MS', 'AR', 'TR'].map(valve => (
-                                        <ToggleButton
-                                            key={valve}
-                                            active={valves.includes(valve)}
-                                            onClick={() => toggleItem(valves, setValves, valve)}
-                                            color="#ec4899"
-                                        >
-                                            {valve}
-                                        </ToggleButton>
-                                    ))}
+                                    {['Stable CAD', 'STEMI', 'NSTE-ACS', 'PAOD', 'TAVI'].map(item => (<ToggleButton key={item} active={patientData.diagnosis === item} onClick={() => setPatientData(prev => ({ ...prev, diagnosis: prev.diagnosis === item ? '' : item }))} color="#dc2626">{item}</ToggleButton>))}
                                 </div>
-                                
-                                {valves.includes('AS') && (
-                                    <div style={{
-                                        marginTop: '12px',
-                                        padding: '12px',
-                                        background: '#fee2e2',
-                                        borderRadius: '10px',
-                                        fontSize: '13px',
-                                        color: '#991b1b'
-                                    }}>
-                                        <strong>⚠️ AS 警示：</strong> 主動脈瓣狹窄，術中需密切監測血壓
-                                    </div>
-                                )}
+                                {patientData.diagnosis === 'STEMI' && (<div style={{ marginTop: '12px', padding: '14px', background: '#fef2f2', borderRadius: '10px', borderLeft: '4px solid #dc2626' }}><strong style={{ color: '#dc2626' }}>🚨 STEMI：</strong> D2B &lt; 90分鐘</div>)}
                             </InfoCard>
-
-                            <InfoCard title="心臟功能檢查" icon="🏃" color="#06b6d4">
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                                    <div style={{ padding: '14px', background: '#f3f4f6', borderRadius: '10px' }}>
-                                        <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '8px' }}>🏃 Treadmill</div>
-                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                                            {['(+)', '(-)', '未做'].map(r => (
-                                                <span key={r} style={{
-                                                    padding: '4px 10px',
-                                                    background: 'white',
-                                                    borderRadius: '6px',
-                                                    fontSize: '12px',
-                                                    border: '1px solid #d1d5db'
-                                                }}>{r}</span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                    
-                                    <div style={{ padding: '14px', background: '#f3f4f6', borderRadius: '10px' }}>
-                                        <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '8px' }}>💚 Thallium</div>
-                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                                            {['Ischemia', 'Fixed', 'Normal'].map(r => (
-                                                <span key={r} style={{
-                                                    padding: '4px 10px',
-                                                    background: 'white',
-                                                    borderRadius: '6px',
-                                                    fontSize: '12px',
-                                                    border: '1px solid #d1d5db'
-                                                }}>{r}</span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
+                            <InfoCard title="重要檢驗" icon="📊" color="#3b82f6">
+                                <div style={{ marginBottom: '16px' }}><div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '8px' }}>eGFR</div><div style={{ display: 'flex', gap: '8px' }}>{['≥60', '30-59', '<30'].map(item => (<ToggleButton key={item} active={patientData.egfr === item} onClick={() => setPatientData(prev => ({ ...prev, egfr: prev.egfr === item ? '' : item }))} color={item === '<30' ? '#dc2626' : '#3b82f6'}>{item}</ToggleButton>))}</div>{patientData.egfr === '<30' && <NoteBox color="#dc2626" bgColor="#fef2f2">⚠️ CKD 4-5：減少顯影劑</NoteBox>}</div>
+                                <div><div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '8px' }}>EF</div><div style={{ display: 'flex', gap: '8px' }}>{['≥50%', '35-49%', '<35%'].map(item => (<ToggleButton key={item} active={patientData.ef === item} onClick={() => setPatientData(prev => ({ ...prev, ef: prev.ef === item ? '' : item }))} color={item === '<35%' ? '#dc2626' : '#3b82f6'}>{item}</ToggleButton>))}</div>{patientData.ef === '<35%' && <NoteBox color="#dc2626" bgColor="#fef2f2">⚠️ 嚴重心衰竭：備IABP/ECMO</NoteBox>}</div>
                             </InfoCard>
                         </div>
                     </div>
                 );
             };
 
-            // ==================== PROCEDURE HANDOFF PAGE ====================
-            // 修改：每個術式都有風險說明，PAOD/EPS新增備註
             const ProcedureHandoffPage = () => {
-                const [procedureType, setProcedureType] = useState('');
-                const [paodLeg, setPaodLeg] = useState('');
                 const [goToICU, setGoToICU] = useState(null);
-                const [bedPosition, setBedPosition] = useState('supine');
-                const [arrhythmiaType, setArrhythmiaType] = useState('');
-                
-                // 所有術式的風險提示
-                const procedureRisks = {
-                    cag: {
-                        title: 'CAG 風險提醒',
-                        risks: ['顯影劑過敏反應', '穿刺部位出血或血腫', '血管損傷', '心律不整']
-                    },
-                    pci: {
-                        title: 'PCI 風險提醒',
-                        risks: ['冠狀動脈剝離', '支架血栓', '無再灌流現象', '顯影劑腎病變', '穿刺部位併發症']
-                    },
-                    paod: {
-                        title: 'PAOD 風險提醒',
-                        risks: ['動脈剝離或穿孔', '遠端栓塞', '再狹窄', '穿刺部位出血']
-                    },
-                    eps: {
-                        title: 'EPS 風險提醒',
-                        risks: ['心律不整誘發', '心包膜積液', '心臟壓塞', '血管損傷']
-                    }
-                };
-                
+                const [bedPosition, setBedPosition] = useState('');
                 return (
                     <div className="fade-in">
-                        <Header title="術式交班" subtitle="Procedure-Specific Handoff" showBack />
+                        <Header title="術式交班" subtitle="Procedure-Based Care" showBack />
                         <div style={{ padding: '0 16px' }}>
-                            <InfoCard title="預計術式" icon="🔧" color="#06b6d4">
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', marginBottom: '16px' }}>
-                                    {[
-                                        { id: 'cag', label: 'CAG', desc: '診斷導管' },
-                                        { id: 'pci', label: 'PCI', desc: '冠狀動脈介入' },
-                                        { id: 'paod', label: 'PAOD', desc: '週邊血管' },
-                                        { id: 'eps', label: 'EPS', desc: '電生理檢查' }
-                                    ].map(proc => (
-                                        <button
-                                            key={proc.id}
-                                            onClick={() => setProcedureType(proc.id)}
-                                            style={{
-                                                padding: '16px',
-                                                background: procedureType === proc.id ? '#e0f2fe' : 'white',
-                                                border: `2px solid ${procedureType === proc.id ? '#0ea5e9' : '#e5e7eb'}`,
-                                                borderRadius: '12px',
-                                                cursor: 'pointer',
-                                                textAlign: 'center'
-                                            }}
-                                        >
-                                            <div style={{ fontWeight: '600', color: '#0369a1' }}>{proc.label}</div>
-                                            <div style={{ fontSize: '12px', color: '#6b7280' }}>{proc.desc}</div>
-                                        </button>
-                                    ))}
+                            <InfoCard title="術後去向" icon="🏥" color="#dc2626">
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                    <button onClick={() => setGoToICU(true)} style={{ padding: '20px', background: goToICU === true ? '#fee2e2' : 'white', border: `2px solid ${goToICU === true ? '#ef4444' : '#e5e7eb'}`, borderRadius: '12px', cursor: 'pointer' }}><div style={{ fontSize: '28px', marginBottom: '8px' }}>🏥</div><div style={{ fontWeight: '600' }}>進 ICU/CCU</div></button>
+                                    <button onClick={() => setGoToICU(false)} style={{ padding: '20px', background: goToICU === false ? '#d1fae5' : 'white', border: `2px solid ${goToICU === false ? '#10b981' : '#e5e7eb'}`, borderRadius: '12px', cursor: 'pointer' }}><div style={{ fontSize: '28px', marginBottom: '8px' }}>🛏️</div><div style={{ fontWeight: '600' }}>回病房</div></button>
                                 </div>
-                                
-                                {/* 顯示術式風險 */}
-                                {procedureType && procedureRisks[procedureType] && (
-                                    <div style={{
-                                        padding: '14px',
-                                        background: '#fef3c7',
-                                        borderRadius: '10px',
-                                        borderLeft: '4px solid #f59e0b'
-                                    }}>
-                                        <strong style={{ color: '#b45309' }}>⚠️ {procedureRisks[procedureType].title}：</strong>
-                                        <div style={{ marginTop: '8px', fontSize: '14px', lineHeight: '1.6' }}>
-                                            {procedureRisks[procedureType].risks.map((risk, idx) => (
-                                                <div key={idx}>• {risk}</div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
                             </InfoCard>
-
-                            {/* 新增：心律不整相關術式 */}
-                            {procedureType === 'eps' && (
-                                <InfoCard title="EPS/Ablation 術式資訊" icon="💓" color="#7c3aed">
-                                    <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '10px' }}>心律不整類型：</div>
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '16px' }}>
-                                        {['AF ablation', 'AVNRT', 'AVRT/WPW', 'VT ablation', 'AFL ablation'].map(type => (
-                                            <button
-                                                key={type}
-                                                onClick={() => setArrhythmiaType(type)}
-                                                style={{
-                                                    padding: '10px 14px',
-                                                    background: arrhythmiaType === type ? '#ede9fe' : 'white',
-                                                    border: `2px solid ${arrhythmiaType === type ? '#7c3aed' : '#e5e7eb'}`,
-                                                    borderRadius: '10px',
-                                                    cursor: 'pointer',
-                                                    fontWeight: '500',
-                                                    fontSize: '13px',
-                                                    color: arrhythmiaType === type ? '#5b21b6' : '#6b7280'
-                                                }}
-                                            >
-                                                {type}
-                                            </button>
-                                        ))}
-                                    </div>
-                                    
-                                    {/* EPS 備註：通常回病房 */}
-                                    <NoteBox color="#7c3aed" bgColor="#f5f3ff">
-                                        <strong>📝 備註：</strong>EPS/Ablation 術後通常回一般病房，去 ICU 機率較低。若有心包膜積液或血流動力學不穩定時才需轉 ICU。
-                                    </NoteBox>
-                                </InfoCard>
-                            )}
-                            
-                            {procedureType === 'paod' && (
-                                <InfoCard title="PAOD 術式資訊" icon="🦵" color="#7c3aed">
-                                    <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '10px' }}>要作哪支腳？</div>
-                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '16px' }}>
-                                        {['右腳', '左腳', '雙腳'].map(leg => (
-                                            <button
-                                                key={leg}
-                                                onClick={() => setPaodLeg(leg)}
-                                                style={{
-                                                    padding: '14px',
-                                                    background: paodLeg === leg ? '#ede9fe' : 'white',
-                                                    border: `2px solid ${paodLeg === leg ? '#7c3aed' : '#e5e7eb'}`,
-                                                    borderRadius: '10px',
-                                                    cursor: 'pointer',
-                                                    fontWeight: '500',
-                                                    color: paodLeg === leg ? '#5b21b6' : '#6b7280'
-                                                }}
-                                            >
-                                                {leg}
-                                            </button>
-                                        ))}
-                                    </div>
-                                    
-                                    {/* PAOD 備註：通常回病房 */}
-                                    <NoteBox color="#7c3aed" bgColor="#f5f3ff">
-                                        <strong>📝 備註：</strong>PAOD 介入術後通常回一般病房，去 ICU 機率較低。需密切觀察肢體循環及穿刺部位。
-                                    </NoteBox>
-                                </InfoCard>
-                            )}
-                            
-                            {/* 只有心導管 (CAG/PCI) 有術後去向選項 */}
-                            {(procedureType === 'pci' || procedureType === 'cag') && (
-                                <InfoCard title="術後去向" icon="🏨" color="#10b981">
-                                    <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '12px' }}>
-                                        CAD/ACS 術後是否去加護病房？
-                                    </div>
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                                        <button
-                                            onClick={() => setGoToICU(true)}
-                                            style={{
-                                                padding: '20px',
-                                                background: goToICU === true ? '#fee2e2' : 'white',
-                                                border: `2px solid ${goToICU === true ? '#ef4444' : '#e5e7eb'}`,
-                                                borderRadius: '12px',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            <div style={{ fontSize: '28px', marginBottom: '8px' }}>🏥</div>
-                                            <div style={{ fontWeight: '600', color: goToICU === true ? '#dc2626' : '#374151' }}>
-                                                進 ICU/CCU
-                                            </div>
-                                        </button>
-                                        
-                                        <button
-                                            onClick={() => setGoToICU(false)}
-                                            style={{
-                                                padding: '20px',
-                                                background: goToICU === false ? '#d1fae5' : 'white',
-                                                border: `2px solid ${goToICU === false ? '#10b981' : '#e5e7eb'}`,
-                                                borderRadius: '12px',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            <div style={{ fontSize: '28px', marginBottom: '8px' }}>🛏️</div>
-                                            <div style={{ fontWeight: '600', color: goToICU === false ? '#065f46' : '#374151' }}>
-                                                回病房
-                                            </div>
-                                        </button>
-                                    </div>
-                                    
-                                    {goToICU === true && (
-                                        <div style={{
-                                            marginTop: '16px',
-                                            padding: '14px',
-                                            background: '#fef2f2',
-                                            borderRadius: '10px',
-                                            borderLeft: '4px solid #dc2626'
-                                        }}>
-                                            <strong style={{ color: '#dc2626' }}>⚠️ ICU 照護重點：</strong>
-                                            <div style={{ marginTop: '8px', fontSize: '14px', lineHeight: '1.6' }}>
-                                                • 持續心電圖監測<br/>
-                                                • 密切監測血壓、心律<br/>
-                                                • 注意穿刺部位出血<br/>
-                                                • 評估胸痛症狀變化
-                                            </div>
-                                        </div>
-                                    )}
-                                </InfoCard>
-                            )}
-                            
                             <InfoCard title="術後臥床姿勢" icon="🛏️" color="#8b5cf6">
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
-                                    <button
-                                        onClick={() => setBedPosition('supine')}
-                                        style={{
-                                            padding: '16px',
-                                            background: bedPosition === 'supine' ? '#ede9fe' : 'white',
-                                            border: `2px solid ${bedPosition === 'supine' ? '#8b5cf6' : '#e5e7eb'}`,
-                                            borderRadius: '12px',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        <div style={{ fontWeight: '600', color: bedPosition === 'supine' ? '#6d28d9' : '#374151' }}>平躺</div>
-                                        <div style={{ fontSize: '12px', color: '#6b7280' }}>Femoral 穿刺</div>
-                                    </button>
-                                    
-                                    <button
-                                        onClick={() => setBedPosition('radial')}
-                                        style={{
-                                            padding: '16px',
-                                            background: bedPosition === 'radial' ? '#d1fae5' : 'white',
-                                            border: `2px solid ${bedPosition === 'radial' ? '#10b981' : '#e5e7eb'}`,
-                                            borderRadius: '12px',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        <div style={{ fontWeight: '600', color: bedPosition === 'radial' ? '#065f46' : '#374151' }}>可坐起</div>
-                                        <div style={{ fontSize: '12px', color: '#6b7280' }}>Radial 穿刺</div>
-                                    </button>
+                                    <button onClick={() => setBedPosition('supine')} style={{ padding: '16px', background: bedPosition === 'supine' ? '#ede9fe' : 'white', border: `2px solid ${bedPosition === 'supine' ? '#8b5cf6' : '#e5e7eb'}`, borderRadius: '12px', cursor: 'pointer' }}><div style={{ fontWeight: '600' }}>平躺</div><div style={{ fontSize: '12px', color: '#6b7280' }}>Femoral</div></button>
+                                    <button onClick={() => setBedPosition('radial')} style={{ padding: '16px', background: bedPosition === 'radial' ? '#d1fae5' : 'white', border: `2px solid ${bedPosition === 'radial' ? '#10b981' : '#e5e7eb'}`, borderRadius: '12px', cursor: 'pointer' }}><div style={{ fontWeight: '600' }}>可坐起</div><div style={{ fontSize: '12px', color: '#6b7280' }}>Radial</div></button>
                                 </div>
-                                
-                                {bedPosition === 'supine' && (
-                                    <div style={{
-                                        padding: '14px',
-                                        background: '#fef3c7',
-                                        borderRadius: '10px',
-                                        borderLeft: '4px solid #f59e0b'
-                                    }}>
-                                        <strong style={{ color: '#b45309' }}>📌 Femoral 穿刺注意事項：</strong>
-                                        <div style={{ marginTop: '8px', fontSize: '14px', lineHeight: '1.6' }}>
-                                            • 平躺臥床，患肢伸直勿彎曲<br/>
-                                            • 依醫囑加壓時間<br/>
-                                            • 使用 2kg 砂包加壓<br/>
-                                            • 定時觀察穿刺部位
-                                        </div>
-                                    </div>
-                                )}
-                                
-                                {bedPosition === 'radial' && (
-                                    <div style={{
-                                        padding: '14px',
-                                        background: '#d1fae5',
-                                        borderRadius: '10px',
-                                        borderLeft: '4px solid #10b981'
-                                    }}>
-                                        <strong style={{ color: '#065f46' }}>📌 Radial 穿刺注意事項：</strong>
-                                        <div style={{ marginTop: '8px', fontSize: '14px', lineHeight: '1.6' }}>
-                                            • 可坐起休息<br/>
-                                            • 使用 TR-band 加壓<br/>
-                                            • 觀察手指顏色、溫度、感覺<br/>
-                                            • 定時評估周邊循環
-                                        </div>
-                                    </div>
-                                )}
-                            </InfoCard>
-                            
-                            <InfoCard title="加壓止血時間" icon="⏱️" color="#f59e0b">
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', marginBottom: '16px' }}>
-                                    {['2小時', '4小時', '6小時', '8小時'].map(time => (
-                                        <button
-                                            key={time}
-                                            style={{
-                                                padding: '16px',
-                                                background: 'white',
-                                                border: '2px solid #e5e7eb',
-                                                borderRadius: '10px',
-                                                cursor: 'pointer',
-                                                fontWeight: '600',
-                                                color: '#b45309'
-                                            }}
-                                        >
-                                            {time}
-                                        </button>
-                                    ))}
-                                </div>
-                                <div style={{
-                                    padding: '12px',
-                                    background: '#fef3c7',
-                                    borderRadius: '10px',
-                                    fontSize: '13px',
-                                    color: '#92400e'
-                                }}>
-                                    💡 依醫囑決定加壓時間，通常 Femoral 4-6 小時
-                                </div>
+                                {bedPosition === 'supine' && (<div style={{ padding: '14px', background: '#fef3c7', borderRadius: '10px', borderLeft: '4px solid #f59e0b' }}><strong style={{ color: '#b45309' }}>📌 Femoral 注意：</strong>平躺臥床，患肢伸直，2kg砂包加壓</div>)}
+                                {bedPosition === 'radial' && (<div style={{ padding: '14px', background: '#d1fae5', borderRadius: '10px', borderLeft: '4px solid #10b981' }}><strong style={{ color: '#065f46' }}>📌 Radial 注意：</strong>可坐起，TR-band加壓，觀察手指循環</div>)}
                             </InfoCard>
                         </div>
                     </div>
                 );
             };
 
-            // ==================== POST-CATH PAGE (完整術後交班) ====================
+            // ==================== POST-CATH PAGE - 含匯出功能 ====================
             const PostCathPage = () => {
                 const [postData, setPostData] = useState({
-                    diagnosis: '',
-                    vesselDisease: '',
-                    hasLM: false,
-                    pciDone: false,
-                    pciLocation: [],
-                    stentDone: false,
-                    stentLocation: [],
-                    sheathSite: '',
-                    sheathRemoved: true,
-                    hasIABP: false,
-                    hasECMO: false,
-                    hadCPR: false,
-                    // 藥物
-                    aspirinLoading: false,
-                    plavixLoading: false,
-                    efientLoading: false,
-                    brilintaLoading: false,
-                    // 維持藥物
-                    bokeyMaintenance: false,
-                    plavixMaintenance: false,
-                    brilintaMaintenance: false,
-                    efientMaintenance: false,
-                    // 術後醫囑
-                    icuAdmission: false,
-                    needECG: false,
-                    labCheck: false
+                    diagnosis: '', vesselDisease: '', hasLM: false, pciDone: false, pciLocation: [], stentDone: false, stentLocation: [],
+                    sheathSite: '', sheathRemoved: true, hasIABP: false, hasECMO: false, hadCPR: false,
+                    aspirinLoading: false, plavixLoading: false, efientLoading: false, brilintaLoading: false,
+                    bokeyMaintenance: false, plavixMaintenance: false, brilintaMaintenance: false, efientMaintenance: false,
+                    icuAdmission: false, needECG: false, labCheck: false
                 });
+                const [copySuccess, setCopySuccess] = useState(false);
+                const [showExportPanel, setShowExportPanel] = useState(false);
                 
-                const updatePost = (key, value) => {
-                    setPostData(prev => ({ ...prev, [key]: value }));
+                const updatePost = (key, value) => setPostData(prev => ({ ...prev, [key]: value }));
+                const toggleArray = (key, item) => setPostData(prev => ({ ...prev, [key]: prev[key].includes(item) ? prev[key].filter(x => x !== item) : [...prev[key], item] }));
+
+                const generateHandoffText = () => {
+                    const now = new Date();
+                    const dateStr = `${now.getFullYear()}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getDate().toString().padStart(2,'0')} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+                    let text = `【心導管術後交班記錄】\n記錄時間：${dateStr}\n────────────────────\n\n`;
+                    text += `【術後診斷】\n`;
+                    if (postData.diagnosis) text += `• 診斷：${postData.diagnosis}\n`;
+                    if (postData.vesselDisease) text += `• 血管病變：${postData.vesselDisease} VD\n`;
+                    if (postData.hasLM) text += `• ⚠️ LM 病變\n`;
+                    text += `\n【PCI 結果】\n`;
+                    if (!postData.pciDone) { text += `• CAG Only\n`; }
+                    else {
+                        text += `• 已執行 PCI\n`;
+                        if (postData.pciLocation.length > 0) text += `• 介入位置：${postData.pciLocation.join(', ')}\n`;
+                        if (postData.stentDone && postData.stentLocation.length > 0) text += `• Stent：${postData.stentLocation.join(', ')}\n`;
+                    }
+                    text += `\n【Sheath 處置】\n`;
+                    if (postData.sheathSite) { const m = { 'RFA': '右股動脈', 'LFA': '左股動脈', 'RRA': '右橈動脈', 'LRA': '左橈動脈' }; text += `• 穿刺：${postData.sheathSite} (${m[postData.sheathSite]})\n`; }
+                    text += `• Sheath：${postData.sheathRemoved ? '已拔除' : '⚠️ 留置中'}\n\n`;
+                    if (postData.hasIABP || postData.hasECMO || postData.hadCPR) { text += `【⚠️ 重要設備】\n`; if (postData.hasIABP) text += `• IABP\n`; if (postData.hasECMO) text += `• ECMO\n`; if (postData.hadCPR) text += `• CPR\n`; text += `\n`; }
+                    const ld = []; if (postData.aspirinLoading) ld.push('Aspirin 300mg'); if (postData.plavixLoading) ld.push('Plavix 300-600mg'); if (postData.efientLoading) ld.push('Efient 20mg'); if (postData.brilintaLoading) ld.push('Brilinta 180mg');
+                    const mt = []; if (postData.bokeyMaintenance) mt.push('Bokey 100mg QD'); if (postData.plavixMaintenance) mt.push('Plavix 75mg QD'); if (postData.brilintaMaintenance) mt.push('Brilinta 90mg BID'); if (postData.efientMaintenance) mt.push('Efient 3.75mg QD');
+                    text += `【抗血小板藥】\n• Loading：${ld.length > 0 ? ld.join('、') : '未給予'}\n`;
+                    if (mt.length > 0) text += `• 維持：${mt.join('、')}\n`;
+                    text += `\n【術後醫囑】\n`;
+                    if (postData.icuAdmission) text += `• ⚠️ ICU Admission\n`;
+                    if (postData.needECG) text += `• ECG stat\n`;
+                    if (postData.labCheck) text += `• Check Labs\n`;
+                    if (!postData.icuAdmission && !postData.needECG && !postData.labCheck) text += `• 一般術後照護\n`;
+                    text += `\n────────────────────\n※ 心導管術後交班系統`;
+                    return text;
                 };
-                
-                const toggleArray = (key, item) => {
-                    setPostData(prev => ({
-                        ...prev,
-                        [key]: prev[key].includes(item) 
-                            ? prev[key].filter(x => x !== item)
-                            : [...prev[key], item]
-                    }));
+
+                const copyToClipboard = async () => {
+                    const text = generateHandoffText();
+                    try { await navigator.clipboard.writeText(text); setCopySuccess(true); setTimeout(() => setCopySuccess(false), 2000); }
+                    catch (err) { const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-999999px'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); setCopySuccess(true); setTimeout(() => setCopySuccess(false), 2000); } catch (e) { alert('複製失敗'); } document.body.removeChild(ta); }
                 };
-                
+                const sendEmail = () => { const text = generateHandoffText(); const subject = encodeURIComponent(`心導管術後交班 - ${new Date().toLocaleDateString('zh-TW')}`); const body = encodeURIComponent(text); window.location.href = `mailto:?subject=${subject}&body=${body}`; };
+
                 return (
                     <div className="fade-in">
                         <Header title="術後交班" subtitle="Post-Cath Transfer Note" showBack />
                         <div style={{ padding: '0 16px' }}>
-                            
                             <InfoCard title="術後診斷" icon="🩺" color="#dc2626">
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
-                                    {['Stable CAD', 'STEMI', 'NSTE-ACS', 'PAOD', 'CHF'].map(item => (
-                                        <ToggleButton
-                                            key={item}
-                                            active={postData.diagnosis === item}
-                                            onClick={() => updatePost('diagnosis', postData.diagnosis === item ? '' : item)}
-                                            color="#dc2626"
-                                        >
-                                            {item}
-                                        </ToggleButton>
-                                    ))}
-                                </div>
-                                
-                                <div style={{ 
-                                    padding: '12px',
-                                    background: postData.hasLM ? '#fef2f2' : '#f9fafb',
-                                    border: `2px solid ${postData.hasLM ? '#dc2626' : '#e5e7eb'}`,
-                                    borderRadius: '12px',
-                                    marginBottom: '12px'
-                                }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                        <div style={{ fontWeight: '600' }}>LM 病變</div>
-                                        <button
-                                            onClick={() => updatePost('hasLM', !postData.hasLM)}
-                                            style={{
-                                                padding: '6px 16px',
-                                                borderRadius: '20px',
-                                                border: 'none',
-                                                background: postData.hasLM ? '#dc2626' : '#e5e7eb',
-                                                color: postData.hasLM ? 'white' : '#6b7280',
-                                                fontWeight: '500',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            {postData.hasLM ? '✓ Yes' : 'No'}
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: '#f3f4f6', borderRadius: '10px' }}>
-                                    <span>血管病變：</span>
-                                    {['1', '2', '3'].map(n => (
-                                        <button
-                                            key={n}
-                                            onClick={() => updatePost('vesselDisease', postData.vesselDisease === n ? '' : n)}
-                                            style={{
-                                                width: '40px',
-                                                height: '40px',
-                                                borderRadius: '50%',
-                                                border: `2px solid ${postData.vesselDisease === n ? '#8b5cf6' : '#e5e7eb'}`,
-                                                background: postData.vesselDisease === n ? '#ede9fe' : 'white',
-                                                color: postData.vesselDisease === n ? '#7c3aed' : '#6b7280',
-                                                fontWeight: '700',
-                                                fontSize: '16px',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            {n}
-                                        </button>
-                                    ))}
-                                    <span style={{ fontSize: '14px', color: '#6b7280' }}>VD</span>
-                                </div>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>{['Stable CAD', 'STEMI', 'NSTE-ACS', 'PAOD', 'CHF'].map(item => (<ToggleButton key={item} active={postData.diagnosis === item} onClick={() => updatePost('diagnosis', postData.diagnosis === item ? '' : item)} color="#dc2626">{item}</ToggleButton>))}</div>
+                                <div style={{ padding: '12px', background: postData.hasLM ? '#fef2f2' : '#f9fafb', border: `2px solid ${postData.hasLM ? '#dc2626' : '#e5e7eb'}`, borderRadius: '12px', marginBottom: '12px' }}><div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}><div style={{ fontWeight: '600' }}>LM 病變</div><button onClick={() => updatePost('hasLM', !postData.hasLM)} style={{ padding: '6px 16px', borderRadius: '20px', border: 'none', background: postData.hasLM ? '#dc2626' : '#e5e7eb', color: postData.hasLM ? 'white' : '#6b7280', fontWeight: '500', cursor: 'pointer' }}>{postData.hasLM ? '✓ Yes' : 'No'}</button></div></div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: '#f3f4f6', borderRadius: '10px' }}><span>血管病變：</span>{['1', '2', '3'].map(n => (<button key={n} onClick={() => updatePost('vesselDisease', postData.vesselDisease === n ? '' : n)} style={{ width: '40px', height: '40px', borderRadius: '50%', border: `2px solid ${postData.vesselDisease === n ? '#8b5cf6' : '#e5e7eb'}`, background: postData.vesselDisease === n ? '#ede9fe' : 'white', color: postData.vesselDisease === n ? '#7c3aed' : '#6b7280', fontWeight: '700', cursor: 'pointer' }}>{n}</button>))}<span style={{ fontSize: '14px', color: '#6b7280' }}>VD</span></div>
                             </InfoCard>
 
                             <InfoCard title="PCI 結果" icon="🔧" color="#3b82f6">
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
-                                    <button
-                                        onClick={() => updatePost('pciDone', false)}
-                                        style={{
-                                            padding: '16px',
-                                            background: !postData.pciDone ? '#f3f4f6' : 'white',
-                                            border: `2px solid ${!postData.pciDone ? '#6b7280' : '#e5e7eb'}`,
-                                            borderRadius: '12px',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        <div style={{ fontWeight: '600', color: !postData.pciDone ? '#374151' : '#6b7280' }}>CAG Only</div>
-                                        <div style={{ fontSize: '12px', color: '#6b7280' }}>僅做檢查</div>
-                                    </button>
-                                    
-                                    <button
-                                        onClick={() => updatePost('pciDone', true)}
-                                        style={{
-                                            padding: '16px',
-                                            background: postData.pciDone ? '#dbeafe' : 'white',
-                                            border: `2px solid ${postData.pciDone ? '#3b82f6' : '#e5e7eb'}`,
-                                            borderRadius: '12px',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        <div style={{ fontWeight: '600', color: postData.pciDone ? '#1d4ed8' : '#6b7280' }}>Yes</div>
-                                        <div style={{ fontSize: '12px', color: '#6b7280' }}>已做介入</div>
-                                    </button>
+                                    <button onClick={() => updatePost('pciDone', false)} style={{ padding: '16px', background: !postData.pciDone ? '#f3f4f6' : 'white', border: `2px solid ${!postData.pciDone ? '#6b7280' : '#e5e7eb'}`, borderRadius: '12px', cursor: 'pointer' }}><div style={{ fontWeight: '600' }}>CAG Only</div></button>
+                                    <button onClick={() => updatePost('pciDone', true)} style={{ padding: '16px', background: postData.pciDone ? '#dbeafe' : 'white', border: `2px solid ${postData.pciDone ? '#3b82f6' : '#e5e7eb'}`, borderRadius: '12px', cursor: 'pointer' }}><div style={{ fontWeight: '600' }}>PCI Done</div></button>
                                 </div>
-
-                                {postData.pciDone && (
-                                    <>
-                                        <div style={{ marginBottom: '12px' }}>
-                                            <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '8px' }}>介入位置：</div>
-                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                                {['LM', 'LAD', 'LCX', 'RCA', 'Other'].map(loc => (
-                                                    <ToggleButton
-                                                        key={loc}
-                                                        active={postData.pciLocation.includes(loc)}
-                                                        onClick={() => toggleArray('pciLocation', loc)}
-                                                        color="#3b82f6"
-                                                    >
-                                                        {loc}
-                                                    </ToggleButton>
-                                                ))}
-                                            </div>
-                                        </div>
-
-                                        <div style={{ padding: '14px', background: '#f3f4f6', borderRadius: '10px' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
-                                                <span style={{ fontWeight: '500' }}>Stent Deployment:</span>
-                                                <button
-                                                    onClick={() => updatePost('stentDone', !postData.stentDone)}
-                                                    style={{
-                                                        padding: '6px 16px',
-                                                        borderRadius: '20px',
-                                                        border: 'none',
-                                                        background: postData.stentDone ? '#10b981' : '#e5e7eb',
-                                                        color: postData.stentDone ? 'white' : '#6b7280',
-                                                        fontWeight: '500',
-                                                        cursor: 'pointer'
-                                                    }}
-                                                >
-                                                    {postData.stentDone ? 'Yes' : 'No'}
-                                                </button>
-                                            </div>
-                                            {postData.stentDone && (
-                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                                    {['LM', 'LAD', 'LCX', 'RCA'].map(loc => (
-                                                        <ToggleButton
-                                                            key={loc}
-                                                            active={postData.stentLocation.includes(loc)}
-                                                            onClick={() => toggleArray('stentLocation', loc)}
-                                                            color="#10b981"
-                                                        >
-                                                            {loc}
-                                                        </ToggleButton>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </>
-                                )}
+                                {postData.pciDone && (<><div style={{ marginBottom: '12px' }}><div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '8px' }}>介入位置：</div><div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>{['LM', 'LAD', 'LCX', 'RCA'].map(loc => (<ToggleButton key={loc} active={postData.pciLocation.includes(loc)} onClick={() => toggleArray('pciLocation', loc)} color="#3b82f6">{loc}</ToggleButton>))}</div></div><div style={{ padding: '14px', background: '#f3f4f6', borderRadius: '10px' }}><div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}><span style={{ fontWeight: '500' }}>Stent:</span><button onClick={() => updatePost('stentDone', !postData.stentDone)} style={{ padding: '6px 16px', borderRadius: '20px', border: 'none', background: postData.stentDone ? '#10b981' : '#e5e7eb', color: postData.stentDone ? 'white' : '#6b7280', cursor: 'pointer' }}>{postData.stentDone ? 'Yes' : 'No'}</button></div>{postData.stentDone && (<div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>{['LM', 'LAD', 'LCX', 'RCA'].map(loc => (<ToggleButton key={loc} active={postData.stentLocation.includes(loc)} onClick={() => toggleArray('stentLocation', loc)} color="#10b981">{loc}</ToggleButton>))}</div>)}</div></>)}
                             </InfoCard>
 
                             <InfoCard title="Sheath 處置" icon="🩹" color="#f59e0b">
-                                <div style={{ marginBottom: '16px' }}>
-                                    <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '10px' }}>穿刺部位：</div>
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                        {['RFA', 'LFA', 'RRA', 'LRA'].map(site => (
-                                            <ToggleButton
-                                                key={site}
-                                                active={postData.sheathSite === site}
-                                                onClick={() => updatePost('sheathSite', site)}
-                                                color="#f59e0b"
-                                            >
-                                                {site}
-                                            </ToggleButton>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <ChecklistItem 
-                                    checked={postData.sheathRemoved} 
-                                    onChange={() => updatePost('sheathRemoved', !postData.sheathRemoved)}
-                                >
-                                    <strong>已在導管室拔除 Sheath</strong>
-                                </ChecklistItem>
-
-                                {!postData.sheathRemoved && (
-                                    <div style={{ 
-                                        padding: '14px', 
-                                        background: '#fef3c7', 
-                                        borderRadius: '10px',
-                                        borderLeft: '4px solid #f59e0b',
-                                        marginTop: '10px'
-                                    }}>
-                                        <strong style={{ color: '#b45309' }}>⚠️ Sheath 留置中</strong>
-                                        <div style={{ marginTop: '8px', fontSize: '14px' }}>
-                                            請依醫囑執行 ACT 監測後拔除<br/>
-                                            ACT &lt; 150-200 秒可考慮拔除
-                                        </div>
-                                    </div>
-                                )}
+                                <div style={{ marginBottom: '16px' }}><div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '10px' }}>穿刺部位：</div><div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>{['RFA', 'LFA', 'RRA', 'LRA'].map(site => (<ToggleButton key={site} active={postData.sheathSite === site} onClick={() => updatePost('sheathSite', site)} color="#f59e0b">{site}</ToggleButton>))}</div></div>
+                                <ChecklistItem checked={postData.sheathRemoved} onChange={() => updatePost('sheathRemoved', !postData.sheathRemoved)}><strong>已拔除 Sheath</strong></ChecklistItem>
+                                {!postData.sheathRemoved && (<div style={{ padding: '14px', background: '#fef3c7', borderRadius: '10px', borderLeft: '4px solid #f59e0b', marginTop: '10px' }}><strong style={{ color: '#b45309' }}>⚠️ Sheath 留置中</strong>：ACT &lt; 150-200 可拔除</div>)}
                             </InfoCard>
 
-                            <InfoCard title="重要支持設備" icon="🚨" color="#dc2626">
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '16px' }}>
-                                    {[
-                                        { id: 'hasIABP', icon: '🫀', label: 'IABP' },
-                                        { id: 'hasECMO', icon: '⚙️', label: 'ECMO' },
-                                        { id: 'hadCPR', icon: '💔', label: 'CPR' }
-                                    ].map(item => (
-                                        <button
-                                            key={item.id}
-                                            onClick={() => updatePost(item.id, !postData[item.id])}
-                                            style={{
-                                                padding: '16px',
-                                                background: postData[item.id] ? '#fee2e2' : 'white',
-                                                border: `2px solid ${postData[item.id] ? '#dc2626' : '#e5e7eb'}`,
-                                                borderRadius: '12px',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            <div style={{ fontSize: '24px', marginBottom: '6px' }}>{item.icon}</div>
-                                            <div style={{ fontWeight: '600', fontSize: '14px' }}>{item.label}</div>
+                            <InfoCard title="重要設備" icon="🚨" color="#dc2626">
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                                    {[{ id: 'hasIABP', icon: '🫀', label: 'IABP' }, { id: 'hasECMO', icon: '⚙️', label: 'ECMO' }, { id: 'hadCPR', icon: '💔', label: 'CPR' }].map(item => (
+                                        <button key={item.id} onClick={() => updatePost(item.id, !postData[item.id])} style={{ padding: '16px', background: postData[item.id] ? '#fee2e2' : 'white', border: `2px solid ${postData[item.id] ? '#dc2626' : '#e5e7eb'}`, borderRadius: '12px', cursor: 'pointer' }}>
+                                            <div style={{ fontSize: '24px', marginBottom: '6px' }}>{item.icon}</div><div style={{ fontWeight: '600', fontSize: '14px' }}>{item.label}</div>
                                         </button>
                                     ))}
                                 </div>
-                                
-                                {(postData.hasIABP || postData.hasECMO || postData.hadCPR) && (
-                                    <CriticalAlert icon="⚠️">
-                                        <strong>嚴重警示：</strong> 病患使用重要生命支持設備，需密切監測！
-                                    </CriticalAlert>
-                                )}
+                                {(postData.hasIABP || postData.hasECMO || postData.hadCPR) && (<CriticalAlert icon="⚠️"><strong>嚴重警示：</strong> 需密切監測！</CriticalAlert>)}
                             </InfoCard>
 
                             <InfoCard title="抗血小板 Loading" icon="💊" color="#ec4899">
-                                <div style={{
-                                    padding: '12px',
-                                    background: '#fee2e2',
-                                    borderRadius: '10px',
-                                    marginBottom: '16px',
-                                    fontSize: '13px',
-                                    color: '#991b1b'
-                                }}>
-                                    <strong>⚠️ 重要：</strong>確認是否已在導管室或急診給予 loading！
-                                </div>
-
+                                <div style={{ padding: '12px', background: '#fee2e2', borderRadius: '10px', marginBottom: '16px', fontSize: '13px', color: '#991b1b' }}><strong>⚠️</strong> 確認是否已給 loading！</div>
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                                    {[
-                                        { id: 'aspirinLoading', label: 'Aspirin', dose: '300mg stat', color: '#dc2626' },
-                                        { id: 'plavixLoading', label: 'Plavix', dose: '300-600mg', color: '#7c3aed' },
-                                        { id: 'efientLoading', label: 'Efient', dose: '20mg stat', color: '#0891b2' },
-                                        { id: 'brilintaLoading', label: 'Brilinta', dose: '180mg stat', color: '#059669' }
-                                    ].map(drug => (
-                                        <button
-                                            key={drug.id}
-                                            onClick={() => updatePost(drug.id, !postData[drug.id])}
-                                            style={{
-                                                padding: '14px',
-                                                background: postData[drug.id] ? `${drug.color}10` : '#f9fafb',
-                                                border: `2px solid ${postData[drug.id] ? drug.color : '#e5e7eb'}`,
-                                                borderRadius: '12px',
-                                                textAlign: 'left',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            <div style={{ fontWeight: '600', color: postData[drug.id] ? drug.color : '#374151' }}>
-                                                {postData[drug.id] ? '✓ ' : ''}{drug.label}
-                                            </div>
-                                            <div style={{ fontSize: '12px', color: '#6b7280' }}>{drug.dose}</div>
+                                    {[{ id: 'aspirinLoading', label: 'Aspirin', dose: '300mg', color: '#dc2626' }, { id: 'plavixLoading', label: 'Plavix', dose: '300-600mg', color: '#7c3aed' }, { id: 'efientLoading', label: 'Efient', dose: '20mg', color: '#0891b2' }, { id: 'brilintaLoading', label: 'Brilinta', dose: '180mg', color: '#059669' }].map(drug => (
+                                        <button key={drug.id} onClick={() => updatePost(drug.id, !postData[drug.id])} style={{ padding: '14px', background: postData[drug.id] ? `${drug.color}10` : '#f9fafb', border: `2px solid ${postData[drug.id] ? drug.color : '#e5e7eb'}`, borderRadius: '12px', textAlign: 'left', cursor: 'pointer' }}>
+                                            <div style={{ fontWeight: '600', color: postData[drug.id] ? drug.color : '#374151' }}>{postData[drug.id] ? '✓ ' : ''}{drug.label}</div><div style={{ fontSize: '12px', color: '#6b7280' }}>{drug.dose}</div>
                                         </button>
                                     ))}
                                 </div>
                             </InfoCard>
 
-                            <InfoCard title="維持藥物 Maintenance" icon="💉" color="#10b981">
+                            <InfoCard title="維持藥物" icon="💉" color="#10b981">
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                                    {[
-                                        { id: 'bokeyMaintenance', label: 'Bokey', dose: '100mg QD' },
-                                        { id: 'plavixMaintenance', label: 'Plavix', dose: '75mg QD' },
-                                        { id: 'brilintaMaintenance', label: 'Brilinta', dose: '90mg BID' },
-                                        { id: 'efientMaintenance', label: 'Efient', dose: '3.75mg QD' }
-                                    ].map(drug => (
-                                        <button
-                                            key={drug.id}
-                                            onClick={() => updatePost(drug.id, !postData[drug.id])}
-                                            style={{
-                                                padding: '14px',
-                                                borderRadius: '10px',
-                                                border: `2px solid ${postData[drug.id] ? '#10b981' : '#e5e7eb'}`,
-                                                background: postData[drug.id] ? '#d1fae5' : 'white',
-                                                textAlign: 'left',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            <div style={{ fontWeight: '600', color: postData[drug.id] ? '#065f46' : '#374151' }}>
-                                                {postData[drug.id] ? '✓ ' : ''}{drug.label}
-                                            </div>
-                                            <div style={{ fontSize: '12px', color: '#6b7280' }}>{drug.dose}</div>
+                                    {[{ id: 'bokeyMaintenance', label: 'Bokey', dose: '100mg QD' }, { id: 'plavixMaintenance', label: 'Plavix', dose: '75mg QD' }, { id: 'brilintaMaintenance', label: 'Brilinta', dose: '90mg BID' }, { id: 'efientMaintenance', label: 'Efient', dose: '3.75mg QD' }].map(drug => (
+                                        <button key={drug.id} onClick={() => updatePost(drug.id, !postData[drug.id])} style={{ padding: '14px', borderRadius: '10px', border: `2px solid ${postData[drug.id] ? '#10b981' : '#e5e7eb'}`, background: postData[drug.id] ? '#d1fae5' : 'white', textAlign: 'left', cursor: 'pointer' }}>
+                                            <div style={{ fontWeight: '600', color: postData[drug.id] ? '#065f46' : '#374151' }}>{postData[drug.id] ? '✓ ' : ''}{drug.label}</div><div style={{ fontSize: '12px', color: '#6b7280' }}>{drug.dose}</div>
                                         </button>
                                     ))}
-                                </div>
-
-                                <div style={{
-                                    marginTop: '16px',
-                                    padding: '14px',
-                                    background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
-                                    borderRadius: '12px',
-                                    border: '2px solid #f59e0b'
-                                }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                                        <span style={{ fontSize: '20px' }}>⚠️</span>
-                                        <span style={{ fontWeight: '700', color: '#b45309' }}>PPI 使用提醒</span>
-                                    </div>
-                                    <div style={{ fontSize: '13px', color: '#92400e', lineHeight: '1.6' }}>
-                                        使用 DAPT 時，建議併用 PPI 預防腸胃道出血：
-                                        <div style={{ marginTop: '6px' }}>• 年齡 ≥ 65 歲</div>
-                                        <div>• 消化性潰瘍病史</div>
-                                        <div>• 併用抗凝血劑或類固醇</div>
-                                    </div>
                                 </div>
                             </InfoCard>
 
                             <InfoCard title="術後醫囑" icon="📝" color="#6366f1">
-                                <ChecklistItem 
-                                    checked={postData.icuAdmission} 
-                                    onChange={() => updatePost('icuAdmission', !postData.icuAdmission)}
-                                    critical
-                                >
-                                    <strong>ICU Admission</strong>
-                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                                        需要加護病房觀察
-                                    </div>
-                                </ChecklistItem>
-                                
-                                <ChecklistItem 
-                                    checked={postData.needECG} 
-                                    onChange={() => updatePost('needECG', !postData.needECG)}
-                                >
-                                    <strong>Complete ECG stat</strong>
-                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                                        術後即刻心電圖
-                                    </div>
-                                </ChecklistItem>
-                                
-                                <ChecklistItem 
-                                    checked={postData.labCheck} 
-                                    onChange={() => updatePost('labCheck', !postData.labCheck)}
-                                >
-                                    <strong>Check Labs</strong>
-                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                                        CK/CKMB/TropI/Hb/aPTT
-                                    </div>
-                                </ChecklistItem>
+                                <ChecklistItem checked={postData.icuAdmission} onChange={() => updatePost('icuAdmission', !postData.icuAdmission)} critical><strong>ICU Admission</strong></ChecklistItem>
+                                <ChecklistItem checked={postData.needECG} onChange={() => updatePost('needECG', !postData.needECG)}><strong>ECG stat</strong></ChecklistItem>
+                                <ChecklistItem checked={postData.labCheck} onChange={() => updatePost('labCheck', !postData.labCheck)}><strong>Check Labs</strong>（CK/CKMB/TropI/Hb/aPTT）</ChecklistItem>
                             </InfoCard>
+
+                            {/* 匯出功能區塊 */}
+                            <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: '16px', padding: '20px', marginBottom: '16px', boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px', color: 'white' }}><span style={{ fontSize: '24px' }}>📋</span><div><div style={{ fontWeight: '700', fontSize: '17px' }}>匯出交班內容</div><div style={{ fontSize: '13px', opacity: 0.9 }}>一鍵複製，貼到護理記錄</div></div></div>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                    <button onClick={copyToClipboard} className={copySuccess ? 'copy-success' : ''} style={{ padding: '16px', background: copySuccess ? '#10b981' : 'white', border: 'none', borderRadius: '12px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', transition: 'all 0.2s ease' }}><div style={{ color: copySuccess ? 'white' : '#667eea' }}>{copySuccess ? <Icons.Check /> : <Icons.Copy />}</div><div style={{ fontWeight: '600', fontSize: '14px', color: copySuccess ? 'white' : '#374151' }}>{copySuccess ? '已複製！' : '複製文字'}</div></button>
+                                    <button onClick={sendEmail} style={{ padding: '16px', background: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}><div style={{ color: '#667eea' }}><Icons.Email /></div><div style={{ fontWeight: '600', fontSize: '14px', color: '#374151' }}>Email</div></button>
+                                </div>
+                                <button onClick={() => setShowExportPanel(!showExportPanel)} style={{ width: '100%', marginTop: '12px', padding: '10px', background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '8px', color: 'white', fontSize: '13px', cursor: 'pointer' }}>{showExportPanel ? '▲ 隱藏預覽' : '▼ 預覽內容'}</button>
+                            </div>
+                            {showExportPanel && (<div style={{ background: 'white', borderRadius: '16px', padding: '20px', marginBottom: '16px', boxShadow: 'var(--shadow)', border: '2px solid #667eea' }} className="fade-in"><div style={{ fontSize: '15px', fontWeight: '600', marginBottom: '12px', color: '#667eea' }}>📄 交班內容預覽</div><pre style={{ background: '#f8fafc', padding: '16px', borderRadius: '10px', fontSize: '12px', lineHeight: '1.6', whiteSpace: 'pre-wrap', wordBreak: 'break-word', color: '#374151', fontFamily: "'Noto Sans TC', monospace", maxHeight: '400px', overflowY: 'auto' }}>{generateHandoffText()}</pre></div>)}
                         </div>
                     </div>
                 );
             };
 
-            // ==================== WOUND CARE PAGE ====================
             const WoundCarePage = () => {
-                const [woundChecks, setWoundChecks] = useState({
-                    bleeding: false,
-                    hematoma: false,
-                    pulse: false,
-                    color: false,
-                    sensation: false
-                });
-                
-                const updateWound = (key) => {
-                    setWoundChecks(prev => ({ ...prev, [key]: !prev[key] }));
-                };
-                
+                const [woundChecks, setWoundChecks] = useState({ bleeding: false, hematoma: false, pulse: false, color: false, sensation: false });
+                const updateWound = (key) => setWoundChecks(prev => ({ ...prev, [key]: !prev[key] }));
                 return (
                     <div className="fade-in">
                         <Header title="傷口護理" subtitle="Wound Care & Assessment" showBack />
                         <div style={{ padding: '0 16px' }}>
-                            <CriticalAlert icon="🏋️">
-                                <div style={{ fontWeight: '700', fontSize: '16px', marginBottom: '4px' }}>
-                                    Femoral 穿刺砂包加壓
-                                </div>
-                                <div style={{ fontSize: '13px', opacity: 0.95 }}>
-                                    使用 2kg 砂包加壓止血，依醫囑時間
-                                </div>
-                            </CriticalAlert>
-
+                            <CriticalAlert icon="🏋️"><div style={{ fontWeight: '700', fontSize: '16px', marginBottom: '4px' }}>Femoral 穿刺砂包加壓</div><div style={{ fontSize: '13px', opacity: 0.95 }}>使用 2kg 砂包加壓止血</div></CriticalAlert>
                             <InfoCard title="傷口評估項目" icon="🔍" color="#f59e0b">
-                                <ChecklistItem checked={woundChecks.bleeding} onChange={() => updateWound('bleeding')} critical>
-                                    <strong>檢查出血</strong>
-                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                                        觀察穿刺部位有無滲血
-                                    </div>
-                                </ChecklistItem>
-                                
-                                <ChecklistItem checked={woundChecks.hematoma} onChange={() => updateWound('hematoma')} critical>
-                                    <strong>檢查血腫</strong>
-                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                                        標記血腫範圍，觀察是否擴大
-                                    </div>
-                                </ChecklistItem>
-                                
-                                <ChecklistItem checked={woundChecks.pulse} onChange={() => updateWound('pulse')} important>
-                                    <strong>檢查足背脈搏</strong>
-                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                                        比較兩側脈搏強度
-                                    </div>
-                                </ChecklistItem>
-                                
-                                <ChecklistItem checked={woundChecks.color} onChange={() => updateWound('color')}>
-                                    <strong>觀察肢端顏色</strong>
-                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                                        注意蒼白、發紺等變化
-                                    </div>
-                                </ChecklistItem>
-                                
-                                <ChecklistItem checked={woundChecks.sensation} onChange={() => updateWound('sensation')}>
-                                    <strong>評估感覺功能</strong>
-                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                                        麻木、刺痛等異常感覺
-                                    </div>
-                                </ChecklistItem>
+                                <ChecklistItem checked={woundChecks.bleeding} onChange={() => updateWound('bleeding')} critical><strong>檢查出血</strong></ChecklistItem>
+                                <ChecklistItem checked={woundChecks.hematoma} onChange={() => updateWound('hematoma')} critical><strong>檢查血腫</strong></ChecklistItem>
+                                <ChecklistItem checked={woundChecks.pulse} onChange={() => updateWound('pulse')} important><strong>檢查足背脈搏</strong></ChecklistItem>
+                                <ChecklistItem checked={woundChecks.color} onChange={() => updateWound('color')}><strong>觀察肢端顏色</strong></ChecklistItem>
+                                <ChecklistItem checked={woundChecks.sensation} onChange={() => updateWound('sensation')}><strong>評估感覺功能</strong></ChecklistItem>
                             </InfoCard>
-
                             <InfoCard title="加壓止血流程" icon="⏱️" color="#8b5cf6">
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                    {[
-                                        { time: '0-2hr', action: '2kg 砂包加壓', note: '持續平躺，患肢伸直' },
-                                        { time: '2-4-6hr', action: '用 2kg 砂包', note: '觀察有無滲血' },
-                                        { time: '6hr後', action: '移除砂包', note: '彈繃包紮固定' },
-                                        { time: '6-8hr', action: '可翻身活動', note: '仍需避免大幅彎曲' }
-                                    ].map((step, idx) => (
-                                        <div key={idx} style={{
-                                            padding: '14px',
-                                            background: '#f9fafb',
-                                            borderRadius: '10px',
-                                            borderLeft: '4px solid #8b5cf6'
-                                        }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-                                                <span style={{
-                                                    padding: '4px 10px',
-                                                    background: '#8b5cf6',
-                                                    color: 'white',
-                                                    borderRadius: '6px',
-                                                    fontSize: '12px',
-                                                    fontWeight: '600'
-                                                }}>{step.time}</span>
-                                                <span style={{ fontWeight: '600' }}>{step.action}</span>
-                                            </div>
-                                            <div style={{ fontSize: '13px', color: '#6b7280' }}>{step.note}</div>
-                                        </div>
-                                    ))}
-                                </div>
+                                {[{ time: '0-2hr', action: '2kg砂包加壓', note: '持續平躺' }, { time: '2-6hr', action: '砂包維持', note: '觀察滲血' }, { time: '6hr後', action: '移除砂包', note: '彈繃包紮' }, { time: '6-8hr', action: '可翻身', note: '避免彎曲' }].map((step, idx) => (<div key={idx} style={{ padding: '14px', background: '#f9fafb', borderRadius: '10px', borderLeft: '4px solid #8b5cf6', marginBottom: '8px' }}><div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}><span style={{ padding: '4px 10px', background: '#8b5cf6', color: 'white', borderRadius: '6px', fontSize: '12px', fontWeight: '600' }}>{step.time}</span><span style={{ fontWeight: '600' }}>{step.action}</span></div><div style={{ fontSize: '13px', color: '#6b7280' }}>{step.note}</div></div>))}
                             </InfoCard>
-
-                            <InfoCard title="Radial 穿刺照護" icon="✋" color="#10b981">
-                                <div style={{
-                                    padding: '14px',
-                                    background: '#d1fae5',
-                                    borderRadius: '10px',
-                                    marginBottom: '12px'
-                                }}>
-                                    <strong style={{ color: '#065f46' }}>TR-Band 照護要點：</strong>
-                                    <div style={{ marginTop: '8px', fontSize: '14px', lineHeight: '1.6' }}>
-                                        • 每 15 分鐘觀察手指顏色<br/>
-                                        • 檢查橈動脈搏動<br/>
-                                        • 定時釋放壓力（依醫囑）<br/>
-                                        • 注意麻木、發紫等警訊
-                                    </div>
-                                </div>
-                            </InfoCard>
-
                             <InfoCard title="傷口評估 5P" icon="✅" color="#06b6d4">
-                                <div style={{ display: 'grid', gap: '8px' }}>
-                                    {[
-                                        { label: 'Pain', desc: '疼痛程度評估' },
-                                        { label: 'Pulse', desc: '遠端脈搏評估' },
-                                        { label: 'Pallor', desc: '膚色蒼白評估' },
-                                        { label: 'Paresthesia', desc: '感覺異常評估' },
-                                        { label: 'Paralysis', desc: '運動功能評估' }
-                                    ].map((item, idx) => (
-                                        <div key={idx} style={{
-                                            padding: '12px 14px',
-                                            background: '#ecfeff',
-                                            borderRadius: '10px',
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'center'
-                                        }}>
-                                            <span style={{ fontWeight: '600', color: '#0891b2' }}>{item.label}</span>
-                                            <span style={{ fontSize: '13px', color: '#06b6d4' }}>{item.desc}</span>
-                                        </div>
-                                    ))}
-                                </div>
+                                {[{ label: 'Pain', desc: '疼痛' }, { label: 'Pulse', desc: '脈搏' }, { label: 'Pallor', desc: '膚色' }, { label: 'Paresthesia', desc: '感覺' }, { label: 'Paralysis', desc: '運動' }].map((item, idx) => (<div key={idx} style={{ padding: '12px 14px', background: '#ecfeff', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}><span style={{ fontWeight: '600', color: '#0891b2' }}>{item.label}</span><span style={{ fontSize: '13px', color: '#06b6d4' }}>{item.desc}</span></div>))}
                             </InfoCard>
                         </div>
                     </div>
                 );
             };
 
-            // ==================== COMPLICATIONS PAGE ====================
             const ComplicationsPage = () => (
                 <div className="fade-in">
                     <Header title="併發症教學" subtitle="Vascular Complications" showBack />
                     <div style={{ padding: '0 16px' }}>
-                        {[
-                            {
-                                title: '血腫 Hematoma',
-                                icon: '🩸',
-                                color: '#dc2626',
-                                symptoms: ['穿刺部位腫脹', '皮下瘀青擴大', '疼痛加劇'],
-                                actions: ['標記範圍', '加強加壓', '通知醫師']
-                            },
-                            {
-                                title: '假性動脈瘤 Pseudoaneurysm',
-                                icon: '💢',
-                                color: '#7c3aed',
-                                symptoms: ['搏動性腫塊', '聽診有雜音', '進行性擴大'],
-                                actions: ['超音波確認', '通知醫師', '準備壓迫或手術']
-                            },
-                            {
-                                title: '動靜脈瘻管 AV Fistula',
-                                icon: '🔄',
-                                color: '#0891b2',
-                                symptoms: ['持續性雜音', '震顫感', '靜脈怒張'],
-                                actions: ['超音波檢查', '照會血管外科']
-                            },
-                            {
-                                title: '後腹腔出血 Retroperitoneal Bleeding',
-                                icon: '⚠️',
-                                color: '#ef4444',
-                                symptoms: ['血壓下降', '心跳加速', '腰背疼痛', '腹脹'],
-                                actions: ['立即通知醫師', '建立大量輸液', '緊急輸血準備', 'CT 確認']
-                            },
-                            {
-                                title: '肢體缺血 Limb Ischemia',
-                                icon: '🦵',
-                                color: '#f59e0b',
-                                symptoms: ['足背脈搏消失', '肢端蒼白發冷', '劇烈疼痛', '感覺喪失'],
-                                actions: ['立即通知醫師', '保持患肢平放', '避免加壓', '準備緊急處置']
-                            }
-                        ].map((comp, idx) => (
-                            <InfoCard key={idx} title={comp.title} icon={comp.icon} color={comp.color}>
-                                <div style={{ marginBottom: '12px' }}>
-                                    <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#dc2626' }}>
-                                        🔔 警示症狀：
-                                    </div>
-                                    {comp.symptoms.map((s, i) => (
-                                        <div key={i} style={{ 
-                                            padding: '8px 12px', 
-                                            background: '#fee2e2', 
-                                            borderRadius: '8px', 
-                                            marginBottom: '6px',
-                                            fontSize: '14px'
-                                        }}>
-                                            • {s}
-                                        </div>
-                                    ))}
-                                </div>
-                                <div>
-                                    <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#059669' }}>
-                                        ✅ 處置措施：
-                                    </div>
-                                    {comp.actions.map((a, i) => (
-                                        <div key={i} style={{ 
-                                            padding: '8px 12px', 
-                                            background: '#d1fae5', 
-                                            borderRadius: '8px', 
-                                            marginBottom: '6px',
-                                            fontSize: '14px'
-                                        }}>
-                                            {i + 1}. {a}
-                                        </div>
-                                    ))}
-                                </div>
-                            </InfoCard>
-                        ))}
+                        {[{ title: '血腫 Hematoma', icon: '🩸', color: '#dc2626', signs: ['穿刺部位腫脹', '疼痛加劇', '瘀青擴大'], actions: ['標記範圍', '加強壓迫', '通知醫師'] },
+                          { title: '假性動脈瘤', icon: '💢', color: '#f59e0b', signs: ['搏動性腫塊', '觸診震顫', '聽診雜音'], actions: ['避免按壓', '超音波確認', '可能需手術'] },
+                          { title: '腹膜後血腫', icon: '🚨', color: '#ef4444', signs: ['低血壓', '腹脹/腰痛', 'Hb下降'], actions: ['緊急CT', '輸血準備', '血管攝影'] }
+                        ].map((comp, idx) => (<InfoCard key={idx} title={comp.title} icon={comp.icon} color={comp.color}><div style={{ marginBottom: '12px' }}><div style={{ fontWeight: '600', fontSize: '14px', marginBottom: '8px' }}>⚠️ 警示徵象：</div><div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>{comp.signs.map((sign, i) => (<span key={i} style={{ padding: '6px 12px', background: `${comp.color}15`, color: comp.color, borderRadius: '20px', fontSize: '13px' }}>{sign}</span>))}</div></div><div><div style={{ fontWeight: '600', fontSize: '14px', marginBottom: '8px' }}>🏥 處置：</div><div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>{comp.actions.map((action, i) => (<span key={i} style={{ padding: '6px 12px', background: '#f3f4f6', color: '#374151', borderRadius: '20px', fontSize: '13px' }}>{action}</span>))}</div></div></InfoCard>))}
                     </div>
                 </div>
             );
 
-            // ==================== QUIZ PAGE ====================
             const QuizPage = () => {
                 const { currentQ, score, selected, showResult, completed } = quizState;
-                
                 const questions = [
-                    {
-                        q: '術前準備時，需要攜帶什麼物品至導管室？',
-                        options: ['1kg 砂包', '2kg 砂包', '3kg 砂包', '不需要砂包'],
-                        correct: 1,
-                        explanation: '需準備 2kg 砂包，用於 Femoral 穿刺術後加壓止血。'
-                    },
-                    {
-                        q: 'Femoral 穿刺後，病患應採取什麼姿勢？',
-                        options: ['可隨意活動', '平躺，患肢伸直', '側躺', '坐起休息'],
-                        correct: 1,
-                        explanation: 'Femoral 穿刺後需平躺且患肢伸直，避免出血。'
-                    },
-                    {
-                        q: '術前交班重點包含以下哪項檢驗報告？',
-                        options: ['只需要血型', '只需要肝功能', 'Cr、貧血、PT 凝血功能', '只需要胸部 X 光'],
-                        correct: 2,
-                        explanation: '術前需確認異常抽血檢驗報告，包含腎功能 Cr、貧血 anemia、凝血功能 PT。'
-                    },
-                    {
-                        q: 'Radial 穿刺後，應使用什麼止血？',
-                        options: ['砂包', 'TR-band', '一般紗布', '彈性繃帶'],
-                        correct: 1,
-                        explanation: 'Radial 穿刺後使用 TR-band 加壓止血，並監測手指循環。'
-                    },
-                    {
-                        q: '傷口評估 5P 不包含以下哪項？',
-                        options: ['Pain 疼痛', 'Pulse 脈搏', 'Pressure 壓力', 'Pallor 蒼白'],
-                        correct: 2,
-                        explanation: '5P 包含：Pain、Pulse、Pallor、Paresthesia、Paralysis，不包含 Pressure。'
-                    },
-                    {
-                        q: '心導管檢查常見的心律不整診斷，下列何者正確？',
-                        options: ['HTN 高血壓', 'DM 糖尿病', 'AF 心房顫動', 'COPD 慢性阻塞性肺病'],
-                        correct: 2,
-                        explanation: 'AF（心房顫動）是常見的心律不整診斷，其他選項不屬於心律不整。'
-                    },
-                    {
-                        q: 'PAOD 介入術後通常去哪裡？',
-                        options: ['必須進 ICU', '通常回一般病房', '必須進開刀房', '直接出院'],
-                        correct: 1,
-                        explanation: 'PAOD 介入術後通常回一般病房，去 ICU 機率較低，除非有特殊併發症。'
-                    },
-                    {
-                        q: 'EPS 電生理檢查最需要注意的併發症是？',
-                        options: ['腎功能惡化', '心包膜積液/心臟壓塞', '肺炎', '尿路感染'],
-                        correct: 1,
-                        explanation: 'EPS/Ablation 最需注意心包膜積液或心臟壓塞，這是可能危及生命的併發症。'
-                    }
+                    { q: '術前最重要必須攜帶到導管室的物品？', options: ['病歷', '2kg 砂包', '血壓計', '氧氣筒'], correct: 1, explanation: '2kg 砂包是術後股動脈穿刺加壓止血的必備物品。' },
+                    { q: 'STEMI 病患 D2B 時間目標？', options: ['30分鐘', '60分鐘', '90分鐘', '120分鐘'], correct: 2, explanation: 'STEMI D2B 目標為 90 分鐘內。' },
+                    { q: 'Femoral 穿刺後應採取什麼姿勢？', options: ['坐起休息', '平躺，患肢伸直', '側躺', '隨意活動'], correct: 1, explanation: 'Femoral 穿刺後需平躺臥床，患肢伸直勿彎曲。' },
+                    { q: '傷口評估 5P 不包含？', options: ['Pain', 'Pulse', 'Pressure', 'Pallor'], correct: 2, explanation: '5P 包含 Pain, Pulse, Pallor, Paresthesia, Paralysis。' },
+                    { q: '使用 DAPT 時，哪種病患建議併用 PPI？', options: ['年齡<40歲', '年齡≥65歲', '男性', '首次PCI'], correct: 1, explanation: '年齡 ≥ 65 歲建議併用 PPI。' }
                 ];
-                
-                const handleAnswer = (idx) => {
-                    if (showResult) return;
-                    setQuizState(prev => ({
-                        ...prev,
-                        selected: idx,
-                        showResult: true,
-                        score: idx === questions[currentQ].correct ? prev.score + 1 : prev.score
-                    }));
-                };
-                
-                const nextQuestion = () => {
-                    if (currentQ < questions.length - 1) {
-                        setQuizState(prev => ({
-                            ...prev,
-                            currentQ: prev.currentQ + 1,
-                            selected: null,
-                            showResult: false
-                        }));
-                    } else {
-                        setQuizState(prev => ({ ...prev, completed: true }));
-                    }
-                };
-                
-                const resetQuiz = () => {
-                    setQuizState({
-                        currentQ: 0,
-                        score: 0,
-                        selected: null,
-                        showResult: false,
-                        completed: false
-                    });
-                };
+                const handleAnswer = (idx) => { if (showResult) return; setQuizState(prev => ({ ...prev, selected: idx, showResult: true, score: idx === questions[currentQ].correct ? prev.score + 1 : prev.score })); };
+                const nextQuestion = () => { if (currentQ < questions.length - 1) { setQuizState(prev => ({ ...prev, currentQ: prev.currentQ + 1, selected: null, showResult: false })); } else { setQuizState(prev => ({ ...prev, completed: true })); } };
+                const restartQuiz = () => { setQuizState({ currentQ: 0, score: 0, selected: null, showResult: false, completed: false }); };
                 
                 if (completed) {
                     const percentage = Math.round((score / questions.length) * 100);
-                    return (
-                        <div className="fade-in">
-                            <Header title="測驗完成" subtitle="Quiz Complete" showBack />
-                            <div style={{ padding: '0 16px' }}>
-                                <div style={{
-                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                    borderRadius: '20px',
-                                    padding: '30px',
-                                    textAlign: 'center',
-                                    color: 'white',
-                                    marginBottom: '20px'
-                                }}>
-                                    <div style={{ fontSize: '60px', marginBottom: '10px' }}>
-                                        {percentage >= 80 ? '🎉' : percentage >= 60 ? '👍' : '💪'}
-                                    </div>
-                                    <div style={{ fontSize: '48px', fontWeight: '700', marginBottom: '10px' }}>
-                                        {score} / {questions.length}
-                                    </div>
-                                    <div style={{ fontSize: '18px', opacity: 0.9 }}>
-                                        正確率 {percentage}%
-                                    </div>
-                                </div>
-                                
-                                <div style={{
-                                    padding: '20px',
-                                    background: percentage >= 80 ? '#d1fae5' : percentage >= 60 ? '#fef3c7' : '#fee2e2',
-                                    borderRadius: '16px',
-                                    textAlign: 'center',
-                                    marginBottom: '20px'
-                                }}>
-                                    <div style={{ 
-                                        fontSize: '16px', 
-                                        fontWeight: '600',
-                                        color: percentage >= 80 ? '#065f46' : percentage >= 60 ? '#92400e' : '#991b1b'
-                                    }}>
-                                        {percentage >= 80 ? '優秀！你已掌握重點知識' : 
-                                         percentage >= 60 ? '不錯！建議複習未掌握的部分' : 
-                                         '加油！建議重新閱讀教學內容'}
-                                    </div>
-                                </div>
-                                
-                                <button
-                                    onClick={resetQuiz}
-                                    style={{
-                                        width: '100%',
-                                        padding: '16px',
-                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '12px',
-                                        fontSize: '16px',
-                                        fontWeight: '600',
-                                        cursor: 'pointer'
-                                    }}
-                                >
-                                    重新測驗
-                                </button>
-                            </div>
-                        </div>
-                    );
+                    return (<div className="fade-in"><Header title="測驗結果" subtitle="Quiz Results" showBack /><div style={{ padding: '0 16px', textAlign: 'center' }}><div style={{ background: percentage >= 80 ? 'linear-gradient(135deg, #10b981, #059669)' : percentage >= 60 ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'linear-gradient(135deg, #ef4444, #dc2626)', borderRadius: '20px', padding: '40px 20px', color: 'white', marginBottom: '20px' }}><div style={{ fontSize: '64px', marginBottom: '10px' }}>{percentage >= 80 ? '🎉' : percentage >= 60 ? '👍' : '📚'}</div><div style={{ fontSize: '48px', fontWeight: '700' }}>{score}/{questions.length}</div><div style={{ fontSize: '18px', marginTop: '10px' }}>正確率 {percentage}%</div></div><button onClick={restartQuiz} style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: '600', cursor: 'pointer' }}>重新測驗</button></div></div>);
                 }
-                
                 const q = questions[currentQ];
-                
                 return (
                     <div className="fade-in">
                         <Header title="自我測驗" subtitle={`問題 ${currentQ + 1} / ${questions.length}`} showBack />
                         <div style={{ padding: '0 16px' }}>
-                            <div style={{ 
-                                height: '6px', 
-                                background: '#e5e7eb', 
-                                borderRadius: '3px',
-                                marginBottom: '20px',
-                                overflow: 'hidden'
-                            }}>
-                                <div style={{
-                                    height: '100%',
-                                    width: `${((currentQ + 1) / questions.length) * 100}%`,
-                                    background: 'linear-gradient(90deg, #667eea, #764ba2)',
-                                    transition: 'width 0.3s ease'
-                                }}/>
-                            </div>
-                            
-                            <div style={{
-                                background: 'white',
-                                borderRadius: '16px',
-                                padding: '20px',
-                                marginBottom: '16px',
-                                boxShadow: 'var(--shadow)'
-                            }}>
-                                <h3 style={{ fontSize: '17px', fontWeight: '600', lineHeight: '1.5' }}>
-                                    {q.q}
-                                </h3>
-                            </div>
-                            
-                            {q.options.map((opt, idx) => {
-                                let bgColor = 'white';
-                                let borderColor = '#e5e7eb';
-                                
-                                if (showResult) {
-                                    if (idx === q.correct) {
-                                        bgColor = '#d1fae5';
-                                        borderColor = '#10b981';
-                                    } else if (idx === selected) {
-                                        bgColor = '#fee2e2';
-                                        borderColor = '#ef4444';
-                                    }
-                                } else if (idx === selected) {
-                                    borderColor = '#667eea';
-                                    bgColor = '#eef2ff';
-                                }
-                                
-                                return (
-                                    <button
-                                        key={idx}
-                                        onClick={() => handleAnswer(idx)}
-                                        disabled={showResult}
-                                        style={{
-                                            width: '100%',
-                                            padding: '16px',
-                                            marginBottom: '10px',
-                                            background: bgColor,
-                                            border: `2px solid ${borderColor}`,
-                                            borderRadius: '12px',
-                                            textAlign: 'left',
-                                            fontSize: '15px',
-                                            cursor: showResult ? 'default' : 'pointer',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '12px'
-                                        }}
-                                    >
-                                        <span style={{
-                                            width: '28px',
-                                            height: '28px',
-                                            borderRadius: '50%',
-                                            background: showResult && idx === q.correct ? '#10b981' : '#f3f4f6',
-                                            color: showResult && idx === q.correct ? 'white' : '#6b7280',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            fontWeight: '600',
-                                            fontSize: '13px',
-                                            flexShrink: 0
-                                        }}>
-                                            {String.fromCharCode(65 + idx)}
-                                        </span>
-                                        {opt}
-                                    </button>
-                                );
-                            })}
-                            
-                            {showResult && (
-                                <div style={{
-                                    padding: '16px',
-                                    background: selected === q.correct ? '#d1fae5' : '#fef3c7',
-                                    borderRadius: '12px',
-                                    borderLeft: `4px solid ${selected === q.correct ? '#10b981' : '#f59e0b'}`,
-                                    marginBottom: '16px'
-                                }} className="fade-in">
-                                    <div style={{ fontWeight: '600', marginBottom: '6px' }}>
-                                        {selected === q.correct ? '✓ 正確！' : '✗ 答錯了'}
-                                    </div>
-                                    <div style={{ fontSize: '14px', lineHeight: '1.5' }}>
-                                        {q.explanation}
-                                    </div>
-                                </div>
-                            )}
-                            
-                            {showResult && (
-                                <button
-                                    onClick={nextQuestion}
-                                    style={{
-                                        width: '100%',
-                                        padding: '16px',
-                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '12px',
-                                        fontSize: '16px',
-                                        fontWeight: '600',
-                                        cursor: 'pointer',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: '8px'
-                                    }}
-                                >
-                                    {currentQ < questions.length - 1 ? '下一題' : '查看結果'}
-                                    <Icons.Arrow />
-                                </button>
-                            )}
+                            <div style={{ height: '6px', background: '#e5e7eb', borderRadius: '3px', marginBottom: '20px', overflow: 'hidden' }}><div style={{ height: '100%', width: `${((currentQ + 1) / questions.length) * 100}%`, background: 'linear-gradient(90deg, #667eea, #764ba2)', transition: 'width 0.3s ease' }}/></div>
+                            <div style={{ background: 'white', borderRadius: '16px', padding: '20px', marginBottom: '16px', boxShadow: 'var(--shadow)' }}><h3 style={{ fontSize: '17px', fontWeight: '600', lineHeight: '1.5' }}>{q.q}</h3></div>
+                            {q.options.map((opt, idx) => { let bgColor = 'white'; let borderColor = '#e5e7eb'; if (showResult) { if (idx === q.correct) { bgColor = '#d1fae5'; borderColor = '#10b981'; } else if (idx === selected) { bgColor = '#fee2e2'; borderColor = '#ef4444'; } } else if (idx === selected) { borderColor = '#667eea'; bgColor = '#eef2ff'; } return (<button key={idx} onClick={() => handleAnswer(idx)} disabled={showResult} style={{ width: '100%', padding: '16px', marginBottom: '10px', background: bgColor, border: `2px solid ${borderColor}`, borderRadius: '12px', textAlign: 'left', fontSize: '15px', cursor: showResult ? 'default' : 'pointer', display: 'flex', alignItems: 'center', gap: '12px' }}><span style={{ width: '28px', height: '28px', borderRadius: '50%', background: showResult && idx === q.correct ? '#10b981' : '#f3f4f6', color: showResult && idx === q.correct ? 'white' : '#6b7280', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '600', fontSize: '13px', flexShrink: 0 }}>{String.fromCharCode(65 + idx)}</span>{opt}</button>); })}
+                            {showResult && (<div style={{ padding: '16px', background: selected === q.correct ? '#d1fae5' : '#fef3c7', borderRadius: '12px', borderLeft: `4px solid ${selected === q.correct ? '#10b981' : '#f59e0b'}`, marginBottom: '16px' }} className="fade-in"><div style={{ fontWeight: '600', marginBottom: '6px' }}>{selected === q.correct ? '✓ 正確！' : '✗ 答錯了'}</div><div style={{ fontSize: '14px', lineHeight: '1.5' }}>{q.explanation}</div></div>)}
+                            {showResult && (<button onClick={nextQuestion} style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>{currentQ < questions.length - 1 ? '下一題' : '查看結果'}<Icons.Arrow /></button>)}
                         </div>
                     </div>
                 );
             };
 
-            // ==================== RENDER PAGE ====================
             const renderPage = () => {
                 switch(currentPage) {
                     case 'home': return <HomePage />;
@@ -1972,17 +435,7 @@
                 }
             };
             
-            return (
-                <div style={{ 
-                    maxWidth: '480px', 
-                    margin: '0 auto',
-                    minHeight: '100vh',
-                    background: 'var(--bg-cream)',
-                    paddingBottom: '30px'
-                }}>
-                    {renderPage()}
-                </div>
-            );
+            return (<div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: 'var(--bg-cream)', paddingBottom: '30px' }}>{renderPage()}</div>);
         };
         
         ReactDOM.render(<App />, document.getElementById('root'));
