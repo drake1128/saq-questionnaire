@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>顯影劑腎病預防指引 | CIN Prevention Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #334155;
+            --bg-input: #475569;
+            --accent-primary: #3b82f6;
+            --accent-secondary: #06b6d4;
+            --accent-warning: #f59e0b;
+            --accent-danger: #ef4444;
+            --accent-success: #10b981;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #475569;
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: var(--bg-secondary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: var(--accent-secondary);
+            margin-top: 10px;
+            border: 1px solid var(--accent-secondary);
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 25px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .nav-tab {
+            flex: 1;
+            min-width: 100px;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .nav-tab:hover {
+            background: var(--bg-card);
+        }
+
+        .nav-tab.active {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title .icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 500px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Checkbox Group */
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .checkbox-item:hover {
+            background: var(--bg-input);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-primary);
+            cursor: pointer;
+        }
+
+        .checkbox-item.checked {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid var(--accent-primary);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-copy {
+            background: var(--accent-success);
+            color: white;
+            padding: 10px 16px;
+            font-size: 0.85rem;
+        }
+
+        /* Results */
+        .result-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .risk-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .risk-low { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .risk-moderate { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+        .risk-high { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .risk-very-high { background: rgba(239, 68, 68, 0.4); color: #fca5a5; }
+
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 5px;
+        }
+
+        .result-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .result-item {
+            background: var(--bg-secondary);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        /* Progress Note */
+        .note-output {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        /* Hydration Calculator */
+        .hydration-result {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1));
+            border: 1px solid var(--accent-success);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .hydration-formula {
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            margin: 15px 0;
+        }
+
+        .hydration-order {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--accent-success);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 15px;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid var(--accent-primary);
+            border-radius: 10px;
+            padding: 16px;
+            margin: 15px 0;
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            color: var(--accent-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .warning-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--accent-warning);
+        }
+
+        .warning-box .info-box-title {
+            color: var(--accent-warning);
+        }
+
+        /* External Link */
+        .external-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            color: var(--accent-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin: 15px 0;
+        }
+
+        .external-link:hover {
+            background: var(--bg-input);
+            transform: translateX(5px);
+        }
+
+        .external-link .arrow {
+            margin-left: auto;
+        }
+
+        /* Learning Content */
+        .learning-section {
+            margin-bottom: 25px;
+        }
+
+        .learning-section h3 {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            color: var(--accent-secondary);
+        }
+
+        .learning-list {
+            list-style: none;
+        }
+
+        .learning-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .learning-list li:last-child {
+            border-bottom: none;
+        }
+
+        .learning-list .bullet {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            margin-top: 8px;
+            flex-shrink: 0;
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table th {
+            background: var(--bg-card);
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .data-table tr:hover {
+            background: var(--bg-card);
+        }
+
+        /* Score Display */
+        .score-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 30px;
+            background: var(--bg-card);
+            border-radius: 16px;
+            margin: 20px 0;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 15px;
+        }
+
+        .score-low { background: linear-gradient(135deg, #10b981, #059669); }
+        .score-moderate { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .score-high { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .score-very-high { background: linear-gradient(135deg, #991b1b, #7f1d1d); }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--accent-success);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 500;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
+        }
+
+        .footer a {
+            color: var(--accent-secondary);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>💧 顯影劑腎病預防指引</h1>
+            <p class="subtitle">Contrast-Induced Nephropathy (CIN) Prevention</p>
+            <span class="badge">📚 台大新竹分院心血管中心</span>
+        </header>
+
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('calculator')">🧮 風險計算</button>
+            <button class="nav-tab" onclick="showTab('hydration')">💉 Hydration</button>
+            <button class="nav-tab" onclick="showTab('learning')">📖 學習重點</button>
+            <button class="nav-tab" onclick="showTab('protocol')">📋 Protocol</button>
+        </nav>
+
+        <!-- Tab 1: Risk Calculator -->
+        <div id="calculator" class="tab-content active">
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">📊</span>
+                    Mehran Risk Score 計算器
+                </div>
+                
+                <div class="info-box">
+                    <div class="info-box-title">ℹ️ 關於此評分</div>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                        此風險評分系統基於 Dr. Roxana Mehran 的研究 (Circulation 2010; J Am Coll Cardiol 2004)，用於預測 PCI 後顯影劑腎病的發生風險。
+                    </p>
+                </div>
+
+                <a href="https://www.qxmd.com/calculate/contrast-nephropathy-post-pci-creatinine" 
+                   target="_blank" class="external-link">
+                    <span>🔗</span>
+                    <span>開啟 QxMD 線上計算器 (官方版)</span>
+                    <span class="arrow">→</span>
+                </a>
+
+                <div class="form-group">
+                    <label class="form-label">病患基本資料</label>
+                    <div class="form-row">
+                        <div>
+                            <label class="form-label">年齡 (歲)</label>
+                            <input type="number" class="form-input" id="age" placeholder="例: 65" min="18" max="120">
+                        </div>
+                        <div>
+                            <label class="form-label">體重 (kg)</label>
+                            <input type="number" class="form-input" id="weight" placeholder="例: 60" min="30" max="200">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">腎功能</label>
+                    <div class="form-row">
+                        <div>
+                            <label class="form-label">Creatinine (mg/dL)</label>
+                            <input type="number" class="form-input" id="creatinine" placeholder="例: 1.5" step="0.1" min="0.1" max="20">
+                        </div>
+                        <div>
+                            <label class="form-label">eGFR (mL/min/1.73m²)</label>
+                            <input type="number" class="form-input" id="egfr" placeholder="自動計算或手動輸入" min="1" max="150">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">顯影劑用量 (mL)</label>
+                    <input type="number" class="form-input" id="contrastVolume" placeholder="預估使用量，例: 150" min="10" max="1000">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">風險因子 (勾選適用項目)</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="hypotension" onchange="toggleCheckbox(this)">
+                            <span>低血壓 (+5)</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="iabp" onchange="toggleCheckbox(this)">
+                            <span>使用 IABP (+5)</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="chf" onchange="toggleCheckbox(this)">
+                            <span>心衰竭 CHF (+5)</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="diabetes" onchange="toggleCheckbox(this)">
+                            <span>糖尿病 DM (+3)</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="anemia" onchange="toggleCheckbox(this)">
+                            <span>貧血 Hct<39% (+3)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="calculateRisk()">
+                    🧮 計算風險
+                </button>
+
+                <div id="riskResult" style="display: none;">
+                    <div class="score-display">
+                        <div id="scoreCircle" class="score-circle score-low">
+                            <span id="scoreValue">0</span>
+                        </div>
+                        <div id="riskCategory" style="font-size: 1.2rem; font-weight: 600;">低風險</div>
+                    </div>
+
+                    <div class="result-grid">
+                        <div class="result-item">
+                            <div class="result-label">CIN 風險</div>
+                            <div id="cinRisk" class="result-value" style="font-size: 1.5rem;">--%</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">需洗腎風險</div>
+                            <div id="dialysisRisk" class="result-value" style="font-size: 1.5rem;">--%</div>
+                        </div>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-header">
+                            <span style="font-weight: 600;">📋 Progress Note 記錄</span>
+                            <button class="btn btn-copy" onclick="copyNote()">📋 複製</button>
+                        </div>
+                        <div class="note-output" id="progressNote"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">📏</span>
+                    最大顯影劑量計算
+                </div>
+                
+                <div class="info-box warning-box">
+                    <div class="info-box-title">⚠️ 重要原則</div>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                        限制顯影劑用量是預防 CIN 最重要的措施之一
+                    </p>
+                </div>
+
+                <div class="hydration-formula">
+                    <strong>常用公式：</strong><br>
+                    • 最大量 = <strong>3 mL/kg</strong> (保守)<br>
+                    • 最大量 = <strong>5 mL/kg ÷ Creatinine</strong> (替代公式)
+                </div>
+
+                <div id="contrastLimit" style="display: none;" class="hydration-result">
+                    <strong>📊 建議最大顯影劑量：</strong>
+                    <div id="contrastLimitValue" style="font-size: 1.5rem; font-weight: 700; margin-top: 10px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Hydration Protocol -->
+        <div id="hydration" class="tab-content">
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">💉</span>
+                    Hydration Protocol 計算
+                </div>
+
+                <div class="info-box">
+                    <div class="info-box-title">ℹ️ Hydration 的重要性</div>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                        充足的靜脈輸液是預防 CIN 最有效且最重要的措施。建議在導管前後給予適當的水分補充。
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">體重 (kg)</label>
+                    <input type="number" class="form-input" id="hydrationWeight" placeholder="例: 60" min="30" max="200">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">心臟功能狀況</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="radio" name="cardiacStatus" value="normal" checked>
+                            <span>心功能正常</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="radio" name="cardiacStatus" value="reduced">
+                            <span>心功能下降 (LVEF<40%)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="calculateHydration()">
+                    💧 計算 Hydration Order
+                </button>
+
+                <div id="hydrationResult" style="display: none;">
+                    <div class="hydration-result">
+                        <strong>💧 建議 Hydration Order：</strong>
+                        
+                        <div class="hydration-order">
+                            <div id="hydrationOrderText" style="font-family: 'JetBrains Mono', monospace;"></div>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <strong>⏰ 給予時機：</strong>
+                            <ul style="margin-top: 10px; margin-left: 20px; color: var(--text-secondary);">
+                                <li>術前 6-12 小時開始給予</li>
+                                <li>術後持續 6-24 小時</li>
+                                <li>總共 12-24 小時的 hydration</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-header">
+                            <span style="font-weight: 600;">📋 醫囑範本</span>
+                            <button class="btn btn-copy" onclick="copyHydrationOrder()">📋 複製</button>
+                        </div>
+                        <div class="note-output" id="hydrationNote"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">💊</span>
+                    其他預防措施
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>措施</th>
+                            <th>說明</th>
+                            <th>效果</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>N-Acetylcysteine</strong></td>
+                            <td>600 mg PO BID × 2 days</td>
+                            <td>⭐⭐ 有爭議</td>
+                        </tr>
+                        <tr>
+                            <td><strong>NaHCO₃</strong></td>
+                            <td>154 mEq/L IV</td>
+                            <td>⭐⭐ 有爭議</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Low-osmolar contrast</strong></td>
+                            <td>使用低滲透壓顯影劑</td>
+                            <td>⭐⭐⭐ 建議</td>
+                        </tr>
+                        <tr>
+                            <td><strong>限制 Contrast 量</strong></td>
+                            <td>< 3 mL/kg</td>
+                            <td>⭐⭐⭐ 重要</td>
+                        </tr>
+                        <tr>
+                            <td><strong>避免腎毒性藥物</strong></td>
+                            <td>停用 NSAIDs, Metformin</td>
+                            <td>⭐⭐⭐ 重要</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="info-box warning-box" style="margin-top: 20px;">
+                    <div class="info-box-title">⚠️ 注意：避免使用 Dopamine</div>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                        低劑量 Dopamine 無法預防 CIN，反而可能造成傷害 (may worsen CIN)
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Learning -->
+        <div id="learning" class="tab-content">
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">🎯</span>
+                    CIN 定義與診斷標準
+                </div>
+
+                <div class="learning-section">
+                    <h3>📌 CIN 定義 (Contrast-Induced Nephropathy)</h3>
+                    <ul class="learning-list">
+                        <li>
+                            <span class="bullet"></span>
+                            <span>Creatinine 上升 <strong>≥ 0.5 mg/dL</strong> 或</span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span>Creatinine 上升 <strong>≥ 25%</strong> (相較於 baseline)</span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span>發生時間：通常在顯影劑暴露後 <strong>48-72 小時</strong>內</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="learning-section">
+                    <h3>📌 發生率</h3>
+                    <ul class="learning-list">
+                        <li>
+                            <span class="bullet"></span>
+                            <span>一般族群：約 <strong>5%</strong></span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span>高風險族群 (CKD + DM)：可達 <strong>20-30%</strong></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">⚠️</span>
+                    高風險族群
+                </div>
+
+                <div class="learning-section">
+                    <h3>📌 主要風險因子</h3>
+                    <ul class="learning-list">
+                        <li>
+                            <span class="bullet"></span>
+                            <span><strong>慢性腎病 CKD</strong> (eGFR < 60)：最重要的風險因子</span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span><strong>糖尿病 DM</strong>：尤其合併 CKD 時</span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span><strong>心衰竭 CHF / 血流動力學不穩</strong></span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span><strong>高齡</strong> (> 75 歲)</span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span><strong>貧血</strong> (Hct < 39%)</span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span><strong>顯影劑用量過多</strong></span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span><strong>使用高滲透壓顯影劑</strong></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">🛡️</span>
+                    預防策略重點
+                </div>
+
+                <div class="learning-section">
+                    <h3>📌 最有效的預防措施</h3>
+                    <ul class="learning-list">
+                        <li>
+                            <span class="bullet"></span>
+                            <span><strong>1. 充足的 Hydration</strong> - 這是最重要且最有效的措施！</span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span><strong>2. 限制顯影劑用量</strong> - 控制在 3 mL/kg 以內</span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span><strong>3. 使用 low-osmolar 或 iso-osmolar 顯影劑</strong></span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span><strong>4. 停用腎毒性藥物</strong> - NSAIDs, Aminoglycosides</span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span><strong>5. Metformin</strong> - 術前 48hr 停藥，術後腎功能正常再恢復</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-box-title">💡 臨床提醒</div>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                        對於已經洗腎的病患，雖然不需擔心 CIN，但顯影劑仍可能造成容積過載，需注意 timing 與洗腎銜接。
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">📚</span>
+                    參考文獻
+                </div>
+
+                <ul class="learning-list">
+                    <li>
+                        <span class="bullet"></span>
+                        <span>Mehran R, et al. Circulation: Cardiovascular Interventions. 2010;3:491-498</span>
+                    </li>
+                    <li>
+                        <span class="bullet"></span>
+                        <span>Mehran R, et al. J Am Coll Cardiol. 2004;44(7):1393-9</span>
+                    </li>
+                    <li>
+                        <span class="bullet"></span>
+                        <span>PAOD Protocol - 台大新竹分院心血管中心 (謝慕揚醫師)</span>
+                    </li>
+                </ul>
+
+                <a href="https://www.qxmd.com/calculate/contrast-nephropathy-post-pci-creatinine" 
+                   target="_blank" class="external-link">
+                    <span>🔗</span>
+                    <span>QxMD Risk Calculator</span>
+                    <span class="arrow">→</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Tab 4: Protocol -->
+        <div id="protocol" class="tab-content">
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">📋</span>
+                    導管前 CIN 預防 Checklist
+                </div>
+
+                <div class="learning-section">
+                    <h3>✅ 術前評估</h3>
+                    <ul class="learning-list">
+                        <li>
+                            <span class="bullet"></span>
+                            <span>確認腎功能 (Cr, eGFR)</span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span>計算 Mehran Risk Score</span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span>評估最大顯影劑用量</span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span>確認是否有使用 Metformin → 術前停藥</span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span>確認是否有使用 NSAIDs → 術前停藥</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="learning-section">
+                    <h3>✅ 術前醫囑</h3>
+                    <ul class="learning-list">
+                        <li>
+                            <span class="bullet"></span>
+                            <span><strong>Hydration:</strong> N/S IV pump 1 mL/kg/hr (術前 6-12 hr 開始)</span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span><strong>N-Acetylcysteine:</strong> 600 mg PO BID (可考慮)</span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span>高風險者安排術後追蹤 Cr</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">🏥</span>
+                    術後照護
+                </div>
+
+                <div class="learning-section">
+                    <h3>✅ 術後醫囑</h3>
+                    <ul class="learning-list">
+                        <li>
+                            <span class="bullet"></span>
+                            <span>持續 Hydration 6-24 小時</span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span>高風險者：48-72hr 後追蹤 Cr</span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span>確認腎功能穩定後再恢復 Metformin</span>
+                        </li>
+                        <li>
+                            <span class="bullet"></span>
+                            <span>記錄實際使用顯影劑量</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="info-box warning-box">
+                    <div class="info-box-title">⚠️ 洗腎病患注意事項</div>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                        洗腎病患進行導管治療時，需注意術後的洗腎時間安排，以避免顯影劑造成的容積過載。建議術後 24-48 小時內安排透析。
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">📝</span>
+                    Progress Note 範本
+                </div>
+
+                <div class="note-output" style="background: var(--bg-card);">
+[Pre-cath CIN risk assessment]
+- Baseline Cr: ___ mg/dL, eGFR: ___ mL/min/1.73m²
+- Mehran Risk Score: ___ points
+- CIN risk: ___%, Dialysis risk: ___%
+- Estimated max contrast volume: ___ mL
+
+[CIN Prevention Measures]
+1. Pre-hydration: N/S ___ mL, rate ___ mL/hr (1 mL/kg/hr)
+2. Hold Metformin: Yes / No / N/A
+3. Hold NSAIDs: Yes / No / N/A
+4. N-Acetylcysteine 600mg BID: Yes / No
+5. Use low-osmolar contrast agent
+
+[Post-procedure]
+- Actual contrast used: ___ mL
+- Continue hydration for ___ hours
+- F/U Cr in 48-72 hours: Scheduled / Not needed
+                </div>
+
+                <button class="btn btn-secondary" style="margin-top: 15px;" onclick="copyTemplate()">
+                    📋 複製範本
+                </button>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>台大醫院新竹分院 心血管中心</p>
+            <p>謝慕揚醫師 製作 | 2025</p>
+            <p style="margin-top: 10px;">
+                <a href="https://www.qxmd.com/calculate/contrast-nephropathy-post-pci-creatinine" target="_blank">
+                    QxMD Risk Calculator
+                </a>
+            </p>
+        </footer>
+    </div>
+
+    <div class="toast" id="toast">✅ 已複製到剪貼簿！</div>
+
+    <script>
+        // Tab Navigation
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Toggle Checkbox Styling
+        function toggleCheckbox(checkbox) {
+            const item = checkbox.closest('.checkbox-item');
+            if (checkbox.checked) {
+                item.classList.add('checked');
+            } else {
+                item.classList.remove('checked');
+            }
+        }
+
+        // Calculate Mehran Risk Score
+        function calculateRisk() {
+            const age = parseFloat(document.getElementById('age').value) || 0;
+            const weight = parseFloat(document.getElementById('weight').value) || 60;
+            const creatinine = parseFloat(document.getElementById('creatinine').value) || 1.0;
+            const contrastVolume = parseFloat(document.getElementById('contrastVolume').value) || 100;
+            
+            let egfr = parseFloat(document.getElementById('egfr').value);
+            
+            // Calculate eGFR if not provided (using simplified MDRD)
+            if (!egfr || isNaN(egfr)) {
+                egfr = 186 * Math.pow(creatinine, -1.154) * Math.pow(age, -0.203);
+                document.getElementById('egfr').value = Math.round(egfr);
+            }
+            
+            // Calculate Mehran Score
+            let score = 0;
+            
+            // Hypotension (+5)
+            if (document.getElementById('hypotension').checked) score += 5;
+            
+            // IABP (+5)
+            if (document.getElementById('iabp').checked) score += 5;
+            
+            // CHF (+5)
+            if (document.getElementById('chf').checked) score += 5;
+            
+            // Age > 75 (+4)
+            if (age > 75) score += 4;
+            
+            // Anemia (+3)
+            if (document.getElementById('anemia').checked) score += 3;
+            
+            // Diabetes (+3)
+            if (document.getElementById('diabetes').checked) score += 3;
+            
+            // Contrast volume (+1 per 100mL)
+            score += Math.floor(contrastVolume / 100);
+            
+            // Creatinine > 1.5 (+4) or eGFR scoring
+            if (egfr < 20) score += 6;
+            else if (egfr < 40) score += 4;
+            else if (egfr < 60) score += 2;
+            
+            // Determine risk category
+            let cinRisk, dialysisRisk, category, colorClass;
+            
+            if (score <= 5) {
+                cinRisk = "7.5";
+                dialysisRisk = "0.04";
+                category = "低風險 (Low Risk)";
+                colorClass = "low";
+            } else if (score <= 10) {
+                cinRisk = "14.0";
+                dialysisRisk = "0.12";
+                category = "中等風險 (Moderate Risk)";
+                colorClass = "moderate";
+            } else if (score <= 15) {
+                cinRisk = "26.1";
+                dialysisRisk = "1.09";
+                category = "高風險 (High Risk)";
+                colorClass = "high";
+            } else {
+                cinRisk = "57.3";
+                dialysisRisk = "12.6";
+                category = "極高風險 (Very High Risk)";
+                colorClass = "very-high";
+            }
+            
+            // Calculate max contrast volume
+            const maxContrast1 = Math.round(3 * weight);
+            const maxContrast2 = Math.round((5 * weight) / creatinine);
+            
+            // Update UI
+            document.getElementById('riskResult').style.display = 'block';
+            document.getElementById('scoreValue').textContent = score;
+            document.getElementById('riskCategory').textContent = category;
+            document.getElementById('cinRisk').textContent = cinRisk + '%';
+            document.getElementById('dialysisRisk').textContent = dialysisRisk + '%';
+            
+            const scoreCircle = document.getElementById('scoreCircle');
+            scoreCircle.className = 'score-circle score-' + colorClass;
+            
+            // Show contrast limit
+            document.getElementById('contrastLimit').style.display = 'block';
+            document.getElementById('contrastLimitValue').innerHTML = `
+                • 保守估計 (3 mL/kg): <strong>${maxContrast1} mL</strong><br>
+                • 替代公式 (5 mL/kg ÷ Cr): <strong>${maxContrast2} mL</strong>
+            `;
+            
+            // Generate progress note
+            const today = new Date().toLocaleDateString('zh-TW');
+            const progressNote = `[Pre-cath CIN Risk Assessment] (${today})
+
+Patient Data:
+- Age: ${age} y/o, Weight: ${weight} kg
+- Baseline Cr: ${creatinine} mg/dL
+- eGFR: ${Math.round(egfr)} mL/min/1.73m²
+- Estimated contrast volume: ${contrastVolume} mL
+
+Risk Factors:
+${document.getElementById('hypotension').checked ? '✓' : '✗'} Hypotension
+${document.getElementById('iabp').checked ? '✓' : '✗'} IABP use
+${document.getElementById('chf').checked ? '✓' : '✗'} CHF
+${document.getElementById('diabetes').checked ? '✓' : '✗'} Diabetes
+${document.getElementById('anemia').checked ? '✓' : '✗'} Anemia (Hct < 39%)
+
+Mehran Risk Score: ${score} points
+→ Risk Category: ${category}
+→ CIN Risk: ${cinRisk}%
+→ Dialysis Risk: ${dialysisRisk}%
+
+Maximum Contrast Volume:
+→ Conservative (3 mL/kg): ${maxContrast1} mL
+→ Alternative (5 mL/kg ÷ Cr): ${maxContrast2} mL
+
+CIN Prevention Plan:
+1. Pre-hydration: N/S ${Math.round(1000)} mL, rate ${Math.round(weight)} mL/hr
+2. Post-hydration: Continue for 6-12 hours
+3. Use low-osmolar contrast agent
+4. Limit contrast volume to < ${Math.min(maxContrast1, maxContrast2)} mL
+5. F/U Cr in 48-72 hours post-procedure`;
+            
+            document.getElementById('progressNote').textContent = progressNote;
+        }
+
+        // Calculate Hydration
+        function calculateHydration() {
+            const weight = parseFloat(document.getElementById('hydrationWeight').value) || 60;
+            const cardiacStatus = document.querySelector('input[name="cardiacStatus"]:checked').value;
+            
+            let rate, totalVolume, duration, ratePerKg;
+            
+            if (cardiacStatus === 'normal') {
+                ratePerKg = 1; // 1 mL/kg/hr
+                rate = Math.round(weight * ratePerKg);
+                totalVolume = 1000;
+                duration = "12-24";
+            } else {
+                ratePerKg = 0.5; // 0.5 mL/kg/hr for reduced EF
+                rate = Math.round(weight * ratePerKg);
+                totalVolume = 500;
+                duration = "12";
+            }
+            
+            document.getElementById('hydrationResult').style.display = 'block';
+            
+            const orderText = `
+<strong>💧 IV Fluid Order:</strong>
+
+• Solution: <strong>Normal Saline (N/S) 0.9%</strong>
+• Total Volume: <strong>${totalVolume} mL</strong>
+• Rate: <strong>${rate} mL/hr</strong> (${ratePerKg} mL/kg/hr × ${weight} kg)
+• Duration: <strong>${duration} hours</strong>
+${cardiacStatus !== 'normal' ? '\n<span style="color: #f59e0b;">⚠️ 心功能下降，使用減半流速</span>' : ''}
+
+<strong>⏰ Timing:</strong>
+• Start: 6-12 hours before procedure
+• Continue: 6-12 hours after procedure
+            `.trim();
+            
+            document.getElementById('hydrationOrderText').innerHTML = orderText;
+            
+            const hydrationNote = `[CIN Prevention - Hydration Order]
+Date: ${new Date().toLocaleDateString('zh-TW')}
+Patient Weight: ${weight} kg
+Cardiac Status: ${cardiacStatus === 'normal' ? 'Normal EF' : 'Reduced EF (LVEF<40%)'}
+
+Pre-cath Hydration:
+→ N/S ${totalVolume} mL IV pump, rate ${rate} mL/hr (${ratePerKg} mL/kg/hr)
+→ Start 6-12 hours before procedure
+
+Post-cath Hydration:
+→ Continue N/S IV at ${rate} mL/hr
+→ Duration: 6-12 hours post-procedure
+
+${cardiacStatus !== 'normal' ? '⚠️ Note: Reduced hydration rate (0.5 mL/kg/hr) due to reduced cardiac function. Monitor for volume overload.' : ''}
+
+Additional orders:
+- Monitor I/O
+- Check Cr 48-72 hours post-procedure
+- Hold Metformin until Cr stable post-procedure`;
+            
+            document.getElementById('hydrationNote').textContent = hydrationNote;
+        }
+
+        // Copy functions
+        function copyNote() {
+            const note = document.getElementById('progressNote').textContent;
+            navigator.clipboard.writeText(note);
+            showToast();
+        }
+
+        function copyHydrationOrder() {
+            const note = document.getElementById('hydrationNote').textContent;
+            navigator.clipboard.writeText(note);
+            showToast();
+        }
+
+        function copyTemplate() {
+            const template = `[Pre-cath CIN risk assessment]
+- Baseline Cr: ___ mg/dL, eGFR: ___ mL/min/1.73m²
+- Mehran Risk Score: ___ points
+- CIN risk: ___%, Dialysis risk: ___%
+- Estimated max contrast volume: ___ mL
+
+[CIN Prevention Measures]
+1. Pre-hydration: N/S ___ mL, rate ___ mL/hr (1 mL/kg/hr)
+2. Hold Metformin: Yes / No / N/A
+3. Hold NSAIDs: Yes / No / N/A
+4. N-Acetylcysteine 600mg BID: Yes / No
+5. Use low-osmolar contrast agent
+
+[Post-procedure]
+- Actual contrast used: ___ mL
+- Continue hydration for ___ hours
+- F/U Cr in 48-72 hours: Scheduled / Not needed`;
+            
+            navigator.clipboard.writeText(template);
+            showToast();
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // Auto-calculate eGFR when age and creatinine change
+        document.getElementById('age').addEventListener('input', autoCalcEGFR);
+        document.getElementById('creatinine').addEventListener('input', autoCalcEGFR);
+
+        function autoCalcEGFR() {
+            const age = parseFloat(document.getElementById('age').value);
+            const creatinine = parseFloat(document.getElementById('creatinine').value);
+            
+            if (age && creatinine) {
+                const egfr = 186 * Math.pow(creatinine, -1.154) * Math.pow(age, -0.203);
+                document.getElementById('egfr').value = Math.round(egfr);
+            }
+        }
+    </script>
+</body>
+</html>
