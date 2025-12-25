@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>心導管併發症案例教學 | PCI Complications Case Teaching</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #1e3a5f;
+            --primary-light: #2d5a87;
+            --accent: #dc2626;
+            --success: #059669;
+            --warning: #d97706;
+            --info: #0284c7;
+            --purple: #7c3aed;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-hover: #334155;
+            --text-light: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        #root { min-height: 100vh; padding-bottom: 100px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Case Data - 6 Clinical Cases
+        const casesData = [
+            {
+                id: 1,
+                title: "急性支架內血栓",
+                subtitle: "Acute Stent Thrombosis",
+                color: "#dc2626",
+                icon: "🫀",
+                keyLesson: "術前術後 ECG 與 DAPT 藥物的重要性",
+                scenario: {
+                    patient: "58歲男性，糖尿病、高血壓病史",
+                    presentation: "因胸痛診斷為 STEMI，接受 primary PCI 於 LAD 置放 DES 支架",
+                    timeline: [
+                        { time: "Day 0", event: "成功置放 LAD DES 3.0×28mm，TIMI 3 flow" },
+                        { time: "Day 1", event: "病患穩定出院，開立 DAPT (Aspirin + Clopidogrel)" },
+                        { time: "Day 3", event: "病患因經濟因素自行停用 Clopidogrel" },
+                        { time: "Day 5", event: "突發胸痛、冒冷汗，送急診" }
+                    ],
+                    findings: [
+                        "ECG: Anterior STEMI with new Q waves",
+                        "BP: 70/40 mmHg, HR: 110 bpm",
+                        "Emergency CAG: Total occlusion at LAD stent (acute stent thrombosis)",
+                        "Aspiration thrombectomy 抽出大量血栓",
+                        "術中 VF → DC shock × 2",
+                        "Cardiogenic shock → ECMO support"
+                    ],
+                    outcome: "經 ECMO 支持 5 天後成功脫離，但 EF 降至 30%"
+                },
+                keyPoints: [
+                    "Acute stent thrombosis (< 24hr) 和 subacute (1-30 days) 死亡率高達 20-40%",
+                    "最重要危險因子：premature discontinuation of DAPT",
+                    "DES 支架需要 DAPT 至少 6-12 個月",
+                    "術前術後 ECG 比較可早期發現問題",
+                    "病患衛教：強調不可自行停藥的重要性"
+                ],
+                clinicalPearls: [
+                    "🔴 Stent thrombosis 是 PCI 後最嚴重的併發症之一",
+                    "🔴 DAPT compliance 是預防的關鍵",
+                    "🔴 高風險病患考慮 Prasugrel 或 Ticagrelor 取代 Clopidogrel",
+                    "🔴 術後 ECG 是重要的 baseline，務必留存比較"
+                ],
+                quiz: [
+                    {
+                        q: "Acute stent thrombosis 最常見的原因是？",
+                        options: ["支架選擇不當", "DAPT 中斷", "顯影劑過敏", "血管痙攣"],
+                        correct: 1,
+                        explanation: "Premature discontinuation of DAPT 是 stent thrombosis 最重要的危險因子，尤其在 DES 置放後的前 6 個月。"
+                    },
+                    {
+                        q: "DES 置放後 DAPT 建議使用時間為？",
+                        options: ["1 個月", "3 個月", "6-12 個月", "終生"],
+                        correct: 2,
+                        explanation: "目前 guidelines 建議 DES 置放後 DAPT 至少 6 個月，高風險病患可延長至 12 個月或更久。"
+                    },
+                    {
+                        q: "術後 ECG 的主要目的是？",
+                        options: ["計算心跳", "作為 baseline 比較", "評估腎功能", "決定出院時機"],
+                        correct: 1,
+                        explanation: "術後 ECG 可作為重要的 baseline，若病患再次胸痛時可比較是否有新的缺血性變化。"
+                    },
+                    {
+                        q: "以下哪種抗血小板藥物較不受 CYP2C19 基因多型性影響？",
+                        options: ["Clopidogrel", "Aspirin", "Ticagrelor", "以上皆是"],
+                        correct: 2,
+                        explanation: "Ticagrelor 不需經 CYP2C19 代謝活化，因此不受基因多型性影響，在亞洲人 (約 40% poor metabolizer) 可能更有優勢。"
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "後腹腔出血",
+                subtitle: "Retroperitoneal Hematoma",
+                color: "#7c3aed",
+                icon: "🩸",
+                keyLesson: "術後生命徵象監測的重要性",
+                scenario: {
+                    patient: "72歲女性，CKD stage 3，使用 femoral approach",
+                    presentation: "因 unstable angina 接受 CAG + PCI，使用 6Fr sheath，術後使用 AngioSeal 止血",
+                    timeline: [
+                        { time: "術後 2hr", event: "傷口檢查乾淨，無明顯血腫" },
+                        { time: "術後 4hr", event: "病患主訴右腰背痛，護理師認為是臥床太久" },
+                        { time: "術後 6hr", event: "BP: 90/60 (原本 140/80), HR: 105, 病患躁動不安" },
+                        { time: "術後 7hr", event: "Hb 從 12 掉至 8.5 g/dL" }
+                    ],
+                    findings: [
+                        "傷口外觀仍乾淨，但右下腹有壓痛",
+                        "骨盆 X-ray: 膀胱輪廓不對稱 (bladder deviation sign)",
+                        "CT: Large right retroperitoneal hematoma with active extravasation",
+                        "Sheath angiogram 回顧：puncture site 偏高，在 inguinal ligament 以上"
+                    ],
+                    outcome: "緊急 angiography + covered stent 置放成功止血，輸血 4U PRBC"
+                },
+                keyPoints: [
+                    "Retroperitoneal bleeding 傷口外觀可能完全正常！",
+                    "警示症狀：unexplained hypotension + 同側腰背痛 + 腹脹",
+                    "高危險因子：高位穿刺 (above inguinal ligament)、女性、高齡、CKD、抗凝血劑",
+                    "快速診斷：bedside 骨盆 X-ray 看 bladder shape",
+                    "生命徵象變化往往是最早的警訊"
+                ],
+                clinicalPearls: [
+                    "🔴 傷口乾淨不代表沒有出血 - 血液可能流到後腹腔",
+                    "🔴 低血壓 + 心跳快 + 腰背痛 = 高度懷疑 retroperitoneal bleeding",
+                    "🔴 Hct/Hb 下降可能延遲 2-4 小時才顯現",
+                    "🔴 骨盆 X-ray 是快速 bedside 篩檢工具"
+                ],
+                quiz: [
+                    {
+                        q: "後腹腔出血的典型三聯症 (triad) 是？",
+                        options: ["胸痛、呼吸困難、咳嗽", "低血壓、心跳加速、腰背痛", "發燒、寒顫、血尿", "頭痛、噁心、視力模糊"],
+                        correct: 1,
+                        explanation: "Retroperitoneal bleeding 典型表現為：unexplained hypotension、tachycardia、ipsilateral flank/back pain。腹脹也是重要徵象。"
+                    },
+                    {
+                        q: "後腹腔出血最常見的原因是？",
+                        options: ["支架穿孔", "高位穿刺 (above inguinal ligament)", "AngioSeal 失敗", "Heparin 過量"],
+                        correct: 1,
+                        explanation: "穿刺點位於 inguinal ligament 以上是最常見原因，因為此處血管周圍沒有肌肉筋膜壓迫，出血容易進入後腹腔。"
+                    },
+                    {
+                        q: "Bedside 快速診斷 retroperitoneal bleeding 的方法？",
+                        options: ["Heart echo", "Pelvic X-ray 看 bladder shape", "Chest X-ray", "Abdominal ultrasound"],
+                        correct: 1,
+                        explanation: "Pelvic X-ray 可快速看 bladder 是否被壓迫變形 (bladder deviation sign)，是簡單有效的 bedside screening tool。"
+                    },
+                    {
+                        q: "發現疑似後腹腔出血，以下何者為首要處置？",
+                        options: ["等待 CT 確診", "立即通知醫師 + 建立大量輸液", "繼續觀察", "給予止痛藥"],
+                        correct: 1,
+                        explanation: "Retroperitoneal bleeding 可快速致命，應立即通知醫師、建立大口徑 IV line、準備輸血、安排緊急 CT 或 angiography。"
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "術中 VT/VF",
+                subtitle: "VT/VF during PCI",
+                color: "#d97706",
+                icon: "⚡",
+                keyLesson: "術前電解質 (K+) 的重要性",
+                scenario: {
+                    patient: "65歲男性，長期使用利尿劑控制高血壓",
+                    presentation: "因 effort angina 接受 elective CAG，發現 LAD 90% stenosis，決定 ad hoc PCI",
+                    timeline: [
+                        { time: "術前", event: "K+: 3.2 mEq/L (未複驗即進行手術)" },
+                        { time: "PCI 中", event: "Wire 通過病灶時出現 frequent VPCs" },
+                        { time: "Balloon inflation", event: "VT → 快速惡化為 VF" },
+                        { time: "After DC shock", event: "短暫恢復後再次 VF，共電擊 5 次" }
+                    ],
+                    findings: [
+                        "術前 ECG: Prominent U wave (hypokalemia sign)",
+                        "K+: 3.2 → 術中 recheck 2.9 mEq/L",
+                        "Mg: 1.5 mEq/L (也偏低)",
+                        "持續 refractory VF despite multiple DC shocks",
+                        "緊急 ECMO implantation for refractory VF"
+                    ],
+                    outcome: "經補充 K+ 和 Mg 後 VF 終於控制，ECMO 支持 3 天後成功脫離"
+                },
+                keyPoints: [
+                    "Hypokalemia (K+ < 3.5) 顯著增加 VT/VF 風險",
+                    "利尿劑使用者務必檢查電解質",
+                    "ECG 上的 U wave 是 hypokalemia 的警訊",
+                    "Hypomagnesemia 常伴隨 hypokalemia",
+                    "Elective PCI 前應 optimize 電解質"
+                ],
+                clinicalPearls: [
+                    "🔴 K+ < 3.5 mEq/L 應先矯正再進行 elective procedure",
+                    "🔴 利尿劑使用者是 hypokalemia 高風險群",
+                    "🔴 VF 對 DC shock 無反應時要想到電解質異常",
+                    "🔴 同時補充 K+ 和 Mg 效果較好"
+                ],
+                quiz: [
+                    {
+                        q: "以下哪個 ECG 變化提示 hypokalemia？",
+                        options: ["Tall peaked T wave", "Prominent U wave", "Wide QRS", "Short QT"],
+                        correct: 1,
+                        explanation: "Hypokalemia 的 ECG 特徵包括：Prominent U wave、T wave flattening、ST depression、QT prolongation。"
+                    },
+                    {
+                        q: "進行 elective PCI 前，K+ 應至少達到多少？",
+                        options: ["2.5 mEq/L", "3.0 mEq/L", "3.5 mEq/L", "4.0 mEq/L"],
+                        correct: 2,
+                        explanation: "建議 K+ ≥ 3.5 mEq/L 再進行 elective procedure，特別是有心律不整風險的病患。"
+                    },
+                    {
+                        q: "Refractory VF 對 DC shock 無反應時，應優先考慮？",
+                        options: ["增加電擊能量", "給予 Amiodarone", "檢查並矯正電解質", "以上皆是"],
+                        correct: 3,
+                        explanation: "Refractory VF 處理包括：增加能量、給予抗心律不整藥物 (Amiodarone/Lidocaine)、矯正電解質 (K+, Mg)、考慮 ECMO。"
+                    },
+                    {
+                        q: "VF 時 MgSO4 的給予劑量為？",
+                        options: ["0.5 g IV", "1-2 g IV over 2 minutes", "5 g IV", "10 g IV"],
+                        correct: 1,
+                        explanation: "Torsades de pointes 或懷疑低血鎂時，MgSO4 1-2 g IV over 2 minutes 是標準劑量。"
+                    }
+                ]
+            },
+            {
+                id: 4,
+                title: "顯影劑腎病變",
+                subtitle: "Contrast-Induced Nephropathy (CIN)",
+                color: "#059669",
+                icon: "🫘",
+                keyLesson: "Metformin 停用與腎功能保護的重要性",
+                scenario: {
+                    patient: "70歲男性，DM on Metformin 1000mg BID，baseline Cr 1.8 mg/dL",
+                    presentation: "因 NSTEMI 接受緊急 CAG + PCI，使用 180ml 顯影劑",
+                    timeline: [
+                        { time: "術前", event: "Cr: 1.8, eGFR: 38 (未停 Metformin)" },
+                        { time: "Day 1", event: "Cr: 2.4, 尿量減少" },
+                        { time: "Day 2", event: "Cr: 3.8, 開始出現噁心、倦怠" },
+                        { time: "Day 3", event: "Cr: 5.2, ABG: pH 7.18, HCO3 12 (severe metabolic acidosis)" }
+                    ],
+                    findings: [
+                        "嚴重代謝性酸中毒 (lactic acidosis)",
+                        "Lactate: 8.5 mmol/L (正常 < 2)",
+                        "K+: 6.2 mEq/L with ECG changes",
+                        "診斷：CIN + Metformin-associated lactic acidosis (MALA)"
+                    ],
+                    outcome: "緊急血液透析 3 次後腎功能逐漸恢復，Cr 穩定在 2.5"
+                },
+                keyPoints: [
+                    "CIN 定義：術後 48-72hr 內 Cr 上升 >0.5 mg/dL 或 >25%",
+                    "Metformin 在腎功能不全時會累積導致 lactic acidosis",
+                    "術前停 Metformin 48 小時，術後待 Cr 穩定再恢復",
+                    "限制顯影劑用量：3 ml/kg 或 5 ml/kg ÷ Cr",
+                    "術前術後充足水化是最重要的預防措施"
+                ],
+                clinicalPearls: [
+                    "🔴 eGFR < 60 是 CIN 高風險群",
+                    "🔴 Metformin + CIN = 高風險 lactic acidosis",
+                    "🔴 充足水化 (1 ml/kg/hr × 12hr before and after) 是最有效預防",
+                    "🔴 代謝性酸中毒 + 腎衰竭 = 考慮緊急透析"
+                ],
+                quiz: [
+                    {
+                        q: "CIN 的定義是術後多久內 Cr 上升？",
+                        options: ["24 小時", "48-72 小時", "1 週", "2 週"],
+                        correct: 1,
+                        explanation: "CIN 定義為顯影劑使用後 48-72 小時內 Cr 上升 >0.5 mg/dL 或 baseline 的 >25%。"
+                    },
+                    {
+                        q: "為什麼 CKD 病患使用 Metformin 會增加 lactic acidosis 風險？",
+                        options: ["Metformin 增加乳酸產生", "Metformin 經腎臟排除，腎功能不全時累積", "Metformin 與顯影劑交互作用", "以上皆非"],
+                        correct: 1,
+                        explanation: "Metformin 主要經腎臟排除，CKD 時藥物累積會抑制肝臟乳酸代謝，導致 lactic acidosis。"
+                    },
+                    {
+                        q: "限制顯影劑用量的公式為？",
+                        options: ["1 ml/kg", "3 ml/kg 或 5 ml/kg ÷ Cr", "固定 100 ml", "固定 200 ml"],
+                        correct: 1,
+                        explanation: "建議顯影劑用量限制在 3 ml/kg 或 5 ml/kg ÷ serum creatinine，以降低 CIN 風險。"
+                    },
+                    {
+                        q: "預防 CIN 最有效的方法是？",
+                        options: ["N-acetylcysteine", "NaHCO3", "充足水化", "Dopamine"],
+                        correct: 2,
+                        explanation: "充足水化 (0.9% saline 1 ml/kg/hr × 12hr 術前術後) 是目前證據最充分的 CIN 預防方法。NAC 和 NaHCO3 效果仍有爭議。"
+                    }
+                ]
+            },
+            {
+                id: 5,
+                title: "術中中風",
+                subtitle: "Stroke during PCI",
+                color: "#0284c7",
+                icon: "🧠",
+                keyLesson: "臨床神經學監測的重要性",
+                scenario: {
+                    patient: "78歲男性，Afib on warfarin，severe aortic calcification",
+                    presentation: "因 stable angina 接受 elective CAG via femoral approach",
+                    timeline: [
+                        { time: "術中", event: "Engage LCA 時 catheter scraping aortic arch" },
+                        { time: "Injection 後", event: "病患開始言語不清、右側無力" },
+                        { time: "立即", event: "停止手術，bedside 神經學評估" },
+                        { time: "緊急 CT", event: "Left MCA territory acute infarction" }
+                    ],
+                    findings: [
+                        "NIHSS score: 15",
+                        "CT: Dense MCA sign + early ischemic changes",
+                        "推測機轉：Aortic atheroma embolization",
+                        "INR 當時為治療範圍內 (2.3)"
+                    ],
+                    outcome: "因已使用抗凝血劑無法 tPA，接受 mechanical thrombectomy，部分恢復但遺留右側偏癱"
+                },
+                keyPoints: [
+                    "術中中風死亡率高達 37% vs 一般心導管 1.1%",
+                    "原因：Aortic atheroma embolization、catheter thrombus、air embolism",
+                    "預防：少碰 aortic arch、多 flush catheter、避免 air in system",
+                    "早期偵測：術中持續監測病患意識和語言反應",
+                    "反抽沒回血絕不 injection！先檢查 system"
+                ],
+                clinicalPearls: [
+                    "🔴 Catheter 操作時讓病人數數字可早期發現 left hemisphere ischemia",
+                    "🔴 嚴重 aortic calcification 是高風險，考慮 radial approach",
+                    "🔴 每次 injection 前確認反抽有回血",
+                    "🔴 發現神經學異常立即停止手術"
+                ],
+                quiz: [
+                    {
+                        q: "心導管術中中風的 in-hospital mortality 約為？",
+                        options: ["1%", "10%", "37%", "50%"],
+                        correct: 2,
+                        explanation: "研究顯示心導管術中發生中風的病患，院內死亡率高達 37%，遠高於一般心導管的 1.1%。"
+                    },
+                    {
+                        q: "術中中風最常見的原因是？",
+                        options: ["出血性中風", "Aortic atheroma embolization", "Air embolism", "Hypotension"],
+                        correct: 1,
+                        explanation: "最常見原因是 catheter 操作時刮落 aortic arch 的 atheroma 造成栓塞，其次是 catheter thrombus 和 air embolism。"
+                    },
+                    {
+                        q: "以下哪個方法可早期發現術中中風？",
+                        options: ["監測血壓", "監測心跳", "讓病人數數字或對話", "監測血氧"],
+                        correct: 2,
+                        explanation: "讓病人在術中持續數數字或簡單對話，可以早期發現言語障礙 (left hemisphere stroke 的徵兆)。"
+                    },
+                    {
+                        q: "預防術中中風，以下何者最重要？",
+                        options: ["使用較大的 catheter", "每次 injection 前確認反抽有回血", "增加 heparin 劑量", "使用較多顯影劑"],
+                        correct: 1,
+                        explanation: "確認 catheter 內無血栓或氣泡是預防 embolic stroke 的關鍵。反抽沒回血絕對不可 injection。"
+                    }
+                ]
+            },
+            {
+                id: 6,
+                title: "IABP 後急性肢體缺血",
+                subtitle: "Acute Limb Ischemia after IABP",
+                color: "#ec4899",
+                icon: "🦵",
+                keyLesson: "週邊循環檢查 (5P) 的重要性",
+                scenario: {
+                    patient: "62歲女性，身材嬌小 (150cm, 45kg)，PAOD 病史",
+                    presentation: "因 cardiogenic shock 接受 IABP support via right femoral artery",
+                    timeline: [
+                        { time: "IABP 置入後 2hr", event: "右腳足背脈搏較對側弱" },
+                        { time: "4hr", event: "護理師注意到右腳溫度較冷，但忙於其他照護未即時通報" },
+                        { time: "8hr", event: "右腳明顯蒼白、冰冷、劇痛、無法活動腳趾" },
+                        { time: "10hr", event: "緊急會診血管外科" }
+                    ],
+                    findings: [
+                        "5P assessment: Pulseless, Pallor, Pain, Paresthesia, Paralysis",
+                        "ABI: Right 0.3, Left 0.9",
+                        "Angiography: Right external iliac + SFA severe stenosis with thrombosis",
+                        "IABP 造成血流受阻 + 既有 PAOD 惡化"
+                    ],
+                    outcome: "緊急移除 IABP + surgical thrombectomy + fasciotomy，但已有部分肌肉壞死"
+                },
+                keyPoints: [
+                    "IABP 置入後每 1-2 小時檢查雙側足背脈搏",
+                    "5P: Pulse, Pallor, Pain, Paresthesia, Paralysis",
+                    "高風險因子：小血管 (女性、糖尿病)、PAOD、long-term IABP",
+                    "發現缺血徵象應立即通報，考慮移除 IABP 或更換側邊",
+                    "延遲處理可能導致截肢或死亡"
+                ],
+                clinicalPearls: [
+                    "🔴 IABP 病患必須常規檢查雙側足背脈搏和溫度",
+                    "🔴 單側肢體冰冷是 limb ischemia 的重要警訊",
+                    "🔴 Acute limb ischemia 6 小時內未處理可能導致不可逆傷害",
+                    "🔴 有 PAOD 病史的病患風險更高"
+                ],
+                quiz: [
+                    {
+                        q: "5P assessment 包括哪些項目？",
+                        options: ["Pulse, Pressure, Pain, Pallor, Paresis", "Pulse, Pallor, Pain, Paresthesia, Paralysis", "Pulse, Pallor, Pain, Perfusion, Pressure", "Pulse, Pain, Paleness, Paresis, Pitting"],
+                        correct: 1,
+                        explanation: "5P 指的是：Pulse (脈搏)、Pallor (蒼白)、Pain (疼痛)、Paresthesia (感覺異常)、Paralysis (癱瘓)，用於評估肢體缺血。"
+                    },
+                    {
+                        q: "IABP 置入後應多久檢查一次足背脈搏？",
+                        options: ["每 15 分鐘", "每 1-2 小時", "每 4 小時", "每班一次"],
+                        correct: 1,
+                        explanation: "IABP 置入後建議每 1-2 小時檢查雙側足背脈搏、溫度、顏色，以早期發現 limb ischemia。"
+                    },
+                    {
+                        q: "Acute limb ischemia 若未及時處理，多久可能造成不可逆傷害？",
+                        options: ["2 小時", "6 小時", "12 小時", "24 小時"],
+                        correct: 1,
+                        explanation: "Acute limb ischemia 是急症，超過 6 小時未處理可能造成肌肉壞死和永久性傷害，甚至需要截肢。"
+                    },
+                    {
+                        q: "發現 IABP 側肢體出現缺血徵象，首要處置為？",
+                        options: ["繼續觀察", "給予止痛藥", "立即通知醫師評估是否移除 IABP", "加強保暖"],
+                        correct: 2,
+                        explanation: "Limb ischemia 是急症，必須立即通知醫師評估，可能需要移除 IABP、更換至對側、或進行 surgical intervention。"
+                    }
+                ]
+            }
+        ];
+
+        // Header Component
+        const Header = ({ title, subtitle, showBack, onBack, color }) => (
+            <div style={{
+                background: `linear-gradient(135deg, ${color || '#1e3a5f'} 0%, ${color ? color + '99' : '#2d5a87'} 100%)`,
+                padding: '20px 16px',
+                paddingTop: '40px',
+                borderRadius: '0 0 24px 24px',
+                marginBottom: '20px'
+            }}>
+                {showBack && (
+                    <button onClick={onBack} style={{
+                        background: 'rgba(255,255,255,0.15)',
+                        border: 'none',
+                        borderRadius: '10px',
+                        padding: '8px 12px',
+                        color: 'white',
+                        marginBottom: '12px',
+                        cursor: 'pointer',
+                        fontSize: '14px'
+                    }}>← 返回</button>
+                )}
+                <h1 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '4px' }}>{title}</h1>
+                <p style={{ fontSize: '14px', opacity: 0.9 }}>{subtitle}</p>
+            </div>
+        );
+
+        // Case Card Component
+        const CaseCard = ({ caseData, onClick }) => (
+            <div onClick={onClick} style={{
+                background: 'var(--bg-card)',
+                borderRadius: '16px',
+                padding: '20px',
+                marginBottom: '12px',
+                cursor: 'pointer',
+                border: `2px solid ${caseData.color}33`,
+                transition: 'all 0.2s ease'
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{
+                        fontSize: '36px',
+                        width: '60px',
+                        height: '60px',
+                        background: `${caseData.color}22`,
+                        borderRadius: '14px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>{caseData.icon}</div>
+                    <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '12px', color: caseData.color, fontWeight: '600', marginBottom: '4px' }}>
+                            CASE {caseData.id}
+                        </div>
+                        <div style={{ fontSize: '17px', fontWeight: '600', marginBottom: '2px' }}>{caseData.title}</div>
+                        <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{caseData.subtitle}</div>
+                    </div>
+                </div>
+                <div style={{
+                    marginTop: '12px',
+                    padding: '10px',
+                    background: `${caseData.color}15`,
+                    borderRadius: '10px',
+                    fontSize: '13px',
+                    color: 'var(--text-light)'
+                }}>
+                    💡 <strong>Key Lesson:</strong> {caseData.keyLesson}
+                </div>
+            </div>
+        );
+
+        // Quiz Component
+        const QuizSection = ({ quiz, caseColor }) => {
+            const [currentQ, setCurrentQ] = useState(0);
+            const [selectedAnswer, setSelectedAnswer] = useState(null);
+            const [showExplanation, setShowExplanation] = useState(false);
+            const [score, setScore] = useState(0);
+            const [completed, setCompleted] = useState(false);
+
+            const handleAnswer = (index) => {
+                if (selectedAnswer !== null) return;
+                setSelectedAnswer(index);
+                setShowExplanation(true);
+                if (index === quiz[currentQ].correct) {
+                    setScore(score + 1);
+                }
+            };
+
+            const nextQuestion = () => {
+                if (currentQ < quiz.length - 1) {
+                    setCurrentQ(currentQ + 1);
+                    setSelectedAnswer(null);
+                    setShowExplanation(false);
+                } else {
+                    setCompleted(true);
+                }
+            };
+
+            const resetQuiz = () => {
+                setCurrentQ(0);
+                setSelectedAnswer(null);
+                setShowExplanation(false);
+                setScore(0);
+                setCompleted(false);
+            };
+
+            if (completed) {
+                return (
+                    <div style={{ textAlign: 'center', padding: '20px' }}>
+                        <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+                            {score === quiz.length ? '🎉' : score >= quiz.length * 0.7 ? '👏' : '📚'}
+                        </div>
+                        <div style={{ fontSize: '24px', fontWeight: '700', marginBottom: '8px' }}>
+                            {score} / {quiz.length}
+                        </div>
+                        <div style={{ fontSize: '16px', color: 'var(--text-muted)', marginBottom: '20px' }}>
+                            {score === quiz.length ? '太棒了！全部答對！' : 
+                             score >= quiz.length * 0.7 ? '做得很好！' : '再接再厲！'}
+                        </div>
+                        <button onClick={resetQuiz} style={{
+                            padding: '12px 24px',
+                            background: caseColor,
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '10px',
+                            fontSize: '15px',
+                            fontWeight: '600',
+                            cursor: 'pointer'
+                        }}>重新測驗</button>
+                    </div>
+                );
+            }
+
+            const q = quiz[currentQ];
+            return (
+                <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', alignItems: 'center' }}>
+                        <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
+                            題目 {currentQ + 1} / {quiz.length}
+                        </span>
+                        <span style={{ fontSize: '14px', color: caseColor }}>
+                            得分: {score}
+                        </span>
+                    </div>
+                    
+                    <div style={{
+                        background: 'var(--bg-dark)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        marginBottom: '16px',
+                        fontSize: '15px',
+                        lineHeight: '1.7'
+                    }}>
+                        {q.q}
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        {q.options.map((opt, idx) => {
+                            let bg = 'var(--bg-card)';
+                            let borderColor = 'var(--border)';
+                            if (selectedAnswer !== null) {
+                                if (idx === q.correct) {
+                                    bg = 'rgba(5, 150, 105, 0.2)';
+                                    borderColor = '#059669';
+                                } else if (idx === selectedAnswer) {
+                                    bg = 'rgba(220, 38, 38, 0.2)';
+                                    borderColor = '#dc2626';
+                                }
+                            }
+                            return (
+                                <div key={idx} onClick={() => handleAnswer(idx)} style={{
+                                    padding: '14px 16px',
+                                    background: bg,
+                                    borderRadius: '10px',
+                                    cursor: selectedAnswer === null ? 'pointer' : 'default',
+                                    border: `2px solid ${borderColor}`,
+                                    fontSize: '14px',
+                                    transition: 'all 0.2s ease'
+                                }}>
+                                    <span style={{ 
+                                        display: 'inline-block',
+                                        width: '24px',
+                                        height: '24px',
+                                        borderRadius: '50%',
+                                        background: 'var(--bg-dark)',
+                                        textAlign: 'center',
+                                        lineHeight: '24px',
+                                        marginRight: '10px',
+                                        fontSize: '12px'
+                                    }}>
+                                        {String.fromCharCode(65 + idx)}
+                                    </span>
+                                    {opt}
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    {showExplanation && (
+                        <div style={{
+                            marginTop: '16px',
+                            padding: '16px',
+                            background: selectedAnswer === q.correct ? 'rgba(5, 150, 105, 0.15)' : 'rgba(220, 38, 38, 0.15)',
+                            borderRadius: '12px',
+                            borderLeft: `4px solid ${selectedAnswer === q.correct ? '#059669' : '#dc2626'}`
+                        }}>
+                            <div style={{ fontWeight: '600', marginBottom: '8px', color: selectedAnswer === q.correct ? '#10b981' : '#ef4444' }}>
+                                {selectedAnswer === q.correct ? '✓ 正確！' : '✗ 錯誤'}
+                            </div>
+                            <div style={{ fontSize: '14px', lineHeight: '1.7' }}>{q.explanation}</div>
+                        </div>
+                    )}
+
+                    {showExplanation && (
+                        <button onClick={nextQuestion} style={{
+                            width: '100%',
+                            marginTop: '16px',
+                            padding: '14px',
+                            background: caseColor,
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '10px',
+                            fontSize: '15px',
+                            fontWeight: '600',
+                            cursor: 'pointer'
+                        }}>
+                            {currentQ < quiz.length - 1 ? '下一題 →' : '查看結果'}
+                        </button>
+                    )}
+                </div>
+            );
+        };
+
+        // Section Component
+        const Section = ({ title, icon, color, children, defaultOpen = true }) => {
+            const [isOpen, setIsOpen] = useState(defaultOpen);
+            return (
+                <div style={{
+                    background: 'var(--bg-card)',
+                    borderRadius: '16px',
+                    marginBottom: '16px',
+                    overflow: 'hidden',
+                    border: '1px solid var(--border)'
+                }}>
+                    <div onClick={() => setIsOpen(!isOpen)} style={{
+                        padding: '16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        cursor: 'pointer',
+                        borderBottom: isOpen ? '1px solid var(--border)' : 'none'
+                    }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <span style={{ fontSize: '20px' }}>{icon}</span>
+                            <span style={{ fontWeight: '600', fontSize: '15px', color: color }}>{title}</span>
+                        </div>
+                        <span style={{ 
+                            transform: isOpen ? 'rotate(180deg)' : 'rotate(0)', 
+                            transition: 'transform 0.3s',
+                            fontSize: '14px' 
+                        }}>▼</span>
+                    </div>
+                    {isOpen && <div style={{ padding: '16px' }} className="fade-in">{children}</div>}
+                </div>
+            );
+        };
+
+        // Timeline Component
+        const Timeline = ({ events, color }) => (
+            <div style={{ position: 'relative', paddingLeft: '24px' }}>
+                {events.map((item, idx) => (
+                    <div key={idx} style={{ 
+                        position: 'relative',
+                        paddingBottom: idx === events.length - 1 ? 0 : '16px',
+                        paddingLeft: '16px',
+                        borderLeft: `2px solid ${idx === events.length - 1 ? 'transparent' : color + '44'}`
+                    }}>
+                        <div style={{
+                            position: 'absolute',
+                            left: '-8px',
+                            top: '4px',
+                            width: '14px',
+                            height: '14px',
+                            borderRadius: '50%',
+                            background: color,
+                            border: '2px solid var(--bg-card)'
+                        }} />
+                        <div style={{ fontSize: '12px', color: color, fontWeight: '600', marginBottom: '2px' }}>
+                            {item.time}
+                        </div>
+                        <div style={{ fontSize: '14px', lineHeight: '1.6' }}>{item.event}</div>
+                    </div>
+                ))}
+            </div>
+        );
+
+        // Case Detail Page
+        const CaseDetailPage = ({ caseData, onBack }) => {
+            const [activeTab, setActiveTab] = useState('case');
+            
+            return (
+                <div className="fade-in">
+                    <Header 
+                        title={`Case ${caseData.id}: ${caseData.title}`}
+                        subtitle={caseData.subtitle}
+                        showBack
+                        onBack={onBack}
+                        color={caseData.color}
+                    />
+                    <div style={{ padding: '0 16px' }}>
+                        {/* Tab Navigation */}
+                        <div style={{
+                            display: 'flex',
+                            background: 'var(--bg-card)',
+                            borderRadius: '12px',
+                            padding: '4px',
+                            marginBottom: '20px'
+                        }}>
+                            {[
+                                { id: 'case', label: '📋 案例' },
+                                { id: 'learn', label: '📚 重點' },
+                                { id: 'quiz', label: '❓ 測驗' }
+                            ].map(tab => (
+                                <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
+                                    flex: 1,
+                                    padding: '10px',
+                                    background: activeTab === tab.id ? caseData.color : 'transparent',
+                                    color: activeTab === tab.id ? 'white' : 'var(--text-muted)',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease'
+                                }}>{tab.label}</button>
+                            ))}
+                        </div>
+
+                        {/* Case Tab */}
+                        {activeTab === 'case' && (
+                            <div className="fade-in">
+                                <Section title="病患資料" icon="👤" color={caseData.color}>
+                                    <div style={{ fontSize: '14px', lineHeight: '1.8' }}>
+                                        <div style={{ marginBottom: '8px' }}><strong>病患：</strong>{caseData.scenario.patient}</div>
+                                        <div><strong>入院原因：</strong>{caseData.scenario.presentation}</div>
+                                    </div>
+                                </Section>
+
+                                <Section title="病程時間軸" icon="⏱️" color={caseData.color}>
+                                    <Timeline events={caseData.scenario.timeline} color={caseData.color} />
+                                </Section>
+
+                                <Section title="檢查發現" icon="🔍" color={caseData.color}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                        {caseData.scenario.findings.map((finding, idx) => (
+                                            <div key={idx} style={{
+                                                padding: '10px 12px',
+                                                background: 'var(--bg-dark)',
+                                                borderRadius: '8px',
+                                                fontSize: '13px',
+                                                lineHeight: '1.6',
+                                                borderLeft: `3px solid ${caseData.color}`
+                                            }}>
+                                                {finding}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </Section>
+
+                                <Section title="結果" icon="📊" color={caseData.color}>
+                                    <div style={{
+                                        padding: '16px',
+                                        background: `${caseData.color}15`,
+                                        borderRadius: '12px',
+                                        fontSize: '14px',
+                                        lineHeight: '1.8'
+                                    }}>
+                                        {caseData.scenario.outcome}
+                                    </div>
+                                </Section>
+                            </div>
+                        )}
+
+                        {/* Learn Tab */}
+                        {activeTab === 'learn' && (
+                            <div className="fade-in">
+                                <Section title="關鍵學習重點" icon="🎯" color={caseData.color}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                        {caseData.keyPoints.map((point, idx) => (
+                                            <div key={idx} style={{
+                                                display: 'flex',
+                                                alignItems: 'flex-start',
+                                                gap: '12px',
+                                                padding: '12px',
+                                                background: 'var(--bg-dark)',
+                                                borderRadius: '10px'
+                                            }}>
+                                                <span style={{
+                                                    background: caseData.color,
+                                                    color: 'white',
+                                                    width: '24px',
+                                                    height: '24px',
+                                                    borderRadius: '50%',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    fontSize: '12px',
+                                                    fontWeight: '700',
+                                                    flexShrink: 0
+                                                }}>{idx + 1}</span>
+                                                <span style={{ fontSize: '14px', lineHeight: '1.6' }}>{point}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </Section>
+
+                                <Section title="Clinical Pearls" icon="💎" color={caseData.color}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                        {caseData.clinicalPearls.map((pearl, idx) => (
+                                            <div key={idx} style={{
+                                                padding: '12px',
+                                                background: `${caseData.color}15`,
+                                                borderRadius: '10px',
+                                                fontSize: '14px',
+                                                lineHeight: '1.6',
+                                                borderLeft: `4px solid ${caseData.color}`
+                                            }}>
+                                                {pearl}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </Section>
+
+                                <div style={{
+                                    background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)',
+                                    borderRadius: '16px',
+                                    padding: '20px',
+                                    marginBottom: '16px'
+                                }}>
+                                    <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '12px' }}>
+                                        📌 本案例核心教訓
+                                    </div>
+                                    <div style={{
+                                        fontSize: '16px',
+                                        fontWeight: '700',
+                                        lineHeight: '1.6'
+                                    }}>
+                                        {caseData.keyLesson}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Quiz Tab */}
+                        {activeTab === 'quiz' && (
+                            <div className="fade-in">
+                                <Section title="自我測驗" icon="✏️" color={caseData.color}>
+                                    <QuizSection quiz={caseData.quiz} caseColor={caseData.color} />
+                                </Section>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // Home Page
+        const HomePage = ({ onSelectCase }) => (
+            <div className="fade-in">
+                <Header 
+                    title="心導管併發症案例教學"
+                    subtitle="PCI Complications Case-Based Learning"
+                />
+                <div style={{ padding: '0 16px' }}>
+                    <div style={{
+                        background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
+                        borderRadius: '16px',
+                        padding: '20px',
+                        marginBottom: '20px'
+                    }}>
+                        <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '8px' }}>📚 學習目標</div>
+                        <div style={{ fontSize: '15px', lineHeight: '1.7' }}>
+                            透過 6 個真實案例，學習心導管術後常見併發症的識別、處理與預防，強化臨床照護能力。
+                        </div>
+                    </div>
+
+                    <div style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '12px', fontWeight: '600' }}>
+                        選擇案例開始學習
+                    </div>
+
+                    {casesData.map(caseData => (
+                        <CaseCard 
+                            key={caseData.id}
+                            caseData={caseData}
+                            onClick={() => onSelectCase(caseData)}
+                        />
+                    ))}
+
+                    <div style={{
+                        background: 'var(--bg-card)',
+                        borderRadius: '16px',
+                        padding: '20px',
+                        marginTop: '20px',
+                        border: '1px solid var(--border)'
+                    }}>
+                        <div style={{ fontSize: '15px', fontWeight: '600', marginBottom: '12px' }}>
+                            📋 六大併發症重點整理
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+                            {[
+                                { icon: '💊', text: 'DAPT 藥物衛教' },
+                                { icon: '📊', text: '生命徵象監測' },
+                                { icon: '⚡', text: '電解質平衡' },
+                                { icon: '🫘', text: '腎功能保護' },
+                                { icon: '🧠', text: '神經學監測' },
+                                { icon: '🦵', text: '週邊循環檢查' }
+                            ].map((item, idx) => (
+                                <div key={idx} style={{
+                                    padding: '12px',
+                                    background: 'var(--bg-dark)',
+                                    borderRadius: '10px',
+                                    fontSize: '13px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px'
+                                }}>
+                                    <span style={{ fontSize: '18px' }}>{item.icon}</span>
+                                    {item.text}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div style={{
+                        textAlign: 'center',
+                        padding: '20px',
+                        fontSize: '12px',
+                        color: 'var(--text-muted)'
+                    }}>
+                        台大醫院新竹分院 心血管中心<br/>
+                        PCI Complications Case Teaching v1.0
+                    </div>
+                </div>
+            </div>
+        );
+
+        // Main App
+        const App = () => {
+            const [selectedCase, setSelectedCase] = useState(null);
+
+            if (selectedCase) {
+                return <CaseDetailPage caseData={selectedCase} onBack={() => setSelectedCase(null)} />;
+            }
+
+            return <HomePage onSelectCase={setSelectedCase} />;
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
