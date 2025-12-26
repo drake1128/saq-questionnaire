@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>心臟超音波衛教中心 | NTUH Hsinchu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        :root {
+            --primary: #1a5f7a;
+            --primary-dark: #0d3d4d;
+            --primary-light: #2d8eb0;
+            --accent: #e74c3c;
+            --accent-orange: #f39c12;
+            --accent-green: #27ae60;
+            --accent-purple: #9b59b6;
+            --bg-gradient-1: #0f2027;
+            --bg-gradient-2: #203a43;
+            --bg-gradient-3: #2c5364;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-dark: #1a1a2e;
+            --text-light: #ffffff;
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.15);
+            --shadow-strong: 0 8px 40px rgba(0, 0, 0, 0.25);
+            --border-radius: 16px;
+            --pediatric-primary: #e91e63;
+            --pediatric-gradient: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 50%, var(--bg-gradient-3) 100%);
+            min-height: 100vh;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        #root { min-height: 100vh; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            14% { transform: scale(1.1); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.1); }
+            70% { transform: scale(1); }
+        }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .animate-fade-in { animation: fadeInUp 0.5s ease-out forwards; }
+        .animate-slide-in { animation: slideInRight 0.4s ease-out forwards; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.1); }
+        ::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Icons
+        const HeartIcon = ({ size = 24, color = "currentColor" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill={color}>
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+        );
+        const CheckIcon = ({ size = 20 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                <polyline points="20 6 9 17 4 12"/>
+            </svg>
+        );
+        const BackIcon = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+        );
+        const WarningIcon = ({ size = 20 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+                <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+            </svg>
+        );
+
+        // Main App
+        const App = () => {
+            const [currentView, setCurrentView] = useState('home');
+            const [currentSection, setCurrentSection] = useState(null);
+            const [checklistData, setChecklistData] = useState(() => {
+                const saved = localStorage.getItem('echo-checklist-data');
+                return saved ? JSON.parse(saved) : {};
+            });
+
+            useEffect(() => {
+                localStorage.setItem('echo-checklist-data', JSON.stringify(checklistData));
+            }, [checklistData]);
+
+            const updateChecklist = (key, value) => {
+                setChecklistData(prev => ({ ...prev, [key]: value }));
+            };
+
+            const resetChecklist = (prefix) => {
+                setChecklistData(prev => {
+                    const newData = { ...prev };
+                    Object.keys(newData).forEach(key => {
+                        if (key.startsWith(prefix)) delete newData[key];
+                    });
+                    return newData;
+                });
+            };
+
+            const navigate = (view, section = null) => {
+                setCurrentView(view);
+                setCurrentSection(section);
+                window.scrollTo(0, 0);
+            };
+
+            return (
+                <div style={{ minHeight: '100vh', paddingBottom: '20px' }}>
+                    {currentView === 'home' && <HomePage navigate={navigate} />}
+                    {currentView === 'tee' && (
+                        <TEEPage navigate={navigate} section={currentSection}
+                            checklistData={checklistData} updateChecklist={updateChecklist} resetChecklist={resetChecklist}/>
+                    )}
+                    {currentView === 'pediatric' && (
+                        <PediatricPage navigate={navigate} section={currentSection}
+                            checklistData={checklistData} updateChecklist={updateChecklist} resetChecklist={resetChecklist}/>
+                    )}
+                </div>
+            );
+        };
+
+        // Home Page
+        const HomePage = ({ navigate }) => (
+            <div className="animate-fade-in" style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+                <div style={{ textAlign: 'center', marginBottom: '30px', paddingTop: '20px' }}>
+                    <div style={{
+                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                        width: '80px', height: '80px', borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)',
+                        marginBottom: '16px', boxShadow: '0 8px 30px rgba(231, 76, 60, 0.4)',
+                        animation: 'heartbeat 2s ease-in-out infinite'
+                    }}>
+                        <HeartIcon size={40} color="white" />
+                    </div>
+                    <h1 style={{ color: 'white', fontSize: '28px', fontWeight: '900', marginBottom: '8px', textShadow: '0 2px 10px rgba(0,0,0,0.3)' }}>
+                        心臟超音波衛教中心
+                    </h1>
+                    <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '14px' }}>新竹臺大分院心血管中心</p>
+                </div>
+
+                {/* TEE Card */}
+                <div onClick={() => navigate('tee')} style={{
+                    background: 'linear-gradient(135deg, rgba(26, 95, 122, 0.95) 0%, rgba(45, 142, 176, 0.95) 100%)',
+                    borderRadius: '20px', padding: '24px', marginBottom: '20px', cursor: 'pointer',
+                    boxShadow: 'var(--shadow-strong)', position: 'relative', overflow: 'hidden'
+                }}>
+                    <div style={{ position: 'absolute', top: '-30px', right: '-30px', width: '120px', height: '120px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} />
+                    <h2 style={{ color: 'white', fontSize: '22px', fontWeight: '700', marginBottom: '8px' }}>經食道心臟超音波</h2>
+                    <p style={{ color: 'white', fontSize: '13px', marginBottom: '4px', fontWeight: '500' }}>Transesophageal Echocardiography (TEE)</p>
+                    <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '14px', marginTop: '12px' }}>病患衛教資料 + 醫療查核表</p>
+                    <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                        <span style={{ background: 'rgba(255,255,255,0.2)', color: 'white', padding: '6px 12px', borderRadius: '20px', fontSize: '12px' }}>👤 病患專區</span>
+                        <span style={{ background: 'rgba(255,255,255,0.2)', color: 'white', padding: '6px 12px', borderRadius: '20px', fontSize: '12px' }}>📋 醫護查核</span>
+                    </div>
+                </div>
+
+                {/* Pediatric Card */}
+                <div onClick={() => navigate('pediatric')} style={{
+                    background: 'var(--pediatric-gradient)', borderRadius: '20px', padding: '24px',
+                    marginBottom: '20px', cursor: 'pointer', boxShadow: 'var(--shadow-strong)',
+                    position: 'relative', overflow: 'hidden'
+                }}>
+                    <div style={{ position: 'absolute', top: '-30px', right: '-30px', width: '120px', height: '120px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} />
+                    <h2 style={{ color: 'white', fontSize: '22px', fontWeight: '700', marginBottom: '8px' }}>兒童心臟超音波</h2>
+                    <p style={{ color: 'white', fontSize: '13px', marginBottom: '4px', fontWeight: '500' }}>Pediatric Echocardiography + Sedation</p>
+                    <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '14px', marginTop: '12px' }}>鎮靜藥物衛教 + 醫護查核表</p>
+                    <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                        <span style={{ background: 'rgba(255,255,255,0.2)', color: 'white', padding: '6px 12px', borderRadius: '20px', fontSize: '12px' }}>👨‍👩‍👧 家屬專區</span>
+                        <span style={{ background: 'rgba(255,255,255,0.2)', color: 'white', padding: '6px 12px', borderRadius: '20px', fontSize: '12px' }}>📋 醫護查核</span>
+                    </div>
+                </div>
+
+                <div style={{ textAlign: 'center', marginTop: '30px', color: 'rgba(255,255,255,0.5)', fontSize: '12px' }}>
+                    <p>© 2025 新竹臺大分院心血管中心</p>
+                    <p style={{ marginTop: '4px' }}>版本 1.0</p>
+                </div>
+            </div>
+        );
+
+        // TEE Page
+        const TEEPage = ({ navigate, section, checklistData, updateChecklist, resetChecklist }) => {
+            const [activeTab, setActiveTab] = useState(section || 'patient');
+
+            return (
+                <div className="animate-fade-in" style={{ maxWidth: '600px', margin: '0 auto', padding: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', padding: '10px 0' }}>
+                        <button onClick={() => navigate('home')} style={{
+                            background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '12px',
+                            padding: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center',
+                            justifyContent: 'center', color: 'white'
+                        }}>
+                            <BackIcon size={24} />
+                        </button>
+                        <div>
+                            <h1 style={{ color: 'white', fontSize: '22px', fontWeight: '700' }}>經食道心臟超音波</h1>
+                            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px' }}>Transesophageal Echocardiography</p>
+                        </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+                        {['patient', 'medical'].map(tab => (
+                            <button key={tab} onClick={() => setActiveTab(tab)} style={{
+                                flex: 1, padding: '14px 16px', border: 'none', borderRadius: '12px',
+                                cursor: 'pointer', fontSize: '15px', fontWeight: '600', transition: 'all 0.3s ease',
+                                background: activeTab === tab 
+                                    ? (tab === 'patient' ? 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)' : 'linear-gradient(135deg, var(--accent-green) 0%, #2ecc71 100%)')
+                                    : 'rgba(255,255,255,0.1)',
+                                color: 'white',
+                                boxShadow: activeTab === tab ? '0 4px 15px rgba(0,0,0,0.3)' : 'none'
+                            }}>
+                                {tab === 'patient' ? '👤 病患專區' : '📋 醫護查核'}
+                            </button>
+                        ))}
+                    </div>
+
+                    {activeTab === 'patient' ? (
+                        <TEEPatientSection />
+                    ) : (
+                        <TEEMedicalChecklist checklistData={checklistData} updateChecklist={updateChecklist} resetChecklist={resetChecklist} />
+                    )}
+                </div>
+            );
+        };
+
+        // TEE Patient Section
+        const TEEPatientSection = () => {
+            const [expandedSection, setExpandedSection] = useState('what');
+
+            const sections = [
+                { id: 'what', title: '什麼是經食道心臟超音波？', icon: '❓', content: (
+                    <div>
+                        <p style={{ marginBottom: '16px', lineHeight: '1.8' }}>
+                            經食道心臟超音波檢查（TEE）是一種心臟超音波的檢查方式。醫師會將一個<strong>細長且柔軟</strong>類似內視鏡的超音波探頭，經由病人的口腔送入食道，利用超音波通過食道壁，進行心臟功能與結構的檢查。
+                        </p>
+                        <div style={{ background: 'linear-gradient(135deg, #e8f4fd 0%, #d1ecf5 100%)', padding: '16px', borderRadius: '12px', borderLeft: '4px solid var(--primary)' }}>
+                            <p style={{ fontWeight: '600', color: 'var(--primary)', marginBottom: '8px' }}>⏱️ 檢查時間</p>
+                            <p style={{ fontSize: '24px', fontWeight: '700', color: 'var(--primary-dark)' }}>約 10~20 分鐘</p>
+                        </div>
+                    </div>
+                )},
+                { id: 'indications', title: '檢查適應症', icon: '📋', content: (
+                    <div>
+                        <p style={{ marginBottom: '16px', color: '#666' }}>以下情況醫師可能建議進行 TEE 檢查：</p>
+                        {['經胸前心臟超音波無法確定診斷時', '評估天然/人工瓣膜的結構與功能', '評估心內膜炎', '懷疑心因性栓塞', '評估心臟腫瘤', '先天性心臟病之評估', '主動脈疾病之評估', '心房顫動患者於接受心臟復律術前', '評估心包膜疾病', '外科手術或介入性治療中監測'].map((item, idx) => (
+                            <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 0', borderBottom: idx < 9 ? '1px solid #eee' : 'none' }}>
+                                <span style={{ background: 'var(--primary)', color: 'white', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: '700', flexShrink: 0 }}>{idx + 1}</span>
+                                <span style={{ fontSize: '15px' }}>{item}</span>
+                            </div>
+                        ))}
+                    </div>
+                )},
+                { id: 'prep', title: '檢查前準備', icon: '📝', content: (
+                    <div>
+                        {[
+                            { title: '說明與同意', desc: '醫護人員會解釋檢查目的及過程，並請您填寫同意書' },
+                            { title: '禁食要求', desc: '檢查前需 8 小時禁止吃東西和喝水', highlight: true },
+                            { title: '早上檢查', desc: '前一晚 12 點後禁止吃東西和喝水' },
+                            { title: '下午檢查', desc: '當日早餐後禁止吃東西和喝水' },
+                            { title: '移除異物', desc: '若有活動假牙或牙套物品，需自行先移除' },
+                            { title: '配合指令', desc: '檢查中務必配合醫師指令，以減少併發症之發生' }
+                        ].map((item, idx) => (
+                            <div key={idx} style={{ background: item.highlight ? '#fff3cd' : '#f8f9fa', padding: '16px', borderRadius: '12px', marginBottom: '12px', border: item.highlight ? '2px solid #ffc107' : '1px solid #e9ecef' }}>
+                                <p style={{ fontWeight: '600', marginBottom: '4px', color: item.highlight ? '#856404' : 'var(--text-dark)' }}>{item.highlight && '⚠️ '}{item.title}</p>
+                                <p style={{ color: '#666', fontSize: '14px' }}>{item.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                )},
+                { id: 'process', title: '檢查過程', icon: '🔬', content: (
+                    <div style={{ position: 'relative', paddingLeft: '30px' }}>
+                        {[
+                            { step: 1, title: '局部麻醉', desc: '施行檢查前會先給局部麻醉劑，噴於喉嚨中' },
+                            { step: 2, title: '擺位準備', desc: '開始檢查前會讓您側躺面向醫師，嘴裡含著咬合器' },
+                            { step: 3, title: '探頭置入', desc: '將細長且柔軟的經食道心臟超音波探頭放入食道及胃中' },
+                            { step: 4, title: '配合吞嚥', desc: '醫師會請您配合作吞嚥動作，這是最不舒服的時候，但只要配合指示就會減輕不適', important: true },
+                            { step: 5, title: '進行檢查', desc: '探頭到位後，超音波檢查會在幾分鐘內完成，過程中若有唾液請讓它自行流出' },
+                            { step: 6, title: '溝通方式', desc: '檢查過程中無法出聲講話，若有任何不適可舉起手讓醫護人員知道' }
+                        ].map((item, idx) => (
+                            <div key={idx} style={{ position: 'relative', paddingBottom: '24px', borderLeft: idx < 5 ? '3px solid var(--primary-light)' : 'none', marginLeft: '-30px', paddingLeft: '30px' }}>
+                                <div style={{ position: 'absolute', left: '-42px', top: '0', width: '28px', height: '28px', borderRadius: '50%', background: item.important ? 'var(--accent-orange)' : 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '14px' }}>{item.step}</div>
+                                <div style={{ background: item.important ? '#fff8e1' : 'white', padding: '16px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', border: item.important ? '2px solid var(--accent-orange)' : '1px solid #eee' }}>
+                                    <p style={{ fontWeight: '600', marginBottom: '6px' }}>{item.title}</p>
+                                    <p style={{ color: '#666', fontSize: '14px', lineHeight: '1.7' }}>{item.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )},
+                { id: 'aftercare', title: '檢查後注意事項', icon: '🏥', content: (
+                    <div>
+                        <div style={{ background: 'linear-gradient(135deg, #fff5f5 0%, #ffe4e4 100%)', padding: '20px', borderRadius: '16px', marginBottom: '16px', border: '2px solid #e74c3c' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                                <WarningIcon size={24} />
+                                <span style={{ fontWeight: '700', color: '#c0392b', fontSize: '18px' }}>重要提醒</span>
+                            </div>
+                            <p style={{ fontWeight: '600', color: '#c0392b', fontSize: '16px' }}>檢查後 1 小時內禁食禁水</p>
+                            <p style={{ color: '#666', marginTop: '8px', fontSize: '14px' }}>因喉嚨麻醉藥尚未消失，為避免嗆到，請勿進食任何食物（包括水）</p>
+                        </div>
+                        <p style={{ fontWeight: '600', marginBottom: '12px', color: 'var(--accent-green)' }}>✅ 正常現象</p>
+                        <div style={{ background: '#e8f5e9', padding: '16px', borderRadius: '12px', marginBottom: '20px' }}>
+                            <p style={{ marginBottom: '8px' }}>• 喉嚨輕微疼痛感 → 可喝些溫開水減輕不適</p>
+                            <p>• 口水可能有些血絲</p>
+                        </div>
+                        <p style={{ fontWeight: '600', marginBottom: '12px', color: 'var(--accent)' }}>🚨 需立即告知醫護人員</p>
+                        <div style={{ background: '#ffebee', padding: '16px', borderRadius: '12px' }}>
+                            <p style={{ marginBottom: '8px' }}>• 喉嚨疼痛症狀加劇</p>
+                            <p style={{ marginBottom: '8px' }}>• 呈現鮮紅血液、血塊且有增加情況</p>
+                            <p>• 頭昏眼花或暈眩（請躺下休息避免跌倒）</p>
+                        </div>
+                    </div>
+                )},
+                { id: 'risks', title: '可能風險與併發症', icon: '⚠️', content: (
+                    <div>
+                        <p style={{ marginBottom: '16px', color: '#666', fontSize: '14px' }}>沒有任何醫療處置是完全沒有風險的，以下是可能發生的併發症：</p>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
+                            <thead>
+                                <tr style={{ background: 'var(--primary)' }}>
+                                    <th style={{ padding: '12px', color: 'white', textAlign: 'left', borderRadius: '8px 0 0 0' }}>併發症</th>
+                                    <th style={{ padding: '12px', color: 'white', textAlign: 'right', borderRadius: '0 8px 0 0' }}>發生率</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {[
+                                    { name: '無法配合吞服探頭', rate: '0.5-1%' },
+                                    { name: '支氣管痙攣', rate: '0.03-0.1%' },
+                                    { name: '血氧降低', rate: '0.01-0.05%' },
+                                    { name: '心室頻脈', rate: '0.01-0.05%' },
+                                    { name: '嘔吐或食道破裂', rate: '0.05-0.1%' }
+                                ].map((item, idx) => (
+                                    <tr key={idx} style={{ background: idx % 2 === 0 ? '#f8f9fa' : 'white' }}>
+                                        <td style={{ padding: '12px', borderBottom: '1px solid #eee' }}>{item.name}</td>
+                                        <td style={{ padding: '12px', borderBottom: '1px solid #eee', textAlign: 'right', fontWeight: '600', color: 'var(--primary)' }}>{item.rate}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        <div style={{ background: '#e3f2fd', padding: '16px', borderRadius: '12px', marginTop: '16px' }}>
+                            <p style={{ fontWeight: '600', color: 'var(--primary)', marginBottom: '8px' }}>💡 檢查成功率</p>
+                            <p style={{ fontSize: '20px', fontWeight: '700', color: 'var(--primary-dark)' }}>95-100%</p>
+                            <p style={{ color: '#666', fontSize: '13px', marginTop: '4px' }}>視病患配合度及口咽部解剖構造而定</p>
+                        </div>
+                    </div>
+                )}
+            ];
+
+            return (
+                <div>
+                    {sections.map((section, idx) => (
+                        <div key={section.id} className="animate-slide-in" style={{
+                            background: 'var(--card-bg)', borderRadius: '16px', marginBottom: '12px',
+                            overflow: 'hidden', boxShadow: 'var(--shadow-soft)', animationDelay: `${idx * 0.1}s`
+                        }}>
+                            <div onClick={() => setExpandedSection(expandedSection === section.id ? null : section.id)} style={{
+                                padding: '18px 20px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                background: expandedSection === section.id ? 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)' : 'transparent',
+                                color: expandedSection === section.id ? 'white' : 'var(--text-dark)', transition: 'all 0.3s ease'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <span style={{ fontSize: '24px' }}>{section.icon}</span>
+                                    <span style={{ fontWeight: '600', fontSize: '16px' }}>{section.title}</span>
+                                </div>
+                                <span style={{ transform: expandedSection === section.id ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease', fontSize: '20px' }}>▼</span>
+                            </div>
+                            {expandedSection === section.id && <div style={{ padding: '20px' }}>{section.content}</div>}
+                        </div>
+                    ))}
+                </div>
+            );
+        };
+
+        // TEE Medical Checklist
+        const TEEMedicalChecklist = ({ checklistData, updateChecklist, resetChecklist }) => {
+            const [currentPhase, setCurrentPhase] = useState('pre');
+
+            const phases = {
+                pre: { label: '處置前評估', icon: '1️⃣', items: [
+                    { id: 'tee-anti-coag', label: '確認抗凝血藥物使用狀況', options: ['無', '有'] },
+                    { id: 'tee-vital-stable', label: '生命徵象穩定', options: ['穩定', '不穩定'] },
+                    { id: 'tee-hr', label: '心跳速率 (次/分)', type: 'input' },
+                    { id: 'tee-spo2', label: '血氧濃度 (%)', type: 'input' },
+                    { id: 'tee-fasting', label: '空腹六小時以上', options: ['是', '否'] },
+                    { id: 'tee-denture', label: '活動假牙', options: ['無', '有（已取下）'] },
+                    { id: 'tee-consent', label: '同意書簽署', options: ['已完成', '未完成'] },
+                    { id: 'tee-assessment', label: '評估後建議', options: ['可執行', '不可執行'] }
+                ]},
+                timeout: { label: 'Time-out', icon: '2️⃣', items: [
+                    { id: 'tee-timeout-patient', label: '病人身份確認', options: ['V', 'NA'] },
+                    { id: 'tee-timeout-procedure', label: '診斷/手術術式 (TEE)', options: ['V', 'NA'] },
+                    { id: 'tee-timeout-site', label: '手術部位 (不分側)', options: ['V', 'NA'] },
+                    { id: 'tee-timeout-doc', label: '文件', options: ['V', 'NA'] },
+                    { id: 'tee-timeout-equipment', label: '設備', options: ['V', 'NA'] },
+                    { id: 'tee-timeout-team', label: '團隊成員共同執行 Time-out', options: ['是', '否'] },
+                    { id: 'tee-timeout-staff', label: '執行者', type: 'input', placeholder: '醫師; 技術員' }
+                ]},
+                post: { label: '處置後評估', icon: '3️⃣', items: [
+                    { id: 'tee-post-pain', label: '疼痛指數 (臉譜量表)', type: 'input', placeholder: '0-10分' },
+                    { id: 'tee-post-vital', label: '生命徵象', options: ['穩定', '不穩定'] },
+                    { id: 'tee-post-spo2', label: '血氧濃度 (%)', type: 'input' },
+                    { id: 'tee-post-hoarse', label: '聲嘶', options: ['無', '有'] },
+                    { id: 'tee-post-education', label: '已給予衛教單張', options: ['是', '否'] },
+                    { id: 'tee-post-fasting-until', label: '禁食至 (時間)', type: 'input', placeholder: 'HH:MM' }
+                ]}
+            };
+
+            const currentPhaseData = phases[currentPhase];
+            const completedCount = currentPhaseData.items.filter(item => checklistData[item.id]).length;
+            const progress = (completedCount / currentPhaseData.items.length) * 100;
+
+            const renderItem = (item) => {
+                const value = checklistData[item.id] || '';
+                if (item.type === 'input') {
+                    return (
+                        <div key={item.id} style={{ background: '#f8f9fa', padding: '16px', borderRadius: '12px', marginBottom: '12px' }}>
+                            <label style={{ fontWeight: '500', marginBottom: '8px', display: 'block' }}>{item.label}</label>
+                            <input type="text" value={value} onChange={(e) => updateChecklist(item.id, e.target.value)} placeholder={item.placeholder || ''}
+                                style={{ width: '100%', padding: '12px', border: '2px solid #e9ecef', borderRadius: '8px', fontSize: '16px', outline: 'none' }} />
+                        </div>
+                    );
+                }
+                return (
+                    <div key={item.id} style={{ background: value ? '#e8f5e9' : '#f8f9fa', padding: '16px', borderRadius: '12px', marginBottom: '12px', border: value ? '2px solid var(--accent-green)' : '2px solid transparent' }}>
+                        <label style={{ fontWeight: '500', marginBottom: '12px', display: 'block' }}>{item.label}</label>
+                        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                            {item.options.map(option => (
+                                <button key={option} onClick={() => updateChecklist(item.id, option)} style={{
+                                    padding: '10px 20px', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: '500',
+                                    background: value === option ? 'var(--accent-green)' : 'white',
+                                    color: value === option ? 'white' : 'var(--text-dark)',
+                                    boxShadow: value === option ? '0 4px 12px rgba(39, 174, 96, 0.3)' : '0 2px 6px rgba(0,0,0,0.1)'
+                                }}>
+                                    {value === option && '✓ '}{option}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                );
+            };
+
+            return (
+                <div>
+                    <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', overflowX: 'auto', paddingBottom: '8px' }}>
+                        {Object.entries(phases).map(([key, phase]) => (
+                            <button key={key} onClick={() => setCurrentPhase(key)} style={{
+                                padding: '12px 16px', border: 'none', borderRadius: '12px', cursor: 'pointer', fontSize: '14px', fontWeight: '600', whiteSpace: 'nowrap',
+                                background: currentPhase === key ? 'var(--card-bg)' : 'rgba(255,255,255,0.1)',
+                                color: currentPhase === key ? 'var(--text-dark)' : 'white',
+                                boxShadow: currentPhase === key ? 'var(--shadow-soft)' : 'none'
+                            }}>
+                                {phase.icon} {phase.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div style={{ background: 'var(--card-bg)', borderRadius: '16px', padding: '20px', marginBottom: '16px', boxShadow: 'var(--shadow-soft)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                            <span style={{ fontWeight: '600' }}>{currentPhaseData.label}</span>
+                            <span style={{ color: 'var(--accent-green)', fontWeight: '700' }}>{completedCount}/{currentPhaseData.items.length}</span>
+                        </div>
+                        <div style={{ height: '8px', background: '#e9ecef', borderRadius: '4px', overflow: 'hidden' }}>
+                            <div style={{ height: '100%', width: `${progress}%`, background: 'linear-gradient(90deg, var(--accent-green) 0%, #2ecc71 100%)', borderRadius: '4px', transition: 'width 0.5s ease' }} />
+                        </div>
+                    </div>
+
+                    <div style={{ background: 'var(--card-bg)', borderRadius: '16px', padding: '20px', boxShadow: 'var(--shadow-soft)' }}>
+                        {currentPhaseData.items.map(renderItem)}
+                    </div>
+
+                    <button onClick={() => { if (confirm('確定要重置查核表嗎？')) resetChecklist('tee-'); }} style={{
+                        width: '100%', padding: '16px', marginTop: '16px', border: '2px solid rgba(255,255,255,0.3)',
+                        borderRadius: '12px', background: 'transparent', color: 'white', fontSize: '15px', fontWeight: '600', cursor: 'pointer'
+                    }}>
+                        🔄 重置查核表
+                    </button>
+                </div>
+            );
+        };
+
+        // Pediatric Page
+        const PediatricPage = ({ navigate, section, checklistData, updateChecklist, resetChecklist }) => {
+            const [activeTab, setActiveTab] = useState(section || 'family');
+
+            return (
+                <div className="animate-fade-in" style={{ maxWidth: '600px', margin: '0 auto', padding: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', padding: '10px 0' }}>
+                        <button onClick={() => navigate('home')} style={{
+                            background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '12px',
+                            padding: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center',
+                            justifyContent: 'center', color: 'white'
+                        }}>
+                            <BackIcon size={24} />
+                        </button>
+                        <div>
+                            <h1 style={{ color: 'white', fontSize: '22px', fontWeight: '700' }}>兒童心臟超音波</h1>
+                            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px' }}>鎮靜藥物介紹</p>
+                        </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+                        {['family', 'medical'].map(tab => (
+                            <button key={tab} onClick={() => setActiveTab(tab)} style={{
+                                flex: 1, padding: '14px 16px', border: 'none', borderRadius: '12px',
+                                cursor: 'pointer', fontSize: '15px', fontWeight: '600', transition: 'all 0.3s ease',
+                                background: activeTab === tab 
+                                    ? (tab === 'family' ? 'var(--pediatric-gradient)' : 'linear-gradient(135deg, var(--accent-purple) 0%, #8e44ad 100%)')
+                                    : 'rgba(255,255,255,0.1)',
+                                color: 'white',
+                                boxShadow: activeTab === tab ? '0 4px 15px rgba(0,0,0,0.3)' : 'none'
+                            }}>
+                                {tab === 'family' ? '👨‍👩‍👧 家屬專區' : '📋 醫護查核'}
+                            </button>
+                        ))}
+                    </div>
+
+                    {activeTab === 'family' ? (
+                        <PediatricFamilySection />
+                    ) : (
+                        <PediatricMedicalChecklist checklistData={checklistData} updateChecklist={updateChecklist} resetChecklist={resetChecklist} />
+                    )}
+                </div>
+            );
+        };
+
+        // Pediatric Family Section
+        const PediatricFamilySection = () => {
+            const [expandedSection, setExpandedSection] = useState('purpose');
+
+            const sections = [
+                { id: 'purpose', title: '用藥目的', icon: '💊', content: (
+                    <div>
+                        <div style={{ background: 'linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%)', padding: '20px', borderRadius: '16px', textAlign: 'center', marginBottom: '16px' }}>
+                            <p style={{ fontSize: '18px', fontWeight: '600', color: '#c2185b' }}>讓孩童熟睡或靜臥，不哭泣</p>
+                            <p style={{ fontSize: '16px', color: '#880e4f', marginTop: '8px' }}>以利檢查進行</p>
+                        </div>
+                        <div style={{ background: '#fff3e0', padding: '16px', borderRadius: '12px', borderLeft: '4px solid #ff9800' }}>
+                            <p style={{ color: '#e65100', fontSize: '14px' }}>💡 心臟超音波檢查需要孩童保持安靜，鎮靜藥物可以幫助孩子在檢查過程中放鬆，讓檢查更順利完成。</p>
+                        </div>
+                    </div>
+                )},
+                { id: 'medication', title: '藥品資訊', icon: '💉', content: (
+                    <div>
+                        <div style={{ background: 'white', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+                            {[
+                                { label: '藥品名稱', value: '可律靜口服液劑', highlight: true },
+                                { label: '成分名稱', value: '水合氯醛 Chloral hydrate', sub: '100mg/mL' },
+                                { label: '服用時間', value: '檢查前 15-30 分鐘' },
+                                { label: '藥效開始', value: '約 15 分鐘開始有效果' },
+                                { label: '維持時間', value: '1-2 小時', sub: '實際情形因體重、年齡、劑量而異' }
+                            ].map((item, idx) => (
+                                <div key={idx} style={{ padding: '16px 20px', borderBottom: idx < 4 ? '1px solid #f0f0f0' : 'none', background: item.highlight ? 'linear-gradient(135deg, #e91e63 0%, #c2185b 100%)' : 'white' }}>
+                                    <p style={{ fontSize: '12px', color: item.highlight ? 'rgba(255,255,255,0.8)' : '#999', marginBottom: '4px' }}>{item.label}</p>
+                                    <p style={{ fontSize: '18px', fontWeight: '600', color: item.highlight ? 'white' : 'var(--text-dark)' }}>{item.value}</p>
+                                    {item.sub && <p style={{ fontSize: '13px', color: item.highlight ? 'rgba(255,255,255,0.7)' : '#666', marginTop: '4px' }}>{item.sub}</p>}
+                                </div>
+                            ))}
+                        </div>
+                        <div style={{ background: '#f5f5f5', padding: '16px', borderRadius: '12px', marginTop: '16px', display: 'flex', gap: '16px', alignItems: 'center' }}>
+                            <div style={{ width: '60px', height: '60px', borderRadius: '12px', background: '#e0e0e0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '30px' }}>🧴</div>
+                            <div>
+                                <p style={{ fontWeight: '600', marginBottom: '4px' }}>藥物特性</p>
+                                <p style={{ fontSize: '14px', color: '#666' }}>聞起來有點辛辣刺鼻</p>
+                                <p style={{ fontSize: '14px', color: '#666' }}>喝起來辣辣的沒味道</p>
+                                <p style={{ fontSize: '14px', color: '#e91e63', fontWeight: '500' }}>可以配點水</p>
+                            </div>
+                        </div>
+                    </div>
+                )},
+                { id: 'day-of', title: '檢查當日流程', icon: '📅', content: (
+                    <div style={{ position: 'relative', paddingLeft: '30px' }}>
+                        {[
+                            { step: 1, title: '報到確認', desc: '確認是否使用鎮靜藥物及藥物用量', time: '報到時' },
+                            { step: 2, title: '重要提醒', desc: '檢查前 1 小時請勿熟睡及進食', important: true },
+                            { step: 3, title: '給藥', desc: '我們會協助抽取藥物，再由爸媽幫忙餵藥' },
+                            { step: 4, title: '等待生效', desc: '等待藥物生效約 15-30 分鐘' },
+                            { step: 5, title: '執行檢查', desc: '正式檢查時間約 15 分鐘，期間可能會補服藥物' },
+                            { step: 6, title: '完成返家', desc: '檢查完畢，經醫師評估確認後，才可返家', highlight: true }
+                        ].map((item, idx) => (
+                            <div key={idx} style={{ position: 'relative', paddingBottom: '20px', borderLeft: idx < 5 ? '3px solid #e91e63' : 'none', marginLeft: '-30px', paddingLeft: '30px' }}>
+                                <div style={{ position: 'absolute', left: '-42px', top: '0', width: '28px', height: '28px', borderRadius: '50%', background: item.important ? '#ff9800' : item.highlight ? '#4caf50' : '#e91e63', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '14px' }}>{item.step}</div>
+                                <div style={{ background: item.important ? '#fff3e0' : item.highlight ? '#e8f5e9' : 'white', padding: '14px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', border: item.important ? '2px solid #ff9800' : item.highlight ? '2px solid #4caf50' : '1px solid #eee' }}>
+                                    {item.time && <span style={{ fontSize: '11px', background: '#e91e63', color: 'white', padding: '2px 8px', borderRadius: '10px', marginBottom: '6px', display: 'inline-block' }}>{item.time}</span>}
+                                    <p style={{ fontWeight: '600', marginBottom: '4px' }}>{item.title}</p>
+                                    <p style={{ color: '#666', fontSize: '14px' }}>{item.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )},
+                { id: 'aftercare', title: '返家恢復期照顧', icon: '🏠', content: (
+                    <div>
+                        <div style={{ background: 'linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%)', padding: '20px', borderRadius: '16px', marginBottom: '16px', border: '2px solid #ff9800' }}>
+                            <p style={{ fontWeight: '700', color: '#e65100', fontSize: '18px', marginBottom: '8px' }}>⏰ 恢復期：檢查後 ~ 24小時</p>
+                            <p style={{ color: '#bf360c', fontSize: '14px' }}>藥物作用期間可能易頭暈跌倒，請特別注意孩童安全</p>
+                        </div>
+                        <div style={{ background: '#ffebee', padding: '16px', borderRadius: '12px', marginBottom: '16px' }}>
+                            <p style={{ fontWeight: '600', color: '#c62828', marginBottom: '12px' }}>⚠️ 請避免孩童從事危險行為</p>
+                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                {['游泳', '騎車', '接觸尖銳物品'].map((item, idx) => (
+                                    <span key={idx} style={{ background: '#ef5350', color: 'white', padding: '6px 12px', borderRadius: '20px', fontSize: '14px' }}>❌ {item}</span>
+                                ))}
+                            </div>
+                        </div>
+                        <div style={{ background: '#e8f5e9', padding: '16px', borderRadius: '12px', marginBottom: '16px' }}>
+                            <p style={{ fontWeight: '600', color: '#2e7d32', marginBottom: '8px' }}>✅ 進食指引</p>
+                            <p style={{ color: '#1b5e20', fontSize: '15px' }}>孩童清醒後先餵開水，<strong>30分鐘無嘔吐</strong>可餵食</p>
+                        </div>
+                        <div style={{ background: '#f3e5f5', padding: '16px', borderRadius: '12px', border: '2px solid #9c27b0' }}>
+                            <p style={{ fontWeight: '700', color: '#7b1fa2', marginBottom: '8px' }}>🚨 若有以下狀況請立即就醫（急診）</p>
+                            <ul style={{ color: '#4a148c', fontSize: '14px', paddingLeft: '20px' }}>
+                                <li style={{ marginBottom: '6px' }}>持續未改善的紅疹</li>
+                                <li style={{ marginBottom: '6px' }}>噁心嘔吐</li>
+                                <li>其他任何異常狀況</li>
+                            </ul>
+                        </div>
+                    </div>
+                )},
+                { id: 'risks', title: '藥物副作用與風險', icon: '📊', content: (
+                    <div>
+                        <p style={{ color: '#666', fontSize: '14px', marginBottom: '16px', lineHeight: '1.8' }}>根據國外大型研究統計 1095 名接受水合氯醛鎮靜進行小兒心臟超音波檢查的病童：</p>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
+                            <div style={{ background: '#fff8e1', padding: '16px', borderRadius: '12px', textAlign: 'center' }}>
+                                <p style={{ fontSize: '28px', fontWeight: '700', color: '#f57c00' }}>10.8%</p>
+                                <p style={{ fontSize: '12px', color: '#e65100' }}>出現不良反應</p>
+                            </div>
+                            <div style={{ background: '#ffebee', padding: '16px', borderRadius: '12px', textAlign: 'center' }}>
+                                <p style={{ fontSize: '28px', fontWeight: '700', color: '#e53935' }}>0.7%</p>
+                                <p style={{ fontSize: '12px', color: '#c62828' }}>需緊急處理</p>
+                            </div>
+                        </div>
+                        <p style={{ fontWeight: '600', marginBottom: '12px' }}>常見不良反應發生比例：</p>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px', marginBottom: '16px' }}>
+                            <tbody>
+                                {[
+                                    { name: '鎮靜時間過長', rate: '3.3%' },
+                                    { name: '高碳酸血症', rate: '6.6%' },
+                                    { name: '缺氧', rate: '5.9%' },
+                                    { name: '呼吸道阻塞', rate: '1.4%' },
+                                    { name: '呼吸暫停', rate: '0.3%' }
+                                ].map((item, idx) => (
+                                    <tr key={idx} style={{ background: idx % 2 === 0 ? '#fce4ec' : 'white' }}>
+                                        <td style={{ padding: '12px', borderBottom: '1px solid #f8bbd9' }}>{item.name}</td>
+                                        <td style={{ padding: '12px', borderBottom: '1px solid #f8bbd9', textAlign: 'right', fontWeight: '600', color: '#e91e63' }}>{item.rate}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        <div style={{ background: '#e3f2fd', padding: '16px', borderRadius: '12px', marginBottom: '16px' }}>
+                            <p style={{ color: '#1565c0', fontSize: '14px' }}>⚠️ 年齡 6 個月內大嬰兒發生之風險較高</p>
+                        </div>
+                        <div style={{ background: 'linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)', padding: '20px', borderRadius: '16px', border: '2px solid #4caf50' }}>
+                            <p style={{ fontWeight: '700', color: '#2e7d32', fontSize: '16px', marginBottom: '8px' }}>🏥 本院安全紀錄</p>
+                            <p style={{ color: '#1b5e20', fontSize: '14px', marginBottom: '8px' }}>從 2011 年執行此檢查以來</p>
+                            <p style={{ fontSize: '32px', fontWeight: '900', color: '#1b5e20' }}>需緊急處理個案數：0</p>
+                        </div>
+                        <p style={{ fontSize: '11px', color: '#999', marginTop: '16px' }}>參考文獻：Pediatrics 2006 Mar;117(3):e434-41</p>
+                    </div>
+                )}
+            ];
+
+            return (
+                <div>
+                    {sections.map((section, idx) => (
+                        <div key={section.id} className="animate-slide-in" style={{
+                            background: 'var(--card-bg)', borderRadius: '16px', marginBottom: '12px',
+                            overflow: 'hidden', boxShadow: 'var(--shadow-soft)', animationDelay: `${idx * 0.1}s`
+                        }}>
+                            <div onClick={() => setExpandedSection(expandedSection === section.id ? null : section.id)} style={{
+                                padding: '18px 20px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                background: expandedSection === section.id ? 'var(--pediatric-gradient)' : 'transparent',
+                                color: expandedSection === section.id ? 'white' : 'var(--text-dark)', transition: 'all 0.3s ease'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <span style={{ fontSize: '24px' }}>{section.icon}</span>
+                                    <span style={{ fontWeight: '600', fontSize: '16px' }}>{section.title}</span>
+                                </div>
+                                <span style={{ transform: expandedSection === section.id ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease', fontSize: '20px' }}>▼</span>
+                            </div>
+                            {expandedSection === section.id && <div style={{ padding: '20px' }}>{section.content}</div>}
+                        </div>
+                    ))}
+                </div>
+            );
+        };
+
+        // Pediatric Medical Checklist
+        const PediatricMedicalChecklist = ({ checklistData, updateChecklist, resetChecklist }) => {
+            const [currentPhase, setCurrentPhase] = useState('pre');
+
+            const phases = {
+                pre: { label: '給藥前評估', icon: '1️⃣', items: [
+                    { id: 'ped-name', label: '病童姓名', type: 'input' },
+                    { id: 'ped-age', label: '年齡', type: 'input', placeholder: '歲/月' },
+                    { id: 'ped-weight', label: '體重 (kg)', type: 'input' },
+                    { id: 'ped-fasting', label: '檢查前1小時未熟睡進食', options: ['是', '否'] },
+                    { id: 'ped-allergy', label: '藥物過敏史', options: ['無', '有'] },
+                    { id: 'ped-consent', label: '家屬同意使用鎮靜藥物', options: ['是', '否'] },
+                    { id: 'ped-dose', label: '藥物劑量 (ml)', type: 'input' }
+                ]},
+                during: { label: '給藥與檢查', icon: '2️⃣', items: [
+                    { id: 'ped-given-time', label: '給藥時間', type: 'input', placeholder: 'HH:MM' },
+                    { id: 'ped-given-by', label: '給藥者', type: 'input', placeholder: '護理師/家屬協助' },
+                    { id: 'ped-effect-time', label: '藥效開始時間', type: 'input', placeholder: 'HH:MM' },
+                    { id: 'ped-sleep-status', label: '入睡狀態', options: ['深睡', '淺睡', '未睡'] },
+                    { id: 'ped-supplement', label: '是否補服藥物', options: ['否', '是'] },
+                    { id: 'ped-exam-start', label: '檢查開始時間', type: 'input', placeholder: 'HH:MM' },
+                    { id: 'ped-exam-end', label: '檢查結束時間', type: 'input', placeholder: 'HH:MM' }
+                ]},
+                monitor: { label: '生命徵象監測', icon: '3️⃣', items: [
+                    { id: 'ped-hr', label: '心跳 (次/分)', type: 'input' },
+                    { id: 'ped-spo2', label: '血氧飽和度 (%)', type: 'input' },
+                    { id: 'ped-rr', label: '呼吸次數 (次/分)', type: 'input' },
+                    { id: 'ped-airway', label: '呼吸道通暢', options: ['是', '否'] },
+                    { id: 'ped-skin', label: '膚色', options: ['正常', '發紺', '蒼白'] },
+                    { id: 'ped-adverse', label: '不良反應', options: ['無', '有'] }
+                ]},
+                post: { label: '甦醒與離院', icon: '4️⃣', items: [
+                    { id: 'ped-wake-time', label: '甦醒時間', type: 'input', placeholder: 'HH:MM' },
+                    { id: 'ped-wake-status', label: '甦醒狀態', options: ['完全清醒', '嗜睡', '躁動'] },
+                    { id: 'ped-vomit', label: '嘔吐', options: ['無', '有'] },
+                    { id: 'ped-feeding-ok', label: '可進食評估', options: ['可', '暫緩'] },
+                    { id: 'ped-education', label: '已給予衛教單張', options: ['是', '否'] },
+                    { id: 'ped-discharge-time', label: '離開時間', type: 'input', placeholder: 'HH:MM' },
+                    { id: 'ped-staff', label: '執行人員', type: 'input' }
+                ]}
+            };
+
+            const currentPhaseData = phases[currentPhase];
+            const completedCount = currentPhaseData.items.filter(item => checklistData[item.id]).length;
+            const progress = (completedCount / currentPhaseData.items.length) * 100;
+
+            const renderItem = (item) => {
+                const value = checklistData[item.id] || '';
+                if (item.type === 'input') {
+                    return (
+                        <div key={item.id} style={{ background: '#f8f9fa', padding: '16px', borderRadius: '12px', marginBottom: '12px' }}>
+                            <label style={{ fontWeight: '500', marginBottom: '8px', display: 'block' }}>{item.label}</label>
+                            <input type="text" value={value} onChange={(e) => updateChecklist(item.id, e.target.value)} placeholder={item.placeholder || ''}
+                                style={{ width: '100%', padding: '12px', border: '2px solid #e9ecef', borderRadius: '8px', fontSize: '16px', outline: 'none' }} />
+                        </div>
+                    );
+                }
+                return (
+                    <div key={item.id} style={{ background: value ? '#fce4ec' : '#f8f9fa', padding: '16px', borderRadius: '12px', marginBottom: '12px', border: value ? '2px solid #e91e63' : '2px solid transparent' }}>
+                        <label style={{ fontWeight: '500', marginBottom: '12px', display: 'block' }}>{item.label}</label>
+                        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                            {item.options.map(option => (
+                                <button key={option} onClick={() => updateChecklist(item.id, option)} style={{
+                                    padding: '10px 20px', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: '500',
+                                    background: value === option ? '#e91e63' : 'white',
+                                    color: value === option ? 'white' : 'var(--text-dark)',
+                                    boxShadow: value === option ? '0 4px 12px rgba(233, 30, 99, 0.3)' : '0 2px 6px rgba(0,0,0,0.1)'
+                                }}>
+                                    {value === option && '✓ '}{option}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                );
+            };
+
+            return (
+                <div>
+                    <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', overflowX: 'auto', paddingBottom: '8px' }}>
+                        {Object.entries(phases).map(([key, phase]) => (
+                            <button key={key} onClick={() => setCurrentPhase(key)} style={{
+                                padding: '12px 16px', border: 'none', borderRadius: '12px', cursor: 'pointer', fontSize: '14px', fontWeight: '600', whiteSpace: 'nowrap',
+                                background: currentPhase === key ? 'var(--card-bg)' : 'rgba(255,255,255,0.1)',
+                                color: currentPhase === key ? 'var(--text-dark)' : 'white',
+                                boxShadow: currentPhase === key ? 'var(--shadow-soft)' : 'none'
+                            }}>
+                                {phase.icon} {phase.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div style={{ background: 'var(--card-bg)', borderRadius: '16px', padding: '20px', marginBottom: '16px', boxShadow: 'var(--shadow-soft)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                            <span style={{ fontWeight: '600' }}>{currentPhaseData.label}</span>
+                            <span style={{ color: '#e91e63', fontWeight: '700' }}>{completedCount}/{currentPhaseData.items.length}</span>
+                        </div>
+                        <div style={{ height: '8px', background: '#e9ecef', borderRadius: '4px', overflow: 'hidden' }}>
+                            <div style={{ height: '100%', width: `${progress}%`, background: 'var(--pediatric-gradient)', borderRadius: '4px', transition: 'width 0.5s ease' }} />
+                        </div>
+                    </div>
+
+                    <div style={{ background: 'var(--card-bg)', borderRadius: '16px', padding: '20px', boxShadow: 'var(--shadow-soft)' }}>
+                        {currentPhaseData.items.map(renderItem)}
+                    </div>
+
+                    <button onClick={() => { if (confirm('確定要重置查核表嗎？')) resetChecklist('ped-'); }} style={{
+                        width: '100%', padding: '16px', marginTop: '16px', border: '2px solid rgba(255,255,255,0.3)',
+                        borderRadius: '12px', background: 'transparent', color: 'white', fontSize: '15px', fontWeight: '600', cursor: 'pointer'
+                    }}>
+                        🔄 重置查核表
+                    </button>
+                </div>
+            );
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
