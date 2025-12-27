@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PTMC 教學系統 | 經皮穿刺二尖瓣球囊成形術</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a365d;
+            --primary-light: #2c5282;
+            --accent: #ed8936;
+            --accent-light: #f6ad55;
+            --success: #38a169;
+            --warning: #d69e2e;
+            --danger: #e53e3e;
+            --bg-dark: #0f1419;
+            --bg-card: #1a2332;
+            --text-primary: #f7fafc;
+            --text-secondary: #a0aec0;
+            --text-muted: #718096;
+            --border-color: #2d3748;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            14% { transform: scale(1.1); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.1); }
+            70% { transform: scale(1); }
+        }
+        .header {
+            background: linear-gradient(135deg, #1a365d, #2c5282);
+            padding: 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            animation: heartbeat 2s infinite;
+        }
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .nav-tabs {
+            display: flex;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+        .nav-tabs::-webkit-scrollbar { display: none; }
+        .nav-tab {
+            flex: 1;
+            padding: 14px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            position: relative;
+            text-align: center;
+        }
+        .nav-tab:hover { color: var(--text-primary); }
+        .nav-tab.active { color: var(--accent); }
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent);
+        }
+        .main-content {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding-bottom: 100px;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeInUp 0.4s ease-out; }
+        .section-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+        }
+        .section-header {
+            background: linear-gradient(135deg, #1a365d, #2c5282);
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .section-icon {
+            width: 42px;
+            height: 42px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .section-title-group { flex: 1; }
+        .section-title { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+        .section-subtitle { font-size: 12px; color: rgba(255,255,255,0.7); }
+        .section-toggle { 
+            font-size: 18px; 
+            transition: transform 0.3s ease;
+            color: rgba(255,255,255,0.7);
+        }
+        .section-card.expanded .section-toggle { transform: rotate(180deg); }
+        .section-body { 
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+        .section-card.expanded .section-body { 
+            max-height: 5000px;
+        }
+        .section-body-inner {
+            padding: 18px;
+        }
+        .content-block { margin-bottom: 20px; }
+        .content-block:last-child { margin-bottom: 0; }
+        .block-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .block-title::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        .info-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--primary-light);
+        }
+        .info-card.warning { border-left-color: var(--warning); background: rgba(214,158,46,0.1); }
+        .info-card.danger { border-left-color: var(--danger); background: rgba(229,62,62,0.1); }
+        .info-card.success { border-left-color: var(--success); background: rgba(56,161,105,0.1); }
+        .info-card.highlight { border-left-color: var(--accent); background: rgba(237,137,54,0.1); }
+        .info-card-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .info-card-content { font-size: 14px; color: var(--text-secondary); line-height: 1.8; }
+        .data-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+        .data-table th {
+            background: var(--primary);
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+        }
+        .data-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+        .content-list { list-style: none; padding: 0; }
+        .content-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .content-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+        .highlight { color: var(--accent); font-weight: 600; }
+        .step-list { counter-reset: step-counter; }
+        .step-item {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 14px;
+            padding: 14px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+        }
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .step-content { flex: 1; }
+        .step-title { font-weight: 600; margin-bottom: 4px; font-size: 14px; }
+        .step-desc { font-size: 13px; color: var(--text-secondary); }
+        .formula-box {
+            background: rgba(237,137,54,0.15);
+            border: 2px solid var(--accent);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            margin: 16px 0;
+        }
+        .formula-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 2px; }
+        .formula-text { font-size: 24px; font-weight: 900; color: var(--accent); margin-bottom: 8px; }
+        .formula-note { font-size: 12px; color: var(--text-secondary); }
+        .equipment-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0; }
+        .equipment-item {
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            padding: 14px 10px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        .equipment-icon { font-size: 24px; margin-bottom: 6px; }
+        .equipment-name { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+        .equipment-desc { font-size: 10px; color: var(--text-muted); }
+        .warning-signs { display: grid; gap: 10px; }
+        .warning-sign {
+            display: flex;
+            gap: 12px;
+            padding: 14px;
+            background: rgba(229,62,62,0.08);
+            border-radius: 12px;
+            border: 1px solid rgba(229,62,62,0.3);
+        }
+        .warning-icon { font-size: 22px; flex-shrink: 0; }
+        .warning-content h4 { font-size: 13px; font-weight: 700; color: var(--danger); margin-bottom: 4px; }
+        .warning-content p { font-size: 12px; color: var(--text-secondary); }
+        .timeline { position: relative; padding-left: 28px; }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--accent), var(--primary-light));
+        }
+        .timeline-item { position: relative; margin-bottom: 20px; }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            background: var(--accent);
+            border-radius: 50%;
+            border: 3px solid var(--bg-dark);
+        }
+        .timeline-title { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+        .timeline-content {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+        }
+        .wilkins-table { width: 100%; font-size: 11px; border-collapse: collapse; }
+        .wilkins-table th { background: var(--primary); padding: 8px 6px; font-size: 10px; text-align: center; }
+        .wilkins-table td { padding: 6px; border-bottom: 1px solid var(--border-color); vertical-align: top; font-size: 10px; text-align: center; }
+        .grade-badge {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            background: var(--accent);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 22px;
+            font-weight: 700;
+            font-size: 12px;
+        }
+        .complication-grid { display: grid; gap: 10px; }
+        .complication-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+        .complication-rate {
+            min-width: 55px;
+            padding: 6px 10px;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 12px;
+        }
+        .complication-rate.low { color: var(--success); }
+        .complication-rate.medium { color: var(--warning); }
+        .complication-info h4 { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+        .complication-info p { font-size: 11px; color: var(--text-muted); }
+        .method-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+        }
+        .method-title { font-size: 14px; font-weight: 700; color: var(--primary-light); margin-bottom: 6px; }
+        .method-desc { font-size: 13px; color: var(--text-secondary); }
+
+        /* Calculator */
+        .calculator-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid var(--accent);
+        }
+        .calculator-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; text-align: center; color: var(--accent); }
+        .input-group { margin-bottom: 16px; }
+        .input-label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; color: var(--text-secondary); }
+        .input-field {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-dark);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .input-field:focus { outline: none; border-color: var(--accent); }
+        .result-display {
+            background: linear-gradient(135deg, #38a169, #2f855a);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 16px;
+            display: none;
+        }
+        .result-display.show { display: block; animation: fadeInUp 0.4s ease-out; }
+        .result-label { font-size: 13px; opacity: 0.9; margin-bottom: 4px; }
+        .result-value { font-size: 36px; font-weight: 900; }
+        .result-unit { font-size: 18px; font-weight: 500; }
+        .calc-detail { margin-top: 16px; display: none; }
+        .calc-detail.show { display: block; animation: fadeInUp 0.5s ease-out; }
+        .reference-table { margin-top: 20px; }
+
+        /* Quiz */
+        .quiz-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        .quiz-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .quiz-progress-text { font-size: 14px; color: var(--text-secondary); }
+        .quiz-progress-bar { width: 55%; height: 8px; background: var(--bg-dark); border-radius: 4px; overflow: hidden; }
+        .quiz-progress-fill { height: 100%; background: var(--accent); transition: width 0.5s ease; width: 0%; }
+        .quiz-question { font-size: 16px; font-weight: 600; margin-bottom: 18px; line-height: 1.6; }
+        .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+        .quiz-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            background: rgba(255,255,255,0.03);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .quiz-option:hover { background: rgba(255,255,255,0.06); border-color: var(--primary-light); }
+        .quiz-option.selected { border-color: var(--accent); background: rgba(237,137,54,0.1); }
+        .quiz-option.correct { border-color: var(--success); background: rgba(56,161,105,0.15); pointer-events: none; }
+        .quiz-option.incorrect { border-color: var(--danger); background: rgba(229,62,62,0.15); pointer-events: none; }
+        .option-letter {
+            width: 30px;
+            height: 30px;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .quiz-option.selected .option-letter { background: var(--accent); }
+        .quiz-option.correct .option-letter { background: var(--success); }
+        .quiz-option.incorrect .option-letter { background: var(--danger); }
+        .option-text { font-size: 14px; line-height: 1.5; }
+        .quiz-explanation {
+            margin-top: 16px;
+            padding: 14px;
+            background: rgba(56,161,105,0.1);
+            border-radius: 12px;
+            border-left: 4px solid var(--success);
+            display: none;
+        }
+        .quiz-explanation.show { display: block; animation: fadeInUp 0.3s ease-out; }
+        .explanation-title { font-weight: 700; margin-bottom: 6px; }
+        .explanation-title.correct { color: var(--success); }
+        .explanation-title.incorrect { color: var(--danger); }
+        .explanation-text { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+        .quiz-btn {
+            width: 100%;
+            padding: 14px;
+            margin-top: 16px;
+            background: var(--accent);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+        .quiz-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .score-display { text-align: center; padding: 30px 20px; display: none; }
+        .score-display.show { display: block; }
+        .score-circle {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .score-value { font-size: 44px; font-weight: 900; }
+        .score-total { font-size: 16px; opacity: 0.9; }
+        .score-message { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+        .score-detail { font-size: 14px; color: var(--text-secondary); }
+
+        /* Checklist */
+        .checklist-progress {
+            margin-bottom: 20px;
+        }
+        .progress-bar-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .progress-bar {
+            flex: 1;
+            height: 10px;
+            background: var(--bg-dark);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        .progress-percent {
+            font-weight: 700;
+            color: var(--accent);
+            min-width: 45px;
+            text-align: right;
+        }
+        .progress-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        .checklist-section {
+            background: var(--bg-card);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        .checklist-header {
+            background: linear-gradient(135deg, #1a365d, #2c5282);
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .checklist-icon { font-size: 20px; }
+        .checklist-title { flex: 1; font-weight: 600; font-size: 15px; }
+        .checklist-count {
+            background: rgba(255,255,255,0.1);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        .checklist-items { padding: 12px; }
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        .checklist-item:last-child { margin-bottom: 0; }
+        .checklist-item.checked {
+            background: rgba(56,161,105,0.1);
+            border-color: var(--success);
+        }
+        .check-box {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+        .checklist-item.checked .check-box {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+        .check-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+        .checklist-item.checked .check-text {
+            color: var(--text-primary);
+            text-decoration: line-through;
+        }
+        .reset-btn {
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            padding-bottom: max(8px, env(safe-area-inset-bottom));
+            z-index: 1000;
+        }
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 16px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 11px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .bottom-nav-item.active { color: var(--accent); }
+        .bottom-nav-icon { font-size: 22px; }
+
+        @media (max-width: 400px) {
+            .equipment-grid { grid-template-columns: repeat(2, 1fr); }
+            .wilkins-table { font-size: 9px; }
+            .wilkins-table th { font-size: 9px; padding: 6px 4px; }
+            .wilkins-table td { padding: 5px 4px; font-size: 9px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">🫀</div>
+                <span class="logo-text">PTMC 教學</span>
+            </div>
+        </div>
+    </header>
+
+    <nav class="nav-tabs">
+        <button class="nav-tab active" data-tab="learn">📚 學習</button>
+        <button class="nav-tab" data-tab="calculator">📏 計算器</button>
+        <button class="nav-tab" data-tab="quiz">✏️ 測驗</button>
+        <button class="nav-tab" data-tab="checklist">✅ 檢核表</button>
+    </nav>
+
+    <main class="main-content">
+        <!-- Learn Tab -->
+        <div id="learn-tab" class="tab-content active">
+            <!-- Section 1: Overview -->
+            <div class="section-card expanded">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-icon">📖</div>
+                    <div class="section-title-group">
+                        <div class="section-title">概述</div>
+                        <div class="section-subtitle">Overview & History</div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-body">
+                    <div class="section-body-inner">
+                        <div class="content-block">
+                            <h3 class="block-title">歷史背景</h3>
+                            <div class="info-card highlight">
+                                <div class="info-card-title">🏆 創始里程碑</div>
+                                <div class="info-card-content">PTMC 由日本醫師<span class="highlight">井上寬治 (Dr. Kanji Inoue)</span> 於 <span class="highlight">1984年</span>首創，是世界上第一個使用球囊導管進行非手術性二尖瓣聯合切開術的技術。至今已有超過 <span class="highlight">15,000 例</span>以上的 Inoue balloon PTMC 手術在全球執行。</div>
+                            </div>
+                        </div>
+                        <div class="content-block">
+                            <h3 class="block-title">Inoue 球囊導管特點</h3>
+                            <ul class="content-list">
+                                <li><strong>獨特沙漏形狀：</strong>防止球囊在瓣口滑脫</li>
+                                <li><strong>可調節直徑：</strong>單一球囊可調節範圍達 4 mm</li>
+                                <li><strong>三段式充氣：</strong>遠端 → 近端 → 腰部</li>
+                                <li><strong>可重複擴張：</strong>無需更換導管</li>
+                                <li><strong>自我定位：</strong>充氣的球囊尖端可隨血流導向</li>
+                                <li><strong>短球囊設計：</strong>不需在左心室內放置 guidewire</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Diagnosis -->
+            <div class="section-card">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-icon">🔬</div>
+                    <div class="section-title-group">
+                        <div class="section-title">診斷評估</div>
+                        <div class="section-subtitle">Diagnosis</div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-body">
+                    <div class="section-body-inner">
+                        <div class="content-block">
+                            <h3 class="block-title">二尖瓣狹窄嚴重度分級</h3>
+                            <table class="data-table">
+                                <thead><tr><th>嚴重度</th><th>瓣膜面積</th><th>Mean Gradient</th></tr></thead>
+                                <tbody>
+                                    <tr><td>輕度</td><td>> 1.5 cm²</td><td>< 5 mmHg</td></tr>
+                                    <tr><td>中度</td><td>1.0-1.5 cm²</td><td>5-10 mmHg</td></tr>
+                                    <tr><td>重度</td><td>< 1.0 cm²</td><td>> 10 mmHg</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="content-block">
+                            <h3 class="block-title">Wilkins Score 評分系統</h3>
+                            <table class="wilkins-table">
+                                <thead><tr><th>Grade</th><th>Mobility</th><th>Thickening</th><th>Calcification</th><th>Subvalvular</th></tr></thead>
+                                <tbody>
+                                    <tr><td><span class="grade-badge">1</span></td><td>僅葉尖受限</td><td>接近正常</td><td>單一亮點</td><td>輕微增厚</td></tr>
+                                    <tr><td><span class="grade-badge">2</span></td><td>中段基部正常</td><td>邊緣增厚</td><td>分散於邊緣</td><td>延伸至1/3</td></tr>
+                                    <tr><td><span class="grade-badge">3</span></td><td>僅基部移動</td><td>整個瓣葉</td><td>延伸至中部</td><td>延伸至遠端1/3</td></tr>
+                                    <tr><td><span class="grade-badge">4</span></td><td>無/極少移動</td><td>明顯增厚</td><td>廣泛分布</td><td>廣泛至乳頭肌</td></tr>
+                                </tbody>
+                            </table>
+                            <div class="info-card success" style="margin-top:14px">
+                                <div class="info-card-title">💡 臨床應用</div>
+                                <div class="info-card-content"><strong>Score ≤ 8：</strong>PTMC最佳候選者<br><strong>Score 9-11：</strong>灰色地帶<br><strong>Score > 11：</strong>較不適合</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Indications -->
+            <div class="section-card">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-icon">✅</div>
+                    <div class="section-title-group">
+                        <div class="section-title">適應症與禁忌</div>
+                        <div class="section-subtitle">Indications</div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-body">
+                    <div class="section-body-inner">
+                        <div class="content-block">
+                            <h3 class="block-title">Class I 適應症</h3>
+                            <div class="info-card success">
+                                <div class="info-card-content">
+                                    <ul class="content-list">
+                                        <li>有症狀 (NYHA II-IV) 的中重度 MS (MVA ≤ 1.5 cm²)</li>
+                                        <li>瓣膜型態適合 (favorable valve morphology)</li>
+                                        <li>無左心房血栓</li>
+                                        <li>無中重度以上 mitral regurgitation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="content-block">
+                            <h3 class="block-title">禁忌症</h3>
+                            <table class="data-table">
+                                <thead><tr><th>類型</th><th>內容</th></tr></thead>
+                                <tbody>
+                                    <tr><td style="color:var(--danger);font-weight:700">絕對禁忌</td><td>左心房血栓、中重度MR(≥3+)、無commissural fusion</td></tr>
+                                    <tr><td style="color:var(--warning);font-weight:700">相對禁忌</td><td>Wilkins score>11、嚴重瓣葉鈣化、嚴重subvalvular disease</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Equipment -->
+            <div class="section-card">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-icon">🔧</div>
+                    <div class="section-title-group">
+                        <div class="section-title">器材準備</div>
+                        <div class="section-subtitle">Equipment</div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-body">
+                    <div class="section-body-inner">
+                        <div class="content-block">
+                            <h3 class="block-title">Inoue 球囊導管套件</h3>
+                            <div class="equipment-grid">
+                                <div class="equipment-item"><div class="equipment-icon">🎈</div><div class="equipment-name">球囊導管</div><div class="equipment-desc">12F PVC</div></div>
+                                <div class="equipment-item"><div class="equipment-icon">🔩</div><div class="equipment-name">金屬伸展管</div><div class="equipment-desc">18G, 80cm</div></div>
+                                <div class="equipment-item"><div class="equipment-icon">🔗</div><div class="equipment-name">導引鋼絲</div><div class="equipment-desc">0.028"</div></div>
+                                <div class="equipment-item"><div class="equipment-icon">📍</div><div class="equipment-name">擴張器</div><div class="equipment-desc">14F PE</div></div>
+                                <div class="equipment-item"><div class="equipment-icon">🎯</div><div class="equipment-name">探針 Stylet</div><div class="equipment-desc">0.038" J型</div></div>
+                                <div class="equipment-item"><div class="equipment-icon">💉</div><div class="equipment-name">刻度注射器</div><div class="equipment-desc">標示充氣量</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Sizing -->
+            <div class="section-card">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-icon">📏</div>
+                    <div class="section-title-group">
+                        <div class="section-title">球囊尺寸</div>
+                        <div class="section-subtitle">Balloon Sizing</div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-body">
+                    <div class="section-body-inner">
+                        <div class="content-block">
+                            <h3 class="block-title">Hung Formula (身高公式)</h3>
+                            <div class="formula-box">
+                                <div class="formula-label">Reference Size 計算公式</div>
+                                <div class="formula-text">RS = 身高(cm) ÷ 10 + 10</div>
+                                <div class="formula-note">※ 身高先四捨五入至最接近的 10</div>
+                            </div>
+                            <div class="info-card highlight">
+                                <div class="info-card-title">📝 計算範例</div>
+                                <div class="info-card-content">患者身高 157 cm → 四捨五入至 160 cm → RS = 160 ÷ 10 + 10 = <strong>26 mm</strong></div>
+                            </div>
+                        </div>
+                        <div class="content-block">
+                            <h3 class="block-title">Catheter 選擇原則</h3>
+                            <table class="data-table">
+                                <thead><tr><th>瓣膜狀態</th><th>Catheter選擇</th><th>初始大小</th></tr></thead>
+                                <tbody>
+                                    <tr><td style="color:var(--success)">柔軟無鈣化</td><td>RS-matched</td><td>RS - 2 mm</td></tr>
+                                    <tr><td style="color:var(--warning)">鈣化/瓣下病變</td><td>小一號(<RS)</td><td>RS - 4 mm</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Transseptal -->
+            <div class="section-card">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-icon">💉</div>
+                    <div class="section-title-group">
+                        <div class="section-title">房間隔穿刺</div>
+                        <div class="section-subtitle">Transseptal Puncture</div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-body">
+                    <div class="section-body-inner">
+                        <div class="content-block">
+                            <h3 class="block-title">穿刺點選擇的重要性</h3>
+                            <div class="info-card danger">
+                                <div class="info-card-title">⚠️ 兩大風險</div>
+                                <div class="info-card-content"><strong>1. 心臟穿孔：</strong>可能導致心包填塞<br><strong>2. 穿刺位置不當：</strong>可能造成導管跨越瓣膜困難</div>
+                            </div>
+                        </div>
+                        <div class="content-block">
+                            <h3 class="block-title">應避免的穿刺位置</h3>
+                            <div class="warning-signs">
+                                <div class="warning-sign"><div class="warning-icon">🔺</div><div class="warning-content"><h4>High atrial septum</h4><p>可能造成房間隔剝離</p></div></div>
+                                <div class="warning-sign"><div class="warning-icon">🔻</div><div class="warning-content"><h4>Low atrial septum</h4><p>可能穿刺到 tricuspid valve 或 coronary sinus</p></div></div>
+                                <div class="warning-sign"><div class="warning-icon">⬅️</div><div class="warning-content"><h4>Posterior-inferior LA wall</h4><p>可能導致 "stitching phenomenon"</p></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 7: Procedure -->
+            <div class="section-card">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-icon">📋</div>
+                    <div class="section-title-group">
+                        <div class="section-title">手術流程</div>
+                        <div class="section-subtitle">Procedure Steps</div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-body">
+                    <div class="section-body-inner">
+                        <div class="content-block">
+                            <h3 class="block-title">手術步驟總覽</h3>
+                            <div class="timeline">
+                                <div class="timeline-item"><div class="timeline-title">步驟一：房間隔穿刺</div><div class="timeline-content">完成右心導管術 → Brockenbrough 穿刺 → 置入導引鋼絲 → Heparin 100 U/kg</div></div>
+                                <div class="timeline-item"><div class="timeline-title">步驟二：導管置入左心房</div><div class="timeline-content">14F擴張器 → 球囊導管送入 → 移除導引鋼絲及金屬伸展管</div></div>
+                                <div class="timeline-item"><div class="timeline-title">步驟三：穿越二尖瓣</div><div class="timeline-content">插入探針操控 → 後拉3-5cm → 隨血流穿過瓣口</div></div>
+                                <div class="timeline-item"><div class="timeline-title">步驟四：逐步擴張</div><div class="timeline-content">Accordion Maneuver → 錨定瓣口 → 快速充氣 → 評估 MR</div></div>
+                                <div class="timeline-item"><div class="timeline-title">步驟五：導管撤出</div><div class="timeline-content">退至房間隔 → 插入導引鋼絲 → 鎖定撤出</div></div>
+                            </div>
+                        </div>
+                        <div class="content-block">
+                            <h3 class="block-title">穿越瓣膜方法</h3>
+                            <div class="method-card"><div class="method-title">🎯 直接法 (Direct Method)</div><div class="method-desc">最常用。逆時針旋轉使尖端朝向瓣口，隨血流穿越。</div></div>
+                            <div class="method-card"><div class="method-title">🔄 彈跳法 (Bounce Method)</div><div class="method-desc">適用於高位穿刺。順時針旋轉導管使其「彈跳」於後壁再穿越。</div></div>
+                            <div class="method-card"><div class="method-title">📐 滑動法 (Sliding Method)</div><div class="method-desc">利用舒張期瓣口開放時機穿越。</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 8: Dilatation -->
+            <div class="section-card">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-icon">🎯</div>
+                    <div class="section-title-group">
+                        <div class="section-title">逐步擴張</div>
+                        <div class="section-subtitle">Stepwise Dilatation</div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-body">
+                    <div class="section-body-inner">
+                        <div class="content-block">
+                            <h3 class="block-title">Accordion Maneuver</h3>
+                            <div class="info-card warning">
+                                <div class="info-card-title">⚡ 關鍵步驟</div>
+                                <div class="info-card-content">在左心室內前後移動球囊 <strong>2-3 次</strong>，確認球囊未纏繞於乳頭肌腱索間。全速充氣前務必執行！</div>
+                            </div>
+                        </div>
+                        <div class="content-block">
+                            <h3 class="block-title">逐步擴張步驟</h3>
+                            <div class="step-list">
+                                <div class="step-item"><div class="step-number">1</div><div class="step-content"><div class="step-title">充氣遠端半部</div><div class="step-desc">穿過瓣口後先充氣球囊遠端</div></div></div>
+                                <div class="step-item"><div class="step-number">2</div><div class="step-content"><div class="step-title">Accordion Maneuver</div><div class="step-desc">前後移動 2-3 次確認位置</div></div></div>
+                                <div class="step-item"><div class="step-number">3</div><div class="step-content"><div class="step-title">錨定於瓣口</div><div class="step-desc">輕輕後拉導管固定位置</div></div></div>
+                                <div class="step-item"><div class="step-number">4</div><div class="step-content"><div class="step-title">快速完全充氣</div><div class="step-desc">球囊腰部自動定位於瓣口中央</div></div></div>
+                                <div class="step-item"><div class="step-number">5</div><div class="step-content"><div class="step-title">立即放氣評估</div><div class="step-desc">測量壓力、評估 MR 程度</div></div></div>
+                            </div>
+                        </div>
+                        <div class="content-block">
+                            <h3 class="block-title">擴張終點</h3>
+                            <div class="info-card success">
+                                <div class="info-card-content">
+                                    <ul class="content-list">
+                                        <li>MVA 增加 ≥ 50% 或達到 ≥ 1.5 cm²</li>
+                                        <li>Mean transmitral gradient 明顯下降</li>
+                                        <li>出現顯著 MR (≥ 2+) 時停止</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 9: Complications -->
+            <div class="section-card">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-icon">⚠️</div>
+                    <div class="section-title-group">
+                        <div class="section-title">併發症</div>
+                        <div class="section-subtitle">Complications</div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-body">
+                    <div class="section-body-inner">
+                        <div class="content-block">
+                            <h3 class="block-title">主要併發症</h3>
+                            <div class="complication-grid">
+                                <div class="complication-item"><div class="complication-rate medium">1.5-7.5%</div><div class="complication-info"><h4>Severe MR</h4><p>觀察或緊急手術</p></div></div>
+                                <div class="complication-item"><div class="complication-rate low"><2%</div><div class="complication-info"><h4>Cardiac Tamponade</h4><p>Pericardiocentesis</p></div></div>
+                                <div class="complication-item"><div class="complication-rate low"><1%</div><div class="complication-info"><h4>Stroke/Embolism</h4><p>支持性治療</p></div></div>
+                                <div class="complication-item"><div class="complication-rate medium">4-5%</div><div class="complication-info"><h4>ASD Creation</h4><p>多數無臨床意義</p></div></div>
+                            </div>
+                        </div>
+                        <div class="content-block">
+                            <h3 class="block-title">Severe Subvalvular Disease 警示徵象</h3>
+                            <div class="warning-signs">
+                                <div class="warning-sign"><div class="warning-icon">🚫</div><div class="warning-content"><h4>Balloon Impasse</h4><p>即使未充氣也無法通過瓣口</p></div></div>
+                                <div class="warning-sign"><div class="warning-icon">💥</div><div class="warning-content"><h4>Balloon Compression Sign</h4><p>充氣的 distal balloon 出現凹陷</p></div></div>
+                                <div class="warning-sign"><div class="warning-icon">🔄</div><div class="warning-content"><h4>Accordion Maneuver 困難</h4><p>瓣下結構阻擋無法執行</p></div></div>
+                                <div class="warning-sign"><div class="warning-icon">⚙️</div><div class="warning-content"><h4>Cogwheel Resistance</h4><p>拉回時感覺齒輪狀阻力</p></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 10: Outcome -->
+            <div class="section-card">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-icon">🏆</div>
+                    <div class="section-title-group">
+                        <div class="section-title">成功標準</div>
+                        <div class="section-subtitle">Outcomes</div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-body">
+                    <div class="section-body-inner">
+                        <div class="content-block">
+                            <h3 class="block-title">手術成功標準</h3>
+                            <div class="info-card success">
+                                <div class="info-card-title">🏆 成功定義</div>
+                                <div class="info-card-content">
+                                    <ul class="content-list">
+                                        <li>二尖瓣面積增加 > 50% 或達到 > 1.5 cm²</li>
+                                        <li>左心房壓力下降</li>
+                                        <li>跨瓣壓差顯著降低</li>
+                                        <li>無顯著二尖瓣閉鎖不全惡化（MR ≤ 2+）</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="content-block">
+                            <h3 class="block-title">長期預後</h3>
+                            <table class="data-table">
+                                <thead><tr><th>追蹤時間</th><th>整體</th><th>瓣膜型態良好</th></tr></thead>
+                                <tbody>
+                                    <tr><td>5 年</td><td>85%</td><td>92%</td></tr>
+                                    <tr><td>10 年</td><td>70%</td><td>85%</td></tr>
+                                    <tr><td>15 年</td><td>44%</td><td>65%</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="content-block">
+                            <h3 class="block-title">Take-Home Messages</h3>
+                            <div class="step-list">
+                                <div class="step-item"><div class="step-number">1</div><div class="step-content"><div class="step-desc">PTMC 是適合病患的首選治療，成功率 >90%</div></div></div>
+                                <div class="step-item"><div class="step-number">2</div><div class="step-content"><div class="step-desc">Transseptal puncture 是 PTMC 成功的關鍵</div></div></div>
+                                <div class="step-item"><div class="step-number">3</div><div class="step-content"><div class="step-desc">身高公式 (RS = H/10 + 10) 簡單有效</div></div></div>
+                                <div class="step-item"><div class="step-number">4</div><div class="step-content"><div class="step-desc">Stepwise dilatation 最大化 MVA 並最小化 MR</div></div></div>
+                                <div class="step-item"><div class="step-number">5</div><div class="step-content"><div class="step-desc">識別 warning signs 可避免 catastrophic MR</div></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculator Tab -->
+        <div id="calculator-tab" class="tab-content">
+            <div class="calculator-card">
+                <div class="calculator-title">🧮 Balloon Size 計算器</div>
+                <div class="formula-box" style="margin-bottom:20px">
+                    <div class="formula-label">Hung Formula</div>
+                    <div class="formula-text">RS = 身高(cm) ÷ 10 + 10</div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">請輸入病患身高 (cm)</label>
+                    <input type="number" id="height-input" class="input-field" placeholder="例如：157" min="100" max="220" oninput="calculateSize()">
+                </div>
+                <div id="result-display" class="result-display">
+                    <div class="result-label">Reference Balloon Size (RS)</div>
+                    <div class="result-value"><span id="rs-value">26</span><span class="result-unit">mm</span></div>
+                </div>
+                <div id="calc-detail" class="calc-detail info-card">
+                    <div class="info-card-content">
+                        <strong>計算過程：</strong><br>
+                        身高 <span id="input-height">157</span> cm → 四捨五入至 <span id="rounded-height">160</span> cm<br>
+                        RS = <span id="rounded-height-2">160</span> ÷ 10 + 10 = <span class="highlight" id="final-rs">26</span> mm
+                    </div>
+                </div>
+            </div>
+
+            <div id="strategy-card" class="section-card" style="display:none">
+                <div class="section-header" style="cursor:default">
+                    <div class="section-icon">📋</div>
+                    <div class="section-title-group">
+                        <div class="section-title">擴張策略建議</div>
+                        <div class="section-subtitle">Dilatation Strategy</div>
+                    </div>
+                </div>
+                <div class="section-body" style="max-height:none">
+                    <div class="section-body-inner">
+                        <table class="data-table">
+                            <thead><tr><th>瓣膜狀態</th><th>Catheter</th><th>初始大小</th></tr></thead>
+                            <tbody>
+                                <tr><td style="color:var(--success)">柔軟無鈣化</td><td id="pliable-cath">PTMC-26</td><td><strong id="pliable-init">24 mm</strong></td></tr>
+                                <tr><td style="color:var(--warning)">鈣化/瓣下病變</td><td id="calcified-cath">PTMC-24</td><td><strong id="calcified-init">22 mm</strong></td></tr>
+                            </tbody>
+                        </table>
+                        <div class="info-card warning" style="margin-top:14px">
+                            <div class="info-card-title">⚠️ 注意事項</div>
+                            <div class="info-card-content"><strong>Low-pressure zone</strong> (距標稱 >2mm)：每次 +1 mm<br><strong>High-pressure zone</strong> (距標稱 ≤2mm)：每次 +0.5 mm<br>出現 MR ≥ 2+ 時應立即停止擴張</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card reference-table">
+                <div class="section-header" style="cursor:default">
+                    <div class="section-icon">📊</div>
+                    <div class="section-title-group">
+                        <div class="section-title">快速參考表</div>
+                        <div class="section-subtitle">Quick Reference</div>
+                    </div>
+                </div>
+                <div class="section-body" style="max-height:none">
+                    <div class="section-body-inner">
+                        <table class="data-table">
+                            <thead><tr><th>身高 (cm)</th><th>四捨五入</th><th>RS (mm)</th></tr></thead>
+                            <tbody>
+                                <tr><td>145-154</td><td>150</td><td><strong>25</strong></td></tr>
+                                <tr><td>155-164</td><td>160</td><td><strong>26</strong></td></tr>
+                                <tr><td>165-174</td><td>170</td><td><strong>27</strong></td></tr>
+                                <tr><td>175-184</td><td>180</td><td><strong>28</strong></td></tr>
+                                <tr><td>185-194</td><td>190</td><td><strong>29</strong></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Tab -->
+        <div id="quiz-tab" class="tab-content">
+            <div class="quiz-card">
+                <div id="quiz-container">
+                    <div class="quiz-progress">
+                        <span class="quiz-progress-text">第 <span id="current-q">1</span> / <span id="total-q">12</span> 題</span>
+                        <div class="quiz-progress-bar"><div id="quiz-progress-fill" class="quiz-progress-fill"></div></div>
+                    </div>
+                    <div id="quiz-question" class="quiz-question"></div>
+                    <div id="quiz-options" class="quiz-options"></div>
+                    <div id="quiz-explanation" class="quiz-explanation">
+                        <div id="explanation-title" class="explanation-title"></div>
+                        <div id="explanation-text" class="explanation-text"></div>
+                    </div>
+                    <button id="quiz-btn" class="quiz-btn" disabled onclick="nextQuestion()">下一題 →</button>
+                </div>
+                <div id="score-display" class="score-display">
+                    <div id="score-circle" class="score-circle">
+                        <div class="score-value"><span id="final-score">0</span></div>
+                        <div class="score-total">/ 12</div>
+                    </div>
+                    <div id="score-message" class="score-message"></div>
+                    <div id="score-detail" class="score-detail"></div>
+                    <button class="quiz-btn" style="margin-top:20px" onclick="resetQuiz()">🔄 重新測驗</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checklist Tab -->
+        <div id="checklist-tab" class="tab-content">
+            <div class="info-card highlight checklist-progress">
+                <div class="info-card-title">📊 完成進度</div>
+                <div class="info-card-content">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar"><div id="checklist-progress-fill" class="progress-fill"></div></div>
+                        <span id="checklist-percent" class="progress-percent">0%</span>
+                    </div>
+                    <div id="checklist-count" class="progress-text">已完成 0 / 25 項目</div>
+                </div>
+            </div>
+
+            <div class="checklist-section">
+                <div class="checklist-header">
+                    <span class="checklist-icon">📋</span>
+                    <span class="checklist-title">術前準備</span>
+                    <span class="checklist-count" data-section="pre">0/6</span>
+                </div>
+                <div class="checklist-items" id="pre-items">
+                    <div class="checklist-item" data-id="pre1" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Informed consent 簽署</span></div>
+                    <div class="checklist-item" data-id="pre2" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">TTE 評估完成 (Wilkins score, MVA, MR)</span></div>
+                    <div class="checklist-item" data-id="pre3" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">TEE 排除左心房血栓</span></div>
+                    <div class="checklist-item" data-id="pre4" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">實驗室檢查確認 (CBC, PT/INR, Cr)</span></div>
+                    <div class="checklist-item" data-id="pre5" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">計算 Reference Balloon Size</span></div>
+                    <div class="checklist-item" data-id="pre6" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">準備 Inoue balloon 套件</span></div>
+                </div>
+            </div>
+
+            <div class="checklist-section">
+                <div class="checklist-header">
+                    <span class="checklist-icon">💉</span>
+                    <span class="checklist-title">房間隔穿刺</span>
+                    <span class="checklist-count" data-section="tsp">0/6</span>
+                </div>
+                <div class="checklist-items" id="tsp-items">
+                    <div class="checklist-item" data-id="tsp1" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">右股靜脈 9F sheath 置入</span></div>
+                    <div class="checklist-item" data-id="tsp2" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">右股動脈 5F sheath 置入</span></div>
+                    <div class="checklist-item" data-id="tsp3" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Right heart catheterization 完成</span></div>
+                    <div class="checklist-item" data-id="tsp4" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">穿刺點定位確認 (Frontal + RAO 30°)</span></div>
+                    <div class="checklist-item" data-id="tsp5" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Transseptal puncture 成功</span></div>
+                    <div class="checklist-item" data-id="tsp6" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Heparin ~100U/kg 給予</span></div>
+                </div>
+            </div>
+
+            <div class="checklist-section">
+                <div class="checklist-header">
+                    <span class="checklist-icon">🎈</span>
+                    <span class="checklist-title">球囊擴張</span>
+                    <span class="checklist-count" data-section="dil">0/7</span>
+                </div>
+                <div class="checklist-items" id="dil-items">
+                    <div class="checklist-item" data-id="dil1" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">14F dilator 擴張完成</span></div>
+                    <div class="checklist-item" data-id="dil2" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Inoue balloon 置入左心房</span></div>
+                    <div class="checklist-item" data-id="dil3" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">成功穿越二尖瓣</span></div>
+                    <div class="checklist-item" data-id="dil4" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Accordion maneuver 確認位置</span></div>
+                    <div class="checklist-item" data-id="dil5" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">逐步擴張執行</span></div>
+                    <div class="checklist-item" data-id="dil6" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">LA 壓力/gradient 測量</span></div>
+                    <div class="checklist-item" data-id="dil7" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">MR 評估</span></div>
+                </div>
+            </div>
+
+            <div class="checklist-section">
+                <div class="checklist-header">
+                    <span class="checklist-icon">✅</span>
+                    <span class="checklist-title">術後評估</span>
+                    <span class="checklist-count" data-section="post">0/6</span>
+                </div>
+                <div class="checklist-items" id="post-items">
+                    <div class="checklist-item" data-id="post1" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Final MVA 測量</span></div>
+                    <div class="checklist-item" data-id="post2" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Final gradient 測量</span></div>
+                    <div class="checklist-item" data-id="post3" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Final MR 評估</span></div>
+                    <div class="checklist-item" data-id="post4" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">導管安全撤出</span></div>
+                    <div class="checklist-item" data-id="post5" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">止血完成</span></div>
+                    <div class="checklist-item" data-id="post6" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">術後心臟超音波安排</span></div>
+                </div>
+            </div>
+
+            <button class="reset-btn" onclick="resetChecklist()">🔄 重置所有項目</button>
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+        <button class="bottom-nav-item active" data-tab="learn"><span class="bottom-nav-icon">📖</span><span>學習</span></button>
+        <button class="bottom-nav-item" data-tab="calculator"><span class="bottom-nav-icon">🧮</span><span>計算</span></button>
+        <button class="bottom-nav-item" data-tab="quiz"><span class="bottom-nav-icon">✏️</span><span>測驗</span></button>
+        <button class="bottom-nav-item" data-tab="checklist"><span class="bottom-nav-icon">✅</span><span>檢核</span></button>
+    </nav>
+
+    <script>
+        // Tab Navigation
+        document.querySelectorAll('.nav-tab, .bottom-nav-item').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabName = this.dataset.tab;
+                document.querySelectorAll('.nav-tab, .bottom-nav-item').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll(`[data-tab="${tabName}"]`).forEach(t => t.classList.add('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(tabName + '-tab').classList.add('active');
+            });
+        });
+
+        // Section Toggle
+        function toggleSection(header) {
+            header.parentElement.classList.toggle('expanded');
+        }
+
+        // Calculator
+        function calculateSize() {
+            const input = document.getElementById('height-input').value;
+            if (!input || isNaN(input) || input < 100 || input > 220) {
+                document.getElementById('result-display').classList.remove('show');
+                document.getElementById('calc-detail').classList.remove('show');
+                document.getElementById('strategy-card').style.display = 'none';
+                return;
+            }
+            const h = parseFloat(input);
+            const rounded = Math.round(h / 10) * 10;
+            const rs = rounded / 10 + 10;
+            
+            document.getElementById('rs-value').textContent = rs;
+            document.getElementById('input-height').textContent = input;
+            document.getElementById('rounded-height').textContent = rounded;
+            document.getElementById('rounded-height-2').textContent = rounded;
+            document.getElementById('final-rs').textContent = rs;
+            
+            document.getElementById('pliable-cath').textContent = 'PTMC-' + rs;
+            document.getElementById('pliable-init').textContent = (rs - 2) + ' mm';
+            document.getElementById('calcified-cath').textContent = 'PTMC-' + (rs - 2);
+            document.getElementById('calcified-init').textContent = (rs - 4) + ' mm';
+            
+            document.getElementById('result-display').classList.add('show');
+            document.getElementById('calc-detail').classList.add('show');
+            document.getElementById('strategy-card').style.display = 'block';
+        }
+
+        // Quiz
+        const quizQuestions = [
+            { q: "PTMC 是由哪位醫師於1984年首創？", o: ["洪瑞松醫師", "井上寬治醫師 (Dr. Kanji Inoue)", "Thomas Feldman 醫師", "Kaplan 醫師"], c: 1, e: "PTMC 是由日本醫師井上寬治 (Dr. Kanji Inoue) 於1984年首創。" },
+            { q: "Hung Formula 計算 Reference Balloon Size 的公式為何？", o: ["RS = 體重(kg) / 10 + 10", "RS = 身高(cm) / 10 + 10", "RS = BSA × 15", "RS = 體重(kg) / 5 + 15"], c: 1, e: "Hung Formula: RS (mm) = 身高(cm) / 10 + 10。身高先四捨五入至最接近的 10。" },
+            { q: "Wilkins Score 多少分以下是 PTMC 的最佳候選者？", o: ["≤ 6 分", "≤ 8 分", "≤ 10 分", "≤ 12 分"], c: 1, e: "Wilkins Score ≤ 8 分：適合 PTMC 的最佳候選者。" },
+            { q: "Inoue balloon 的三段式充氣順序為何？", o: ["近端 → 遠端 → 腰部", "腰部 → 遠端 → 近端", "遠端 → 近端 → 腰部", "遠端 → 腰部 → 近端"], c: 2, e: "三段式充氣順序：遠端 → 近端 → 腰部。腰部順應性最低，確保有效擴張。" },
+            { q: "PTMC 術中給予 Heparin 的時機與劑量為何？", o: ["穿刺前 5000 U", "房間隔穿刺後 約100 U/kg", "球囊擴張前 3000 U", "術後 10000 U"], c: 1, e: "房間隔穿刺成功後，給予 Heparin 約 100 U/kg 或 9000 U。" },
+            { q: "下列何者是 PTMC 的絕對禁忌症？", o: ["Wilkins score > 8", "左心房血栓", "心房顫動", "肺動脈高壓"], c: 1, e: "絕對禁忌症：左心房血栓、中重度 MR (≥3+)、無 commissural fusion 的 MS。" },
+            { q: "「Balloon Impasse」徵象代表什麼？", o: ["球囊過度充氣", "房間隔穿刺失敗", "嚴重阻塞性瓣下病變", "導管位置錯誤"], c: 2, e: "Balloon Impasse：即使未充氣也無法通過瓣口，反映嚴重瓣下病變。" },
+            { q: "「High-pressure zone」定義為何？", o: ["球囊直徑 > 標稱直徑 2mm", "球囊直徑在標稱直徑 2mm 範圍內", "球囊直徑 < 標稱直徑 4mm", "球囊直徑等於標稱直徑"], c: 1, e: "High-pressure zone：球囊直徑在標稱直徑 2mm 範圍內（壓力急遽上升）。" },
+            { q: "PTMC 手術成功定義，下列何者正確？", o: ["MVA增加>30%且無MR", "MVA增加>50%或達到>1.5cm²，無顯著MR惡化", "跨瓣壓差降低20%", "LA壓力降低10mmHg"], c: 1, e: "成功定義：MVA增加>50%或達到>1.5cm²、LA壓力下降、跨瓣壓差降低、MR≤2+。" },
+            { q: "「彈跳法 (Bounce Method)」何時適用？", o: ["瓣口極小時", "瓣膜嚴重鈣化時", "穿刺點過高或角度過陡時", "左心房血栓存在時"], c: 2, e: "彈跳法適用於穿刺點過高或角度過銳時，順時針旋轉導管彈跳於後壁再穿越。" },
+            { q: "Accordion Maneuver 的目的為何？", o: ["確認導管已進入左心房", "確認球囊未纏繞於乳頭肌腱索間", "測量跨瓣壓差", "評估MR程度"], c: 1, e: "Accordion Maneuver：前後移動球囊2-3次，確認未纏繞於腱索間。" },
+            { q: "二尖瓣狹窄「重度」的瓣膜面積為何？", o: ["> 2.0 cm²", "1.5-2.0 cm²", "1.0-1.5 cm²", "< 1.0 cm²"], c: 3, e: "嚴重度分級：輕度>1.5cm²、中度1.0-1.5cm²、重度<1.0cm²。" }
+        ];
+
+        let currentQ = 0, score = 0, answered = false;
+
+        function loadQuestion() {
+            const q = quizQuestions[currentQ];
+            document.getElementById('current-q').textContent = currentQ + 1;
+            document.getElementById('total-q').textContent = quizQuestions.length;
+            document.getElementById('quiz-progress-fill').style.width = ((currentQ + 1) / quizQuestions.length * 100) + '%';
+            document.getElementById('quiz-question').textContent = q.q;
+            
+            const optionsDiv = document.getElementById('quiz-options');
+            optionsDiv.innerHTML = '';
+            q.o.forEach((opt, i) => {
+                const div = document.createElement('div');
+                div.className = 'quiz-option';
+                div.innerHTML = `<div class="option-letter">${String.fromCharCode(65 + i)}</div><div class="option-text">${opt}</div>`;
+                div.onclick = () => selectAnswer(i);
+                optionsDiv.appendChild(div);
+            });
+            
+            document.getElementById('quiz-explanation').classList.remove('show');
+            document.getElementById('quiz-btn').disabled = true;
+            document.getElementById('quiz-btn').textContent = currentQ < quizQuestions.length - 1 ? '下一題 →' : '查看結果 🏆';
+            answered = false;
+        }
+
+        function selectAnswer(index) {
+            if (answered) return;
+            answered = true;
+            const q = quizQuestions[currentQ];
+            const options = document.querySelectorAll('.quiz-option');
+            
+            options.forEach((opt, i) => {
+                if (i === q.c) opt.classList.add('correct');
+                else if (i === index && index !== q.c) opt.classList.add('incorrect');
+            });
+            
+            if (index === q.c) score++;
+            
+            const expTitle = document.getElementById('explanation-title');
+            expTitle.textContent = index === q.c ? '✅ 正確！' : '❌ 答錯了';
+            expTitle.className = 'explanation-title ' + (index === q.c ? 'correct' : 'incorrect');
+            document.getElementById('explanation-text').textContent = q.e;
+            document.getElementById('quiz-explanation').classList.add('show');
+            document.getElementById('quiz-btn').disabled = false;
+        }
+
+        function nextQuestion() {
+            if (currentQ < quizQuestions.length - 1) {
+                currentQ++;
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quiz-container').style.display = 'none';
+            const scoreDisplay = document.getElementById('score-display');
+            scoreDisplay.classList.add('show');
+            
+            const percent = Math.round(score / quizQuestions.length * 100);
+            document.getElementById('final-score').textContent = score;
+            document.getElementById('score-detail').textContent = '正確率：' + percent + '%';
+            
+            let msg, color;
+            if (percent >= 90) { msg = '🌟 傑出！你已精通 PTMC！'; color = 'var(--success)'; }
+            else if (percent >= 70) { msg = '👍 很好！繼續加油！'; color = 'var(--success)'; }
+            else if (percent >= 50) { msg = '📚 不錯，建議再複習一下'; color = 'var(--warning)'; }
+            else { msg = '💪 需要更多練習，再試一次！'; color = 'var(--danger)'; }
+            
+            document.getElementById('score-message').textContent = msg;
+            document.getElementById('score-circle').style.background = color;
+        }
+
+        function resetQuiz() {
+            currentQ = 0;
+            score = 0;
+            document.getElementById('quiz-container').style.display = 'block';
+            document.getElementById('score-display').classList.remove('show');
+            loadQuestion();
+        }
+
+        // Checklist
+        const checkedItems = {};
+
+        function toggleCheck(item) {
+            const id = item.dataset.id;
+            item.classList.toggle('checked');
+            checkedItems[id] = item.classList.contains('checked');
+            item.querySelector('.check-box').textContent = checkedItems[id] ? '✓' : '';
+            updateChecklistProgress();
+        }
+
+        function updateChecklistProgress() {
+            const total = 25;
+            const checked = Object.values(checkedItems).filter(Boolean).length;
+            const percent = Math.round(checked / total * 100);
+            
+            document.getElementById('checklist-progress-fill').style.width = percent + '%';
+            document.getElementById('checklist-percent').textContent = percent + '%';
+            document.getElementById('checklist-count').textContent = `已完成 ${checked} / ${total} 項目`;
+            
+            // Update section counts
+            ['pre', 'tsp', 'dil', 'post'].forEach(section => {
+                const items = document.querySelectorAll(`#${section}-items .checklist-item`);
+                const sectionChecked = Array.from(items).filter(i => i.classList.contains('checked')).length;
+                document.querySelector(`[data-section="${section}"]`).textContent = `${sectionChecked}/${items.length}`;
+            });
+        }
+
+        function resetChecklist() {
+            document.querySelectorAll('.checklist-item').forEach(item => {
+                item.classList.remove('checked');
+                item.querySelector('.check-box').textContent = '';
+            });
+            Object.keys(checkedItems).forEach(k => delete checkedItems[k]);
+            updateChecklistProgress();
+        }
+
+        // Initialize
+        loadQuestion();
+    </script>
+</body>
+</html>
