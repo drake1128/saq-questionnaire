@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>心因性休克教學 Cardiogenic Shock</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Noto Sans TC', sans-serif; }
+    body { margin: 0; background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #1e293b; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #ef4444, #dc2626); border-radius: 3px; }
+    .fade-in { animation: fadeIn 0.4s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes heartbeat { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.15); } 30% { transform: scale(1); } }
+    .heartbeat { animation: heartbeat 1.5s infinite; }
+    .glass-card { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .gradient-text { background: linear-gradient(135deg, #ef4444, #f97316, #eab308); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState } = React;
+
+    // Icons
+    const Icons = {
+      Heart: ({className="w-6 h-6"}) => <svg className={className} fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>,
+      ChevronDown: ({className="w-5 h-5"}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/></svg>,
+      Check: ({className="w-5 h-5"}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
+      X: ({className="w-5 h-5"}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
+      Menu: ({className="w-6 h-6"}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16"/></svg>,
+      Close: ({className="w-6 h-6"}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>,
+    };
+
+    // Data
+    const scaiStages = [
+      { stage: 'A', name: 'At Risk', nameZh: '風險期', color: 'from-green-500 to-emerald-600', lactate: '≤2', mortality: '~5%', criteria: ['有AMI或嚴重心衰', 'BP正常', '灌流正常'] },
+      { stage: 'B', name: 'Beginning', nameZh: '初期休克', color: 'from-yellow-500 to-amber-600', lactate: '≤2', mortality: '~15%', criteria: ['SBP<90或HR>100', '無灌流不足', 'Lactate≤2'] },
+      { stage: 'C', name: 'Classic', nameZh: '典型休克', color: 'from-orange-500 to-red-500', lactate: '>2', mortality: '~40%', criteria: ['SBP<90>30分', '需升壓劑', 'Lactate>2', 'CI<2.2'] },
+      { stage: 'D', name: 'Deteriorating', nameZh: '惡化期', color: 'from-red-500 to-red-700', lactate: '持續>2', mortality: '~50%', criteria: ['治療無效', 'Lactate上升', '需增加MCS'] },
+      { stage: 'E', name: 'Extremis', nameZh: '極端期', color: 'from-red-700 to-red-900', lactate: '>8', mortality: '>70%', criteria: ['CPR中', 'Lactate>8', '多器官衰竭'] }
+    ];
+
+    const mcsDevices = [
+      { name: 'IABP', flow: '0.5-1 L/min', evidence: 'IABP-SHOCK II: 無死亡率差異', rec: '不建議常規', color: 'from-blue-500 to-blue-600' },
+      { name: 'Impella', flow: '2.5-5.5 L/min', evidence: 'DanGer Shock: 特定族群HR 0.74', rec: 'Class IIa特定族群', color: 'from-orange-500 to-red-500' },
+      { name: 'VA-ECMO', flow: '~6 L/min', evidence: 'ECLS-SHOCK: 無死亡率差異', rec: '不建議常規', color: 'from-purple-500 to-violet-600' }
+    ];
+
+    const keyTrials = [
+      { name: 'SHOCK', year: 1999, msg: '早期血管重建改善長期存活', color: 'border-blue-500' },
+      { name: 'IABP-SHOCK II', year: 2012, msg: 'IABP不改善死亡率', color: 'border-amber-500' },
+      { name: 'CULPRIT-SHOCK', year: 2017, msg: '僅罪犯血管PCI較優', color: 'border-green-500' },
+      { name: 'ECLS-SHOCK', year: 2023, msg: 'VA-ECMO不改善死亡率', color: 'border-purple-500' },
+      { name: 'DanGer Shock', year: 2024, msg: 'Impella在特定族群有效', color: 'border-red-500' }
+    ];
+
+    const quizData = [
+      { q: "心因性休克SHARC定義的血壓標準是？", opts: ["SBP<100 >15分", "SBP<90 >30分 或需升壓劑", "SBP<80 >60分", "MAP<65 >20分"], ans: 1, exp: "SHARC定義需要SBP<90 mmHg持續>30分鐘，或需要升壓劑/MCS維持SBP≥90。" },
+      { q: "SCAI Stage C的乳酸標準是？", opts: ["≤2 mmol/L", ">2 mmol/L", ">5 mmol/L", ">8 mmol/L"], ans: 1, exp: "Stage C (Classic)定義乳酸>2 mmol/L。Stage E (Extremis)才需>8 mmol/L。" },
+      { q: "目前心因性休克病因趨勢是？", opts: ["AMI相關佔>70%", "非AMI相關已超過AMI相關", "兩者各約50%", "次發性最常見"], ans: 1, exp: "由於AMI預防和治療進步，非AMI相關CS（如心衰竭）現已超過AMI相關。" },
+      { q: "IABP-SHOCK II試驗結果建議？", opts: ["強烈建議常規使用", "建議使用", "不建議常規使用", "絕對禁忌"], ans: 2, exp: "IABP-SHOCK II顯示IABP不改善死亡率，不建議常規使用於AMI-CS。" },
+      { q: "DanGer Shock試驗Impella有效的族群是？", opts: ["所有CS患者", "心衰竭相關CS", "STEMI+CS+LV failure+無腦損傷風險", "心跳停止後CS"], ans: 2, exp: "DanGer Shock顯示Impella僅在STEMI+CS+LV failure+無腦損傷風險的特定族群有效(HR 0.74)，約佔所有CS的10%。" },
+      { q: "心因性休克首選升壓劑是？", opts: ["Dopamine", "Epinephrine", "Norepinephrine", "Phenylephrine"], ans: 2, exp: "Norepinephrine是首選，相較Dopamine較少心律不整，相較Epinephrine較少代謝異常。" },
+      { q: "CULPRIT-SHOCK建議多血管疾病AMI-CS的PCI策略是？", opts: ["立即多血管PCI", "僅罪犯血管PCI後分階段", "僅藥物治療", "先CABG"], ans: 1, exp: "CULPRIT-SHOCK顯示僅罪犯血管PCI優於立即多血管PCI（死亡+RRT 45.9% vs 55.4%）。" },
+      { q: "心因性休克30天死亡率約為？", opts: ["10-20%", "20-30%", "40-50%", "60-70%"], ans: 2, exp: "儘管治療進步，心因性休克30天死亡率仍維持在40-50%。" }
+    ];
+
+    // Components
+    const Card = ({ title, children, gradient = 'from-slate-600 to-slate-700', className = '' }) => (
+      <div className={`glass-card rounded-2xl overflow-hidden ${className}`}>
+        {title && <div className={`bg-gradient-to-r ${gradient} px-5 py-4 border-b border-white/10`}><h3 className="font-bold text-white">{title}</h3></div>}
+        <div className="p-5">{children}</div>
+      </div>
+    );
+
+    const Expandable = ({ title, children, defaultOpen = false, gradient = 'from-slate-600 to-slate-700' }) => {
+      const [open, setOpen] = useState(defaultOpen);
+      return (
+        <div className="glass-card rounded-2xl overflow-hidden mb-4">
+          <button onClick={() => setOpen(!open)} className={`w-full bg-gradient-to-r ${gradient} px-5 py-4 flex items-center justify-between`}>
+            <span className="font-bold text-white">{title}</span>
+            <Icons.ChevronDown className={`w-5 h-5 text-white/60 transition-transform ${open ? 'rotate-180' : ''}`} />
+          </button>
+          {open && <div className="p-5 fade-in border-t border-white/10">{children}</div>}
+        </div>
+      );
+    };
+
+    // Pages
+    const HomePage = ({ setSection }) => (
+      <div className="fade-in space-y-6">
+        <div className="glass-card rounded-3xl p-8 bg-gradient-to-br from-red-500/20 via-orange-500/10 to-transparent">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="text-red-500 p-3 bg-red-500/10 rounded-full"><Icons.Heart className="w-12 h-12 heartbeat" /></div>
+            <div>
+              <h1 className="text-3xl font-black text-white">心因性休克</h1>
+              <p className="text-gray-400">Cardiogenic Shock - NEJM 2026 Review</p>
+            </div>
+          </div>
+          <p className="text-gray-300 text-lg">儘管定義、分期和治療進步，心因性休克仍是心臟科最具挑戰的急症，<span className="text-red-400 font-bold">30天死亡率維持在40-50%</span>。</p>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[{ l: '30天死亡率', v: '40-50%', c: 'from-red-500 to-rose-600' }, { l: '佔比較高', v: 'HF相關', c: 'from-blue-500 to-indigo-600' }, { l: 'RCT支持', v: 'Impella*', c: 'from-orange-500 to-amber-600' }, { l: '不建議常規', v: 'IABP/ECMO', c: 'from-purple-500 to-violet-600' }].map((s, i) => (
+            <div key={i} className="glass-card rounded-2xl p-4 text-center">
+              <div className={`text-2xl font-black bg-gradient-to-r ${s.c} bg-clip-text text-transparent`}>{s.v}</div>
+              <div className="text-xs text-gray-400 mt-1">{s.l}</div>
+            </div>
+          ))}
+        </div>
+        <div className="grid md:grid-cols-2 gap-4">
+          {[{ s: 'staging', t: 'SCAI分期', d: '五階段休克分期', c: 'from-orange-500/20 to-red-500/10' }, { s: 'treatment', t: '治療策略', d: '藥物與介入', c: 'from-green-500/20 to-emerald-500/10' }, { s: 'mcs', t: '機械循環支持', d: 'IABP、Impella、ECMO', c: 'from-purple-500/20 to-violet-500/10' }, { s: 'quiz', t: '自我測驗', d: '8題快速複習', c: 'from-amber-500/20 to-orange-500/10' }].map(item => (
+            <button key={item.s} onClick={() => setSection(item.s)} className={`glass-card rounded-2xl p-6 text-left hover:scale-[1.02] transition-transform bg-gradient-to-br ${item.c}`}>
+              <h3 className="font-bold text-white text-lg">{item.t}</h3>
+              <p className="text-gray-400 text-sm mt-1">{item.d}</p>
+            </button>
+          ))}
+        </div>
+        <Card title="重點摘要 Key Points" gradient="from-red-600 to-rose-700">
+          <ul className="space-y-2">
+            {['心因性休克30天死亡率約40-50%', 'AMI相關休克需立即血管重建', '多血管疾病先處理罪犯血管', 'MCS僅特定族群可降低死亡率', '仍需更多研究解決高死亡率'].map((p, i) => (
+              <li key={i} className="flex items-start gap-2 text-gray-300"><Icons.Check className="w-5 h-5 text-red-400 flex-shrink-0" />{p}</li>
+            ))}
+          </ul>
+        </Card>
+      </div>
+    );
+
+    const StagingPage = () => {
+      const [sel, setSel] = useState(null);
+      return (
+        <div className="fade-in space-y-6">
+          <h2 className="text-2xl font-black text-white">SCAI休克分期</h2>
+          <Card title="分期金字塔">
+            <div className="flex flex-col items-center space-y-2">
+              {scaiStages.slice().reverse().map((s, i) => (
+                <button key={s.stage} onClick={() => setSel(sel === s.stage ? null : s.stage)} style={{ width: `${100 - (4 - i) * 15}%` }} className={`py-3 px-4 rounded-lg bg-gradient-to-r ${s.color} ${sel === s.stage ? 'ring-2 ring-white' : ''}`}>
+                  <span className="text-white font-black text-lg">{s.stage}</span>
+                  <span className="text-white/80 ml-2 hidden sm:inline">{s.name}</span>
+                </button>
+              ))}
+            </div>
+          </Card>
+          {sel && scaiStages.filter(s => s.stage === sel).map(s => (
+            <div key={s.stage} className="fade-in glass-card rounded-2xl overflow-hidden">
+              <div className={`bg-gradient-to-r ${s.color} p-6`}>
+                <div className="flex items-center gap-4">
+                  <div className="text-5xl font-black text-white/30">{s.stage}</div>
+                  <div><h3 className="text-2xl font-bold text-white">{s.name}</h3><p className="text-white/80">{s.nameZh}</p></div>
+                </div>
+              </div>
+              <div className="p-6 space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white/5 rounded-xl p-4"><h4 className="text-white font-bold mb-2">診斷標準</h4><ul>{s.criteria.map((c, i) => <li key={i} className="text-sm text-gray-300">• {c}</li>)}</ul></div>
+                  <div className="bg-white/5 rounded-xl p-4"><h4 className="text-white font-bold mb-2">指標</h4><p className="text-gray-400">乳酸: <span className="text-white">{s.lactate} mmol/L</span></p><p className="text-gray-400">死亡率: <span className="text-red-400 font-bold">{s.mortality}</span></p></div>
+                </div>
+              </div>
+            </div>
+          ))}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+            {scaiStages.map(s => (
+              <button key={s.stage} onClick={() => setSel(s.stage === sel ? null : s.stage)} className={`glass-card rounded-xl p-3 text-left ${sel === s.stage ? 'ring-2 ring-red-500' : ''}`}>
+                <div className="flex items-center gap-2 mb-1">
+                  <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${s.color} flex items-center justify-center text-white font-black`}>{s.stage}</div>
+                  <span className="text-white font-bold text-sm">{s.name}</span>
+                </div>
+                <p className="text-xs text-gray-400">乳酸: {s.lactate}</p>
+                <p className="text-xs text-red-400">{s.mortality}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+      );
+    };
+
+    const TreatmentPage = () => (
+      <div className="fade-in space-y-6">
+        <h2 className="text-2xl font-black text-white">治療策略</h2>
+        <Card title="照護系統" gradient="from-blue-600 to-indigo-700">
+          <p className="text-gray-300 mb-4">心因性休克患者應轉至具備完整MCS能力、心臟介入手術、心臟外科的專業中心（年案例量≥107例）。</p>
+          <div className="grid grid-cols-2 gap-2">{['多專科休克團隊', '心臟加護病房', '可升級MCS', '24/7心導管室'].map(i => <div key={i} className="bg-white/5 rounded-lg p-2 text-sm text-gray-300 flex items-center gap-2"><Icons.Check className="w-4 h-4 text-blue-400" />{i}</div>)}</div>
+        </Card>
+        <Expandable title="升壓劑 Vasopressors" gradient="from-red-600 to-rose-700" defaultOpen>
+          <div className="space-y-3">
+            {[{ n: 'Norepinephrine (首選)', d: '0.1-2 μg/kg/min', m: 'α1>β1', note: '較少心律不整/代謝異常' }, { n: 'Vasopressin', d: '0.01-0.04 U/min', m: 'V1R', note: '輔助用藥' }, { n: 'Epinephrine', d: '0.01-0.5 μg/kg/min', m: 'α1,β1,β2', note: '增加心率和乳酸' }].map(med => (
+              <div key={med.n} className="bg-white/5 rounded-xl p-4">
+                <div className="flex justify-between"><span className="font-bold text-white">{med.n}</span><span className="text-xs text-gray-400">{med.d}</span></div>
+                <p className="text-sm text-gray-400">{med.m}</p>
+                <p className="text-xs text-amber-400 mt-1">💡 {med.note}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 bg-green-500/10 border border-green-500/30 rounded-xl p-4 text-green-300 text-sm">
+            <strong>Norepinephrine</strong>是首選升壓劑。目標MAP &gt;65 mmHg。
+          </div>
+        </Expandable>
+        <Expandable title="強心劑 Inotropes" gradient="from-orange-600 to-amber-700">
+          <div className="space-y-3">
+            {[{ n: 'Dobutamine', d: '2-20 μg/kg/min', m: 'β1>β2', note: '常用首選' }, { n: 'Milrinone', d: '0.375-0.75 μg/kg/min', m: 'PDE3抑制劑', note: '不經β受體' }, { n: 'Levosimendan', d: '0.1-0.2 μg/kg/min', m: '鈣敏化劑', note: '不增加心肌耗氧' }].map(med => (
+              <div key={med.n} className="bg-white/5 rounded-xl p-4">
+                <div className="flex justify-between"><span className="font-bold text-white">{med.n}</span><span className="text-xs text-gray-400">{med.d}</span></div>
+                <p className="text-sm text-gray-400">{med.m}</p>
+                <p className="text-xs text-amber-400 mt-1">💡 {med.note}</p>
+              </div>
+            ))}
+          </div>
+        </Expandable>
+        <Card title="血管重建策略" gradient="from-green-600 to-emerald-700">
+          <p className="text-gray-300 mb-4"><strong>SHOCK試驗：</strong>早期血管重建可改善長期存活。</p>
+          <div className="bg-white/5 rounded-xl p-4 mb-4">
+            <h4 className="font-bold text-green-400 mb-2">CULPRIT-SHOCK建議</h4>
+            <p className="text-gray-300 text-sm mb-3">多血管疾病患者，建議<span className="text-white font-semibold">僅罪犯血管PCI</span>，穩定後分階段血管重建。</p>
+            <div className="grid grid-cols-2 gap-4 text-center">
+              <div className="bg-green-500/20 rounded-lg p-3"><div className="text-2xl font-black text-green-400">45.9%</div><div className="text-xs text-gray-400">僅罪犯血管</div></div>
+              <div className="bg-red-500/20 rounded-lg p-3"><div className="text-2xl font-black text-red-400">55.4%</div><div className="text-xs text-gray-400">立即多血管</div></div>
+            </div>
+          </div>
+        </Card>
+      </div>
+    );
+
+    const MCSPage = () => (
+      <div className="fade-in space-y-6">
+        <h2 className="text-2xl font-black text-white">機械循環支持 MCS</h2>
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-amber-200 text-sm">
+          <strong>重要：</strong>約50-60%的AMI-CS患者不需MCS即可存活。MCS在特定族群有生存優勢，但可能增加併發症。<span className="text-white font-semibold">患者選擇是關鍵！</span>
+        </div>
+        <div className="space-y-4">
+          {mcsDevices.map(d => (
+            <div key={d.name} className="glass-card rounded-2xl overflow-hidden">
+              <div className={`bg-gradient-to-r ${d.color} p-4`}>
+                <h3 className="text-xl font-black text-white">{d.name}</h3>
+                <p className="text-white/70 text-sm">流量: {d.flow}</p>
+              </div>
+              <div className="p-4">
+                <p className="text-amber-300 text-sm mb-2">{d.evidence}</p>
+                <p className="text-gray-400 text-sm">建議：<span className="text-white">{d.rec}</span></p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <Card title="DanGer Shock納入條件" gradient="from-red-600 to-rose-700">
+          <div className="space-y-2">
+            {['STEMI <36小時', 'SBP<100或需升壓劑', 'Lactate>2.5或SvO2<55%', 'LVEF<45%', '排除CPR>30分/神經預後不良'].map((c, i) => (
+              <div key={i} className="flex items-center gap-3 bg-white/5 rounded-lg p-3">
+                <div className="w-6 h-6 rounded-full bg-red-500/30 text-red-400 flex items-center justify-center text-sm font-bold">{i + 1}</div>
+                <span className="text-gray-300 text-sm">{c}</span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-red-200 text-sm">
+            僅約5%的所有CS和32%的STEMI-CS符合DanGer Shock條件。
+          </div>
+        </Card>
+        <Card title="證據摘要" gradient="from-purple-600 to-violet-700">
+          <div className="space-y-3">
+            <div className="bg-green-500/10 rounded-lg p-3"><span className="text-green-400 font-bold">✓ Impella (DanGer Shock)</span><p className="text-gray-300 text-sm">特定族群180天HR 0.74</p></div>
+            <div className="bg-amber-500/10 rounded-lg p-3"><span className="text-amber-400 font-bold">△ IABP / VA-ECMO</span><p className="text-gray-300 text-sm">RCT未顯示死亡率改善</p></div>
+          </div>
+        </Card>
+      </div>
+    );
+
+    const TrialsPage = () => (
+      <div className="fade-in space-y-6">
+        <h2 className="text-2xl font-black text-white">重要臨床試驗</h2>
+        <div className="space-y-4">
+          {keyTrials.map(t => (
+            <div key={t.name} className={`glass-card rounded-2xl p-5 border-l-4 ${t.color}`}>
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-xl font-black text-white">{t.name}</h3>
+                <span className="text-sm text-gray-400">{t.year}</span>
+              </div>
+              <p className="text-gray-300">{t.msg}</p>
+            </div>
+          ))}
+        </div>
+        <Card title="試驗帶來的關鍵訊息" gradient="from-amber-600 to-orange-700">
+          <div className="space-y-2">
+            {[{ t: 'SHOCK', m: '早期血管重建→強烈建議' }, { t: 'IABP-SHOCK II', m: 'IABP無優勢→不建議常規' }, { t: 'CULPRIT-SHOCK', m: '僅罪犯血管較優→分階段' }, { t: 'ECLS-SHOCK', m: 'VA-ECMO無優勢→不建議常規' }, { t: 'DanGer Shock', m: 'Impella特定族群有效→Class IIa' }].map(i => (
+              <div key={i.t} className="flex items-start gap-3"><span className="font-bold text-amber-400 text-sm w-28 flex-shrink-0">{i.t}</span><span className="text-gray-300 text-sm">{i.m}</span></div>
+            ))}
+          </div>
+        </Card>
+      </div>
+    );
+
+    const QuizPage = () => {
+      const [cur, setCur] = useState(0);
+      const [sel, setSel] = useState(null);
+      const [show, setShow] = useState(false);
+      const [score, setScore] = useState(0);
+      const [done, setDone] = useState(false);
+
+      const answer = (i) => { if (show) return; setSel(i); setShow(true); if (i === quizData[cur].ans) setScore(score + 1); };
+      const next = () => { if (cur < quizData.length - 1) { setCur(cur + 1); setSel(null); setShow(false); } else setDone(true); };
+      const reset = () => { setCur(0); setSel(null); setShow(false); setScore(0); setDone(false); };
+
+      if (done) {
+        const pct = Math.round((score / quizData.length) * 100);
+        return (
+          <div className="fade-in glass-card rounded-3xl p-8 text-center">
+            <div className="text-6xl mb-4">{pct >= 70 ? '🎉' : pct >= 50 ? '📚' : '💪'}</div>
+            <h2 className="text-3xl font-black text-white mb-2">測驗完成！</h2>
+            <div className="text-5xl font-black gradient-text mb-4">{score} / {quizData.length}</div>
+            <p className="text-gray-400 mb-6">正確率: {pct}%</p>
+            <button onClick={reset} className="px-8 py-3 bg-gradient-to-r from-red-500 to-orange-500 rounded-xl text-white font-bold">重新測驗</button>
+          </div>
+        );
+      }
+
+      const q = quizData[cur];
+      return (
+        <div className="fade-in space-y-6">
+          <div className="flex items-center justify-between"><h2 className="text-2xl font-black text-white">自我測驗</h2><span className="text-gray-400">{cur + 1}/{quizData.length}</span></div>
+          <div className="h-2 bg-white/10 rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-red-500 to-orange-500 rounded-full" style={{ width: `${((cur + 1) / quizData.length) * 100}%` }} /></div>
+          <div className="glass-card rounded-2xl p-6">
+            <h3 className="text-lg font-bold text-white mb-6">{q.q}</h3>
+            <div className="space-y-3">
+              {q.opts.map((opt, i) => {
+                let style = 'bg-white/5 hover:bg-white/10 text-gray-300';
+                if (show) { if (i === q.ans) style = 'bg-green-500/30 border-green-500 text-green-300'; else if (i === sel) style = 'bg-red-500/30 border-red-500 text-red-300'; }
+                return <button key={i} onClick={() => answer(i)} className={`w-full p-4 rounded-xl border border-transparent text-left ${style}`}><div className="flex items-start gap-3"><span className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-sm font-bold">{String.fromCharCode(65 + i)}</span><span>{opt}</span></div></button>;
+              })}
+            </div>
+          </div>
+          {show && (
+            <div className={`fade-in glass-card rounded-2xl p-6 border ${sel === q.ans ? 'border-green-500/50 bg-green-500/10' : 'border-red-500/50 bg-red-500/10'}`}>
+              <div className="flex items-center gap-2 mb-2">{sel === q.ans ? <><Icons.Check className="w-5 h-5 text-green-400" /><span className="font-bold text-green-400">正確！</span></> : <><Icons.X className="w-5 h-5 text-red-400" /><span className="font-bold text-red-400">不正確</span></>}</div>
+              <p className="text-gray-300 text-sm">{q.exp}</p>
+            </div>
+          )}
+          {show && <button onClick={next} className="w-full py-4 bg-gradient-to-r from-red-500 to-orange-500 rounded-xl text-white font-bold">{cur < quizData.length - 1 ? '下一題' : '查看結果'}</button>}
+        </div>
+      );
+    };
+
+    // Main App
+    const App = () => {
+      const [section, setSection] = useState('home');
+      const [menuOpen, setMenuOpen] = useState(false);
+      const sections = [{ id: 'home', name: '首頁' }, { id: 'staging', name: 'SCAI分期' }, { id: 'treatment', name: '治療策略' }, { id: 'mcs', name: '機械循環支持' }, { id: 'trials', name: '重要試驗' }, { id: 'quiz', name: '測驗' }];
+
+      return (
+        <div className="min-h-screen">
+          {/* Header */}
+          <header className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-white/10">
+            <div className="flex items-center justify-between px-4 py-3 max-w-4xl mx-auto">
+              <div className="flex items-center gap-2">
+                <div className="text-red-500"><Icons.Heart className="w-7 h-7 heartbeat" /></div>
+                <span className="font-bold text-white">心因性休克</span>
+              </div>
+              <button onClick={() => setMenuOpen(!menuOpen)} className="p-2 text-white hover:bg-white/10 rounded-lg md:hidden">{menuOpen ? <Icons.Close /> : <Icons.Menu />}</button>
+              <nav className="hidden md:flex gap-1">
+                {sections.map(s => <button key={s.id} onClick={() => setSection(s.id)} className={`px-3 py-2 rounded-lg text-sm ${section === s.id ? 'bg-red-500/30 text-white' : 'text-gray-400 hover:text-white'}`}>{s.name}</button>)}
+              </nav>
+            </div>
+          </header>
+
+          {/* Mobile Menu */}
+          {menuOpen && (
+            <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden" onClick={() => setMenuOpen(false)}>
+              <div className="absolute top-16 left-0 right-0 glass-card border-b border-white/10 p-4" onClick={e => e.stopPropagation()}>
+                {sections.map(s => <button key={s.id} onClick={() => { setSection(s.id); setMenuOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg ${section === s.id ? 'bg-red-500/30 text-white' : 'text-gray-400'}`}>{s.name}</button>)}
+              </div>
+            </div>
+          )}
+
+          {/* Content */}
+          <main className="pt-20 pb-8 px-4 max-w-4xl mx-auto">
+            {section === 'home' && <HomePage setSection={setSection} />}
+            {section === 'staging' && <StagingPage />}
+            {section === 'treatment' && <TreatmentPage />}
+            {section === 'mcs' && <MCSPage />}
+            {section === 'trials' && <TrialsPage />}
+            {section === 'quiz' && <QuizPage />}
+          </main>
+
+          {/* Footer */}
+          <footer className="text-center py-6 text-gray-500 text-xs">
+            Based on NEJM 2026 Review: Cardiogenic Shock (Thiele & Hassager)
+          </footer>
+        </div>
+      );
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
