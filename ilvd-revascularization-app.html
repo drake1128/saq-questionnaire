@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>缺血性左心室功能不全血管重建術 | iLVD Revascularization</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0f1c;
+            --bg-secondary: #111827;
+            --bg-card: #1a2234;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-teal: #14b8a6;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --accent-violet: #8b5cf6;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #334155;
+            --success: #22c55e;
+            --error: #ef4444;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; line-height: 1.6; }
+        #root { min-height: 100vh; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fadeIn { animation: fadeIn 0.4s ease-out forwards; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const quizQuestions = [
+            { id: 1, q: "關於 iLVD 的流行病學，何者正確？", options: ["CAD 佔 HF 病因約 20-30%", "缺血性比非缺血性預後較好", "40-60% HF 患者有 CAD", "多數 HF 患者接受過冠脈攝影"], answer: 2, explain: "40-60% HF 患者有 CAD，但僅 10-20% 接受冠脈攝影。缺血性病因預後更差。" },
+            { id: 2, q: "心肌冬眠 (Hibernation) 的特徵？", options: ["缺血後立即完全恢復", "持續的灌流-收縮不匹配，長期下調維持細胞存活", "不可逆的心肌壞死", "僅發生在反應性充血期間"], answer: 1, explain: "冬眠是持續性灌流-收縮不匹配，心肌功能下調以維持存活，除非移除缺血基質否則不恢復。" },
+            { id: 3, q: "STICHES 長期追蹤結果顯示？", options: ["CABG 在所有年齡層有相同益處", "9.8 年時 CABG 死亡率較高", "CABG 預期壽命增加約 18 個月", "有心絞痛者從 CABG 獲益最多"], answer: 2, explain: "9.8 年時 CABG 死亡率較低 (HR 0.84, P=0.02)，預期壽命增加 18 個月，但益處僅限於 <60 歲患者。" },
+            { id: 4, q: "REVIVED-BCIS2 的主要結果？", options: ["PCI 顯著降低全因死亡率", "PCI 組 LVEF 明顯改善", "PCI 和藥物治療組主要終點相似", "PCI 長期生活品質持續較佳"], answer: 2, explain: "3.4 年主要終點（全因死亡或 HF 住院）兩組相似 (37% vs 38%, HR 0.99)，生活品質改善僅維持至 6 個月。" },
+            { id: 5, q: "存活性檢測在 iLVD 血管重建決策中的角色？", options: ["存活性與血管重建益處有明確關聯", "存活性範圍越大預後越好", "當代證據不支持用存活性決定是否血管重建以改善預後", "PET 引導評估可改善 1 年結果"], answer: 2, explain: "STICH 和 REVIVED 存活性研究均顯示存活性與治療效果無交互作用。不良事件與疤痕範圍相關。" },
+            { id: 6, q: "GDMT 四大支柱不包括？", options: ["RAAS 抑制劑", "SGLT2 抑制劑", "鈣離子通道阻斷劑", "MRA"], answer: 2, explain: "四大支柱：RAAS 抑制劑（ARNi 優先）、β 阻斷劑、MRA、SGLT2i。50 歲時預期壽命增加 8 年。" },
+            { id: 7, q: "關於 iLVD 患者的 ICD 植入，REVIVED 分析顯示？", options: ["血管重建後應等待 3 個月再評估", "PCI 顯著降低猝死風險可延遲 ICD", "全因死亡或猝死率達 40% 且不受 PCI 影響", "僅有 VT 病史者需要 ICD"], answer: 2, explain: "REVIVED 顯示全因死亡或猝死率 40% 且不受 PCI 影響，疤痕比缺血更重要。不應因血管重建延遲裝置植入。" },
+            { id: 8, q: "右心導管在高風險 PCI 中可提供的資訊？", options: ["僅有 PA 壓力", "心臟指數、LV 充盈壓、右心功能、PVR", "僅評估是否需 MCS", "僅術後監測使用"], answer: 1, explain: "右心導管提供心臟指數、LV 充盈壓、右心功能和 PVR，對了解心室儲備和程序風險很重要。" },
+            { id: 9, q: "關於 MCS 裝置，何者正確？", options: ["IABP 可顯著增加心輸出量", "VA-ECMO 是高風險 PCI 首選擇期支持", "pLVAD 顯著增加心輸出量但冠脈灌注效果不確定", "BCIS-1 顯示擇期 IABP 降低 MACE"], answer: 2, explain: "IABP 對心輸出量影響可忽略。pLVAD 顯著增加心輸出量但冠脈灌注效果不確定。BCIS-1 顯示擇期 IABP 未降低 MACE。" },
+            { id: 10, q: "穩定冠心症合併 LVEF ≤35% 的血管重建建議？", options: ["所有患者優先 PCI", "CABG + 藥物優於單純藥物以改善存活 (Class I)", "血管重建不能改善預後", "PCI 優於 CABG 以改善存活"], answer: 1, explain: "ESC 2024 和 AHA 2023 建議 CABG + 藥物優於單純藥物以改善長期存活 (Class I, Level B)。高手術風險時 PCI 可作為替代。" },
+            { id: 11, q: "BCIS 心肌危害評分在 iLVD 診斷中的意義？", options: ["評分 ≥6 表示低缺血風險", "評分 ≥6 對 LVEF <35% 診斷缺血性病因有高特異性", "評分越低缺血性病因可能性越高", "僅用於評估 PCI 風險"], answer: 1, explain: "BCIS-JS ≥6（至少近端 LAD 或多血管疾病）對 LVEF <35% 診斷缺血性病因有高特異性。" },
+            { id: 12, q: "CHIP-BCIS3 和 PROTECT IV 試驗的目的？", options: ["比較 CABG 和 PCI", "評估擇期 pLVAD 在高風險 PCI 中的角色", "結果已顯示擇期 MCS 有顯著益處", "僅納入 LVEF >40% 患者"], answer: 1, explain: "CHIP-BCIS3 (300 患者) 和 PROTECT IV (1252 患者) 評估擇期 pLVAD 在高風險複雜 PCI 中的角色，預計 2026-2027 年報告。" },
+            { id: 13, q: "高風險 PCI 術前準備不包括？", options: ["麻醉評估和去顫貼片放置", "中央靜脈通路建立", "僅在休克時才通知血庫", "MCS 設備準備和 ICU 床位預約"], answer: 2, explain: "術前準備應包括麻醉評估、去顫貼片、中央靜脈通路、血庫通知、MCS 準備、ICU 床位預約。血庫應術前通知。" },
+            { id: 14, q: "STICH 和 REVIVED 患者特徵差異？", options: ["REVIVED 患者較年輕 (60 vs 70 歲)", "STICH ICD 植入率較高 (21% vs 2%)", "REVIVED 年齡較大、ICD 率較高，反映當代治療", "兩試驗 LVEF 差異很大"], answer: 2, explain: "REVIVED 患者年長 (70±9 vs 60±9 歲)、ICD 率高 (21% vs 2%)，反映當代治療演進。LVEF 相似 (~27%)。" },
+            { id: 15, q: "心肌驚嚇、冬眠和梗塞的臨床意義？", options: ["三種狀態不會在單一患者共存", "所有嚴重 CAD 都會發展為 LV 功能不全", "三種狀態常共存，可能解釋對血管重建的不同反應", "冬眠心肌即使血管重建也無法恢復"], answer: 2, explain: "三種狀態常在單一患者心肌中共存，可能解釋 ACS 和 CCS 對血管重建的不同反應。" }
+        ];
+
+        const Card = ({ children, style = {} }) => (
+            <div style={{ background: 'var(--bg-card)', borderRadius: '16px', padding: '20px', border: '1px solid var(--border-color)', marginBottom: '16px', ...style }}>{children}</div>
+        );
+
+        const StatCard = ({ label, value, color }) => (
+            <div style={{ background: `linear-gradient(135deg, var(--accent-${color})15, var(--accent-${color})08)`, borderRadius: '12px', padding: '16px', border: `1px solid var(--accent-${color})30`, textAlign: 'center' }}>
+                <div style={{ fontSize: '24px', fontWeight: '700', color: `var(--accent-${color})`, marginBottom: '4px' }}>{value}</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: '1.4' }}>{label}</div>
+            </div>
+        );
+
+        const SectionHeader = ({ title, subtitle, icon }) => (
+            <div style={{ marginBottom: '24px', textAlign: 'center' }}>
+                {icon && <div style={{ fontSize: '40px', marginBottom: '12px' }}>{icon}</div>}
+                <h1 style={{ fontSize: '24px', fontWeight: '700', background: 'linear-gradient(135deg, var(--text-primary), var(--accent-cyan))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '8px' }}>{title}</h1>
+                {subtitle && <p style={{ color: 'var(--text-secondary)', fontSize: '14px', fontStyle: 'italic' }}>{subtitle}</p>}
+            </div>
+        );
+
+        const Expandable = ({ title, children, defaultOpen = false, color = 'blue' }) => {
+            const [isOpen, setIsOpen] = useState(defaultOpen);
+            return (
+                <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-color)', overflow: 'hidden', marginBottom: '12px' }}>
+                    <button onClick={() => setIsOpen(!isOpen)} style={{ width: '100%', padding: '16px', background: isOpen ? `linear-gradient(135deg, var(--accent-${color})15, transparent)` : 'transparent', border: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', color: 'var(--text-primary)' }}>
+                        <span style={{ fontWeight: '600', fontSize: '15px' }}>{title}</span>
+                        <span style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s', fontSize: '16px' }}>▼</span>
+                    </button>
+                    {isOpen && <div style={{ padding: '0 16px 16px' }}>{children}</div>}
+                </div>
+            );
+        };
+
+        const OverviewSection = () => (
+            <div className="animate-fadeIn">
+                <SectionHeader title="缺血性左心室功能不全 (iLVD)" subtitle="Ischemic Left Ventricular Dysfunction" icon="🫀" />
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', marginBottom: '20px' }}>
+                    <StatCard label="HF 患者 CAD 盛行率" value="40-60%" color="blue" />
+                    <StatCard label="接受冠脈攝影比例" value="10-20%" color="amber" />
+                    <StatCard label="PCI 患者 LV 功能不全" value="30%" color="rose" />
+                    <StatCard label="嚴重 LVEF 降低" value="10%" color="violet" />
+                </div>
+                <Card>
+                    <h3 style={{ color: 'var(--accent-cyan)', marginBottom: '16px', fontSize: '16px' }}>📌 核心要點</h3>
+                    {["冠狀動脈疾病 (CAD) 是 HFrEF 最常見的病因", "缺血性病因比非缺血性心肌病預後更差", "40-60% HF 患者有 CAD，但僅 10-20% 接受冠脈攝影", "LVEF 降低是 PCI 後不良預後的最強獨立預測因子", "嚴重 iLVD 患者 PCI 後早期死亡風險是正常患者的 2-5 倍"].map((p, i) => (
+                        <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '12px', background: i % 2 === 0 ? 'var(--bg-secondary)' : 'transparent', borderRadius: '8px', borderLeft: '3px solid var(--accent-cyan)' }}>
+                            <span style={{ color: 'var(--accent-cyan)', fontWeight: '700', minWidth: '24px' }}>{i + 1}</span>
+                            <span style={{ color: 'var(--text-primary)', fontSize: '14px', lineHeight: '1.5' }}>{p}</span>
+                        </div>
+                    ))}
+                </Card>
+            </div>
+        );
+
+        const PathophysiologySection = () => (
+            <div className="animate-fadeIn">
+                <SectionHeader title="病理生理學" subtitle="Stunning, Hibernation & Infarction" icon="🔬" />
+                {[{ name: "心肌驚嚇 Stunning", desc: "短暫的灌流-收縮不匹配，缺血後心肌功能暫時下降但完全恢復", rev: true, icon: "⚡", color: "cyan" },
+                  { name: "心肌冬眠 Hibernation", desc: "持續的灌流-收縮不匹配，心肌功能長期下調以維持細胞存活，除非移除缺血基質否則不恢復", rev: true, icon: "❄️", color: "blue" },
+                  { name: "心肌梗塞 Infarction", desc: "不可逆的心肌壞死，從心內膜向心外膜以波前方式進展，是心律不整和負面重塑的關鍵驅動因子", rev: false, icon: "💔", color: "rose" }
+                ].map((s, i) => (
+                    <Card key={i}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                            <span style={{ fontSize: '32px' }}>{s.icon}</span>
+                            <div style={{ flex: 1 }}><h3 style={{ color: `var(--accent-${s.color})`, fontSize: '18px' }}>{s.name}</h3></div>
+                            <span style={{ padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: '600', background: s.rev ? 'var(--success)20' : 'var(--error)20', color: s.rev ? 'var(--success)' : 'var(--error)' }}>{s.rev ? '可逆' : '不可逆'}</span>
+                        </div>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: '1.6' }}>{s.desc}</p>
+                    </Card>
+                ))}
+                <Card style={{ background: 'linear-gradient(135deg, var(--accent-violet)10, var(--bg-card))' }}>
+                    <h3 style={{ color: 'var(--accent-violet)', marginBottom: '12px', fontSize: '16px' }}>💡 臨床相關性</h3>
+                    <ul style={{ color: 'var(--text-secondary)', paddingLeft: '20px', lineHeight: '1.8', fontSize: '14px' }}>
+                        <li style={{ marginBottom: '8px' }}>三種狀態常在單一患者心肌中共存</li>
+                        <li style={{ marginBottom: '8px' }}>可能解釋 ACS 和 CCS 對血管重建的不同反應</li>
+                        <li>發展可能性取決於缺血的深度、持續時間和頻率</li>
+                    </ul>
+                </Card>
+            </div>
+        );
+
+        const TrialsSection = () => (
+            <div className="animate-fadeIn">
+                <SectionHeader title="關鍵臨床試驗" subtitle="STICH & REVIVED-BCIS2" icon="📊" />
+                <Expandable title="🔵 STICH Trial - CABG vs 藥物治療" defaultOpen={true} color="blue">
+                    <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '8px' }}>年齡 60±9 歲，男性 88%，LVEF 27±6%，n=1212</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '12px' }}>納入：LVEF ≤35%，適合 CABG 的 CAD</p>
+                    <div style={{ background: 'linear-gradient(135deg, var(--accent-blue)15, transparent)', padding: '12px', borderRadius: '8px', marginBottom: '12px' }}>
+                        <h4 style={{ color: 'var(--accent-blue)', marginBottom: '8px', fontSize: '14px' }}>🎯 主要結果</h4>
+                        {["4.7 年：死亡率相似 (36% vs 41%)", "9.8 年：CABG 死亡率較低 (59% vs 66%, HR 0.84, P=0.02)", "預期壽命增加 18 個月", "益處僅限於 <60 歲患者"].map((r, i) => <p key={i} style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '4px' }}>• {r}</p>)}
+                    </div>
+                    <p style={{ color: 'var(--accent-amber)', fontSize: '13px' }}>⚠️ 早期風險：術後 30 天，9% 患者死亡或仍住院</p>
+                </Expandable>
+                <Expandable title="🟢 REVIVED-BCIS2 Trial - PCI vs 藥物治療" color="teal">
+                    <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '8px' }}>年齡 70±9 歲，男性 88%，LVEF 27±7%，ICD 21%，n=700</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '12px' }}>納入：LVEF ≤35%，BCIS-JS ≥6，≥4 個存活節段</p>
+                    <div style={{ background: 'linear-gradient(135deg, var(--accent-teal)15, transparent)', padding: '12px', borderRadius: '8px' }}>
+                        <h4 style={{ color: 'var(--accent-teal)', marginBottom: '8px', fontSize: '14px' }}>🎯 主要結果</h4>
+                        {["3.4 年主要終點：兩組相同 (37% vs 38%, HR 0.99)", "CV 死亡和 LVEF 無差異", "PCI 組 6 個月生活品質較佳，但 2 年內差異消失", "缺血或存活性均與治療效果無關"].map((r, i) => <p key={i} style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '4px' }}>• {r}</p>)}
+                    </div>
+                </Expandable>
+                <Card style={{ background: 'linear-gradient(135deg, var(--accent-rose)10, var(--bg-card))' }}>
+                    <h3 style={{ color: 'var(--accent-rose)', marginBottom: '12px', fontSize: '16px' }}>🔬 存活性檢測結論</h3>
+                    <p style={{ color: 'var(--text-primary)', fontSize: '14px', fontWeight: '500', marginBottom: '12px' }}>當代證據不支持使用存活性或缺血檢測來決定穩定 CAD 和 iLVD 患者是否應血管重建以改善預後</p>
+                    <ul style={{ color: 'var(--text-secondary)', paddingLeft: '20px', fontSize: '13px', lineHeight: '1.8' }}>
+                        <li>STICH：存活性與死亡風險或 CABG 效果無交互作用</li>
+                        <li>REVIVED-BCIS2：不良事件風險與疤痕範圍（而非存活心肌）相關</li>
+                        <li>PARR-2：PET 存活性引導管理無差異</li>
+                    </ul>
+                </Card>
+            </div>
+        );
+
+        const TreatmentSection = () => (
+            <div className="animate-fadeIn">
+                <SectionHeader title="治療策略" subtitle="GDMT, Devices & Guidelines" icon="💊" />
+                <Card>
+                    <h3 style={{ color: 'var(--accent-cyan)', marginBottom: '16px', fontSize: '16px' }}>💊 GDMT 四大支柱</h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+                        {[{ name: "RAAS 抑制劑", detail: "ARNi 優先", icon: "💊" }, { name: "β 阻斷劑", detail: "Carvedilol, Bisoprolol", icon: "💓" }, { name: "MRA", detail: "Spironolactone", icon: "🧪" }, { name: "SGLT2i", detail: "Dapagliflozin", icon: "💉" }].map((p, i) => (
+                            <div key={i} style={{ background: 'var(--bg-secondary)', padding: '16px', borderRadius: '12px', textAlign: 'center' }}>
+                                <span style={{ fontSize: '28px' }}>{p.icon}</span>
+                                <h4 style={{ color: 'var(--text-primary)', fontSize: '14px', marginTop: '8px' }}>{p.name}</h4>
+                                <p style={{ color: 'var(--text-muted)', fontSize: '11px' }}>{p.detail}</p>
+                            </div>
+                        ))}
+                    </div>
+                    <div style={{ marginTop: '16px', padding: '12px', background: 'linear-gradient(135deg, var(--accent-green)15, transparent)', borderRadius: '8px', textAlign: 'center' }}>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>預期壽命增加（與安慰劑相比）</p>
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginTop: '8px' }}>
+                            <div><span style={{ fontSize: '24px', fontWeight: '700', color: 'var(--accent-green)' }}>8 年</span><p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>50 歲</p></div>
+                            <div><span style={{ fontSize: '24px', fontWeight: '700', color: 'var(--accent-green)' }}>5 年</span><p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>70 歲</p></div>
+                        </div>
+                    </div>
+                </Card>
+                <Expandable title="🔌 裝置治療" color="violet">
+                    <div style={{ background: 'var(--bg-secondary)', padding: '12px', borderRadius: '8px', marginBottom: '12px' }}>
+                        <h4 style={{ color: 'var(--accent-violet)', fontSize: '14px', marginBottom: '8px' }}>ICD</h4>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>LVEF &lt;35%，不應因血管重建而延遲。REVIVED 顯示全因死亡或猝死率 40% 且不受 PCI 影響</p>
+                    </div>
+                    <div style={{ background: 'var(--bg-secondary)', padding: '12px', borderRadius: '8px' }}>
+                        <h4 style={{ color: 'var(--accent-violet)', fontSize: '14px', marginBottom: '8px' }}>CRT</h4>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>LV 收縮功能不全且 QRS &gt;130ms，無論 HF 病因</p>
+                    </div>
+                </Expandable>
+                <Expandable title="📋 指引建議" color="amber">
+                    {[{ source: "ESC 2024", cond: "CCS + 多血管 + LVEF ≤35%", rec: "CABG 優於藥物治療改善存活", cls: "I", lvl: "B" },
+                      { source: "ESC 2024", cond: "高手術風險", rec: "PCI 可作為 CABG 替代", cls: "IIb", lvl: "B" },
+                      { source: "AHA 2023", cond: "左主幹/多血管 + 嚴重 LV 功能不全", rec: "CABG + 藥物優於單純藥物", cls: "I", lvl: "B" }
+                    ].map((g, i) => (
+                        <div key={i} style={{ background: 'var(--bg-secondary)', padding: '12px', borderRadius: '8px', marginBottom: '12px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                <span style={{ padding: '4px 10px', background: 'var(--accent-violet)20', borderRadius: '20px', fontSize: '11px', color: 'var(--accent-violet)' }}>{g.source}</span>
+                                <div style={{ display: 'flex', gap: '6px' }}>
+                                    <span style={{ padding: '4px 8px', background: g.cls === 'I' ? 'var(--accent-green)' : 'var(--accent-blue)', borderRadius: '6px', fontSize: '11px', color: 'white', fontWeight: '700' }}>Class {g.cls}</span>
+                                    <span style={{ padding: '4px 8px', background: 'var(--border-color)', borderRadius: '6px', fontSize: '11px', color: 'var(--text-primary)' }}>LoE {g.lvl}</span>
+                                </div>
+                            </div>
+                            <p style={{ color: 'var(--text-muted)', fontSize: '12px', marginBottom: '6px' }}>{g.cond}</p>
+                            <p style={{ color: 'var(--text-primary)', fontSize: '13px', fontWeight: '500' }}>{g.rec}</p>
+                        </div>
+                    ))}
+                </Expandable>
+            </div>
+        );
+
+        const PCISection = () => (
+            <div className="animate-fadeIn">
+                <SectionHeader title="PCI 規劃與執行" subtitle="High-Risk PCI Considerations" icon="🔧" />
+                <Card>
+                    <h3 style={{ color: 'var(--accent-cyan)', marginBottom: '16px', fontSize: '16px' }}>📋 術前規劃步驟</h3>
+                    {["選擇目標病灶：結合冠脈解剖與心肌影像", "評估每個狹窄的相對風險/益處", "確定最小和理想血管重建完整度", "決定單次或分階段程序"].map((s, i) => (
+                        <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '12px', background: i % 2 === 0 ? 'var(--bg-secondary)' : 'transparent', borderRadius: '8px' }}>
+                            <span style={{ width: '28px', height: '28px', background: 'var(--accent-cyan)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: '700', flexShrink: 0 }}>{i + 1}</span>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: '1.5' }}>{s}</p>
+                        </div>
+                    ))}
+                </Card>
+                <Card>
+                    <h3 style={{ color: 'var(--accent-rose)', marginBottom: '16px', fontSize: '16px' }}>⚠️ 高風險因素</h3>
+                    <div style={{ display: 'grid', gap: '12px' }}>
+                        <div style={{ background: 'linear-gradient(135deg, var(--accent-blue)15, transparent)', padding: '12px', borderRadius: '12px' }}>
+                            <h4 style={{ color: 'var(--accent-blue)', marginBottom: '8px', fontSize: '14px' }}>🫀 解剖因素</h4>
+                            <ul style={{ color: 'var(--text-secondary)', fontSize: '13px', paddingLeft: '20px', lineHeight: '1.6' }}>
+                                <li>複雜左主幹</li><li>最後暢通血管</li><li>高心肌危害</li>
+                            </ul>
+                        </div>
+                        <div style={{ background: 'linear-gradient(135deg, var(--accent-rose)15, transparent)', padding: '12px', borderRadius: '12px' }}>
+                            <h4 style={{ color: 'var(--accent-rose)', marginBottom: '8px', fontSize: '14px' }}>💔 左心室因素</h4>
+                            <ul style={{ color: 'var(--text-secondary)', fontSize: '13px', paddingLeft: '20px', lineHeight: '1.6' }}>
+                                <li>LVEDP 升高</li><li>嚴重 LV 功能不全</li><li>嚴重瓣膜病</li>
+                            </ul>
+                        </div>
+                        <div style={{ background: 'linear-gradient(135deg, var(--accent-amber)15, transparent)', padding: '12px', borderRadius: '12px' }}>
+                            <h4 style={{ color: 'var(--accent-amber)', marginBottom: '8px', fontSize: '14px' }}>🔧 程序因素</h4>
+                            <ul style={{ color: 'var(--text-secondary)', fontSize: '13px', paddingLeft: '20px', lineHeight: '1.6' }}>
+                                <li>逆行 CTO</li><li>左主幹鈣化處理</li><li>多血管鈣化</li>
+                            </ul>
+                        </div>
+                    </div>
+                </Card>
+                <Expandable title="👥 非技術因素" color="violet">
+                    <ul style={{ color: 'var(--text-secondary)', fontSize: '13px', paddingLeft: '20px', lineHeight: '1.8' }}>
+                        {["多學科評估", "優化 GDMT", "血管通路評估", "緊急救援計畫", "心臟 ICU 床位預約", "血流動力學監測", "考慮雙術者"].map((n, i) => <li key={i}>{n}</li>)}
+                    </ul>
+                </Expandable>
+            </div>
+        );
+
+        const MCSSection = () => (
+            <div className="animate-fadeIn">
+                <SectionHeader title="機械循環支持" subtitle="Mechanical Circulatory Support" icon="❤️" />
+                {[{ name: "IABP", profile: "最低口徑", co: "可忽略", trial: "BCIS-1：擇期 IABP 未降低 MACE", use: "緊急救援緩解缺血", color: "cyan" },
+                  { name: "pLVAD (Impella)", profile: "大口徑 (15.5F)", co: "顯著增加", trial: "PROTECT II：無差異，提前停止", use: "CHIP-BCIS3 & PROTECT IV 進行中", color: "blue" },
+                  { name: "VA-ECMO", profile: "最高併發症", co: "大量", trial: "無 RCT 數據", use: "保留用於嚴重休克或心臟停止", concern: "增加 LV 後負荷，導致肺水腫", color: "rose" }
+                ].map((d, i) => (
+                    <Card key={i}>
+                        <h3 style={{ color: `var(--accent-${d.color})`, fontSize: '18px', marginBottom: '12px' }}>{d.name}</h3>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
+                            <div style={{ background: 'var(--bg-secondary)', padding: '10px', borderRadius: '8px', fontSize: '12px' }}>
+                                <span style={{ color: 'var(--text-muted)' }}>通路口徑：</span>
+                                <p style={{ color: 'var(--text-primary)', marginTop: '4px' }}>{d.profile}</p>
+                            </div>
+                            <div style={{ background: 'var(--bg-secondary)', padding: '10px', borderRadius: '8px', fontSize: '12px' }}>
+                                <span style={{ color: 'var(--text-muted)' }}>心輸出量：</span>
+                                <p style={{ color: 'var(--text-primary)', marginTop: '4px' }}>{d.co}</p>
+                            </div>
+                        </div>
+                        <div style={{ background: `linear-gradient(135deg, var(--accent-${d.color})15, transparent)`, padding: '12px', borderRadius: '8px', marginBottom: '12px' }}>
+                            <p style={{ color: `var(--accent-${d.color})`, fontSize: '13px' }}>📊 {d.trial}</p>
+                        </div>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '13px', borderLeft: `3px solid var(--accent-${d.color})`, paddingLeft: '12px' }}><strong>建議：</strong>{d.use}</p>
+                        {d.concern && <div style={{ background: 'var(--accent-rose)15', padding: '12px', borderRadius: '8px', marginTop: '12px' }}><p style={{ color: 'var(--accent-rose)', fontSize: '12px' }}>⚠️ {d.concern}</p></div>}
+                    </Card>
+                ))}
+                <Card style={{ background: 'linear-gradient(135deg, var(--accent-cyan)10, var(--bg-card))' }}>
+                    <h3 style={{ color: 'var(--accent-cyan)', marginBottom: '16px', fontSize: '16px' }}>🔬 進行中的重要試驗</h3>
+                    {[{ name: "CHIP-BCIS3", n: 300, comp: "擇期 pLVAD vs 無 MCS", exp: "2026-2027" }, { name: "PROTECT IV", n: 1252, comp: "Impella CP vs 對照", exp: "2026-2027" }].map((t, i) => (
+                        <div key={i} style={{ background: 'var(--bg-secondary)', padding: '16px', borderRadius: '12px', marginBottom: i < 1 ? '12px' : 0 }}>
+                            <h4 style={{ color: 'var(--accent-cyan)', fontSize: '16px', marginBottom: '8px' }}>{t.name}</h4>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>👥 {t.n} 患者 | {t.comp}</p>
+                            <p style={{ color: 'var(--accent-amber)', fontSize: '12px', marginTop: '8px' }}>📅 預期：{t.exp}</p>
+                        </div>
+                    ))}
+                </Card>
+            </div>
+        );
+
+        const GuidelinesSection = () => (
+            <div className="animate-fadeIn">
+                <SectionHeader title="未來方向" subtitle="Future Trials & Knowledge Gaps" icon="📖" />
+                <Card>
+                    <h3 style={{ color: 'var(--accent-amber)', marginBottom: '16px', fontSize: '16px' }}>🔮 未來研究</h3>
+                    {[{ name: "STICH-3", q: "iLVD 有血管重建適應症時 CABG vs PCI", n: ">2500", exp: "2030+" },
+                      { name: "RESTORE-PCI", q: "PCI（強制 IVUS/生理）vs 藥物", n: "900", exp: "進行中" },
+                      { name: "REPRIEVED", q: "HFpEF + CAD，PCI vs 假程序", n: "規劃中", exp: "待定" }
+                    ].map((t, i) => (
+                        <div key={i} style={{ borderLeft: '3px solid var(--accent-amber)', paddingLeft: '12px', marginBottom: '16px' }}>
+                            <h4 style={{ color: 'var(--accent-amber)', fontSize: '14px', marginBottom: '4px' }}>{t.name}</h4>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>{t.q}</p>
+                            <p style={{ color: 'var(--text-muted)', fontSize: '12px' }}>👥 {t.n} 患者 | 📅 {t.exp}</p>
+                        </div>
+                    ))}
+                </Card>
+                <Card style={{ background: 'linear-gradient(135deg, var(--accent-rose)10, var(--bg-card))' }}>
+                    <h3 style={{ color: 'var(--accent-rose)', marginBottom: '12px', fontSize: '16px' }}>🔍 知識缺口</h3>
+                    <ul style={{ color: 'var(--text-secondary)', fontSize: '14px', paddingLeft: '20px', lineHeight: '1.8' }}>
+                        <li style={{ marginBottom: '8px' }}>iLVD 缺乏共識診斷標準</li>
+                        <li style={{ marginBottom: '8px' }}>混合缺血/非缺血病因對血管重建效果的影響不明</li>
+                        <li style={{ marginBottom: '8px' }}>「旁觀者」CAD 是否真正影響疾病軌跡和症狀</li>
+                        <li>血管重建後缺血負擔變化的數據有限</li>
+                    </ul>
+                </Card>
+            </div>
+        );
+
+        const QuizSection = () => {
+            const [current, setCurrent] = useState(0);
+            const [selected, setSelected] = useState(null);
+            const [showResult, setShowResult] = useState(false);
+            const [score, setScore] = useState(0);
+            const [done, setDone] = useState(false);
+            const [answered, setAnswered] = useState([]);
+
+            const handleSubmit = () => {
+                if (selected === null) return;
+                const correct = selected === quizQuestions[current].answer;
+                if (correct) setScore(score + 1);
+                setAnswered([...answered, { id: quizQuestions[current].id, correct }]);
+                setShowResult(true);
+            };
+
+            const handleNext = () => {
+                if (current < quizQuestions.length - 1) { setCurrent(current + 1); setSelected(null); setShowResult(false); }
+                else { setDone(true); }
+            };
+
+            const handleRestart = () => { setCurrent(0); setSelected(null); setShowResult(false); setScore(0); setDone(false); setAnswered([]); };
+
+            if (done) {
+                const pct = Math.round((score / quizQuestions.length) * 100);
+                return (
+                    <div className="animate-fadeIn">
+                        <SectionHeader title="測驗完成！" subtitle="Quiz Complete" icon="🎉" />
+                        <Card style={{ textAlign: 'center' }}>
+                            <div style={{ width: '120px', height: '120px', borderRadius: '50%', background: pct >= 80 ? 'linear-gradient(135deg, var(--accent-green), var(--accent-teal))' : pct >= 60 ? 'linear-gradient(135deg, var(--accent-amber), var(--accent-rose))' : 'linear-gradient(135deg, var(--accent-rose), var(--accent-violet))', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', boxShadow: '0 10px 40px rgba(0,0,0,0.3)' }}>
+                                <span style={{ fontSize: '32px', fontWeight: '700', color: 'white' }}>{pct}%</span>
+                            </div>
+                            <h2 style={{ color: 'var(--text-primary)', marginBottom: '8px' }}>{score} / {quizQuestions.length} 正確</h2>
+                            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
+                                {pct >= 80 ? '🌟 太棒了！你對 iLVD 血管重建有很好的理解！' : pct >= 60 ? '👍 不錯！建議再複習一些重點概念。' : '📚 建議重新閱讀教材後再次測驗。'}
+                            </p>
+                            <button onClick={handleRestart} style={{ padding: '14px 32px', background: 'linear-gradient(135deg, var(--accent-blue), var(--accent-cyan))', border: 'none', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: '600', cursor: 'pointer' }}>重新測驗</button>
+                        </Card>
+                    </div>
+                );
+            }
+
+            const q = quizQuestions[current];
+            return (
+                <div className="animate-fadeIn">
+                    <SectionHeader title="知識測驗" subtitle={`第 ${current + 1} 題 / 共 ${quizQuestions.length} 題`} icon="✍️" />
+                    <div style={{ display: 'flex', gap: '4px', marginBottom: '20px' }}>
+                        {quizQuestions.map((_, i) => (
+                            <div key={i} style={{ flex: 1, height: '4px', borderRadius: '2px', background: i < current ? 'var(--accent-green)' : i === current ? 'var(--accent-cyan)' : 'var(--border-color)' }} />
+                        ))}
+                    </div>
+                    <Card>
+                        <p style={{ color: 'var(--text-primary)', fontSize: '16px', lineHeight: '1.6', marginBottom: '20px' }}>{q.q}</p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                            {q.options.map((opt, i) => {
+                                let bg = 'var(--bg-secondary)', border = 'var(--border-color)';
+                                if (showResult) {
+                                    if (i === q.answer) { bg = 'var(--success)20'; border = 'var(--success)'; }
+                                    else if (i === selected && i !== q.answer) { bg = 'var(--error)20'; border = 'var(--error)'; }
+                                } else if (selected === i) { bg = 'var(--accent-blue)20'; border = 'var(--accent-blue)'; }
+                                return (
+                                    <button key={i} onClick={() => !showResult && setSelected(i)} disabled={showResult} style={{ padding: '14px 16px', background: bg, border: `2px solid ${border}`, borderRadius: '12px', textAlign: 'left', cursor: showResult ? 'default' : 'pointer', color: 'var(--text-primary)', fontSize: '14px', lineHeight: '1.5' }}>
+                                        <span style={{ fontWeight: '600', color: 'var(--accent-cyan)', marginRight: '12px' }}>{String.fromCharCode(65 + i)}.</span>{opt}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </Card>
+                    {showResult && (
+                        <Card style={{ background: selected === q.answer ? 'linear-gradient(135deg, var(--success)15, var(--bg-card))' : 'linear-gradient(135deg, var(--error)15, var(--bg-card))' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                                <span style={{ fontSize: '24px' }}>{selected === q.answer ? '✅' : '❌'}</span>
+                                <h3 style={{ color: selected === q.answer ? 'var(--success)' : 'var(--error)', fontSize: '16px' }}>{selected === q.answer ? '正確！' : '答錯了'}</h3>
+                            </div>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: '1.6' }}>{q.explain}</p>
+                        </Card>
+                    )}
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                        {!showResult ? (
+                            <button onClick={handleSubmit} disabled={selected === null} style={{ flex: 1, padding: '14px', background: selected !== null ? 'linear-gradient(135deg, var(--accent-blue), var(--accent-cyan))' : 'var(--border-color)', border: 'none', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: '600', cursor: selected !== null ? 'pointer' : 'not-allowed' }}>確認答案</button>
+                        ) : (
+                            <button onClick={handleNext} style={{ flex: 1, padding: '14px', background: 'linear-gradient(135deg, var(--accent-green), var(--accent-teal))', border: 'none', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: '600', cursor: 'pointer' }}>{current < quizQuestions.length - 1 ? '下一題 →' : '查看結果'}</button>
+                        )}
+                    </div>
+                    <div style={{ textAlign: 'center', marginTop: '16px', color: 'var(--text-muted)', fontSize: '14px' }}>目前得分：{score} / {answered.length}</div>
+                </div>
+            );
+        };
+
+        const Navigation = ({ active, setActive }) => {
+            const sections = [
+                { id: 'overview', label: '概述', icon: '📋' },
+                { id: 'patho', label: '病理', icon: '🔬' },
+                { id: 'trials', label: '試驗', icon: '📊' },
+                { id: 'treatment', label: '治療', icon: '💊' },
+                { id: 'pci', label: 'PCI', icon: '🔧' },
+                { id: 'mcs', label: 'MCS', icon: '❤️' },
+                { id: 'future', label: '未來', icon: '📖' },
+                { id: 'quiz', label: '測驗', icon: '✍️' }
+            ];
+            return (
+                <nav style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(10, 15, 28, 0.98), rgba(10, 15, 28, 0.95))', backdropFilter: 'blur(20px)', borderTop: '1px solid var(--border-color)', padding: '8px 4px', zIndex: 1000, display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+                    {sections.map(s => (
+                        <button key={s.id} onClick={() => setActive(s.id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', padding: '6px 8px', background: active === s.id ? 'linear-gradient(135deg, var(--accent-blue), var(--accent-cyan))' : 'transparent', border: 'none', borderRadius: '12px', cursor: 'pointer', color: active === s.id ? 'white' : 'var(--text-secondary)', transition: 'all 0.3s ease', minWidth: '40px' }}>
+                            <span style={{ fontSize: '18px' }}>{s.icon}</span>
+                            <span style={{ fontSize: '9px', fontWeight: active === s.id ? '600' : '400', whiteSpace: 'nowrap' }}>{s.label}</span>
+                        </button>
+                    ))}
+                </nav>
+            );
+        };
+
+        const App = () => {
+            const [active, setActive] = useState('overview');
+            const [progress, setProgress] = useState({});
+
+            useEffect(() => {
+                const saved = localStorage.getItem('ilvd-progress');
+                if (saved) setProgress(JSON.parse(saved));
+            }, []);
+
+            useEffect(() => {
+                const newProgress = { ...progress, [active]: true };
+                setProgress(newProgress);
+                localStorage.setItem('ilvd-progress', JSON.stringify(newProgress));
+            }, [active]);
+
+            const renderSection = () => {
+                switch (active) {
+                    case 'overview': return <OverviewSection />;
+                    case 'patho': return <PathophysiologySection />;
+                    case 'trials': return <TrialsSection />;
+                    case 'treatment': return <TreatmentSection />;
+                    case 'pci': return <PCISection />;
+                    case 'mcs': return <MCSSection />;
+                    case 'future': return <GuidelinesSection />;
+                    case 'quiz': return <QuizSection />;
+                    default: return <OverviewSection />;
+                }
+            };
+
+            return (
+                <div style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
+                    <header style={{ position: 'sticky', top: 0, background: 'linear-gradient(to bottom, rgba(10, 15, 28, 0.98), rgba(10, 15, 28, 0.95))', backdropFilter: 'blur(20px)', borderBottom: '1px solid var(--border-color)', padding: '12px 16px', zIndex: 100 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <div>
+                                <h1 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--text-primary)' }}>iLVD 血管重建</h1>
+                                <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>JACC Cardiovasc Interv 2025</p>
+                            </div>
+                            <span style={{ padding: '6px 12px', background: 'linear-gradient(135deg, var(--accent-blue)20, var(--accent-cyan)20)', borderRadius: '20px', fontSize: '11px', color: 'var(--accent-cyan)' }}>{Object.keys(progress).length}/8 完成</span>
+                        </div>
+                    </header>
+                    <main style={{ padding: '20px 16px 100px', maxWidth: '800px', margin: '0 auto' }}>{renderSection()}</main>
+                    <Navigation active={active} setActive={setActive} />
+                </div>
+            );
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
