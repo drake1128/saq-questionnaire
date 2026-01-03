@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>血栓溶解藥物計算 | Thrombolytic Calculator</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a365d;
+            --primary-light: #2c5282;
+            --accent: #ed8936;
+            --accent-light: #f6ad55;
+            --danger: #c53030;
+            --danger-light: #fc8181;
+            --success: #276749;
+            --success-light: #68d391;
+            --warning: #d69e2e;
+            --info: #3182ce;
+            --bg-light: #f7fafc;
+            --bg-cream: #fffaf0;
+            --text-dark: #1a202c;
+            --text-gray: #718096;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1a365d 0%, #2d3748 100%);
+            min-height: 100vh;
+            color: var(--text-dark);
+        }
+
+        .app-container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--danger) 0%, #9b2c2c 100%);
+            padding: 28px 24px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(197, 48, 48, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 50%;
+            height: 200%;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            color: white;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .header-subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.95rem;
+        }
+
+        .header-icon {
+            position: absolute;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 3.5rem;
+            opacity: 0.3;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            color: var(--text-dark);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .nav-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .nav-tab.urokinase.active {
+            background: var(--accent);
+        }
+
+        .nav-tab.alteplase.active {
+            background: var(--danger);
+        }
+
+        /* Card */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title.danger {
+            color: var(--danger);
+        }
+
+        .card-title.warning {
+            color: var(--warning);
+        }
+
+        .card-title.success {
+            color: var(--success);
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--text-dark);
+        }
+
+        .form-hint {
+            font-weight: 400;
+            color: var(--text-gray);
+            font-size: 0.85rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row, .form-row-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Result Box */
+        .result-box {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .result-box.warning {
+            background: linear-gradient(135deg, var(--warning) 0%, #b7791f 100%);
+        }
+
+        .result-box.danger {
+            background: linear-gradient(135deg, var(--danger) 0%, #9b2c2c 100%);
+        }
+
+        .result-box.success {
+            background: linear-gradient(135deg, var(--success) 0%, #22543d 100%);
+        }
+
+        .result-label {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .result-unit {
+            font-size: 1rem;
+            font-weight: 400;
+            margin-left: 8px;
+        }
+
+        .result-note {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+
+        /* Info Box */
+        .info-box {
+            padding: 16px;
+            border-radius: 12px;
+            margin: 16px 0;
+        }
+
+        .info-box.warning {
+            background: #fffbeb;
+            border-left: 4px solid var(--warning);
+        }
+
+        .info-box.danger {
+            background: #fff5f5;
+            border-left: 4px solid var(--danger);
+        }
+
+        .info-box.info {
+            background: #ebf8ff;
+            border-left: 4px solid var(--info);
+        }
+
+        .info-box.success {
+            background: #f0fff4;
+            border-left: 4px solid var(--success);
+        }
+
+        .info-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Preparation Card */
+        .prep-card {
+            background: var(--bg-cream);
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+
+        .prep-title {
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        .prep-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .prep-number {
+            width: 28px;
+            height: 28px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .prep-content {
+            flex: 1;
+        }
+
+        .prep-highlight {
+            background: var(--accent-light);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Protocol Table */
+        .protocol-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 0.9rem;
+        }
+
+        .protocol-table th,
+        .protocol-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .protocol-table th {
+            background: var(--bg-light);
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .protocol-table tr:hover {
+            background: var(--bg-cream);
+        }
+
+        .protocol-table .highlight {
+            background: #fef3c7;
+        }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+        }
+
+        .checklist li {
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            background: var(--bg-light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .checklist li:hover {
+            background: #edf2f7;
+        }
+
+        .checklist li.checked {
+            background: #c6f6d5;
+        }
+
+        .checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .checklist li.checked .checkbox {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge.danger {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .badge.warning {
+            background: #fef3c7;
+            color: var(--warning);
+        }
+
+        .badge.success {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .badge.info {
+            background: #bee3f8;
+            color: var(--info);
+        }
+
+        /* Tabs within card */
+        .inner-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .inner-tab {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            color: var(--text-gray);
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .inner-tab:hover {
+            background: var(--bg-light);
+        }
+
+        .inner-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Copy Button */
+        .copy-btn {
+            padding: 8px 16px;
+            background: var(--info);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #2b6cb0;
+        }
+
+        .copy-btn.copied {
+            background: var(--success);
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 20px 0;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85rem;
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease;
+        }
+
+        /* Summary Grid */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .summary-item {
+            background: var(--bg-light);
+            padding: 14px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .summary-item.highlight {
+            background: var(--accent);
+            color: white;
+        }
+
+        .summary-label {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            margin-bottom: 4px;
+        }
+
+        .summary-item.highlight .summary-label {
+            color: rgba(255,255,255,0.9);
+        }
+
+        .summary-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .summary-item.highlight .summary-value {
+            color: white;
+        }
+
+        /* Alert stripe */
+        .alert-stripe {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--danger),
+                var(--danger) 10px,
+                #9b2c2c 10px,
+                #9b2c2c 20px
+            );
+            padding: 12px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            margin: 16px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useMemo } = React;
+
+        // ==================== CONSTANTS ====================
+        const UROKINASE_IU_PER_AMP = 60000;
+        const ALTEPLASE_MG_PER_VIAL = 50; // 50mg or 100mg vials
+
+        const UROKINASE_PROTOCOLS = [
+            {
+                id: 1,
+                name: "Protocol 1 (High Dose)",
+                dose: 2000,
+                description: "0-4h: 4000 IU/kg/hr → 5-36h: 2000 IU/kg/hr",
+                loadingDose: 250000,
+                source: "Traditional high-dose"
+            },
+            {
+                id: 2,
+                name: "Protocol 2 (Standard)",
+                dose: 1800,
+                description: "持續輸注 1800 IU/kg/hr",
+                loadingDose: 250000,
+                source: "Standard infusion"
+            },
+            {
+                id: 3,
+                name: "Protocol 3 (Low Dose)",
+                dose: "434-868",
+                doseValue: 650,
+                description: "D1: 868 IU/kg/hr → D2+: 434-868 IU/kg/hr",
+                loadingDose: "250000-500000",
+                totalDaily: 1250000,
+                source: "PURPOSE Trial / CGMH"
+            }
+        ];
+
+        const PE_ALTEPLASE_PROTOCOLS = [
+            {
+                id: "systemic",
+                name: "全身性溶栓 (Systemic)",
+                description: "適用於 Massive PE / High-risk PE",
+                regimen: "100mg IV over 2 hours",
+                detail: "10mg bolus + 90mg over 2hr"
+            },
+            {
+                id: "cdt",
+                name: "導管導向溶栓 CDT",
+                description: "適用於 Submassive PE / Intermediate-high risk",
+                regimen: "1 mg/hr × 每條導管",
+                detail: "雙側 PE 使用雙導管：0.5 mg/hr × 2"
+            },
+            {
+                id: "half",
+                name: "半量溶栓 (Half-dose)",
+                description: "年長/出血風險較高者",
+                regimen: "50mg IV over 2 hours",
+                detail: "可考慮用於 submassive PE"
+            }
+        ];
+
+        const LAB_CHECKLIST = [
+            { id: 'cbc', label: 'CBC/DC（含血小板）' },
+            { id: 'pt', label: 'PT/INR' },
+            { id: 'aptt', label: 'aPTT' },
+            { id: 'fibrinogen', label: 'Fibrinogen（纖維蛋白原）' },
+            { id: 'blood', label: '備血：PRBC 2U + FFP 2U' },
+            { id: 'consent', label: '溶栓同意書已簽署' }
+        ];
+
+        const CONTRAINDICATIONS = [
+            "近期(<3月)缺血性中風或顱內出血",
+            "活動性出血或出血體質",
+            "近期(<3週)重大手術/外傷",
+            "無法控制的嚴重高血壓 (>180/110)",
+            "顱內腫瘤、動靜脈畸形",
+            "主動脈剝離",
+            "近期(<10天)不可壓迫部位穿刺"
+        ];
+
+        // ==================== COMPONENTS ====================
+
+        const Header = () => (
+            <div className="header">
+                <h1>🩸 血栓溶解藥物計算</h1>
+                <p className="header-subtitle">Urokinase (ALI) · Alteplase (PE) · 泡藥指引與劑量計算</p>
+                <span className="header-icon">💉</span>
+            </div>
+        );
+
+        const NavTabs = ({ activeTab, setActiveTab }) => (
+            <div className="nav-tabs">
+                <button
+                    className={`nav-tab urokinase ${activeTab === 'urokinase' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('urokinase')}
+                >
+                    🦵 Urokinase (ALI)
+                </button>
+                <button
+                    className={`nav-tab alteplase ${activeTab === 'alteplase' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('alteplase')}
+                >
+                    🫁 Alteplase (PE)
+                </button>
+                <button
+                    className={`nav-tab ${activeTab === 'safety' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('safety')}
+                >
+                    ⚠️ 安全查核
+                </button>
+                <button
+                    className={`nav-tab ${activeTab === 'reference' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('reference')}
+                >
+                    📚 參考資料
+                </button>
+            </div>
+        );
+
+        // ==================== UROKINASE TAB ====================
+        const UrokinaseTab = () => {
+            const [innerTab, setInnerTab] = useState('calculator');
+            const [bodyWeight, setBodyWeight] = useState(60);
+            const [selectedProtocol, setSelectedProtocol] = useState(2);
+            const [customDose, setCustomDose] = useState(1800);
+            
+            // Pump preparation variables
+            const [ampsInBag, setAmpsInBag] = useState(56);
+            const [pumpRate, setPumpRate] = useState(21);
+            const [nsVolume, setNsVolume] = useState(500);
+
+            // Calculations
+            const protocol = UROKINASE_PROTOCOLS.find(p => p.id === selectedProtocol);
+            const dosePerKgHr = selectedProtocol === 0 ? customDose : (protocol?.doseValue || protocol?.dose);
+            
+            const totalDailyIU = useMemo(() => {
+                if (selectedProtocol === 3) return 1250000;
+                return dosePerKgHr * 24 * bodyWeight;
+            }, [dosePerKgHr, bodyWeight, selectedProtocol]);
+
+            const ampsPerDay = useMemo(() => {
+                return totalDailyIU / UROKINASE_IU_PER_AMP;
+            }, [totalDailyIU]);
+
+            // Verification calculation
+            const deliveredDose = useMemo(() => {
+                return (UROKINASE_IU_PER_AMP * ampsInBag * pumpRate) / nsVolume / bodyWeight;
+            }, [ampsInBag, pumpRate, nsVolume, bodyWeight]);
+
+            // Calculate recommended pump settings for target dose
+            const recommendedSettings = useMemo(() => {
+                // For a common setup: 56 amps in 500ml N/S
+                // Rate = (target dose * weight * 500) / (60000 * 56)
+                const targetDose = dosePerKgHr;
+                const amps = 56;
+                const volume = 500;
+                const rate = (targetDose * bodyWeight * volume) / (UROKINASE_IU_PER_AMP * amps);
+                return {
+                    amps: amps,
+                    volume: volume,
+                    rate: Math.round(rate * 10) / 10
+                };
+            }, [dosePerKgHr, bodyWeight]);
+
+            const [copied, setCopied] = useState(false);
+            
+            const copyOrder = () => {
+                const order = `Urokinase ${Math.ceil(ampsPerDay)} amps in N/S 500ml
+Pump rate: ${recommendedSettings.rate} ml/hr
+(Target: ${dosePerKgHr} IU/kg/hr, BW: ${bodyWeight}kg)
+Daily total: ${(totalDailyIU/1000000).toFixed(2)} MIU`;
+                navigator.clipboard.writeText(order);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            };
+
+            return (
+                <div className="fade-in">
+                    <div className="inner-tabs">
+                        <button 
+                            className={`inner-tab ${innerTab === 'calculator' ? 'active' : ''}`}
+                            onClick={() => setInnerTab('calculator')}
+                        >
+                            🔢 劑量計算
+                        </button>
+                        <button 
+                            className={`inner-tab ${innerTab === 'preparation' ? 'active' : ''}`}
+                            onClick={() => setInnerTab('preparation')}
+                        >
+                            💊 泡藥指引
+                        </button>
+                        <button 
+                            className={`inner-tab ${innerTab === 'verify' ? 'active' : ''}`}
+                            onClick={() => setInnerTab('verify')}
+                        >
+                            ✅ 驗算區
+                        </button>
+                    </div>
+
+                    {innerTab === 'calculator' && (
+                        <>
+                            <div className="card">
+                                <h2 className="card-title">🦵 Urokinase for Acute Limb Ischemia</h2>
+                                
+                                <div className="form-group">
+                                    <label className="form-label">
+                                        體重 Body Weight <span className="form-hint">(kg)</span>
+                                    </label>
+                                    <input
+                                        type="number"
+                                        className="form-input"
+                                        value={bodyWeight}
+                                        onChange={(e) => setBodyWeight(Number(e.target.value))}
+                                        min="30" max="200"
+                                        style={{maxWidth: '200px'}}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">選擇 Protocol</label>
+                                    <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+                                        {UROKINASE_PROTOCOLS.map(p => (
+                                            <div 
+                                                key={p.id}
+                                                onClick={() => setSelectedProtocol(p.id)}
+                                                style={{
+                                                    padding: '14px',
+                                                    border: `2px solid ${selectedProtocol === p.id ? 'var(--accent)' : 'var(--border)'}`,
+                                                    borderRadius: '10px',
+                                                    cursor: 'pointer',
+                                                    background: selectedProtocol === p.id ? 'var(--bg-cream)' : 'white'
+                                                }}
+                                            >
+                                                <div style={{fontWeight: '600', marginBottom: '4px'}}>
+                                                    {p.name} 
+                                                    <span className="badge info" style={{marginLeft: '10px'}}>
+                                                        {typeof p.dose === 'number' ? `${p.dose} IU/kg/hr` : p.dose}
+                                                    </span>
+                                                </div>
+                                                <div style={{fontSize: '0.85rem', color: 'var(--text-gray)'}}>
+                                                    {p.description}
+                                                </div>
+                                                <div style={{fontSize: '0.8rem', color: 'var(--accent)', marginTop: '4px'}}>
+                                                    Loading: {p.loadingDose} IU
+                                                </div>
+                                            </div>
+                                        ))}
+                                        
+                                        <div 
+                                            onClick={() => setSelectedProtocol(0)}
+                                            style={{
+                                                padding: '14px',
+                                                border: `2px solid ${selectedProtocol === 0 ? 'var(--accent)' : 'var(--border)'}`,
+                                                borderRadius: '10px',
+                                                cursor: 'pointer',
+                                                background: selectedProtocol === 0 ? 'var(--bg-cream)' : 'white'
+                                            }}
+                                        >
+                                            <div style={{fontWeight: '600', marginBottom: '8px'}}>
+                                                自訂劑量 Custom Dose
+                                            </div>
+                                            {selectedProtocol === 0 && (
+                                                <input
+                                                    type="number"
+                                                    className="form-input"
+                                                    value={customDose}
+                                                    onChange={(e) => setCustomDose(Number(e.target.value))}
+                                                    placeholder="IU/kg/hr"
+                                                    style={{maxWidth: '200px'}}
+                                                />
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="summary-grid">
+                                    <div className="summary-item">
+                                        <div className="summary-label">劑量</div>
+                                        <div className="summary-value">{dosePerKgHr}</div>
+                                        <div style={{fontSize: '0.75rem', color: 'var(--text-gray)'}}>IU/kg/hr</div>
+                                    </div>
+                                    <div className="summary-item">
+                                        <div className="summary-label">每日總量</div>
+                                        <div className="summary-value">{(totalDailyIU/1000000).toFixed(2)}</div>
+                                        <div style={{fontSize: '0.75rem', color: 'var(--text-gray)'}}>MIU/day</div>
+                                    </div>
+                                    <div className="summary-item highlight">
+                                        <div className="summary-label">每日安瓿數</div>
+                                        <div className="summary-value">{Math.ceil(ampsPerDay)}</div>
+                                        <div style={{fontSize: '0.75rem'}}>amps/day</div>
+                                    </div>
+                                </div>
+
+                                <div className="result-box warning">
+                                    <div className="result-label">建議 Pump 設定</div>
+                                    <div className="result-value" style={{fontSize: '1.8rem'}}>
+                                        {recommendedSettings.amps} amps in {recommendedSettings.volume}ml N/S
+                                    </div>
+                                    <div className="result-note" style={{fontSize: '1.2rem', marginTop: '8px'}}>
+                                        Pump Rate: <strong>{recommendedSettings.rate} ml/hr</strong>
+                                    </div>
+                                </div>
+
+                                <div style={{marginTop: '16px', textAlign: 'center'}}>
+                                    <button className={`copy-btn ${copied ? 'copied' : ''}`} onClick={copyOrder}>
+                                        {copied ? '✓ 已複製' : '📋 複製醫囑'}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="info-box warning">
+                                <div className="info-title">⚠️ Fibrinogen 監測與劑量調整</div>
+                                <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                                    <li><strong>Fibrinogen &lt; 150 mg/dL</strong>：降低劑量至 625,000 IU/day</li>
+                                    <li><strong>Fibrinogen &lt; 100 mg/dL</strong>：暫停 Urokinase，改 Heparin (keep aPTT 1.5-2x)，考慮輸 FFP</li>
+                                </ul>
+                            </div>
+                        </>
+                    )}
+
+                    {innerTab === 'preparation' && (
+                        <div className="card">
+                            <h2 className="card-title warning">💊 Urokinase 泡藥指引</h2>
+                            
+                            <div className="prep-card">
+                                <div className="prep-title">📦 藥品資訊</div>
+                                <div className="prep-step">
+                                    <div className="prep-number">i</div>
+                                    <div className="prep-content">
+                                        <strong>Urokinase</strong>: <span className="prep-highlight">60,000 IU/amp</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="prep-card">
+                                <div className="prep-title">🧪 標準泡藥步驟</div>
+                                <div className="prep-step">
+                                    <div className="prep-number">1</div>
+                                    <div className="prep-content">
+                                        準備 <span className="prep-highlight">Normal Saline 500ml</span> 一袋
+                                    </div>
+                                </div>
+                                <div className="prep-step">
+                                    <div className="prep-number">2</div>
+                                    <div className="prep-content">
+                                        取出需要的 Urokinase 安瓿數（依醫囑）
+                                        <div style={{fontSize: '0.85rem', color: 'var(--text-gray)', marginTop: '4px'}}>
+                                            常用配置：56 amps / 500ml N/S
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="prep-step">
+                                    <div className="prep-number">3</div>
+                                    <div className="prep-content">
+                                        將 Urokinase 溶於 N/S 袋中，輕搖混合均勻
+                                    </div>
+                                </div>
+                                <div className="prep-step">
+                                    <div className="prep-number">4</div>
+                                    <div className="prep-content">
+                                        設定 pump rate（依計算結果）
+                                        <div style={{fontSize: '0.85rem', color: 'var(--text-gray)', marginTop: '4px'}}>
+                                            經由動脈導管給予（catheter-directed thrombolysis）
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="info-box info">
+                                <div className="info-title">💡 濃度計算公式</div>
+                                <p style={{fontFamily: 'monospace', marginTop: '8px'}}>
+                                    實際劑量 (IU/kg/hr) = (60,000 × Amps × Rate) ÷ Volume ÷ BW
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    {innerTab === 'verify' && (
+                        <div className="card">
+                            <h2 className="card-title success">✅ Urokinase 驗算區</h2>
+                            <p style={{color: 'var(--text-gray)', marginBottom: '20px'}}>
+                                輸入實際泡藥參數，驗證給藥劑量是否正確
+                            </p>
+
+                            <div className="form-row">
+                                <div className="form-group">
+                                    <label className="form-label">體重 (kg)</label>
+                                    <input
+                                        type="number"
+                                        className="form-input"
+                                        value={bodyWeight}
+                                        onChange={(e) => setBodyWeight(Number(e.target.value))}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">N/S 容量 (ml)</label>
+                                    <input
+                                        type="number"
+                                        className="form-input"
+                                        value={nsVolume}
+                                        onChange={(e) => setNsVolume(Number(e.target.value))}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-row">
+                                <div className="form-group">
+                                    <label className="form-label">Urokinase (amps)</label>
+                                    <input
+                                        type="number"
+                                        className="form-input"
+                                        value={ampsInBag}
+                                        onChange={(e) => setAmpsInBag(Number(e.target.value))}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Pump Rate (ml/hr)</label>
+                                    <input
+                                        type="number"
+                                        className="form-input"
+                                        value={pumpRate}
+                                        onChange={(e) => setPumpRate(Number(e.target.value))}
+                                        step="0.1"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="result-box success">
+                                <div className="result-label">實際給藥劑量 Delivered Dose</div>
+                                <div className="result-value">
+                                    {Math.round(deliveredDose)}
+                                    <span className="result-unit">IU/kg/hr</span>
+                                </div>
+                                <div className="result-note">
+                                    每小時總量：{Math.round(deliveredDose * bodyWeight).toLocaleString()} IU/hr
+                                </div>
+                            </div>
+
+                            <div className="info-box info" style={{marginTop: '20px'}}>
+                                <div className="info-title">📐 驗算公式</div>
+                                <p style={{fontFamily: 'monospace'}}>
+                                    {UROKINASE_IU_PER_AMP} × {ampsInBag} × {pumpRate} ÷ {nsVolume} ÷ {bodyWeight} = {Math.round(deliveredDose)} IU/kg/hr
+                                </p>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // ==================== ALTEPLASE TAB ====================
+        const AlteplaseTab = () => {
+            const [innerTab, setInnerTab] = useState('systemic');
+            const [bodyWeight, setBodyWeight] = useState(60);
+            const [numCatheters, setNumCatheters] = useState(2);
+            const [cdtDuration, setCdtDuration] = useState(12);
+            const [cdtProtocol, setCdtProtocol] = useState('conservative'); // 'conservative' or 'seattle'
+
+            // Systemic PE calculations
+            const systemicDose = 100; // Fixed 100mg
+            const boluseDose = 10;
+            const infusionDose = 90;
+
+            // CDT calculations based on protocol
+            // Conservative (Taiwan practice): Total 1 mg/hr regardless of catheter number
+            // SEATTLE II: 1 mg/hr per catheter
+            const cdtDosePerCatheter = cdtProtocol === 'seattle' ? 1 : (numCatheters === 2 ? 0.5 : 1);
+            const cdtTotalPerHour = cdtProtocol === 'seattle' ? numCatheters : 1; // Conservative always 1 mg/hr total
+            const cdtTotalDose = cdtTotalPerHour * cdtDuration;
+
+            const [copied, setCopied] = useState(false);
+
+            const copyCDTOrder = () => {
+                const protocolName = cdtProtocol === 'conservative' ? '保守劑量' : 'SEATTLE II';
+                const order = `Alteplase (rt-PA) for PE - CDT Protocol (${protocolName})
+${numCatheters === 2 ? '雙側導管' : '單側導管'}: ${cdtDosePerCatheter} mg/hr × ${numCatheters} catheter(s)
+Total rate: ${cdtTotalPerHour} mg/hr × ${cdtDuration}hr = ${cdtTotalDose} mg
+監測: aPTT, Fibrinogen q6h`;
+                navigator.clipboard.writeText(order);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            };
+
+            return (
+                <div className="fade-in">
+                    <div className="inner-tabs">
+                        <button 
+                            className={`inner-tab ${innerTab === 'systemic' ? 'active' : ''}`}
+                            onClick={() => setInnerTab('systemic')}
+                        >
+                            💨 全身性溶栓
+                        </button>
+                        <button 
+                            className={`inner-tab ${innerTab === 'cdt' ? 'active' : ''}`}
+                            onClick={() => setInnerTab('cdt')}
+                        >
+                            🎯 CDT 導管溶栓
+                        </button>
+                        <button 
+                            className={`inner-tab ${innerTab === 'preparation' ? 'active' : ''}`}
+                            onClick={() => setInnerTab('preparation')}
+                        >
+                            💊 泡藥指引
+                        </button>
+                    </div>
+
+                    {innerTab === 'systemic' && (
+                        <>
+                            <div className="card">
+                                <h2 className="card-title danger">🫁 Alteplase for Massive PE (Systemic)</h2>
+                                
+                                <div className="alert-stripe">
+                                    ⚠️ 適應症：High-risk PE (Massive PE) with hemodynamic instability
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">體重 (kg) - 供參考</label>
+                                    <input
+                                        type="number"
+                                        className="form-input"
+                                        value={bodyWeight}
+                                        onChange={(e) => setBodyWeight(Number(e.target.value))}
+                                        style={{maxWidth: '200px'}}
+                                    />
+                                </div>
+
+                                <div className="info-box danger">
+                                    <div className="info-title">📋 標準劑量 (Fixed Dose)</div>
+                                    <p>Alteplase <strong>100 mg</strong> IV over 2 hours（不依體重調整）</p>
+                                </div>
+
+                                <table className="protocol-table">
+                                    <thead>
+                                        <tr>
+                                            <th>階段</th>
+                                            <th>劑量</th>
+                                            <th>給藥方式</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr className="highlight">
+                                            <td><strong>Bolus</strong></td>
+                                            <td>10 mg</td>
+                                            <td>IV push over 1-2 min</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Infusion</strong></td>
+                                            <td>90 mg</td>
+                                            <td>IV over 2 hours (45 mg/hr)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Total</strong></td>
+                                            <td>100 mg</td>
+                                            <td>-</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div className="divider"></div>
+
+                                <h3 style={{marginBottom: '12px'}}>💊 半量溶栓 Half-dose Option</h3>
+                                <div className="info-box warning">
+                                    <p>適用於：年長者、出血風險較高、submassive PE 考慮溶栓時</p>
+                                    <p style={{marginTop: '8px'}}><strong>Alteplase 50 mg</strong> IV over 2 hours</p>
+                                </div>
+                            </div>
+
+                            <div className="info-box info">
+                                <div className="info-title">📝 溶栓後抗凝</div>
+                                <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                                    <li>溶栓完成後，check aPTT</li>
+                                    <li>當 aPTT &lt; 2× 正常值時，開始 Heparin infusion（不需 bolus）</li>
+                                    <li>目標 aPTT 1.5-2.5× control</li>
+                                </ul>
+                            </div>
+                        </>
+                    )}
+
+                    {innerTab === 'cdt' && (
+                        <>
+                            <div className="card">
+                                <h2 className="card-title" style={{color: 'var(--info)'}}>
+                                    🎯 Alteplase CDT for PE (Catheter-Directed Thrombolysis)
+                                </h2>
+
+                                <div className="info-box info">
+                                    <div className="info-title">適應症</div>
+                                    <p>Intermediate-high risk PE (Submassive PE) with RV dysfunction</p>
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">選擇 Protocol</label>
+                                    <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+                                        <div 
+                                            onClick={() => setCdtProtocol('conservative')}
+                                            style={{
+                                                padding: '14px',
+                                                border: `2px solid ${cdtProtocol === 'conservative' ? 'var(--info)' : 'var(--border)'}`,
+                                                borderRadius: '10px',
+                                                cursor: 'pointer',
+                                                background: cdtProtocol === 'conservative' ? '#ebf8ff' : 'white'
+                                            }}
+                                        >
+                                            <div style={{fontWeight: '600', marginBottom: '4px'}}>
+                                                🏥 保守劑量 (Conservative)
+                                                <span className="badge info" style={{marginLeft: '10px'}}>總量 1 mg/hr</span>
+                                            </div>
+                                            <div style={{fontSize: '0.85rem', color: 'var(--text-gray)'}}>
+                                                雙側導管：每側 0.5 mg/hr × 2 = 總共 1 mg/hr
+                                            </div>
+                                            <div style={{fontSize: '0.8rem', color: 'var(--info)', marginTop: '4px'}}>
+                                                ✓ 出血風險較低，適合亞洲人體型
+                                            </div>
+                                        </div>
+                                        
+                                        <div 
+                                            onClick={() => setCdtProtocol('seattle')}
+                                            style={{
+                                                padding: '14px',
+                                                border: `2px solid ${cdtProtocol === 'seattle' ? 'var(--warning)' : 'var(--border)'}`,
+                                                borderRadius: '10px',
+                                                cursor: 'pointer',
+                                                background: cdtProtocol === 'seattle' ? '#fffbeb' : 'white'
+                                            }}
+                                        >
+                                            <div style={{fontWeight: '600', marginBottom: '4px'}}>
+                                                📚 SEATTLE II Protocol
+                                                <span className="badge warning" style={{marginLeft: '10px'}}>1 mg/hr/catheter</span>
+                                            </div>
+                                            <div style={{fontSize: '0.85rem', color: 'var(--text-gray)'}}>
+                                                雙側導管：每側 1 mg/hr × 2 = 總共 2 mg/hr（12hr）
+                                            </div>
+                                            <div style={{fontSize: '0.8rem', color: 'var(--warning)', marginTop: '4px'}}>
+                                                總劑量 24mg，Major bleeding rate ~10%
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="form-row">
+                                    <div className="form-group">
+                                        <label className="form-label">導管數量</label>
+                                        <select 
+                                            className="form-input"
+                                            value={numCatheters}
+                                            onChange={(e) => setNumCatheters(Number(e.target.value))}
+                                        >
+                                            <option value={1}>單側 (1 catheter)</option>
+                                            <option value={2}>雙側 (2 catheters)</option>
+                                        </select>
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">預計溶栓時間 (hr)</label>
+                                        <input
+                                            type="number"
+                                            className="form-input"
+                                            value={cdtDuration}
+                                            onChange={(e) => setCdtDuration(Number(e.target.value))}
+                                            min="6" max="24"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="summary-grid">
+                                    <div className="summary-item">
+                                        <div className="summary-label">每條導管</div>
+                                        <div className="summary-value">{cdtDosePerCatheter}</div>
+                                        <div style={{fontSize: '0.75rem', color: 'var(--text-gray)'}}>mg/hr</div>
+                                    </div>
+                                    <div className="summary-item highlight">
+                                        <div className="summary-label">總輸注速率</div>
+                                        <div className="summary-value">{cdtTotalPerHour}</div>
+                                        <div style={{fontSize: '0.75rem'}}>mg/hr</div>
+                                    </div>
+                                    <div className="summary-item">
+                                        <div className="summary-label">預估總量</div>
+                                        <div className="summary-value">{cdtTotalDose}</div>
+                                        <div style={{fontSize: '0.75rem', color: 'var(--text-gray)'}}>mg</div>
+                                    </div>
+                                </div>
+
+                                <div className="result-box">
+                                    <div className="result-label">CDT Protocol</div>
+                                    <div className="result-value" style={{fontSize: '1.6rem'}}>
+                                        {numCatheters === 2 
+                                            ? `Alteplase ${cdtDosePerCatheter} mg/hr × 2 catheters`
+                                            : `Alteplase ${cdtDosePerCatheter} mg/hr × 1 catheter`
+                                        }
+                                    </div>
+                                    <div className="result-note">
+                                        {cdtProtocol === 'conservative' 
+                                            ? `保守劑量：總共 ${cdtTotalPerHour} mg/hr`
+                                            : `SEATTLE II：總共 ${cdtTotalPerHour} mg/hr`
+                                        }
+                                        <br/>持續 {cdtDuration} 小時，總劑量 {cdtTotalDose} mg
+                                    </div>
+                                </div>
+
+                                <div style={{marginTop: '16px', textAlign: 'center'}}>
+                                    <button className={`copy-btn ${copied ? 'copied' : ''}`} onClick={copyCDTOrder}>
+                                        {copied ? '✓ 已複製' : '📋 複製醫囑'}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="info-box warning">
+                                <div className="info-title">⚠️ CDT 監測要點</div>
+                                <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                                    <li>Fibrinogen, aPTT：q6h 監測</li>
+                                    <li>Fibrinogen &lt; 200：考慮降低劑量或停藥</li>
+                                    <li>可併用低劑量 heparin（如 500 U/hr through sheath）</li>
+                                    <li>通常持續 12-24 小時</li>
+                                </ul>
+                            </div>
+
+                            <div className="info-box info">
+                                <div className="info-title">📚 Trial Reference</div>
+                                <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                                    <li><strong>SEATTLE II</strong>：1 mg/hr/catheter × 12hr (bilateral) or 24hr (unilateral) = 24mg total</li>
+                                    <li><strong>ULTIMA</strong>：1 mg/hr/catheter × 5hr → 0.5 mg/hr × 10hr，Max 20mg (bilateral)</li>
+                                    <li><strong>OPTALYSE PE</strong>：測試更低劑量與更短時間 (2-6hr)</li>
+                                </ul>
+                            </div>
+                        </>
+                    )}
+
+                    {innerTab === 'preparation' && (
+                        <div className="card">
+                            <h2 className="card-title danger">💊 Alteplase (rt-PA) 泡藥指引</h2>
+
+                            <div className="prep-card">
+                                <div className="prep-title">📦 藥品資訊</div>
+                                <div className="prep-step">
+                                    <div className="prep-number">i</div>
+                                    <div className="prep-content">
+                                        <strong>Alteplase (Actilyse)</strong>: <span className="prep-highlight">50 mg/vial</span>
+                                        <div style={{fontSize: '0.85rem', color: 'var(--text-gray)', marginTop: '4px'}}>
+                                            附 50ml 注射用水 (SWFI)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="prep-card">
+                                <div className="prep-title">🧪 全身性溶栓泡藥步驟 (100mg)</div>
+                                <div className="prep-step">
+                                    <div className="prep-number">1</div>
+                                    <div className="prep-content">
+                                        取 Alteplase <span className="prep-highlight">2 vials (100mg)</span>
+                                    </div>
+                                </div>
+                                <div className="prep-step">
+                                    <div className="prep-number">2</div>
+                                    <div className="prep-content">
+                                        每 vial 加入隨附 50ml SWFI，輕搖溶解
+                                        <div style={{fontSize: '0.85rem', color: 'var(--text-gray)', marginTop: '4px'}}>
+                                            最終濃度：1 mg/ml
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="prep-step">
+                                    <div className="prep-number">3</div>
+                                    <div className="prep-content">
+                                        <strong>Bolus</strong>: 抽取 <span className="prep-highlight">10ml (10mg)</span> IV push
+                                    </div>
+                                </div>
+                                <div className="prep-step">
+                                    <div className="prep-number">4</div>
+                                    <div className="prep-content">
+                                        <strong>Infusion</strong>: 剩餘 <span className="prep-highlight">90ml (90mg)</span> over 2hr
+                                        <div style={{fontSize: '0.85rem', color: 'var(--text-gray)', marginTop: '4px'}}>
+                                            Pump rate: 45 ml/hr
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="prep-card">
+                                <div className="prep-title">🧪 CDT 泡藥步驟 (1 mg/hr)</div>
+                                <div className="prep-step">
+                                    <div className="prep-number">1</div>
+                                    <div className="prep-content">
+                                        取 Alteplase <span className="prep-highlight">1 vial (50mg)</span>
+                                    </div>
+                                </div>
+                                <div className="prep-step">
+                                    <div className="prep-number">2</div>
+                                    <div className="prep-content">
+                                        加入 50ml SWFI 溶解 → 濃度 1 mg/ml
+                                    </div>
+                                </div>
+                                <div className="prep-step">
+                                    <div className="prep-number">3</div>
+                                    <div className="prep-content">
+                                        <strong>單側導管</strong>: Pump rate <span className="prep-highlight">1 ml/hr</span> (= 1 mg/hr)
+                                    </div>
+                                </div>
+                                <div className="prep-step">
+                                    <div className="prep-number">4</div>
+                                    <div className="prep-content">
+                                        <strong>雙側導管</strong>: 每側 <span className="prep-highlight">0.5 ml/hr</span> (= 0.5 mg/hr × 2)
+                                        <div style={{fontSize: '0.85rem', color: 'var(--text-gray)', marginTop: '4px'}}>
+                                            或各側配 25mg 以 0.5 ml/hr 輸注
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="info-box success">
+                                <div className="info-title">💡 小提醒</div>
+                                <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                                    <li>Alteplase 溶解後須於 8 小時內使用</li>
+                                    <li>避免劇烈搖晃，輕柔旋轉溶解</li>
+                                    <li>不可與其他藥物混合</li>
+                                    <li>儲存於 2-8°C，避光</li>
+                                </ul>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // ==================== SAFETY TAB ====================
+        const SafetyTab = () => {
+            const [checkedItems, setCheckedItems] = useState([]);
+
+            const toggleCheck = (id) => {
+                setCheckedItems(prev => 
+                    prev.includes(id) 
+                        ? prev.filter(item => item !== id)
+                        : [...prev, id]
+                );
+            };
+
+            const allChecked = LAB_CHECKLIST.every(item => checkedItems.includes(item.id));
+
+            return (
+                <div className="fade-in">
+                    <div className="card">
+                        <h2 className="card-title danger">⚠️ 溶栓治療禁忌症</h2>
+                        
+                        <div className="alert-stripe">
+                            使用前務必確認無絕對禁忌症！
+                        </div>
+
+                        <h3 style={{margin: '16px 0 12px', color: 'var(--danger)'}}>🚫 絕對禁忌症</h3>
+                        <ul style={{marginLeft: '20px'}}>
+                            {CONTRAINDICATIONS.map((item, idx) => (
+                                <li key={idx} style={{marginBottom: '8px', color: 'var(--text-dark)'}}>{item}</li>
+                            ))}
+                        </ul>
+
+                        <h3 style={{margin: '20px 0 12px', color: 'var(--warning)'}}>⚠️ 相對禁忌症</h3>
+                        <ul style={{marginLeft: '20px'}}>
+                            <li>目前使用抗凝血劑</li>
+                            <li>妊娠或產後一週內</li>
+                            <li>感染性心內膜炎</li>
+                            <li>嚴重肝腎功能不全</li>
+                            <li>糖尿病視網膜病變</li>
+                            <li>CPR 胸部按壓 > 10 分鐘</li>
+                        </ul>
+                    </div>
+
+                    <div className="card">
+                        <h2 className="card-title success">✅ 溶栓前查核表</h2>
+                        
+                        <ul className="checklist">
+                            {LAB_CHECKLIST.map(item => (
+                                <li 
+                                    key={item.id}
+                                    className={checkedItems.includes(item.id) ? 'checked' : ''}
+                                    onClick={() => toggleCheck(item.id)}
+                                >
+                                    <div className="checkbox">
+                                        {checkedItems.includes(item.id) && '✓'}
+                                    </div>
+                                    <span>{item.label}</span>
+                                </li>
+                            ))}
+                        </ul>
+
+                        {allChecked && (
+                            <div className="info-box success" style={{marginTop: '16px'}}>
+                                <div className="info-title">✅ 查核完成</div>
+                                <p>所有項目已確認，可進行溶栓治療</p>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="card">
+                        <h2 className="card-title warning">🩸 出血處置原則</h2>
+                        
+                        <div className="info-box danger">
+                            <div className="info-title">⚡ 嚴重出血時</div>
+                            <ol style={{marginLeft: '20px', marginTop: '8px'}}>
+                                <li>立即停止溶栓藥物</li>
+                                <li>停止所有抗凝血劑</li>
+                                <li>壓迫止血（如可行）</li>
+                                <li>輸血：PRBC, FFP, Cryoprecipitate</li>
+                                <li>考慮 Tranexamic acid 1g IV</li>
+                                <li>顱內出血：緊急神經外科會診</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // ==================== REFERENCE TAB ====================
+        const ReferenceTab = () => (
+            <div className="fade-in">
+                <div className="card">
+                    <h2 className="card-title">📚 Urokinase for ALI - 參考資料</h2>
+                    
+                    <div className="info-box info">
+                        <div className="info-title">PURPOSE Trial</div>
+                        <p>Prourokinase versus Urokinase for Peripheral Occlusions, Safety and Efficacy</p>
+                        <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                            <li>Low-dose protocol: 434-868 IU/kg/hr</li>
+                            <li>停止標準：&gt;95% clot lysis 或達 24 小時</li>
+                        </ul>
+                        <a href="https://pubmed.ncbi.nlm.nih.gov/10496218/" target="_blank" rel="noopener noreferrer" 
+                           style={{display: 'inline-block', marginTop: '10px', color: 'var(--info)', fontWeight: '500'}}>
+                            📄 PubMed: PURPOSE Trial →
+                        </a>
+                    </div>
+
+                    <table className="protocol-table">
+                        <thead>
+                            <tr>
+                                <th>Protocol</th>
+                                <th>劑量</th>
+                                <th>Loading Dose</th>
+                                <th>來源</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>High Dose</td>
+                                <td>2000 IU/kg/hr (維持)</td>
+                                <td>250,000 IU</td>
+                                <td>Traditional</td>
+                            </tr>
+                            <tr>
+                                <td>Standard</td>
+                                <td>1800 IU/kg/hr</td>
+                                <td>250,000 IU</td>
+                                <td>Common practice</td>
+                            </tr>
+                            <tr>
+                                <td>Low Dose</td>
+                                <td>434-868 IU/kg/hr</td>
+                                <td>250,000-500,000 IU</td>
+                                <td>PURPOSE / CGMH</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div className="info-box warning">
+                        <div className="info-title">⏹️ 終止治療指標</div>
+                        <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                            <li>血栓溶解 &gt;95%</li>
+                            <li>達 24 小時輸注時間</li>
+                            <li>發生併發症</li>
+                            <li>臨床狀況顯著惡化</li>
+                            <li>連續兩次血管攝影無任何血栓溶解進展</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="card">
+                    <h2 className="card-title danger">📚 Alteplase for PE - 參考資料</h2>
+                    
+                    <table className="protocol-table">
+                        <thead>
+                            <tr>
+                                <th>治療方式</th>
+                                <th>適應症</th>
+                                <th>劑量</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>全身性溶栓</td>
+                                <td>High-risk (Massive) PE</td>
+                                <td>100mg IV/2hr</td>
+                            </tr>
+                            <tr>
+                                <td>半量溶栓</td>
+                                <td>Submassive PE / 高出血風險</td>
+                                <td>50mg IV/2hr</td>
+                            </tr>
+                            <tr>
+                                <td>CDT (Conservative)</td>
+                                <td>Intermediate-high risk PE</td>
+                                <td>總量 1 mg/hr</td>
+                            </tr>
+                            <tr>
+                                <td>CDT (SEATTLE II)</td>
+                                <td>Intermediate-high risk PE</td>
+                                <td>1 mg/hr/catheter</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style={{marginTop: '20px'}}>
+                        <h3 style={{marginBottom: '12px', color: 'var(--primary)'}}>🔗 Key Trials - 文獻連結</h3>
+                        
+                        <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
+                            <a href="https://pubmed.ncbi.nlm.nih.gov/26315743/" target="_blank" rel="noopener noreferrer"
+                               style={{
+                                   padding: '14px',
+                                   background: 'var(--bg-light)',
+                                   borderRadius: '10px',
+                                   textDecoration: 'none',
+                                   color: 'var(--text-dark)',
+                                   display: 'block',
+                                   border: '1px solid var(--border)',
+                                   transition: 'all 0.2s'
+                               }}>
+                                <div style={{fontWeight: '600', color: 'var(--info)'}}>SEATTLE II Trial (2015)</div>
+                                <div style={{fontSize: '0.85rem', color: 'var(--text-gray)', marginTop: '4px'}}>
+                                    Ultrasound-facilitated CDT: 1 mg/hr/catheter × 12-24hr = 24mg total
+                                </div>
+                                <div style={{fontSize: '0.8rem', color: 'var(--info)', marginTop: '6px'}}>
+                                    JACC Cardiovasc Interv. 2015 Aug;8(10):1382-92 →
+                                </div>
+                            </a>
+
+                            <a href="https://pubmed.ncbi.nlm.nih.gov/24226805/" target="_blank" rel="noopener noreferrer"
+                               style={{
+                                   padding: '14px',
+                                   background: 'var(--bg-light)',
+                                   borderRadius: '10px',
+                                   textDecoration: 'none',
+                                   color: 'var(--text-dark)',
+                                   display: 'block',
+                                   border: '1px solid var(--border)',
+                                   transition: 'all 0.2s'
+                               }}>
+                                <div style={{fontWeight: '600', color: 'var(--info)'}}>ULTIMA Trial (2014)</div>
+                                <div style={{fontSize: '0.85rem', color: 'var(--text-gray)', marginTop: '4px'}}>
+                                    First RCT of USCDT vs anticoagulation: Max 20mg bilateral, 10mg unilateral
+                                </div>
+                                <div style={{fontSize: '0.8rem', color: 'var(--info)', marginTop: '6px'}}>
+                                    Circulation. 2014 Jan 28;129(4):479-86 →
+                                </div>
+                            </a>
+
+                            <a href="https://pubmed.ncbi.nlm.nih.gov/30025734/" target="_blank" rel="noopener noreferrer"
+                               style={{
+                                   padding: '14px',
+                                   background: 'var(--bg-light)',
+                                   borderRadius: '10px',
+                                   textDecoration: 'none',
+                                   color: 'var(--text-dark)',
+                                   display: 'block',
+                                   border: '1px solid var(--border)',
+                                   transition: 'all 0.2s'
+                               }}>
+                                <div style={{fontWeight: '600', color: 'var(--info)'}}>OPTALYSE PE Trial (2018)</div>
+                                <div style={{fontSize: '0.85rem', color: 'var(--text-gray)', marginTop: '4px'}}>
+                                    Optimum duration study: Lower doses (4-24mg) over 2-6 hours
+                                </div>
+                                <div style={{fontSize: '0.8rem', color: 'var(--info)', marginTop: '6px'}}>
+                                    JACC Cardiovasc Interv. 2018 Jul 23;11(14):1401-1410 →
+                                </div>
+                            </a>
+
+                            <a href="https://pubmed.ncbi.nlm.nih.gov/24226804/" target="_blank" rel="noopener noreferrer"
+                               style={{
+                                   padding: '14px',
+                                   background: 'var(--bg-light)',
+                                   borderRadius: '10px',
+                                   textDecoration: 'none',
+                                   color: 'var(--text-dark)',
+                                   display: 'block',
+                                   border: '1px solid var(--border)',
+                                   transition: 'all 0.2s'
+                               }}>
+                                <div style={{fontWeight: '600', color: 'var(--info)'}}>PEITHO Trial (2014)</div>
+                                <div style={{fontSize: '0.85rem', color: 'var(--text-gray)', marginTop: '4px'}}>
+                                    Systemic thrombolysis (Tenecteplase) for intermediate-risk PE
+                                </div>
+                                <div style={{fontSize: '0.8rem', color: 'var(--info)', marginTop: '6px'}}>
+                                    N Engl J Med. 2014 Apr 10;370(15):1402-11 →
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div className="info-box info" style={{marginTop: '20px'}}>
+                        <div className="info-title">📖 Guidelines</div>
+                        <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                            <li>
+                                <a href="https://academic.oup.com/eurheartj/article/41/4/543/5556136" target="_blank" rel="noopener noreferrer" style={{color: 'var(--info)'}}>
+                                    ESC 2019 Guidelines on Pulmonary Embolism →
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://pubmed.ncbi.nlm.nih.gov/33428871/" target="_blank" rel="noopener noreferrer" style={{color: 'var(--info)'}}>
+                                    ACCP Antithrombotic Therapy Guidelines (CHEST 2021) →
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        );
+
+        // ==================== MAIN APP ====================
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('urokinase');
+
+            const renderContent = () => {
+                switch(activeTab) {
+                    case 'urokinase': return <UrokinaseTab />;
+                    case 'alteplase': return <AlteplaseTab />;
+                    case 'safety': return <SafetyTab />;
+                    case 'reference': return <ReferenceTab />;
+                    default: return <UrokinaseTab />;
+                }
+            };
+
+            return (
+                <div className="app-container">
+                    <Header />
+                    <NavTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+                    {renderContent()}
+                    <footer className="footer">
+                        <p>血栓溶解藥物計算與泡藥指引</p>
+                        <p style={{marginTop: '8px'}}>
+                            國立臺灣大學醫學院附設醫院新竹臺大分院心血管中心
+                        </p>
+                    </footer>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
