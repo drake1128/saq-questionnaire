@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warfarin Dosing Algorithm | 華法林劑量計算教學</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Crimson+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --deep-burgundy: #5D1A2E;
+            --warm-cream: #FDF6E9;
+            --gold-accent: #C9A962;
+            --dark-charcoal: #2C2C2C;
+            --muted-rose: #B4838D;
+            --pale-blush: #F5E6E8;
+            --sage-green: #7A9E7E;
+            --alert-red: #C1474B;
+            --info-blue: #4A6FA5;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(135deg, var(--warm-cream) 0%, var(--pale-blush) 100%);
+            min-height: 100vh;
+            color: var(--dark-charcoal);
+        }
+
+        .app-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--deep-burgundy) 0%, #7D2A42 100%);
+            padding: 32px 24px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(93, 26, 46, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 60%;
+            height: 200%;
+            background: radial-gradient(ellipse, rgba(201, 169, 98, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .header h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2rem;
+            color: var(--warm-cream);
+            margin-bottom: 8px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .header-subtitle {
+            color: var(--gold-accent);
+            font-size: 1rem;
+            font-weight: 300;
+        }
+
+        .pill-icon {
+            position: absolute;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 4rem;
+            opacity: 0.2;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            color: var(--dark-charcoal);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .nav-tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .nav-tab.active {
+            background: var(--deep-burgundy);
+            color: var(--warm-cream);
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--deep-burgundy);
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--pale-blush);
+        }
+
+        .card-subtitle {
+            font-size: 0.9rem;
+            color: var(--muted-rose);
+            margin-top: -12px;
+            margin-bottom: 16px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--dark-charcoal);
+        }
+
+        .form-label-hint {
+            font-weight: 400;
+            color: var(--muted-rose);
+            font-size: 0.85rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #E8E0E0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--gold-accent);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Toggle Switch */
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 52px;
+            height: 28px;
+            background: #E0D8D8;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--sage-green);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(24px);
+        }
+
+        .toggle-label {
+            font-size: 0.9rem;
+            color: var(--dark-charcoal);
+        }
+
+        /* Result Display */
+        .result-box {
+            background: linear-gradient(135deg, var(--deep-burgundy) 0%, #7D2A42 100%);
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .result-label {
+            color: var(--gold-accent);
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-family: 'Crimson Pro', serif;
+            font-size: 3rem;
+            font-weight: 600;
+            color: var(--warm-cream);
+        }
+
+        .result-unit {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-left: 8px;
+        }
+
+        .result-note {
+            color: var(--pale-blush);
+            font-size: 0.85rem;
+            margin-top: 12px;
+        }
+
+        /* Dosing Table */
+        .dosing-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        .dosing-table th,
+        .dosing-table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #E8E0E0;
+        }
+
+        .dosing-table th {
+            background: var(--pale-blush);
+            font-weight: 600;
+            color: var(--deep-burgundy);
+        }
+
+        .dosing-table tr:hover {
+            background: var(--warm-cream);
+        }
+
+        .highlight-row {
+            background: var(--gold-accent) !important;
+            color: var(--deep-burgundy);
+            font-weight: 600;
+        }
+
+        /* Reference Link */
+        .reference-link {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            background: var(--warm-cream);
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--dark-charcoal);
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .reference-link:hover {
+            border-color: var(--gold-accent);
+            transform: translateX(4px);
+        }
+
+        .reference-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--deep-burgundy);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            color: var(--warm-cream);
+            font-size: 1.5rem;
+        }
+
+        .reference-text {
+            flex: 1;
+        }
+
+        .reference-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+
+        .reference-journal {
+            font-size: 0.85rem;
+            color: var(--muted-rose);
+        }
+
+        .external-icon {
+            color: var(--gold-accent);
+            font-size: 1.2rem;
+        }
+
+        /* Algorithm Box */
+        .algorithm-box {
+            background: #F8F5F2;
+            border-left: 4px solid var(--gold-accent);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 16px 0;
+            font-family: 'Crimson Pro', monospace;
+            font-size: 0.95rem;
+            overflow-x: auto;
+        }
+
+        .algorithm-title {
+            font-weight: 600;
+            color: var(--deep-burgundy);
+            margin-bottom: 12px;
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+
+        /* Info Box */
+        .info-box {
+            padding: 16px;
+            border-radius: 12px;
+            margin: 16px 0;
+        }
+
+        .info-box.warning {
+            background: #FFF5E6;
+            border-left: 4px solid #E8A838;
+        }
+
+        .info-box.info {
+            background: #E8F0FA;
+            border-left: 4px solid var(--info-blue);
+        }
+
+        .info-box.success {
+            background: #E8F5E9;
+            border-left: 4px solid var(--sage-green);
+        }
+
+        .info-box.danger {
+            background: #FDEAEA;
+            border-left: 4px solid var(--alert-red);
+        }
+
+        .info-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Quiz Styles */
+        .quiz-option {
+            padding: 14px 18px;
+            border: 2px solid #E8E0E0;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--gold-accent);
+            background: var(--warm-cream);
+        }
+
+        .quiz-option.selected {
+            border-color: var(--deep-burgundy);
+            background: var(--pale-blush);
+        }
+
+        .quiz-option.correct {
+            border-color: var(--sage-green);
+            background: #E8F5E9;
+        }
+
+        .quiz-option.incorrect {
+            border-color: var(--alert-red);
+            background: #FDEAEA;
+        }
+
+        .quiz-marker {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #D0C8C8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .quiz-option.selected .quiz-marker {
+            background: var(--deep-burgundy);
+            border-color: var(--deep-burgundy);
+            color: white;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--deep-burgundy);
+            color: var(--warm-cream);
+        }
+
+        .btn-primary:hover {
+            background: #7D2A42;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--gold-accent);
+            color: var(--deep-burgundy);
+        }
+
+        /* Progress Indicator */
+        .progress-bar {
+            height: 8px;
+            background: #E8E0E0;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold-accent), var(--deep-burgundy));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        /* Key Points List */
+        .key-points {
+            list-style: none;
+            padding: 0;
+        }
+
+        .key-points li {
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            background: var(--warm-cream);
+            border-radius: 10px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .key-points li::before {
+            content: '✓';
+            color: var(--sage-green);
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        /* Collapsible Section */
+        .collapsible {
+            cursor: pointer;
+            padding: 16px;
+            background: var(--pale-blush);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s ease;
+        }
+
+        .collapsible:hover {
+            background: #EBD9DC;
+        }
+
+        .collapsible-content {
+            padding: 16px;
+            background: white;
+            border-radius: 0 0 12px 12px;
+            margin-top: -8px;
+            margin-bottom: 8px;
+            border: 1px solid #E8E0E0;
+            border-top: none;
+        }
+
+        /* BSA Display */
+        .bsa-display {
+            display: inline-block;
+            background: var(--pale-blush);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        /* Fade Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: var(--muted-rose);
+            font-size: 0.85rem;
+        }
+
+        .footer a {
+            color: var(--deep-burgundy);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // ================== DATA ==================
+        const COAG_TRIAL_KEY_POINTS = [
+            "COAG試驗是一項多中心、雙盲、隨機對照試驗，比較基因導向劑量與臨床導向劑量策略",
+            "共1015位病人被隨機分配至兩組，追蹤4週",
+            "主要終點為Day 4/5到Day 28的治療範圍時間百分比（TTR）",
+            "結果：基因導向組TTR 45.2% vs 臨床導向組TTR 45.4%（P=0.91），無顯著差異",
+            "亞組分析發現：黑人患者使用基因導向反而較差（35.2% vs 43.5%）",
+            "結論：基因導向劑量並未改善抗凝血控制，臨床演算法同樣有效"
+        ];
+
+        const DOSING_TABLE = [
+            { dose: 1.0, w1: "1#", w5: "-", display: "1mg 1#" },
+            { dose: 1.5, w1: "1.5#", w5: "-", display: "1mg 1.5#" },
+            { dose: 2.0, w1: "2#", w5: "-", display: "1mg 2#" },
+            { dose: 2.5, w1: "-", w5: "½#", display: "5mg ½#" },
+            { dose: 3.0, w1: "3#", w5: "-", display: "1mg 3#" },
+            { dose: 3.5, w1: "1#", w5: "½#", display: "1mg 1# + 5mg ½#" },
+            { dose: 4.0, w1: "1.5#", w5: "½#", display: "1mg 1.5# + 5mg ½#" },
+            { dose: 4.5, w1: "2#", w5: "½#", display: "1mg 2# + 5mg ½#" },
+            { dose: 5.0, w1: "-", w5: "1#", display: "5mg 1#" },
+            { dose: 5.5, w1: "½#", w5: "1#", display: "1mg ½# + 5mg 1#" },
+            { dose: 6.0, w1: "1#", w5: "1#", display: "1mg 1# + 5mg 1#" },
+            { dose: 6.5, w1: "1.5#", w5: "1#", display: "1mg 1.5# + 5mg 1#" },
+            { dose: 7.0, w1: "2#", w5: "1#", display: "1mg 2# + 5mg 1#" },
+            { dose: 7.5, w1: "-", w5: "1.5#", display: "5mg 1.5#" },
+            { dose: 8.0, w1: "3#", w5: "1#", display: "1mg 3# + 5mg 1#" },
+            { dose: 8.5, w1: "1#", w5: "1.5#", display: "1mg 1# + 5mg 1.5#" },
+            { dose: 9.0, w1: "1.5#", w5: "1.5#", display: "1mg 1.5# + 5mg 1.5#" },
+            { dose: 9.5, w1: "2#", w5: "1.5#", display: "1mg 2# + 5mg 1.5#" },
+            { dose: 10.0, w1: "-", w5: "2#", display: "5mg 2#" },
+        ];
+
+        const QUIZ_QUESTIONS = [
+            {
+                question: "COAG試驗的主要發現是什麼？",
+                options: [
+                    "基因導向劑量顯著優於臨床導向",
+                    "基因導向劑量與臨床導向無顯著差異",
+                    "臨床導向劑量顯著優於基因導向",
+                    "兩種方法都無法預測適當劑量"
+                ],
+                correct: 1,
+                explanation: "COAG試驗顯示基因導向組TTR為45.2%，臨床導向組為45.4%，兩組無顯著差異（P=0.91）。"
+            },
+            {
+                question: "在臨床劑量起始演算法中，哪個因素會「增加」預測的warfarin劑量？",
+                options: [
+                    "年齡增加",
+                    "使用Amiodarone",
+                    "體表面積增加",
+                    "以上皆是"
+                ],
+                correct: 2,
+                explanation: "在演算法中，年齡和Amiodarone使用會減少劑量（係數為負），而體表面積增加會增加劑量（係數+0.425）。"
+            },
+            {
+                question: "Warfarin的目標INR通常設定為多少？",
+                options: [
+                    "1.0-2.0",
+                    "2.0-3.0",
+                    "3.0-4.0",
+                    "4.0-5.0"
+                ],
+                correct: 1,
+                explanation: "對於大多數適應症（如心房顫動、DVT/PE），warfarin的目標INR為2.0-3.0。"
+            },
+            {
+                question: "以下哪種藥物會增加warfarin的作用，需要減少劑量？",
+                options: [
+                    "Amiodarone",
+                    "Aspirin",
+                    "Vitamin K",
+                    "Rifampin"
+                ],
+                correct: 0,
+                explanation: "Amiodarone會抑制CYP2C9，減少warfarin代謝，增加出血風險，需要減少warfarin劑量約30-50%。"
+            },
+            {
+                question: "在COAG試驗中，黑人患者使用基因導向劑量的結果如何？",
+                options: [
+                    "優於臨床導向",
+                    "與臨床導向相同",
+                    "劣於臨床導向",
+                    "未納入研究"
+                ],
+                correct: 2,
+                explanation: "亞組分析顯示黑人患者使用基因導向TTR為35.2%，臨床導向為43.5%（P=0.01），基因導向反而較差。"
+            }
+        ];
+
+        // ================== COMPONENTS ==================
+
+        // Calculate BSA using Du Bois formula
+        const calculateBSA = (height, weight) => {
+            if (!height || !weight) return null;
+            return Math.sqrt((height * weight) / 3600);
+        };
+
+        // Clinical Dose Initiation Algorithm
+        const calculateInitiationDose = (params) => {
+            const { age, blackRace, smokes, bsa, amiodarone, targetINR, dvtPE } = params;
+            
+            const dose = Math.exp(
+                0.613 
+                - (0.0075 * age) 
+                + (0.156 * (blackRace ? 1 : 0)) 
+                + (0.108 * (smokes ? 1 : 0)) 
+                + (0.425 * bsa) 
+                - (0.257 * (amiodarone ? 1 : 0)) 
+                + (0.216 * targetINR) 
+                + (0.0784 * (dvtPE ? 1 : 0))
+            );
+            
+            return Math.round(dose * 10) / 10;
+        };
+
+        // Clinical Dose Revision Algorithm
+        const calculateRevisionDose = (params) => {
+            const { age, blackRace, bsa, diabetes, stroke, amiodarone, fluvastatin, targetINR, currentINR, dose2, dose3, dose4 } = params;
+            
+            if (!currentINR || currentINR <= 0) return null;
+            
+            const dose = (1/7) * Math.exp(
+                2.81602 
+                - (0.00589 * age) 
+                + (0.07123 * (blackRace ? 1 : 0)) 
+                + (0.17675 * bsa) 
+                - (0.16759 * (diabetes ? 1 : 0)) 
+                - (0.22844 * (stroke ? 1 : 0))
+                - (0.11137 * (amiodarone ? 1 : 0)) 
+                - (0.25487 * (fluvastatin ? 1 : 0)) 
+                + (0.27815 * targetINR) 
+                - (0.76679 * Math.log(currentINR)) 
+                + (0.03471 * dose2) 
+                + (0.03047 * dose3) 
+                + (0.01929 * dose4)
+            );
+            
+            return Math.round(dose * 10) / 10;
+        };
+
+        // Header Component
+        const Header = () => (
+            <div className="header">
+                <h1>💊 Warfarin Dosing Algorithm</h1>
+                <p className="header-subtitle">華法林劑量計算 · Clinical Dosing Calculator · COAG Trial</p>
+                <span className="pill-icon">💊</span>
+            </div>
+        );
+
+        // Navigation Tabs
+        const NavTabs = ({ activeTab, setActiveTab }) => (
+            <div className="nav-tabs">
+                <button 
+                    className={`nav-tab ${activeTab === 'home' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('home')}
+                >
+                    📚 文獻資料
+                </button>
+                <button 
+                    className={`nav-tab ${activeTab === 'initiation' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('initiation')}
+                >
+                    🔢 起始劑量
+                </button>
+                <button 
+                    className={`nav-tab ${activeTab === 'revision' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('revision')}
+                >
+                    📊 劑量調整
+                </button>
+                <button 
+                    className={`nav-tab ${activeTab === 'table' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('table')}
+                >
+                    📋 劑量對照
+                </button>
+                <button 
+                    className={`nav-tab ${activeTab === 'quiz' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('quiz')}
+                >
+                    ✏️ 測驗
+                </button>
+            </div>
+        );
+
+        // Home Tab - References & Overview
+        const HomeTab = () => {
+            const [expandedSection, setExpandedSection] = useState('overview');
+            
+            return (
+                <div className="fade-in">
+                    {/* Reference Links */}
+                    <div className="card">
+                        <h2 className="card-title">📖 參考文獻 References</h2>
+                        
+                        <a 
+                            href="https://www.nejm.org/doi/full/10.1056/NEJMoa1310669" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="reference-link"
+                        >
+                            <div className="reference-icon">📄</div>
+                            <div className="reference-text">
+                                <div className="reference-title">
+                                    A Pharmacogenetic versus a Clinical Algorithm for Warfarin Dosing
+                                </div>
+                                <div className="reference-journal">
+                                    Kimmel SE et al. N Engl J Med 2013;369:2283-93 (COAG Trial)
+                                </div>
+                            </div>
+                            <span className="external-icon">↗</span>
+                        </a>
+
+                        <a 
+                            href="https://pubmed.ncbi.nlm.nih.gov/18574025/" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="reference-link"
+                        >
+                            <div className="reference-icon">📄</div>
+                            <div className="reference-text">
+                                <div className="reference-title">
+                                    Use of pharmacogenetic and clinical factors to predict the therapeutic dose of warfarin
+                                </div>
+                                <div className="reference-journal">
+                                    Gage BF et al. Clin Pharmacol Ther 2008;84:326-31
+                                </div>
+                            </div>
+                            <span className="external-icon">↗</span>
+                        </a>
+                    </div>
+
+                    {/* COAG Trial Summary */}
+                    <div className="card">
+                        <h2 className="card-title">🔬 COAG Trial 重點摘要</h2>
+                        
+                        <div className="info-box info">
+                            <div className="info-title">📋 試驗設計</div>
+                            <p>多中心、雙盲、隨機對照試驗，比較基因導向vs臨床導向的warfarin劑量策略</p>
+                        </div>
+
+                        <ul className="key-points">
+                            {COAG_TRIAL_KEY_POINTS.map((point, index) => (
+                                <li key={index}>{point}</li>
+                            ))}
+                        </ul>
+
+                        <div className="info-box success" style={{marginTop: '20px'}}>
+                            <div className="info-title">💡 臨床意義</div>
+                            <p>臨床演算法在預測warfarin起始劑量上與基因導向一樣有效，且不需要額外的基因檢測成本與等待時間。台灣臨床實務中可以使用臨床演算法作為起始劑量的參考。</p>
+                        </div>
+                    </div>
+
+                    {/* Algorithm Explanation */}
+                    <div className="card">
+                        <h2 className="card-title">📐 演算法說明</h2>
+                        
+                        <div 
+                            className="collapsible"
+                            onClick={() => setExpandedSection(expandedSection === 'init-algo' ? '' : 'init-algo')}
+                        >
+                            <span>📌 劑量起始演算法 (Dose-Initiation)</span>
+                            <span>{expandedSection === 'init-algo' ? '▼' : '▶'}</span>
+                        </div>
+                        {expandedSection === 'init-algo' && (
+                            <div className="collapsible-content">
+                                <div className="algorithm-box">
+                                    <div className="algorithm-title">Clinical Dose-Initiation Algorithm</div>
+                                    <p>Dose (mg/day) = exp[</p>
+                                    <p>&nbsp;&nbsp;0.613</p>
+                                    <p>&nbsp;&nbsp;− 0.0075 × Age</p>
+                                    <p>&nbsp;&nbsp;+ 0.156 × Black Race (1 if yes)</p>
+                                    <p>&nbsp;&nbsp;+ 0.108 × Smokes (1 if yes)</p>
+                                    <p>&nbsp;&nbsp;+ 0.425 × BSA (m²)</p>
+                                    <p>&nbsp;&nbsp;− 0.257 × Amiodarone (1 if yes)</p>
+                                    <p>&nbsp;&nbsp;+ 0.216 × Target INR</p>
+                                    <p>&nbsp;&nbsp;+ 0.0784 × DVT/PE (1 if yes)</p>
+                                    <p>]</p>
+                                </div>
+                                <p style={{marginTop: '12px', color: '#666'}}>
+                                    BSA (Body Surface Area) = √(Height × Weight / 3600)
+                                </p>
+                            </div>
+                        )}
+
+                        <div 
+                            className="collapsible"
+                            onClick={() => setExpandedSection(expandedSection === 'rev-algo' ? '' : 'rev-algo')}
+                        >
+                            <span>📌 劑量調整演算法 (Dose-Revision)</span>
+                            <span>{expandedSection === 'rev-algo' ? '▼' : '▶'}</span>
+                        </div>
+                        {expandedSection === 'rev-algo' && (
+                            <div className="collapsible-content">
+                                <div className="algorithm-box">
+                                    <div className="algorithm-title">Clinical Dose-Revision Algorithm</div>
+                                    <p>Dose (mg/day) = 1/7 × exp[</p>
+                                    <p>&nbsp;&nbsp;2.81602</p>
+                                    <p>&nbsp;&nbsp;− 0.00589 × Age</p>
+                                    <p>&nbsp;&nbsp;+ 0.07123 × Black Race</p>
+                                    <p>&nbsp;&nbsp;+ 0.17675 × BSA</p>
+                                    <p>&nbsp;&nbsp;− 0.16759 × Diabetes</p>
+                                    <p>&nbsp;&nbsp;− 0.22844 × Stroke</p>
+                                    <p>&nbsp;&nbsp;− 0.11137 × Amiodarone</p>
+                                    <p>&nbsp;&nbsp;− 0.25487 × Fluvastatin</p>
+                                    <p>&nbsp;&nbsp;+ 0.27815 × Target INR</p>
+                                    <p>&nbsp;&nbsp;− 0.76679 × ln(Current INR)</p>
+                                    <p>&nbsp;&nbsp;+ 0.03471 × Dose-2</p>
+                                    <p>&nbsp;&nbsp;+ 0.03047 × Dose-3</p>
+                                    <p>&nbsp;&nbsp;+ 0.01929 × Dose-4</p>
+                                    <p>]</p>
+                                </div>
+                                <p style={{marginTop: '12px', color: '#666'}}>
+                                    用於治療第4-5天，根據前幾天劑量和INR反應調整
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // Toggle Component
+        const Toggle = ({ value, onChange, label }) => (
+            <div className="toggle-group">
+                <div 
+                    className={`toggle-switch ${value ? 'active' : ''}`}
+                    onClick={() => onChange(!value)}
+                />
+                <span className="toggle-label">{label}</span>
+            </div>
+        );
+
+        // Initiation Calculator Tab
+        const InitiationTab = () => {
+            const [height, setHeight] = useState(160);
+            const [weight, setWeight] = useState(60);
+            const [age, setAge] = useState(65);
+            const [blackRace, setBlackRace] = useState(false);
+            const [smokes, setSmokes] = useState(false);
+            const [amiodarone, setAmiodarone] = useState(false);
+            const [targetINR, setTargetINR] = useState(2.5);
+            const [dvtPE, setDvtPE] = useState(false);
+
+            const bsa = useMemo(() => calculateBSA(height, weight), [height, weight]);
+            
+            const calculatedDose = useMemo(() => {
+                if (!bsa) return null;
+                return calculateInitiationDose({
+                    age, blackRace, smokes, bsa, amiodarone, targetINR, dvtPE
+                });
+            }, [age, blackRace, smokes, bsa, amiodarone, targetINR, dvtPE]);
+
+            const matchingRow = DOSING_TABLE.find(row => {
+                return calculatedDose >= row.dose - 0.25 && calculatedDose < row.dose + 0.25;
+            });
+
+            return (
+                <div className="fade-in">
+                    <div className="card">
+                        <h2 className="card-title">🔢 Warfarin 起始劑量計算</h2>
+                        <p className="card-subtitle">Clinical Dose-Initiation Algorithm (Day 1-3)</p>
+
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label className="form-label">
+                                    身高 Height <span className="form-label-hint">(cm)</span>
+                                </label>
+                                <input 
+                                    type="number" 
+                                    className="form-input"
+                                    value={height}
+                                    onChange={(e) => setHeight(Number(e.target.value))}
+                                    min="100" max="250"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">
+                                    體重 Weight <span className="form-label-hint">(kg)</span>
+                                </label>
+                                <input 
+                                    type="number" 
+                                    className="form-input"
+                                    value={weight}
+                                    onChange={(e) => setWeight(Number(e.target.value))}
+                                    min="20" max="200"
+                                />
+                            </div>
+                        </div>
+
+                        {bsa && (
+                            <div className="bsa-display">
+                                📐 BSA: <strong>{bsa.toFixed(2)} m²</strong>
+                            </div>
+                        )}
+
+                        <div className="form-row" style={{marginTop: '16px'}}>
+                            <div className="form-group">
+                                <label className="form-label">
+                                    年齡 Age <span className="form-label-hint">(years)</span>
+                                </label>
+                                <input 
+                                    type="number" 
+                                    className="form-input"
+                                    value={age}
+                                    onChange={(e) => setAge(Number(e.target.value))}
+                                    min="18" max="120"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">
+                                    目標 INR <span className="form-label-hint">(Target)</span>
+                                </label>
+                                <input 
+                                    type="number" 
+                                    className="form-input"
+                                    value={targetINR}
+                                    onChange={(e) => setTargetINR(Number(e.target.value))}
+                                    min="1.5" max="4" step="0.1"
+                                />
+                            </div>
+                        </div>
+
+                        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '16px'}}>
+                            <Toggle value={blackRace} onChange={setBlackRace} label="Black Race 黑人" />
+                            <Toggle value={smokes} onChange={setSmokes} label="Smokes 抽菸" />
+                            <Toggle value={amiodarone} onChange={setAmiodarone} label="Amiodarone 使用" />
+                            <Toggle value={dvtPE} onChange={setDvtPE} label="DVT/PE 適應症" />
+                        </div>
+
+                        {calculatedDose && (
+                            <div className="result-box">
+                                <div className="result-label">建議起始劑量 Recommended Starting Dose</div>
+                                <div className="result-value">
+                                    {calculatedDose}
+                                    <span className="result-unit">mg/day</span>
+                                </div>
+                                {matchingRow && (
+                                    <div className="result-note">
+                                        💊 建議處方：Warfarin {matchingRow.display}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="info-box warning">
+                        <div className="info-title">⚠️ 注意事項</div>
+                        <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                            <li>此計算僅供參考，實際劑量需依臨床判斷調整</li>
+                            <li>起始後需密切監測INR（建議第4-5天抽血）</li>
+                            <li>若INR變化劇烈，需考慮藥物交互作用或飲食因素</li>
+                        </ul>
+                    </div>
+                </div>
+            );
+        };
+
+        // Revision Calculator Tab
+        const RevisionTab = () => {
+            const [height, setHeight] = useState(160);
+            const [weight, setWeight] = useState(60);
+            const [age, setAge] = useState(65);
+            const [blackRace, setBlackRace] = useState(false);
+            const [diabetes, setDiabetes] = useState(false);
+            const [stroke, setStroke] = useState(false);
+            const [amiodarone, setAmiodarone] = useState(false);
+            const [fluvastatin, setFluvastatin] = useState(false);
+            const [targetINR, setTargetINR] = useState(2.5);
+            const [currentINR, setCurrentINR] = useState(1.5);
+            const [dose2, setDose2] = useState(5);
+            const [dose3, setDose3] = useState(5);
+            const [dose4, setDose4] = useState(5);
+
+            const bsa = useMemo(() => calculateBSA(height, weight), [height, weight]);
+            
+            const calculatedDose = useMemo(() => {
+                if (!bsa || !currentINR) return null;
+                return calculateRevisionDose({
+                    age, blackRace, bsa, diabetes, stroke, amiodarone, fluvastatin,
+                    targetINR, currentINR, dose2, dose3, dose4
+                });
+            }, [age, blackRace, bsa, diabetes, stroke, amiodarone, fluvastatin, targetINR, currentINR, dose2, dose3, dose4]);
+
+            const getINRStatus = () => {
+                if (!currentINR) return null;
+                if (currentINR < 2) return { status: 'low', text: '低於治療範圍', color: 'var(--info-blue)' };
+                if (currentINR > 3) return { status: 'high', text: '高於治療範圍', color: 'var(--alert-red)' };
+                return { status: 'normal', text: '在治療範圍內', color: 'var(--sage-green)' };
+            };
+
+            const inrStatus = getINRStatus();
+
+            return (
+                <div className="fade-in">
+                    <div className="card">
+                        <h2 className="card-title">📊 Warfarin 劑量調整計算</h2>
+                        <p className="card-subtitle">Clinical Dose-Revision Algorithm (Day 4-5)</p>
+
+                        <div className="info-box info" style={{marginBottom: '20px'}}>
+                            <div className="info-title">📋 使用時機</div>
+                            <p>在治療第4-5天，根據前幾天的劑量和目前INR來調整維持劑量</p>
+                        </div>
+
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label className="form-label">身高 (cm)</label>
+                                <input 
+                                    type="number" 
+                                    className="form-input"
+                                    value={height}
+                                    onChange={(e) => setHeight(Number(e.target.value))}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">體重 (kg)</label>
+                                <input 
+                                    type="number" 
+                                    className="form-input"
+                                    value={weight}
+                                    onChange={(e) => setWeight(Number(e.target.value))}
+                                />
+                            </div>
+                        </div>
+
+                        {bsa && <div className="bsa-display">📐 BSA: <strong>{bsa.toFixed(2)} m²</strong></div>}
+
+                        <div className="form-row" style={{marginTop: '16px'}}>
+                            <div className="form-group">
+                                <label className="form-label">年齡 (years)</label>
+                                <input 
+                                    type="number" 
+                                    className="form-input"
+                                    value={age}
+                                    onChange={(e) => setAge(Number(e.target.value))}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">目標 INR</label>
+                                <input 
+                                    type="number" 
+                                    className="form-input"
+                                    value={targetINR}
+                                    onChange={(e) => setTargetINR(Number(e.target.value))}
+                                    step="0.1"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="form-group" style={{marginTop: '16px'}}>
+                            <label className="form-label" style={{color: inrStatus?.color}}>
+                                🩸 目前 INR (Current INR on Day 4/5) - {inrStatus?.text}
+                            </label>
+                            <input 
+                                type="number" 
+                                className="form-input"
+                                value={currentINR}
+                                onChange={(e) => setCurrentINR(Number(e.target.value))}
+                                step="0.1"
+                                style={{borderColor: inrStatus?.color}}
+                            />
+                        </div>
+
+                        <div style={{background: 'var(--warm-cream)', padding: '16px', borderRadius: '12px', marginTop: '16px'}}>
+                            <label className="form-label" style={{marginBottom: '12px'}}>💊 過去三天劑量 (mg/day)</label>
+                            <div className="form-row">
+                                <div className="form-group">
+                                    <label className="form-label form-label-hint">Day -2 (Dose-2)</label>
+                                    <input 
+                                        type="number" 
+                                        className="form-input"
+                                        value={dose2}
+                                        onChange={(e) => setDose2(Number(e.target.value))}
+                                        step="0.5"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label form-label-hint">Day -3 (Dose-3)</label>
+                                    <input 
+                                        type="number" 
+                                        className="form-input"
+                                        value={dose3}
+                                        onChange={(e) => setDose3(Number(e.target.value))}
+                                        step="0.5"
+                                    />
+                                </div>
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label form-label-hint">Day -4 (Dose-4)</label>
+                                <input 
+                                    type="number" 
+                                    className="form-input"
+                                    value={dose4}
+                                    onChange={(e) => setDose4(Number(e.target.value))}
+                                    step="0.5"
+                                    style={{maxWidth: '200px'}}
+                                />
+                            </div>
+                        </div>
+
+                        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '16px'}}>
+                            <Toggle value={blackRace} onChange={setBlackRace} label="Black Race" />
+                            <Toggle value={diabetes} onChange={setDiabetes} label="Diabetes 糖尿病" />
+                            <Toggle value={stroke} onChange={setStroke} label="Stroke 中風史" />
+                            <Toggle value={amiodarone} onChange={setAmiodarone} label="Amiodarone" />
+                            <Toggle value={fluvastatin} onChange={setFluvastatin} label="Fluvastatin" />
+                        </div>
+
+                        {calculatedDose && (
+                            <div className="result-box">
+                                <div className="result-label">建議調整劑量 Recommended Revised Dose</div>
+                                <div className="result-value">
+                                    {calculatedDose}
+                                    <span className="result-unit">mg/day</span>
+                                </div>
+                                <div className="result-note">
+                                    繼續監測INR直到穩定，通常1-2週後達穩定狀態
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // Dosing Table Tab
+        const TableTab = () => {
+            const [targetDose, setTargetDose] = useState(5);
+
+            return (
+                <div className="fade-in">
+                    <div className="card">
+                        <h2 className="card-title">📋 Warfarin 劑量對照表</h2>
+                        <p className="card-subtitle">台灣健保藥品：Warfarin 1mg (粉紅色) / 5mg (黃色)</p>
+
+                        <div className="form-group">
+                            <label className="form-label">輸入目標每日劑量查找 (mg/day)</label>
+                            <input 
+                                type="number" 
+                                className="form-input"
+                                value={targetDose}
+                                onChange={(e) => setTargetDose(Number(e.target.value))}
+                                step="0.5"
+                                min="0.5"
+                                max="15"
+                                style={{maxWidth: '200px'}}
+                            />
+                        </div>
+
+                        <table className="dosing-table">
+                            <thead>
+                                <tr>
+                                    <th>每日劑量<br/>(mg/day)</th>
+                                    <th>Warfarin 1mg<br/>(粉紅)</th>
+                                    <th>Warfarin 5mg<br/>(黃色)</th>
+                                    <th>處方寫法</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {DOSING_TABLE.map((row, index) => {
+                                    const isHighlighted = targetDose >= row.dose - 0.25 && targetDose < row.dose + 0.25;
+                                    return (
+                                        <tr key={index} className={isHighlighted ? 'highlight-row' : ''}>
+                                            <td><strong>{row.dose}</strong></td>
+                                            <td>{row.w1}</td>
+                                            <td>{row.w5}</td>
+                                            <td style={{fontSize: '0.85rem'}}>{row.display}</td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+
+                        <div className="info-box info" style={{marginTop: '20px'}}>
+                            <div className="info-title">💡 使用說明</div>
+                            <p># 代表錠數。例如：3.5 mg/day = Warfarin 1mg 1# + Warfarin 5mg ½#</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Quiz Tab
+        const QuizTab = () => {
+            const [currentQuestion, setCurrentQuestion] = useState(0);
+            const [selectedAnswer, setSelectedAnswer] = useState(null);
+            const [showResult, setShowResult] = useState(false);
+            const [score, setScore] = useState(0);
+            const [answered, setAnswered] = useState([]);
+
+            const question = QUIZ_QUESTIONS[currentQuestion];
+            const progress = ((currentQuestion + 1) / QUIZ_QUESTIONS.length) * 100;
+
+            const handleAnswer = (index) => {
+                if (showResult) return;
+                setSelectedAnswer(index);
+            };
+
+            const handleSubmit = () => {
+                if (selectedAnswer === null) return;
+                
+                setShowResult(true);
+                if (selectedAnswer === question.correct) {
+                    setScore(score + 1);
+                }
+                setAnswered([...answered, { question: currentQuestion, selected: selectedAnswer, correct: question.correct }]);
+            };
+
+            const handleNext = () => {
+                if (currentQuestion < QUIZ_QUESTIONS.length - 1) {
+                    setCurrentQuestion(currentQuestion + 1);
+                    setSelectedAnswer(null);
+                    setShowResult(false);
+                }
+            };
+
+            const handleRestart = () => {
+                setCurrentQuestion(0);
+                setSelectedAnswer(null);
+                setShowResult(false);
+                setScore(0);
+                setAnswered([]);
+            };
+
+            const isComplete = currentQuestion === QUIZ_QUESTIONS.length - 1 && showResult;
+
+            return (
+                <div className="fade-in">
+                    <div className="card">
+                        <h2 className="card-title">✏️ 自我測驗 Quiz</h2>
+                        
+                        <div className="progress-bar">
+                            <div className="progress-fill" style={{width: `${progress}%`}}></div>
+                        </div>
+                        
+                        <p style={{textAlign: 'right', color: 'var(--muted-rose)', marginBottom: '20px'}}>
+                            問題 {currentQuestion + 1} / {QUIZ_QUESTIONS.length}
+                        </p>
+
+                        {!isComplete ? (
+                            <>
+                                <h3 style={{fontSize: '1.1rem', marginBottom: '20px', lineHeight: '1.6'}}>
+                                    {question.question}
+                                </h3>
+
+                                <div>
+                                    {question.options.map((option, index) => {
+                                        let className = 'quiz-option';
+                                        if (selectedAnswer === index && !showResult) className += ' selected';
+                                        if (showResult) {
+                                            if (index === question.correct) className += ' correct';
+                                            else if (selectedAnswer === index) className += ' incorrect';
+                                        }
+                                        
+                                        return (
+                                            <div 
+                                                key={index}
+                                                className={className}
+                                                onClick={() => handleAnswer(index)}
+                                            >
+                                                <div className="quiz-marker">{String.fromCharCode(65 + index)}</div>
+                                                <span>{option}</span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+
+                                {showResult && (
+                                    <div className={`info-box ${selectedAnswer === question.correct ? 'success' : 'danger'}`} style={{marginTop: '20px'}}>
+                                        <div className="info-title">
+                                            {selectedAnswer === question.correct ? '✅ 正確！' : '❌ 不正確'}
+                                        </div>
+                                        <p>{question.explanation}</p>
+                                    </div>
+                                )}
+
+                                <div style={{display: 'flex', gap: '12px', marginTop: '24px'}}>
+                                    {!showResult ? (
+                                        <button 
+                                            className="btn btn-primary" 
+                                            onClick={handleSubmit}
+                                            disabled={selectedAnswer === null}
+                                        >
+                                            確認答案
+                                        </button>
+                                    ) : (
+                                        <button className="btn btn-primary" onClick={handleNext}>
+                                            {currentQuestion < QUIZ_QUESTIONS.length - 1 ? '下一題 →' : '查看結果'}
+                                        </button>
+                                    )}
+                                </div>
+                            </>
+                        ) : (
+                            <div style={{textAlign: 'center', padding: '20px'}}>
+                                <div style={{fontSize: '4rem', marginBottom: '16px'}}>🎉</div>
+                                <h3 style={{fontSize: '1.5rem', marginBottom: '12px'}}>測驗完成！</h3>
+                                <p style={{fontSize: '2rem', color: 'var(--deep-burgundy)', fontWeight: '600'}}>
+                                    {score} / {QUIZ_QUESTIONS.length}
+                                </p>
+                                <p style={{color: 'var(--muted-rose)', marginBottom: '24px'}}>
+                                    正確率：{Math.round(score / QUIZ_QUESTIONS.length * 100)}%
+                                </p>
+                                <button className="btn btn-secondary" onClick={handleRestart}>
+                                    重新測驗
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // Main App Component
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('home');
+
+            const renderContent = () => {
+                switch(activeTab) {
+                    case 'home': return <HomeTab />;
+                    case 'initiation': return <InitiationTab />;
+                    case 'revision': return <RevisionTab />;
+                    case 'table': return <TableTab />;
+                    case 'quiz': return <QuizTab />;
+                    default: return <HomeTab />;
+                }
+            };
+
+            return (
+                <div className="app-container">
+                    <Header />
+                    <NavTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+                    {renderContent()}
+                    <footer className="footer">
+                        <p>
+                            Based on COAG Trial (NEJM 2013) & Gage et al. (Clin Pharmacol Ther 2008)
+                        </p>
+                        <p style={{marginTop: '8px'}}>
+                            Created for educational purposes • 國立臺灣大學醫學院附設醫院新竹臺大分院心血管中心
+                        </p>
+                    </footer>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
