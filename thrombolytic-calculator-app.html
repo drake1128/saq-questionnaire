@@ -718,10 +718,13 @@
             const [pumpRate, setPumpRate] = useState(21);
             const [nsVolume, setNsVolume] = useState(500);
 
-            // Calculations
+            // Calculations - Fixed pump rate approach
+            // Fixed: 500ml N/S, 21 ml/hr pump rate
+            // Adjust amps to achieve target dose
             const protocol = UROKINASE_PROTOCOLS.find(p => p.id === selectedProtocol);
             const dosePerKgHr = selectedProtocol === 0 ? customDose : (protocol?.doseValue || protocol?.dose);
             
+            // For Protocol 3 (Low Dose), use fixed 1.25 MIU/day
             const totalDailyIU = useMemo(() => {
                 if (selectedProtocol === 3) return 1250000;
                 return dosePerKgHr * 24 * bodyWeight;
@@ -731,32 +734,36 @@
                 return totalDailyIU / UROKINASE_IU_PER_AMP;
             }, [totalDailyIU]);
 
-            // Verification calculation
+            // Fixed pump settings: 500ml N/S, 21 ml/hr
+            // Calculate how many amps needed for the bag
+            // Bag lasts: 500ml / 21 ml/hr = ~23.8 hours ≈ 1 day
+            // So amps in bag ≈ amps per day
+            const FIXED_PUMP_RATE = 21;
+            const FIXED_NS_VOLUME = 500;
+            
+            const recommendedAmpsInBag = useMemo(() => {
+                // Amps needed = (target dose × weight × volume) / (IU per amp × pump rate)
+                // Or simply use daily amps since bag lasts ~24hr
+                return Math.ceil(ampsPerDay);
+            }, [ampsPerDay]);
+
+            // Verification: what dose does this actually deliver?
+            const actualDeliveredDose = useMemo(() => {
+                return (UROKINASE_IU_PER_AMP * recommendedAmpsInBag * FIXED_PUMP_RATE) / FIXED_NS_VOLUME / bodyWeight;
+            }, [recommendedAmpsInBag, bodyWeight]);
+
+            // For manual verification with custom values
             const deliveredDose = useMemo(() => {
                 return (UROKINASE_IU_PER_AMP * ampsInBag * pumpRate) / nsVolume / bodyWeight;
             }, [ampsInBag, pumpRate, nsVolume, bodyWeight]);
 
-            // Calculate recommended pump settings for target dose
-            const recommendedSettings = useMemo(() => {
-                // For a common setup: 56 amps in 500ml N/S
-                // Rate = (target dose * weight * 500) / (60000 * 56)
-                const targetDose = dosePerKgHr;
-                const amps = 56;
-                const volume = 500;
-                const rate = (targetDose * bodyWeight * volume) / (UROKINASE_IU_PER_AMP * amps);
-                return {
-                    amps: amps,
-                    volume: volume,
-                    rate: Math.round(rate * 10) / 10
-                };
-            }, [dosePerKgHr, bodyWeight]);
-
             const [copied, setCopied] = useState(false);
             
             const copyOrder = () => {
-                const order = `Urokinase ${Math.ceil(ampsPerDay)} amps in N/S 500ml
-Pump rate: ${recommendedSettings.rate} ml/hr
-(Target: ${dosePerKgHr} IU/kg/hr, BW: ${bodyWeight}kg)
+                const order = `Urokinase ${recommendedAmpsInBag} amps in N/S 500ml
+Pump rate: 21 ml/hr (固定)
+Target: ${dosePerKgHr} IU/kg/hr, BW: ${bodyWeight}kg
+實際劑量: ${Math.round(actualDeliveredDose)} IU/kg/hr
 Daily total: ${(totalDailyIU/1000000).toFixed(2)} MIU`;
                 navigator.clipboard.writeText(order);
                 setCopied(true);
@@ -864,7 +871,7 @@ Daily total: ${(totalDailyIU/1000000).toFixed(2)} MIU`;
 
                                 <div className="summary-grid">
                                     <div className="summary-item">
-                                        <div className="summary-label">劑量</div>
+                                        <div className="summary-label">目標劑量</div>
                                         <div className="summary-value">{dosePerKgHr}</div>
                                         <div style={{fontSize: '0.75rem', color: 'var(--text-gray)'}}>IU/kg/hr</div>
                                     </div>
@@ -875,18 +882,21 @@ Daily total: ${(totalDailyIU/1000000).toFixed(2)} MIU`;
                                     </div>
                                     <div className="summary-item highlight">
                                         <div className="summary-label">每日安瓿數</div>
-                                        <div className="summary-value">{Math.ceil(ampsPerDay)}</div>
+                                        <div className="summary-value">{recommendedAmpsInBag}</div>
                                         <div style={{fontSize: '0.75rem'}}>amps/day</div>
                                     </div>
                                 </div>
 
                                 <div className="result-box warning">
-                                    <div className="result-label">建議 Pump 設定</div>
+                                    <div className="result-label">建議 Pump 設定（固定流速）</div>
                                     <div className="result-value" style={{fontSize: '1.8rem'}}>
-                                        {recommendedSettings.amps} amps in {recommendedSettings.volume}ml N/S
+                                        {recommendedAmpsInBag} amps in 500ml N/S
                                     </div>
                                     <div className="result-note" style={{fontSize: '1.2rem', marginTop: '8px'}}>
-                                        Pump Rate: <strong>{recommendedSettings.rate} ml/hr</strong>
+                                        Pump Rate: <strong>21 ml/hr</strong>（固定）
+                                    </div>
+                                    <div className="result-note" style={{marginTop: '8px'}}>
+                                        實際給藥：{Math.round(actualDeliveredDose)} IU/kg/hr
                                     </div>
                                 </div>
 
@@ -922,7 +932,7 @@ Daily total: ${(totalDailyIU/1000000).toFixed(2)} MIU`;
                             </div>
 
                             <div className="prep-card">
-                                <div className="prep-title">🧪 標準泡藥步驟</div>
+                                <div className="prep-title">🧪 標準泡藥步驟（固定流速法）</div>
                                 <div className="prep-step">
                                     <div className="prep-number">1</div>
                                     <div className="prep-content">
@@ -932,9 +942,9 @@ Daily total: ${(totalDailyIU/1000000).toFixed(2)} MIU`;
                                 <div className="prep-step">
                                     <div className="prep-number">2</div>
                                     <div className="prep-content">
-                                        取出需要的 Urokinase 安瓿數（依醫囑）
+                                        依計算結果取出需要的 Urokinase 安瓿數
                                         <div style={{fontSize: '0.85rem', color: 'var(--text-gray)', marginTop: '4px'}}>
-                                            常用配置：56 amps / 500ml N/S
+                                            根據目標劑量與體重計算
                                         </div>
                                     </div>
                                 </div>
@@ -947,7 +957,7 @@ Daily total: ${(totalDailyIU/1000000).toFixed(2)} MIU`;
                                 <div className="prep-step">
                                     <div className="prep-number">4</div>
                                     <div className="prep-content">
-                                        設定 pump rate（依計算結果）
+                                        設定 pump rate: <span className="prep-highlight">21 ml/hr（固定）</span>
                                         <div style={{fontSize: '0.85rem', color: 'var(--text-gray)', marginTop: '4px'}}>
                                             經由動脈導管給予（catheter-directed thrombolysis）
                                         </div>
@@ -955,10 +965,19 @@ Daily total: ${(totalDailyIU/1000000).toFixed(2)} MIU`;
                                 </div>
                             </div>
 
+                            <div className="info-box success">
+                                <div className="info-title">✅ 固定流速法優點</div>
+                                <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                                    <li>Pump rate 固定 21 ml/hr，不易設定錯誤</li>
+                                    <li>500ml / 21 ml/hr ≈ 24 小時換一袋</li>
+                                    <li>只需調整安瓿數即可改變劑量</li>
+                                </ul>
+                            </div>
+
                             <div className="info-box info">
                                 <div className="info-title">💡 濃度計算公式</div>
                                 <p style={{fontFamily: 'monospace', marginTop: '8px'}}>
-                                    實際劑量 (IU/kg/hr) = (60,000 × Amps × Rate) ÷ Volume ÷ BW
+                                    實際劑量 (IU/kg/hr) = (60,000 × Amps × 21) ÷ 500 ÷ BW
                                 </p>
                             </div>
                         </div>
@@ -971,6 +990,11 @@ Daily total: ${(totalDailyIU/1000000).toFixed(2)} MIU`;
                                 輸入實際泡藥參數，驗證給藥劑量是否正確
                             </p>
 
+                            <div className="info-box info" style={{marginBottom: '20px'}}>
+                                <div className="info-title">📋 標準設定</div>
+                                <p>N/S 500ml + Pump rate 21 ml/hr（固定）→ 調整安瓿數達到目標劑量</p>
+                            </div>
+
                             <div className="form-row">
                                 <div className="form-group">
                                     <label className="form-label">體重 (kg)</label>
@@ -982,18 +1006,6 @@ Daily total: ${(totalDailyIU/1000000).toFixed(2)} MIU`;
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label className="form-label">N/S 容量 (ml)</label>
-                                    <input
-                                        type="number"
-                                        className="form-input"
-                                        value={nsVolume}
-                                        onChange={(e) => setNsVolume(Number(e.target.value))}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="form-row">
-                                <div className="form-group">
                                     <label className="form-label">Urokinase (amps)</label>
                                     <input
                                         type="number"
@@ -1002,14 +1014,28 @@ Daily total: ${(totalDailyIU/1000000).toFixed(2)} MIU`;
                                         onChange={(e) => setAmpsInBag(Number(e.target.value))}
                                     />
                                 </div>
+                            </div>
+
+                            <div className="form-row">
                                 <div className="form-group">
-                                    <label className="form-label">Pump Rate (ml/hr)</label>
+                                    <label className="form-label">N/S 容量 (ml) <span className="form-hint">固定 500ml</span></label>
+                                    <input
+                                        type="number"
+                                        className="form-input"
+                                        value={nsVolume}
+                                        onChange={(e) => setNsVolume(Number(e.target.value))}
+                                        style={{background: '#f7fafc'}}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Pump Rate (ml/hr) <span className="form-hint">固定 21</span></label>
                                     <input
                                         type="number"
                                         className="form-input"
                                         value={pumpRate}
                                         onChange={(e) => setPumpRate(Number(e.target.value))}
                                         step="0.1"
+                                        style={{background: '#f7fafc'}}
                                     />
                                 </div>
                             </div>
@@ -1022,6 +1048,9 @@ Daily total: ${(totalDailyIU/1000000).toFixed(2)} MIU`;
                                 </div>
                                 <div className="result-note">
                                     每小時總量：{Math.round(deliveredDose * bodyWeight).toLocaleString()} IU/hr
+                                </div>
+                                <div className="result-note">
+                                    每日總量：{((deliveredDose * bodyWeight * 24)/1000000).toFixed(2)} MIU/day
                                 </div>
                             </div>
 
