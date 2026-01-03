@@ -63,6 +63,7 @@
 
             const menuItems = [
                 { id: 'pre-cath', icon: <Icons.Checklist />, title: '術前準備', subtitle: 'Pre-Cath Checklist', color: '#3b82f6' },
+                { id: 'medications', icon: <Icons.Medical />, title: '藥物與NPO', subtitle: '紅黃綠燈藥物管理', color: '#059669' },
                 { id: 'patient-handoff', icon: <Icons.Person />, title: '病人交班', subtitle: '診斷與檢查結果', color: '#8b5cf6' },
                 { id: 'procedure-handoff', icon: <Icons.Bed />, title: '術式交班', subtitle: '配合術式注意事項', color: '#06b6d4' },
                 { id: 'post-cath', icon: <Icons.Exchange />, title: '術後交班', subtitle: '治療結果與照護', color: '#10b981' },
@@ -168,6 +169,296 @@
                                 <ChecklistItem checked={preCathChecks.ivLine} onChange={() => updateCheck('ivLine')}><strong>確認點滴通路</strong>（20G以上）</ChecklistItem>
                             </InfoCard>
                             {allChecked && (<div style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', padding: '20px', borderRadius: '16px', textAlign: 'center', marginBottom: '20px' }} className="fade-in"><div style={{ fontSize: '32px', marginBottom: '10px' }}>✓</div><div style={{ fontWeight: '700', fontSize: '18px' }}>準備完成！可以前往導管室</div></div>)}
+                        </div>
+                    </div>
+                );
+            };
+
+            const MedicationsPage = () => {
+                const [activeTab, setActiveTab] = useState('meds');
+                const [selectedEgfr, setSelectedEgfr] = useState('');
+                const [accessType, setAccessType] = useState('');
+                const [procedureType, setProcedureType] = useState('');
+                
+                const MedCard = ({ color, emoji, title, children }) => (
+                    <div style={{ background: 'white', borderRadius: '16px', padding: '16px', marginBottom: '12px', boxShadow: 'var(--shadow)', borderLeft: `5px solid ${color}` }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                            <span style={{ fontSize: '24px' }}>{emoji}</span>
+                            <h4 style={{ fontSize: '16px', fontWeight: '700', color }}>{title}</h4>
+                        </div>
+                        {children}
+                    </div>
+                );
+
+                const MedRow = ({ name, examples, note, warn }) => (
+                    <div style={{ padding: '10px 12px', background: '#f9fafb', borderRadius: '8px', marginBottom: '8px' }}>
+                        <div style={{ fontWeight: '600', fontSize: '14px', marginBottom: '4px' }}>{name}</div>
+                        {examples && <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px' }}>{examples}</div>}
+                        {note && <div style={{ fontSize: '12px', color: '#059669', display: 'flex', alignItems: 'flex-start', gap: '4px' }}><span>✓</span>{note}</div>}
+                        {warn && <div style={{ fontSize: '12px', color: '#dc2626', display: 'flex', alignItems: 'flex-start', gap: '4px' }}><span>⚠️</span>{warn}</div>}
+                    </div>
+                );
+
+                const renderMedsTab = () => (
+                    <div>
+                        {/* eGFR 選擇器 */}
+                        <div style={{ background: 'white', borderRadius: '12px', padding: '16px', marginBottom: '16px', boxShadow: 'var(--shadow)' }}>
+                            <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '10px' }}>📊 先選擇病人的 eGFR</div>
+                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                {['≥60', '45-59', '30-44', '<30'].map(item => (
+                                    <button key={item} onClick={() => setSelectedEgfr(item)} style={{ padding: '10px 16px', borderRadius: '8px', border: `2px solid ${selectedEgfr === item ? (item === '<30' || item === '30-44' ? '#dc2626' : '#059669') : '#e5e7eb'}`, background: selectedEgfr === item ? (item === '<30' || item === '30-44' ? '#fef2f2' : '#ecfdf5') : 'white', color: selectedEgfr === item ? (item === '<30' || item === '30-44' ? '#dc2626' : '#059669') : '#6b7280', fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>{selectedEgfr === item && '✓ '}{item}</button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* 🟢 綠燈藥物 */}
+                        <MedCard color="#10b981" emoji="🟢" title="綠燈：繼續使用">
+                            <MedRow name="抗血小板藥物 ⭐" examples="Aspirin, Clopidogrel (Plavix), Ticagrelor (Brilinta)" note="絕對不要停！繼續使用可降低血栓併發症" />
+                            <MedRow name="Statin 類" examples="Atorvastatin, Rosuvastatin" note="穩定斑塊，繼續使用" />
+                            <MedRow name="Beta-blocker" examples="Metoprolol, Bisoprolol, Carvedilol" note="心率控制，繼續使用" />
+                            <MedRow name="CCB 鈣離子阻斷劑" examples="Amlodipine, Diltiazem, Verapamil" note="血壓控制，繼續使用" />
+                            {(selectedEgfr === '≥60' || selectedEgfr === '45-59') && (
+                                <MedRow name="Metformin" examples="Glucophage" note={`eGFR ${selectedEgfr}：可繼續使用`} />
+                            )}
+                            {selectedEgfr === '≥60' && (
+                                <MedRow name="ACEi/ARB" examples="Ramipril, Valsartan, Losartan" note="eGFR ≥60：可繼續使用" />
+                            )}
+                        </MedCard>
+
+                        {/* 🟡 黃燈藥物 */}
+                        <MedCard color="#f59e0b" emoji="🟡" title="黃燈：視情況調整">
+                            <MedRow name="胰島素" examples="Lantus, NovoRapid, Humalog" warn="無低血糖史：可繼續｜有低血糖史：減量或停早上劑量" />
+                            <MedRow name="Sulfonylurea 磺胺尿素類" examples="Glimepiride (Amaryl), Gliclazide" warn="低血糖風險高，術前當天建議停用" />
+                            <MedRow name="SGLT2 抑制劑" examples="Empagliflozin (Jardiance), Dapagliflozin" warn="脫水/酮酸中毒風險，術前建議停用" />
+                            <MedRow name="利尿劑" examples="Furosemide, HCTZ, Spironolactone" warn="術前當天可暫停，避免脫水" />
+                            {selectedEgfr === '45-59' && (
+                                <MedRow name="ACEi/ARB" examples="Ramipril, Valsartan" warn="eGFR 45-59：諮詢主治醫師決定" />
+                            )}
+                        </MedCard>
+
+                        {/* 🔴 紅燈藥物 */}
+                        <MedCard color="#dc2626" emoji="🔴" title="紅燈：需要停用">
+                            {(selectedEgfr === '30-44' || selectedEgfr === '<30') && (
+                                <MedRow name="Metformin ⚠️" examples="Glucophage" warn={`eGFR ${selectedEgfr}：必須停用！乳酸中毒風險`} />
+                            )}
+                            {(selectedEgfr === '30-44' || selectedEgfr === '<30' || selectedEgfr === '45-59') && selectedEgfr !== '≥60' && (
+                                <MedRow name="ACEi/ARB" examples="Ramipril, Valsartan" warn={selectedEgfr === '45-59' ? "eGFR 45-59：視情況術前24小時停用" : "eGFR <45：術前24小時停用，降低AKI風險"} />
+                            )}
+                            <div style={{ padding: '12px', background: '#fef2f2', borderRadius: '8px', marginTop: '8px' }}>
+                                <div style={{ fontWeight: '600', color: '#dc2626', marginBottom: '8px' }}>📋 口服抗凝血劑停藥時間</div>
+                                <div style={{ fontSize: '13px', lineHeight: '1.8' }}>
+                                    <div>• <strong>Warfarin</strong>：停至 INR {'<'} 1.5-1.8</div>
+                                    <div>• <strong>Dabigatran</strong>：CrCl{'>'}80 停48hr / CrCl{'<'}80 停更久</div>
+                                    <div>• <strong>Rivaroxaban/Apixaban</strong>：CrCl{'>'}30 停48hr</div>
+                                </div>
+                            </div>
+                        </MedCard>
+
+                        {/* 重要提醒 */}
+                        <div style={{ background: 'linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%)', borderRadius: '16px', padding: '18px', color: 'white' }}>
+                            <div style={{ fontWeight: '700', fontSize: '15px', marginBottom: '12px' }}>💡 護理師快速記憶口訣</div>
+                            <div style={{ fontSize: '14px', lineHeight: '1.8' }}>
+                                <div style={{ marginBottom: '8px' }}>🩸 <strong>「抗血小板不要停，抗凝血劑看術式」</strong></div>
+                                <div>💊 <strong>「血糖藥看腎功能，胰島素看低血糖史」</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                );
+
+                const renderAnticoagTab = () => (
+                    <div>
+                        {/* 穿刺部位選擇 */}
+                        <div style={{ background: 'white', borderRadius: '12px', padding: '16px', marginBottom: '16px', boxShadow: 'var(--shadow)' }}>
+                            <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '10px' }}>📍 穿刺部位</div>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                                <button onClick={() => setAccessType('radial')} style={{ padding: '16px', borderRadius: '10px', border: `2px solid ${accessType === 'radial' ? '#10b981' : '#e5e7eb'}`, background: accessType === 'radial' ? '#ecfdf5' : 'white', cursor: 'pointer' }}>
+                                    <div style={{ fontSize: '24px', marginBottom: '6px' }}>🤚</div>
+                                    <div style={{ fontWeight: '600' }}>Radial</div>
+                                    <div style={{ fontSize: '11px', color: '#6b7280' }}>橈動脈</div>
+                                </button>
+                                <button onClick={() => setAccessType('femoral')} style={{ padding: '16px', borderRadius: '10px', border: `2px solid ${accessType === 'femoral' ? '#f59e0b' : '#e5e7eb'}`, background: accessType === 'femoral' ? '#fffbeb' : 'white', cursor: 'pointer' }}>
+                                    <div style={{ fontSize: '24px', marginBottom: '6px' }}>🦵</div>
+                                    <div style={{ fontWeight: '600' }}>Femoral</div>
+                                    <div style={{ fontSize: '11px', color: '#6b7280' }}>股動脈</div>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* 術式類型 */}
+                        <div style={{ background: 'white', borderRadius: '12px', padding: '16px', marginBottom: '16px', boxShadow: 'var(--shadow)' }}>
+                            <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '10px' }}>🏥 術式類型</div>
+                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                {['診斷性', '簡單PCI', '複雜PCI'].map(item => (
+                                    <button key={item} onClick={() => setProcedureType(item)} style={{ padding: '10px 16px', borderRadius: '8px', border: `2px solid ${procedureType === item ? '#3b82f6' : '#e5e7eb'}`, background: procedureType === item ? '#eff6ff' : 'white', color: procedureType === item ? '#3b82f6' : '#6b7280', fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>{procedureType === item && '✓ '}{item}</button>
+                                ))}
+                            </div>
+                            {procedureType === '複雜PCI' && (
+                                <div style={{ marginTop: '10px', fontSize: '12px', color: '#6b7280' }}>複雜 PCI：Rotablator、CTO、IVUS/OCT 引導等</div>
+                            )}
+                        </div>
+
+                        {/* 建議結果 */}
+                        {accessType && procedureType && (
+                            <div className="fade-in">
+                                {accessType === 'radial' && procedureType === '診斷性' && (
+                                    <div style={{ background: '#ecfdf5', borderRadius: '16px', padding: '20px', border: '2px solid #10b981' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                                            <span style={{ fontSize: '28px' }}>✅</span>
+                                            <span style={{ fontWeight: '700', fontSize: '18px', color: '#059669' }}>可繼續抗凝血劑</span>
+                                        </div>
+                                        <div style={{ fontSize: '14px', color: '#047857', lineHeight: '1.6' }}>
+                                            Radial + 診斷性導管：出血風險低，Warfarin/DOAC 可繼續使用。止血方便，TR-band 加壓即可。
+                                        </div>
+                                    </div>
+                                )}
+                                {accessType === 'radial' && procedureType === '簡單PCI' && (
+                                    <div style={{ background: '#ecfdf5', borderRadius: '16px', padding: '20px', border: '2px solid #10b981' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                                            <span style={{ fontSize: '28px' }}>✅</span>
+                                            <span style={{ fontWeight: '700', fontSize: '18px', color: '#059669' }}>多數可繼續抗凝血劑</span>
+                                        </div>
+                                        <div style={{ fontSize: '14px', color: '#047857', lineHeight: '1.6' }}>
+                                            Radial + 簡單 PCI：出血風險較低。建議與主治醫師確認，多數情況可繼續。
+                                        </div>
+                                    </div>
+                                )}
+                                {accessType === 'radial' && procedureType === '複雜PCI' && (
+                                    <div style={{ background: '#fffbeb', borderRadius: '16px', padding: '20px', border: '2px solid #f59e0b' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                                            <span style={{ fontSize: '28px' }}>⚠️</span>
+                                            <span style={{ fontWeight: '700', fontSize: '18px', color: '#b45309' }}>諮詢主治醫師</span>
+                                        </div>
+                                        <div style={{ fontSize: '14px', color: '#92400e', lineHeight: '1.6' }}>
+                                            複雜 PCI 可能轉換至 Femoral，建議與主治醫師討論是否停用抗凝血劑。
+                                        </div>
+                                    </div>
+                                )}
+                                {accessType === 'femoral' && procedureType === '診斷性' && (
+                                    <div style={{ background: '#fffbeb', borderRadius: '16px', padding: '20px', border: '2px solid #f59e0b' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                                            <span style={{ fontSize: '28px' }}>⚠️</span>
+                                            <span style={{ fontWeight: '700', fontSize: '18px', color: '#b45309' }}>建議停用或調整</span>
+                                        </div>
+                                        <div style={{ fontSize: '14px', color: '#92400e', lineHeight: '1.6' }}>
+                                            Femoral 穿刺出血風險較高。<br/>
+                                            • Warfarin：停至 INR {'<'} 1.8<br/>
+                                            • DOAC：停用 48 小時
+                                        </div>
+                                    </div>
+                                )}
+                                {accessType === 'femoral' && (procedureType === '簡單PCI' || procedureType === '複雜PCI') && (
+                                    <div style={{ background: '#fef2f2', borderRadius: '16px', padding: '20px', border: '2px solid #dc2626' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                                            <span style={{ fontSize: '28px' }}>🔴</span>
+                                            <span style={{ fontWeight: '700', fontSize: '18px', color: '#dc2626' }}>需停用抗凝血劑</span>
+                                        </div>
+                                        <div style={{ fontSize: '14px', color: '#b91c1c', lineHeight: '1.6' }}>
+                                            Femoral + PCI：出血風險高，需停用抗凝血劑。<br/>
+                                            • Warfarin：停至 INR {'<'} 1.5，高栓塞風險者需 Heparin 橋接<br/>
+                                            • DOAC：停用 48 小時（腎功能差者更久）
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                );
+
+                const renderNPOTab = () => (
+                    <div>
+                        {/* NPO 新觀念 */}
+                        <div style={{ background: 'linear-gradient(135deg, #059669 0%, #047857 100%)', borderRadius: '16px', padding: '20px', color: 'white', marginBottom: '16px' }}>
+                            <div style={{ fontWeight: '700', fontSize: '17px', marginBottom: '10px' }}>💡 2024 最新觀念</div>
+                            <div style={{ fontSize: '14px', lineHeight: '1.7', opacity: 0.95 }}>
+                                傳統「午夜後禁食」已不再是唯一標準！多項 RCT 顯示：適度進食不增加不良事件，反而改善病人舒適度。
+                            </div>
+                        </div>
+
+                        {/* 比較表 */}
+                        <div style={{ background: 'white', borderRadius: '16px', padding: '16px', marginBottom: '16px', boxShadow: 'var(--shadow)' }}>
+                            <h4 style={{ fontSize: '15px', fontWeight: '700', marginBottom: '14px' }}>📋 NPO 建議比較</h4>
+                            <div style={{ overflowX: 'auto' }}>
+                                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+                                    <thead>
+                                        <tr style={{ background: '#f3f4f6' }}>
+                                            <th style={{ padding: '10px 8px', textAlign: 'left', fontWeight: '600' }}>項目</th>
+                                            <th style={{ padding: '10px 8px', textAlign: 'center', fontWeight: '600', color: '#6b7280' }}>傳統</th>
+                                            <th style={{ padding: '10px 8px', textAlign: 'center', fontWeight: '600', color: '#059669' }}>最新證據</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr style={{ borderBottom: '1px solid #e5e7eb' }}>
+                                            <td style={{ padding: '12px 8px', fontWeight: '500' }}>固體食物</td>
+                                            <td style={{ padding: '12px 8px', textAlign: 'center', color: '#dc2626' }}>午夜後禁食</td>
+                                            <td style={{ padding: '12px 8px', textAlign: 'center', color: '#059669' }}>術前 4-6 小時</td>
+                                        </tr>
+                                        <tr style={{ borderBottom: '1px solid #e5e7eb' }}>
+                                            <td style={{ padding: '12px 8px', fontWeight: '500' }}>清流質</td>
+                                            <td style={{ padding: '12px 8px', textAlign: 'center', color: '#dc2626' }}>完全禁止</td>
+                                            <td style={{ padding: '12px 8px', textAlign: 'center', color: '#059669' }}>術前 2 小時可</td>
+                                        </tr>
+                                        <tr style={{ borderBottom: '1px solid #e5e7eb' }}>
+                                            <td style={{ padding: '12px 8px', fontWeight: '500' }}>口服藥物</td>
+                                            <td style={{ padding: '12px 8px', textAlign: 'center' }}>配少量水</td>
+                                            <td style={{ padding: '12px 8px', textAlign: 'center', color: '#059669' }}>配少量水 ✓</td>
+                                        </tr>
+                                        <tr>
+                                            <td style={{ padding: '12px 8px', fontWeight: '500' }}>僅局麻不鎮靜</td>
+                                            <td style={{ padding: '12px 8px', textAlign: 'center', color: '#6b7280' }}>仍需禁食</td>
+                                            <td style={{ padding: '12px 8px', textAlign: 'center', color: '#059669' }}>可能不需禁食</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        {/* 實務建議 */}
+                        <MedCard color="#3b82f6" emoji="📌" title="實務建議">
+                            <div style={{ fontSize: '14px', lineHeight: '1.8' }}>
+                                <div style={{ marginBottom: '12px' }}>
+                                    <strong style={{ color: '#1d4ed8' }}>選擇性導管（僅診斷）</strong>
+                                    <div style={{ color: '#6b7280', marginTop: '4px' }}>可考慮更寬鬆政策：清流質術前2小時即可</div>
+                                </div>
+                                <div style={{ marginBottom: '12px' }}>
+                                    <strong style={{ color: '#1d4ed8' }}>預期會做 PCI</strong>
+                                    <div style={{ color: '#6b7280', marginTop: '4px' }}>建議：清流質 2 小時、固體食物 4-6 小時</div>
+                                </div>
+                                <div>
+                                    <strong style={{ color: '#dc2626' }}>緊急 STEMI</strong>
+                                    <div style={{ color: '#6b7280', marginTop: '4px' }}>⚠️ 不因 NPO 狀態延遲治療！D2B 時間優先</div>
+                                </div>
+                            </div>
+                        </MedCard>
+
+                        {/* 清流質定義 */}
+                        <div style={{ background: '#f0fdf4', borderRadius: '12px', padding: '16px', border: '1px solid #86efac' }}>
+                            <div style={{ fontWeight: '600', marginBottom: '10px', color: '#166534' }}>🥤 清流質 (Clear Liquids) 定義</div>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                {['白開水', '無渣果汁', '清湯', '黑咖啡', '茶（無奶）', '運動飲料'].map(item => (
+                                    <span key={item} style={{ padding: '6px 12px', background: 'white', borderRadius: '20px', fontSize: '13px', color: '#166534' }}>✓ {item}</span>
+                                ))}
+                            </div>
+                            <div style={{ marginTop: '10px', fontSize: '12px', color: '#6b7280' }}>
+                                最多 400 ml，術前 2 小時內飲用
+                            </div>
+                        </div>
+                    </div>
+                );
+
+                return (
+                    <div className="fade-in">
+                        <Header title="藥物與 NPO 管理" subtitle="Pre-Cath Medication & Fasting Guidelines" showBack />
+                        <div style={{ padding: '0 16px' }}>
+                            {/* Tab 切換 */}
+                            <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', background: '#f3f4f6', padding: '4px', borderRadius: '12px' }}>
+                                <button onClick={() => setActiveTab('meds')} style={{ flex: 1, padding: '12px', borderRadius: '10px', border: 'none', background: activeTab === 'meds' ? 'white' : 'transparent', boxShadow: activeTab === 'meds' ? '0 2px 8px rgba(0,0,0,0.1)' : 'none', fontWeight: '600', fontSize: '14px', color: activeTab === 'meds' ? '#059669' : '#6b7280', cursor: 'pointer' }}>💊 藥物管理</button>
+                                <button onClick={() => setActiveTab('anticoag')} style={{ flex: 1, padding: '12px', borderRadius: '10px', border: 'none', background: activeTab === 'anticoag' ? 'white' : 'transparent', boxShadow: activeTab === 'anticoag' ? '0 2px 8px rgba(0,0,0,0.1)' : 'none', fontWeight: '600', fontSize: '14px', color: activeTab === 'anticoag' ? '#dc2626' : '#6b7280', cursor: 'pointer' }}>🩸 抗凝血劑</button>
+                                <button onClick={() => setActiveTab('npo')} style={{ flex: 1, padding: '12px', borderRadius: '10px', border: 'none', background: activeTab === 'npo' ? 'white' : 'transparent', boxShadow: activeTab === 'npo' ? '0 2px 8px rgba(0,0,0,0.1)' : 'none', fontWeight: '600', fontSize: '14px', color: activeTab === 'npo' ? '#3b82f6' : '#6b7280', cursor: 'pointer' }}>🍽️ NPO</button>
+                            </div>
+                            
+                            {activeTab === 'meds' && renderMedsTab()}
+                            {activeTab === 'anticoag' && renderAnticoagTab()}
+                            {activeTab === 'npo' && renderNPOTab()}
                         </div>
                     </div>
                 );
@@ -425,6 +716,7 @@
                 switch(currentPage) {
                     case 'home': return <HomePage />;
                     case 'pre-cath': return <PreCathPage />;
+                    case 'medications': return <MedicationsPage />;
                     case 'patient-handoff': return <PatientHandoffPage />;
                     case 'procedure-handoff': return <ProcedureHandoffPage />;
                     case 'post-cath': return <PostCathPage />;
