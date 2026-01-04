@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PCI 緊急併發症處置 | No-Reflow & Perforation</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #dc2626;
+            --primary-dark: #b91c1c;
+            --secondary: #0891b2;
+            --secondary-dark: #0e7490;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        #root {
+            min-height: 100vh;
+        }
+
+        @keyframes pulse-emergency {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .animate-slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        // ============== Data ==============
+        const noReflowData = {
+            title: "Coronary No-Reflow",
+            titleCn: "冠狀動脈無復流現象",
+            definition: "PCI 後儘管成功打開阻塞的表面冠狀動脈，TIMI flow ≤2 且排除夾層、血栓、痙攣、空氣栓塞等機械性原因",
+            incidence: "Primary PCI: 5-25%，Elective PCI: 2-5%，SVG intervention: 10-15%",
+            mortality: "若未妥善處理，30天死亡率高達 32%",
+            riskFactors: [
+                { category: "病患因素", items: ["高齡", "糖尿病", "高血脂", "腎功能不全", "急性心肌梗塞", "長時間缺血 (>4小時)"] },
+                { category: "病灶因素", items: ["大量血栓負荷", "SVG病變", "長病灶", "嚴重鈣化", "彌漫性病變"] },
+                { category: "術式因素", items: ["Rotational atherectomy", "過度擴張", "支架過長", "延遲介入"] }
+            ],
+            differentialDiagnosis: [
+                { condition: "Dissection 夾層", features: "可見夾層flap，造影劑滯留在假腔" },
+                { condition: "Air Embolism 空氣栓塞", features: "注射時可見氣泡，通常發生在guiding catheter操作後" },
+                { condition: "Coronary Spasm 痙攣", features: "血管瀰漫性狹窄，NTG有效" },
+                { condition: "Thrombus 血栓", features: "可見充盈缺損，IVUS/OCT可確認" },
+                { condition: "Pseudo-lesion", features: "Guiding catheter深插造成" },
+                { condition: "Intramural Hematoma", features: "IVUS可見血管壁內血腫" }
+            ],
+            diagnosis: {
+                angiographic: [
+                    { grade: "TIMI 0", desc: "完全無血流通過" },
+                    { grade: "TIMI 1", desc: "造影劑部分通過但無法完全灌注遠端血管" },
+                    { grade: "TIMI 2", desc: "造影劑可完全灌注但速度延遲（>3個心跳）" },
+                    { grade: "TIMI 3", desc: "正常血流" }
+                ],
+                mbg: [
+                    { grade: "MBG 0", desc: "無心肌顯影" },
+                    { grade: "MBG 1", desc: "輕微心肌顯影" },
+                    { grade: "MBG 2", desc: "中度心肌顯影但低於對照區域" },
+                    { grade: "MBG 3", desc: "正常心肌灌注" }
+                ]
+            },
+            emergencyChecklist: [
+                { id: 1, step: "立即確認：排除機械性原因（dissection、spasm、thrombus、air）", critical: true },
+                { id: 2, step: "維持血流動力學穩定", critical: true },
+                { id: 3, step: "停止進一步的介入操作", critical: false },
+                { id: 4, step: "給予 IC Adenosine 100-200 μg（可重複給予）", critical: true },
+                { id: 5, step: "若無效：IC Verapamil 100-200 μg", critical: false },
+                { id: 6, step: "若無效：IC Nitroprusside 100-200 μg", critical: false },
+                { id: 7, step: "若無效：IC Nicardipine 200 μg", critical: false },
+                { id: 8, step: "若血壓允許：IC Epinephrine 50-200 μg（低劑量）", critical: false },
+                { id: 9, step: "考慮 GP IIb/IIIa inhibitor（若有大量血栓）", critical: false },
+                { id: 10, step: "必要時使用 Aspiration thrombectomy", critical: false },
+                { id: 11, step: "嚴重者考慮 IABP/ECMO 支持", critical: false },
+                { id: 12, step: "持續監測至 TIMI 3 flow 恢復", critical: true }
+            ],
+            medications: [
+                { 
+                    name: "Adenosine", 
+                    dose: "100-200 μg IC bolus", 
+                    mechanism: "A2受體激動→血管平滑肌舒張",
+                    notes: "可重複給予，作用快速但短暫，可能造成短暫心跳過緩/AV block",
+                    firstLine: true
+                },
+                { 
+                    name: "Verapamil", 
+                    dose: "100-200 μg IC bolus，最大1-2 mg", 
+                    mechanism: "鈣離子通道阻斷→血管舒張",
+                    notes: "注意血壓下降、心跳過緩，LV功能差者小心使用",
+                    firstLine: true
+                },
+                { 
+                    name: "Nitroprusside", 
+                    dose: "100-200 μg IC bolus", 
+                    mechanism: "NO供體→血管舒張",
+                    notes: "作用快速，可能造成系統性低血壓",
+                    firstLine: true
+                },
+                { 
+                    name: "Nicardipine", 
+                    dose: "200 μg IC bolus，可重複至1 mg", 
+                    mechanism: "二氫吡啶類鈣離子阻斷劑",
+                    notes: "血管選擇性高，對心肌抑制較小",
+                    firstLine: false
+                },
+                { 
+                    name: "Epinephrine", 
+                    dose: "50-200 μg IC", 
+                    mechanism: "α+β受體激動，低劑量β2優勢→血管舒張",
+                    notes: "頑固性no-reflow的救援用藥，注意心律不整風險",
+                    firstLine: false
+                },
+                { 
+                    name: "GP IIb/IIIa Inhibitors", 
+                    dose: "Abciximab IC bolus / Tirofiban", 
+                    mechanism: "抑制血小板聚集",
+                    notes: "大量血栓負荷時考慮使用",
+                    firstLine: false
+                }
+            ],
+            prevention: [
+                "適當的預先用藥（DAPT、statins）",
+                "避免過度擴張血管",
+                "高血栓負荷時考慮 aspiration thrombectomy",
+                "SVG介入時使用 distal protection device",
+                "Rotational atherectomy 時預防性使用血管舒張劑",
+                "Primary PCI 時縮短 door-to-balloon time"
+            ]
+        };
+
+        const perforationData = {
+            title: "Coronary Perforation",
+            titleCn: "冠狀動脈穿孔",
+            definition: "PCI 過程中冠狀動脈壁的穿透性損傷，造影劑外漏至血管外",
+            incidence: "0.1-0.8%（CTO介入可達3-5%）",
+            mortality: "Ellis Type III: 死亡率可達10-20%",
+            ellisClassification: [
+                { 
+                    type: "Type I", 
+                    description: "Extraluminal crater",
+                    descCn: "血管外腔隙狀突起，無造影劑外漏",
+                    management: "保守治療，密切觀察",
+                    prognosis: "預後良好",
+                    image: "局限性造影劑滯留在血管壁"
+                },
+                { 
+                    type: "Type II", 
+                    description: "Pericardial or myocardial blush",
+                    descCn: "心包膜或心肌染色，但無明顯外漏jet",
+                    management: "長時間球囊擴張 + 密切觀察 ± 逆轉抗凝",
+                    prognosis: "大多可自行癒合",
+                    image: "心肌或心包膜區域染色"
+                },
+                { 
+                    type: "Type III", 
+                    description: "Frank contrast streaming",
+                    descCn: "明顯造影劑噴射入心包膜腔",
+                    management: "緊急處置！球囊封堵 + covered stent + pericardiocentesis",
+                    prognosis: "可能快速進展至 tamponade，死亡率高",
+                    image: "造影劑噴射流入心包膜腔"
+                },
+                { 
+                    type: "Type III-CS", 
+                    description: "Cavity Spilling",
+                    descCn: "造影劑外漏至心腔（LV/RV）或冠狀靜脈",
+                    management: "逆轉抗凝 + 長時間球囊擴張 ± covered stent",
+                    prognosis: "通常不會造成tamponade但需密切監測",
+                    image: "造影劑漏入心室或靜脈"
+                }
+            ],
+            riskFactors: [
+                { category: "病患因素", items: ["女性", "高齡 >65歲", "CABG後血管", "腎功能不全"] },
+                { category: "病灶因素", items: ["CTO病變", "嚴重鈣化", "彎曲血管", "小血管 <2.5mm", "分叉病變"] },
+                { category: "器材因素", items: ["Hydrophilic/stiff guidewire", "Rotational atherectomy", "過大的球囊/支架", "高壓後擴張", "Laser atherectomy"] }
+            ],
+            emergencyChecklist: [
+                { id: 1, step: "立即辨識：造影確認穿孔類型（Ellis分類）", critical: true },
+                { id: 2, step: "立即球囊擴張封堵穿孔部位（低壓、長時間）", critical: true },
+                { id: 3, step: "通知團隊：呼叫心臟外科 backup、通知 Echo team", critical: true },
+                { id: 4, step: "準備 pericardiocentesis 設備", critical: true },
+                { id: 5, step: "監測血壓、心跳、有無 tamponade 徵象", critical: true },
+                { id: 6, step: "Ellis III：立即逆轉抗凝（Protamine 1mg:100U Heparin）", critical: true },
+                { id: 7, step: "Ellis III：緊急行心包膜穿刺引流", critical: true },
+                { id: 8, step: "Proximal大血管：準備 Covered stent（如 PK Papyrus、Graftmaster）", critical: false },
+                { id: 9, step: "Distal小血管：考慮 Coil embolization 或 Fat/Gelfoam embolization", critical: false },
+                { id: 10, step: "引流血液可考慮 autotransfusion（回輸）", critical: false },
+                { id: 11, step: "手術 backup：若 percutaneous 處置失敗需緊急 CABG", critical: false },
+                { id: 12, step: "術後：Echo 追蹤 48 小時，注意 delayed tamponade", critical: true }
+            ],
+            managementByLocation: [
+                {
+                    location: "Proximal/Large Vessel (>2.5mm)",
+                    approach: [
+                        "長時間低壓球囊封堵（Perfusion balloon 較佳）",
+                        "Covered stent 植入（首選）",
+                        "若 covered stent 無法到達：考慮 CABG"
+                    ]
+                },
+                {
+                    location: "Distal/Small Vessel (<2.5mm)",
+                    approach: [
+                        "長時間球囊封堵",
+                        "Coil embolization",
+                        "Fat/Gelfoam/Thrombin embolization",
+                        "Autologous blood clot injection"
+                    ]
+                },
+                {
+                    location: "Guidewire Perforation",
+                    approach: [
+                        "保持 guidewire 位置不要再進",
+                        "長時間球囊封堵近端",
+                        "逆轉抗凝",
+                        "大多可保守治療"
+                    ]
+                }
+            ],
+            pericardiocentesis: {
+                indications: ["Tamponade physiology", "Ellis III perforation with hemodynamic instability", "Rapid pericardial effusion accumulation"],
+                technique: [
+                    "Subxiphoid approach（首選）",
+                    "18G needle + J-tip guidewire + 6-8F pigtail catheter",
+                    "Echo guidance if available",
+                    "Continuous drainage until bleeding stops",
+                    "Consider autotransfusion of drained blood"
+                ],
+                tips: [
+                    "不要等到完全 tamponade 才做！早期引流",
+                    "引流的血可以從 femoral vein sheath 回輸",
+                    "留置引流管 24-48 小時",
+                    "反覆 Echo 監測"
+                ]
+            },
+            coveredStents: [
+                { name: "PK Papyrus", size: "2.5-5.0mm", features: "第二代，可過 6F guiding，較易送達" },
+                { name: "Graftmaster", size: "2.8-4.8mm", features: "PTFE covered，需較大 guiding" },
+                { name: "BeGraft", size: "2.5-5.0mm", features: "Low profile，可過 6F" }
+            ],
+            prevention: [
+                "慎選 guidewire（避免不必要使用 hydrophilic wire）",
+                "CTO 介入時使用 IVUS 確認 wire 位置",
+                "適當 sizing 球囊和支架（勿過大）",
+                "高壓後擴張要小心",
+                "Rotational atherectomy 要循序漸進",
+                "彎曲血管操作要特別小心"
+            ]
+        };
+
+        const quizQuestions = [
+            {
+                id: 1,
+                question: "45歲男性 STEMI 患者，primary PCI 後 LAD 支架植入成功，但造影顯示 TIMI 1 flow，排除 dissection 後診斷為 no-reflow。下列何者為第一線用藥？",
+                options: ["IC Epinephrine", "IC Adenosine", "IV Atropine", "IC Nitroglycerin"],
+                answer: 1,
+                explanation: "Adenosine 是 no-reflow 的第一線用藥，劑量 100-200 μg IC bolus，可重複給予。其作用機轉為 A2 受體激動導致微血管舒張。Epinephrine 為救援用藥。"
+            },
+            {
+                id: 2,
+                question: "關於 Ellis Type III coronary perforation，下列敘述何者正確？",
+                options: [
+                    "通常保守治療即可",
+                    "可見造影劑噴射入心包膜腔",
+                    "不需要準備 pericardiocentesis",
+                    "預後通常良好"
+                ],
+                answer: 1,
+                explanation: "Ellis Type III 定義為 frank contrast streaming（明顯造影劑噴射入心包膜腔），為最嚴重類型，可能快速進展至 cardiac tamponade，死亡率可達 10-20%，需緊急處置。"
+            },
+            {
+                id: 3,
+                question: "No-reflow 的主要病理機轉不包括下列何者？",
+                options: ["微血管栓塞", "內皮功能障礙", "再灌注損傷", "表面冠狀動脈狹窄"],
+                answer: 3,
+                explanation: "No-reflow 的定義即是「儘管表面冠狀動脈已打通」但微循環仍有障礙。主要機轉包括微血管栓塞、內皮功能障礙、再灌注損傷、微血管痙攣等。"
+            },
+            {
+                id: 4,
+                question: "處理 coronary perforation 時，Protamine 的建議劑量為何？",
+                options: ["1mg：10U Heparin", "1mg：50U Heparin", "1mg：100U Heparin", "1mg：200U Heparin"],
+                answer: 2,
+                explanation: "Protamine 逆轉 Heparin 的標準劑量為 1mg Protamine：100U Heparin。給予時需緩慢 IV push 以避免過敏反應和低血壓。"
+            },
+            {
+                id: 5,
+                question: "下列何者不是 coronary perforation 的危險因子？",
+                options: ["CTO 病變", "使用 hydrophilic guidewire", "年輕男性", "Rotational atherectomy"],
+                answer: 2,
+                explanation: "Coronary perforation 的危險因子包括：女性、高齡、CTO 病變、嚴重鈣化、彎曲血管、使用 hydrophilic/stiff wire、atheroablative devices 等。年輕男性反而是低風險族群。"
+            },
+            {
+                id: 6,
+                question: "關於 no-reflow 時使用 IC Verapamil，下列敘述何者錯誤？",
+                options: [
+                    "可能造成低血壓",
+                    "可能造成心跳過緩",
+                    "LV function 差者可放心使用",
+                    "建議劑量 100-200 μg IC"
+                ],
+                answer: 2,
+                explanation: "Verapamil 為鈣離子阻斷劑，可能造成負性肌力作用、低血壓、心跳過緩。LV function 差的患者應小心使用，可考慮改用其他藥物如 Adenosine 或 Nitroprusside。"
+            },
+            {
+                id: 7,
+                question: "Distal small vessel perforation 最適合的處置方式為何？",
+                options: ["Covered stent", "Coil embolization", "Emergency CABG", "Thrombolytic therapy"],
+                answer: 1,
+                explanation: "Distal/small vessel (<2.5mm) perforation 因血管太小無法放置 covered stent，較適合的處置方式包括：coil embolization、fat/gelfoam embolization、autologous blood clot injection 等。"
+            },
+            {
+                id: 8,
+                question: "關於 pericardiocentesis 在 coronary perforation 的應用，下列何者正確？",
+                options: [
+                    "應等到完全 tamponade 才執行",
+                    "引流出的血液必須丟棄",
+                    "可考慮將引流血液 autotransfusion",
+                    "引流後即可移除引流管"
+                ],
+                answer: 2,
+                explanation: "Pericardiocentesis 應早期執行，不要等到完全 tamponade。引流出的血液可經 femoral vein sheath 進行 autotransfusion。引流管應留置 24-48 小時並持續 Echo 監測。"
+            },
+            {
+                id: 9,
+                question: "下列何種情況 no-reflow 發生率最高？",
+                options: ["Elective PCI for stable angina", "Primary PCI for STEMI", "PCI for in-stent restenosis", "Diagnostic coronary angiography"],
+                answer: 1,
+                explanation: "No-reflow 在 primary PCI for STEMI 發生率最高（5-25%），主要因為血栓負荷高、缺血時間長、再灌注損傷嚴重。SVG intervention 也是高危險情境（10-15%）。"
+            },
+            {
+                id: 10,
+                question: "Ellis Type III-CS (Cavity Spilling) perforation 的特徵為何？",
+                options: [
+                    "造影劑噴射入心包膜腔",
+                    "造影劑漏入心腔或冠狀靜脈",
+                    "局限性血管壁染色",
+                    "無造影劑外漏"
+                ],
+                answer: 1,
+                explanation: "Ellis Type III-CS 指造影劑外漏至心腔（LV/RV）或冠狀靜脈系統，而非心包膜腔。此類型通常不會造成 cardiac tamponade，但仍需密切監測並適當處置。"
+            }
+        ];
+
+        // ============== Components ==============
+
+        const Header = ({ currentSection, onBack, progress }) => (
+            <header style={{
+                background: 'linear-gradient(180deg, rgba(15,23,42,0.98) 0%, rgba(15,23,42,0.95) 100%)',
+                backdropFilter: 'blur(10px)',
+                padding: '16px 20px',
+                position: 'sticky',
+                top: 0,
+                zIndex: 100,
+                borderBottom: '1px solid var(--border)'
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    {currentSection !== 'home' ? (
+                        <button onClick={onBack} style={{
+                            background: 'none',
+                            border: 'none',
+                            color: 'var(--text-primary)',
+                            fontSize: '24px',
+                            cursor: 'pointer',
+                            padding: '8px',
+                            display: 'flex',
+                            alignItems: 'center'
+                        }}>
+                            ←
+                        </button>
+                    ) : (
+                        <div style={{ width: '40px' }} />
+                    )}
+                    <div style={{ textAlign: 'center' }}>
+                        <h1 style={{ 
+                            fontSize: '18px', 
+                            fontWeight: '700',
+                            background: 'linear-gradient(135deg, #f1f5f9 0%, #94a3b8 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent'
+                        }}>
+                            PCI 緊急併發症處置
+                        </h1>
+                        <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                            No-Reflow & Perforation
+                        </p>
+                    </div>
+                    <div style={{ width: '40px', textAlign: 'right' }}>
+                        {progress > 0 && (
+                            <span style={{ 
+                                fontSize: '12px', 
+                                color: 'var(--success)',
+                                fontWeight: '500'
+                            }}>
+                                {progress}%
+                            </span>
+                        )}
+                    </div>
+                </div>
+            </header>
+        );
+
+        const EmergencyBanner = ({ type }) => (
+            <div style={{
+                background: type === 'perforation' 
+                    ? 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)' 
+                    : 'linear-gradient(135deg, #dc2626 0%, #ea580c 100%)',
+                padding: '12px 16px',
+                margin: '16px',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                animation: 'pulse-emergency 2s infinite'
+            }}>
+                <span style={{ fontSize: '24px' }}>⚠️</span>
+                <div>
+                    <div style={{ fontWeight: '700', fontSize: '14px' }}>緊急狀況</div>
+                    <div style={{ fontSize: '12px', opacity: 0.9 }}>
+                        {type === 'perforation' ? '可能危及生命，需立即處置' : '需快速辨識並處理'}
+                    </div>
+                </div>
+            </div>
+        );
+
+        const NavCard = ({ icon, title, subtitle, color, onClick }) => (
+            <div 
+                onClick={onClick}
+                style={{
+                    background: `linear-gradient(135deg, ${color}15 0%, ${color}08 100%)`,
+                    border: `1px solid ${color}40`,
+                    borderRadius: '16px',
+                    padding: '24px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    marginBottom: '16px'
+                }}
+            >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <span style={{ fontSize: '40px' }}>{icon}</span>
+                    <div style={{ flex: 1 }}>
+                        <h3 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-primary)' }}>
+                            {title}
+                        </h3>
+                        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                            {subtitle}
+                        </p>
+                    </div>
+                    <span style={{ fontSize: '24px', color: color }}>→</span>
+                </div>
+            </div>
+        );
+
+        const SectionCard = ({ title, icon, children, expandable = false, defaultExpanded = false }) => {
+            const [expanded, setExpanded] = useState(defaultExpanded);
+            
+            return (
+                <div style={{
+                    background: 'var(--bg-card)',
+                    borderRadius: '12px',
+                    marginBottom: '12px',
+                    overflow: 'hidden',
+                    border: '1px solid var(--border)'
+                }}>
+                    <div 
+                        onClick={() => expandable && setExpanded(!expanded)}
+                        style={{
+                            padding: '16px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            cursor: expandable ? 'pointer' : 'default',
+                            background: expanded ? 'rgba(255,255,255,0.02)' : 'transparent'
+                        }}
+                    >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <span style={{ fontSize: '20px' }}>{icon}</span>
+                            <h3 style={{ fontSize: '15px', fontWeight: '600' }}>{title}</h3>
+                        </div>
+                        {expandable && (
+                            <span style={{ 
+                                fontSize: '18px', 
+                                transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                                transition: 'transform 0.3s ease',
+                                color: 'var(--text-muted)'
+                            }}>
+                                ▼
+                            </span>
+                        )}
+                    </div>
+                    {(!expandable || expanded) && (
+                        <div style={{ padding: '0 16px 16px' }} className="animate-fade-in">
+                            {children}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const ChecklistItem = ({ item, checked, onToggle }) => (
+            <div 
+                onClick={onToggle}
+                style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '12px',
+                    padding: '12px',
+                    background: checked ? 'rgba(16, 185, 129, 0.1)' : item.critical ? 'rgba(239, 68, 68, 0.05)' : 'rgba(255,255,255,0.02)',
+                    borderRadius: '8px',
+                    marginBottom: '8px',
+                    cursor: 'pointer',
+                    border: item.critical && !checked ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid transparent',
+                    transition: 'all 0.2s ease'
+                }}
+            >
+                <div style={{
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '6px',
+                    border: `2px solid ${checked ? 'var(--success)' : item.critical ? 'var(--danger)' : 'var(--text-muted)'}`,
+                    background: checked ? 'var(--success)' : 'transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    transition: 'all 0.2s ease'
+                }}>
+                    {checked && <span style={{ color: 'white', fontSize: '14px' }}>✓</span>}
+                </div>
+                <div style={{ flex: 1 }}>
+                    <span style={{ 
+                        fontSize: '14px',
+                        textDecoration: checked ? 'line-through' : 'none',
+                        color: checked ? 'var(--text-muted)' : 'var(--text-primary)'
+                    }}>
+                        {item.step}
+                    </span>
+                    {item.critical && !checked && (
+                        <span style={{
+                            marginLeft: '8px',
+                            fontSize: '11px',
+                            background: 'var(--danger)',
+                            color: 'white',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            fontWeight: '500'
+                        }}>
+                            關鍵
+                        </span>
+                    )}
+                </div>
+            </div>
+        );
+
+        const MedicationCard = ({ med }) => (
+            <div style={{
+                background: med.firstLine ? 'linear-gradient(135deg, rgba(8, 145, 178, 0.15) 0%, rgba(8, 145, 178, 0.05) 100%)' : 'rgba(255,255,255,0.02)',
+                border: med.firstLine ? '1px solid rgba(8, 145, 178, 0.3)' : '1px solid var(--border)',
+                borderRadius: '12px',
+                padding: '16px',
+                marginBottom: '12px'
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <h4 style={{ fontSize: '16px', fontWeight: '700', color: med.firstLine ? 'var(--secondary)' : 'var(--text-primary)' }}>
+                        {med.name}
+                    </h4>
+                    {med.firstLine && (
+                        <span style={{
+                            fontSize: '11px',
+                            background: 'var(--secondary)',
+                            color: 'white',
+                            padding: '3px 8px',
+                            borderRadius: '4px',
+                            fontWeight: '500'
+                        }}>
+                            第一線
+                        </span>
+                    )}
+                </div>
+                <div style={{ fontSize: '14px', color: 'var(--warning)', fontWeight: '600', marginBottom: '6px' }}>
+                    {med.dose}
+                </div>
+                <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                    <strong>機轉：</strong>{med.mechanism}
+                </div>
+                <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                    💡 {med.notes}
+                </div>
+            </div>
+        );
+
+        const EllisCard = ({ item }) => (
+            <div style={{
+                background: item.type === 'Type III' ? 'linear-gradient(135deg, rgba(220, 38, 38, 0.15) 0%, rgba(220, 38, 38, 0.05) 100%)' : 'var(--bg-card)',
+                border: item.type === 'Type III' ? '1px solid rgba(220, 38, 38, 0.4)' : '1px solid var(--border)',
+                borderRadius: '12px',
+                padding: '16px',
+                marginBottom: '12px'
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
+                    <span style={{
+                        background: item.type === 'Type III' ? 'var(--danger)' : item.type === 'Type III-CS' ? 'var(--warning)' : 'var(--secondary)',
+                        color: 'white',
+                        padding: '4px 10px',
+                        borderRadius: '6px',
+                        fontSize: '13px',
+                        fontWeight: '700'
+                    }}>
+                        {item.type}
+                    </span>
+                    <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{item.description}</span>
+                </div>
+                <p style={{ fontSize: '14px', color: 'var(--text-primary)', marginBottom: '8px' }}>
+                    {item.descCn}
+                </p>
+                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                    <strong>影像特徵：</strong>{item.image}
+                </p>
+                <p style={{ fontSize: '13px', color: 'var(--warning)' }}>
+                    <strong>處置：</strong>{item.management}
+                </p>
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '6px' }}>
+                    <strong>預後：</strong>{item.prognosis}
+                </p>
+            </div>
+        );
+
+        const QuizQuestion = ({ question, onAnswer, answered, selectedAnswer }) => {
+            const isCorrect = selectedAnswer === question.answer;
+            
+            return (
+                <div style={{
+                    background: 'var(--bg-card)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    marginBottom: '20px',
+                    border: '1px solid var(--border)'
+                }}>
+                    <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '10px',
+                        marginBottom: '16px'
+                    }}>
+                        <span style={{
+                            background: 'var(--secondary)',
+                            color: 'white',
+                            width: '28px',
+                            height: '28px',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '14px',
+                            fontWeight: '700'
+                        }}>
+                            {question.id}
+                        </span>
+                        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                            第 {question.id} 題 / 共 {quizQuestions.length} 題
+                        </span>
+                    </div>
+                    
+                    <p style={{ fontSize: '15px', lineHeight: '1.7', marginBottom: '20px', color: 'var(--text-primary)' }}>
+                        {question.question}
+                    </p>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        {question.options.map((option, idx) => {
+                            const isSelected = selectedAnswer === idx;
+                            const isCorrectOption = idx === question.answer;
+                            
+                            let bgColor = 'rgba(255,255,255,0.03)';
+                            let borderColor = 'var(--border)';
+                            
+                            if (answered) {
+                                if (isCorrectOption) {
+                                    bgColor = 'rgba(16, 185, 129, 0.15)';
+                                    borderColor = 'var(--success)';
+                                } else if (isSelected && !isCorrect) {
+                                    bgColor = 'rgba(239, 68, 68, 0.15)';
+                                    borderColor = 'var(--danger)';
+                                }
+                            }
+                            
+                            return (
+                                <div
+                                    key={idx}
+                                    onClick={() => !answered && onAnswer(idx)}
+                                    style={{
+                                        padding: '14px 16px',
+                                        background: bgColor,
+                                        border: `1px solid ${borderColor}`,
+                                        borderRadius: '10px',
+                                        cursor: answered ? 'default' : 'pointer',
+                                        transition: 'all 0.2s ease',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px'
+                                    }}
+                                >
+                                    <span style={{
+                                        width: '24px',
+                                        height: '24px',
+                                        borderRadius: '50%',
+                                        background: isSelected ? (isCorrect ? 'var(--success)' : 'var(--danger)') : 'rgba(255,255,255,0.1)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '12px',
+                                        fontWeight: '600',
+                                        flexShrink: 0
+                                    }}>
+                                        {String.fromCharCode(65 + idx)}
+                                    </span>
+                                    <span style={{ fontSize: '14px', color: 'var(--text-primary)' }}>
+                                        {option}
+                                    </span>
+                                    {answered && isCorrectOption && (
+                                        <span style={{ marginLeft: 'auto', color: 'var(--success)' }}>✓</span>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                    
+                    {answered && (
+                        <div style={{
+                            marginTop: '16px',
+                            padding: '14px',
+                            background: isCorrect ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                            borderRadius: '10px',
+                            borderLeft: `4px solid ${isCorrect ? 'var(--success)' : 'var(--danger)'}`
+                        }} className="animate-slide-in">
+                            <div style={{ 
+                                fontSize: '13px', 
+                                fontWeight: '600',
+                                color: isCorrect ? 'var(--success)' : 'var(--danger)',
+                                marginBottom: '8px'
+                            }}>
+                                {isCorrect ? '✓ 答對了！' : '✗ 答錯了'}
+                            </div>
+                            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+                                {question.explanation}
+                            </p>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const TabButton = ({ active, onClick, children }) => (
+            <button
+                onClick={onClick}
+                style={{
+                    flex: 1,
+                    padding: '12px 16px',
+                    background: active ? 'var(--secondary)' : 'transparent',
+                    border: 'none',
+                    borderRadius: '8px',
+                    color: active ? 'white' : 'var(--text-secondary)',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                }}
+            >
+                {children}
+            </button>
+        );
+
+        // ============== Pages ==============
+
+        const HomePage = ({ onNavigate }) => (
+            <div style={{ padding: '20px' }} className="animate-slide-in">
+                <div style={{ 
+                    textAlign: 'center', 
+                    marginBottom: '32px',
+                    padding: '24px',
+                    background: 'linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, rgba(8, 145, 178, 0.1) 100%)',
+                    borderRadius: '20px'
+                }}>
+                    <span style={{ fontSize: '48px', display: 'block', marginBottom: '12px' }}>🫀</span>
+                    <h2 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '8px' }}>
+                        PCI 緊急併發症處置
+                    </h2>
+                    <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+                        學習辨識與處理 PCI 最危險的兩種併發症
+                    </p>
+                </div>
+
+                <NavCard
+                    icon="🚫"
+                    title="Coronary No-Reflow"
+                    subtitle="無復流現象的診斷與處置"
+                    color="#f59e0b"
+                    onClick={() => onNavigate('noreflow')}
+                />
+                
+                <NavCard
+                    icon="💥"
+                    title="Coronary Perforation"
+                    subtitle="冠狀動脈穿孔的緊急處置"
+                    color="#dc2626"
+                    onClick={() => onNavigate('perforation')}
+                />
+                
+                <NavCard
+                    icon="📋"
+                    title="Emergency Checklist"
+                    subtitle="互動式緊急處置查核表"
+                    color="#10b981"
+                    onClick={() => onNavigate('checklist')}
+                />
+                
+                <NavCard
+                    icon="📝"
+                    title="自我測驗"
+                    subtitle="10題測驗題評估學習成效"
+                    color="#8b5cf6"
+                    onClick={() => onNavigate('quiz')}
+                />
+
+                <div style={{
+                    marginTop: '24px',
+                    padding: '16px',
+                    background: 'rgba(255,255,255,0.02)',
+                    borderRadius: '12px',
+                    border: '1px solid var(--border)'
+                }}>
+                    <h4 style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                        📚 參考資料（點擊可閱讀全文）
+                    </h4>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <a 
+                            href="https://www.jscai.org/article/S2772-9303(24)01740-X/fulltext" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            style={{ 
+                                fontSize: '12px', 
+                                color: 'var(--secondary)', 
+                                textDecoration: 'none',
+                                padding: '10px 12px',
+                                background: 'rgba(8, 145, 178, 0.1)',
+                                borderRadius: '8px',
+                                display: 'block'
+                            }}
+                        >
+                            📄 SCAI Expert Consensus Statement 2024<br/>
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                                Management of Patients With STEMI Referred for Primary PCI
+                            </span>
+                        </a>
+                        <a 
+                            href="https://www.ahajournals.org/doi/10.1161/CIRCINTERVENTIONS.120.008962" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            style={{ 
+                                fontSize: '12px', 
+                                color: 'var(--secondary)', 
+                                textDecoration: 'none',
+                                padding: '10px 12px',
+                                background: 'rgba(8, 145, 178, 0.1)',
+                                borderRadius: '8px',
+                                display: 'block'
+                            }}
+                        >
+                            📄 Circ Cardiovasc Interv 2020<br/>
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                                Management of PCI Complications: Algorithms from Seattle Conference
+                            </span>
+                        </a>
+                        <a 
+                            href="https://eurointervention.pcronline.com/article/coronary-perforations" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            style={{ 
+                                fontSize: '12px', 
+                                color: 'var(--secondary)', 
+                                textDecoration: 'none',
+                                padding: '10px 12px',
+                                background: 'rgba(8, 145, 178, 0.1)',
+                                borderRadius: '8px',
+                                display: 'block'
+                            }}
+                        >
+                            📄 EuroIntervention - Coronary Perforations<br/>
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                                Complete review of aetiology, therapeutic options and outcomes
+                            </span>
+                        </a>
+                        <a 
+                            href="https://www.ncbi.nlm.nih.gov/books/NBK554476/" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            style={{ 
+                                fontSize: '12px', 
+                                color: 'var(--secondary)', 
+                                textDecoration: 'none',
+                                padding: '10px 12px',
+                                background: 'rgba(8, 145, 178, 0.1)',
+                                borderRadius: '8px',
+                                display: 'block'
+                            }}
+                        >
+                            📄 StatPearls - Coronary Artery Perforation<br/>
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                                NCBI Bookshelf comprehensive review (Free full text)
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const NoReflowPage = () => {
+            const [activeTab, setActiveTab] = useState('overview');
+            
+            return (
+                <div style={{ padding: '16px', paddingBottom: '100px' }} className="animate-slide-in">
+                    <EmergencyBanner type="noreflow" />
+                    
+                    <div style={{
+                        display: 'flex',
+                        gap: '8px',
+                        padding: '4px',
+                        background: 'var(--bg-card)',
+                        borderRadius: '12px',
+                        marginBottom: '20px'
+                    }}>
+                        <TabButton active={activeTab === 'overview'} onClick={() => setActiveTab('overview')}>
+                            概述
+                        </TabButton>
+                        <TabButton active={activeTab === 'diagnosis'} onClick={() => setActiveTab('diagnosis')}>
+                            診斷
+                        </TabButton>
+                        <TabButton active={activeTab === 'treatment'} onClick={() => setActiveTab('treatment')}>
+                            治療
+                        </TabButton>
+                    </div>
+
+                    {activeTab === 'overview' && (
+                        <>
+                            <SectionCard title="定義 Definition" icon="📖">
+                                <p style={{ fontSize: '14px', lineHeight: '1.7', color: 'var(--text-secondary)' }}>
+                                    {noReflowData.definition}
+                                </p>
+                                <div style={{ 
+                                    marginTop: '12px', 
+                                    padding: '12px', 
+                                    background: 'rgba(245, 158, 11, 0.1)',
+                                    borderRadius: '8px'
+                                }}>
+                                    <p style={{ fontSize: '13px', color: 'var(--warning)' }}>
+                                        ⚡ 發生率：{noReflowData.incidence}
+                                    </p>
+                                    <p style={{ fontSize: '13px', color: 'var(--danger)', marginTop: '6px' }}>
+                                        ⚠️ {noReflowData.mortality}
+                                    </p>
+                                </div>
+                            </SectionCard>
+
+                            <SectionCard title="危險因子 Risk Factors" icon="⚡" expandable defaultExpanded>
+                                {noReflowData.riskFactors.map((category, idx) => (
+                                    <div key={idx} style={{ marginBottom: idx < noReflowData.riskFactors.length - 1 ? '16px' : 0 }}>
+                                        <h4 style={{ 
+                                            fontSize: '13px', 
+                                            color: 'var(--secondary)',
+                                            fontWeight: '600',
+                                            marginBottom: '8px'
+                                        }}>
+                                            {category.category}
+                                        </h4>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                                            {category.items.map((item, i) => (
+                                                <span key={i} style={{
+                                                    fontSize: '12px',
+                                                    background: 'rgba(255,255,255,0.05)',
+                                                    padding: '4px 10px',
+                                                    borderRadius: '20px',
+                                                    color: 'var(--text-secondary)'
+                                                }}>
+                                                    {item}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </SectionCard>
+
+                            <SectionCard title="預防措施 Prevention" icon="🛡️" expandable>
+                                {noReflowData.prevention.map((item, idx) => (
+                                    <div key={idx} style={{
+                                        display: 'flex',
+                                        alignItems: 'flex-start',
+                                        gap: '10px',
+                                        marginBottom: '10px'
+                                    }}>
+                                        <span style={{ color: 'var(--success)' }}>✓</span>
+                                        <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{item}</span>
+                                    </div>
+                                ))}
+                            </SectionCard>
+                        </>
+                    )}
+
+                    {activeTab === 'diagnosis' && (
+                        <>
+                            <SectionCard title="鑑別診斷 Differential Diagnosis" icon="🔍" expandable defaultExpanded>
+                                <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                                    確認為 No-reflow 前，必須排除以下情況：
+                                </p>
+                                {noReflowData.differentialDiagnosis.map((item, idx) => (
+                                    <div key={idx} style={{
+                                        padding: '12px',
+                                        background: 'rgba(255,255,255,0.02)',
+                                        borderRadius: '8px',
+                                        marginBottom: '8px',
+                                        borderLeft: '3px solid var(--secondary)'
+                                    }}>
+                                        <div style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-primary)' }}>
+                                            {item.condition}
+                                        </div>
+                                        <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                                            {item.features}
+                                        </div>
+                                    </div>
+                                ))}
+                            </SectionCard>
+
+                            <SectionCard title="TIMI Flow Grade" icon="📊" expandable defaultExpanded>
+                                {noReflowData.diagnosis.angiographic.map((item, idx) => (
+                                    <div key={idx} style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px',
+                                        padding: '10px',
+                                        background: item.grade === 'TIMI 3' ? 'rgba(16, 185, 129, 0.1)' : item.grade === 'TIMI 0' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(255,255,255,0.02)',
+                                        borderRadius: '8px',
+                                        marginBottom: '6px'
+                                    }}>
+                                        <span style={{
+                                            background: item.grade === 'TIMI 3' ? 'var(--success)' : item.grade === 'TIMI 0' ? 'var(--danger)' : 'var(--warning)',
+                                            color: 'white',
+                                            padding: '4px 8px',
+                                            borderRadius: '4px',
+                                            fontSize: '12px',
+                                            fontWeight: '700'
+                                        }}>
+                                            {item.grade}
+                                        </span>
+                                        <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{item.desc}</span>
+                                    </div>
+                                ))}
+                            </SectionCard>
+
+                            <SectionCard title="Myocardial Blush Grade (MBG)" icon="💫" expandable>
+                                {noReflowData.diagnosis.mbg.map((item, idx) => (
+                                    <div key={idx} style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px',
+                                        padding: '10px',
+                                        background: 'rgba(255,255,255,0.02)',
+                                        borderRadius: '8px',
+                                        marginBottom: '6px'
+                                    }}>
+                                        <span style={{
+                                            background: item.grade === 'MBG 3' ? 'var(--success)' : 'var(--text-muted)',
+                                            color: 'white',
+                                            padding: '4px 8px',
+                                            borderRadius: '4px',
+                                            fontSize: '12px',
+                                            fontWeight: '700'
+                                        }}>
+                                            {item.grade}
+                                        </span>
+                                        <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{item.desc}</span>
+                                    </div>
+                                ))}
+                            </SectionCard>
+                        </>
+                    )}
+
+                    {activeTab === 'treatment' && (
+                        <>
+                            <SectionCard title="藥物治療 Medications" icon="💊" expandable defaultExpanded>
+                                {noReflowData.medications.map((med, idx) => (
+                                    <MedicationCard key={idx} med={med} />
+                                ))}
+                            </SectionCard>
+
+                            <div style={{
+                                padding: '16px',
+                                background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%)',
+                                borderRadius: '12px',
+                                border: '1px solid rgba(139, 92, 246, 0.3)'
+                            }}>
+                                <h4 style={{ fontSize: '14px', fontWeight: '600', color: '#a78bfa', marginBottom: '10px' }}>
+                                    💡 治療要點
+                                </h4>
+                                <ul style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.8', paddingLeft: '16px' }}>
+                                    <li>優先排除機械性原因（dissection、spasm、thrombus）</li>
+                                    <li>藥物給予建議使用 microcatheter 送到遠端</li>
+                                    <li>可合併使用多種藥物</li>
+                                    <li>血流動力學不穩定時考慮 IABP/ECMO</li>
+                                    <li>持續監測直到 TIMI 3 恢復</li>
+                                </ul>
+                            </div>
+                        </>
+                    )}
+                </div>
+            );
+        };
+
+        const PerforationPage = () => {
+            const [activeTab, setActiveTab] = useState('classification');
+            
+            return (
+                <div style={{ padding: '16px', paddingBottom: '100px' }} className="animate-slide-in">
+                    <EmergencyBanner type="perforation" />
+                    
+                    <div style={{
+                        display: 'flex',
+                        gap: '8px',
+                        padding: '4px',
+                        background: 'var(--bg-card)',
+                        borderRadius: '12px',
+                        marginBottom: '20px'
+                    }}>
+                        <TabButton active={activeTab === 'classification'} onClick={() => setActiveTab('classification')}>
+                            分類
+                        </TabButton>
+                        <TabButton active={activeTab === 'management'} onClick={() => setActiveTab('management')}>
+                            處置
+                        </TabButton>
+                        <TabButton active={activeTab === 'tools'} onClick={() => setActiveTab('tools')}>
+                            器材
+                        </TabButton>
+                    </div>
+
+                    {activeTab === 'classification' && (
+                        <>
+                            <SectionCard title="定義 Definition" icon="📖">
+                                <p style={{ fontSize: '14px', lineHeight: '1.7', color: 'var(--text-secondary)' }}>
+                                    {perforationData.definition}
+                                </p>
+                                <div style={{ 
+                                    marginTop: '12px', 
+                                    padding: '12px', 
+                                    background: 'rgba(220, 38, 38, 0.1)',
+                                    borderRadius: '8px'
+                                }}>
+                                    <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                                        ⚡ 發生率：{perforationData.incidence}
+                                    </p>
+                                    <p style={{ fontSize: '13px', color: 'var(--danger)', marginTop: '6px' }}>
+                                        ⚠️ {perforationData.mortality}
+                                    </p>
+                                </div>
+                            </SectionCard>
+
+                            <SectionCard title="Ellis Classification" icon="📋" expandable defaultExpanded>
+                                {perforationData.ellisClassification.map((item, idx) => (
+                                    <EllisCard key={idx} item={item} />
+                                ))}
+                            </SectionCard>
+
+                            <SectionCard title="危險因子 Risk Factors" icon="⚡" expandable>
+                                {perforationData.riskFactors.map((category, idx) => (
+                                    <div key={idx} style={{ marginBottom: idx < perforationData.riskFactors.length - 1 ? '16px' : 0 }}>
+                                        <h4 style={{ 
+                                            fontSize: '13px', 
+                                            color: 'var(--danger)',
+                                            fontWeight: '600',
+                                            marginBottom: '8px'
+                                        }}>
+                                            {category.category}
+                                        </h4>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                                            {category.items.map((item, i) => (
+                                                <span key={i} style={{
+                                                    fontSize: '12px',
+                                                    background: 'rgba(220, 38, 38, 0.1)',
+                                                    padding: '4px 10px',
+                                                    borderRadius: '20px',
+                                                    color: 'var(--text-secondary)'
+                                                }}>
+                                                    {item}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </SectionCard>
+                        </>
+                    )}
+
+                    {activeTab === 'management' && (
+                        <>
+                            <SectionCard title="依位置處置策略" icon="📍" expandable defaultExpanded>
+                                {perforationData.managementByLocation.map((loc, idx) => (
+                                    <div key={idx} style={{
+                                        padding: '14px',
+                                        background: 'rgba(255,255,255,0.02)',
+                                        borderRadius: '10px',
+                                        marginBottom: '12px',
+                                        border: '1px solid var(--border)'
+                                    }}>
+                                        <h4 style={{ 
+                                            fontSize: '14px', 
+                                            fontWeight: '600',
+                                            color: 'var(--secondary)',
+                                            marginBottom: '10px'
+                                        }}>
+                                            {loc.location}
+                                        </h4>
+                                        {loc.approach.map((step, i) => (
+                                            <div key={i} style={{
+                                                display: 'flex',
+                                                alignItems: 'flex-start',
+                                                gap: '8px',
+                                                marginBottom: '6px'
+                                            }}>
+                                                <span style={{ 
+                                                    color: 'var(--warning)',
+                                                    fontSize: '12px',
+                                                    marginTop: '2px'
+                                                }}>
+                                                    {i + 1}.
+                                                </span>
+                                                <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                                                    {step}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ))}
+                            </SectionCard>
+
+                            <SectionCard title="Pericardiocentesis" icon="💉" expandable defaultExpanded>
+                                <h4 style={{ fontSize: '13px', color: 'var(--danger)', fontWeight: '600', marginBottom: '8px' }}>
+                                    適應症
+                                </h4>
+                                {perforationData.pericardiocentesis.indications.map((item, idx) => (
+                                    <div key={idx} style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        marginBottom: '6px'
+                                    }}>
+                                        <span style={{ color: 'var(--danger)' }}>•</span>
+                                        <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{item}</span>
+                                    </div>
+                                ))}
+                                
+                                <h4 style={{ fontSize: '13px', color: 'var(--secondary)', fontWeight: '600', margin: '16px 0 8px' }}>
+                                    技術要點
+                                </h4>
+                                {perforationData.pericardiocentesis.technique.map((item, idx) => (
+                                    <div key={idx} style={{
+                                        display: 'flex',
+                                        alignItems: 'flex-start',
+                                        gap: '8px',
+                                        marginBottom: '6px'
+                                    }}>
+                                        <span style={{ color: 'var(--secondary)', fontSize: '12px' }}>{idx + 1}.</span>
+                                        <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{item}</span>
+                                    </div>
+                                ))}
+                                
+                                <div style={{
+                                    marginTop: '16px',
+                                    padding: '12px',
+                                    background: 'rgba(245, 158, 11, 0.1)',
+                                    borderRadius: '8px',
+                                    borderLeft: '3px solid var(--warning)'
+                                }}>
+                                    <h4 style={{ fontSize: '13px', color: 'var(--warning)', fontWeight: '600', marginBottom: '8px' }}>
+                                        💡 小技巧
+                                    </h4>
+                                    {perforationData.pericardiocentesis.tips.map((tip, idx) => (
+                                        <p key={idx} style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                                            • {tip}
+                                        </p>
+                                    ))}
+                                </div>
+                            </SectionCard>
+                        </>
+                    )}
+
+                    {activeTab === 'tools' && (
+                        <>
+                            <SectionCard title="Covered Stents" icon="🔧" expandable defaultExpanded>
+                                {perforationData.coveredStents.map((stent, idx) => (
+                                    <div key={idx} style={{
+                                        padding: '14px',
+                                        background: 'rgba(255,255,255,0.03)',
+                                        borderRadius: '10px',
+                                        marginBottom: '10px',
+                                        border: '1px solid var(--border)'
+                                    }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <h4 style={{ fontSize: '15px', fontWeight: '600', color: 'var(--text-primary)' }}>
+                                                {stent.name}
+                                            </h4>
+                                            <span style={{
+                                                fontSize: '12px',
+                                                background: 'var(--secondary)',
+                                                color: 'white',
+                                                padding: '3px 8px',
+                                                borderRadius: '4px'
+                                            }}>
+                                                {stent.size}
+                                            </span>
+                                        </div>
+                                        <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '6px' }}>
+                                            {stent.features}
+                                        </p>
+                                    </div>
+                                ))}
+                            </SectionCard>
+
+                            <SectionCard title="其他器材" icon="🛠️" expandable>
+                                <div style={{ padding: '12px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', marginBottom: '10px' }}>
+                                    <h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '6px' }}>Coils</h4>
+                                    <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                                        用於 distal small vessel perforation<br/>
+                                        常見：Cook Tornado, Interlock coils
+                                    </p>
+                                </div>
+                                <div style={{ padding: '12px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', marginBottom: '10px' }}>
+                                    <h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '6px' }}>Embolization Materials</h4>
+                                    <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                                        Gelfoam, Fat particles, Autologous blood clot<br/>
+                                        Thrombin injection
+                                    </p>
+                                </div>
+                                <div style={{ padding: '12px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
+                                    <h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '6px' }}>Perfusion Balloon</h4>
+                                    <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                                        可長時間擴張同時維持遠端血流<br/>
+                                        爭取時間準備 covered stent
+                                    </p>
+                                </div>
+                            </SectionCard>
+
+                            <SectionCard title="預防措施 Prevention" icon="🛡️" expandable>
+                                {perforationData.prevention.map((item, idx) => (
+                                    <div key={idx} style={{
+                                        display: 'flex',
+                                        alignItems: 'flex-start',
+                                        gap: '10px',
+                                        marginBottom: '10px'
+                                    }}>
+                                        <span style={{ color: 'var(--success)' }}>✓</span>
+                                        <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{item}</span>
+                                    </div>
+                                ))}
+                            </SectionCard>
+                        </>
+                    )}
+                </div>
+            );
+        };
+
+        const ChecklistPage = () => {
+            const [selectedType, setSelectedType] = useState('noreflow');
+            const [checkedItems, setCheckedItems] = useState({});
+            
+            const currentData = selectedType === 'noreflow' ? noReflowData : perforationData;
+            
+            const handleToggle = (id) => {
+                setCheckedItems(prev => ({
+                    ...prev,
+                    [`${selectedType}-${id}`]: !prev[`${selectedType}-${id}`]
+                }));
+            };
+            
+            const resetChecklist = () => {
+                const newChecked = {};
+                Object.keys(checkedItems).forEach(key => {
+                    if (!key.startsWith(selectedType)) {
+                        newChecked[key] = checkedItems[key];
+                    }
+                });
+                setCheckedItems(newChecked);
+            };
+            
+            const progress = Math.round(
+                (currentData.emergencyChecklist.filter(item => 
+                    checkedItems[`${selectedType}-${item.id}`]
+                ).length / currentData.emergencyChecklist.length) * 100
+            );
+            
+            return (
+                <div style={{ padding: '16px', paddingBottom: '100px' }} className="animate-slide-in">
+                    <div style={{
+                        display: 'flex',
+                        gap: '8px',
+                        marginBottom: '20px'
+                    }}>
+                        <button
+                            onClick={() => setSelectedType('noreflow')}
+                            style={{
+                                flex: 1,
+                                padding: '14px',
+                                background: selectedType === 'noreflow' ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' : 'var(--bg-card)',
+                                border: 'none',
+                                borderRadius: '12px',
+                                color: selectedType === 'noreflow' ? 'white' : 'var(--text-secondary)',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            🚫 No-Reflow
+                        </button>
+                        <button
+                            onClick={() => setSelectedType('perforation')}
+                            style={{
+                                flex: 1,
+                                padding: '14px',
+                                background: selectedType === 'perforation' ? 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)' : 'var(--bg-card)',
+                                border: 'none',
+                                borderRadius: '12px',
+                                color: selectedType === 'perforation' ? 'white' : 'var(--text-secondary)',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            💥 Perforation
+                        </button>
+                    </div>
+                    
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginBottom: '16px'
+                    }}>
+                        <div>
+                            <h2 style={{ fontSize: '18px', fontWeight: '700' }}>
+                                {selectedType === 'noreflow' ? 'No-Reflow' : 'Perforation'} 處置流程
+                            </h2>
+                            <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                                完成進度：{progress}%
+                            </p>
+                        </div>
+                        <button
+                            onClick={resetChecklist}
+                            style={{
+                                padding: '8px 16px',
+                                background: 'rgba(255,255,255,0.05)',
+                                border: '1px solid var(--border)',
+                                borderRadius: '8px',
+                                color: 'var(--text-secondary)',
+                                fontSize: '13px',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            重置
+                        </button>
+                    </div>
+                    
+                    <div style={{
+                        height: '6px',
+                        background: 'var(--bg-card)',
+                        borderRadius: '3px',
+                        marginBottom: '20px',
+                        overflow: 'hidden'
+                    }}>
+                        <div style={{
+                            height: '100%',
+                            width: `${progress}%`,
+                            background: progress === 100 ? 'var(--success)' : selectedType === 'noreflow' ? 'var(--warning)' : 'var(--danger)',
+                            borderRadius: '3px',
+                            transition: 'width 0.3s ease'
+                        }} />
+                    </div>
+                    
+                    {currentData.emergencyChecklist.map(item => (
+                        <ChecklistItem
+                            key={item.id}
+                            item={item}
+                            checked={checkedItems[`${selectedType}-${item.id}`]}
+                            onToggle={() => handleToggle(item.id)}
+                        />
+                    ))}
+                    
+                    {progress === 100 && (
+                        <div style={{
+                            marginTop: '20px',
+                            padding: '20px',
+                            background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%)',
+                            borderRadius: '12px',
+                            textAlign: 'center',
+                            border: '1px solid rgba(16, 185, 129, 0.3)'
+                        }} className="animate-slide-in">
+                            <span style={{ fontSize: '40px' }}>✅</span>
+                            <h3 style={{ fontSize: '16px', fontWeight: '600', marginTop: '12px', color: 'var(--success)' }}>
+                                查核完成！
+                            </h3>
+                            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '6px' }}>
+                                所有關鍵步驟已確認執行
+                            </p>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const QuizPage = () => {
+            const [currentQuestion, setCurrentQuestion] = useState(0);
+            const [answers, setAnswers] = useState({});
+            const [showResults, setShowResults] = useState(false);
+            
+            const handleAnswer = (answerIndex) => {
+                setAnswers(prev => ({
+                    ...prev,
+                    [currentQuestion]: answerIndex
+                }));
+            };
+            
+            const nextQuestion = () => {
+                if (currentQuestion < quizQuestions.length - 1) {
+                    setCurrentQuestion(prev => prev + 1);
+                } else {
+                    setShowResults(true);
+                }
+            };
+            
+            const resetQuiz = () => {
+                setCurrentQuestion(0);
+                setAnswers({});
+                setShowResults(false);
+            };
+            
+            const score = Object.keys(answers).filter(
+                key => answers[key] === quizQuestions[key].answer
+            ).length;
+            
+            if (showResults) {
+                return (
+                    <div style={{ padding: '20px', textAlign: 'center', paddingBottom: '100px' }} className="animate-slide-in">
+                        <div style={{
+                            padding: '40px 20px',
+                            background: score >= 8 ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%)' : score >= 6 ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%)' : 'linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) 100%)',
+                            borderRadius: '20px',
+                            marginBottom: '24px'
+                        }}>
+                            <span style={{ fontSize: '60px' }}>
+                                {score >= 8 ? '🎉' : score >= 6 ? '👍' : '📚'}
+                            </span>
+                            <h2 style={{ fontSize: '24px', fontWeight: '700', marginTop: '16px' }}>
+                                測驗完成！
+                            </h2>
+                            <div style={{
+                                fontSize: '48px',
+                                fontWeight: '700',
+                                color: score >= 8 ? 'var(--success)' : score >= 6 ? 'var(--warning)' : 'var(--danger)',
+                                marginTop: '16px'
+                            }}>
+                                {score} / {quizQuestions.length}
+                            </div>
+                            <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginTop: '8px' }}>
+                                正確率：{Math.round((score / quizQuestions.length) * 100)}%
+                            </p>
+                        </div>
+                        
+                        <div style={{
+                            padding: '20px',
+                            background: 'var(--bg-card)',
+                            borderRadius: '12px',
+                            marginBottom: '20px',
+                            textAlign: 'left'
+                        }}>
+                            <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '12px' }}>
+                                {score >= 8 ? '🌟 優秀！' : score >= 6 ? '💪 不錯！' : '📖 需要加強'}
+                            </h3>
+                            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+                                {score >= 8 
+                                    ? '你對 PCI 緊急併發症的處置有很好的理解！建議定期複習以保持熟練度。'
+                                    : score >= 6
+                                    ? '你已掌握基本概念，建議針對答錯的題目再複習相關章節。'
+                                    : '建議重新閱讀 No-Reflow 和 Perforation 的處置章節，並使用查核表練習。'}
+                            </p>
+                        </div>
+                        
+                        <button
+                            onClick={resetQuiz}
+                            style={{
+                                width: '100%',
+                                padding: '16px',
+                                background: 'var(--secondary)',
+                                border: 'none',
+                                borderRadius: '12px',
+                                color: 'white',
+                                fontSize: '16px',
+                                fontWeight: '600',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            重新測驗
+                        </button>
+                    </div>
+                );
+            }
+            
+            const question = quizQuestions[currentQuestion];
+            const isAnswered = answers[currentQuestion] !== undefined;
+            
+            return (
+                <div style={{ padding: '16px', paddingBottom: '100px' }} className="animate-slide-in">
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginBottom: '20px'
+                    }}>
+                        <div style={{
+                            display: 'flex',
+                            gap: '4px'
+                        }}>
+                            {quizQuestions.map((_, idx) => (
+                                <div
+                                    key={idx}
+                                    style={{
+                                        width: idx === currentQuestion ? '24px' : '8px',
+                                        height: '8px',
+                                        borderRadius: '4px',
+                                        background: answers[idx] !== undefined
+                                            ? answers[idx] === quizQuestions[idx].answer
+                                                ? 'var(--success)'
+                                                : 'var(--danger)'
+                                            : idx === currentQuestion
+                                                ? 'var(--secondary)'
+                                                : 'var(--border)',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                />
+                            ))}
+                        </div>
+                        <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                            {Object.keys(answers).filter(k => answers[k] === quizQuestions[k].answer).length} / {currentQuestion + (isAnswered ? 1 : 0)} 正確
+                        </span>
+                    </div>
+                    
+                    <QuizQuestion
+                        question={question}
+                        onAnswer={handleAnswer}
+                        answered={isAnswered}
+                        selectedAnswer={answers[currentQuestion]}
+                    />
+                    
+                    {isAnswered && (
+                        <button
+                            onClick={nextQuestion}
+                            style={{
+                                width: '100%',
+                                padding: '16px',
+                                background: 'var(--secondary)',
+                                border: 'none',
+                                borderRadius: '12px',
+                                color: 'white',
+                                fontSize: '16px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                marginTop: '16px'
+                            }}
+                            className="animate-fade-in"
+                        >
+                            {currentQuestion < quizQuestions.length - 1 ? '下一題 →' : '查看結果'}
+                        </button>
+                    )}
+                </div>
+            );
+        };
+
+        // ============== Main App ==============
+        const App = () => {
+            const [currentSection, setCurrentSection] = useState('home');
+            const [progress, setProgress] = useState(0);
+            
+            const renderSection = () => {
+                switch (currentSection) {
+                    case 'home':
+                        return <HomePage onNavigate={setCurrentSection} />;
+                    case 'noreflow':
+                        return <NoReflowPage />;
+                    case 'perforation':
+                        return <PerforationPage />;
+                    case 'checklist':
+                        return <ChecklistPage />;
+                    case 'quiz':
+                        return <QuizPage />;
+                    default:
+                        return <HomePage onNavigate={setCurrentSection} />;
+                }
+            };
+            
+            return (
+                <div style={{ 
+                    maxWidth: '480px', 
+                    margin: '0 auto', 
+                    minHeight: '100vh',
+                    background: 'var(--bg-dark)'
+                }}>
+                    <Header 
+                        currentSection={currentSection} 
+                        onBack={() => setCurrentSection('home')}
+                        progress={progress}
+                    />
+                    {renderSection()}
+                    
+                    {currentSection !== 'home' && (
+                        <div style={{
+                            position: 'fixed',
+                            bottom: 0,
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            width: '100%',
+                            maxWidth: '480px',
+                            padding: '12px 16px',
+                            background: 'linear-gradient(180deg, transparent 0%, var(--bg-dark) 30%)',
+                            paddingTop: '40px'
+                        }}>
+                            <button
+                                onClick={() => setCurrentSection('home')}
+                                style={{
+                                    width: '100%',
+                                    padding: '14px',
+                                    background: 'var(--bg-card)',
+                                    border: '1px solid var(--border)',
+                                    borderRadius: '12px',
+                                    color: 'var(--text-secondary)',
+                                    fontSize: '14px',
+                                    fontWeight: '500',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '8px'
+                                }}
+                            >
+                                ← 返回主選單
+                            </button>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
