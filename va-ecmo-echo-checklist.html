@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>VA-ECMO Echo Checklist 心臟超音波檢查清單</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Noto Sans TC', sans-serif; }
+    body { margin: 0; background: linear-gradient(180deg, #0c1929 0%, #1a2744 100%); min-height: 100vh; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #1a2744; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #3b82f6, #1d4ed8); border-radius: 3px; }
+    .fade-in { animation: fadeIn 0.4s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse-echo { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.8; } }
+    .pulse-echo { animation: pulse-echo 2s infinite; }
+    .glass-card { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .gradient-text { background: linear-gradient(135deg, #3b82f6, #06b6d4, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .checklist-item { transition: all 0.3s ease; }
+    .checklist-item:hover { background: rgba(59, 130, 246, 0.1); }
+    .checklist-item.checked { background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.5); }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // Icons
+    const Icons = {
+      Heart: ({className="w-6 h-6"}) => <svg className={className} fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>,
+      ChevronDown: ({className="w-5 h-5"}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/></svg>,
+      Check: ({className="w-5 h-5"}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
+      X: ({className="w-5 h-5"}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
+      Menu: ({className="w-6 h-6"}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16"/></svg>,
+      Close: ({className="w-6 h-6"}) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>,
+      Echo: ({className="w-6 h-6"}) => <svg className={className} fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>,
+    };
+
+    // 9-Point Checklist Data
+    const checklistData = [
+      {
+        id: 1,
+        title: 'Drainage Cannula Position',
+        titleZh: '引流管位置',
+        color: 'from-blue-500 to-blue-600',
+        icon: '1',
+        keyPoints: [
+          '最佳位置：Drainage cannula tip 位於 Right Atrium (RA)',
+          '若位於 IVC：壁可能被 suction，阻礙引流',
+          '若位於 SVC：通常 ECMO flow 不受影響',
+          'Cannula tip 接觸 interatrial septum 可能導致引流不足、內皮損傷、血栓形成'
+        ],
+        view: 'TTE subcostal view',
+        action: '確認 drainage cannula tip 在 RA 內',
+        warning: 'Patent foramen ovale 穿孔可能使含氧血從 LA 流向 return cannula，減少 LV preload'
+      },
+      {
+        id: 2,
+        title: 'Drainage Insufficiency',
+        titleZh: '引流不足評估',
+        color: 'from-cyan-500 to-cyan-600',
+        icon: '2',
+        keyPoints: [
+          '臨床表現：ECMO lines chattering（管路震顫）+ ECMO flow 快速短暫下降',
+          '原因：Multistage drainage cannula 吸附 IVC 或 RA 壁',
+          '需排除：Pneumothorax、Abdominal hypertension'
+        ],
+        view: 'TTE subcostal view',
+        action: '1) 確認 cannula 位置 2) 排除 tamponade 3) 確認 IVC-cannula 間有空間',
+        warning: 'Virtual space（IVC 壁貼近 cannula）提示需要補液'
+      },
+      {
+        id: 3,
+        title: 'ECMO Flow Setting',
+        titleZh: 'ECMO Flow 設定',
+        color: 'from-green-500 to-emerald-600',
+        icon: '3',
+        keyPoints: [
+          'High flow (3-4 LPM)：Severe hemodynamic instability、High vasoactive drugs、Elevated lactate、LVOT VTI <5 cm',
+          'Lower flow (2-3 LPM)：Stabilized patients、有 residual LV ejection',
+          '考量因素：LVOT VTI、Aortic valve opening、MAP、Vasopressor 需求、Lactate、器官灌流'
+        ],
+        view: 'Apical 5-chamber / LVOT view',
+        action: '每日評估 LVEF 及 LVOT VTI，從 ECMO 開始到 recovery',
+        warning: 'Flow 設定需平衡循環支持與 LV unloading 需求'
+      },
+      {
+        id: 4,
+        title: 'Aortic Valve Opening',
+        titleZh: '主動脈瓣開啟',
+        color: 'from-orange-500 to-red-500',
+        icon: '4',
+        keyPoints: [
+          '問題：Very low residual cardiac ejection + High ECMO flow → Aortic valve 持續關閉',
+          '併發症風險：Blood stagnation、LV thrombus、Aortic root thrombus',
+          '維持開啟策略：1) 降低 ECMO flow 2) Inotropic support 3) IABP unloading 4) Fluid challenge'
+        ],
+        view: 'TTE long axis view / M-mode',
+        action: '確認 aortic valve 有開啟；若持續關閉考慮 direct venting (如 Impella)',
+        warning: '有 atrioseptostomy 或 trans-septal LA drainage 的病人，LV ejection 可能因 preload 減少而惡化'
+      },
+      {
+        id: 5,
+        title: 'Venting Device Position',
+        titleZh: 'Venting Device 位置',
+        color: 'from-purple-500 to-violet-600',
+        icon: '5',
+        keyPoints: [
+          'IABP：降低 LV afterload、促進 aortic valve opening、降低 pulmonary edema 風險',
+          'IABP 位置：Suprasternal view 確認 tip 在 left subclavian artery 起始處',
+          'Impella：Inlet 應在 aortic valve annulus 下方 3-4 cm',
+          'Impella 確認：Color Doppler aliasing 確認血液 return 至 ascending aorta'
+        ],
+        view: 'TTE suprasternal / Apical view',
+        action: '確認 IABP/Impella 定位正確，Color Doppler 驗證血流方向',
+        warning: 'Impella positioned too deeply → 血液 reinjected 回 LV → 無法提供支持且增加 LV distension'
+      },
+      {
+        id: 6,
+        title: 'Pericardial Effusion',
+        titleZh: '心包膜積液',
+        color: 'from-red-500 to-rose-600',
+        icon: '6',
+        keyPoints: [
+          '評估挑戰：RA collapse 可能是 drainage cannula suction 或 compressive pericardial effusion',
+          'True Tamponade 徵象：IVC dilation + RV collapse → 需要 drainage',
+          'Pseudo-Tamponade：Transient ECMO flow 減少後 tamponade appearance 消失'
+        ],
+        view: 'TTE subcostal view',
+        action: '區分 true tamponade vs ECMO-induced pseudo-tamponade',
+        warning: '複雜情況可嘗試短暫減少 ECMO flow 觀察 tamponade appearance 是否消失'
+      },
+      {
+        id: 7,
+        title: 'Right-Sided ECMO + LV Support',
+        titleZh: 'Right-sided ECMO 設定',
+        color: 'from-indigo-500 to-blue-600',
+        icon: '7',
+        keyPoints: [
+          '適用：RA-PA double-lumen cannula 用於 LVAD 後 severe RV failure',
+          '或 peripheral VA-ECMO 併發症轉換為 double central ECMO (RA-PA + LV-AA)',
+          'Right-sided flow 不足後果：RV dilation、IVS 左移、LV collapse、Left-sided low-flow'
+        ],
+        view: 'TTE apical view / TEE',
+        action: '增加 right-sided ECMO flow（可能需 fluid challenge），達到 IVS neutral position',
+        warning: 'LV support suction 可導致 intraventricular obstruction'
+      },
+      {
+        id: 8,
+        title: 'Weaning Assessment',
+        titleZh: 'Weaning 評估',
+        color: 'from-emerald-500 to-teal-600',
+        icon: '8',
+        keyPoints: [
+          'Weaning Trial：ECMO flow 降至 1 L/min，持續 5-10 分鐘',
+          'Success 預測指標：LVOT VTI ≥12 cm、LVEF ≥20%、S mitral wave ≥6 cm/s',
+          '其他條件：低劑量 vasopressor/inotrope、Hemodynamic stability 維持'
+        ],
+        view: 'Apical 4-chamber / LVOT Doppler',
+        action: '結合 clinical hemodynamic assessment 與 Doppler echocardiographic evaluation',
+        warning: '其他預測方法：Ventricular interdependence、RV-PA coupling 評估'
+      },
+      {
+        id: 9,
+        title: 'Post-ECMO Complications',
+        titleZh: 'Post-ECMO 併發症',
+        color: 'from-slate-500 to-gray-600',
+        icon: '9',
+        keyPoints: [
+          'IVC Thrombus：「Phantom of the cannula」外觀或附著於 IVC 壁',
+          'RA Thrombus：較少見，需 anticoagulation',
+          'Arterial 併發症：Pseudoaneurysm、Stenosis、Dissection at cannulation site'
+        ],
+        view: 'TTE subcostal view + Echo-Doppler for arterial site',
+        action: '檢查 IVC/RA thrombosis、Arterial pseudoaneurysm',
+        warning: 'IVC thrombus 有 pulmonary embolism 風險，需要 anticoagulation'
+      }
+    ];
+
+    // Weaning criteria data
+    const weaningCriteria = [
+      { param: 'LVOT VTI', threshold: '≥12 cm', icon: '📏' },
+      { param: 'LVEF', threshold: '≥20%', icon: '💪' },
+      { param: 'S mitral wave', threshold: '≥6 cm/s', icon: '📈' },
+      { param: 'Vasopressor', threshold: '低劑量', icon: '💊' },
+      { param: 'Hemodynamic', threshold: '穩定', icon: '📊' }
+    ];
+
+    // Quiz data
+    const quizData = [
+      { q: "VA-ECMO drainage cannula 的最佳位置是？", opts: ["Inferior vena cava (IVC)", "Right atrium (RA)", "Superior vena cava (SVC)", "Right ventricle (RV)"], ans: 1, exp: "Drainage cannula tip 最佳位置在 Right Atrium (RA)。若在 IVC，壁可能被 suction 阻礙引流。" },
+      { q: "ECMO lines chattering 伴隨 flow 短暫下降最可能的原因是？", opts: ["Pericardial tamponade", "Cannula suction against IVC/RA wall", "Pump malfunction", "Air embolism"], ans: 1, exp: "Drainage insufficiency 表現為 lines chattering + flow 短暫下降，通常是 multistage drainage cannula 吸附 IVC 或 RA 壁所致。" },
+      { q: "高流量 ECMO (3-4 LPM) 適用於何種情況？", opts: ["穩定病人有殘餘 LV ejection", "LVOT VTI <5 cm + 高劑量升壓劑", "準備 weaning 的病人", "Post-ECMO 監測期"], ans: 1, exp: "High flow (3-4 LPM) 適用於 severe hemodynamic instability、high vasoactive drugs、elevated lactate、LVOT VTI <5 cm 的病人。" },
+      { q: "Aortic valve 持續關閉的主要風險是？", opts: ["Hemolysis", "LV/Aortic root thrombosis", "Tricuspid regurgitation", "RV failure"], ans: 1, exp: "Aortic valve 持續關閉會造成 blood stagnation，導致 LV thrombus 或 aortic root thrombus 形成。" },
+      { q: "Impella 正確定位時 inlet 應位於？", opts: ["Aortic root", "Aortic valve annulus 上方 3-4 cm", "Aortic valve annulus 下方 3-4 cm 在 LV 內", "LV apex"], ans: 2, exp: "Impella inlet 應位於 aortic valve annulus 下方 3-4 cm，在 LV 內。可用 Color Doppler aliasing 確認血液 return 至 ascending aorta。" },
+      { q: "如何區分 true tamponade 與 ECMO-induced pseudo-tamponade？", opts: ["僅看 pericardial effusion 量", "IVC dilation + RV collapse 支持 true tamponade", "RA collapse 一定是 true tamponade", "無法區分"], ans: 1, exp: "IVC dilation + RV collapse 支持 true tamponade 需要 drainage。Pseudo-tamponade 在暫時減少 ECMO flow 後 tamponade appearance 會消失。" },
+      { q: "VA-ECMO weaning trial 成功的 LVOT VTI 閾值是？", opts: ["≥5 cm", "≥8 cm", "≥12 cm", "≥15 cm"], ans: 2, exp: "Weaning 成功預測指標：LVOT VTI ≥12 cm、LVEF ≥20%、S mitral wave ≥6 cm/s，加上低劑量升壓劑及血行動力學穩定。" },
+      { q: "Post-ECMO 移除後 IVC thrombus 的主要風險是？", opts: ["Cardiac tamponade", "Stroke", "Pulmonary embolism", "Aortic dissection"], ans: 2, exp: "IVC thrombus (「Phantom of the cannula」) 有 pulmonary embolism 風險，需要 anticoagulation 治療。" }
+    ];
+
+    // Abbreviations
+    const abbreviations = [
+      { abbr: 'VA-ECMO', full: 'Venoarterial Extracorporeal Membrane Oxygenation' },
+      { abbr: 'TTE', full: 'Transthoracic Echocardiography' },
+      { abbr: 'TEE', full: 'Transesophageal Echocardiography' },
+      { abbr: 'RA', full: 'Right Atrium (右心房)' },
+      { abbr: 'LA', full: 'Left Atrium (左心房)' },
+      { abbr: 'LV', full: 'Left Ventricle (左心室)' },
+      { abbr: 'RV', full: 'Right Ventricle (右心室)' },
+      { abbr: 'IVC', full: 'Inferior Vena Cava (下腔靜脈)' },
+      { abbr: 'LVOT VTI', full: 'LV Outflow Tract Velocity Time Integral' },
+      { abbr: 'LVEF', full: 'LV Ejection Fraction (左心室射血分數)' },
+      { abbr: 'IABP', full: 'Intra-Aortic Balloon Pump (主動脈內氣球幫浦)' },
+      { abbr: 'IVS', full: 'Interventricular Septum (心室中隔)' },
+      { abbr: 'LPM', full: 'Liters Per Minute' }
+    ];
+
+    // Components
+    const Card = ({ title, children, gradient = 'from-slate-600 to-slate-700', className = '' }) => (
+      <div className={`glass-card rounded-2xl overflow-hidden ${className}`}>
+        {title && <div className={`bg-gradient-to-r ${gradient} px-5 py-4 border-b border-white/10`}><h3 className="font-bold text-white">{title}</h3></div>}
+        <div className="p-5">{children}</div>
+      </div>
+    );
+
+    const Expandable = ({ title, children, defaultOpen = false, gradient = 'from-slate-600 to-slate-700' }) => {
+      const [open, setOpen] = useState(defaultOpen);
+      return (
+        <div className="glass-card rounded-2xl overflow-hidden mb-4">
+          <button onClick={() => setOpen(!open)} className={`w-full bg-gradient-to-r ${gradient} px-5 py-4 flex items-center justify-between`}>
+            <span className="font-bold text-white">{title}</span>
+            <Icons.ChevronDown className={`w-5 h-5 text-white/60 transition-transform ${open ? 'rotate-180' : ''}`} />
+          </button>
+          {open && <div className="p-5 fade-in border-t border-white/10">{children}</div>}
+        </div>
+      );
+    };
+
+    // Pages
+    const HomePage = ({ setSection }) => (
+      <div className="fade-in space-y-6">
+        <div className="glass-card rounded-3xl p-8 bg-gradient-to-br from-blue-500/20 via-cyan-500/10 to-transparent">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="text-cyan-400 p-3 bg-cyan-500/10 rounded-full"><Icons.Heart className="w-12 h-12 pulse-echo" /></div>
+            <div>
+              <h1 className="text-3xl font-black text-white">VA-ECMO Echo Checklist</h1>
+              <p className="text-gray-400">心臟超音波九點檢查清單 - ICM 2024</p>
+            </div>
+          </div>
+          <p className="text-gray-300 text-lg">Transthoracic echocardiography 是 VA-ECMO 病人管理的必要工具。本教學提出<span className="text-cyan-400 font-bold">系統性九點檢查清單</span>，用於每日床邊評估。</p>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { l: '檢查重點', v: '9項', c: 'from-blue-500 to-indigo-600' },
+            { l: 'Weaning LVOT VTI', v: '≥12cm', c: 'from-green-500 to-emerald-600' },
+            { l: 'Weaning LVEF', v: '≥20%', c: 'from-cyan-500 to-blue-600' },
+            { l: 'S wave', v: '≥6cm/s', c: 'from-purple-500 to-violet-600' }
+          ].map((s, i) => (
+            <div key={i} className="glass-card rounded-2xl p-4 text-center">
+              <div className={`text-2xl font-black bg-gradient-to-r ${s.c} bg-clip-text text-transparent`}>{s.v}</div>
+              <div className="text-xs text-gray-400 mt-1">{s.l}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4">
+          {[
+            { s: 'checklist', t: '九點檢查清單', d: '系統性評估每個項目', c: 'from-blue-500/20 to-cyan-500/10' },
+            { s: 'weaning', t: 'Weaning 評估', d: 'ECMO 脫離標準與流程', c: 'from-green-500/20 to-emerald-500/10' },
+            { s: 'complications', t: '併發症處理', d: '常見問題與解決方案', c: 'from-orange-500/20 to-red-500/10' },
+            { s: 'quiz', t: '自我測驗', d: '8題快速複習', c: 'from-purple-500/20 to-violet-500/10' }
+          ].map(item => (
+            <button key={item.s} onClick={() => setSection(item.s)} className={`glass-card rounded-2xl p-6 text-left hover:scale-[1.02] transition-transform bg-gradient-to-br ${item.c}`}>
+              <h3 className="font-bold text-white text-lg">{item.t}</h3>
+              <p className="text-gray-400 text-sm mt-1">{item.d}</p>
+            </button>
+          ))}
+        </div>
+
+        <Card title="Take-Home Message" gradient="from-blue-600 to-cyan-700">
+          <ul className="space-y-2">
+            {[
+              '每日評估：LVEF、LVOT VTI、Aortic valve opening、Pericardial effusion',
+              'Weaning 標準：LVOT VTI ≥12 cm、LVEF ≥20%、S mitral wave ≥6 cm/s',
+              'LV unloading：考慮 IABP 或 Impella 以預防 LV/aortic thrombosis',
+              '區分 true tamponade vs pseudo-tamponade 是關鍵'
+            ].map((p, i) => (
+              <li key={i} className="flex items-start gap-2 text-gray-300"><Icons.Check className="w-5 h-5 text-cyan-400 flex-shrink-0" />{p}</li>
+            ))}
+          </ul>
+        </Card>
+      </div>
+    );
+
+    const ChecklistPage = () => {
+      const [checked, setChecked] = useState({});
+      const [expanded, setExpanded] = useState(null);
+
+      const toggleCheck = (id) => {
+        setChecked(prev => ({ ...prev, [id]: !prev[id] }));
+      };
+
+      const completedCount = Object.values(checked).filter(Boolean).length;
+
+      return (
+        <div className="fade-in space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-black text-white">九點檢查清單</h2>
+            <div className="text-sm text-gray-400">
+              完成 <span className="text-cyan-400 font-bold">{completedCount}</span> / 9
+            </div>
+          </div>
+
+          <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full transition-all" style={{ width: `${(completedCount / 9) * 100}%` }} />
+          </div>
+
+          <div className="space-y-4">
+            {checklistData.map((item) => (
+              <div key={item.id} className={`glass-card rounded-2xl overflow-hidden checklist-item ${checked[item.id] ? 'checked border-green-500/30' : ''}`}>
+                <div
+                  className={`bg-gradient-to-r ${item.color} px-5 py-4 flex items-center gap-4 cursor-pointer`}
+                  onClick={() => setExpanded(expanded === item.id ? null : item.id)}
+                >
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-lg cursor-pointer transition-all ${checked[item.id] ? 'bg-green-500 text-white' : 'bg-white/20 text-white'}`}
+                    onClick={(e) => { e.stopPropagation(); toggleCheck(item.id); }}
+                  >
+                    {checked[item.id] ? <Icons.Check className="w-6 h-6" /> : item.icon}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-white">{item.title}</h3>
+                    <p className="text-white/70 text-sm">{item.titleZh}</p>
+                  </div>
+                  <Icons.ChevronDown className={`w-5 h-5 text-white/60 transition-transform ${expanded === item.id ? 'rotate-180' : ''}`} />
+                </div>
+
+                {expanded === item.id && (
+                  <div className="p-5 fade-in border-t border-white/10 space-y-4">
+                    <div className="bg-white/5 rounded-xl p-4">
+                      <h4 className="text-cyan-400 font-bold mb-2">重點</h4>
+                      <ul className="space-y-1">
+                        {item.keyPoints.map((point, i) => (
+                          <li key={i} className="text-sm text-gray-300 flex items-start gap-2">
+                            <span className="text-cyan-400">•</span>{point}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="bg-blue-500/10 rounded-xl p-4">
+                        <h4 className="text-blue-400 font-bold mb-2">超音波視角</h4>
+                        <p className="text-sm text-gray-300">{item.view}</p>
+                      </div>
+                      <div className="bg-green-500/10 rounded-xl p-4">
+                        <h4 className="text-green-400 font-bold mb-2">Action</h4>
+                        <p className="text-sm text-gray-300">{item.action}</p>
+                      </div>
+                    </div>
+
+                    <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4">
+                      <p className="text-amber-300 text-sm"><span className="font-bold">⚠️ 注意：</span>{item.warning}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {completedCount === 9 && (
+            <div className="glass-card rounded-2xl p-6 bg-gradient-to-r from-green-500/20 to-emerald-500/10 text-center">
+              <div className="text-4xl mb-2">🎉</div>
+              <h3 className="text-xl font-bold text-white">檢查完成！</h3>
+              <p className="text-gray-400 text-sm mt-1">所有九個項目均已完成評估</p>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    const WeaningPage = () => (
+      <div className="fade-in space-y-6">
+        <h2 className="text-2xl font-black text-white">Weaning 評估</h2>
+
+        <Card title="Weaning Trial 方法" gradient="from-emerald-600 to-teal-700">
+          <div className="bg-white/5 rounded-xl p-4 mb-4">
+            <div className="flex items-center gap-4">
+              <div className="text-4xl font-black text-emerald-400">1 L/min</div>
+              <div>
+                <p className="text-white font-bold">ECMO flow 降至 1 L/min</p>
+                <p className="text-gray-400 text-sm">持續 5-10 分鐘進行評估</p>
+              </div>
+            </div>
+          </div>
+          <p className="text-gray-300 text-sm">結合 clinical hemodynamic assessment 與 Doppler echocardiographic evaluation</p>
+        </Card>
+
+        <Card title="Successful Weaning 預測指標" gradient="from-green-600 to-emerald-700">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {weaningCriteria.map((c, i) => (
+              <div key={i} className="bg-white/5 rounded-xl p-4 text-center">
+                <div className="text-2xl mb-2">{c.icon}</div>
+                <div className="text-xl font-black text-green-400">{c.threshold}</div>
+                <div className="text-xs text-gray-400 mt-1">{c.param}</div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Expandable title="其他預測方法" gradient="from-blue-600 to-indigo-700">
+          <ul className="space-y-2">
+            {[
+              'Ventricular interdependence 評估',
+              'RV systolic function 評估',
+              'RV coupling to pulmonary circulation',
+              '3D echocardiography-derived RV ejection fraction'
+            ].map((item, i) => (
+              <li key={i} className="flex items-start gap-2 text-gray-300">
+                <Icons.Check className="w-5 h-5 text-blue-400 flex-shrink-0" />{item}
+              </li>
+            ))}
+          </ul>
+        </Expandable>
+
+        <Card title="Weaning 流程圖" gradient="from-cyan-600 to-blue-700">
+          <div className="space-y-3">
+            {[
+              { step: 1, text: '穩定的臨床狀態 + 低劑量 vasopressor/inotrope', color: 'bg-cyan-500' },
+              { step: 2, text: '降低 ECMO flow 至 1 L/min，持續 5-10 分鐘', color: 'bg-blue-500' },
+              { step: 3, text: '評估 LVOT VTI、LVEF、S mitral wave', color: 'bg-indigo-500' },
+              { step: 4, text: '確認 hemodynamic stability 維持', color: 'bg-purple-500' },
+              { step: 5, text: '符合條件 → Successful weaning', color: 'bg-green-500' }
+            ].map((s) => (
+              <div key={s.step} className="flex items-center gap-4">
+                <div className={`w-8 h-8 rounded-full ${s.color} flex items-center justify-center text-white font-bold text-sm`}>{s.step}</div>
+                <p className="text-gray-300 text-sm">{s.text}</p>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+    );
+
+    const ComplicationsPage = () => (
+      <div className="fade-in space-y-6">
+        <h2 className="text-2xl font-black text-white">併發症處理</h2>
+
+        <Expandable title="Drainage Insufficiency 處理" gradient="from-orange-600 to-red-700" defaultOpen>
+          <div className="space-y-3">
+            {[
+              { step: '1', text: '降低 pump RPM，然後緩慢增加', action: '緩解 line suction' },
+              { step: '2', text: '確認 drainage cannula 位置', action: '若在 IVC → 推進至 RA' },
+              { step: '3', text: '排除 tamponade 及 hypovolemia', action: 'Subcostal view 評估' },
+              { step: '4', text: '若 virtual space → 補液', action: '增加 preload 後再增加 RPM' }
+            ].map((s, i) => (
+              <div key={i} className="bg-white/5 rounded-xl p-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-orange-500/30 text-orange-400 flex items-center justify-center font-bold">{s.step}</div>
+                  <div>
+                    <p className="text-white font-bold">{s.text}</p>
+                    <p className="text-gray-400 text-sm">{s.action}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Expandable>
+
+        <Expandable title="Aortic Valve 關閉處理" gradient="from-red-600 to-rose-700">
+          <p className="text-gray-300 mb-4">維持 Aortic Valve Opening 的策略：</p>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { t: '降低 ECMO flow', d: '前提是循環支持足夠' },
+              { t: 'Inotropic support', d: '增強 LV 收縮力' },
+              { t: 'IABP unloading', d: '降低 afterload' },
+              { t: 'Fluid challenge', d: '增加 preload' }
+            ].map((item, i) => (
+              <div key={i} className="bg-white/5 rounded-lg p-3">
+                <p className="text-white font-bold text-sm">{item.t}</p>
+                <p className="text-gray-400 text-xs">{item.d}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-red-200 text-sm">
+            若 aortic valve 持續關閉 → 考慮 direct venting（如 Impella）以預防 LV thrombus
+          </div>
+        </Expandable>
+
+        <Expandable title="Tamponade vs Pseudo-Tamponade" gradient="from-purple-600 to-violet-700">
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="bg-red-500/10 rounded-xl p-4">
+              <h4 className="text-red-400 font-bold mb-2">True Tamponade</h4>
+              <ul className="space-y-1">
+                {['IVC dilation', 'RV collapse', '需要 drainage'].map((item, i) => (
+                  <li key={i} className="text-sm text-gray-300">• {item}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="bg-amber-500/10 rounded-xl p-4">
+              <h4 className="text-amber-400 font-bold mb-2">Pseudo-Tamponade</h4>
+              <ul className="space-y-1">
+                {['ECMO suction 造成', '暫減 flow 後消失', '不需 drainage'].map((item, i) => (
+                  <li key={i} className="text-sm text-gray-300">• {item}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <p className="text-gray-400 text-sm mt-4">複雜情況：嘗試短暫減少 ECMO flow 觀察 tamponade appearance 是否消失</p>
+        </Expandable>
+
+        <Expandable title="Post-ECMO 血管併發症" gradient="from-slate-600 to-gray-700">
+          <div className="space-y-3">
+            {[
+              { type: 'IVC Thrombus', desc: '「Phantom of the cannula」外觀', risk: 'Pulmonary embolism', action: 'Anticoagulation' },
+              { type: 'RA Thrombus', desc: '較少見', risk: 'Embolism', action: 'Anticoagulation' },
+              { type: 'Arterial Pseudoaneurysm', desc: 'Cannulation site', risk: 'Rupture', action: 'Echo-Doppler 監測' },
+              { type: 'Stenosis/Dissection', desc: 'Arterial site', risk: 'Ischemia', action: '影像追蹤' }
+            ].map((item, i) => (
+              <div key={i} className="bg-white/5 rounded-xl p-4">
+                <div className="flex justify-between items-start">
+                  <span className="font-bold text-white">{item.type}</span>
+                  <span className="text-xs bg-red-500/20 text-red-300 px-2 py-1 rounded">{item.risk}</span>
+                </div>
+                <p className="text-gray-400 text-sm">{item.desc}</p>
+                <p className="text-cyan-400 text-xs mt-1">處理：{item.action}</p>
+              </div>
+            ))}
+          </div>
+        </Expandable>
+      </div>
+    );
+
+    const QuizPage = () => {
+      const [cur, setCur] = useState(0);
+      const [sel, setSel] = useState(null);
+      const [show, setShow] = useState(false);
+      const [score, setScore] = useState(0);
+      const [done, setDone] = useState(false);
+
+      const answer = (i) => { if (show) return; setSel(i); setShow(true); if (i === quizData[cur].ans) setScore(score + 1); };
+      const next = () => { if (cur < quizData.length - 1) { setCur(cur + 1); setSel(null); setShow(false); } else setDone(true); };
+      const reset = () => { setCur(0); setSel(null); setShow(false); setScore(0); setDone(false); };
+
+      if (done) {
+        const pct = Math.round((score / quizData.length) * 100);
+        return (
+          <div className="fade-in glass-card rounded-3xl p-8 text-center">
+            <div className="text-6xl mb-4">{pct >= 70 ? '🎉' : pct >= 50 ? '📚' : '💪'}</div>
+            <h2 className="text-3xl font-black text-white mb-2">測驗完成！</h2>
+            <div className="text-5xl font-black gradient-text mb-4">{score} / {quizData.length}</div>
+            <p className="text-gray-400 mb-6">正確率: {pct}%</p>
+            <button onClick={reset} className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl text-white font-bold">重新測驗</button>
+          </div>
+        );
+      }
+
+      const q = quizData[cur];
+      return (
+        <div className="fade-in space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-black text-white">自我測驗</h2>
+            <span className="text-gray-400">{cur + 1}/{quizData.length}</span>
+          </div>
+          <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full" style={{ width: `${((cur + 1) / quizData.length) * 100}%` }} />
+          </div>
+          <div className="glass-card rounded-2xl p-6">
+            <h3 className="text-lg font-bold text-white mb-6">{q.q}</h3>
+            <div className="space-y-3">
+              {q.opts.map((opt, i) => {
+                let style = 'bg-white/5 hover:bg-white/10 text-gray-300';
+                if (show) { if (i === q.ans) style = 'bg-green-500/30 border-green-500 text-green-300'; else if (i === sel) style = 'bg-red-500/30 border-red-500 text-red-300'; }
+                return <button key={i} onClick={() => answer(i)} className={`w-full p-4 rounded-xl border border-transparent text-left ${style}`}><div className="flex items-start gap-3"><span className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-sm font-bold">{String.fromCharCode(65 + i)}</span><span>{opt}</span></div></button>;
+              })}
+            </div>
+          </div>
+          {show && (
+            <div className={`fade-in glass-card rounded-2xl p-6 border ${sel === q.ans ? 'border-green-500/50 bg-green-500/10' : 'border-red-500/50 bg-red-500/10'}`}>
+              <div className="flex items-center gap-2 mb-2">{sel === q.ans ? <><Icons.Check className="w-5 h-5 text-green-400" /><span className="font-bold text-green-400">正確！</span></> : <><Icons.X className="w-5 h-5 text-red-400" /><span className="font-bold text-red-400">不正確</span></>}</div>
+              <p className="text-gray-300 text-sm">{q.exp}</p>
+            </div>
+          )}
+          {show && <button onClick={next} className="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl text-white font-bold">{cur < quizData.length - 1 ? '下一題' : '查看結果'}</button>}
+        </div>
+      );
+    };
+
+    const AbbreviationsPage = () => (
+      <div className="fade-in space-y-6">
+        <h2 className="text-2xl font-black text-white">縮寫對照表</h2>
+        <div className="glass-card rounded-2xl overflow-hidden">
+          <div className="divide-y divide-white/10">
+            {abbreviations.map((item, i) => (
+              <div key={i} className="px-5 py-3 flex items-center gap-4">
+                <span className="font-bold text-cyan-400 w-24 flex-shrink-0">{item.abbr}</span>
+                <span className="text-gray-300 text-sm">{item.full}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+
+    // Main App
+    const App = () => {
+      const [section, setSection] = useState('home');
+      const [menuOpen, setMenuOpen] = useState(false);
+      const sections = [
+        { id: 'home', name: '首頁' },
+        { id: 'checklist', name: '檢查清單' },
+        { id: 'weaning', name: 'Weaning' },
+        { id: 'complications', name: '併發症' },
+        { id: 'quiz', name: '測驗' },
+        { id: 'abbr', name: '縮寫' }
+      ];
+
+      return (
+        <div className="min-h-screen">
+          {/* Header */}
+          <header className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-white/10">
+            <div className="flex items-center justify-between px-4 py-3 max-w-4xl mx-auto">
+              <div className="flex items-center gap-2">
+                <div className="text-cyan-400"><Icons.Heart className="w-7 h-7 pulse-echo" /></div>
+                <span className="font-bold text-white text-sm md:text-base">VA-ECMO Echo</span>
+              </div>
+              <button onClick={() => setMenuOpen(!menuOpen)} className="p-2 text-white hover:bg-white/10 rounded-lg md:hidden">
+                {menuOpen ? <Icons.Close /> : <Icons.Menu />}
+              </button>
+              <nav className="hidden md:flex gap-1">
+                {sections.map(s => (
+                  <button key={s.id} onClick={() => setSection(s.id)} className={`px-3 py-2 rounded-lg text-sm ${section === s.id ? 'bg-cyan-500/30 text-white' : 'text-gray-400 hover:text-white'}`}>{s.name}</button>
+                ))}
+              </nav>
+            </div>
+          </header>
+
+          {/* Mobile Menu */}
+          {menuOpen && (
+            <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden" onClick={() => setMenuOpen(false)}>
+              <div className="absolute top-16 left-0 right-0 glass-card border-b border-white/10 p-4" onClick={e => e.stopPropagation()}>
+                {sections.map(s => (
+                  <button key={s.id} onClick={() => { setSection(s.id); setMenuOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg ${section === s.id ? 'bg-cyan-500/30 text-white' : 'text-gray-400'}`}>{s.name}</button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Content */}
+          <main className="pt-20 pb-8 px-4 max-w-4xl mx-auto">
+            {section === 'home' && <HomePage setSection={setSection} />}
+            {section === 'checklist' && <ChecklistPage />}
+            {section === 'weaning' && <WeaningPage />}
+            {section === 'complications' && <ComplicationsPage />}
+            {section === 'quiz' && <QuizPage />}
+            {section === 'abbr' && <AbbreviationsPage />}
+          </main>
+
+          {/* Footer */}
+          <footer className="text-center py-6 text-gray-500 text-xs px-4">
+            <p>Based on: Saura O, et al. My echo checklist in venoarterial ECMO patients.</p>
+            <p>Intensive Care Med 2024;50:2158-2161</p>
+          </footer>
+        </div>
+      );
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
