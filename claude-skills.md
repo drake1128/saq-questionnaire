@@ -142,6 +142,7 @@ const EducationalSection = ({ title, content, keyPoints }) => (
 
 ### 2. Interactive Checklist Template
 
+{% raw %}
 ```jsx
 const Checklist = ({ items, sectionId, onComplete }) => {
     const [checked, setChecked] = useState({});
@@ -172,9 +173,11 @@ const Checklist = ({ items, sectionId, onComplete }) => {
     );
 };
 ```
+{% endraw %}
 
 ### 3. Quiz Module Template
 
+{% raw %}
 ```jsx
 const Quiz = ({ questions }) => {
     const [currentQ, setCurrentQ] = useState(0);
@@ -232,9 +235,11 @@ const Quiz = ({ questions }) => {
     );
 };
 ```
+{% endraw %}
 
 ### 4. Clinical Calculator Template
 
+{% raw %}
 ```jsx
 const Calculator = ({ name, formula, inputs, calculate }) => {
     const [values, setValues] = useState({});
@@ -282,6 +287,7 @@ const Calculator = ({ name, formula, inputs, calculate }) => {
     );
 };
 ```
+{% endraw %}
 
 ### 5. SVG Anatomical Diagram Template
 
