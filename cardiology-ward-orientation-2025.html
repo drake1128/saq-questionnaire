@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>心血管中心病房工作指引 2025</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Noto Sans TC', sans-serif; box-sizing: border-box; }
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; margin: 0; }
+        .glass { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+        .gradient-text { background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .checklist-item { transition: all 0.2s ease; }
+        .checklist-item.checked { background: rgba(34, 197, 94, 0.2); border-color: rgba(34, 197, 94, 0.5); }
+        .schedule-cell { transition: all 0.2s ease; }
+        .schedule-cell:hover { background: rgba(96, 165, 250, 0.2); }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .accordion-content.open { max-height: 2000px; }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 9999px; font-size: 0.75rem; margin-right: 4px; }
+        .tag-required { background: rgba(239, 68, 68, 0.3); color: #fca5a5; }
+        .tag-optional { background: rgba(59, 130, 246, 0.3); color: #93c5fd; }
+        .tag-important { background: rgba(245, 158, 11, 0.3); color: #fcd34d; }
+        input[type="checkbox"] { width: 20px; height: 20px; accent-color: #22c55e; }
+        .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table { border-collapse: collapse; width: 100%; min-width: 500px; }
+        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        th { background: rgba(96, 165, 250, 0.2); font-weight: 600; }
+        tr:hover { background: rgba(255,255,255,0.05); }
+        .nav-item { transition: all 0.2s ease; }
+        .nav-item:hover { background: rgba(96, 165, 250, 0.2); }
+        .nav-item.active { background: rgba(96, 165, 250, 0.3); border-left: 3px solid #60a5fa; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Icons
+        const Icons = {
+            Home: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>,
+            Calendar: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>,
+            Document: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>,
+            Heart: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>,
+            Clipboard: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>,
+            Users: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>,
+            Edit: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>,
+            Book: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>,
+            Logout: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>,
+            Phone: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>,
+            Check: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>,
+            ChevronDown: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>,
+            ChevronRight: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>,
+            Menu: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>,
+            Close: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>,
+            Back: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>,
+        };
+
+        // Data
+        const weeklySchedule = [
+            { day: 'W1 (一)', time: '07:30-08:00', activity: 'Morning Conference', location: '3F會議室', required: true },
+            { day: 'W2 (二)', time: '07:30-08:00', activity: 'CV Journal Reading', location: '3F會議室', required: true },
+            { day: 'W3 (三)', time: '07:30-08:00', activity: 'Echo Conference', location: '3F會議室', required: true },
+            { day: 'W4 (四)', time: '07:30-08:00', activity: 'Cath Conference', location: '3F會議室', required: true },
+            { day: 'W5 (五)', time: '07:30-08:00', activity: 'Case Discussion / M&M', location: '3F會議室', required: true },
+        ];
+
+        const consentForms = [
+            { procedure: 'CAG / PCI (心導管 / 冠狀動脈介入)', forms: ['心導管檢查同意書', '血管攝影同意書', 'PCI同意書(若需介入)'], notes: '須填寫造影劑過敏史' },
+            { procedure: 'PPM Implantation (永久性心律調節器置放)', forms: ['心律調節器置放同意書', '手術同意書'], notes: '需解釋電池壽命、MRI相容性' },
+            { procedure: 'EPS / RFCA (電生理檢查/電燒)', forms: ['心律不整電氣生理檢查同意書', '電燒灼術同意書'], notes: '需解釋成功率及復發風險' },
+            { procedure: 'PAOD / PTA (周邊血管介入)', forms: ['周邊血管攝影同意書', '周邊血管介入同意書'], notes: '含股動脈或橈動脈途徑說明' },
+            { procedure: 'ICAS (顱內動脈支架)', forms: ['頸動脈/顱內動脈支架同意書', '神外會診單'], notes: '需神經外科評估' },
+            { procedure: 'AV Shunt PTA (洗腎廔管介入)', forms: ['動靜脈廔管介入同意書'], notes: '需與腎臟科溝通' },
+            { procedure: 'LAAO (左心耳封堵術)', forms: ['左心耳封堵術同意書', 'TEE同意書'], notes: '需術前TEE評估' },
+        ];
+
+        const preCathChecklist = [
+            { id: 'consent', text: '同意書已完成簽署並掃描上傳' },
+            { id: 'lab', text: '抽血報告確認 (CBC, BCS, PT/aPTT, Cr/eGFR)' },
+            { id: 'npo', text: 'NPO 至少6小時 (急診例外)' },
+            { id: 'allergy', text: '確認過敏史 (造影劑、Aspirin、Heparin)' },
+            { id: 'dapt', text: 'DAPT loading 已給予 (若需PCI)' },
+            { id: 'iv', text: '建立周邊靜脈管路' },
+            { id: 'foley', text: '評估是否需放置尿管' },
+            { id: 'mark', text: '確認穿刺部位 (橈/股動脈)' },
+        ];
+
+        const postCath6P = [
+            { item: 'Pain (疼痛)', description: '穿刺部位疼痛程度評估' },
+            { item: 'Pallor (蒼白)', description: '皮膚顏色是否蒼白' },
+            { item: 'Pulselessness (無脈搏)', description: '遠端動脈搏動' },
+            { item: 'Paresthesia (感覺異常)', description: '麻木或刺痛感' },
+            { item: 'Paralysis (癱瘓)', description: '肢體活動能力' },
+            { item: 'Poikilothermia (體溫變化)', description: '肢體溫度比較' },
+        ];
+
+        const sheathRemovalProtocol = [
+            { step: 1, action: '確認ACT < 180秒或停用Heparin > 4小時' },
+            { step: 2, action: '準備止血器材 (手動壓迫或血管封堵器)' },
+            { step: 3, action: '移除鞘管，立即加壓止血' },
+            { step: 4, action: '股動脈：壓迫15-20分鐘後加壓包紮' },
+            { step: 5, action: '平躺臥床4-6小時 (股動脈途徑)' },
+            { step: 6, action: '橈動脈：使用TR Band加壓2-3小時後逐步減壓' },
+            { step: 7, action: '監測穿刺部位及遠端脈搏' },
+        ];
+
+        const procedureGuidelines = {
+            cad: {
+                title: 'CAD - 冠狀動脈疾病處置',
+                content: [
+                    { subtitle: 'LM + 3VD 處置原則', items: [
+                        '安排 Heart Team Discussion (Shared Decision Making)',
+                        '會診心臟外科評估 CABG 適應症',
+                        'SYNTAX Score 評估',
+                        '討論 PCI vs CABG 利弊'
+                    ]},
+                    { subtitle: 'Pre-CABG Checklist', items: [
+                        'Carotid duplex (頸動脈超音波)',
+                        'Chest CT (胸部電腦斷層)',
+                        'PFT (肺功能檢查)',
+                        'Dental clearance (牙科評估)',
+                        '心臟外科門診預約'
+                    ]}
+                ]
+            },
+            ppm: {
+                title: 'PPM - 永久性心律調節器',
+                content: [
+                    { subtitle: '適應症評估', items: [
+                        'Symptomatic bradycardia',
+                        'High-grade AV block',
+                        'Sick sinus syndrome',
+                        'Chronotropic incompetence'
+                    ]},
+                    { subtitle: '術後照護', items: [
+                        '術後 X-ray 確認 lead position',
+                        '傷口護理：保持乾燥 5-7 天',
+                        '限制同側手臂活動 4-6 週',
+                        '術後 1 週、1 個月、3 個月回診',
+                        'PPM ID card 發給病人'
+                    ]}
+                ]
+            },
+            eps: {
+                title: 'EPS / RFCA - 電生理檢查與電燒',
+                content: [
+                    { subtitle: '適應症', items: [
+                        'PSVT (Paroxysmal SVT)',
+                        'Atrial flutter',
+                        'Atrial fibrillation (AF ablation)',
+                        'VT ablation',
+                        'Accessory pathway (WPW syndrome)'
+                    ]},
+                    { subtitle: '術前準備', items: [
+                        '停用抗心律不整藥物 (依醫囑)',
+                        'TEE 評估 (AF ablation 前)',
+                        '確認 LA thrombus 排除'
+                    ]}
+                ]
+            },
+            laao: {
+                title: 'LAAO - 左心耳封堵術',
+                content: [
+                    { subtitle: '適應症', items: [
+                        'Non-valvular AF with high CHA2DS2-VASc',
+                        '無法長期使用抗凝血劑',
+                        '出血風險高 (HAS-BLED ≥3)'
+                    ]},
+                    { subtitle: '術前評估', items: [
+                        'TEE 測量 LAA 尺寸',
+                        'CT 評估 LAA morphology',
+                        '排除 LA/LAA thrombus'
+                    ]}
+                ]
+            },
+            icas: {
+                title: 'ICAS - 顱內動脈支架',
+                content: [
+                    { subtitle: '適應症', items: [
+                        'Symptomatic intracranial stenosis ≥70%',
+                        '藥物治療無效',
+                        'TIA 或 minor stroke 病史'
+                    ]},
+                    { subtitle: '必要會診', items: [
+                        '神經內科確認適應症',
+                        '神經外科評估手術風險',
+                        '影像科 CTA/MRA 評估'
+                    ]}
+                ]
+            },
+            paod: {
+                title: 'PAOD - 周邊動脈阻塞疾病',
+                content: [
+                    { subtitle: 'Rutherford Classification', items: [
+                        'Category 1: Mild claudication',
+                        'Category 2: Moderate claudication',
+                        'Category 3: Severe claudication',
+                        'Category 4: Rest pain',
+                        'Category 5: Minor tissue loss',
+                        'Category 6: Major tissue loss'
+                    ]},
+                    { subtitle: '介入適應症', items: [
+                        'Lifestyle-limiting claudication (Rutherford 2-3)',
+                        'Critical limb ischemia (Rutherford 4-6)',
+                        'Acute limb ischemia'
+                    ]}
+                ]
+            }
+        };
+
+        const clinicalWorkRules = [
+            { role: 'R2', patients: '主責病人，完整照護', duties: '主治醫師查房、值班' },
+            { role: 'R1', patients: '協助 R2 照護', duties: '學習導管及程序' },
+            { role: 'PGY', patients: '跟隨 R1/R2 學習', duties: '基本病房工作' },
+            { role: 'Clerk', patients: '指派學習個案', duties: '病史詢問、身體檢查' },
+            { role: 'NP', patients: '協助病房管理', duties: '出院準備、衛教' },
+        ];
+
+        const workHourRules = [
+            '每週工時上限：80 小時 (4週平均)',
+            '連續工作時間：不超過 28 小時',
+            '值班後休息：至少 10 小時',
+            '每週至少一天完整休假',
+            'Cost Center: 65115 (心臟內科病房)',
+        ];
+
+        const medicalRecordRules = {
+            diagnosis: [
+                '主診斷置於第一位',
+                '次診斷依重要性排序',
+                '需包含 CV risk factors',
+                'AF 需記錄 CHA2DS2-VASc',
+                'PAD 需記錄 Rutherford class',
+                'HF 需記錄 NYHA class 及 EF%'
+            ],
+            cvRiskFactors: [
+                'HTN (高血壓)',
+                'DM (糖尿病)',
+                'Dyslipidemia (血脂異常)',
+                'Smoking (吸菸)',
+                'Family history of CAD (家族史)',
+                'Obesity (肥胖)',
+                'CKD (慢性腎病)'
+            ],
+            progressNote: [
+                '每日至少一次 progress note',
+                '記錄 vital signs 及重要變化',
+                '藥物調整需記錄原因',
+                '檢查結果需追蹤並記錄',
+                '與家屬溝通內容需記錄'
+            ],
+            weeklySummary: [
+                '每週五完成 weekly summary',
+                '包含本週治療摘要',
+                '下週治療計畫',
+                '預計出院日期'
+            ]
+        };
+
+        const dischargePlanning = {
+            expectedLOS: [
+                { procedure: 'Elective CAG only', days: '1 天' },
+                { procedure: 'Elective PCI', days: '2-3 天' },
+                { procedure: 'ACS with PCI', days: '3-5 天' },
+                { procedure: 'PPM implantation', days: '2-3 天' },
+                { procedure: 'EPS/RFCA', days: '1-2 天' },
+                { procedure: 'LAAO', days: '2-3 天' },
+                { procedure: 'Heart failure', days: '5-7 天' },
+            ],
+            medications: [
+                { category: 'DAPT', drugs: 'Aspirin + P2Y12 inhibitor', duration: 'PCI 後至少 6-12 個月' },
+                { category: 'Statin', drugs: 'High-intensity statin', duration: '長期使用' },
+                { category: 'ACEI/ARB', drugs: '依 indication', duration: 'HF/HTN/DM 長期' },
+                { category: 'Beta-blocker', drugs: '依 indication', duration: 'Post-MI/HF 長期' },
+                { category: 'Anticoagulant', drugs: 'NOAC/Warfarin', duration: 'AF 長期' },
+            ],
+            followUp: [
+                'PCI 後：2 週、1 個月、3 個月',
+                'PPM：1 週、1 個月、3 個月、6 個月',
+                'HF：2 週內回診',
+                '心臟復健轉介評估'
+            ]
+        };
+
+        const quickReference = {
+            extensions: [
+                { dept: '導管室', ext: '5882' },
+                { dept: '心臟超音波室', ext: '5880' },
+                { dept: '2A護理站', ext: '2100' },
+                { dept: '2B護理站', ext: '2200' },
+                { dept: 'CCU', ext: '5850' },
+                { dept: '心臟內科門診', ext: '6100' },
+            ],
+            contacts: [
+                { role: '心血管中心主任', name: '謝慕揚 醫師' },
+                { role: '2A病房主任', name: '潘恆宇 醫師' },
+                { role: 'CCU病房主任', name: '許如瑩 醫師' },
+                { role: 'NP負責人', name: '黃秋燕 NP' },
+            ]
+        };
+
+        // Components
+        const Accordion = ({ title, children, defaultOpen = false }) => {
+            const [isOpen, setIsOpen] = useState(defaultOpen);
+            return (
+                <div className="mb-3">
+                    <button
+                        onClick={() => setIsOpen(!isOpen)}
+                        className="w-full flex items-center justify-between p-4 glass rounded-lg hover:bg-white/5 transition-colors"
+                    >
+                        <span className="font-medium text-white">{title}</span>
+                        <span className={`transform transition-transform ${isOpen ? 'rotate-180' : ''}`}>
+                            <Icons.ChevronDown />
+                        </span>
+                    </button>
+                    <div className={`accordion-content ${isOpen ? 'open' : ''}`}>
+                        <div className="p-4 glass rounded-b-lg border-t border-white/5">
+                            {children}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const ChecklistItem = ({ item, checked, onToggle }) => (
+            <div
+                onClick={onToggle}
+                className={`checklist-item flex items-center gap-3 p-3 rounded-lg cursor-pointer border ${
+                    checked ? 'checked' : 'glass border-white/10'
+                }`}
+            >
+                <input type="checkbox" checked={checked} onChange={onToggle} />
+                <span className={`text-sm ${checked ? 'text-green-300 line-through' : 'text-gray-300'}`}>
+                    {item.text || item}
+                </span>
+            </div>
+        );
+
+        // Pages
+        const HomePage = ({ setPage }) => (
+            <div className="p-4 pb-20">
+                <div className="text-center mb-8">
+                    <div className="text-6xl mb-4">🏥</div>
+                    <h1 className="text-2xl font-bold gradient-text mb-2">心血管中心病房工作指引</h1>
+                    <p className="text-gray-400">2025 Edition</p>
+                    <p className="text-sm text-gray-500 mt-2">NTUH Hsinchu Branch - Cardiovascular Center</p>
+                </div>
+
+                <div className="glass rounded-xl p-4 mb-6">
+                    <h3 className="text-cyan-400 font-medium mb-3">📋 適用對象</h3>
+                    <div className="flex flex-wrap gap-2">
+                        <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">NP 護理師</span>
+                        <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">住院醫師</span>
+                        <span className="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm">PGY</span>
+                        <span className="px-3 py-1 bg-yellow-500/20 text-yellow-300 rounded-full text-sm">Clerk</span>
+                    </div>
+                </div>
+
+                <div className="glass rounded-xl p-4 mb-6">
+                    <h3 className="text-cyan-400 font-medium mb-3">✍️ 編輯群</h3>
+                    <div className="text-gray-300 text-sm space-y-1">
+                        <p>NP 黃秋燕</p>
+                        <p>2A病房主任 潘恆宇 醫師</p>
+                        <p>CCU病房主任 許如瑩 醫師</p>
+                        <p>心血管中心主任 謝慕揚 醫師</p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                    {[
+                        { icon: '📅', title: '每週學術活動', page: 'schedule' },
+                        { icon: '📝', title: '同意書指引', page: 'consent' },
+                        { icon: '💉', title: '導管室相關', page: 'cath' },
+                        { icon: '🫀', title: '特殊術式', page: 'procedures' },
+                        { icon: '👥', title: '工作規範', page: 'rules' },
+                        { icon: '📋', title: '病歷書寫', page: 'records' },
+                        { icon: '📚', title: '教學活動', page: 'teaching' },
+                        { icon: '🏠', title: '出院規劃', page: 'discharge' },
+                        { icon: '📞', title: '快速查詢', page: 'reference' },
+                    ].map((item, i) => (
+                        <button
+                            key={i}
+                            onClick={() => setPage(item.page)}
+                            className="glass rounded-xl p-4 card-hover text-left"
+                        >
+                            <div className="text-2xl mb-2">{item.icon}</div>
+                            <div className="text-sm text-gray-300">{item.title}</div>
+                        </button>
+                    ))}
+                </div>
+            </div>
+        );
+
+        const SchedulePage = () => (
+            <div className="p-4">
+                <h2 className="text-xl font-bold text-white mb-4">📅 每週學術活動</h2>
+                <div className="space-y-3">
+                    {weeklySchedule.map((item, i) => (
+                        <div key={i} className="glass rounded-xl p-4 schedule-cell">
+                            <div className="flex justify-between items-start mb-2">
+                                <span className="text-cyan-400 font-bold">{item.day}</span>
+                                {item.required && <span className="tag tag-required">必參加</span>}
+                            </div>
+                            <div className="text-white font-medium mb-1">{item.activity}</div>
+                            <div className="flex justify-between text-sm text-gray-400">
+                                <span>🕐 {item.time}</span>
+                                <span>📍 {item.location}</span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                <div className="glass rounded-xl p-4 mt-4">
+                    <h3 className="text-yellow-400 font-medium mb-2">⚠️ 注意事項</h3>
+                    <ul className="text-sm text-gray-300 space-y-1">
+                        <li>• Morning Conference 需簽到</li>
+                        <li>• 值班隔天可補簽</li>
+                        <li>• 缺席需事先請假</li>
+                    </ul>
+                </div>
+            </div>
+        );
+
+        const ConsentPage = () => (
+            <div className="p-4">
+                <h2 className="text-xl font-bold text-white mb-4">📝 同意書指引</h2>
+                <div className="space-y-3">
+                    {consentForms.map((item, i) => (
+                        <Accordion key={i} title={item.procedure}>
+                            <div className="space-y-3">
+                                <div>
+                                    <h4 className="text-cyan-400 text-sm font-medium mb-2">需要的同意書：</h4>
+                                    <ul className="space-y-1">
+                                        {item.forms.map((form, j) => (
+                                            <li key={j} className="text-gray-300 text-sm flex items-center gap-2">
+                                                <Icons.Check />
+                                                {form}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <div className="pt-2 border-t border-white/10">
+                                    <span className="text-yellow-400 text-sm">📌 {item.notes}</span>
+                                </div>
+                            </div>
+                        </Accordion>
+                    ))}
+                </div>
+            </div>
+        );
+
+        const CathPage = () => {
+            const [checklist, setChecklist] = useState({});
+            const toggleCheck = (id) => setChecklist(prev => ({ ...prev, [id]: !prev[id] }));
+
+            return (
+                <div className="p-4">
+                    <h2 className="text-xl font-bold text-white mb-4">💉 導管室相關</h2>
+
+                    <Accordion title="術前準備 Checklist" defaultOpen={true}>
+                        <div className="space-y-2">
+                            {preCathChecklist.map(item => (
+                                <ChecklistItem
+                                    key={item.id}
+                                    item={item}
+                                    checked={checklist[item.id]}
+                                    onToggle={() => toggleCheck(item.id)}
+                                />
+                            ))}
+                        </div>
+                    </Accordion>
+
+                    <Accordion title="術後 6P 評估">
+                        <div className="space-y-2">
+                            {postCath6P.map((item, i) => (
+                                <div key={i} className="flex items-start gap-3 p-2">
+                                    <span className="text-cyan-400 font-bold min-w-[100px]">{item.item}</span>
+                                    <span className="text-gray-300 text-sm">{item.description}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </Accordion>
+
+                    <Accordion title="Sheath Removal Protocol">
+                        <div className="space-y-3">
+                            {sheathRemovalProtocol.map(item => (
+                                <div key={item.step} className="flex items-start gap-3">
+                                    <span className="w-8 h-8 flex items-center justify-center bg-cyan-500/30 text-cyan-300 rounded-full font-bold text-sm">
+                                        {item.step}
+                                    </span>
+                                    <span className="text-gray-300 text-sm flex-1">{item.action}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </Accordion>
+
+                    <div className="glass rounded-xl p-4 mt-4">
+                        <h3 className="text-yellow-400 font-medium mb-2">💊 DAPT Loading</h3>
+                        <div className="text-sm text-gray-300 space-y-2">
+                            <p><span className="text-cyan-400">Aspirin:</span> 300mg loading</p>
+                            <p><span className="text-cyan-400">P2Y12 inhibitor:</span></p>
+                            <ul className="ml-4 space-y-1">
+                                <li>• Clopidogrel 600mg (or 300mg)</li>
+                                <li>• Ticagrelor 180mg</li>
+                                <li>• Prasugrel 60mg</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const ProceduresPage = () => (
+            <div className="p-4">
+                <h2 className="text-xl font-bold text-white mb-4">🫀 特殊術式指引</h2>
+                <div className="space-y-3">
+                    {Object.entries(procedureGuidelines).map(([key, proc]) => (
+                        <Accordion key={key} title={proc.title}>
+                            <div className="space-y-4">
+                                {proc.content.map((section, i) => (
+                                    <div key={i}>
+                                        <h4 className="text-cyan-400 font-medium mb-2">{section.subtitle}</h4>
+                                        <ul className="space-y-1">
+                                            {section.items.map((item, j) => (
+                                                <li key={j} className="text-gray-300 text-sm flex items-start gap-2">
+                                                    <span className="text-cyan-400 mt-1">•</span>
+                                                    {item}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                ))}
+                            </div>
+                        </Accordion>
+                    ))}
+                </div>
+            </div>
+        );
+
+        const RulesPage = () => (
+            <div className="p-4">
+                <h2 className="text-xl font-bold text-white mb-4">👥 臨床工作規範</h2>
+
+                <Accordion title="人員分工" defaultOpen={true}>
+                    <div className="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th className="text-cyan-400">角色</th>
+                                    <th className="text-cyan-400">病人照護</th>
+                                    <th className="text-cyan-400">職責</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {clinicalWorkRules.map((rule, i) => (
+                                    <tr key={i}>
+                                        <td className="font-medium text-white">{rule.role}</td>
+                                        <td className="text-gray-300 text-sm">{rule.patients}</td>
+                                        <td className="text-gray-300 text-sm">{rule.duties}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </Accordion>
+
+                <Accordion title="工時規定">
+                    <ul className="space-y-2">
+                        {workHourRules.map((rule, i) => (
+                            <li key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                <Icons.Check />
+                                {rule}
+                            </li>
+                        ))}
+                    </ul>
+                </Accordion>
+
+                <div className="glass rounded-xl p-4 mt-4">
+                    <h3 className="text-yellow-400 font-medium mb-2">⚠️ 重要提醒</h3>
+                    <ul className="text-sm text-gray-300 space-y-1">
+                        <li>• 請假需提前填寫假單並經主管核准</li>
+                        <li>• 值班交班需確實完成</li>
+                        <li>• 緊急狀況通報流程需熟悉</li>
+                    </ul>
+                </div>
+            </div>
+        );
+
+        const RecordsPage = () => (
+            <div className="p-4">
+                <h2 className="text-xl font-bold text-white mb-4">📋 病歷書寫規範</h2>
+
+                <Accordion title="診斷書寫原則" defaultOpen={true}>
+                    <ul className="space-y-2">
+                        {medicalRecordRules.diagnosis.map((rule, i) => (
+                            <li key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                <span className="text-cyan-400">•</span>
+                                {rule}
+                            </li>
+                        ))}
+                    </ul>
+                </Accordion>
+
+                <Accordion title="CV Risk Factors 記錄">
+                    <div className="grid grid-cols-2 gap-2">
+                        {medicalRecordRules.cvRiskFactors.map((factor, i) => (
+                            <div key={i} className="glass p-2 rounded-lg text-sm text-gray-300">
+                                {factor}
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="Progress Note 要求">
+                    <ul className="space-y-2">
+                        {medicalRecordRules.progressNote.map((rule, i) => (
+                            <li key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                <Icons.Check />
+                                {rule}
+                            </li>
+                        ))}
+                    </ul>
+                </Accordion>
+
+                <Accordion title="Weekly Summary">
+                    <ul className="space-y-2">
+                        {medicalRecordRules.weeklySummary.map((rule, i) => (
+                            <li key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                <Icons.Check />
+                                {rule}
+                            </li>
+                        ))}
+                    </ul>
+                </Accordion>
+
+                <div className="glass rounded-xl p-4 mt-4">
+                    <h3 className="text-cyan-400 font-medium mb-2">📝 CHA₂DS₂-VASc Score (AF)</h3>
+                    <div className="text-sm text-gray-300 space-y-1">
+                        <p>C - CHF (1分)</p>
+                        <p>H - HTN (1分)</p>
+                        <p>A₂ - Age ≥75 (2分)</p>
+                        <p>D - DM (1分)</p>
+                        <p>S₂ - Stroke/TIA (2分)</p>
+                        <p>V - Vascular disease (1分)</p>
+                        <p>A - Age 65-74 (1分)</p>
+                        <p>Sc - Sex category female (1分)</p>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const TeachingPage = () => (
+            <div className="p-4">
+                <h2 className="text-xl font-bold text-white mb-4">📚 教學活動</h2>
+
+                <div className="glass rounded-xl p-4 mb-4">
+                    <h3 className="text-cyan-400 font-medium mb-3">Morning Conference</h3>
+                    <ul className="text-sm text-gray-300 space-y-2">
+                        <li>• 每日 07:30-08:00</li>
+                        <li>• 需完成簽到記錄</li>
+                        <li>• 輪值報告 case presentation</li>
+                    </ul>
+                </div>
+
+                <div className="glass rounded-xl p-4 mb-4">
+                    <h3 className="text-cyan-400 font-medium mb-3">教學記錄要求</h3>
+                    <ul className="text-sm text-gray-300 space-y-2">
+                        <li>• R2: 每月至少 2 次教學記錄</li>
+                        <li>• R1: 每月參與教學紀錄</li>
+                        <li>• 教學記錄需雙方簽名</li>
+                    </ul>
+                </div>
+
+                <div className="glass rounded-xl p-4 mb-4">
+                    <h3 className="text-cyan-400 font-medium mb-3">報告輪值</h3>
+                    <ul className="text-sm text-gray-300 space-y-2">
+                        <li>• Journal Reading: 每人每季至少 1 次</li>
+                        <li>• Case Report: 依排班表</li>
+                        <li>• M&M Conference: 每月第三週</li>
+                    </ul>
+                </div>
+
+                <div className="glass rounded-xl p-4">
+                    <h3 className="text-yellow-400 font-medium mb-2">⚠️ M&M Conference 規範</h3>
+                    <ul className="text-sm text-gray-300 space-y-1">
+                        <li>• 需完整分析 adverse event</li>
+                        <li>• 討論改善措施</li>
+                        <li>• 會議記錄需存檔</li>
+                    </ul>
+                </div>
+            </div>
+        );
+
+        const DischargePage = () => (
+            <div className="p-4">
+                <h2 className="text-xl font-bold text-white mb-4">🏠 出院規劃</h2>
+
+                <Accordion title="預期住院天數" defaultOpen={true}>
+                    <div className="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th className="text-cyan-400">術式/診斷</th>
+                                    <th className="text-cyan-400">預期天數</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {dischargePlanning.expectedLOS.map((item, i) => (
+                                    <tr key={i}>
+                                        <td className="text-gray-300 text-sm">{item.procedure}</td>
+                                        <td className="text-white font-medium">{item.days}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </Accordion>
+
+                <Accordion title="出院藥物 Checklist">
+                    <div className="space-y-3">
+                        {dischargePlanning.medications.map((med, i) => (
+                            <div key={i} className="glass p-3 rounded-lg">
+                                <div className="flex justify-between items-start mb-1">
+                                    <span className="text-cyan-400 font-medium">{med.category}</span>
+                                    <span className="text-xs text-gray-400">{med.duration}</span>
+                                </div>
+                                <p className="text-gray-300 text-sm">{med.drugs}</p>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="回診安排">
+                    <ul className="space-y-2">
+                        {dischargePlanning.followUp.map((item, i) => (
+                            <li key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                <Icons.Check />
+                                {item}
+                            </li>
+                        ))}
+                    </ul>
+                </Accordion>
+
+                <div className="glass rounded-xl p-4 mt-4">
+                    <h3 className="text-cyan-400 font-medium mb-2">🏃 心臟復健轉介</h3>
+                    <ul className="text-sm text-gray-300 space-y-1">
+                        <li>• ACS 後建議轉介</li>
+                        <li>• CABG 後建議轉介</li>
+                        <li>• 心衰竭病人評估轉介</li>
+                        <li>• 復健科照會單填寫</li>
+                    </ul>
+                </div>
+            </div>
+        );
+
+        const ReferencePage = () => (
+            <div className="p-4">
+                <h2 className="text-xl font-bold text-white mb-4">📞 快速查詢</h2>
+
+                <div className="glass rounded-xl p-4 mb-4">
+                    <h3 className="text-cyan-400 font-medium mb-3">重要分機</h3>
+                    <div className="grid grid-cols-2 gap-2">
+                        {quickReference.extensions.map((item, i) => (
+                            <div key={i} className="glass p-3 rounded-lg">
+                                <div className="text-gray-400 text-xs">{item.dept}</div>
+                                <div className="text-white font-bold text-lg">{item.ext}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="glass rounded-xl p-4 mb-4">
+                    <h3 className="text-cyan-400 font-medium mb-3">重要聯絡人</h3>
+                    <div className="space-y-2">
+                        {quickReference.contacts.map((item, i) => (
+                            <div key={i} className="flex justify-between items-center p-2 border-b border-white/10 last:border-0">
+                                <span className="text-gray-400 text-sm">{item.role}</span>
+                                <span className="text-white font-medium">{item.name}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="glass rounded-xl p-4">
+                    <h3 className="text-red-400 font-medium mb-3">🚨 緊急聯絡</h3>
+                    <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                            <span className="text-gray-400">院內急救代碼</span>
+                            <span className="text-white font-bold">999</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-gray-400">STEMI Activation</span>
+                            <span className="text-white font-bold">導管室直撥</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-gray-400">值班總機</span>
+                            <span className="text-white font-bold">9</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+
+        // Main App
+        const App = () => {
+            const [page, setPage] = useState('home');
+            const [menuOpen, setMenuOpen] = useState(false);
+
+            const navItems = [
+                { id: 'home', icon: <Icons.Home />, label: '首頁' },
+                { id: 'schedule', icon: <Icons.Calendar />, label: '學術活動' },
+                { id: 'consent', icon: <Icons.Document />, label: '同意書' },
+                { id: 'cath', icon: <Icons.Heart />, label: '導管室' },
+                { id: 'procedures', icon: <Icons.Clipboard />, label: '術式指引' },
+                { id: 'rules', icon: <Icons.Users />, label: '工作規範' },
+                { id: 'records', icon: <Icons.Edit />, label: '病歷書寫' },
+                { id: 'teaching', icon: <Icons.Book />, label: '教學活動' },
+                { id: 'discharge', icon: <Icons.Logout />, label: '出院規劃' },
+                { id: 'reference', icon: <Icons.Phone />, label: '快速查詢' },
+            ];
+
+            const renderPage = () => {
+                switch(page) {
+                    case 'home': return <HomePage setPage={setPage} />;
+                    case 'schedule': return <SchedulePage />;
+                    case 'consent': return <ConsentPage />;
+                    case 'cath': return <CathPage />;
+                    case 'procedures': return <ProceduresPage />;
+                    case 'rules': return <RulesPage />;
+                    case 'records': return <RecordsPage />;
+                    case 'teaching': return <TeachingPage />;
+                    case 'discharge': return <DischargePage />;
+                    case 'reference': return <ReferencePage />;
+                    default: return <HomePage setPage={setPage} />;
+                }
+            };
+
+            return (
+                <div className="min-h-screen text-white">
+                    {/* Header */}
+                    <header className="glass sticky top-0 z-50 px-4 py-3 flex items-center justify-between">
+                        {page !== 'home' ? (
+                            <button onClick={() => setPage('home')} className="p-2 hover:bg-white/10 rounded-lg">
+                                <Icons.Back />
+                            </button>
+                        ) : (
+                            <div className="w-9"></div>
+                        )}
+                        <h1 className="text-lg font-bold">心血管中心工作指引</h1>
+                        <button onClick={() => setMenuOpen(true)} className="p-2 hover:bg-white/10 rounded-lg">
+                            <Icons.Menu />
+                        </button>
+                    </header>
+
+                    {/* Content */}
+                    <main className="pb-20">
+                        {renderPage()}
+                    </main>
+
+                    {/* Mobile Menu Overlay */}
+                    {menuOpen && (
+                        <div className="fixed inset-0 z-50 bg-black/50" onClick={() => setMenuOpen(false)}>
+                            <div className="absolute right-0 top-0 h-full w-72 glass" onClick={e => e.stopPropagation()}>
+                                <div className="flex justify-between items-center p-4 border-b border-white/10">
+                                    <span className="font-bold">選單</span>
+                                    <button onClick={() => setMenuOpen(false)} className="p-2 hover:bg-white/10 rounded-lg">
+                                        <Icons.Close />
+                                    </button>
+                                </div>
+                                <nav className="p-2">
+                                    {navItems.map(item => (
+                                        <button
+                                            key={item.id}
+                                            onClick={() => { setPage(item.id); setMenuOpen(false); }}
+                                            className={`nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg ${page === item.id ? 'active' : ''}`}
+                                        >
+                                            {item.icon}
+                                            <span>{item.label}</span>
+                                        </button>
+                                    ))}
+                                </nav>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
