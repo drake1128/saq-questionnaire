@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>冠狀動脈慢性全阻塞(CTO)心導管治療 - 病人衛教</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif; }
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; }
+        .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .gradient-text { background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .risk-bar { height: 8px; border-radius: 4px; background: rgba(255,255,255,0.1); overflow: hidden; }
+        .risk-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+        .section-indicator { width: 8px; height: 8px; border-radius: 50%; transition: all 0.3s; }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .accordion-content.open { max-height: 2000px; }
+        .pulse-animation { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Icons
+        const Icons = {
+            Heart: () => (
+                <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+            ),
+            Info: () => (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+            ),
+            Tool: () => (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6">
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                </svg>
+            ),
+            Check: () => (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+            ),
+            Alert: () => (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+            ),
+            Pills: () => (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6">
+                    <path d="M10.5 20.5L3.5 13.5a4.95 4.95 0 1 1 7-7l7 7a4.95 4.95 0 1 1-7 7z"/>
+                    <path d="M8.5 8.5l7 7"/>
+                </svg>
+            ),
+            Activity: () => (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+            ),
+            ChevronDown: () => (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
+                    <polyline points="6 9 12 15 18 9"/>
+                </svg>
+            ),
+            ChevronRight: () => (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+            ),
+            Home: () => (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+            ),
+            ArrowLeft: () => (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6">
+                    <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+                </svg>
+            )
+        };
+
+        // Section Data
+        const sections = [
+            { id: 'what', title: '什麼是CTO?', icon: Icons.Info, color: 'from-blue-500 to-cyan-500' },
+            { id: 'procedure', title: '手術如何進行?', icon: Icons.Tool, color: 'from-purple-500 to-pink-500' },
+            { id: 'benefits', title: '手術的好處', icon: Icons.Check, color: 'from-green-500 to-emerald-500' },
+            { id: 'risks', title: '風險與併發症', icon: Icons.Alert, color: 'from-orange-500 to-red-500' },
+            { id: 'alternatives', title: '替代治療', icon: Icons.Pills, color: 'from-indigo-500 to-purple-500' },
+            { id: 'recovery', title: '術後恢復', icon: Icons.Activity, color: 'from-teal-500 to-cyan-500' }
+        ];
+
+        // Risk data
+        const riskData = [
+            { name: '冠狀動脈穿孔', rate: '2.5-8.8%', value: 8.8, color: 'bg-orange-500', desc: '大多是良性的，可能需要球囊止血或包膜支架' },
+            { name: '心包填塞', rate: '0.3-0.9%', value: 0.9, color: 'bg-red-500', desc: '可能需要心包穿刺術引流' },
+            { name: '手術期間心肌梗塞', rate: '0.6-2.6%', value: 2.6, color: 'bg-red-400', desc: '可能由側支損傷或血栓形成導致' },
+            { name: '主動脈剝離', rate: '0.8-1.8%', value: 1.8, color: 'bg-orange-400', desc: '大多數會自行癒合，少數需要手術' },
+            { name: '導絲/導管困住', rate: '~1.5%', value: 1.5, color: 'bg-yellow-500', desc: '可能延長手術時間' },
+            { name: '危及生命心律不整', rate: '~1.2%', value: 1.2, color: 'bg-red-600', desc: '可能需要電擊或起搏器' },
+            { name: '急性心臟衰竭', rate: '~1.1%', value: 1.1, color: 'bg-red-500', desc: '可能需要機械循環支持' },
+            { name: '緊急心臟手術', rate: '0.1-0.7%', value: 0.7, color: 'bg-red-700', desc: '罕見但可能發生' },
+            { name: '死亡', rate: '0.2-0.9%', value: 0.9, color: 'bg-gray-700', desc: '極少數情況' }
+        ];
+
+        const nonCardiacRisks = [
+            { name: '血管穿刺併發症', rate: '0.5-1.5%', desc: '血腫、偽動脈瘤等' },
+            { name: '顯影劑腎病變', rate: '0.8-3.8%', desc: '腎功能暫時下降' },
+            { name: '重大出血', rate: '0.4-0.8%', desc: '可能需要輸血' },
+            { name: '中風', rate: '<0.01%', desc: '極罕見' },
+            { name: '皮膚輻射傷害', rate: '<0.01%', desc: '極罕見' }
+        ];
+
+        const lateRisks = [
+            { name: '支架血栓', rate: '0-3%', desc: '需終身服用抗血小板藥物預防' },
+            { name: '再狹窄', rate: '2-8%', desc: '支架內組織增生，可再次治療' }
+        ];
+
+        // Home Page Component
+        const HomePage = ({ onNavigate }) => (
+            <div className="fade-in p-4 pb-24">
+                {/* Header */}
+                <div className="text-center mb-8">
+                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-red-500 to-pink-500 mb-4">
+                        <Icons.Heart />
+                        <span className="text-white text-3xl">
+                            <svg viewBox="0 0 24 24" fill="currentColor" className="w-10 h-10">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <h1 className="text-2xl font-bold text-white mb-2">冠狀動脈慢性全阻塞</h1>
+                    <h2 className="text-xl text-blue-400 mb-2">心導管治療手術 (CTO PCI)</h2>
+                    <p className="text-gray-400 text-sm">Chronic Total Occlusion Percutaneous Coronary Intervention</p>
+                </div>
+
+                {/* Introduction Card */}
+                <div className="glass-card rounded-2xl p-5 mb-6">
+                    <h3 className="text-lg font-semibold text-white mb-3">病人衛教手冊</h3>
+                    <p className="text-gray-300 text-sm leading-relaxed">
+                        本衛教內容將幫助您了解冠狀動脈慢性全阻塞(CTO)的心導管治療手術，包括手術的進行方式、預期效益、可能的風險，以及術後恢復的注意事項。
+                    </p>
+                </div>
+
+                {/* Section Navigation */}
+                <div className="space-y-3">
+                    {sections.map((section, index) => (
+                        <button
+                            key={section.id}
+                            onClick={() => onNavigate(section.id)}
+                            className="w-full glass-card rounded-xl p-4 flex items-center gap-4 hover:bg-white/10 transition-all active:scale-[0.98]"
+                        >
+                            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${section.color} flex items-center justify-center text-white`}>
+                                <section.icon />
+                            </div>
+                            <div className="flex-1 text-left">
+                                <span className="text-gray-500 text-xs">第 {index + 1} 部分</span>
+                                <h3 className="text-white font-medium">{section.title}</h3>
+                            </div>
+                            <Icons.ChevronRight />
+                        </button>
+                    ))}
+                </div>
+
+                {/* Footer Reference */}
+                <div className="mt-8 pt-4 border-t border-white/10">
+                    <p className="text-gray-500 text-xs text-center">
+                        內容來源：臺大醫院新竹分院心臟血管中心<br/>
+                        CTO PCI 病人知情同意書 2023 版
+                    </p>
+                </div>
+            </div>
+        );
+
+        // What is CTO Section
+        const WhatIsCTO = () => (
+            <div className="fade-in p-4 space-y-4">
+                <div className="glass-card rounded-2xl p-5">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span className="text-2xl">🫀</span> 什麼是冠狀動脈慢性全阻塞?
+                    </h3>
+                    <div className="space-y-4 text-gray-300 text-sm leading-relaxed">
+                        <p>
+                            <span className="text-cyan-400 font-medium">慢性全阻塞 (CTO)</span> 是指冠狀動脈的
+                            <span className="text-red-400 font-bold">100%完全阻塞</span>，血管內沒有前向血流，而且這種情況已持續
+                            <span className="text-yellow-400">至少三個月</span>。
+                        </p>
+
+                        <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
+                            <h4 className="text-blue-400 font-medium mb-2">發生率</h4>
+                            <ul className="space-y-2">
+                                <li className="flex items-start gap-2">
+                                    <span className="text-blue-400 mt-1">•</span>
+                                    <span>冠狀動脈疾病患者中約佔 <strong className="text-white">15-20%</strong></span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="text-blue-400 mt-1">•</span>
+                                    <span>接受繞道手術的患者中則佔 <strong className="text-white">50-70%</strong></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="glass-card rounded-2xl p-5">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span className="text-2xl">💡</span> 為什麼CTO會有症狀?
+                    </h3>
+                    <p className="text-gray-300 text-sm mb-4">
+                        雖然身體會形成<span className="text-green-400">側支循環</span>來維持心肌血流，但幾乎所有CTO患者都會有
+                        <span className="text-red-400">心肌缺血</span>的問題。
+                    </p>
+
+                    <div className="grid grid-cols-2 gap-3">
+                        {[
+                            { icon: '💔', text: '增加死亡風險', color: 'red' },
+                            { icon: '⚡', text: '危及生命的心律不整', color: 'orange' },
+                            { icon: '😰', text: '胸痛 (心絞痛)', color: 'yellow' },
+                            { icon: '😮‍💨', text: '呼吸急促', color: 'blue' },
+                            { icon: '😴', text: '容易疲勞', color: 'purple' },
+                            { icon: '🏃‍♂️', text: '運動能力下降', color: 'cyan' }
+                        ].map((item, i) => (
+                            <div key={i} className={`bg-${item.color}-500/10 border border-${item.color}-500/20 rounded-xl p-3 text-center`}>
+                                <span className="text-2xl">{item.icon}</span>
+                                <p className="text-gray-300 text-xs mt-1">{item.text}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Visual Diagram */}
+                <div className="glass-card rounded-2xl p-5">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span className="text-2xl">🔬</span> 圖解說明
+                    </h3>
+                    <div className="bg-slate-800 rounded-xl p-4">
+                        <svg viewBox="0 0 300 150" className="w-full">
+                            {/* Normal artery */}
+                            <text x="75" y="20" fill="#60a5fa" fontSize="12" textAnchor="middle">正常血管</text>
+                            <rect x="25" y="30" width="100" height="40" rx="20" fill="#1e3a5f" stroke="#60a5fa" strokeWidth="2"/>
+                            <ellipse cx="75" cy="50" rx="40" ry="15" fill="#ef4444" opacity="0.3"/>
+                            <path d="M30 50 L120 50" stroke="#ef4444" strokeWidth="3" strokeDasharray="5,3">
+                                <animate attributeName="stroke-dashoffset" from="0" to="-16" dur="1s" repeatCount="indefinite"/>
+                            </path>
+                            <text x="75" y="90" fill="#22c55e" fontSize="10" textAnchor="middle">血流正常 ✓</text>
+
+                            {/* CTO artery */}
+                            <text x="225" y="20" fill="#f87171" fontSize="12" textAnchor="middle">CTO 阻塞血管</text>
+                            <rect x="175" y="30" width="100" height="40" rx="20" fill="#1e3a5f" stroke="#f87171" strokeWidth="2"/>
+                            <ellipse cx="225" cy="50" rx="15" ry="15" fill="#374151"/>
+                            <text x="225" y="55" fill="#9ca3af" fontSize="10" textAnchor="middle">阻塞</text>
+                            <path d="M180 50 L205 50" stroke="#ef4444" strokeWidth="3" opacity="0.5"/>
+                            <text x="225" y="90" fill="#ef4444" fontSize="10" textAnchor="middle">血流中斷 ✗</text>
+
+                            {/* Legend */}
+                            <rect x="100" y="110" width="100" height="30" rx="5" fill="rgba(255,255,255,0.05)"/>
+                            <circle cx="120" cy="125" r="5" fill="#ef4444"/>
+                            <text x="130" y="128" fill="#9ca3af" fontSize="9">= 血流方向</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        );
+
+        // Procedure Section
+        const ProcedureSection = () => {
+            const [openAccordion, setOpenAccordion] = useState(null);
+
+            const procedureSteps = [
+                {
+                    title: '血管穿刺',
+                    content: '通常需要在兩個以上位置進行動脈穿刺。穿刺位置可能在：\n• 腹股溝（股動脈）\n• 手腕（橈動脈）\n• 手臂（肱動脈）\n\n醫師會根據情況選擇最適合的位置。'
+                },
+                {
+                    title: '導絲穿越阻塞',
+                    content: '使用特殊的導絲穿越完全阻塞的血管區域。穿越方式包括：\n\n• 順行穿越：從阻塞上游進入\n• 逆行穿越：通過側支循環從下游進入\n• 內膜下穿越：在血管壁內層穿越'
+                },
+                {
+                    title: '球囊擴張',
+                    content: '導絲成功穿越後，推進球囊導管來擴張閉塞的血管，使血液能夠再次通過。'
+                },
+                {
+                    title: '處理鈣化',
+                    content: '當CTO嚴重鈣化時，可能使用：\n\n• 血管內震波碎石術 (IVL)：使用聲波碎裂鈣質\n• 旋磨術 (Rotablation)：使用高速旋轉鑽頭磨除鈣化'
+                },
+                {
+                    title: '支架植入',
+                    content: '擴張後，幾乎都需要植入一個或多個金屬支架。\n\n• 支架由惰性金屬製成，不會產生排斥\n• 新一代塗藥支架可減少再狹窄風險\n• 支架在高壓下會嵌入動脈壁，不會移動'
+                }
+            ];
+
+            return (
+                <div className="fade-in p-4 space-y-4">
+                    <div className="glass-card rounded-2xl p-5">
+                        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <span className="text-2xl">⏱️</span> 手術時間
+                        </h3>
+                        <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl p-4">
+                            <p className="text-gray-300 text-sm">
+                                CTO手術比一般心導管手術複雜，時間較長：
+                            </p>
+                            <div className="mt-3 flex items-center justify-center gap-2">
+                                <span className="text-3xl font-bold text-orange-400">90-120</span>
+                                <span className="text-gray-400">分鐘</span>
+                            </div>
+                            <p className="text-gray-500 text-xs text-center mt-2">
+                                若血管嚴重鈣化，時間可能更長
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="glass-card rounded-2xl p-5">
+                        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <span className="text-2xl">📋</span> 手術步驟
+                        </h3>
+                        <div className="space-y-2">
+                            {procedureSteps.map((step, index) => (
+                                <div key={index} className="bg-slate-800/50 rounded-xl overflow-hidden">
+                                    <button
+                                        onClick={() => setOpenAccordion(openAccordion === index ? null : index)}
+                                        className="w-full p-4 flex items-center gap-3 text-left"
+                                    >
+                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
+                                            {index + 1}
+                                        </div>
+                                        <span className="flex-1 text-white font-medium">{step.title}</span>
+                                        <div className={`transform transition-transform ${openAccordion === index ? 'rotate-180' : ''}`}>
+                                            <Icons.ChevronDown />
+                                        </div>
+                                    </button>
+                                    <div className={`accordion-content ${openAccordion === index ? 'open' : ''}`}>
+                                        <div className="px-4 pb-4 text-gray-300 text-sm whitespace-pre-line">
+                                            {step.content}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="glass-card rounded-2xl p-5">
+                        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <span className="text-2xl">💊</span> 術後用藥
+                        </h3>
+                        <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
+                            <p className="text-gray-300 text-sm mb-3">
+                                成功開通CTO並植入支架後，需要服用<span className="text-blue-400 font-medium">雙抗血小板藥物</span>：
+                            </p>
+                            <div className="flex gap-3">
+                                <div className="flex-1 bg-slate-800 rounded-lg p-3 text-center">
+                                    <p className="text-white font-medium">Aspirin</p>
+                                    <p className="text-gray-500 text-xs">阿斯匹靈</p>
+                                </div>
+                                <div className="text-gray-500 flex items-center">+</div>
+                                <div className="flex-1 bg-slate-800 rounded-lg p-3 text-center">
+                                    <p className="text-white font-medium">P2Y12抑制劑</p>
+                                    <p className="text-gray-500 text-xs">如 Clopidogrel</p>
+                                </div>
+                            </div>
+                            <p className="text-yellow-400 text-xs mt-3">
+                                ⚠️ 請告知醫師您是否對阿斯匹靈過敏或有重大出血病史
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Benefits Section
+        const BenefitsSection = () => (
+            <div className="fade-in p-4 space-y-4">
+                <div className="glass-card rounded-2xl p-5">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span className="text-2xl">✨</span> 成功率
+                    </h3>
+                    <div className="text-center py-4">
+                        <div className="inline-flex items-end gap-1">
+                            <span className="text-5xl font-bold gradient-text">70-95</span>
+                            <span className="text-2xl text-gray-400 mb-1">%</span>
+                        </div>
+                        <p className="text-gray-400 text-sm mt-2">
+                            近年來技術進步，成功率從 50-60% 大幅提升
+                        </p>
+                    </div>
+                </div>
+
+                <div className="glass-card rounded-2xl p-5">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span className="text-2xl">🎯</span> 治療效益
+                    </h3>
+                    <div className="space-y-3">
+                        {[
+                            { icon: '🔄', title: '恢復正常血流', desc: '閉塞的冠狀動脈重新獲得血液供應' },
+                            { icon: '💪', title: '解決心肌缺血', desc: '心臟在休息和運動時都能獲得足夠血流' },
+                            { icon: '😌', title: '減少心絞痛', desc: '胸痛和不適感明顯改善' },
+                            { icon: '🌬️', title: '改善呼吸', desc: '呼吸急促的症狀減輕' },
+                            { icon: '🏃', title: '提升運動能力', desc: '可以恢復更多日常活動' },
+                            { icon: '⭐', title: '提高生活品質', desc: '整體生活品質獲得改善' }
+                        ].map((item, i) => (
+                            <div key={i} className="flex items-start gap-3 bg-green-500/10 rounded-xl p-3">
+                                <span className="text-2xl">{item.icon}</span>
+                                <div>
+                                    <p className="text-white font-medium">{item.title}</p>
+                                    <p className="text-gray-400 text-sm">{item.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="glass-card rounded-2xl p-5">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span className="text-2xl">📊</span> 研究證據
+                    </h3>
+                    <p className="text-gray-300 text-sm">
+                        全世界已有數百名患者參加隨機對照臨床試驗，研究證實CTO PCI可以有效改善症狀和生活品質。
+                    </p>
+                </div>
+            </div>
+        );
+
+        // Risks Section
+        const RisksSection = () => {
+            const [activeTab, setActiveTab] = useState('cardiac');
+
+            return (
+                <div className="fade-in p-4 space-y-4">
+                    <div className="glass-card rounded-2xl p-5">
+                        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <span className="text-2xl">⚠️</span> 重要提醒
+                        </h3>
+                        <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl p-4">
+                            <p className="text-gray-300 text-sm">
+                                CTO PCI是最複雜的心導管手術之一。為了您的安全，當達到預定的X光劑量或顯影劑使用量時，醫師可能會
+                                <span className="text-orange-400 font-medium">中斷手術</span>，改日再進行。
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Tab Navigation */}
+                    <div className="flex gap-2 overflow-x-auto pb-2">
+                        {[
+                            { id: 'cardiac', label: '心臟相關' },
+                            { id: 'nonCardiac', label: '非心臟' },
+                            { id: 'late', label: '長期併發症' }
+                        ].map(tab => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                                    activeTab === tab.id
+                                        ? 'bg-red-500 text-white'
+                                        : 'bg-slate-800 text-gray-400'
+                                }`}
+                            >
+                                {tab.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Cardiac Risks */}
+                    {activeTab === 'cardiac' && (
+                        <div className="glass-card rounded-2xl p-5 space-y-4">
+                            <h3 className="text-lg font-semibold text-white mb-2">心臟相關併發症</h3>
+                            {riskData.map((risk, i) => (
+                                <div key={i} className="bg-slate-800/50 rounded-xl p-4">
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-white font-medium">{risk.name}</span>
+                                        <span className="text-red-400 font-bold">{risk.rate}</span>
+                                    </div>
+                                    <div className="risk-bar mb-2">
+                                        <div
+                                            className={`risk-fill ${risk.color}`}
+                                            style={{ width: `${Math.min(risk.value * 10, 100)}%` }}
+                                        />
+                                    </div>
+                                    <p className="text-gray-500 text-xs">{risk.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Non-Cardiac Risks */}
+                    {activeTab === 'nonCardiac' && (
+                        <div className="glass-card rounded-2xl p-5 space-y-3">
+                            <h3 className="text-lg font-semibold text-white mb-2">非心臟併發症</h3>
+                            {nonCardiacRisks.map((risk, i) => (
+                                <div key={i} className="bg-slate-800/50 rounded-xl p-4 flex justify-between items-center">
+                                    <div>
+                                        <p className="text-white font-medium">{risk.name}</p>
+                                        <p className="text-gray-500 text-xs">{risk.desc}</p>
+                                    </div>
+                                    <span className="text-orange-400 font-bold text-sm">{risk.rate}</span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Late Risks */}
+                    {activeTab === 'late' && (
+                        <div className="glass-card rounded-2xl p-5 space-y-3">
+                            <h3 className="text-lg font-semibold text-white mb-2">長期併發症</h3>
+                            <p className="text-gray-400 text-sm mb-4">
+                                手術後數天、數月或數年後可能發生：
+                            </p>
+                            {lateRisks.map((risk, i) => (
+                                <div key={i} className="bg-slate-800/50 rounded-xl p-4">
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-white font-medium">{risk.name}</span>
+                                        <span className="text-yellow-400 font-bold">{risk.rate}</span>
+                                    </div>
+                                    <p className="text-gray-500 text-xs">{risk.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    <div className="glass-card rounded-2xl p-5">
+                        <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                            <span className="text-2xl">📝</span> 影響風險的因素
+                        </h3>
+                        <ul className="text-gray-300 text-sm space-y-2">
+                            <li className="flex items-start gap-2">
+                                <span className="text-blue-400">•</span>
+                                <span>患者的臨床狀況（年齡、疾病嚴重程度、糖尿病等）</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="text-blue-400">•</span>
+                                <span>閉塞的解剖特性（位置、長度、鈣化程度）</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="text-blue-400">•</span>
+                                <span>使用的方法和技術類型</span>
+                            </li>
+                        </ul>
+                        <p className="text-cyan-400 text-sm mt-4">
+                            請與手術醫師討論您個人的手術風險和治療策略。
+                        </p>
+                    </div>
+                </div>
+            );
+        };
+
+        // Alternatives Section
+        const AlternativesSection = () => (
+            <div className="fade-in p-4 space-y-4">
+                <div className="glass-card rounded-2xl p-5">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span className="text-2xl">💊</span> 藥物治療
+                    </h3>
+                    <div className="space-y-4">
+                        <p className="text-gray-300 text-sm">
+                            選擇不接受手術，繼續藥物治療：
+                        </p>
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-3">
+                                <p className="text-green-400 font-medium text-sm">優點</p>
+                                <p className="text-gray-400 text-xs mt-1">避免手術風險</p>
+                            </div>
+                            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+                                <p className="text-red-400 font-medium text-sm">缺點</p>
+                                <p className="text-gray-400 text-xs mt-1">症狀和運動能力受損將維持不變</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="glass-card rounded-2xl p-5">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span className="text-2xl">🏥</span> 冠狀動脈繞道手術 (CABG)
+                    </h3>
+                    <p className="text-gray-300 text-sm mb-4">
+                        這是一種<span className="text-purple-400">開心手術</span>，使用其他血管繞過阻塞處。
+                    </p>
+
+                    <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-4 mb-4">
+                        <p className="text-purple-400 font-medium mb-2">適合考慮繞道手術的情況：</p>
+                        <ul className="text-gray-300 text-sm space-y-2">
+                            <li className="flex items-start gap-2">
+                                <span className="text-purple-400">•</span>
+                                <span>同時有瓣膜性心臟疾病需要手術</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="text-purple-400">•</span>
+                                <span>糖尿病患者合併多條血管嚴重疾病</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <p className="text-cyan-400 text-sm">
+                        這個選擇應根據個案情況與醫生詳細討論。
+                    </p>
+                </div>
+
+                <div className="glass-card rounded-2xl p-5 bg-gradient-to-br from-blue-500/10 to-purple-500/10">
+                    <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                        <span className="text-2xl">🤝</span> 醫病共享決策
+                    </h3>
+                    <p className="text-gray-300 text-sm">
+                        最適合您的治療方式取決於您的整體健康狀況、症狀嚴重程度、冠狀動脈病變的複雜度等因素。請與您的心臟科醫師充分討論，共同決定最佳治療方案。
+                    </p>
+                </div>
+            </div>
+        );
+
+        // Recovery Section
+        const RecoverySection = () => (
+            <div className="fade-in p-4 space-y-4">
+                <div className="glass-card rounded-2xl p-5">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span className="text-2xl">🛏️</span> 術後臥床休息
+                    </h3>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4 text-center">
+                            <p className="text-green-400 font-medium mb-2">手腕穿刺</p>
+                            <p className="text-3xl font-bold text-white">較短</p>
+                            <p className="text-gray-500 text-xs mt-1">可較快下床活動</p>
+                        </div>
+                        <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl p-4 text-center">
+                            <p className="text-orange-400 font-medium mb-2">鼠蹊穿刺</p>
+                            <p className="text-3xl font-bold text-white">6-12hr</p>
+                            <p className="text-gray-500 text-xs mt-1">需較長時間確實止血</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="glass-card rounded-2xl p-5">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span className="text-2xl">🏠</span> 出院時間
+                    </h3>
+                    <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-center">
+                        <p className="text-gray-300 mb-2">通常在手術後</p>
+                        <p className="text-4xl font-bold text-blue-400">隔天</p>
+                        <p className="text-gray-400 text-sm mt-2">即可出院</p>
+                    </div>
+                </div>
+
+                <div className="glass-card rounded-2xl p-5">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span className="text-2xl">📋</span> 出院注意事項
+                    </h3>
+                    <div className="space-y-3">
+                        {[
+                            { icon: '💊', text: '按時服用處方藥物', sub: '特別是抗血小板藥物' },
+                            { icon: '🚶', text: '恢復日常輕度活動', sub: '傷口止血後即可' },
+                            { icon: '🏃', text: '遵循運動建議', sub: '醫師會給予明確建議' },
+                            { icon: '🩹', text: '注意傷口照護', sub: '保持清潔乾燥' },
+                            { icon: '📅', text: '按時回診追蹤', sub: '不要錯過預約' }
+                        ].map((item, i) => (
+                            <div key={i} className="flex items-center gap-3 bg-slate-800/50 rounded-xl p-3">
+                                <span className="text-2xl">{item.icon}</span>
+                                <div>
+                                    <p className="text-white font-medium">{item.text}</p>
+                                    <p className="text-gray-500 text-xs">{item.sub}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="glass-card rounded-2xl p-5 bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-red-500/20">
+                    <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                        <span className="text-2xl">🚨</span> 何時應立即就醫
+                    </h3>
+                    <ul className="text-gray-300 text-sm space-y-2">
+                        <li className="flex items-start gap-2">
+                            <span className="text-red-400">•</span>
+                            <span>穿刺處持續出血或明顯腫脹</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-red-400">•</span>
+                            <span>胸痛、呼吸困難</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-red-400">•</span>
+                            <span>發燒或傷口紅腫熱痛</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-red-400">•</span>
+                            <span>肢體冰冷、麻木或蒼白</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        );
+
+        // Main App
+        const App = () => {
+            const [currentSection, setCurrentSection] = useState('home');
+
+            const renderSection = () => {
+                switch(currentSection) {
+                    case 'what': return <WhatIsCTO />;
+                    case 'procedure': return <ProcedureSection />;
+                    case 'benefits': return <BenefitsSection />;
+                    case 'risks': return <RisksSection />;
+                    case 'alternatives': return <AlternativesSection />;
+                    case 'recovery': return <RecoverySection />;
+                    default: return <HomePage onNavigate={setCurrentSection} />;
+                }
+            };
+
+            const currentSectionData = sections.find(s => s.id === currentSection);
+
+            return (
+                <div className="min-h-screen max-w-lg mx-auto relative">
+                    {/* Header for sub-pages */}
+                    {currentSection !== 'home' && (
+                        <div className="sticky top-0 z-50 glass-card border-b border-white/10">
+                            <div className="flex items-center gap-3 p-4">
+                                <button
+                                    onClick={() => setCurrentSection('home')}
+                                    className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white"
+                                >
+                                    <Icons.ArrowLeft />
+                                </button>
+                                <div className="flex-1">
+                                    <h1 className="text-white font-semibold">{currentSectionData?.title}</h1>
+                                    <p className="text-gray-500 text-xs">CTO PCI 病人衛教</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Content */}
+                    <div className="pb-20">
+                        {renderSection()}
+                    </div>
+
+                    {/* Bottom Navigation */}
+                    {currentSection !== 'home' && (
+                        <div className="fixed bottom-0 left-0 right-0 glass-card border-t border-white/10">
+                            <div className="max-w-lg mx-auto flex justify-around p-2">
+                                <button
+                                    onClick={() => setCurrentSection('home')}
+                                    className="flex flex-col items-center p-2 text-gray-400 hover:text-white transition-colors"
+                                >
+                                    <Icons.Home />
+                                    <span className="text-xs mt-1">首頁</span>
+                                </button>
+                                {sections.map((section, i) => {
+                                    const isActive = currentSection === section.id;
+                                    const Icon = section.icon;
+                                    return (
+                                        <button
+                                            key={section.id}
+                                            onClick={() => setCurrentSection(section.id)}
+                                            className={`flex flex-col items-center p-2 transition-colors ${isActive ? 'text-blue-400' : 'text-gray-400 hover:text-white'}`}
+                                        >
+                                            <div className={`section-indicator ${isActive ? 'bg-blue-400 w-2 h-2' : 'bg-gray-600 w-1.5 h-1.5'}`} />
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
