@@ -1084,7 +1084,7 @@
             <button class="share-modal-close" onclick="closeShareModal()">&times;</button>
             <h3>📤 分享本網站</h3>
             <div class="qr-container">
-                <canvas id="qrcode"></canvas>
+                <img id="qrcode" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://drake1128.github.io/saq-questionnaire" alt="QR Code" width="180" height="180">
                 <p class="qr-hint">掃描 QR Code 分享網站</p>
             </div>
             <div class="share-options">
@@ -1097,9 +1097,6 @@
             </div>
         </div>
     </div>
-
-    <!-- QR Code Library -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
     <script>
         // Search functionality
@@ -1189,27 +1186,12 @@
         // Share Modal Functions
         function openShareModal() {
             document.getElementById('shareModal').classList.add('active');
-            generateQRCode();
         }
 
         function closeShareModal(event) {
             if (!event || event.target === event.currentTarget) {
                 document.getElementById('shareModal').classList.remove('active');
             }
-        }
-
-        function generateQRCode() {
-            const canvas = document.getElementById('qrcode');
-            QRCode.toCanvas(canvas, 'https://drake1128.github.io/saq-questionnaire', {
-                width: 180,
-                margin: 2,
-                color: {
-                    dark: '#2c3e50',
-                    light: '#ffffff'
-                }
-            }, function(error) {
-                if (error) console.error(error);
-            });
         }
 
         // Close modal with Escape key
