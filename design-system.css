@@ -1,0 +1,651 @@
+/**
+ * Design System CSS
+ * 心血管照護教學資源中心 (Cardiovascular Care Education Hub)
+ *
+ * This file contains centralized design tokens and reusable components.
+ * Include this file in your HTML pages to maintain consistent styling.
+ *
+ * Usage: <link rel="stylesheet" href="design-system.css">
+ */
+
+/* ==========================================================================
+   1. Design Tokens (CSS Custom Properties)
+   ========================================================================== */
+
+:root {
+    /* -------------------------
+       Primary Colors
+       ------------------------- */
+    --color-primary: #e74c3c;
+    --color-primary-dark: #c0392b;
+    --color-primary-light: #f5b7b1;
+
+    --color-secondary: #3498db;
+    --color-secondary-dark: #2980b9;
+    --color-secondary-light: #aed6f1;
+
+    /* -------------------------
+       Semantic Colors
+       ------------------------- */
+    --color-success: #27ae60;
+    --color-success-dark: #1e8449;
+    --color-success-light: #a9dfbf;
+
+    --color-warning: #f39c12;
+    --color-warning-dark: #d68910;
+    --color-warning-light: #f9e79f;
+
+    --color-danger: #e74c3c;
+    --color-danger-dark: #c0392b;
+    --color-danger-light: #f5b7b1;
+
+    --color-info: #3498db;
+    --color-info-dark: #2980b9;
+    --color-info-light: #aed6f1;
+
+    /* -------------------------
+       Category Colors
+       ------------------------- */
+    --color-cath: #e74c3c;          /* Cath Lab - Red */
+    --color-ward: #3498db;          /* Ward - Blue */
+    --color-icu: #00d4ff;           /* ICU/CCU - Cyan */
+    --color-intervention: #9b59b6;  /* Intervention - Purple */
+    --color-medication: #27ae60;    /* Medication - Green */
+    --color-patient: #f39c12;       /* Patient Education - Orange */
+    --color-learning: #1abc9c;      /* Learning Resources - Teal */
+
+    /* -------------------------
+       Neutral Colors
+       ------------------------- */
+    --color-dark: #2c3e50;
+    --color-gray-900: #1a252f;
+    --color-gray-800: #2c3e50;
+    --color-gray-700: #34495e;
+    --color-gray-600: #5d6d7e;
+    --color-gray-500: #7f8c8d;
+    --color-gray-400: #95a5a6;
+    --color-gray-300: #bdc3c7;
+    --color-gray-200: #d5dbdb;
+    --color-gray-100: #ecf0f1;
+    --color-gray-50: #f8f9f9;
+    --color-white: #ffffff;
+
+    /* -------------------------
+       Background Colors
+       ------------------------- */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9f9;
+    --bg-tertiary: #ecf0f1;
+    --bg-dark: #2c3e50;
+    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+    /* -------------------------
+       Text Colors
+       ------------------------- */
+    --text-primary: #2c3e50;
+    --text-secondary: #5d6d7e;
+    --text-muted: #7f8c8d;
+    --text-light: #95a5a6;
+    --text-inverse: #ffffff;
+
+    /* -------------------------
+       Spacing Scale (8px base)
+       ------------------------- */
+    --space-0: 0;
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 28px;
+    --space-8: 32px;
+    --space-10: 40px;
+    --space-12: 48px;
+    --space-16: 64px;
+    --space-20: 80px;
+
+    /* -------------------------
+       Typography
+       ------------------------- */
+    --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
+    --font-family-mono: 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
+
+    --font-size-xs: 0.75rem;    /* 12px */
+    --font-size-sm: 0.875rem;   /* 14px */
+    --font-size-base: 1rem;     /* 16px */
+    --font-size-lg: 1.125rem;   /* 18px */
+    --font-size-xl: 1.25rem;    /* 20px */
+    --font-size-2xl: 1.5rem;    /* 24px */
+    --font-size-3xl: 1.875rem;  /* 30px */
+    --font-size-4xl: 2.25rem;   /* 36px */
+
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    --line-height-tight: 1.25;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.75;
+
+    /* -------------------------
+       Border Radius
+       ------------------------- */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-2xl: 24px;
+    --radius-full: 9999px;
+
+    /* -------------------------
+       Shadows
+       ------------------------- */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+    --shadow-card: 0 4px 15px rgba(0, 0, 0, 0.1);
+    --shadow-card-hover: 0 8px 25px rgba(0, 0, 0, 0.15);
+
+    /* -------------------------
+       Transitions
+       ------------------------- */
+    --transition-fast: 150ms ease;
+    --transition-normal: 200ms ease;
+    --transition-slow: 300ms ease;
+
+    /* -------------------------
+       Z-Index Scale
+       ------------------------- */
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-fixed: 300;
+    --z-modal-backdrop: 400;
+    --z-modal: 500;
+    --z-popover: 600;
+    --z-tooltip: 700;
+}
+
+
+/* ==========================================================================
+   2. Base Styles
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+}
+
+
+/* ==========================================================================
+   3. Accessibility Utilities
+   ========================================================================== */
+
+/* Visually hidden but accessible to screen readers */
+.visually-hidden,
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Skip link for keyboard navigation */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--color-dark);
+    color: var(--text-inverse);
+    padding: var(--space-2) var(--space-4);
+    z-index: var(--z-tooltip);
+    text-decoration: none;
+    border-radius: 0 0 var(--radius-md) 0;
+    transition: top var(--transition-normal);
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* Focus styles */
+*:focus-visible {
+    outline: 3px solid var(--color-secondary);
+    outline-offset: 2px;
+}
+
+
+/* ==========================================================================
+   4. Button Components
+   ========================================================================== */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
+    font-family: inherit;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
+    text-decoration: none;
+    border: none;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Button Variants */
+.btn-primary {
+    background-color: var(--color-primary);
+    color: var(--text-inverse);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--color-primary-dark);
+}
+
+.btn-secondary {
+    background-color: var(--color-secondary);
+    color: var(--text-inverse);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: var(--color-secondary-dark);
+}
+
+.btn-success {
+    background-color: var(--color-success);
+    color: var(--text-inverse);
+}
+
+.btn-success:hover:not(:disabled) {
+    background-color: var(--color-success-dark);
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 2px solid var(--color-gray-300);
+    color: var(--text-primary);
+}
+
+.btn-outline:hover:not(:disabled) {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+/* Button Sizes */
+.btn-sm {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-sm);
+}
+
+.btn-lg {
+    padding: var(--space-4) var(--space-6);
+    font-size: var(--font-size-lg);
+}
+
+/* Pill Button */
+.btn-pill {
+    border-radius: var(--radius-full);
+}
+
+
+/* ==========================================================================
+   5. Card Components
+   ========================================================================== */
+
+.card {
+    background: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    padding: var(--space-5);
+    box-shadow: var(--shadow-card);
+    transition: all var(--transition-normal);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-card-hover);
+}
+
+.card-header {
+    margin-bottom: var(--space-4);
+}
+
+.card-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.card-body {
+    color: var(--text-secondary);
+}
+
+.card-footer {
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-gray-200);
+}
+
+
+/* ==========================================================================
+   6. Badge/Tag Components
+   ========================================================================== */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    border-radius: var(--radius-full);
+    background-color: var(--color-gray-100);
+    color: var(--text-secondary);
+}
+
+.badge-staff {
+    background-color: #e3f2fd;
+    color: #1565c0;
+}
+
+.badge-patient {
+    background-color: #fff3e0;
+    color: #e65100;
+}
+
+.badge-new {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.badge-updated {
+    background-color: #fce4ec;
+    color: #c2185b;
+}
+
+.badge-icu {
+    background-color: #e0f7fa;
+    color: #00838f;
+}
+
+
+/* ==========================================================================
+   7. Form Components
+   ========================================================================== */
+
+.form-input {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    font-family: inherit;
+    font-size: var(--font-size-base);
+    border: 2px solid var(--color-gray-300);
+    border-radius: var(--radius-lg);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: border-color var(--transition-fast);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-secondary);
+}
+
+.form-input::placeholder {
+    color: var(--text-muted);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+}
+
+.form-group {
+    margin-bottom: var(--space-4);
+}
+
+
+/* ==========================================================================
+   8. Modal Components
+   ========================================================================== */
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: var(--z-modal-backdrop);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal {
+    background: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: var(--shadow-xl);
+    animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal-close {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    background: none;
+    border: none;
+    font-size: var(--font-size-2xl);
+    color: var(--text-muted);
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+}
+
+.modal-close:hover {
+    background: var(--color-gray-100);
+    color: var(--text-primary);
+}
+
+.modal-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin: 0 0 var(--space-4);
+}
+
+
+/* ==========================================================================
+   9. Utility Classes
+   ========================================================================== */
+
+/* Text Alignment */
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+/* Text Colors */
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted { color: var(--text-muted); }
+.text-success { color: var(--color-success); }
+.text-warning { color: var(--color-warning); }
+.text-danger { color: var(--color-danger); }
+
+/* Font Weights */
+.font-normal { font-weight: var(--font-weight-normal); }
+.font-medium { font-weight: var(--font-weight-medium); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+.font-bold { font-weight: var(--font-weight-bold); }
+
+/* Display */
+.hidden { display: none !important; }
+.block { display: block; }
+.inline-block { display: inline-block; }
+.flex { display: flex; }
+.inline-flex { display: inline-flex; }
+.grid { display: grid; }
+
+/* Flexbox */
+.flex-row { flex-direction: row; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.items-end { align-items: flex-end; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.justify-end { justify-content: flex-end; }
+.flex-wrap { flex-wrap: wrap; }
+.gap-2 { gap: var(--space-2); }
+.gap-3 { gap: var(--space-3); }
+.gap-4 { gap: var(--space-4); }
+
+/* Margin */
+.m-0 { margin: 0; }
+.mt-2 { margin-top: var(--space-2); }
+.mt-4 { margin-top: var(--space-4); }
+.mb-2 { margin-bottom: var(--space-2); }
+.mb-4 { margin-bottom: var(--space-4); }
+.mx-auto { margin-left: auto; margin-right: auto; }
+
+/* Padding */
+.p-0 { padding: 0; }
+.p-2 { padding: var(--space-2); }
+.p-4 { padding: var(--space-4); }
+.p-6 { padding: var(--space-6); }
+
+/* Width */
+.w-full { width: 100%; }
+.max-w-sm { max-width: 384px; }
+.max-w-md { max-width: 448px; }
+.max-w-lg { max-width: 512px; }
+.max-w-xl { max-width: 576px; }
+
+/* Border Radius */
+.rounded { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-xl { border-radius: var(--radius-xl); }
+.rounded-full { border-radius: var(--radius-full); }
+
+/* Shadows */
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+
+
+/* ==========================================================================
+   10. Responsive Breakpoints
+   ========================================================================== */
+
+/* Mobile First Breakpoints */
+/* sm: 640px, md: 768px, lg: 1024px, xl: 1280px */
+
+@media (max-width: 640px) {
+    :root {
+        --font-size-base: 0.9375rem;  /* 15px */
+        --font-size-lg: 1rem;
+        --font-size-xl: 1.125rem;
+        --font-size-2xl: 1.25rem;
+    }
+
+    .modal {
+        padding: var(--space-5);
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --space-4: 12px;
+        --space-6: 20px;
+        --space-8: 28px;
+    }
+}
+
+
+/* ==========================================================================
+   11. Print Styles
+   ========================================================================== */
+
+@media print {
+    *,
+    *::before,
+    *::after {
+        background: transparent !important;
+        color: #000 !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]::after {
+        content: " (" attr(href) ")";
+    }
+
+    .btn,
+    .modal-overlay,
+    .skip-link {
+        display: none !important;
+    }
+}

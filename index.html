@@ -6,7 +6,51 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>心血管照護教學資源中心</title>
+    <title>心血管照護教學資源中心 | Cardiovascular Care Education Hub</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="心血管照護教學資源中心 - 提供導管室、病房、加護病房照護教學資源，含互動式計算工具、臨床指引、病人衛教材料。Cardiovascular care education resources for healthcare professionals.">
+    <meta name="keywords" content="心血管, 心臟科, 教學, 護理, 導管室, CCU, ICU, PCI, 心衰竭, 心房顫動, cardiovascular, cardiology, education, nursing">
+    <meta name="author" content="心血管照護教學資源中心">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://drake1128.github.io/saq-questionnaire/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://drake1128.github.io/saq-questionnaire/">
+    <meta property="og:title" content="心血管照護教學資源中心 | Cardiovascular Care Education Hub">
+    <meta property="og:description" content="專業心血管照護教學資源平台，提供導管室、病房、ICU 教學內容，含互動式計算工具與臨床指引。">
+    <meta property="og:image" content="https://drake1128.github.io/saq-questionnaire/og-image.png">
+    <meta property="og:locale" content="zh_TW">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://drake1128.github.io/saq-questionnaire/">
+    <meta name="twitter:title" content="心血管照護教學資源中心">
+    <meta name="twitter:description" content="專業心血管照護教學資源平台，提供導管室、病房、ICU 教學內容。">
+    <meta name="twitter:image" content="https://drake1128.github.io/saq-questionnaire/og-image.png">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "EducationalOrganization",
+        "name": "心血管照護教學資源中心",
+        "alternateName": "Cardiovascular Care Education Hub",
+        "url": "https://drake1128.github.io/saq-questionnaire/",
+        "description": "心血管照護教學資源平台，提供醫護人員與病人專業教學內容",
+        "knowsAbout": ["Cardiology", "Cardiovascular Care", "Nursing Education", "Patient Education"]
+    }
+    </script>
+
+    <!-- Performance: Preconnect to external domains -->
+    <link rel="preconnect" href="https://api.qrserver.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Performance: DNS Prefetch -->
+    <link rel="dns-prefetch" href="https://social-plugins.line.me">
+
     <style>
         * {
             margin: 0;
@@ -540,20 +584,68 @@
                 font-size: 1.1rem;
             }
         }
+
+        /* Accessibility: Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--dark);
+            color: white;
+            padding: 8px 16px;
+            z-index: 9999;
+            text-decoration: none;
+            border-radius: 0 0 8px 0;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Accessibility: Visually Hidden (for screen readers) */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Accessibility: Focus Styles */
+        *:focus-visible {
+            outline: 3px solid var(--secondary);
+            outline-offset: 2px;
+        }
+
+        .app-card:focus-visible,
+        .quick-btn:focus-visible,
+        .featured-link:focus-visible {
+            outline: 3px solid var(--secondary);
+            outline-offset: 4px;
+        }
     </style>
 </head>
 <body>
+    <!-- Accessibility: Skip Link -->
+    <a href="#main-content" class="skip-link">跳至主要內容</a>
+
     <div class="container">
         <!-- Header -->
-        <header class="header">
-            <div class="header-icon">❤️</div>
+        <header class="header" role="banner">
+            <div class="header-icon" aria-hidden="true">❤️</div>
             <h1>心血管照護教學資源中心</h1>
             <p>Cardiovascular Care Education Hub</p>
         </header>
-        
+
         <!-- Search -->
-        <div class="search-container">
-            <input type="text" class="search-box" placeholder="🔍 搜尋教學資源..." id="searchInput" onkeyup="filterApps()">
+        <div class="search-container" role="search">
+            <label for="searchInput" class="visually-hidden">搜尋教學資源</label>
+            <input type="text" class="search-box" placeholder="🔍 搜尋教學資源..." id="searchInput" onkeyup="filterApps()" aria-label="搜尋教學資源">
         </div>
         
         <!-- Featured: Reading Library -->
@@ -569,14 +661,14 @@
         </div>
         
         <!-- Quick Filters -->
-        <div class="quick-filters">
-            <button class="quick-btn active" onclick="filterByCategory('all')">📚 全部</button>
-            <button class="quick-btn" onclick="filterByCategory('staff')">👨‍⚕️ 醫護人員</button>
-            <button class="quick-btn" onclick="filterByCategory('patient')">👥 病人衛教</button>
-        </div>
-        
+        <nav class="quick-filters" role="navigation" aria-label="資源分類篩選" id="main-content">
+            <button class="quick-btn active" onclick="filterByCategory('all')" aria-pressed="true">📚 全部</button>
+            <button class="quick-btn" onclick="filterByCategory('staff')" aria-pressed="false">👨‍⚕️ 醫護人員</button>
+            <button class="quick-btn" onclick="filterByCategory('patient')" aria-pressed="false">👥 病人衛教</button>
+        </nav>
+
         <!-- Stats -->
-        <div class="stats-bar">
+        <div class="stats-bar" aria-live="polite">
             <div class="stat-item">
                 <span class="stat-number" id="totalApps">23</span> 個教學資源
             </div>
@@ -584,12 +676,14 @@
                 持續更新中 🔄
             </div>
         </div>
-        
+
+        <!-- Main Content Area -->
+        <main role="main" aria-label="教學資源列表">
         <!-- Category: 導管室 Cath Lab -->
-        <section class="category" data-category="staff">
+        <section class="category" data-category="staff" aria-labelledby="cath-lab-title">
             <div class="category-header">
-                <span class="category-icon">🏥</span>
-                <span class="category-title">導管室教學 Cath Lab</span>
+                <span class="category-icon" aria-hidden="true">🏥</span>
+                <span class="category-title" id="cath-lab-title">導管室教學 Cath Lab</span>
                 <span class="category-count">4</span>
             </div>
             <div class="app-grid">
@@ -1063,36 +1157,37 @@
                 </a>
             </div>
         </section>
-        
+        </main>
+
         <!-- Footer -->
-        <footer class="footer">
-            <p>❤️ 心血管照護教學資源中心</p>
+        <footer class="footer" role="contentinfo">
+            <p><span aria-hidden="true">❤️</span> 心血管照護教學資源中心</p>
             <p>持續更新中 · 歡迎提供建議</p>
             <p style="margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">
                 參考資料：TSOC Guidelines · ACC/AHA Guidelines · ESC Guidelines
             </p>
             <div class="footer-links">
-                <a href="#" onclick="openShareModal(); return false;">📤 分享網站</a>
-                <a href="#" onclick="scrollToTop()">⬆️ 回到頂部</a>
+                <a href="#" onclick="openShareModal(); return false;" aria-label="分享網站">📤 分享網站</a>
+                <a href="#" onclick="scrollToTop()" aria-label="回到頁面頂部">⬆️ 回到頂部</a>
             </div>
         </footer>
     </div>
 
     <!-- Share Modal -->
-    <div class="share-modal-overlay" id="shareModal" onclick="closeShareModal(event)">
+    <div class="share-modal-overlay" id="shareModal" onclick="closeShareModal(event)" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
         <div class="share-modal" onclick="event.stopPropagation()">
-            <button class="share-modal-close" onclick="closeShareModal()">&times;</button>
-            <h3>📤 分享本網站</h3>
+            <button class="share-modal-close" onclick="closeShareModal()" aria-label="關閉分享視窗">&times;</button>
+            <h3 id="share-modal-title"><span aria-hidden="true">📤</span> 分享本網站</h3>
             <div class="qr-container">
-                <img id="qrcode" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://drake1128.github.io/saq-questionnaire" alt="QR Code" width="180" height="180">
+                <img id="qrcode" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://drake1128.github.io/saq-questionnaire" alt="心血管照護教學資源中心網站 QR Code" width="180" height="180" loading="lazy">
                 <p class="qr-hint">掃描 QR Code 分享網站</p>
             </div>
             <div class="share-options">
-                <a href="mailto:?subject=%E5%BF%83%E8%A1%80%E7%AE%A1%E7%85%A7%E8%AD%B7%E6%95%99%E5%AD%B8%E8%B3%87%E6%BA%90%E4%B8%AD%E5%BF%83%20-%20%E6%8E%A8%E8%96%A6%E5%88%86%E4%BA%AB&body=%E6%8E%A8%E8%96%A6%E6%82%A8%E4%B8%80%E5%80%8B%E5%84%AA%E8%B3%AA%E7%9A%84%E5%BF%83%E8%A1%80%E7%AE%A1%E7%85%A7%E8%AD%B7%E6%95%99%E5%AD%B8%E8%B3%87%E6%BA%90%E7%B6%B2%E7%AB%99%EF%BC%9A%0A%0Ahttps://drake1128.github.io/saq-questionnaire" class="share-option email">
-                    📧 Email 分享
+                <a href="mailto:?subject=%E5%BF%83%E8%A1%80%E7%AE%A1%E7%85%A7%E8%AD%B7%E6%95%99%E5%AD%B8%E8%B3%87%E6%BA%90%E4%B8%AD%E5%BF%83%20-%20%E6%8E%A8%E8%96%A6%E5%88%86%E4%BA%AB&body=%E6%8E%A8%E8%96%A6%E6%82%A8%E4%B8%80%E5%80%8B%E5%84%AA%E8%B3%AA%E7%9A%84%E5%BF%83%E8%A1%80%E7%AE%A1%E7%85%A7%E8%AD%B7%E6%95%99%E5%AD%B8%E8%B3%87%E6%BA%90%E7%B6%B2%E7%AB%99%EF%BC%9A%0A%0Ahttps://drake1128.github.io/saq-questionnaire" class="share-option email" aria-label="透過 Email 分享網站">
+                    <span aria-hidden="true">📧</span> Email 分享
                 </a>
-                <a href="https://social-plugins.line.me/lineit/share?url=https://drake1128.github.io/saq-questionnaire" target="_blank" class="share-option line">
-                    💬 LINE 分享
+                <a href="https://social-plugins.line.me/lineit/share?url=https://drake1128.github.io/saq-questionnaire" target="_blank" rel="noopener noreferrer" class="share-option line" aria-label="透過 LINE 分享網站">
+                    <span aria-hidden="true">💬</span> LINE 分享
                 </a>
             </div>
         </div>
