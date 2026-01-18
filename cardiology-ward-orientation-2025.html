@@ -307,6 +307,283 @@
             ]
         };
 
+        // Adult Chest Pain Protocol (成人胸痛預立醫療流程)
+        const chestPainProtocol = {
+            fiveSymptoms: [
+                { symptom: '胸悶/胸痛', icon: '💔' },
+                { symptom: '喘 (Dyspnea)', icon: '😮‍💨' },
+                { symptom: '上腹不舒服', icon: '🤢' },
+                { symptom: '昏厥 (Syncope)', icon: '😵' },
+                { symptom: '血循不穩定', icon: '📉' },
+            ],
+            unstableCriteria: [
+                'SBP < 90 mmHg',
+                'SpO2 < 90%',
+                '意識改變 (GCS下降)',
+                '持續胸痛不緩解',
+                '心律不整 (VT/VF)',
+            ],
+            initialManagement: [
+                { step: 1, action: '12-lead ECG (到院10分鐘內完成)' },
+                { step: 2, action: '建立靜脈管路、抽血 (Troponin T, CBC, BCS)' },
+                { step: 3, action: 'Aspirin 300mg PO (若無禁忌)' },
+                { step: 4, action: 'Nitroglycerin 0.6mg SL PRN (若SBP>90)' },
+                { step: 5, action: 'Morphine 2-4mg IV PRN (疼痛控制)' },
+                { step: 6, action: 'Oxygen 若 SpO2 < 94%' },
+            ],
+            troponinTracking: [
+                { time: '0 hr', action: '初次抽血 Troponin T' },
+                { time: '1 hr', action: '追蹤 Troponin T (hs-TnT)' },
+                { time: '3 hr', action: '再次追蹤 Troponin T' },
+            ],
+            stemiCriteria: [
+                'ST elevation ≥1mm in 2 contiguous leads',
+                '新發生或推定新發生的 LBBB',
+                'Posterior MI: V1-V3 ST depression with tall R waves',
+            ],
+            doorToBalloon: '目標: 90分鐘內 (Primary PCI)',
+        };
+
+        // Common Cardiac Symptoms (常見心臟症狀)
+        const cardiacSymptoms = {
+            chiefComplaints: [
+                { symptom: '胸痛/胸悶 (Chest pain)', ddx: 'ACS, Angina, PE, Aortic dissection, GERD, MSK pain' },
+                { symptom: '呼吸困難 (Dyspnea)', ddx: 'Heart failure, COPD, Pneumonia, PE, Anemia' },
+                { symptom: '心悸 (Palpitation)', ddx: 'AF, Aflutter, SVT, VT, PVC, Anxiety' },
+                { symptom: '昏厥 (Syncope)', ddx: 'Arrhythmia, Vasovagal, Orthostatic, Aortic stenosis' },
+                { symptom: '水腫 (Edema)', ddx: 'Heart failure, CKD, Liver disease, DVT, Venous insufficiency' },
+                { symptom: '疲倦 (Fatigue)', ddx: 'Heart failure, Anemia, Hypothyroidism, Depression' },
+            ],
+            commonDiagnoses: [
+                { abbr: 'IHD/CAD', full: 'Ischemic Heart Disease / Coronary Artery Disease' },
+                { abbr: 'ACS', full: 'Acute Coronary Syndrome (STEMI, NSTEMI, UA)' },
+                { abbr: 'HF/CHF', full: 'Heart Failure / Congestive Heart Failure' },
+                { abbr: 'AF', full: 'Atrial Fibrillation' },
+                { abbr: 'Aflutter', full: 'Atrial Flutter' },
+                { abbr: 'VT', full: 'Ventricular Tachycardia' },
+                { abbr: 'SSS', full: 'Sick Sinus Syndrome' },
+                { abbr: 'AVB', full: 'Atrioventricular Block (1st, 2nd, 3rd degree)' },
+                { abbr: 'VHD', full: 'Valvular Heart Disease (AS, AR, MS, MR, TR)' },
+                { abbr: 'IE', full: 'Infective Endocarditis' },
+                { abbr: 'PAOD', full: 'Peripheral Arterial Occlusive Disease' },
+                { abbr: 'DVT/PE', full: 'Deep Vein Thrombosis / Pulmonary Embolism' },
+            ]
+        };
+
+        // Clinical Assessment Scores (臨床評估分數)
+        const clinicalScores = {
+            nyha: [
+                { class: 'I', description: '無活動限制，一般體力活動不會引起過度疲勞、心悸或呼吸困難' },
+                { class: 'II', description: '輕度活動限制，休息時舒適，一般體力活動會引起疲勞、心悸或呼吸困難' },
+                { class: 'III', description: '明顯活動限制，休息時舒適，輕微活動即會引起症狀' },
+                { class: 'IV', description: '無法進行任何體力活動而不感到不適，休息時也可能有症狀' },
+            ],
+            killip: [
+                { class: 'I', description: '無心衰竭徵象', mortality: '~6%' },
+                { class: 'II', description: '輕度心衰竭 (肺部囉音 < 50%、S3、JVD)', mortality: '~17%' },
+                { class: 'III', description: '肺水腫 (肺部囉音 > 50%)', mortality: '~38%' },
+                { class: 'IV', description: '心因性休克', mortality: '~81%' },
+            ],
+            timiStemi: [
+                { criteria: '年齡 65-74 歲 (2分) 或 ≥75 歲 (3分)', points: '2-3' },
+                { criteria: 'DM 或 HTN 或 Angina', points: '1' },
+                { criteria: 'SBP < 100 mmHg', points: '3' },
+                { criteria: 'HR > 100 bpm', points: '2' },
+                { criteria: 'Killip II-IV', points: '2' },
+                { criteria: '體重 < 67 kg', points: '1' },
+                { criteria: '前壁 MI 或 LBBB', points: '1' },
+                { criteria: '發作至治療時間 > 4 hr', points: '1' },
+            ],
+            timiNstemi: [
+                { criteria: '年齡 ≥ 65 歲', points: '1' },
+                { criteria: '≥ 3 個 CAD 危險因子', points: '1' },
+                { criteria: '已知 CAD (stenosis ≥ 50%)', points: '1' },
+                { criteria: '使用 Aspirin 於過去 7 天內', points: '1' },
+                { criteria: '24 小時內 ≥ 2 次心絞痛', points: '1' },
+                { criteria: 'ST 變化 ≥ 0.5mm', points: '1' },
+                { criteria: '心肌酵素上升', points: '1' },
+            ],
+            hasbled: [
+                { letter: 'H', criteria: 'Hypertension (未控制，SBP>160)', points: '1' },
+                { letter: 'A', criteria: 'Abnormal renal/liver function', points: '1-2' },
+                { letter: 'S', criteria: 'Stroke 病史', points: '1' },
+                { letter: 'B', criteria: 'Bleeding 病史或傾向', points: '1' },
+                { letter: 'L', criteria: 'Labile INR (TTR<60%)', points: '1' },
+                { letter: 'E', criteria: 'Elderly (>65歲)', points: '1' },
+                { letter: 'D', criteria: 'Drugs or alcohol', points: '1-2' },
+            ]
+        };
+
+        // Enhanced Medications Data (藥物資料)
+        const medicationsData = {
+            antihypertensives: {
+                betaBlockers: [
+                    { name: 'Concor (Bisoprolol)', type: 'β1 selective', dose: '2.5-10mg QD', notes: 'HFrEF首選之一' },
+                    { name: 'BetalocZok (Metoprolol XL)', type: 'β1 selective', dose: '25-200mg QD', notes: 'Post-MI' },
+                    { name: 'Dilatrend (Carvedilol)', type: 'α1+β non-selective', dose: '3.125-25mg BID', notes: 'HFrEF首選之一' },
+                    { name: 'Inderal (Propranolol)', type: 'Non-selective', dose: '10-40mg TID', notes: '心律控制' },
+                ],
+                aceiArb: [
+                    { name: 'Tritace (Ramipril)', type: 'ACEi', dose: '1.25-10mg QD', notes: 'Post-MI, HF' },
+                    { name: 'Renitec (Enalapril)', type: 'ACEi', dose: '2.5-20mg BID', notes: 'HF' },
+                    { name: 'Cozaar (Losartan)', type: 'ARB', dose: '25-100mg QD', notes: 'ACEi intolerance' },
+                    { name: 'Diovan (Valsartan)', type: 'ARB', dose: '80-320mg QD', notes: 'HF, Post-MI' },
+                    { name: 'Blopress (Candesartan)', type: 'ARB', dose: '4-32mg QD', notes: 'HF' },
+                ],
+                ccb: [
+                    { name: 'Norvasc (Amlodipine)', type: 'DHP', dose: '2.5-10mg QD', notes: '周邊水腫' },
+                    { name: 'Adalat OROS (Nifedipine)', type: 'DHP', dose: '30-90mg QD', notes: '高血壓' },
+                    { name: 'Herbesser (Diltiazem)', type: 'Non-DHP', dose: '30-90mg TID', notes: 'Rate control, Angina' },
+                    { name: 'Isoptin (Verapamil)', type: 'Non-DHP', dose: '40-120mg TID', notes: 'Rate control, PSVT' },
+                ],
+            },
+            diuretics: [
+                { name: 'Lasix (Furosemide)', type: 'Loop', dose: 'PO: 20-80mg, IV: 20-200mg', notes: '急性肺水腫首選' },
+                { name: 'Burinex (Bumetanide)', type: 'Loop', dose: '0.5-2mg', notes: '效力為Lasix 40倍' },
+                { name: 'Aldactone (Spironolactone)', type: 'K-sparing (MRA)', dose: '12.5-50mg QD', notes: 'HFrEF EF<35%' },
+                { name: 'Inspra (Eplerenone)', type: 'K-sparing (MRA)', dose: '25-50mg QD', notes: '較少男性女乳症' },
+                { name: 'Fluitran (Trichlormethiazide)', type: 'Thiazide', dose: '1-2mg QD', notes: '高血壓' },
+            ],
+            antiplatelet: [
+                { name: 'Aspirin', dose: 'Loading 300mg, Maintenance 100mg QD', notes: 'ACS必用' },
+                { name: 'Plavix (Clopidogrel)', dose: 'Loading 300-600mg, Maintenance 75mg QD', notes: 'P2Y12 inhibitor' },
+                { name: 'Brilinta (Ticagrelor)', dose: 'Loading 180mg, Maintenance 90mg BID', notes: '效力強，可逆性' },
+                { name: 'Efient (Prasugrel)', dose: 'Loading 60mg, Maintenance 10mg QD', notes: '出血風險較高' },
+            ],
+            anticoagulants: [
+                { name: 'Xarelto (Rivaroxaban)', type: 'NOAC (Xa)', dose: 'AF: 20mg QD (15mg if CrCl 15-50)', notes: '食物一起服用' },
+                { name: 'Eliquis (Apixaban)', type: 'NOAC (Xa)', dose: 'AF: 5mg BID (2.5mg if criteria met)', notes: '腎功能不佳首選' },
+                { name: 'Pradaxa (Dabigatran)', type: 'NOAC (IIa)', dose: 'AF: 150mg BID (110mg if >80歲)', notes: '有解藥Idarucizumab' },
+                { name: 'Warfarin', type: 'VKA', dose: 'Titrate to INR 2-3', notes: '機械瓣膜、嚴重MS' },
+            ]
+        };
+
+        // On-Call Emergency Protocols (值班急症處理)
+        const onCallProtocols = {
+            cardiacArrest: {
+                title: 'Cardiac Arrest (ACLS)',
+                steps: [
+                    '呼叫幫手、啟動急救系統 (Call 999)',
+                    '確認無反應、無呼吸或喘息',
+                    '開始CPR (30:2)，品質: 深度5-6cm, 速率100-120/min',
+                    '取得AED/Defibrillator',
+                    'Shockable (VF/pVT): 電擊 + CPR 2分鐘',
+                    'Non-shockable (Asystole/PEA): CPR + 找可逆原因 (4H4T)',
+                    'Epinephrine 1mg IV q3-5min',
+                    'Amiodarone 300mg IV (VF/pVT持續)',
+                ],
+                fourHfourT: [
+                    'Hypoxia (低血氧)', 'Hypovolemia (低血容)', 'Hypo/Hyperkalemia', 'Hypothermia',
+                    'Tension pneumothorax', 'Tamponade', 'Toxins', 'Thrombosis (PE/MI)',
+                ]
+            },
+            acuteChestPain: {
+                title: 'Acute Chest Pain',
+                steps: [
+                    '12-lead ECG STAT',
+                    'Vital signs, SpO2 monitoring',
+                    'IV access + 抽血 (Troponin, CBC, BCS, Coag)',
+                    '若STEMI: 啟動Cath lab (Primary PCI)',
+                    '若NSTEMI/UA: Risk stratification (TIMI score)',
+                    'Aspirin 300mg + P2Y12 inhibitor loading (依醫囑)',
+                    'Anticoagulation (Heparin or LMWH)',
+                    '若持續胸痛: NTG SL, Morphine PRN',
+                ]
+            },
+            acuteDyspnea: {
+                title: 'Acute Dyspnea / Pulmonary Edema',
+                steps: [
+                    '坐姿、給氧 (目標SpO2 > 94%)',
+                    'Furosemide 40-80mg IV',
+                    'NTG 0.6mg SL 或 NTG drip (若SBP > 100)',
+                    'Morphine 2-4mg IV (緩解焦慮、降前負荷)',
+                    '若無效考慮: NIPPV (BiPAP)',
+                    '找原因: ACS? 心律不整? 感染? 未服藥?',
+                    '嚴重時: ICU / 插管',
+                ]
+            },
+            bradycardia: {
+                title: 'Symptomatic Bradycardia',
+                steps: [
+                    '確認有症狀 (低血壓、意識改變、胸痛)',
+                    'Atropine 0.5-1mg IV (可重複，最大3mg)',
+                    '若Atropine無效: TCP (經皮心律調節)',
+                    'Dopamine 5-20 mcg/kg/min 或 Epinephrine 2-10 mcg/min',
+                    '準備暫時性心律調節器 (TVP)',
+                    '找原因: 藥物? 電解質? MI? 甲狀腺?',
+                ]
+            },
+            tachycardia: {
+                title: 'SVT / Tachycardia',
+                steps: [
+                    '評估穩定性 (BP, 意識, 胸痛)',
+                    '若不穩定: Synchronized cardioversion',
+                    '若穩定 SVT: Vagal maneuver (Valsalva, carotid massage)',
+                    'Adenosine 6mg rapid IV push → 12mg → 12mg',
+                    '若無效: Diltiazem IV 或 Beta-blocker',
+                    'AF with RVR: Rate control (Diltiazem, Metoprolol)',
+                    '寬QRS: 考慮VT，準備電擊，Amiodarone',
+                ]
+            },
+            hypotension: {
+                title: 'Hypotension / Shock',
+                steps: [
+                    '評估休克類型 (心因性、低血容、敗血性)',
+                    'IV fluid challenge (若無肺水腫徵象)',
+                    '心因性休克: Inotrope (Dopamine, Dobutamine)',
+                    '若MI: 緊急心導管評估',
+                    '監測CVP、尿量',
+                    '考慮 IABP / ECMO (依情況)',
+                ]
+            },
+            afRvr: {
+                title: 'AF with RVR',
+                steps: [
+                    '評估血行動力學穩定性',
+                    '若不穩定: Synchronized cardioversion 120-200J',
+                    '若穩定 - Rate control:',
+                    '  - Diltiazem 0.25mg/kg IV over 2min, then drip',
+                    '  - Metoprolol 5mg IV q5min x3',
+                    '  - Digoxin 0.5mg IV (HFrEF考慮)',
+                    '找誘發因子: 感染、貧血、甲亢、電解質',
+                    '考慮Anticoagulation (評估CHA2DS2-VASc)',
+                ]
+            }
+        };
+
+        // CAG Routine (心導管日常照護)
+        const cagRoutine = {
+            preCath: [
+                '確認同意書已簽署並上傳',
+                '確認Lab data: CBC, BCS, PT/aPTT, Cr/eGFR',
+                'NPO 至少6小時 (急診例外)',
+                '確認過敏史 (造影劑、Aspirin、Heparin)',
+                '確認穿刺部位 (Radial vs Femoral)',
+                '給予 DAPT loading (若PCI planned)',
+                '建立 IV access',
+                '移除飾品、假牙',
+            ],
+            postCath: [
+                '生命徵象監測 q15min x4 → q30min x2 → q1h x4',
+                '穿刺部位觀察: 血腫、滲血、瘀青',
+                '遠端脈搏、6P評估',
+                '股動脈: 平躺4-6hr，Sand bag 2hr',
+                '橈動脈: TR Band 減壓 (q1-2hr)',
+                '鼓勵多喝水 (促進造影劑排除)',
+                '監測尿量 (預防 CIN)',
+                '追蹤 post-cath CBC, Cr (隔日)',
+            ],
+            complications: [
+                { complication: '穿刺部位出血/血腫', management: '加壓止血，評估是否需手術' },
+                { complication: '假性動脈瘤', management: '超音波導引壓迫或Thrombin注射' },
+                { complication: '動靜脈廔管', management: '血管外科評估' },
+                { complication: '造影劑腎病變 (CIN)', management: '水分補充，避免腎毒性藥物' },
+                { complication: '造影劑過敏', management: 'Steroid + Antihistamine，下次預防' },
+                { complication: 'Stroke', management: '神經學評估，影像檢查' },
+                { complication: '冠狀動脈穿孔', management: '緊急處理，可能需pericardiocentesis' },
+            ]
+        };
+
         // Components
         const Accordion = ({ title, children, defaultOpen = false }) => {
             const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -374,10 +651,27 @@
                     </div>
                 </div>
 
+                <div className="glass rounded-xl p-3 mb-4">
+                    <h3 className="text-red-400 font-bold mb-2 text-sm">🚨 急診必看</h3>
+                    <div className="grid grid-cols-2 gap-2">
+                        <button onClick={() => setPage('chestpain')} className="bg-red-500/20 rounded-lg p-3 card-hover text-left">
+                            <div className="text-lg">💔</div>
+                            <div className="text-xs text-red-300">胸痛流程</div>
+                        </button>
+                        <button onClick={() => setPage('oncall')} className="bg-red-500/20 rounded-lg p-3 card-hover text-left">
+                            <div className="text-lg">🚨</div>
+                            <div className="text-xs text-red-300">值班急症</div>
+                        </button>
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-2 gap-3">
                     {[
                         { icon: '📝', title: '同意書指引', page: 'consent' },
                         { icon: '💉', title: '導管室相關', page: 'cath' },
+                        { icon: '🩺', title: '症狀與診斷', page: 'symptoms' },
+                        { icon: '💊', title: '常用藥物', page: 'medications' },
+                        { icon: '📊', title: '臨床評分', page: 'scores' },
                         { icon: '🫀', title: '特殊術式', page: 'procedures' },
                         { icon: '👥', title: '工作規範', page: 'rules' },
                         { icon: '📋', title: '病歷書寫', page: 'records' },
@@ -794,6 +1088,426 @@
             </div>
         );
 
+        // NEW PAGE: Chest Pain Protocol
+        const ChestPainPage = () => (
+            <div className="p-4">
+                <h2 className="text-xl font-bold text-white mb-4">🚨 成人胸痛流程</h2>
+
+                <div className="glass rounded-xl p-4 mb-4">
+                    <h3 className="text-red-400 font-bold mb-3">⚠️ 五大症狀 - 須做 ECG</h3>
+                    <div className="grid grid-cols-2 gap-2">
+                        {chestPainProtocol.fiveSymptoms.map((item, i) => (
+                            <div key={i} className="flex items-center gap-2 bg-red-500/20 p-3 rounded-lg">
+                                <span className="text-2xl">{item.icon}</span>
+                                <span className="text-white font-medium text-sm">{item.symptom}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <Accordion title="不穩定徵象" defaultOpen={true}>
+                    <ul className="space-y-2">
+                        {chestPainProtocol.unstableCriteria.map((item, i) => (
+                            <li key={i} className="text-red-300 text-sm flex items-center gap-2">
+                                <span className="text-red-500">⚠</span>
+                                {item}
+                            </li>
+                        ))}
+                    </ul>
+                </Accordion>
+
+                <Accordion title="初始處置 (MONA)">
+                    <div className="space-y-3">
+                        {chestPainProtocol.initialManagement.map(item => (
+                            <div key={item.step} className="flex items-start gap-3">
+                                <span className="w-8 h-8 flex items-center justify-center bg-cyan-500/30 text-cyan-300 rounded-full font-bold text-sm">
+                                    {item.step}
+                                </span>
+                                <span className="text-gray-300 text-sm flex-1">{item.action}</span>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="Troponin 追蹤">
+                    <div className="space-y-2">
+                        {chestPainProtocol.troponinTracking.map((item, i) => (
+                            <div key={i} className="flex items-center gap-3 p-2 glass rounded-lg">
+                                <span className="text-yellow-400 font-bold min-w-[60px]">{item.time}</span>
+                                <span className="text-gray-300 text-sm">{item.action}</span>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="STEMI 診斷標準">
+                    <ul className="space-y-2">
+                        {chestPainProtocol.stemiCriteria.map((item, i) => (
+                            <li key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                <span className="text-cyan-400">•</span>
+                                {item}
+                            </li>
+                        ))}
+                    </ul>
+                    <div className="mt-3 p-3 bg-red-500/20 rounded-lg">
+                        <span className="text-red-300 font-bold">🎯 {chestPainProtocol.doorToBalloon}</span>
+                    </div>
+                </Accordion>
+            </div>
+        );
+
+        // NEW PAGE: Common Symptoms & Diagnoses
+        const SymptomsPage = () => (
+            <div className="p-4">
+                <h2 className="text-xl font-bold text-white mb-4">🩺 常見症狀與診斷</h2>
+
+                <Accordion title="主訴與鑑別診斷" defaultOpen={true}>
+                    <div className="space-y-3">
+                        {cardiacSymptoms.chiefComplaints.map((item, i) => (
+                            <div key={i} className="glass p-3 rounded-lg">
+                                <div className="text-cyan-400 font-medium mb-1">{item.symptom}</div>
+                                <div className="text-gray-400 text-xs">DDx: {item.ddx}</div>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="常見心臟診斷縮寫">
+                    <div className="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th className="text-cyan-400">縮寫</th>
+                                    <th className="text-cyan-400">全名</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {cardiacSymptoms.commonDiagnoses.map((item, i) => (
+                                    <tr key={i}>
+                                        <td className="text-white font-medium">{item.abbr}</td>
+                                        <td className="text-gray-300 text-sm">{item.full}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </Accordion>
+            </div>
+        );
+
+        // NEW PAGE: Clinical Scores
+        const ClinicalScoresPage = () => (
+            <div className="p-4">
+                <h2 className="text-xl font-bold text-white mb-4">📊 臨床評估分數</h2>
+
+                <Accordion title="NYHA 心衰竭功能分級" defaultOpen={true}>
+                    <div className="space-y-2">
+                        {clinicalScores.nyha.map((item, i) => (
+                            <div key={i} className="flex items-start gap-3 p-2 glass rounded-lg">
+                                <span className="w-10 h-10 flex items-center justify-center bg-purple-500/30 text-purple-300 rounded-full font-bold">
+                                    {item.class}
+                                </span>
+                                <span className="text-gray-300 text-sm flex-1">{item.description}</span>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="Killip Classification (AMI)">
+                    <div className="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th className="text-cyan-400">Class</th>
+                                    <th className="text-cyan-400">描述</th>
+                                    <th className="text-cyan-400">死亡率</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {clinicalScores.killip.map((item, i) => (
+                                    <tr key={i}>
+                                        <td className="text-white font-bold">{item.class}</td>
+                                        <td className="text-gray-300 text-sm">{item.description}</td>
+                                        <td className="text-red-300">{item.mortality}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </Accordion>
+
+                <Accordion title="TIMI Score - STEMI">
+                    <div className="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th className="text-cyan-400">項目</th>
+                                    <th className="text-cyan-400">分數</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {clinicalScores.timiStemi.map((item, i) => (
+                                    <tr key={i}>
+                                        <td className="text-gray-300 text-sm">{item.criteria}</td>
+                                        <td className="text-yellow-400 font-bold">{item.points}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="mt-2 text-xs text-gray-400">總分0-14分，分數越高30天死亡率越高</div>
+                </Accordion>
+
+                <Accordion title="TIMI Score - NSTEMI/UA">
+                    <div className="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th className="text-cyan-400">項目</th>
+                                    <th className="text-cyan-400">分數</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {clinicalScores.timiNstemi.map((item, i) => (
+                                    <tr key={i}>
+                                        <td className="text-gray-300 text-sm">{item.criteria}</td>
+                                        <td className="text-yellow-400 font-bold">{item.points}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="mt-2 p-2 bg-yellow-500/20 rounded-lg">
+                        <span className="text-yellow-300 text-xs">0-2: 低風險 | 3-4: 中風險 | 5-7: 高風險 (建議早期侵入性治療)</span>
+                    </div>
+                </Accordion>
+
+                <Accordion title="HAS-BLED Score (出血風險)">
+                    <div className="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th className="text-cyan-400">字母</th>
+                                    <th className="text-cyan-400">項目</th>
+                                    <th className="text-cyan-400">分數</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {clinicalScores.hasbled.map((item, i) => (
+                                    <tr key={i}>
+                                        <td className="text-red-400 font-bold">{item.letter}</td>
+                                        <td className="text-gray-300 text-sm">{item.criteria}</td>
+                                        <td className="text-yellow-400">{item.points}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="mt-2 text-xs text-gray-400">≥3分: 高出血風險，需謹慎使用抗凝血劑</div>
+                </Accordion>
+            </div>
+        );
+
+        // NEW PAGE: Medications
+        const MedicationsPage = () => (
+            <div className="p-4">
+                <h2 className="text-xl font-bold text-white mb-4">💊 常用藥物</h2>
+
+                <Accordion title="Beta-Blockers (β阻斷劑)" defaultOpen={true}>
+                    <div className="space-y-2">
+                        {medicationsData.antihypertensives.betaBlockers.map((drug, i) => (
+                            <div key={i} className="glass p-3 rounded-lg">
+                                <div className="flex justify-between items-start mb-1">
+                                    <span className="text-cyan-400 font-medium">{drug.name}</span>
+                                    <span className="tag tag-optional">{drug.type}</span>
+                                </div>
+                                <div className="text-gray-300 text-sm">{drug.dose}</div>
+                                <div className="text-gray-500 text-xs mt-1">{drug.notes}</div>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="ACEi / ARB">
+                    <div className="space-y-2">
+                        {medicationsData.antihypertensives.aceiArb.map((drug, i) => (
+                            <div key={i} className="glass p-3 rounded-lg">
+                                <div className="flex justify-between items-start mb-1">
+                                    <span className="text-cyan-400 font-medium">{drug.name}</span>
+                                    <span className={`tag ${drug.type === 'ACEi' ? 'tag-required' : 'tag-important'}`}>{drug.type}</span>
+                                </div>
+                                <div className="text-gray-300 text-sm">{drug.dose}</div>
+                                <div className="text-gray-500 text-xs mt-1">{drug.notes}</div>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="CCB (鈣離子阻斷劑)">
+                    <div className="space-y-2">
+                        {medicationsData.antihypertensives.ccb.map((drug, i) => (
+                            <div key={i} className="glass p-3 rounded-lg">
+                                <div className="flex justify-between items-start mb-1">
+                                    <span className="text-cyan-400 font-medium">{drug.name}</span>
+                                    <span className="tag tag-optional">{drug.type}</span>
+                                </div>
+                                <div className="text-gray-300 text-sm">{drug.dose}</div>
+                                <div className="text-gray-500 text-xs mt-1">{drug.notes}</div>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="Diuretics (利尿劑)">
+                    <div className="space-y-2">
+                        {medicationsData.diuretics.map((drug, i) => (
+                            <div key={i} className="glass p-3 rounded-lg">
+                                <div className="flex justify-between items-start mb-1">
+                                    <span className="text-cyan-400 font-medium">{drug.name}</span>
+                                    <span className="tag tag-important">{drug.type}</span>
+                                </div>
+                                <div className="text-gray-300 text-sm">{drug.dose}</div>
+                                <div className="text-gray-500 text-xs mt-1">{drug.notes}</div>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="Antiplatelet (抗血小板藥)">
+                    <div className="space-y-2">
+                        {medicationsData.antiplatelet.map((drug, i) => (
+                            <div key={i} className="glass p-3 rounded-lg">
+                                <div className="text-cyan-400 font-medium mb-1">{drug.name}</div>
+                                <div className="text-gray-300 text-sm">{drug.dose}</div>
+                                <div className="text-gray-500 text-xs mt-1">{drug.notes}</div>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="Anticoagulants (抗凝血劑)">
+                    <div className="space-y-2">
+                        {medicationsData.anticoagulants.map((drug, i) => (
+                            <div key={i} className="glass p-3 rounded-lg">
+                                <div className="flex justify-between items-start mb-1">
+                                    <span className="text-cyan-400 font-medium">{drug.name}</span>
+                                    <span className="tag tag-required">{drug.type}</span>
+                                </div>
+                                <div className="text-gray-300 text-sm">{drug.dose}</div>
+                                <div className="text-gray-500 text-xs mt-1">{drug.notes}</div>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+            </div>
+        );
+
+        // NEW PAGE: On-Call Protocols
+        const OnCallPage = () => (
+            <div className="p-4">
+                <h2 className="text-xl font-bold text-white mb-4">🚨 值班急症處理</h2>
+
+                {Object.entries(onCallProtocols).map(([key, protocol]) => (
+                    <Accordion key={key} title={protocol.title} defaultOpen={key === 'cardiacArrest'}>
+                        <div className="space-y-2">
+                            {protocol.steps.map((step, i) => (
+                                <div key={i} className="flex items-start gap-3">
+                                    <span className="w-6 h-6 flex items-center justify-center bg-red-500/30 text-red-300 rounded-full font-bold text-xs">
+                                        {i + 1}
+                                    </span>
+                                    <span className="text-gray-300 text-sm flex-1">{step}</span>
+                                </div>
+                            ))}
+                            {protocol.fourHfourT && (
+                                <div className="mt-3 p-3 bg-yellow-500/20 rounded-lg">
+                                    <div className="text-yellow-400 font-medium text-sm mb-2">4H4T 可逆原因:</div>
+                                    <div className="grid grid-cols-2 gap-1">
+                                        {protocol.fourHfourT.map((item, i) => (
+                                            <div key={i} className="text-gray-300 text-xs">• {item}</div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </Accordion>
+                ))}
+
+                <div className="glass rounded-xl p-4 mt-4">
+                    <h3 className="text-red-400 font-bold mb-2">📞 緊急通報</h3>
+                    <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                            <span className="text-gray-400">院內急救</span>
+                            <span className="text-white font-bold">999</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-gray-400">STEMI Activation</span>
+                            <span className="text-white font-bold">導管室 5882</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-gray-400">ICU</span>
+                            <span className="text-white font-bold">5850</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+
+        // NEW PAGE: CAG Routine
+        const CAGRoutinePage = () => (
+            <div className="p-4">
+                <h2 className="text-xl font-bold text-white mb-4">💉 心導管照護流程</h2>
+
+                <Accordion title="術前準備 (Pre-Cath)" defaultOpen={true}>
+                    <div className="space-y-2">
+                        {cagRoutine.preCath.map((item, i) => (
+                            <div key={i} className="flex items-start gap-3">
+                                <span className="w-6 h-6 flex items-center justify-center bg-cyan-500/30 text-cyan-300 rounded-full font-bold text-xs">
+                                    {i + 1}
+                                </span>
+                                <span className="text-gray-300 text-sm flex-1">{item}</span>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="術後照護 (Post-Cath)">
+                    <div className="space-y-2">
+                        {cagRoutine.postCath.map((item, i) => (
+                            <div key={i} className="flex items-start gap-3">
+                                <span className="w-6 h-6 flex items-center justify-center bg-green-500/30 text-green-300 rounded-full font-bold text-xs">
+                                    {i + 1}
+                                </span>
+                                <span className="text-gray-300 text-sm flex-1">{item}</span>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="常見併發症處理">
+                    <div className="space-y-3">
+                        {cagRoutine.complications.map((item, i) => (
+                            <div key={i} className="glass p-3 rounded-lg">
+                                <div className="text-red-400 font-medium text-sm mb-1">{item.complication}</div>
+                                <div className="text-gray-300 text-xs">處理: {item.management}</div>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <div className="glass rounded-xl p-4 mt-4">
+                    <h3 className="text-cyan-400 font-medium mb-2">📋 6P 評估提醒</h3>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div className="text-gray-300">• Pain (疼痛)</div>
+                        <div className="text-gray-300">• Pallor (蒼白)</div>
+                        <div className="text-gray-300">• Pulselessness (無脈)</div>
+                        <div className="text-gray-300">• Paresthesia (感覺異常)</div>
+                        <div className="text-gray-300">• Paralysis (癱瘓)</div>
+                        <div className="text-gray-300">• Poikilothermia (體溫)</div>
+                    </div>
+                </div>
+            </div>
+        );
+
         // Main App
         const App = () => {
             const [page, setPage] = useState('home');
@@ -801,8 +1515,13 @@
 
             const navItems = [
                 { id: 'home', icon: <Icons.Home />, label: '首頁' },
+                { id: 'chestpain', icon: <Icons.Heart />, label: '胸痛流程' },
+                { id: 'oncall', icon: <Icons.Phone />, label: '值班急症' },
                 { id: 'consent', icon: <Icons.Document />, label: '同意書' },
                 { id: 'cath', icon: <Icons.Heart />, label: '導管室' },
+                { id: 'symptoms', icon: <Icons.Clipboard />, label: '症狀診斷' },
+                { id: 'medications', icon: <Icons.Document />, label: '常用藥物' },
+                { id: 'scores', icon: <Icons.Edit />, label: '臨床評分' },
                 { id: 'procedures', icon: <Icons.Clipboard />, label: '術式指引' },
                 { id: 'rules', icon: <Icons.Users />, label: '工作規範' },
                 { id: 'records', icon: <Icons.Edit />, label: '病歷書寫' },
@@ -822,6 +1541,12 @@
                     case 'teaching': return <TeachingPage />;
                     case 'discharge': return <DischargePage />;
                     case 'reference': return <ReferencePage />;
+                    case 'chestpain': return <ChestPainPage />;
+                    case 'symptoms': return <SymptomsPage />;
+                    case 'scores': return <ClinicalScoresPage />;
+                    case 'medications': return <MedicationsPage />;
+                    case 'oncall': return <OnCallPage />;
+                    case 'cagroutine': return <CAGRoutinePage />;
                     default: return <HomePage setPage={setPage} />;
                 }
             };
