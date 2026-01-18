@@ -1403,12 +1403,73 @@
                 <p class="qr-hint">掃描 QR Code 分享網站</p>
             </div>
             <div class="share-options">
-                <a href="mailto:?subject=%E5%BF%83%E8%A1%80%E7%AE%A1%E7%85%A7%E8%AD%B7%E6%95%99%E5%AD%B8%E8%B3%87%E6%BA%90%E4%B8%AD%E5%BF%83%20-%20%E6%8E%A8%E8%96%A6%E5%88%86%E4%BA%AB&body=%E6%8E%A8%E8%96%A6%E6%82%A8%E4%B8%80%E5%80%8B%E5%84%AA%E8%B3%AA%E7%9A%84%E5%BF%83%E8%A1%80%E7%AE%A1%E7%85%A7%E8%AD%B7%E6%95%99%E5%AD%B8%E8%B3%87%E6%BA%90%E7%B6%B2%E7%AB%99%EF%BC%9A%0A%0Ahttps://drake1128.github.io/saq-questionnaire" class="share-option email" aria-label="透過 Email 分享網站">
+                <a href="mailto:?subject=%E5%BF%83%E8%A1%80%E7%AE%A1%E7%85%A7%E8%AD%B7%E6%95%99%E5%AD%B8%E8%B3%87%E6%BA%90%E4%B8%AD%E5%BF%83%20-%20%E6%8E%A8%E8%96%A6%E5%88%86%E4%BA%AB&body=%E6%8E%A8%E8%96%A6%E6%82%A8%E4%B8%80%E5%80%8B%E5%84%AA%E8%B3%AA%E7%9A%84%E5%BF%83%E8%A1%80%E7%AE%A1%E7%85%A7%E8%AD%B7%E6%95%99%E5%AD%B8%E8%B3%87%E6%BA%90%E7%B6%B2%E7%AB%99%EF%BC%9A%0A%0Ahttps://drake1128.github.io/saq-questionnaire" class="share-option email" aria-label="透過 Email 分享網站" onclick="trackShareAction()">
                     <span aria-hidden="true">📧</span> Email 分享
                 </a>
-                <a href="https://social-plugins.line.me/lineit/share?url=https://drake1128.github.io/saq-questionnaire" target="_blank" rel="noopener noreferrer" class="share-option line" aria-label="透過 LINE 分享網站">
+                <a href="https://social-plugins.line.me/lineit/share?url=https://drake1128.github.io/saq-questionnaire" target="_blank" rel="noopener noreferrer" class="share-option line" aria-label="透過 LINE 分享網站" onclick="trackShareAction()">
                     <span aria-hidden="true">💬</span> LINE 分享
                 </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Achievements Modal -->
+    <div class="achievements-modal-overlay" id="achievementsModal" onclick="closeAchievementsModal(event)" role="dialog" aria-modal="true" aria-labelledby="achievements-modal-title">
+        <div class="achievements-modal" onclick="event.stopPropagation()">
+            <!-- Header -->
+            <div class="achievements-modal-header">
+                <button class="modal-close" onclick="closeAchievementsModal()" aria-label="關閉成就視窗">&times;</button>
+                <div class="profile-summary">
+                    <div class="profile-avatar">🎓</div>
+                    <div class="profile-info">
+                        <h2 id="achievements-modal-title">我的學習成就</h2>
+                        <div class="profile-stats">
+                            <span class="stat">🏆 <span class="profile-stat-points">0</span> 點</span>
+                            <span class="stat">📊 <span class="profile-stat-level">新手學員</span></span>
+                            <span class="stat">🔥 <span class="profile-stat-streak">0</span></span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Level Progress -->
+                <div class="level-progress">
+                    <div class="level-bar">
+                        <div class="level-fill" style="width: 0%"></div>
+                    </div>
+                    <span class="level-text">開始你的學習之旅！</span>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="achievements-tabs">
+                <button class="tab active" onclick="filterAchievements('all')">全部</button>
+                <button class="tab" onclick="filterAchievements('quiz')">測驗</button>
+                <button class="tab" onclick="filterAchievements('exploration')">探索</button>
+                <button class="tab" onclick="filterAchievements('milestone')">里程碑</button>
+                <button class="tab" onclick="filterAchievements('special')">特殊</button>
+            </div>
+
+            <!-- Achievement Grid -->
+            <div class="achievements-grid">
+                <!-- Achievements will be rendered by JavaScript -->
+            </div>
+
+            <!-- Stats Section -->
+            <div class="stats-section">
+                <h3>📊 學習統計</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value stat-pages">0</div>
+                        <div class="stat-label">訪問頁面</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value stat-quizzes">0</div>
+                        <div class="stat-label">完成測驗</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value stat-achievements">0/0</div>
+                        <div class="stat-label">成就解鎖</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1515,6 +1576,17 @@
                 document.getElementById('shareModal').classList.remove('active');
             }
         });
+
+        // Track share action for achievements
+        function trackShareAction() {
+            if (window.AchievementTracker) {
+                window.AchievementTracker.trackShare();
+            }
+        }
     </script>
+
+    <!-- Achievement System Scripts -->
+    <script src="achievements-config.js"></script>
+    <script src="achievements.js"></script>
 </body>
 </html>
