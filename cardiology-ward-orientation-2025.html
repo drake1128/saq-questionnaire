@@ -551,7 +551,7 @@
             }
         };
 
-        // CAG Routine (心導管日常照護)
+        // CAG Routine (心導管日常照護) - Updated from 91C-40-0004
         const cagRoutine = {
             preCath: [
                 '確認同意書已簽署並上傳',
@@ -560,19 +560,42 @@
                 '確認過敏史 (造影劑、Aspirin、Heparin)',
                 '確認穿刺部位 (Radial vs Femoral)',
                 '給予 DAPT loading (若PCI planned)',
-                '建立 IV access',
+                '建立 IV access (註明左右手)',
                 '移除飾品、假牙',
+                '周邊動脈搏動檢查',
+                'Allen test (若橈動脈途徑)',
+            ],
+            preCathLabs: [
+                'CBC, ECG, Urine Routine, Stool Routine, CXR',
+                'Glucose, BUN, Creatinine, Na, K, AST, ALT',
+                'PT, APTT',
+                'Cholesterol, Triglyceride, HDL, LDL, Uric acid',
+            ],
+            postCathOrders: [
+                '若放支架或氣球擴張則加做 complete ECG',
+                '髖部sheath留置：依醫囑開立拔除時間',
+                '髖部傷口：側肢體平直，砂袋加壓 6-8 小時',
+                '手部傷口：TR Band 加壓至指定時間',
+                'Check BP and HR q30min x2, q1h x1, q2h x1, then routine',
             ],
             postCath: [
-                '生命徵象監測 q15min x4 → q30min x2 → q1h x4',
+                '生命徵象監測 q30min x2 → q1h x1 → q2h x1',
                 '穿刺部位觀察: 血腫、滲血、瘀青',
                 '遠端脈搏、6P評估',
-                '股動脈: 平躺4-6hr，Sand bag 2hr',
+                '股動脈: 平躺4-6hr，Sand bag加壓',
                 '橈動脈: TR Band 減壓 (q1-2hr)',
                 '鼓勵多喝水 (促進造影劑排除)',
                 '監測尿量 (預防 CIN)',
                 '追蹤 post-cath CBC, Cr (隔日)',
             ],
+            notifyDoctor: [
+                '術前發燒超過 38 度',
+                '術前腎功能過高 (Cr >2 或 eGFR <45)',
+                '術前 platelet, PT, APTT 數值異常',
+                '穿刺傷口持續出血不止或發生血腫',
+                '術後有胸痛、胸悶或呼吸喘',
+            ],
+            cinRisk: '若 Cr >2 mg/dL 或 eGFR <45，需計算 CIN 風險指數',
             complications: [
                 { complication: '穿刺部位出血/血腫', management: '加壓止血，評估是否需手術' },
                 { complication: '假性動脈瘤', management: '超音波導引壓迫或Thrombin注射' },
@@ -581,6 +604,151 @@
                 { complication: '造影劑過敏', management: 'Steroid + Antihistamine，下次預防' },
                 { complication: 'Stroke', management: '神經學評估，影像檢查' },
                 { complication: '冠狀動脈穿孔', management: '緊急處理，可能需pericardiocentesis' },
+            ],
+            patientEducation: [
+                '觀察穿刺傷口有無流血、瘀青或血腫',
+                '約3週勿舉重物、過度運動 (爬山、打球、跑步)',
+                '勿從事過度勞累工作 (拖地、農作、搬運)',
+                '若有劇烈胸悶、胸痛、頭暈、意識不清或呼吸喘，請至急診',
+                '服用抗血小板藥物需觀察大便顏色及出血徵象',
+                '每天監測血壓及心跳並紀錄',
+                '若 BP <90 或 HR <60 合併頭暈，暫停當天血壓藥',
+                '日常飲食清淡，勿吃重油、油炸、過鹹食物',
+                '切勿自行停藥或更改藥物劑量',
+            ]
+        };
+
+        // ICAS Routine (頸動脈支架照護) - From 91C-40-0006
+        const icasRoutine = {
+            indications: [
+                'Carotid or vertebral artery stenosis',
+                'Stroke',
+                'Transient ischemic attack (TIA)',
+                'Pre-CABG evaluation',
+            ],
+            preProcedure: [
+                '確認同意書已簽署',
+                '神經學檢查：瞳孔大小、雙側上下肢肌力',
+                '查詢相關檢查 (頸動脈超音波、CTA、MRA)',
+                '雙側頸動脈血管嘈音 (bruit) 聽診',
+                '周邊動脈搏動檢查',
+                'Prepare LP RBC 8U (含血型)',
+                'Skin prepare',
+            ],
+            preProcedureLabs: [
+                'CBC, ECG, Urine Routine, Stool Routine, CXR',
+                'Glucose, BUN, Creatinine, Na, K, AST, ALT',
+                'PT, APTT, Cholesterol, TG, HDL, LDL, Uric acid',
+            ],
+            preProcedureMeds: [
+                'Nicardipine HCl 100mg once bring to cath room',
+            ],
+            postProcedureWard: [
+                '依穿刺傷口開立傷口照護',
+                '髖部：拔除sheath後砂袋加壓 6-8 小時',
+                '手部：加壓至指定時間',
+                'Check BP and HR q30min x2, q1h x1, q2h x1, then routine',
+            ],
+            postProcedureICU: [
+                'Complete ECG stat',
+                '2小時後 check ACT，ACT <150 sec 可 remove sheath',
+                '依穿刺傷口開立傷口照護',
+                'Check GCS & pupil sizes q1h',
+                '有放支架者 90% 血壓會下降，控制在目標值內',
+            ],
+            notifyDoctor: [
+                '術前發燒超過 38 度',
+                '術前 Cr >2 或 eGFR <45',
+                '術前 Platelet, PT, APTT 異常',
+                '術後 I/O positive >3000 或 SpO2 <95% 或變喘',
+                '血壓過高或過低',
+                '新發生的神經學異常 (需做 Brain CT、照會神內)',
+                '穿刺傷口持續出血或血腫',
+            ],
+            patientEducation: [
+                '觀察穿刺傷口有無流血、瘀青或血腫',
+                '約4週勿過度運動 (爬山、打球、跑步)',
+                '勿從事過度勞累工作 (拖地、農作、搬運)',
+                '出院後注意四肢肌力及意識狀況',
+                '若有漸進式肢體無力或意識改變，速回急診',
+                '在家測量心跳及血壓並紀錄',
+                '若胸悶且 HR >100 或 HR <50，請就診',
+                '服用 Plavix/Bokey 觀察大便顏色及出血徵象',
+                '服用 Lipitor 若有皮膚癢或全身痠痛，請返診',
+                '返家後出現單側肢體無力、頭痛、視力模糊、口齒不清需立即返院',
+                '切勿自行停藥或更改藥物劑量',
+            ]
+        };
+
+        // PPM/CIED Routine (心律調節器照護) - From 91C-40-0007
+        const ppmRoutine = {
+            indications: [
+                '病竇症候群 (SSS)',
+                '完全房室傳導阻斷 (Complete AV block)',
+                '高度房室傳導阻斷 (High degree AV block)',
+                '心房顫動併心搏過緩 (AF with slow VR)',
+                '心室頻脈/心室顫動 (VT/VF) - ICD',
+                '心臟衰竭 - CRT',
+            ],
+            preAssessment: [
+                '左右手有無洗腎管路',
+                '左右鎖骨下靜脈有無化療用人工血管',
+                '左右手及鎖骨下有無開過刀 (乳癌切除、淋巴移除)',
+                '評估病人是否能平躺至少 60 分鐘',
+                '評估是否有水分過多問題 (下肢水腫、呼吸音異常、端坐呼吸)',
+                '若為 ICD，詢問家族有無猝死病史',
+            ],
+            preProcedureLabs: [
+                'CBC, ECG, Urine Routine, Stool Routine, CXR',
+                'Glucose, BUN, Creatinine, Na, K, Ca, Mg, AST, ALT',
+                'PT, APTT, Cholesterol, TG, HDL, LDL, Uric acid',
+            ],
+            preProcedureOrders: [
+                'NPO since ______',
+                'On IV lock (CIED放哪邊就 on 哪邊)',
+                'Cefazolin 1000mg once before cath room (送導管室前 30 分鐘打)',
+                '若已有常規抗生素治療感染，則不需開立術前抗生素',
+            ],
+            postProcedureOrders: [
+                'Check BP and HR q30min x2, q1h x1, q2h x1, then routine',
+                'Bed rest overnight (換電池且導線沒更動則不需臥床)',
+                'CIED 傷口手術當日不換藥',
+                'Complete ECG STAT',
+                'CXR 隔日追蹤',
+                'Cefazolin 1000mg IV drip q8h x1 day (依腎功能調整)',
+            ],
+            postAssessment: [
+                '觀察傷口出血、血腫狀況、疼痛指數',
+                '呼吸音聽診 (減弱或喘要懷疑氣胸)',
+                '追蹤術後心電圖結果',
+                '追蹤術後 CXR 有無氣胸、導線脫落',
+                '若為 CRT 有左心室導線，評估有無隔神經刺激 (打嗝)',
+            ],
+            notifyDoctor: [
+                '術前發燒超過 38 度',
+                '術前心跳 <50 或 >130',
+                '病人無法配合平躺 60 分鐘',
+                '身體評估有水分過多問題',
+                '術前 Platelet, PT, APTT 異常',
+                '術前 Cr >2 或 eGFR <45',
+                'CIED 傷口持續出血或血腫',
+                '術後 HR <60、RR >25、呼吸音減弱、胸悶、SpO2 <95%、打嗝不止',
+            ],
+            patientEducation: [
+                '出院前傷口使用防水敷料 (康威愛康膚)，約可使用七天',
+                '傷口不用每天換藥，周圍皮膚用擦拭方式清潔',
+                '每天觀察傷口敷料有無流血、瘀青、血腫或異常分泌物',
+                '若有流血或血腫，上班期間回心臟科病房找 NP 檢查',
+                '非上班期間請至急診',
+                'PPM側手臂活動要輕柔，勿舉重物或過度運動約一個月',
+                '起床請從對側下床，勿用 PPM 側手臂支撐身體',
+                '手機請使用對側耳朵接聽',
+                '請遠離微波爐、變電箱及高壓電塔約 1 公尺',
+                '下週回診時請攜帶銀離子敷料一片 (大) 帶至診間',
+                '傷口疼痛可使用 Acetaminophen PRN',
+                '若有劇烈胸悶、胸痛、嚴重頭暈、意識不清或呼吸喘，請至急診',
+                '每天監測血壓及心跳並紀錄',
+                '若 BP <90 或 HR <60，暫停當天血壓藥並帶紀錄本回診',
             ]
         };
 
@@ -661,6 +829,24 @@
                         <button onClick={() => setPage('oncall')} className="bg-red-500/20 rounded-lg p-3 card-hover text-left">
                             <div className="text-lg">🚨</div>
                             <div className="text-xs text-red-300">值班急症</div>
+                        </button>
+                    </div>
+                </div>
+
+                <div className="glass rounded-xl p-3 mb-4">
+                    <h3 className="text-cyan-400 font-bold mb-2 text-sm">📋 照護流程 (依據院內SOP)</h3>
+                    <div className="grid grid-cols-3 gap-2">
+                        <button onClick={() => setPage('cagroutine')} className="bg-cyan-500/20 rounded-lg p-3 card-hover text-left">
+                            <div className="text-lg">💉</div>
+                            <div className="text-xs text-cyan-300">心導管</div>
+                        </button>
+                        <button onClick={() => setPage('icasroutine')} className="bg-purple-500/20 rounded-lg p-3 card-hover text-left">
+                            <div className="text-lg">🧠</div>
+                            <div className="text-xs text-purple-300">頸動脈支架</div>
+                        </button>
+                        <button onClick={() => setPage('ppmroutine')} className="bg-green-500/20 rounded-lg p-3 card-hover text-left">
+                            <div className="text-lg">🔋</div>
+                            <div className="text-xs text-green-300">心律調節器</div>
                         </button>
                     </div>
                 </div>
@@ -1452,16 +1638,44 @@
             </div>
         );
 
-        // NEW PAGE: CAG Routine
+        // NEW PAGE: CAG Routine - Enhanced with 91C-40-0004 content
         const CAGRoutinePage = () => (
             <div className="p-4">
                 <h2 className="text-xl font-bold text-white mb-4">💉 心導管照護流程</h2>
+                <p className="text-gray-400 text-xs mb-4">依據 91C-40-0004 內科部心導管檢查照護預立醫療流程</p>
 
                 <Accordion title="術前準備 (Pre-Cath)" defaultOpen={true}>
                     <div className="space-y-2">
                         {cagRoutine.preCath.map((item, i) => (
                             <div key={i} className="flex items-start gap-3">
                                 <span className="w-6 h-6 flex items-center justify-center bg-cyan-500/30 text-cyan-300 rounded-full font-bold text-xs">
+                                    {i + 1}
+                                </span>
+                                <span className="text-gray-300 text-sm flex-1">{item}</span>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="術前檢驗項目">
+                    <div className="space-y-2">
+                        {cagRoutine.preCathLabs.map((item, i) => (
+                            <div key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                <span className="text-cyan-400">•</span>
+                                {item}
+                            </div>
+                        ))}
+                    </div>
+                    <div className="mt-3 p-2 bg-yellow-500/20 rounded-lg">
+                        <span className="text-yellow-300 text-xs">⚠️ {cagRoutine.cinRisk}</span>
+                    </div>
+                </Accordion>
+
+                <Accordion title="術後醫囑開立">
+                    <div className="space-y-2">
+                        {cagRoutine.postCathOrders.map((item, i) => (
+                            <div key={i} className="flex items-start gap-3">
+                                <span className="w-6 h-6 flex items-center justify-center bg-purple-500/30 text-purple-300 rounded-full font-bold text-xs">
                                     {i + 1}
                                 </span>
                                 <span className="text-gray-300 text-sm flex-1">{item}</span>
@@ -1483,12 +1697,34 @@
                     </div>
                 </Accordion>
 
+                <Accordion title="需通知醫師的情況">
+                    <div className="space-y-2">
+                        {cagRoutine.notifyDoctor.map((item, i) => (
+                            <div key={i} className="text-red-300 text-sm flex items-start gap-2">
+                                <span className="text-red-500">⚠</span>
+                                {item}
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
                 <Accordion title="常見併發症處理">
                     <div className="space-y-3">
                         {cagRoutine.complications.map((item, i) => (
                             <div key={i} className="glass p-3 rounded-lg">
                                 <div className="text-red-400 font-medium text-sm mb-1">{item.complication}</div>
                                 <div className="text-gray-300 text-xs">處理: {item.management}</div>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="出院衛教內容">
+                    <div className="space-y-2">
+                        {cagRoutine.patientEducation.map((item, i) => (
+                            <div key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                <Icons.Check />
+                                {item}
                             </div>
                         ))}
                     </div>
@@ -1508,6 +1744,229 @@
             </div>
         );
 
+        // NEW PAGE: ICAS Routine - From 91C-40-0006
+        const ICASRoutinePage = () => (
+            <div className="p-4">
+                <h2 className="text-xl font-bold text-white mb-4">🧠 頸動脈支架照護流程</h2>
+                <p className="text-gray-400 text-xs mb-4">依據 91C-40-0006 內科部頸動脈血管檢查及支架置放術照護預立醫療流程</p>
+
+                <Accordion title="適應症" defaultOpen={true}>
+                    <div className="space-y-2">
+                        {icasRoutine.indications.map((item, i) => (
+                            <div key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                <span className="text-cyan-400">•</span>
+                                {item}
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="術前準備">
+                    <div className="space-y-2">
+                        {icasRoutine.preProcedure.map((item, i) => (
+                            <div key={i} className="flex items-start gap-3">
+                                <span className="w-6 h-6 flex items-center justify-center bg-cyan-500/30 text-cyan-300 rounded-full font-bold text-xs">
+                                    {i + 1}
+                                </span>
+                                <span className="text-gray-300 text-sm flex-1">{item}</span>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="術前檢驗及藥物">
+                    <div className="space-y-2 mb-3">
+                        <h4 className="text-cyan-400 text-sm font-medium">檢驗項目：</h4>
+                        {icasRoutine.preProcedureLabs.map((item, i) => (
+                            <div key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                <span className="text-cyan-400">•</span>
+                                {item}
+                            </div>
+                        ))}
+                    </div>
+                    <div className="space-y-2">
+                        <h4 className="text-yellow-400 text-sm font-medium">術前藥物：</h4>
+                        {icasRoutine.preProcedureMeds.map((item, i) => (
+                            <div key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                <span className="text-yellow-400">💊</span>
+                                {item}
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="術後照護 - 返回病房 (僅做檢查)">
+                    <div className="space-y-2">
+                        {icasRoutine.postProcedureWard.map((item, i) => (
+                            <div key={i} className="flex items-start gap-3">
+                                <span className="w-6 h-6 flex items-center justify-center bg-green-500/30 text-green-300 rounded-full font-bold text-xs">
+                                    {i + 1}
+                                </span>
+                                <span className="text-gray-300 text-sm flex-1">{item}</span>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="術後照護 - 轉加護病房 (有放支架)">
+                    <div className="space-y-2">
+                        {icasRoutine.postProcedureICU.map((item, i) => (
+                            <div key={i} className="flex items-start gap-3">
+                                <span className="w-6 h-6 flex items-center justify-center bg-red-500/30 text-red-300 rounded-full font-bold text-xs">
+                                    {i + 1}
+                                </span>
+                                <span className="text-gray-300 text-sm flex-1">{item}</span>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="需通知醫師的情況">
+                    <div className="space-y-2">
+                        {icasRoutine.notifyDoctor.map((item, i) => (
+                            <div key={i} className="text-red-300 text-sm flex items-start gap-2">
+                                <span className="text-red-500">⚠</span>
+                                {item}
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="出院衛教內容">
+                    <div className="space-y-2">
+                        {icasRoutine.patientEducation.map((item, i) => (
+                            <div key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                <Icons.Check />
+                                {item}
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <div className="glass rounded-xl p-4 mt-4">
+                    <h3 className="text-red-400 font-bold mb-2">🚨 警示症狀 - 需立即返院</h3>
+                    <div className="grid grid-cols-1 gap-2 text-sm">
+                        <div className="text-red-300">• 單側肢體無力</div>
+                        <div className="text-red-300">• 頭痛</div>
+                        <div className="text-red-300">• 視力模糊</div>
+                        <div className="text-red-300">• 口齒不清</div>
+                    </div>
+                </div>
+            </div>
+        );
+
+        // NEW PAGE: PPM/CIED Routine - From 91C-40-0007
+        const PPMRoutinePage = () => (
+            <div className="p-4">
+                <h2 className="text-xl font-bold text-white mb-4">🔋 心律調節器照護流程</h2>
+                <p className="text-gray-400 text-xs mb-4">依據 91C-40-0007 內科部永久性心律調節器、去顫器、再同步治療器置入照護預立醫療流程</p>
+
+                <Accordion title="適應症" defaultOpen={true}>
+                    <div className="space-y-2">
+                        {ppmRoutine.indications.map((item, i) => (
+                            <div key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                <span className="text-cyan-400">•</span>
+                                {item}
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="術前特殊評估">
+                    <div className="space-y-2">
+                        {ppmRoutine.preAssessment.map((item, i) => (
+                            <div key={i} className="flex items-start gap-3">
+                                <span className="w-6 h-6 flex items-center justify-center bg-cyan-500/30 text-cyan-300 rounded-full font-bold text-xs">
+                                    {i + 1}
+                                </span>
+                                <span className="text-gray-300 text-sm flex-1">{item}</span>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="術前檢驗項目">
+                    <div className="space-y-2">
+                        {ppmRoutine.preProcedureLabs.map((item, i) => (
+                            <div key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                <span className="text-cyan-400">•</span>
+                                {item}
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="術前醫囑">
+                    <div className="space-y-2">
+                        {ppmRoutine.preProcedureOrders.map((item, i) => (
+                            <div key={i} className="flex items-start gap-3">
+                                <span className="w-6 h-6 flex items-center justify-center bg-purple-500/30 text-purple-300 rounded-full font-bold text-xs">
+                                    {i + 1}
+                                </span>
+                                <span className="text-gray-300 text-sm flex-1">{item}</span>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="術後醫囑">
+                    <div className="space-y-2">
+                        {ppmRoutine.postProcedureOrders.map((item, i) => (
+                            <div key={i} className="flex items-start gap-3">
+                                <span className="w-6 h-6 flex items-center justify-center bg-green-500/30 text-green-300 rounded-full font-bold text-xs">
+                                    {i + 1}
+                                </span>
+                                <span className="text-gray-300 text-sm flex-1">{item}</span>
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="術後評估重點">
+                    <div className="space-y-2">
+                        {ppmRoutine.postAssessment.map((item, i) => (
+                            <div key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                <Icons.Check />
+                                {item}
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="需通知醫師的情況">
+                    <div className="space-y-2">
+                        {ppmRoutine.notifyDoctor.map((item, i) => (
+                            <div key={i} className="text-red-300 text-sm flex items-start gap-2">
+                                <span className="text-red-500">⚠</span>
+                                {item}
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <Accordion title="出院衛教內容">
+                    <div className="space-y-2">
+                        {ppmRoutine.patientEducation.map((item, i) => (
+                            <div key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                <Icons.Check />
+                                {item}
+                            </div>
+                        ))}
+                    </div>
+                </Accordion>
+
+                <div className="glass rounded-xl p-4 mt-4">
+                    <h3 className="text-yellow-400 font-medium mb-2">⚡ 電磁干擾注意事項</h3>
+                    <div className="grid grid-cols-1 gap-2 text-sm">
+                        <div className="text-gray-300">• 手機請使用對側耳朵接聽</div>
+                        <div className="text-gray-300">• 家用電話則無差別</div>
+                        <div className="text-gray-300">• 請遠離微波爐約 1 公尺</div>
+                        <div className="text-gray-300">• 請遠離變電箱及高壓電塔約 1 公尺</div>
+                    </div>
+                </div>
+            </div>
+        );
+
         // Main App
         const App = () => {
             const [page, setPage] = useState('home');
@@ -1519,6 +1978,9 @@
                 { id: 'oncall', icon: <Icons.Phone />, label: '值班急症' },
                 { id: 'consent', icon: <Icons.Document />, label: '同意書' },
                 { id: 'cath', icon: <Icons.Heart />, label: '導管室' },
+                { id: 'cagroutine', icon: <Icons.Clipboard />, label: '心導管照護' },
+                { id: 'icasroutine', icon: <Icons.Clipboard />, label: '頸動脈支架' },
+                { id: 'ppmroutine', icon: <Icons.Clipboard />, label: '心律調節器' },
                 { id: 'symptoms', icon: <Icons.Clipboard />, label: '症狀診斷' },
                 { id: 'medications', icon: <Icons.Document />, label: '常用藥物' },
                 { id: 'scores', icon: <Icons.Edit />, label: '臨床評分' },
@@ -1547,6 +2009,8 @@
                     case 'medications': return <MedicationsPage />;
                     case 'oncall': return <OnCallPage />;
                     case 'cagroutine': return <CAGRoutinePage />;
+                    case 'icasroutine': return <ICASRoutinePage />;
+                    case 'ppmroutine': return <PPMRoutinePage />;
                     default: return <HomePage setPage={setPage} />;
                 }
             };
