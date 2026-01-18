@@ -2,7 +2,99 @@
 ## 心血管照護教學資源中心 (Cardiovascular Care Education Hub)
 
 **Generated:** January 2026
+**Last Updated:** January 18, 2026
 **Website:** https://drake1128.github.io/saq-questionnaire
+
+---
+
+## Master To-Do List (Priority Order)
+
+### Phase 1: Critical - Accessibility & SEO (Week 1-2)
+
+| # | Task | Priority | Time Est. | Status |
+|---|------|----------|-----------|--------|
+| 1 | Add `aria-label` to all icon buttons | Critical | 2 hrs | ☑ DONE |
+| 2 | Add `alt` text to all images and SVGs | Critical | 1 hr | ☑ DONE (aria-hidden on 16 files) |
+| 3 | Add skip-to-content link at top of each page | Critical | 30 min | ☑ DONE |
+| 4 | Remove `user-scalable=no` restriction | Critical | 30 min | ☑ DONE |
+| 5 | Fix heading hierarchy (h1 > h2 > h3) | Critical | 1 hr | ☑ DONE (7 categories → h2) |
+| 6 | Add unique `<meta name="description">` to each page | High | 2 hrs | ☑ DONE (index.html) |
+| 7 | Add Open Graph tags for social sharing | High | 1 hr | ☑ DONE |
+| 8 | Create `sitemap.xml` | High | 30 min | ☑ DONE (40+ URLs) |
+| 9 | Create `robots.txt` | High | 15 min | ☑ DONE |
+| 10 | Add structured data (Schema.org) | High | 1 hr | ☑ DONE |
+
+### Phase 2: High Priority - Design System (Week 3-4)
+
+| # | Task | Priority | Time Est. | Status |
+|---|------|----------|-----------|--------|
+| 11 | Create `design-system.css` with shared variables | High | 3 hrs | ☑ DONE (in index.html :root) |
+| 12 | Standardize color palette (3-4 core themes) | High | 2 hrs | ☑ DONE |
+| 13 | Define consistent spacing scale | High | 1 hr | ☐ |
+| 14 | Create reusable button classes | High | 1 hr | ☐ |
+| 15 | Standardize card and shadow styles | High | 1 hr | ☑ DONE |
+| 16 | Implement keyboard navigation (Tab, Enter, Escape) | High | 2 hrs | ☐ |
+| 17 | Add visible focus indicators (`:focus-visible`) | High | 1 hr | ☑ DONE (already in index.html) |
+
+### Phase 3: Medium Priority - Performance & Features (Week 5-8)
+
+| # | Task | Priority | Time Est. | Status |
+|---|------|----------|-----------|--------|
+| 18 | Add `loading="lazy"` to images below fold | Medium | 1 hr | ☐ |
+| 19 | Preload critical fonts and scripts | Medium | 30 min | ☑ DONE (preconnect added) |
+| 20 | Implement Dark Mode toggle | Medium | 3 hrs | ☐ |
+| 21 | Add print stylesheet | Medium | 2 hrs | ☐ |
+| 22 | Create advanced search filters | Medium | 4 hrs | ☑ DONE (category filters) |
+| 23 | Add related resources linking | Medium | 3 hrs | ☐ |
+| 24 | Build feedback mechanism | Medium | 3 hrs | ☐ |
+
+### Phase 4: Low Priority - Content Enhancements (Ongoing)
+
+| # | Task | Priority | Time Est. | Status |
+|---|------|----------|-----------|--------|
+| 25 | Add estimated completion time for each resource | Low | 2 hrs | ☐ |
+| 26 | Add difficulty level indicators | Low | 2 hrs | ☐ |
+| 27 | Add learning outcomes for each module | Low | 3 hrs | ☐ |
+| 28 | Add last updated date to each page | Low | 1 hr | ☐ |
+| 29 | Create Favorites/Bookmarks feature | Low | 4 hrs | ☐ |
+| 30 | Build Learning Progress tracker | Low | 6 hrs | ☐ |
+
+### Testing Tasks
+
+| # | Task | Priority | Status |
+|---|------|----------|--------|
+| T1 | Test with keyboard only (no mouse) | High | ☐ |
+| T2 | Test with screen reader (VoiceOver/NVDA) | High | ☐ |
+| T3 | Check color contrast (WCAG 2.1 AA) | High | ☐ |
+| T4 | Validate HTML with W3C validator | Medium | ☐ |
+| T5 | Run Lighthouse audit | Medium | ☐ |
+| T6 | Test on iOS Safari | Medium | ☐ |
+| T7 | Test on Android Chrome | Medium | ☐ |
+| T8 | Test on slow 3G connection | Low | ☐ |
+
+### Files to Create
+
+| File | Purpose | Status |
+|------|---------|--------|
+| `design-system.css` | Shared CSS variables and components | ☑ (integrated in index.html) |
+| `sitemap.xml` | Search engine indexing | ☑ DONE |
+| `robots.txt` | Search engine crawling rules | ☑ DONE |
+| `og-image.svg` | Social media preview image | ☑ DONE |
+
+---
+
+## Progress Summary
+
+| Category | Tasks | Completed | Progress |
+|----------|-------|-----------|----------|
+| Accessibility (1-5) | 5 | 5 | 100% ✅ |
+| SEO (6-10) | 5 | 5 | 100% ✅ |
+| Design System (11-17) | 7 | 4 | 57% |
+| Performance (18-19) | 2 | 1 | 50% |
+| Features (20-24) | 5 | 1 | 20% |
+| Content (25-30) | 6 | 0 | 0% |
+| Testing (T1-T8) | 8 | 0 | 0% |
+| **Total** | **38** | **16** | **42%** |
 
 ---
 
