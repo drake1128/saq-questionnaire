@@ -1426,6 +1426,400 @@
             color: var(--text-dark-primary);
         }
 
+        /* ===== Learning Progress Tracker ===== */
+        .progress-badge {
+            position: absolute;
+            bottom: var(--space-sm);
+            right: var(--space-sm);
+            background: var(--success);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            box-shadow: 0 2px 8px rgba(46, 196, 182, 0.3);
+        }
+
+        .app-card.visited .progress-badge {
+            animation: badgePop 0.3s ease;
+        }
+
+        @keyframes badgePop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .app-card.visited::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--success) 0%, #3dd9c9 100%);
+        }
+
+        /* Progress Stats Bar */
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-left: auto;
+        }
+
+        .progress-bar-container {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            background: var(--bg-light);
+            padding: var(--space-xs) var(--space-md);
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(0, 119, 182, 0.1);
+        }
+
+        .progress-bar-container:hover {
+            background: var(--bg-blue);
+            border-color: var(--primary);
+        }
+
+        .progress-bar {
+            width: 60px;
+            height: 6px;
+            background: rgba(0, 119, 182, 0.15);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success) 0%, #3dd9c9 100%);
+            border-radius: var(--radius-full);
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-medium);
+            white-space: nowrap;
+        }
+
+        /* Progress Panel Modal */
+        .progress-panel {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-lg);
+            max-width: 480px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        .progress-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid rgba(0, 119, 182, 0.1);
+        }
+
+        .progress-panel-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .progress-panel-close {
+            background: var(--bg-light);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 1.3rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .progress-panel-close:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .progress-overview {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+        }
+
+        .progress-stat-card {
+            background: var(--bg-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            text-align: center;
+        }
+
+        .progress-stat-card.highlight {
+            background: linear-gradient(135deg, var(--success) 0%, #3dd9c9 100%);
+            color: white;
+        }
+
+        .progress-stat-card.highlight .progress-stat-value,
+        .progress-stat-card.highlight .progress-stat-label {
+            color: white;
+        }
+
+        .progress-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1.2;
+        }
+
+        .progress-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-medium);
+            margin-top: var(--space-xs);
+        }
+
+        .progress-main-bar {
+            margin-bottom: var(--space-lg);
+        }
+
+        .progress-main-bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-sm);
+            font-size: 0.85rem;
+            color: var(--text-medium);
+        }
+
+        .progress-main-bar-track {
+            height: 10px;
+            background: rgba(0, 119, 182, 0.1);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+
+        .progress-main-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success) 0%, var(--primary-light) 50%, var(--primary) 100%);
+            border-radius: var(--radius-full);
+            transition: width 0.5s ease;
+        }
+
+        .progress-categories {
+            margin-top: var(--space-lg);
+        }
+
+        .progress-category-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: var(--space-md);
+        }
+
+        .progress-category-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .progress-category-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-sm) var(--space-md);
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+        }
+
+        .progress-category-icon {
+            font-size: 1.1rem;
+        }
+
+        .progress-category-info {
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .progress-category-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .progress-category-bar {
+            height: 4px;
+            background: rgba(0, 119, 182, 0.1);
+            border-radius: var(--radius-full);
+            margin-top: 4px;
+            overflow: hidden;
+        }
+
+        .progress-category-bar-fill {
+            height: 100%;
+            background: var(--success);
+            border-radius: var(--radius-full);
+            transition: width 0.3s ease;
+        }
+
+        .progress-category-count {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-light);
+            white-space: nowrap;
+        }
+
+        .progress-reset-btn {
+            margin-top: var(--space-lg);
+            width: 100%;
+            padding: var(--space-sm);
+            background: transparent;
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: var(--radius-md);
+            color: #dc2626;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .progress-reset-btn:hover {
+            background: #fee2e2;
+            border-color: #dc2626;
+        }
+
+        /* Dark mode for progress tracker */
+        body.dark-mode .progress-badge {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode .progress-bar-container {
+            background: var(--bg-dark-tertiary);
+            border-color: var(--border-dark);
+        }
+
+        body.dark-mode .progress-bar-container:hover {
+            background: var(--bg-dark-secondary);
+            border-color: var(--primary-light);
+        }
+
+        body.dark-mode .progress-bar {
+            background: var(--border-dark);
+        }
+
+        body.dark-mode .progress-text {
+            color: var(--text-dark-secondary);
+        }
+
+        body.dark-mode .progress-panel {
+            background: var(--bg-dark-secondary);
+        }
+
+        body.dark-mode .progress-panel-header {
+            border-bottom-color: var(--border-dark);
+        }
+
+        body.dark-mode .progress-panel-title {
+            color: var(--text-dark-primary);
+        }
+
+        body.dark-mode .progress-panel-close {
+            background: var(--bg-dark-tertiary);
+            color: var(--text-dark-secondary);
+        }
+
+        body.dark-mode .progress-panel-close:hover {
+            background: #7f1d1d;
+            color: #fca5a5;
+        }
+
+        body.dark-mode .progress-stat-card {
+            background: var(--bg-dark-tertiary);
+        }
+
+        body.dark-mode .progress-stat-value {
+            color: var(--primary-light);
+        }
+
+        body.dark-mode .progress-stat-label {
+            color: var(--text-dark-secondary);
+        }
+
+        body.dark-mode .progress-main-bar-label {
+            color: var(--text-dark-secondary);
+        }
+
+        body.dark-mode .progress-main-bar-track {
+            background: var(--border-dark);
+        }
+
+        body.dark-mode .progress-category-title {
+            color: var(--text-dark-primary);
+        }
+
+        body.dark-mode .progress-category-item {
+            background: var(--bg-dark-tertiary);
+        }
+
+        body.dark-mode .progress-category-name {
+            color: var(--text-dark-primary);
+        }
+
+        body.dark-mode .progress-category-bar {
+            background: var(--border-dark);
+        }
+
+        body.dark-mode .progress-category-count {
+            color: var(--text-dark-secondary);
+        }
+
+        body.dark-mode .progress-reset-btn {
+            border-color: rgba(252, 165, 165, 0.3);
+            color: #fca5a5;
+        }
+
+        body.dark-mode .progress-reset-btn:hover {
+            background: rgba(127, 29, 29, 0.5);
+            border-color: #fca5a5;
+        }
+
+        @media (max-width: 600px) {
+            .progress-stats {
+                display: none;
+            }
+
+            .progress-overview {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .progress-stat-value {
+                font-size: 1.2rem;
+            }
+
+            .progress-stat-label {
+                font-size: 0.65rem;
+            }
+        }
+
         /* Quick Filter Buttons - EBM Style */
         .quick-filters {
             display: flex;
@@ -2138,6 +2532,15 @@
             <div class="stat-item">
                 持續更新中 🔄
             </div>
+            <div class="progress-stats">
+                <div class="progress-bar-container" onclick="openProgressPanel()" role="button" tabindex="0" aria-label="查看學習進度">
+                    <span class="progress-text">📊 進度</span>
+                    <div class="progress-bar">
+                        <div class="progress-bar-fill" id="progressBarFill" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progressPercent">0%</span>
+                </div>
+            </div>
         </div>
 
         <!-- Main Content Area -->
@@ -2717,6 +3120,52 @@
                 </button>
                 <p class="feedback-note">回饋將透過 Email 傳送，感謝您的寶貴意見！</p>
             </form>
+        </div>
+    </div>
+
+    <!-- Progress Panel Modal -->
+    <div class="share-modal-overlay" id="progressModal" onclick="closeProgressPanel(event)" role="dialog" aria-modal="true" aria-labelledby="progress-modal-title">
+        <div class="progress-panel" onclick="event.stopPropagation()">
+            <div class="progress-panel-header">
+                <div class="progress-panel-title" id="progress-modal-title">
+                    <span aria-hidden="true">📊</span> 學習進度追蹤
+                </div>
+                <button class="progress-panel-close" onclick="closeProgressPanel()" aria-label="關閉進度面板">×</button>
+            </div>
+
+            <div class="progress-overview">
+                <div class="progress-stat-card highlight">
+                    <div class="progress-stat-value" id="progressVisitedCount">0</div>
+                    <div class="progress-stat-label">已瀏覽</div>
+                </div>
+                <div class="progress-stat-card">
+                    <div class="progress-stat-value" id="progressQuizCount">0</div>
+                    <div class="progress-stat-label">測驗完成</div>
+                </div>
+                <div class="progress-stat-card">
+                    <div class="progress-stat-value" id="progressStreakCount">0</div>
+                    <div class="progress-stat-label">連續天數</div>
+                </div>
+            </div>
+
+            <div class="progress-main-bar">
+                <div class="progress-main-bar-label">
+                    <span>整體完成度</span>
+                    <span id="progressMainPercent">0%</span>
+                </div>
+                <div class="progress-main-bar-track">
+                    <div class="progress-main-bar-fill" id="progressMainFill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="progress-categories">
+                <div class="progress-category-title">各類別進度</div>
+                <div class="progress-category-list" id="progressCategoryList">
+                    <!-- Categories will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <button class="progress-reset-btn" onclick="confirmResetProgress()">🗑️ 重置學習進度</button>
         </div>
     </div>
 
@@ -3365,11 +3814,228 @@
             updateFavoritesCount();
         }
 
+        // ===== Learning Progress Tracker =====
+        const PROGRESS_KEY = 'cv-education-user-data';
+
+        // Category definitions for progress tracking
+        const CATEGORY_CONFIG = {
+            'cath': { name: '導管室', icon: '🏥', selector: '.app-card.cath' },
+            'ward': { name: '病房照護', icon: '🛏️', selector: '.app-card.ward' },
+            'icu': { name: 'ICU/CCU', icon: '🫀', selector: '.app-card.icu' },
+            'intervention': { name: '介入治療', icon: '🔧', selector: '.app-card.intervention' },
+            'medication': { name: '藥物', icon: '💊', selector: '.app-card.medication' },
+            'patient': { name: '病人衛教', icon: '👥', selector: '.app-card.patient' },
+            'learning': { name: '學習資源', icon: '📚', selector: '.app-card.learning' }
+        };
+
+        // Get progress data from achievement system
+        function getProgressData() {
+            try {
+                const data = localStorage.getItem(PROGRESS_KEY);
+                if (data) {
+                    const parsed = JSON.parse(data);
+                    return parsed.progress || { pagesVisited: {}, quizzes: {}, streaks: { currentStreak: 0 } };
+                }
+            } catch (e) {
+                console.error('Error loading progress data:', e);
+            }
+            return { pagesVisited: {}, quizzes: {}, streaks: { currentStreak: 0 } };
+        }
+
+        // Get list of visited pages
+        function getVisitedPages() {
+            const progress = getProgressData();
+            return Object.keys(progress.pagesVisited || {}).filter(p => p && p !== 'index.html');
+        }
+
+        // Calculate overall progress
+        function calculateProgress() {
+            const allCards = document.querySelectorAll('.app-card');
+            const visitedPages = getVisitedPages();
+            const totalResources = allCards.length;
+
+            let visitedCount = 0;
+            allCards.forEach(card => {
+                const href = card.getAttribute('href');
+                if (visitedPages.includes(href)) {
+                    visitedCount++;
+                }
+            });
+
+            return {
+                visited: visitedCount,
+                total: totalResources,
+                percent: totalResources > 0 ? Math.round((visitedCount / totalResources) * 100) : 0
+            };
+        }
+
+        // Calculate category progress
+        function calculateCategoryProgress() {
+            const visitedPages = getVisitedPages();
+            const categoryProgress = {};
+
+            for (const [key, config] of Object.entries(CATEGORY_CONFIG)) {
+                const cards = document.querySelectorAll(config.selector);
+                let visited = 0;
+
+                cards.forEach(card => {
+                    const href = card.getAttribute('href');
+                    if (visitedPages.includes(href)) {
+                        visited++;
+                    }
+                });
+
+                categoryProgress[key] = {
+                    ...config,
+                    visited: visited,
+                    total: cards.length,
+                    percent: cards.length > 0 ? Math.round((visited / cards.length) * 100) : 0
+                };
+            }
+
+            return categoryProgress;
+        }
+
+        // Update progress UI elements
+        function updateProgressUI() {
+            const progress = calculateProgress();
+            const progressData = getProgressData();
+
+            // Update mini progress bar
+            const progressFill = document.getElementById('progressBarFill');
+            const progressPercent = document.getElementById('progressPercent');
+            if (progressFill) progressFill.style.width = progress.percent + '%';
+            if (progressPercent) progressPercent.textContent = progress.percent + '%';
+
+            // Update card visited indicators
+            const visitedPages = getVisitedPages();
+            const cards = document.querySelectorAll('.app-card');
+
+            cards.forEach(card => {
+                const href = card.getAttribute('href');
+                const isVisited = visitedPages.includes(href);
+
+                // Remove existing badge if any
+                const existingBadge = card.querySelector('.progress-badge');
+                if (existingBadge) existingBadge.remove();
+
+                if (isVisited) {
+                    card.classList.add('visited');
+                    const badge = document.createElement('span');
+                    badge.className = 'progress-badge';
+                    badge.textContent = '✓';
+                    badge.setAttribute('aria-label', '已瀏覽');
+                    card.appendChild(badge);
+                } else {
+                    card.classList.remove('visited');
+                }
+            });
+        }
+
+        // Open progress panel
+        function openProgressPanel() {
+            const modal = document.getElementById('progressModal');
+            modal.classList.add('active');
+
+            // Update panel content
+            updateProgressPanelContent();
+
+            // Focus close button
+            setTimeout(() => {
+                modal.querySelector('.progress-panel-close').focus();
+            }, 100);
+        }
+
+        // Close progress panel
+        function closeProgressPanel(event) {
+            if (!event || event.target === event.currentTarget) {
+                document.getElementById('progressModal').classList.remove('active');
+            }
+        }
+
+        // Update progress panel content
+        function updateProgressPanelContent() {
+            const progress = calculateProgress();
+            const progressData = getProgressData();
+            const categoryProgress = calculateCategoryProgress();
+
+            // Update overview stats
+            document.getElementById('progressVisitedCount').textContent = progress.visited;
+            document.getElementById('progressQuizCount').textContent = Object.keys(progressData.quizzes || {}).length;
+            document.getElementById('progressStreakCount').textContent = progressData.streaks?.currentStreak || 0;
+
+            // Update main progress bar
+            document.getElementById('progressMainPercent').textContent = progress.percent + '%';
+            document.getElementById('progressMainFill').style.width = progress.percent + '%';
+
+            // Update category list
+            const categoryList = document.getElementById('progressCategoryList');
+            categoryList.innerHTML = '';
+
+            for (const [key, data] of Object.entries(categoryProgress)) {
+                if (data.total === 0) continue;
+
+                const item = document.createElement('div');
+                item.className = 'progress-category-item';
+                item.innerHTML = `
+                    <span class="progress-category-icon">${data.icon}</span>
+                    <div class="progress-category-info">
+                        <div class="progress-category-name">${data.name}</div>
+                        <div class="progress-category-bar">
+                            <div class="progress-category-bar-fill" style="width: ${data.percent}%"></div>
+                        </div>
+                    </div>
+                    <span class="progress-category-count">${data.visited}/${data.total}</span>
+                `;
+                categoryList.appendChild(item);
+            }
+        }
+
+        // Reset progress confirmation
+        function confirmResetProgress() {
+            if (confirm('確定要重置所有學習進度嗎？\n\n這將清除：\n• 瀏覽記錄\n• 測驗記錄\n• 連續天數\n• 成就徽章\n\n此操作無法復原。')) {
+                localStorage.removeItem(PROGRESS_KEY);
+                localStorage.removeItem('cv-education-favorites');
+                updateProgressUI();
+                updateFavoritesCount();
+                closeProgressPanel();
+                alert('學習進度已重置。');
+                location.reload();
+            }
+        }
+
+        // Initialize progress tracking
+        function initProgressTracking() {
+            updateProgressUI();
+
+            // Handle Enter key on progress bar
+            const progressContainer = document.querySelector('.progress-bar-container');
+            if (progressContainer) {
+                progressContainer.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openProgressPanel();
+                    }
+                });
+            }
+        }
+
+        // Close progress panel on Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const progressModal = document.getElementById('progressModal');
+                if (progressModal && progressModal.classList.contains('active')) {
+                    closeProgressPanel();
+                }
+            }
+        });
+
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             updateStats();
             initRelatedButtons();
             initBookmarkButtons();
+            initProgressTracking();
         });
 
         // Share Modal Functions
