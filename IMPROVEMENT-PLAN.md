@@ -56,7 +56,7 @@
 | 26 | Add difficulty level indicators | Low | 2 hrs | ☐ |
 | 27 | Add learning outcomes for each module | Low | 3 hrs | ☐ |
 | 28 | Add last updated date to each page | Low | 1 hr | ☐ |
-| 29 | Create Favorites/Bookmarks feature | Low | 4 hrs | ☐ |
+| 29 | Create Favorites/Bookmarks feature | Low | 4 hrs | ☑ DONE |
 | 30 | Build Learning Progress tracker | Low | 6 hrs | ☐ |
 
 ### Testing Tasks
@@ -92,9 +92,9 @@
 | Design System (11-17) | 7 | 7 | 100% ✅ |
 | Performance (18-19) | 2 | 2 | 100% ✅ |
 | Features (20-24) | 5 | 5 | 100% ✅ |
-| Content (25-30) | 6 | 0 | 0% |
+| Content (25-30) | 6 | 1 | 17% |
 | Testing (T1-T8) | 8 | 0 | 0% |
-| **Total** | **38** | **24** | **63%** |
+| **Total** | **38** | **25** | **66%** |
 
 ---
 
@@ -183,6 +183,15 @@
 | #21 Print stylesheet | `index.html` | Comprehensive @media print styles |
 | #23 Related resources | `index.html` | Tag-based related resources linking |
 | #24 Feedback mechanism | `index.html` | Floating feedback button with email form |
+| #29 Favorites/Bookmarks | `index.html` | localStorage-based favorites system |
+
+**Favorites/Bookmarks Feature:**
+- ☆/⭐ bookmark button on each resource card (appears on hover)
+- Click to toggle favorite status with toast notification
+- "⭐ 我的收藏" filter button with count badge
+- Persisted in localStorage across sessions
+- Empty state message when no favorites
+- Full dark mode support
 
 **Feedback Mechanism:**
 - Floating action button (FAB) in bottom-right corner

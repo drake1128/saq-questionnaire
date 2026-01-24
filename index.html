@@ -1298,6 +1298,134 @@
             }
         }
 
+        /* ===== Favorites/Bookmarks Feature ===== */
+        .bookmark-btn {
+            position: absolute;
+            top: var(--space-sm);
+            left: var(--space-sm);
+            background: var(--bg-light);
+            border: 1px solid rgba(0, 119, 182, 0.15);
+            border-radius: var(--radius-md);
+            width: 32px;
+            height: 32px;
+            font-size: 1rem;
+            color: var(--text-light);
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.2s ease;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .app-card:hover .bookmark-btn,
+        .app-card:focus-within .bookmark-btn,
+        .bookmark-btn.active {
+            opacity: 1;
+        }
+
+        .bookmark-btn:hover {
+            background: var(--warning);
+            color: white;
+            border-color: var(--warning);
+            transform: scale(1.1);
+        }
+
+        .bookmark-btn.active {
+            background: var(--warning);
+            color: white;
+            border-color: var(--warning);
+        }
+
+        .bookmark-btn.active:hover {
+            background: #e5a800;
+        }
+
+        /* Favorites filter button special style */
+        .quick-btn.favorites-btn {
+            background: linear-gradient(135deg, var(--warning) 0%, #ffd43b 100%);
+            color: var(--text-dark);
+            border-color: transparent;
+        }
+
+        .quick-btn.favorites-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 190, 11, 0.35);
+        }
+
+        .quick-btn.favorites-btn .fav-count {
+            background: white;
+            color: var(--text-dark);
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            margin-left: 6px;
+            font-weight: 700;
+        }
+
+        /* Empty favorites state */
+        .favorites-empty {
+            text-align: center;
+            padding: var(--space-2xl) var(--space-lg);
+            color: var(--text-light);
+        }
+
+        .favorites-empty-icon {
+            font-size: 3rem;
+            margin-bottom: var(--space-md);
+            opacity: 0.5;
+        }
+
+        .favorites-empty-text {
+            font-size: 1rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .favorites-empty-hint {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        /* Dark mode for favorites */
+        body.dark-mode .bookmark-btn {
+            background: var(--bg-dark-tertiary);
+            border-color: var(--border-dark);
+            color: var(--text-dark-secondary);
+        }
+
+        body.dark-mode .bookmark-btn:hover,
+        body.dark-mode .bookmark-btn.active {
+            background: var(--warning);
+            color: var(--text-dark);
+            border-color: var(--warning);
+        }
+
+        body.dark-mode .quick-btn.favorites-btn {
+            color: var(--text-dark);
+        }
+
+        body.dark-mode .favorites-empty {
+            color: var(--text-dark-secondary);
+        }
+
+        /* Toast animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        body.dark-mode .favorite-toast {
+            background: var(--bg-dark-tertiary);
+            color: var(--text-dark-primary);
+        }
+
         /* Quick Filter Buttons - EBM Style */
         .quick-filters {
             display: flex;
@@ -1999,6 +2127,7 @@
             <button class="quick-btn active" onclick="filterByCategory('all')" aria-pressed="true">📚 全部</button>
             <button class="quick-btn" onclick="filterByCategory('staff')" aria-pressed="false">👨‍⚕️ 醫護人員</button>
             <button class="quick-btn" onclick="filterByCategory('patient')" aria-pressed="false">👥 病人衛教</button>
+            <button class="quick-btn favorites-btn" onclick="filterByFavorites()" aria-pressed="false" id="favoritesFilterBtn">⭐ 我的收藏 <span class="fav-count" id="favCount">0</span></button>
         </nav>
 
         <!-- Stats -->
@@ -2864,6 +2993,10 @@
             const categories = document.querySelectorAll('.category');
             const cards = document.querySelectorAll('.app-card');
 
+            // Remove empty favorites message if exists
+            const emptyMsg = document.querySelector('.favorites-empty');
+            if (emptyMsg) emptyMsg.remove();
+
             // Update button states and aria-pressed
             buttons.forEach(btn => {
                 btn.classList.remove('active');
@@ -2874,7 +3007,7 @@
 
             // Clear search
             document.getElementById('searchInput').value = '';
-            
+
             if (type === 'all') {
                 categories.forEach(cat => cat.classList.remove('hidden'));
                 cards.forEach(card => card.classList.remove('hidden'));
@@ -2886,7 +3019,7 @@
                         category.classList.add('hidden');
                     }
                 });
-                
+
                 cards.forEach(card => {
                     if (card.dataset.tags.includes(type)) {
                         card.classList.remove('hidden');
@@ -2895,7 +3028,7 @@
                     }
                 });
             }
-            
+
             updateStats();
         }
         
@@ -3047,10 +3180,196 @@
             });
         }
 
+        // ===== Favorites/Bookmarks Feature =====
+        const FAVORITES_KEY = 'cv-education-favorites';
+
+        // Get favorites from localStorage
+        function getFavorites() {
+            try {
+                return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
+            } catch {
+                return [];
+            }
+        }
+
+        // Save favorites to localStorage
+        function saveFavorites(favorites) {
+            localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+            updateFavoritesCount();
+        }
+
+        // Toggle favorite status for a card
+        function toggleFavorite(card, event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const href = card.getAttribute('href');
+            const favorites = getFavorites();
+            const index = favorites.indexOf(href);
+            const btn = card.querySelector('.bookmark-btn');
+
+            if (index === -1) {
+                // Add to favorites
+                favorites.push(href);
+                btn.classList.add('active');
+                btn.textContent = '⭐';
+                btn.setAttribute('aria-label', '從收藏移除');
+                showFavoriteToast('已加入收藏 ⭐');
+            } else {
+                // Remove from favorites
+                favorites.splice(index, 1);
+                btn.classList.remove('active');
+                btn.textContent = '☆';
+                btn.setAttribute('aria-label', '加入收藏');
+                showFavoriteToast('已從收藏移除');
+            }
+
+            saveFavorites(favorites);
+        }
+
+        // Show toast notification for favorites
+        function showFavoriteToast(message) {
+            // Remove existing toast
+            const existingToast = document.querySelector('.favorite-toast');
+            if (existingToast) existingToast.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'favorite-toast';
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 100px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--text-dark);
+                color: white;
+                padding: 12px 24px;
+                border-radius: 8px;
+                font-size: 0.9rem;
+                z-index: 1001;
+                animation: fadeInUp 0.3s ease;
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
+        }
+
+        // Update favorites count badge
+        function updateFavoritesCount() {
+            const favorites = getFavorites();
+            const countEl = document.getElementById('favCount');
+            if (countEl) {
+                countEl.textContent = favorites.length;
+            }
+        }
+
+        // Filter to show only favorites
+        function filterByFavorites() {
+            const favorites = getFavorites();
+            const buttons = document.querySelectorAll('.quick-btn');
+            const categories = document.querySelectorAll('.category');
+            const cards = document.querySelectorAll('.app-card');
+
+            // Update button states
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-pressed', 'false');
+            });
+            document.getElementById('favoritesFilterBtn').classList.add('active');
+            document.getElementById('favoritesFilterBtn').setAttribute('aria-pressed', 'true');
+
+            // Clear search
+            document.getElementById('searchInput').value = '';
+
+            if (favorites.length === 0) {
+                // Show empty state
+                categories.forEach(cat => cat.classList.add('hidden'));
+                showEmptyFavoritesMessage();
+            } else {
+                // Remove empty message if exists
+                const emptyMsg = document.querySelector('.favorites-empty');
+                if (emptyMsg) emptyMsg.remove();
+
+                // Show all categories first, then filter cards
+                categories.forEach(cat => cat.classList.remove('hidden'));
+
+                cards.forEach(card => {
+                    const href = card.getAttribute('href');
+                    if (favorites.includes(href)) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+
+                // Hide categories with no visible cards
+                categories.forEach(category => {
+                    const visibleCards = category.querySelectorAll('.app-card:not(.hidden)');
+                    if (visibleCards.length === 0) {
+                        category.classList.add('hidden');
+                    }
+                });
+            }
+
+            updateStats();
+        }
+
+        // Show empty favorites message
+        function showEmptyFavoritesMessage() {
+            // Remove existing message
+            const existing = document.querySelector('.favorites-empty');
+            if (existing) existing.remove();
+
+            const container = document.querySelector('.main-container');
+            const firstCategory = document.querySelector('.category');
+
+            const emptyDiv = document.createElement('div');
+            emptyDiv.className = 'favorites-empty';
+            emptyDiv.innerHTML = `
+                <div class="favorites-empty-icon">⭐</div>
+                <div class="favorites-empty-text">您還沒有收藏任何資源</div>
+                <div class="favorites-empty-hint">點擊資源卡片上的 ☆ 按鈕來加入收藏</div>
+            `;
+
+            if (firstCategory) {
+                container.insertBefore(emptyDiv, firstCategory);
+            } else {
+                container.appendChild(emptyDiv);
+            }
+        }
+
+        // Add bookmark buttons to all cards
+        function initBookmarkButtons() {
+            const cards = document.querySelectorAll('.app-card');
+            const favorites = getFavorites();
+
+            cards.forEach(card => {
+                // Check if button already exists
+                if (card.querySelector('.bookmark-btn')) return;
+
+                const href = card.getAttribute('href');
+                const isFavorite = favorites.includes(href);
+
+                const btn = document.createElement('button');
+                btn.className = 'bookmark-btn' + (isFavorite ? ' active' : '');
+                btn.textContent = isFavorite ? '⭐' : '☆';
+                btn.setAttribute('aria-label', isFavorite ? '從收藏移除' : '加入收藏');
+                btn.onclick = (e) => toggleFavorite(card, e);
+                card.appendChild(btn);
+            });
+
+            updateFavoritesCount();
+        }
+
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             updateStats();
             initRelatedButtons();
+            initBookmarkButtons();
         });
 
         // Share Modal Functions
