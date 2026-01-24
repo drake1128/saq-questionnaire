@@ -218,6 +218,11 @@
                     const finalScore = Math.round((score / quizQuestions.length) * 100);
                     localStorage.setItem('exam-vascular-abi-score', finalScore);
                     onComplete(finalScore);
+
+                    // Track achievement
+                    if (window.AchievementTracker) {
+                        window.AchievementTracker.trackQuizComplete('exam-vascular-abi', finalScore);
+                    }
                 }
             };
 
@@ -328,5 +333,9 @@
 
         ReactDOM.render(<App />, document.getElementById('root'));
     </script>
+
+    <!-- Achievement System Scripts -->
+    <script src="achievements-config.js"></script>
+    <script src="achievements.js"></script>
 </body>
 </html>
