@@ -1117,6 +1117,167 @@
             outline: 3px solid var(--primary-light);
             outline-offset: 4px;
         }
+
+        /* ===== Print Stylesheet ===== */
+        @media print {
+            /* Reset colors for printing */
+            * {
+                background: white !important;
+                color: black !important;
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+
+            /* Hide non-printable elements */
+            .site-header,
+            .skip-link,
+            .hero,
+            .quick-filters,
+            .share-button,
+            .profile-button,
+            .dark-mode-toggle,
+            .version-badge,
+            .share-modal-overlay,
+            .achievement-toast,
+            .footer {
+                display: none !important;
+            }
+
+            /* Page setup */
+            @page {
+                margin: 1.5cm;
+                size: A4;
+            }
+
+            body {
+                font-size: 12pt;
+                line-height: 1.5;
+                padding: 0;
+                margin: 0;
+            }
+
+            /* Print header */
+            .container::before {
+                content: "心血管照護教學資源中心 - 資源列表";
+                display: block;
+                font-size: 18pt;
+                font-weight: bold;
+                text-align: center;
+                margin-bottom: 20pt;
+                padding-bottom: 10pt;
+                border-bottom: 2pt solid black;
+            }
+
+            .container {
+                max-width: 100%;
+                padding: 0;
+            }
+
+            /* Category headers */
+            .category-header {
+                background: none !important;
+                border: none !important;
+                padding: 10pt 0 5pt 0;
+                margin-top: 15pt;
+                border-bottom: 1pt solid #333 !important;
+            }
+
+            .category-title {
+                font-size: 14pt;
+                font-weight: bold;
+            }
+
+            .category-count {
+                font-size: 10pt;
+            }
+
+            /* App grid - list view for print */
+            .app-grid {
+                display: block !important;
+                columns: 2;
+                column-gap: 20pt;
+            }
+
+            /* App cards */
+            .app-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                border: 1pt solid #ccc !important;
+                border-radius: 0 !important;
+                padding: 8pt !important;
+                margin-bottom: 10pt !important;
+                display: block !important;
+            }
+
+            .app-card::before {
+                display: none !important;
+            }
+
+            .app-icon {
+                display: none !important;
+            }
+
+            .app-title {
+                font-size: 11pt;
+                font-weight: bold;
+                margin-bottom: 3pt;
+            }
+
+            .app-desc {
+                font-size: 9pt;
+                margin-bottom: 5pt;
+            }
+
+            /* Tags */
+            .app-tags {
+                margin-top: 5pt;
+            }
+
+            .tag {
+                font-size: 8pt;
+                padding: 2pt 5pt;
+                border: 1pt solid #999 !important;
+                border-radius: 0 !important;
+                margin-right: 3pt;
+            }
+
+            /* Show URLs for links */
+            .app-card::after {
+                content: " [" attr(href) "]";
+                font-size: 8pt;
+                color: #666 !important;
+                display: block;
+                margin-top: 3pt;
+                word-break: break-all;
+            }
+
+            /* Featured link */
+            .featured-link {
+                display: none !important;
+            }
+
+            /* Hide decorative elements */
+            .category-header::before,
+            .app-card .app-icon {
+                display: none !important;
+            }
+
+            /* Stats section */
+            .stats-bar {
+                display: none !important;
+            }
+
+            /* Print footer */
+            .container::after {
+                content: "列印日期: " attr(data-print-date) " | https://drake1128.github.io/saq-questionnaire";
+                display: block;
+                font-size: 9pt;
+                text-align: center;
+                margin-top: 20pt;
+                padding-top: 10pt;
+                border-top: 1pt solid #ccc;
+            }
+        }
     </style>
 </head>
 <body>

@@ -43,7 +43,7 @@
 | 18 | Add `loading="lazy"` to images below fold | Medium | 1 hr | ☑ DONE (already implemented) |
 | 19 | Preload critical fonts and scripts | Medium | 30 min | ☑ DONE (preconnect added) |
 | 20 | Implement Dark Mode toggle | Medium | 3 hrs | ☑ DONE |
-| 21 | Add print stylesheet | Medium | 2 hrs | ☐ |
+| 21 | Add print stylesheet | Medium | 2 hrs | ☑ DONE |
 | 22 | Create advanced search filters | Medium | 4 hrs | ☑ DONE (category filters) |
 | 23 | Add related resources linking | Medium | 3 hrs | ☐ |
 | 24 | Build feedback mechanism | Medium | 3 hrs | ☐ |
@@ -91,10 +91,10 @@
 | SEO (6-10) | 5 | 5 | 100% ✅ |
 | Design System (11-17) | 7 | 5 | 71% |
 | Performance (18-19) | 2 | 2 | 100% ✅ |
-| Features (20-24) | 5 | 2 | 40% |
+| Features (20-24) | 5 | 3 | 60% |
 | Content (25-30) | 6 | 0 | 0% |
 | Testing (T1-T8) | 8 | 0 | 0% |
-| **Total** | **38** | **19** | **50%** |
+| **Total** | **38** | **20** | **53%** |
 
 ---
 
@@ -517,13 +517,13 @@ Your website has an excellent foundation. With **Accessibility, SEO, Performance
 
 ## Next Recommended Tasks
 
-1. **Print Stylesheet** (#21) - Offline study materials, 2 hrs
-2. **Spacing Scale** (#13) - Design consistency, 1 hr
-3. **Reusable Button Classes** (#14) - Maintainability, 1 hr
-4. **Related Resources Linking** (#23) - Better navigation, 3 hrs
+1. **Spacing Scale** (#13) - Design consistency, 1 hr
+2. **Reusable Button Classes** (#14) - Maintainability, 1 hr
+3. **Related Resources Linking** (#23) - Better navigation, 3 hrs
+4. **Feedback Mechanism** (#24) - User engagement, 3 hrs
 
 ---
 
 *Last updated: January 25, 2026*
-*Progress: 50% complete (19/38 tasks)*
+*Progress: 53% complete (20/38 tasks)*
 *Achievement system: Fixed across 16 quiz pages*
