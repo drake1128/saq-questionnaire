@@ -2,7 +2,7 @@
 ## 心血管照護教學資源中心 (Cardiovascular Care Education Hub)
 
 **Generated:** January 2026
-**Last Updated:** January 25, 2026
+**Last Updated:** January 25, 2026 (Session 2)
 **Website:** https://drake1128.github.io/saq-questionnaire
 
 ---
