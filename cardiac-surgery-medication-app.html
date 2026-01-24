@@ -579,6 +579,12 @@
                         ...prev,
                         showResult: true
                     }));
+                    // Track achievement
+                    if (window.AchievementTracker) {
+                        const correct = quizState.answers.filter(a => a.selected === a.correct).length + (quizState.selectedAnswer === quizState.questions[quizState.currentQuestion].correct ? 1 : 0);
+                        const percentage = Math.round((correct / quizState.questions.length) * 100);
+                        window.AchievementTracker.trackQuizComplete('cardiac-surgery-medication-quiz', percentage);
+                    }
                 }
             };
 
@@ -1332,5 +1338,9 @@
 
         ReactDOM.render(<App />, document.getElementById('root'));
     </script>
+
+    <!-- Achievement System Scripts -->
+    <script src="achievements-config.js"></script>
+    <script src="achievements.js"></script>
 </body>
 </html>

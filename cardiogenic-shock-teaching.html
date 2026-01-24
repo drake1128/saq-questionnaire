@@ -303,6 +303,14 @@
       const next = () => { if (cur < quizData.length - 1) { setCur(cur + 1); setSel(null); setShow(false); } else setDone(true); };
       const reset = () => { setCur(0); setSel(null); setShow(false); setScore(0); setDone(false); };
 
+      // Track achievement when quiz is completed
+      React.useEffect(() => {
+        if (done && window.AchievementTracker) {
+          const pct = Math.round((score / quizData.length) * 100);
+          window.AchievementTracker.trackQuizComplete('cardiogenic-shock-quiz', pct);
+        }
+      }, [done, score]);
+
       if (done) {
         const pct = Math.round((score / quizData.length) * 100);
         return (
@@ -393,5 +401,9 @@
 
     ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
+
+  <!-- Achievement System Scripts -->
+  <script src="achievements-config.js"></script>
+  <script src="achievements.js"></script>
 </body>
 </html>

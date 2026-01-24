@@ -1420,6 +1420,14 @@
                 setAnswers([]);
             };
 
+            // Track achievement when quiz is completed
+            React.useEffect(() => {
+                if (finished && window.AchievementTracker) {
+                    const percentage = Math.round((score / quizQuestions.length) * 100);
+                    window.AchievementTracker.trackQuizComplete('ph-diagnostic-quiz', percentage);
+                }
+            }, [finished, score]);
+
             if (finished) {
                 const finalScore = score;
                 const percentage = Math.round((finalScore / quizQuestions.length) * 100);
@@ -1877,5 +1885,9 @@
 
         ReactDOM.render(<App />, document.getElementById('root'));
     </script>
+
+    <!-- Achievement System Scripts -->
+    <script src="achievements-config.js"></script>
+    <script src="achievements.js"></script>
 </body>
 </html>

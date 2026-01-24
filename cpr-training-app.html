@@ -871,6 +871,10 @@
         });
         function showQuizResult() {
             var percentage = Math.round((quizScoreCount / quizQuestions.length) * 100);
+            // Track achievement
+            if (window.AchievementTracker) {
+                window.AchievementTracker.trackQuizComplete('cpr-training-quiz', percentage);
+            }
             var gradeLabel, gradeClass;
             if (percentage >= 80) { gradeLabel = '優良'; gradeClass = 'grade-excellent'; }
             else if (percentage >= 60) { gradeLabel = '及格'; gradeClass = 'grade-good'; }
@@ -898,5 +902,9 @@
         loadQuestion();
         document.getElementById('practiceDate').value = new Date().toISOString().split('T')[0];
     </script>
+
+    <!-- Achievement System Scripts -->
+    <script src="achievements-config.js"></script>
+    <script src="achievements.js"></script>
 </body>
 </html>

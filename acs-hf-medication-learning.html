@@ -2503,6 +2503,14 @@
                 );
             }
 
+            // Track achievement when quiz is completed
+            React.useEffect(() => {
+                if (isComplete && window.AchievementTracker) {
+                    const percentage = Math.round((score / questions.length) * 100);
+                    window.AchievementTracker.trackQuizComplete('acs-hf-medication-quiz', percentage);
+                }
+            }, [isComplete, score, questions.length]);
+
             if (isComplete) {
                 const percentage = Math.round((score / questions.length) * 100);
                 let message = '';
@@ -2785,5 +2793,9 @@
         // ==================== 渲染應用程式 ====================
         ReactDOM.render(<App />, document.getElementById('root'));
     </script>
+
+    <!-- Achievement System Scripts -->
+    <script src="achievements-config.js"></script>
+    <script src="achievements.js"></script>
 </body>
 </html>

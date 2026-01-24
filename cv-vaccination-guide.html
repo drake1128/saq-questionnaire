@@ -938,6 +938,12 @@
                     }));
                 } else {
                     setQuizState(prev => ({ ...prev, completed: true }));
+                    // Track achievement
+                    if (window.AchievementTracker) {
+                        const finalScore = quizState.score + (quizState.selectedAnswer === QUIZ_QUESTIONS[quizState.currentQuestion].correct ? 1 : 0);
+                        const percentage = Math.round((finalScore / QUIZ_QUESTIONS.length) * 100);
+                        window.AchievementTracker.trackQuizComplete('cv-vaccination-quiz', percentage);
+                    }
                 }
             };
 
@@ -1530,5 +1536,9 @@
 
         ReactDOM.render(<App />, document.getElementById('root'));
     </script>
+
+    <!-- Achievement System Scripts -->
+    <script src="achievements-config.js"></script>
+    <script src="achievements.js"></script>
 </body>
 </html>

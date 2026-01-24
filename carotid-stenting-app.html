@@ -1858,6 +1858,14 @@
                     });
                 };
 
+                // Track achievement when quiz is completed
+                React.useEffect(() => {
+                    if (quizState.completed && window.AchievementTracker) {
+                        const percentage = Math.round((quizState.score / quizQuestions.length) * 100);
+                        window.AchievementTracker.trackQuizComplete('carotid-stenting-quiz', percentage);
+                    }
+                }, [quizState.completed, quizState.score]);
+
                 if (quizState.completed) {
                     const percentage = Math.round((quizState.score / quizQuestions.length) * 100);
                     return (
@@ -2021,5 +2029,9 @@
 
         ReactDOM.render(<App />, document.getElementById('root'));
     </script>
+
+    <!-- Achievement System Scripts -->
+    <script src="achievements-config.js"></script>
+    <script src="achievements.js"></script>
 </body>
 </html>

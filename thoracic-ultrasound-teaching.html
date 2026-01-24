@@ -465,6 +465,8 @@ function nextQuestion(){
 function renderResult(container){
     var score=quizState.answers.filter(function(a){return a;}).length;
     var pct=Math.round((score/quizQuestions.length)*100);
+    // Track achievement
+    if(window.AchievementTracker){window.AchievementTracker.trackQuizComplete('thoracic-ultrasound-quiz',pct);}
     var msg,detail;
     if(pct>=90){msg="🎉 太棒了！Excellent!";detail="你已經掌握胸腔超音波的核心概念！";}
     else if(pct>=70){msg="👍 做得好！Good Job!";detail="大部分概念都理解了，再複習一下較弱的部分。";}
@@ -475,5 +477,9 @@ function renderResult(container){
 function resetQuiz(){quizState={currentQuestion:0,answers:[],showResult:false,selectedOption:null,answered:false};renderQuiz();}
 document.addEventListener('DOMContentLoaded',function(){renderQuiz();});
 </script>
+
+<!-- Achievement System Scripts -->
+<script src="achievements-config.js"></script>
+<script src="achievements.js"></script>
 </body>
 </html>

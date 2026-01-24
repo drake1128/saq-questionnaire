@@ -1467,6 +1467,14 @@
                     });
                 };
 
+                // Track achievement when quiz is completed
+                React.useEffect(() => {
+                    if (completed && window.AchievementTracker) {
+                        const percentage = Math.round((score / questions.length) * 100);
+                        window.AchievementTracker.trackQuizComplete('heart-failure-ward-quiz', percentage);
+                    }
+                }, [completed, score]);
+
                 if (completed) {
                     const percentage = Math.round((score / questions.length) * 100);
                     return (
@@ -1687,5 +1695,9 @@
         
         ReactDOM.render(<App />, document.getElementById('root'));
     </script>
+
+    <!-- Achievement System Scripts -->
+    <script src="achievements-config.js"></script>
+    <script src="achievements.js"></script>
 </body>
 </html>
