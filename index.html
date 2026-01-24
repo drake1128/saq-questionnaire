@@ -1038,6 +1038,266 @@
             color: var(--text-dark-secondary);
         }
 
+        /* ===== Feedback Feature ===== */
+        .feedback-fab {
+            position: fixed;
+            bottom: var(--space-lg);
+            right: var(--space-lg);
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-warm) 100%);
+            border: none;
+            border-radius: var(--radius-full);
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(255, 107, 53, 0.35);
+            transition: all 0.3s ease;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feedback-fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 24px rgba(255, 107, 53, 0.45);
+        }
+
+        .feedback-fab:focus-visible {
+            outline: 3px solid var(--accent-warm);
+            outline-offset: 3px;
+        }
+
+        .feedback-modal {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-lg);
+            max-width: 450px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        .feedback-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-sm);
+            border-bottom: 1px solid rgba(0, 119, 182, 0.1);
+        }
+
+        .feedback-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .feedback-close {
+            background: var(--bg-light);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 1.3rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .feedback-close:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .feedback-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        .feedback-field {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+
+        .feedback-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .feedback-input,
+        .feedback-textarea,
+        .feedback-select {
+            padding: var(--space-sm) var(--space-md);
+            border: 2px solid rgba(0, 119, 182, 0.15);
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: border-color 0.2s ease;
+            background: white;
+            color: var(--text-dark);
+        }
+
+        .feedback-input:focus,
+        .feedback-textarea:focus,
+        .feedback-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .feedback-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .feedback-type-options {
+            display: flex;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+        }
+
+        .feedback-type-btn {
+            padding: var(--space-sm) var(--space-md);
+            border: 2px solid rgba(0, 119, 182, 0.15);
+            border-radius: var(--radius-md);
+            background: var(--bg-light);
+            color: var(--text-medium);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .feedback-type-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .feedback-type-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .feedback-submit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border: none;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 119, 182, 0.25);
+        }
+
+        .feedback-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 119, 182, 0.35);
+        }
+
+        .feedback-note {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            text-align: center;
+            margin-top: var(--space-xs);
+        }
+
+        /* Dark mode for feedback */
+        body.dark-mode .feedback-fab {
+            box-shadow: 0 4px 16px rgba(255, 107, 53, 0.25);
+        }
+
+        body.dark-mode .feedback-modal {
+            background: var(--bg-dark-secondary);
+        }
+
+        body.dark-mode .feedback-header {
+            border-bottom-color: var(--border-dark);
+        }
+
+        body.dark-mode .feedback-title {
+            color: var(--text-dark-primary);
+        }
+
+        body.dark-mode .feedback-close {
+            background: var(--bg-dark-tertiary);
+            color: var(--text-dark-secondary);
+        }
+
+        body.dark-mode .feedback-close:hover {
+            background: #7f1d1d;
+            color: #fca5a5;
+        }
+
+        body.dark-mode .feedback-label {
+            color: var(--text-dark-primary);
+        }
+
+        body.dark-mode .feedback-input,
+        body.dark-mode .feedback-textarea,
+        body.dark-mode .feedback-select {
+            background: var(--bg-dark-tertiary);
+            border-color: var(--border-dark);
+            color: var(--text-dark-primary);
+        }
+
+        body.dark-mode .feedback-input:focus,
+        body.dark-mode .feedback-textarea:focus,
+        body.dark-mode .feedback-select:focus {
+            border-color: var(--primary-light);
+        }
+
+        body.dark-mode .feedback-type-btn {
+            background: var(--bg-dark-tertiary);
+            border-color: var(--border-dark);
+            color: var(--text-dark-secondary);
+        }
+
+        body.dark-mode .feedback-type-btn:hover {
+            border-color: var(--primary-light);
+            color: var(--primary-light);
+        }
+
+        body.dark-mode .feedback-type-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        body.dark-mode .feedback-note {
+            color: var(--text-dark-secondary);
+        }
+
+        /* Mobile adjustments for FAB */
+        @media (max-width: 600px) {
+            .feedback-fab {
+                bottom: var(--space-md);
+                right: var(--space-md);
+                width: 50px;
+                height: 50px;
+                font-size: 1.3rem;
+            }
+        }
+
         /* Quick Filter Buttons - EBM Style */
         .quick-filters {
             display: flex;
@@ -2277,6 +2537,60 @@
         </div>
     </div>
 
+    <!-- Feedback FAB Button -->
+    <button class="feedback-fab" onclick="openFeedbackModal()" aria-label="提供回饋意見" title="提供回饋意見">
+        💬
+    </button>
+
+    <!-- Feedback Modal -->
+    <div class="share-modal-overlay" id="feedbackModal" onclick="closeFeedbackModal(event)" role="dialog" aria-modal="true" aria-labelledby="feedback-modal-title">
+        <div class="feedback-modal" onclick="event.stopPropagation()">
+            <div class="feedback-header">
+                <div class="feedback-title" id="feedback-modal-title">
+                    <span aria-hidden="true">💬</span> 提供回饋意見
+                </div>
+                <button class="feedback-close" onclick="closeFeedbackModal()" aria-label="關閉回饋視窗">×</button>
+            </div>
+            <form class="feedback-form" id="feedbackForm" onsubmit="submitFeedback(event)">
+                <div class="feedback-field">
+                    <label class="feedback-label">回饋類型</label>
+                    <div class="feedback-type-options">
+                        <button type="button" class="feedback-type-btn active" data-type="suggestion" onclick="selectFeedbackType(this)">💡 建議</button>
+                        <button type="button" class="feedback-type-btn" data-type="bug" onclick="selectFeedbackType(this)">🐛 問題回報</button>
+                        <button type="button" class="feedback-type-btn" data-type="content" onclick="selectFeedbackType(this)">📚 內容建議</button>
+                        <button type="button" class="feedback-type-btn" data-type="praise" onclick="selectFeedbackType(this)">❤️ 感謝</button>
+                    </div>
+                </div>
+                <div class="feedback-field">
+                    <label class="feedback-label" for="feedbackPage">相關頁面（選填）</label>
+                    <select class="feedback-select" id="feedbackPage">
+                        <option value="">-- 請選擇 --</option>
+                        <option value="首頁">首頁</option>
+                        <option value="導管室">導管室相關</option>
+                        <option value="病房/ICU">病房/ICU 相關</option>
+                        <option value="介入治療">介入治療相關</option>
+                        <option value="藥物">藥物相關</option>
+                        <option value="病人衛教">病人衛教相關</option>
+                        <option value="學習資源">學習資源相關</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                <div class="feedback-field">
+                    <label class="feedback-label" for="feedbackMessage">您的意見 *</label>
+                    <textarea class="feedback-textarea" id="feedbackMessage" placeholder="請輸入您的意見或建議..." required></textarea>
+                </div>
+                <div class="feedback-field">
+                    <label class="feedback-label" for="feedbackName">您的稱呼（選填）</label>
+                    <input type="text" class="feedback-input" id="feedbackName" placeholder="例如：王醫師">
+                </div>
+                <button type="submit" class="feedback-submit">
+                    <span aria-hidden="true">📧</span> 送出回饋
+                </button>
+                <p class="feedback-note">回饋將透過 Email 傳送，感謝您的寶貴意見！</p>
+            </form>
+        </div>
+    </div>
+
     <!-- Achievements Modal -->
     <div class="achievements-modal-overlay" id="achievementsModal" onclick="closeAchievementsModal(event)" role="dialog" aria-modal="true" aria-labelledby="achievements-modal-title">
         <div class="achievements-modal" onclick="event.stopPropagation()">
@@ -2773,6 +3087,98 @@
                 window.AchievementTracker.trackShare();
             }
         }
+
+        // ===== Feedback Modal Functions =====
+        let feedbackLastFocused = null;
+        let selectedFeedbackType = 'suggestion';
+
+        function openFeedbackModal() {
+            feedbackLastFocused = document.activeElement;
+            const modal = document.getElementById('feedbackModal');
+            modal.classList.add('active');
+
+            // Focus the first input after modal opens
+            setTimeout(() => {
+                const closeBtn = modal.querySelector('.feedback-close');
+                if (closeBtn) closeBtn.focus();
+            }, 100);
+        }
+
+        function closeFeedbackModal(event) {
+            if (!event || event.target === event.currentTarget) {
+                document.getElementById('feedbackModal').classList.remove('active');
+                // Reset form
+                document.getElementById('feedbackForm').reset();
+                // Reset type buttons
+                document.querySelectorAll('.feedback-type-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.type === 'suggestion') btn.classList.add('active');
+                });
+                selectedFeedbackType = 'suggestion';
+                // Restore focus
+                if (feedbackLastFocused) {
+                    feedbackLastFocused.focus();
+                }
+            }
+        }
+
+        function selectFeedbackType(btn) {
+            document.querySelectorAll('.feedback-type-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedFeedbackType = btn.dataset.type;
+        }
+
+        function submitFeedback(event) {
+            event.preventDefault();
+
+            const typeLabels = {
+                'suggestion': '💡 建議',
+                'bug': '🐛 問題回報',
+                'content': '📚 內容建議',
+                'praise': '❤️ 感謝'
+            };
+
+            const page = document.getElementById('feedbackPage').value || '未指定';
+            const message = document.getElementById('feedbackMessage').value;
+            const name = document.getElementById('feedbackName').value || '匿名';
+            const typeLabel = typeLabels[selectedFeedbackType] || '建議';
+
+            // Build email subject and body
+            const subject = encodeURIComponent(`[心血管教學網站回饋] ${typeLabel} - ${page}`);
+            const body = encodeURIComponent(
+`回饋類型：${typeLabel}
+相關頁面：${page}
+回饋者：${name}
+
+回饋內容：
+${message}
+
+---
+此回饋來自：心血管照護教學資源中心
+網址：https://drake1128.github.io/saq-questionnaire
+時間：${new Date().toLocaleString('zh-TW')}`
+            );
+
+            // Open mailto link
+            const mailtoLink = `mailto:drake1128@gmail.com?subject=${subject}&body=${body}`;
+            window.location.href = mailtoLink;
+
+            // Close modal and show thank you message
+            setTimeout(() => {
+                closeFeedbackModal();
+                alert('感謝您的回饋！您的 Email 應用程式將會開啟。');
+            }, 500);
+        }
+
+        // Close feedback modal on Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const feedbackModal = document.getElementById('feedbackModal');
+                if (feedbackModal.classList.contains('active')) {
+                    closeFeedbackModal();
+                }
+            }
+        });
     </script>
 
     <!-- Achievement System Scripts -->

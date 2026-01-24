@@ -46,7 +46,7 @@
 | 21 | Add print stylesheet | Medium | 2 hrs | ☑ DONE |
 | 22 | Create advanced search filters | Medium | 4 hrs | ☑ DONE (category filters) |
 | 23 | Add related resources linking | Medium | 3 hrs | ☑ DONE |
-| 24 | Build feedback mechanism | Medium | 3 hrs | ☐ |
+| 24 | Build feedback mechanism | Medium | 3 hrs | ☑ DONE |
 
 ### Phase 4: Low Priority - Content Enhancements (Ongoing)
 
@@ -91,10 +91,10 @@
 | SEO (6-10) | 5 | 5 | 100% ✅ |
 | Design System (11-17) | 7 | 7 | 100% ✅ |
 | Performance (18-19) | 2 | 2 | 100% ✅ |
-| Features (20-24) | 5 | 4 | 80% |
+| Features (20-24) | 5 | 5 | 100% ✅ |
 | Content (25-30) | 6 | 0 | 0% |
 | Testing (T1-T8) | 8 | 0 | 0% |
-| **Total** | **38** | **23** | **61%** |
+| **Total** | **38** | **24** | **63%** |
 
 ---
 
@@ -182,6 +182,16 @@
 | #18 Lazy loading | - | Already implemented (verified) |
 | #21 Print stylesheet | `index.html` | Comprehensive @media print styles |
 | #23 Related resources | `index.html` | Tag-based related resources linking |
+| #24 Feedback mechanism | `index.html` | Floating feedback button with email form |
+
+**Feedback Mechanism:**
+- Floating action button (FAB) in bottom-right corner
+- Modal form with feedback type selection (建議/問題回報/內容建議/感謝)
+- Page selector dropdown
+- Message textarea and optional name field
+- Sends via mailto: to drake1128@gmail.com
+- Full dark mode support
+- Keyboard accessible
 
 **Related Resources Feature:**
 - "🔗 相關" button appears on hover for each resource card
