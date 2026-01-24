@@ -693,6 +693,14 @@
                 const nextQuestion = () => { if (currentQ < questions.length - 1) { setQuizState(prev => ({ ...prev, currentQ: prev.currentQ + 1, selected: null, showResult: false })); } else { setQuizState(prev => ({ ...prev, completed: true })); } };
                 const restartQuiz = () => { setQuizState({ currentQ: 0, score: 0, selected: null, showResult: false, completed: false }); };
                 
+                // Track achievement when quiz is completed
+                React.useEffect(() => {
+                    if (completed && window.AchievementTracker) {
+                        const percentage = Math.round((score / questions.length) * 100);
+                        window.AchievementTracker.trackQuizComplete('cath-handoff-quiz', percentage);
+                    }
+                }, [completed, score]);
+
                 if (completed) {
                     const percentage = Math.round((score / questions.length) * 100);
                     return (<div className="fade-in"><Header title="測驗結果" subtitle="Quiz Results" showBack /><div style={{ padding: '0 16px', textAlign: 'center' }}><div style={{ background: percentage >= 80 ? 'linear-gradient(135deg, #10b981, #059669)' : percentage >= 60 ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'linear-gradient(135deg, #ef4444, #dc2626)', borderRadius: '20px', padding: '40px 20px', color: 'white', marginBottom: '20px' }}><div style={{ fontSize: '64px', marginBottom: '10px' }}>{percentage >= 80 ? '🎉' : percentage >= 60 ? '👍' : '📚'}</div><div style={{ fontSize: '48px', fontWeight: '700' }}>{score}/{questions.length}</div><div style={{ fontSize: '18px', marginTop: '10px' }}>正確率 {percentage}%</div></div><button onClick={restartQuiz} style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: '600', cursor: 'pointer' }}>重新測驗</button></div></div>);
@@ -732,5 +740,9 @@
         
         ReactDOM.render(<App />, document.getElementById('root'));
     </script>
+
+    <!-- Achievement System Scripts -->
+    <script src="achievements-config.js"></script>
+    <script src="achievements.js"></script>
 </body>
 </html>
