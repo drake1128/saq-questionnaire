@@ -2,7 +2,7 @@
 ## 心血管照護教學資源中心 (Cardiovascular Care Education Hub)
 
 **Generated:** January 2026
-**Last Updated:** January 18, 2026
+**Last Updated:** January 25, 2026
 **Website:** https://drake1128.github.io/saq-questionnaire
 
 ---
@@ -33,7 +33,7 @@
 | 13 | Define consistent spacing scale | High | 1 hr | ☐ |
 | 14 | Create reusable button classes | High | 1 hr | ☐ |
 | 15 | Standardize card and shadow styles | High | 1 hr | ☑ DONE |
-| 16 | Implement keyboard navigation (Tab, Enter, Escape) | High | 2 hrs | ☐ |
+| 16 | Implement keyboard navigation (Tab, Enter, Escape) | High | 2 hrs | ☑ DONE |
 | 17 | Add visible focus indicators (`:focus-visible`) | High | 1 hr | ☑ DONE (already in index.html) |
 
 ### Phase 3: Medium Priority - Performance & Features (Week 5-8)
@@ -42,7 +42,7 @@
 |---|------|----------|-----------|--------|
 | 18 | Add `loading="lazy"` to images below fold | Medium | 1 hr | ☐ |
 | 19 | Preload critical fonts and scripts | Medium | 30 min | ☑ DONE (preconnect added) |
-| 20 | Implement Dark Mode toggle | Medium | 3 hrs | ☐ |
+| 20 | Implement Dark Mode toggle | Medium | 3 hrs | ☑ DONE |
 | 21 | Add print stylesheet | Medium | 2 hrs | ☐ |
 | 22 | Create advanced search filters | Medium | 4 hrs | ☑ DONE (category filters) |
 | 23 | Add related resources linking | Medium | 3 hrs | ☐ |
@@ -89,12 +89,12 @@
 |----------|-------|-----------|----------|
 | Accessibility (1-5) | 5 | 5 | 100% ✅ |
 | SEO (6-10) | 5 | 5 | 100% ✅ |
-| Design System (11-17) | 7 | 4 | 57% |
+| Design System (11-17) | 7 | 5 | 71% |
 | Performance (18-19) | 2 | 1 | 50% |
-| Features (20-24) | 5 | 1 | 20% |
+| Features (20-24) | 5 | 2 | 40% |
 | Content (25-30) | 6 | 0 | 0% |
 | Testing (T1-T8) | 8 | 0 | 0% |
-| **Total** | **38** | **16** | **42%** |
+| **Total** | **38** | **18** | **47%** |
 
 ---
 
@@ -117,6 +117,30 @@
 | #19 Preconnect | `index.html` | fonts.googleapis.com, fonts.gstatic.com |
 | #22 Search filters | `index.html` | Category filter buttons implemented |
 | Created og-image.svg | `og-image.svg` | Social media preview image |
+
+### January 25, 2026 - Dark Mode & Keyboard Navigation
+| Task | Files Modified | Details |
+|------|----------------|---------|
+| #20 Dark Mode toggle | `index.html`, `achievements-ui.css` | Full dark mode implementation with system preference detection, localStorage persistence, smooth transitions |
+| #16 Keyboard navigation | `index.html` | Arrow keys for filter buttons & app cards, Escape to close modals, Ctrl+K for search, Ctrl+D for dark mode, focus trap in modals |
+| Mobile optimization | `index.html` | iPhone safe area support, responsive dark mode toggle, touch-friendly sizing |
+
+**Dark Mode Features:**
+- Toggle button in header (🌙/☀️)
+- Respects system preference (`prefers-color-scheme: dark`)
+- Saves preference to localStorage
+- Smooth CSS transitions
+- Full support for all components (header, cards, modals, achievements)
+- Keyboard shortcut: Ctrl/Cmd + D
+
+**Keyboard Navigation Features:**
+- Tab through all interactive elements
+- Arrow keys to navigate filter buttons and app card grids
+- Enter/Space to activate buttons
+- Escape to close modals with focus restoration
+- Ctrl/Cmd + K to focus search
+- Screen reader announcements for mode changes
+- Focus trap in modals
 
 ### January 18, 2026 - Accessibility Sprint
 | Task | Files Modified | Details |
@@ -183,7 +207,7 @@ Your website is a **well-executed educational platform** with excellent content 
 - [x] Fix heading hierarchy (h1 > h2 > h3) *(Jan 18 - 7 categories)*
 
 **Remaining:**
-- [ ] Implement keyboard navigation (Tab, Enter, Escape)
+- [x] Implement keyboard navigation (Tab, Enter, Escape) *(Jan 25)*
 - [ ] Test with screen readers (VoiceOver, NVDA)
 
 **Example Fix:**
@@ -238,20 +262,20 @@ Your website is a **well-executed educational platform** with excellent content 
 
 ---
 
-### 3. Design System Consistency (High Priority) - 57% Complete
+### 3. Design System Consistency (High Priority) - 71% Complete
 
-**Status: Foundation established, some tasks remaining**
+**Status: Foundation established, minor tasks remaining**
 
 **Completed:**
 - [x] Create CSS variables in `:root` *(Jan 17 - in index.html)*
 - [x] Standardize color palette (category colors) *(Jan 17)*
 - [x] Standardize card and shadow styles *(Jan 17)*
 - [x] Add visible focus indicators *(Jan 18)*
+- [x] Implement keyboard navigation (Tab, Enter, Escape, Arrow keys) *(Jan 25)*
 
 **Remaining:**
 - [ ] Define consistent spacing scale (8px, 16px, 24px, 32px)
 - [ ] Create reusable button classes
-- [ ] Implement keyboard navigation (Tab, Enter, Escape)
 
 **Proposed Design Tokens:**
 ```css
@@ -321,30 +345,23 @@ Your website is a **well-executed educational platform** with excellent content 
 
 ### 5. New Features (Medium Priority)
 
-| Feature | Description | Benefit |
-|---------|-------------|---------|
-| Dark Mode Toggle | Add light/dark theme switch | User preference, reduce eye strain |
-| Print Stylesheet | Optimize pages for printing | Offline study materials |
-| Favorites/Bookmarks | Save frequently used tools | Quick access for repeat users |
-| Learning Progress | Track completed resources | Student engagement |
-| Search Filters | Filter by category, difficulty, time | Better resource discovery |
-| Related Resources | Link similar content | Improved navigation |
-| Feedback Form | Collect user suggestions | Continuous improvement |
+| Feature | Description | Benefit | Status |
+|---------|-------------|---------|--------|
+| Dark Mode Toggle | Add light/dark theme switch | User preference, reduce eye strain | ☑ DONE |
+| Print Stylesheet | Optimize pages for printing | Offline study materials | ☐ |
+| Favorites/Bookmarks | Save frequently used tools | Quick access for repeat users | ☐ |
+| Learning Progress | Track completed resources | Student engagement | ☐ |
+| Search Filters | Filter by category, difficulty, time | Better resource discovery | ☑ DONE |
+| Related Resources | Link similar content | Improved navigation | ☐ |
+| Feedback Form | Collect user suggestions | Continuous improvement | ☐ |
 
-**Dark Mode Implementation:**
-```javascript
-// Add toggle button
-function toggleDarkMode() {
-    document.body.classList.toggle('dark-mode');
-    localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-}
-
-// Check preference on load
-if (localStorage.getItem('darkMode') === 'true' ||
-    window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.body.classList.add('dark-mode');
-}
-```
+**Dark Mode Implementation (COMPLETED Jan 25):**
+- Toggle button with 🌙/☀️ icons in header
+- Respects system `prefers-color-scheme` preference
+- Saves to localStorage for persistence
+- Smooth CSS transitions on all components
+- Full dark theme for all UI elements including achievements modal
+- Keyboard shortcut: Ctrl/Cmd + D
 
 ---
 
@@ -458,22 +475,22 @@ These improvements take minimal effort but have high impact:
 |----------|--------|---------|--------|--------|
 | Accessibility | 30% | **100%** | 90%+ | ✅ Complete |
 | SEO | 20% | **100%** | 80%+ | ✅ Complete |
-| Design System | 60% | **57%** | 90%+ | In Progress |
+| Design System | 60% | **71%** | 90%+ | In Progress |
 | Performance | 70% | **75%** | 85%+ | In Progress |
-| Features | 70% | **75%** | 85%+ | In Progress |
+| Features | 70% | **80%** | 85%+ | In Progress |
 
-Your website has an excellent foundation. With **Accessibility and SEO now at 100%**, the site is well-optimized for search engines and accessible to all users. Next priorities: Dark Mode, keyboard navigation, and content enhancements.
+Your website has an excellent foundation. With **Accessibility, SEO, Dark Mode, and Keyboard Navigation complete**, the site is well-optimized and fully accessible. Next priorities: performance optimizations and content enhancements.
 
 ---
 
 ## Next Recommended Tasks
 
-1. **Dark Mode Toggle** (#20) - Popular user feature, 3 hrs
-2. **Keyboard Navigation** (#16) - Accessibility enhancement, 2 hrs
-3. **Lazy Loading Images** (#18) - Performance quick win, 1 hr
-4. **Print Stylesheet** (#21) - Offline study materials, 2 hrs
+1. **Lazy Loading Images** (#18) - Performance quick win, 1 hr
+2. **Print Stylesheet** (#21) - Offline study materials, 2 hrs
+3. **Spacing Scale** (#13) - Design consistency, 1 hr
+4. **Related Resources Linking** (#23) - Better navigation, 3 hrs
 
 ---
 
-*Last updated: January 18, 2026*
-*Progress: 42% complete (16/38 tasks)*
+*Last updated: January 25, 2026*
+*Progress: 47% complete (18/38 tasks)*
