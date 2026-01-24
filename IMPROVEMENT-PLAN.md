@@ -118,12 +118,13 @@
 | #22 Search filters | `index.html` | Category filter buttons implemented |
 | Created og-image.svg | `og-image.svg` | Social media preview image |
 
-### January 25, 2026 - Dark Mode & Keyboard Navigation
+### January 25, 2026 - Dark Mode, Keyboard Navigation & Bug Fixes
 | Task | Files Modified | Details |
 |------|----------------|---------|
 | #20 Dark Mode toggle | `index.html`, `achievements-ui.css` | Full dark mode implementation with system preference detection, localStorage persistence, smooth transitions |
 | #16 Keyboard navigation | `index.html` | Arrow keys for filter buttons & app cards, Escape to close modals, Ctrl+K for search, Ctrl+D for dark mode, focus trap in modals |
 | Mobile optimization | `index.html` | iPhone safe area support, responsive dark mode toggle, touch-friendly sizing |
+| Bug Fix: Achievement tracking | `exam-echo-as.html`, `exam-vascular-abi.html` | Quiz pages now properly call `AchievementTracker.trackQuizComplete()` to award medals |
 
 **Dark Mode Features:**
 - Toggle button in header (🌙/☀️)
@@ -141,6 +142,15 @@
 - Ctrl/Cmd + K to focus search
 - Screen reader announcements for mode changes
 - Focus trap in modals
+
+**Achievement System Bug Fix:**
+- Added `AchievementTracker.trackQuizComplete(quizId, score)` call when quizzes complete
+- Included achievement scripts in quiz pages
+- Now properly awards: 🎯 初試啼聲, 🏆 滿分達人, 📚 學海無涯, 💪 屢敗屢戰
+
+**Git Commits:**
+- `66480f6` - Add dark mode and keyboard navigation
+- `d598e28` - Fix achievement tracking for quiz completion
 
 ### January 18, 2026 - Accessibility Sprint
 | Task | Files Modified | Details |
