@@ -118,13 +118,13 @@
 | #22 Search filters | `index.html` | Category filter buttons implemented |
 | Created og-image.svg | `og-image.svg` | Social media preview image |
 
-### January 25, 2026 - Dark Mode, Keyboard Navigation & Bug Fixes
+### January 25, 2026 - Dark Mode, Keyboard Navigation & Achievement System Fix
 | Task | Files Modified | Details |
 |------|----------------|---------|
 | #20 Dark Mode toggle | `index.html`, `achievements-ui.css` | Full dark mode implementation with system preference detection, localStorage persistence, smooth transitions |
 | #16 Keyboard navigation | `index.html` | Arrow keys for filter buttons & app cards, Escape to close modals, Ctrl+K for search, Ctrl+D for dark mode, focus trap in modals |
 | Mobile optimization | `index.html` | iPhone safe area support, responsive dark mode toggle, touch-friendly sizing |
-| Bug Fix: Achievement tracking | `exam-echo-as.html`, `exam-vascular-abi.html` | Quiz pages now properly call `AchievementTracker.trackQuizComplete()` to award medals |
+| Bug Fix: Achievement tracking | 16 quiz pages | All quiz pages now properly call `AchievementTracker.trackQuizComplete()` to award medals |
 
 **Dark Mode Features:**
 - Toggle button in header (🌙/☀️)
@@ -143,14 +143,36 @@
 - Screen reader announcements for mode changes
 - Focus trap in modals
 
-**Achievement System Bug Fix:**
+**Achievement System Bug Fix (16 Quiz Pages):**
 - Added `AchievementTracker.trackQuizComplete(quizId, score)` call when quizzes complete
-- Included achievement scripts in quiz pages
+- Included achievement scripts in all quiz pages
 - Now properly awards: 🎯 初試啼聲, 🏆 滿分達人, 📚 學海無涯, 💪 屢敗屢戰
+
+**Quiz pages fixed:**
+| Page | Quiz ID |
+|------|---------|
+| `exam-echo-as.html` | exam-echo-as |
+| `exam-vascular-abi.html` | exam-vascular-abi |
+| `cath-handoff-teaching-app.html` | cath-handoff-quiz |
+| `acs-hf-medication-learning.html` | acs-hf-medication-quiz |
+| `cardiac-surgery-medication-app.html` | cardiac-surgery-medication-quiz |
+| `cardiogenic-shock-teaching.html` | cardiogenic-shock-quiz |
+| `carotid-stenting-app.html` | carotid-stenting-quiz |
+| `cpr-training-app.html` | cpr-training-quiz |
+| `cv-vaccination-guide.html` | cv-vaccination-quiz |
+| `heart-failure-ward-app.html` | heart-failure-ward-quiz |
+| `hemodynamic-shock-teaching-app.html` | hemodynamic-shock-quiz |
+| `ph-diagnostic-checklist.html` | ph-diagnostic-quiz |
+| `thoracic-ultrasound-teaching.html` | thoracic-ultrasound-quiz |
+| `troponin-lecture.html` | troponin-quiz |
+| `va-ecmo-echo-checklist.html` | va-ecmo-echo-quiz |
+| `ccu-orientation-manual.html` | ccu-orientation-quiz |
 
 **Git Commits:**
 - `66480f6` - Add dark mode and keyboard navigation
 - `d598e28` - Fix achievement tracking for quiz completion
+- `de89474` - Fix achievement tracking for cath-handoff quiz
+- `5eea24d` - Add achievement tracking to all quiz pages (13 files)
 
 ### January 18, 2026 - Accessibility Sprint
 | Task | Files Modified | Details |
@@ -489,7 +511,7 @@ These improvements take minimal effort but have high impact:
 | Performance | 70% | **75%** | 85%+ | In Progress |
 | Features | 70% | **80%** | 85%+ | In Progress |
 
-Your website has an excellent foundation. With **Accessibility, SEO, Dark Mode, and Keyboard Navigation complete**, the site is well-optimized and fully accessible. Next priorities: performance optimizations and content enhancements.
+Your website has an excellent foundation. With **Accessibility, SEO, Dark Mode, Keyboard Navigation, and Achievement System complete**, the site is well-optimized, fully accessible, and gamification features work correctly across all 16 quiz pages.
 
 ---
 
@@ -504,3 +526,4 @@ Your website has an excellent foundation. With **Accessibility, SEO, Dark Mode, 
 
 *Last updated: January 25, 2026*
 *Progress: 47% complete (18/38 tasks)*
+*Achievement system: Fixed across 16 quiz pages*
