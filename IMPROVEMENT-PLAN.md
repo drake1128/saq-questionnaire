@@ -45,7 +45,7 @@
 | 20 | Implement Dark Mode toggle | Medium | 3 hrs | ☑ DONE |
 | 21 | Add print stylesheet | Medium | 2 hrs | ☑ DONE |
 | 22 | Create advanced search filters | Medium | 4 hrs | ☑ DONE (category filters) |
-| 23 | Add related resources linking | Medium | 3 hrs | ☐ |
+| 23 | Add related resources linking | Medium | 3 hrs | ☑ DONE |
 | 24 | Build feedback mechanism | Medium | 3 hrs | ☐ |
 
 ### Phase 4: Low Priority - Content Enhancements (Ongoing)
@@ -91,10 +91,10 @@
 | SEO (6-10) | 5 | 5 | 100% ✅ |
 | Design System (11-17) | 7 | 7 | 100% ✅ |
 | Performance (18-19) | 2 | 2 | 100% ✅ |
-| Features (20-24) | 5 | 3 | 60% |
+| Features (20-24) | 5 | 4 | 80% |
 | Content (25-30) | 6 | 0 | 0% |
 | Testing (T1-T8) | 8 | 0 | 0% |
-| **Total** | **38** | **22** | **58%** |
+| **Total** | **38** | **23** | **61%** |
 
 ---
 
@@ -181,6 +181,15 @@
 | #14 Reusable buttons | `index.html` | Complete button class system |
 | #18 Lazy loading | - | Already implemented (verified) |
 | #21 Print stylesheet | `index.html` | Comprehensive @media print styles |
+| #23 Related resources | `index.html` | Tag-based related resources linking |
+
+**Related Resources Feature:**
+- "🔗 相關" button appears on hover for each resource card
+- Clicking opens a popup showing up to 5 related resources
+- Relationship calculated based on shared `data-tags` attributes
+- Sorted by relevance (number of matching tags)
+- Full dark mode support
+- Keyboard accessible (Escape to close)
 
 **Spacing Scale Variables:**
 ```css

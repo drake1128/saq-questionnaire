@@ -833,7 +833,211 @@
         .tag.new { background: #e8f5e9; color: #2e7d32; }
         .tag.updated { background: #fce4ec; color: #c2185b; }
         .tag.icu { background: #e0f7fa; color: #00838f; }
-        
+
+        /* Related Resources Feature */
+        .related-btn {
+            position: absolute;
+            top: var(--space-sm);
+            right: var(--space-sm);
+            background: var(--bg-light);
+            border: 1px solid rgba(0, 119, 182, 0.15);
+            border-radius: var(--radius-md);
+            padding: var(--space-xs) var(--space-sm);
+            font-size: 0.7rem;
+            color: var(--text-light);
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        .app-card:hover .related-btn,
+        .app-card:focus-within .related-btn {
+            opacity: 1;
+        }
+
+        .related-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .related-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-lg);
+            max-width: 400px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            animation: modalFadeIn 0.2s ease;
+        }
+
+        .related-popup-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-sm);
+            border-bottom: 1px solid rgba(0, 119, 182, 0.1);
+        }
+
+        .related-popup-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .related-popup-close {
+            background: var(--bg-light);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .related-popup-close:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .related-source {
+            background: var(--bg-blue);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+            font-size: 0.85rem;
+            color: var(--primary-dark);
+        }
+
+        .related-source-icon {
+            margin-right: var(--space-xs);
+        }
+
+        .related-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .related-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-sm) var(--space-md);
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .related-item:hover {
+            background: white;
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .related-item-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .related-item-content {
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .related-item-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .related-item-match {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .related-empty {
+            text-align: center;
+            padding: var(--space-lg);
+            color: var(--text-light);
+        }
+
+        /* Dark mode for related resources */
+        body.dark-mode .related-btn {
+            background: var(--bg-dark-tertiary);
+            border-color: var(--border-dark);
+            color: var(--text-dark-secondary);
+        }
+
+        body.dark-mode .related-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        body.dark-mode .related-popup {
+            background: var(--bg-dark-secondary);
+        }
+
+        body.dark-mode .related-popup-header {
+            border-bottom-color: var(--border-dark);
+        }
+
+        body.dark-mode .related-popup-title {
+            color: var(--text-dark-primary);
+        }
+
+        body.dark-mode .related-popup-close {
+            background: var(--bg-dark-tertiary);
+            color: var(--text-dark-secondary);
+        }
+
+        body.dark-mode .related-popup-close:hover {
+            background: #7f1d1d;
+            color: #fca5a5;
+        }
+
+        body.dark-mode .related-source {
+            background: var(--bg-dark-tertiary);
+            color: var(--primary-light);
+        }
+
+        body.dark-mode .related-item {
+            background: var(--bg-dark-tertiary);
+            color: var(--text-dark-primary);
+        }
+
+        body.dark-mode .related-item:hover {
+            background: var(--bg-dark);
+            border-color: var(--primary-light);
+        }
+
+        body.dark-mode .related-item-match {
+            color: var(--text-dark-secondary);
+        }
+
         /* Quick Filter Buttons - EBM Style */
         .quick-filters {
             display: flex;
@@ -2386,15 +2590,153 @@
             const visibleCards = document.querySelectorAll('.app-card:not(.hidden)');
             document.getElementById('totalApps').textContent = visibleCards.length;
         }
-        
+
         // Scroll to top
         function scrollToTop() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-        
+
+        // ===== Related Resources Feature =====
+
+        // Find related resources based on shared tags
+        function findRelatedResources(sourceCard, maxResults = 5) {
+            const sourceTags = (sourceCard.dataset.tags || '').split(' ').filter(t => t);
+            const sourceHref = sourceCard.getAttribute('href');
+            const allCards = document.querySelectorAll('.app-card');
+            const related = [];
+
+            allCards.forEach(card => {
+                if (card.getAttribute('href') === sourceHref) return; // Skip self
+
+                const cardTags = (card.dataset.tags || '').split(' ').filter(t => t);
+                const sharedTags = sourceTags.filter(t => cardTags.includes(t));
+
+                if (sharedTags.length > 0) {
+                    related.push({
+                        card: card,
+                        sharedTags: sharedTags,
+                        score: sharedTags.length
+                    });
+                }
+            });
+
+            // Sort by score (most shared tags first)
+            related.sort((a, b) => b.score - a.score);
+            return related.slice(0, maxResults);
+        }
+
+        // Show related resources popup
+        function showRelatedPopup(sourceCard, event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Remove existing popup
+            const existingPopup = document.querySelector('.related-popup');
+            if (existingPopup) existingPopup.remove();
+
+            // Remove existing overlay
+            const existingOverlay = document.querySelector('.related-overlay');
+            if (existingOverlay) existingOverlay.remove();
+
+            const related = findRelatedResources(sourceCard);
+            const sourceTitle = sourceCard.querySelector('.app-title').textContent;
+            const sourceIcon = sourceCard.querySelector('.app-icon').textContent;
+
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'share-modal-overlay related-overlay';
+            overlay.onclick = closeRelatedPopup;
+
+            // Create popup
+            const popup = document.createElement('div');
+            popup.className = 'related-popup';
+            popup.setAttribute('role', 'dialog');
+            popup.setAttribute('aria-modal', 'true');
+            popup.setAttribute('aria-label', '相關資源');
+
+            let relatedHTML = `
+                <div class="related-popup-header">
+                    <div class="related-popup-title">🔗 相關資源</div>
+                    <button class="related-popup-close" onclick="closeRelatedPopup()" aria-label="關閉">×</button>
+                </div>
+                <div class="related-source">
+                    <span class="related-source-icon">${sourceIcon}</span>
+                    ${sourceTitle}
+                </div>
+            `;
+
+            if (related.length > 0) {
+                relatedHTML += '<div class="related-list">';
+                related.forEach(item => {
+                    const icon = item.card.querySelector('.app-icon').textContent;
+                    const title = item.card.querySelector('.app-title').textContent;
+                    const href = item.card.getAttribute('href');
+                    const matchText = item.sharedTags.length === 1
+                        ? `1 個相關標籤`
+                        : `${item.sharedTags.length} 個相關標籤`;
+
+                    relatedHTML += `
+                        <a href="${href}" class="related-item">
+                            <span class="related-item-icon">${icon}</span>
+                            <div class="related-item-content">
+                                <div class="related-item-title">${title}</div>
+                                <div class="related-item-match">${matchText}</div>
+                            </div>
+                        </a>
+                    `;
+                });
+                relatedHTML += '</div>';
+            } else {
+                relatedHTML += '<div class="related-empty">沒有找到相關資源</div>';
+            }
+
+            popup.innerHTML = relatedHTML;
+            document.body.appendChild(overlay);
+            document.body.appendChild(popup);
+
+            // Focus the close button
+            setTimeout(() => {
+                popup.querySelector('.related-popup-close').focus();
+            }, 100);
+
+            // Close on Escape
+            document.addEventListener('keydown', handleRelatedEscape);
+        }
+
+        function closeRelatedPopup() {
+            const popup = document.querySelector('.related-popup');
+            const overlay = document.querySelector('.related-overlay');
+            if (popup) popup.remove();
+            if (overlay) overlay.remove();
+            document.removeEventListener('keydown', handleRelatedEscape);
+        }
+
+        function handleRelatedEscape(e) {
+            if (e.key === 'Escape') {
+                closeRelatedPopup();
+            }
+        }
+
+        // Add related buttons to all cards
+        function initRelatedButtons() {
+            const cards = document.querySelectorAll('.app-card');
+            cards.forEach(card => {
+                // Check if button already exists
+                if (card.querySelector('.related-btn')) return;
+
+                const btn = document.createElement('button');
+                btn.className = 'related-btn';
+                btn.textContent = '🔗 相關';
+                btn.setAttribute('aria-label', '顯示相關資源');
+                btn.onclick = (e) => showRelatedPopup(card, e);
+                card.appendChild(btn);
+            });
+        }
+
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             updateStats();
+            initRelatedButtons();
         });
 
         // Share Modal Functions
