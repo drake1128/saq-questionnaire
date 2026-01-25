@@ -780,37 +780,38 @@
                 📚 學習章節
               </h2>
               
-              {courses.map((course) => (
-                <button
-                  key={course.id}
-                  onClick={() => {
-                    setSelectedCourse(course);
-                    setSelectedSection(0);
-                    setCurrentView('course');
-                  }}
-                  className="w-full bg-white rounded-2xl p-4 shadow-sm hover:shadow-lg transition-all border border-slate-100 text-left group"
-                >
-                  <div className="flex items-center gap-4">
-                    <div
-                      className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl shadow-sm"
-                      style={{ backgroundColor: `${course.color}15`, borderColor: course.color, borderWidth: 1 }}
-                    >
-                      {course.icon}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-bold text-slate-800 group-hover:text-blue-600 transition-colors">
-                        {course.title}
-                      </h3>
-                      <p className="text-sm text-slate-500">{course.titleEn}</p>
-                      <div className="flex items-center gap-4 mt-2 text-xs text-slate-400">
-                        <span>📄 {course.sections.length} 小節</span>
-                        {course.quiz && <span>🏆 {course.quiz.length} 題測驗</span>}
+              <div className="grid grid-cols-2 gap-2">
+                {courses.map((course) => (
+                  <button
+                    key={course.id}
+                    onClick={() => {
+                      setSelectedCourse(course);
+                      setSelectedSection(0);
+                      setCurrentView('course');
+                    }}
+                    className="bg-white rounded-xl p-3 shadow-sm hover:shadow-lg transition-all border border-slate-100 text-left group"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-10 h-10 rounded-lg flex items-center justify-center text-lg flex-shrink-0"
+                        style={{ backgroundColor: `${course.color}15` }}
+                      >
+                        {course.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-slate-800 group-hover:text-blue-600 transition-colors text-sm truncate">
+                          {course.title}
+                        </h3>
+                        <p className="text-xs text-slate-400 truncate">{course.titleEn}</p>
                       </div>
                     </div>
-                    <Icon name="chevron-right" className="text-slate-400 group-hover:text-blue-600" size={20} />
-                  </div>
-                </button>
-              ))}
+                    <div className="flex items-center gap-2 mt-2 text-xs text-slate-400">
+                      <span>📄 {course.sections.length}</span>
+                      {course.quiz && <span>🏆 {course.quiz.length}</span>}
+                    </div>
+                  </button>
+                ))}
+              </div>
 
               {/* Advanced Topics - Links to Subpages */}
               <h2 className="text-lg font-bold text-slate-800 mt-8 mb-4 flex items-center gap-2">
@@ -869,14 +870,15 @@
               style={{ background: `linear-gradient(135deg, ${selectedCourse.color}, ${selectedCourse.color}dd)` }}
             >
               <div className="flex items-center justify-between text-white">
-                <button 
-                  onClick={() => setCurrentView('home')} 
-                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                <button
+                  onClick={() => setCurrentView('home')}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors flex items-center gap-1"
                 >
-                  <Icon name="chevron-left" size={24} />
+                  <Icon name="chevron-left" size={20} />
+                  <span className="text-sm">返回</span>
                 </button>
                 <h1 className="font-bold text-lg flex-1 text-center px-2 truncate">{selectedCourse.title}</h1>
-                <div className="w-10"></div>
+                <div className="w-16"></div>
               </div>
             </div>
 
