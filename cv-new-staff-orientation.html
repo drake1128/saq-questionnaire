@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>心血管中心新進同仁學習模組</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Noto Sans TC', sans-serif; }
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); min-height: 100vh; }
+        .glass { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(10px); }
+        .card-glow:hover { box-shadow: 0 0 30px rgba(59, 130, 246, 0.3); }
+        .progress-ring { transform: rotate(-90deg); }
+        .week-connector { position: absolute; left: 28px; top: 60px; bottom: -20px; width: 2px; background: linear-gradient(to bottom, #3b82f6, #8b5cf6); }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .animate-pulse-slow { animation: pulse 2s ease-in-out infinite; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .slide-in { animation: slideIn 0.5s ease-out forwards; }
+        .checkmark { stroke-dasharray: 50; stroke-dashoffset: 50; animation: checkmark 0.5s ease forwards; }
+        @keyframes checkmark { to { stroke-dashoffset: 0; } }
+    </style>
+</head>
+<body class="text-slate-100">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Lucide Icon Component
+        const Icon = ({ name, size = 24, className = "" }) => {
+            const iconRef = React.useRef(null);
+            React.useEffect(() => {
+                if (iconRef.current && window.lucide) {
+                    iconRef.current.innerHTML = '';
+                    const icon = window.lucide.createElement(window.lucide.icons[name]);
+                    icon.setAttribute('width', size);
+                    icon.setAttribute('height', size);
+                    if (className) icon.setAttribute('class', className);
+                    iconRef.current.appendChild(icon);
+                }
+            }, [name, size, className]);
+            return <span ref={iconRef} className={`inline-flex items-center justify-center ${className}`}></span>;
+        };
+
+        // Learning modules data - organized by week
+        const orientationModules = [
+            {
+                week: 1,
+                title: "第一週：基礎環境認識",
+                subtitle: "環境熟悉與基本照護技能",
+                color: "#3b82f6",
+                modules: [
+                    {
+                        id: "ward-orientation",
+                        title: "病房工作指引",
+                        titleEn: "Ward Orientation",
+                        description: "認識病房環境、工作流程、交班重點",
+                        duration: "45 分鐘",
+                        priority: "必修",
+                        href: "cardiology-ward-orientation-2025.html",
+                        icon: "building-2"
+                    },
+                    {
+                        id: "ccu-orientation",
+                        title: "CCU 工作手冊",
+                        titleEn: "CCU Manual",
+                        description: "CCU 照護重點、監測設備、緊急流程",
+                        duration: "60 分鐘",
+                        priority: "必修",
+                        href: "ccu-orientation-manual.html",
+                        icon: "heart-pulse"
+                    },
+                    {
+                        id: "wound-care",
+                        title: "心導管傷口照護",
+                        titleEn: "Cath Wound Care",
+                        description: "穿刺部位照護、6P評估、出血處理",
+                        duration: "30 分鐘",
+                        priority: "必修",
+                        href: "cath-wound-care-app.html",
+                        icon: "bandage"
+                    },
+                    {
+                        id: "cath-handoff",
+                        title: "導管室交班指引",
+                        titleEn: "Cath Lab Handoff",
+                        description: "術後交接、注意事項、監測重點",
+                        duration: "20 分鐘",
+                        priority: "必修",
+                        href: "cath-handoff-teaching-app.html",
+                        icon: "clipboard-check"
+                    }
+                ]
+            },
+            {
+                week: 2,
+                title: "第二週：常見疾病與用藥",
+                subtitle: "認識心血管常見疾病與藥物",
+                color: "#8b5cf6",
+                modules: [
+                    {
+                        id: "acs-hf-meds",
+                        title: "ACS/HF 常用藥物",
+                        titleEn: "ACS & HF Medications",
+                        description: "急性冠心症與心衰竭藥物學習",
+                        duration: "45 分鐘",
+                        priority: "必修",
+                        href: "acs-hf-medication-learning.html",
+                        icon: "pill"
+                    },
+                    {
+                        id: "af-teaching",
+                        title: "心房顫動照護",
+                        titleEn: "AF Ward Teaching",
+                        description: "AF 病患照護、用藥、衛教重點",
+                        duration: "30 分鐘",
+                        priority: "必修",
+                        href: "af-ward-teaching-app.html",
+                        icon: "activity"
+                    },
+                    {
+                        id: "hf-ward",
+                        title: "心衰竭病房照護",
+                        titleEn: "Heart Failure Ward",
+                        description: "心衰竭認證、體重監測、利尿劑調整",
+                        duration: "40 分鐘",
+                        priority: "必修",
+                        href: "heart-failure-ward-app.html",
+                        icon: "heart"
+                    },
+                    {
+                        id: "hypertension",
+                        title: "高血壓衛教",
+                        titleEn: "Hypertension Education",
+                        description: "血壓控制、生活型態、用藥指導",
+                        duration: "25 分鐘",
+                        priority: "選修",
+                        href: "hypertension-education-app.html",
+                        icon: "gauge"
+                    },
+                    {
+                        id: "warfarin",
+                        title: "Warfarin 劑量調整",
+                        titleEn: "Warfarin Dosing",
+                        description: "INR 監測、劑量計算、交互作用",
+                        duration: "20 分鐘",
+                        priority: "選修",
+                        href: "warfarin-dosing-app.html",
+                        icon: "droplet"
+                    }
+                ]
+            },
+            {
+                week: 3,
+                title: "第三週：術式照護與併發症",
+                subtitle: "心導管前後照護與併發症預防",
+                color: "#ec4899",
+                modules: [
+                    {
+                        id: "cin-prevention",
+                        title: "顯影劑腎病變預防",
+                        titleEn: "CIN Prevention",
+                        description: "高風險評估、水化策略、藥物調整",
+                        duration: "25 分鐘",
+                        priority: "必修",
+                        href: "cin-prevention-app.html",
+                        icon: "shield-check"
+                    },
+                    {
+                        id: "pci-complications",
+                        title: "PCI 併發症緊急處理",
+                        titleEn: "PCI Complications",
+                        description: "出血、血腫、過敏、心律不整處理",
+                        duration: "35 分鐘",
+                        priority: "必修",
+                        href: "pci-complications-emergency.html",
+                        icon: "alert-triangle"
+                    },
+                    {
+                        id: "pci-cases",
+                        title: "PCI 併發症案例教學",
+                        titleEn: "PCI Case Teaching",
+                        description: "實際案例分析與處理流程",
+                        duration: "40 分鐘",
+                        priority: "選修",
+                        href: "pci-complications-case-teaching.html",
+                        icon: "file-text"
+                    },
+                    {
+                        id: "paod-care",
+                        title: "周邊動脈疾病照護",
+                        titleEn: "PAOD Care",
+                        description: "ABI 評估、傷口照護、運動指導",
+                        duration: "30 分鐘",
+                        priority: "選修",
+                        href: "paod-care-app.html",
+                        icon: "footprints"
+                    }
+                ]
+            },
+            {
+                week: 4,
+                title: "第四週：進階照護與評核",
+                subtitle: "緊急處置與學習評量",
+                color: "#f97316",
+                modules: [
+                    {
+                        id: "cardiogenic-shock",
+                        title: "心因性休克",
+                        titleEn: "Cardiogenic Shock",
+                        description: "休克辨識、血管升壓藥、IABP/ECMO",
+                        duration: "45 分鐘",
+                        priority: "必修",
+                        href: "cardiogenic-shock-teaching.html",
+                        icon: "zap"
+                    },
+                    {
+                        id: "hemodynamic-shock",
+                        title: "血行動力學與休克",
+                        titleEn: "Hemodynamic Shock",
+                        description: "休克分類、輸液治療、監測指標",
+                        duration: "40 分鐘",
+                        priority: "必修",
+                        href: "hemodynamic-shock-teaching-app.html",
+                        icon: "activity"
+                    },
+                    {
+                        id: "cpr-training",
+                        title: "CPR 急救訓練",
+                        titleEn: "CPR Training",
+                        description: "BLS/ACLS 流程、團隊合作、藥物",
+                        duration: "30 分鐘",
+                        priority: "必修",
+                        href: "cpr-training-app.html",
+                        icon: "heart-handshake"
+                    },
+                    {
+                        id: "troponin",
+                        title: "Troponin 判讀",
+                        titleEn: "Troponin Lecture",
+                        description: "心肌梗塞診斷、鑑別診斷、臨床意義",
+                        duration: "25 分鐘",
+                        priority: "選修",
+                        href: "troponin-lecture.html",
+                        icon: "test-tube"
+                    },
+                    {
+                        id: "cv-calculations",
+                        title: "心血管計算工具",
+                        titleEn: "CV Calculations",
+                        description: "常用公式、劑量計算、評估工具",
+                        duration: "20 分鐘",
+                        priority: "選修",
+                        href: "cv-calculations-app.html",
+                        icon: "calculator"
+                    }
+                ]
+            }
+        ];
+
+        // Main App Component
+        function App() {
+            const [completedModules, setCompletedModules] = useState(() => {
+                const saved = localStorage.getItem('cv-new-staff-progress');
+                return saved ? JSON.parse(saved) : [];
+            });
+            const [showCongrats, setShowCongrats] = useState(false);
+
+            useEffect(() => {
+                localStorage.setItem('cv-new-staff-progress', JSON.stringify(completedModules));
+            }, [completedModules]);
+
+            const toggleComplete = (moduleId, e) => {
+                e.stopPropagation();
+                setCompletedModules(prev => {
+                    if (prev.includes(moduleId)) {
+                        return prev.filter(id => id !== moduleId);
+                    } else {
+                        const newCompleted = [...prev, moduleId];
+                        // Check if all required modules are done
+                        const requiredModules = orientationModules.flatMap(w =>
+                            w.modules.filter(m => m.priority === "必修").map(m => m.id)
+                        );
+                        if (requiredModules.every(id => newCompleted.includes(id))) {
+                            setShowCongrats(true);
+                        }
+                        return newCompleted;
+                    }
+                });
+            };
+
+            const openModule = (href) => {
+                window.open(href, '_blank');
+            };
+
+            // Calculate progress
+            const totalModules = orientationModules.flatMap(w => w.modules).length;
+            const requiredModules = orientationModules.flatMap(w => w.modules.filter(m => m.priority === "必修"));
+            const completedRequired = requiredModules.filter(m => completedModules.includes(m.id)).length;
+            const overallProgress = Math.round((completedModules.length / totalModules) * 100);
+            const requiredProgress = Math.round((completedRequired / requiredModules.length) * 100);
+
+            // Calculate week progress
+            const getWeekProgress = (week) => {
+                const weekModules = week.modules;
+                const completed = weekModules.filter(m => completedModules.includes(m.id)).length;
+                return Math.round((completed / weekModules.length) * 100);
+            };
+
+            return (
+                <div className="min-h-screen pb-20">
+                    {/* Header */}
+                    <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 px-4 py-6 shadow-xl">
+                        <div className="max-w-2xl mx-auto">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                                    <Icon name="graduation-cap" size={28} />
+                                </div>
+                                <div>
+                                    <h1 className="text-xl font-bold">心血管中心新進同仁</h1>
+                                    <p className="text-sm text-white/80">第一個月學習模組</p>
+                                </div>
+                            </div>
+
+                            {/* Progress Overview */}
+                            <div className="grid grid-cols-2 gap-3 mt-4">
+                                <div className="bg-white/10 rounded-xl p-3">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-sm text-white/70">必修進度</span>
+                                        <span className="text-lg font-bold">{requiredProgress}%</span>
+                                    </div>
+                                    <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-green-400 rounded-full transition-all duration-500"
+                                            style={{ width: `${requiredProgress}%` }}
+                                        ></div>
+                                    </div>
+                                    <p className="text-xs text-white/60 mt-1">{completedRequired} / {requiredModules.length} 模組</p>
+                                </div>
+                                <div className="bg-white/10 rounded-xl p-3">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-sm text-white/70">整體進度</span>
+                                        <span className="text-lg font-bold">{overallProgress}%</span>
+                                    </div>
+                                    <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-blue-400 rounded-full transition-all duration-500"
+                                            style={{ width: `${overallProgress}%` }}
+                                        ></div>
+                                    </div>
+                                    <p className="text-xs text-white/60 mt-1">{completedModules.length} / {totalModules} 模組</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Welcome Message */}
+                    <div className="max-w-2xl mx-auto px-4 py-4">
+                        <div className="glass rounded-2xl p-4 border border-white/10">
+                            <div className="flex items-start gap-3">
+                                <div className="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <span className="text-xl">👋</span>
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold text-yellow-300 mb-1">歡迎加入心血管中心！</h3>
+                                    <p className="text-sm text-slate-300 leading-relaxed">
+                                        這份學習模組專為新進同仁設計，涵蓋到任第一個月應完成的核心課程。
+                                        標註<span className="text-red-400 font-medium">「必修」</span>的項目請務必完成，
+                                        <span className="text-blue-400">「選修」</span>項目可依工作需求選擇學習。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Weekly Modules */}
+                    <div className="max-w-2xl mx-auto px-4 space-y-6">
+                        {orientationModules.map((week, weekIdx) => (
+                            <div key={week.week} className="slide-in" style={{ animationDelay: `${weekIdx * 0.1}s` }}>
+                                {/* Week Header */}
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div
+                                        className="w-14 h-14 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg"
+                                        style={{ background: `linear-gradient(135deg, ${week.color}, ${week.color}aa)` }}
+                                    >
+                                        W{week.week}
+                                    </div>
+                                    <div className="flex-1">
+                                        <h2 className="font-bold text-lg text-white">{week.title}</h2>
+                                        <p className="text-sm text-slate-400">{week.subtitle}</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <span
+                                            className="text-2xl font-bold"
+                                            style={{ color: week.color }}
+                                        >
+                                            {getWeekProgress(week)}%
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Module Cards */}
+                                <div className="space-y-2 ml-2 pl-6 border-l-2" style={{ borderColor: week.color + '40' }}>
+                                    {week.modules.map((module, idx) => {
+                                        const isCompleted = completedModules.includes(module.id);
+                                        return (
+                                            <div
+                                                key={module.id}
+                                                onClick={() => openModule(module.href)}
+                                                className={`glass rounded-xl p-4 border cursor-pointer transition-all duration-300 card-glow ${
+                                                    isCompleted
+                                                        ? 'border-green-500/50 bg-green-500/10'
+                                                        : 'border-white/10 hover:border-white/30'
+                                                }`}
+                                            >
+                                                <div className="flex items-start gap-3">
+                                                    {/* Checkbox */}
+                                                    <button
+                                                        onClick={(e) => toggleComplete(module.id, e)}
+                                                        className={`w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all ${
+                                                            isCompleted
+                                                                ? 'bg-green-500 border-green-500'
+                                                                : 'border-slate-500 hover:border-slate-300'
+                                                        }`}
+                                                    >
+                                                        {isCompleted && (
+                                                            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path className="checkmark" strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                        )}
+                                                    </button>
+
+                                                    {/* Icon */}
+                                                    <div
+                                                        className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                                                        style={{ backgroundColor: week.color + '20', color: week.color }}
+                                                    >
+                                                        <Icon name={module.icon} size={20} />
+                                                    </div>
+
+                                                    {/* Content */}
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-2 flex-wrap">
+                                                            <h3 className={`font-semibold ${isCompleted ? 'text-green-300' : 'text-white'}`}>
+                                                                {module.title}
+                                                            </h3>
+                                                            <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                                                module.priority === '必修'
+                                                                    ? 'bg-red-500/30 text-red-300'
+                                                                    : 'bg-blue-500/30 text-blue-300'
+                                                            }`}>
+                                                                {module.priority}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-xs text-slate-400 mt-0.5">{module.titleEn}</p>
+                                                        <p className="text-sm text-slate-300 mt-1 line-clamp-2">{module.description}</p>
+                                                        <div className="flex items-center gap-3 mt-2 text-xs text-slate-500">
+                                                            <span className="flex items-center gap-1">
+                                                                <Icon name="clock" size={12} />
+                                                                {module.duration}
+                                                            </span>
+                                                            <span className="flex items-center gap-1">
+                                                                <Icon name="external-link" size={12} />
+                                                                點擊開始學習
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Additional Resources */}
+                    <div className="max-w-2xl mx-auto px-4 mt-8">
+                        <h2 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
+                            <Icon name="book-open" size={20} />
+                            延伸學習資源
+                        </h2>
+                        <div className="grid grid-cols-2 gap-3">
+                            {[
+                                { title: "心臟超音波", href: "tsoc-echo-learning-2025.html", icon: "scan-heart", color: "#6366f1" },
+                                { title: "疫苗接種指引", href: "cv-vaccination-guide.html", icon: "syringe", color: "#10b981" },
+                                { title: "LDL 衛教", href: "ldl-education-app.html", icon: "heart", color: "#f59e0b" },
+                                { title: "閱讀文獻庫", href: "cardiovascular-reading-library.html", icon: "library", color: "#8b5cf6" },
+                            ].map(item => (
+                                <a
+                                    key={item.href}
+                                    href={item.href}
+                                    className="glass rounded-xl p-3 border border-white/10 hover:border-white/30 transition-all flex items-center gap-3"
+                                >
+                                    <div
+                                        className="w-10 h-10 rounded-lg flex items-center justify-center"
+                                        style={{ backgroundColor: item.color + '20', color: item.color }}
+                                    >
+                                        <Icon name={item.icon} size={20} />
+                                    </div>
+                                    <span className="font-medium text-sm text-white">{item.title}</span>
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Reset Button */}
+                    <div className="max-w-2xl mx-auto px-4 mt-8 mb-4">
+                        <button
+                            onClick={() => {
+                                if (confirm('確定要重置所有學習進度嗎？')) {
+                                    setCompletedModules([]);
+                                    localStorage.removeItem('cv-new-staff-progress');
+                                }
+                            }}
+                            className="w-full py-3 text-sm text-slate-400 hover:text-red-400 transition-colors"
+                        >
+                            <Icon name="refresh-cw" size={14} className="mr-1" />
+                            重置學習進度
+                        </button>
+                    </div>
+
+                    {/* Congratulations Modal */}
+                    {showCongrats && (
+                        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+                            <div className="bg-gradient-to-br from-green-600 to-emerald-700 rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl">
+                                <div className="text-6xl mb-4">🎉</div>
+                                <h2 className="text-2xl font-bold text-white mb-2">恭喜完成必修課程！</h2>
+                                <p className="text-green-100 mb-4">
+                                    您已完成所有必修模組，正式成為心血管中心的一員！
+                                </p>
+                                <button
+                                    onClick={() => setShowCongrats(false)}
+                                    className="bg-white text-green-700 font-semibold px-6 py-2 rounded-lg hover:bg-green-50 transition-colors"
+                                >
+                                    太棒了！
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Footer */}
+                    <div className="max-w-2xl mx-auto px-4 py-6 text-center text-slate-500 text-sm">
+                        <p>新竹台大分院 心血管中心</p>
+                        <p className="text-xs mt-1">如有問題請洽單位護理長或教學組</p>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
