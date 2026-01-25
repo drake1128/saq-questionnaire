@@ -469,6 +469,18 @@
       { abbr: 'VTI', full: 'Velocity time integral', chinese: '速度時間積分' },
     ];
 
+    // 成就系統定義
+    const achievementDefinitions = [
+      { id: 'first_lesson', icon: '🌟', title: '初學者', desc: '完成第一個章節', condition: (progress) => progress.lessonsCompleted >= 1 },
+      { id: 'three_lessons', icon: '📚', title: '勤學者', desc: '完成 3 個章節', condition: (progress) => progress.lessonsCompleted >= 3 },
+      { id: 'all_lessons', icon: '🎓', title: '學霸', desc: '完成所有基礎章節', condition: (progress) => progress.lessonsCompleted >= 6 },
+      { id: 'first_quiz', icon: '✏️', title: '初試身手', desc: '完成第一個測驗', condition: (progress) => progress.quizzesCompleted >= 1 },
+      { id: 'perfect_quiz', icon: '💯', title: '完美答題', desc: '測驗獲得滿分', condition: (progress) => progress.perfectQuizzes >= 1 },
+      { id: 'quiz_master', icon: '🏆', title: '測驗達人', desc: '完成所有測驗', condition: (progress) => progress.quizzesCompleted >= 6 },
+      { id: 'explorer', icon: '🗺️', title: '探索者', desc: '訪問所有進階主題', condition: (progress) => progress.topicsVisited >= 10 },
+      { id: 'dedicated', icon: '🔥', title: '堅持不懈', desc: '連續學習 3 天', condition: (progress) => progress.streak >= 3 },
+    ];
+
     // 主應用組件
     function EchoLearningApp() {
       const [currentView, setCurrentView] = useState('home');
@@ -482,6 +494,60 @@
       const [searchTerm, setSearchTerm] = useState('');
       const [menuOpen, setMenuOpen] = useState(false);
       const [showAbbrModal, setShowAbbrModal] = useState(false);
+      const [showAchievements, setShowAchievements] = useState(false);
+      const [newAchievement, setNewAchievement] = useState(null);
+
+      // 成就系統狀態
+      const [progress, setProgress] = useState(() => {
+        const saved = localStorage.getItem('echo-learning-progress');
+        return saved ? JSON.parse(saved) : {
+          lessonsCompleted: 0,
+          quizzesCompleted: 0,
+          perfectQuizzes: 0,
+          topicsVisited: 0,
+          streak: 0,
+          lastVisit: null,
+          unlockedAchievements: [],
+          visitedTopics: []
+        };
+      });
+
+      // 保存進度到 localStorage
+      useEffect(() => {
+        localStorage.setItem('echo-learning-progress', JSON.stringify(progress));
+      }, [progress]);
+
+      // 檢查並解鎖成就
+      const checkAchievements = (newProgress) => {
+        achievementDefinitions.forEach(achievement => {
+          if (!newProgress.unlockedAchievements.includes(achievement.id) && achievement.condition(newProgress)) {
+            setNewAchievement(achievement);
+            setProgress(prev => ({
+              ...prev,
+              unlockedAchievements: [...prev.unlockedAchievements, achievement.id]
+            }));
+            setTimeout(() => setNewAchievement(null), 3000);
+          }
+        });
+      };
+
+      // 記錄完成章節
+      const recordLessonComplete = () => {
+        const newProgress = { ...progress, lessonsCompleted: progress.lessonsCompleted + 1 };
+        setProgress(newProgress);
+        checkAchievements(newProgress);
+      };
+
+      // 記錄完成測驗
+      const recordQuizComplete = (isPerfect) => {
+        const newProgress = {
+          ...progress,
+          quizzesCompleted: progress.quizzesCompleted + 1,
+          perfectQuizzes: isPerfect ? progress.perfectQuizzes + 1 : progress.perfectQuizzes
+        };
+        setProgress(newProgress);
+        checkAchievements(newProgress);
+      };
 
       const courses = Object.values(courseData);
 
@@ -517,6 +583,8 @@
         setQuizAnswer(null);
         setQuizScore(0);
         setQuizComplete(false);
+        // 記錄章節完成（開始測驗表示已閱讀章節）
+        recordLessonComplete();
       };
 
       const handleQuizAnswer = (index) => {
@@ -533,6 +601,10 @@
           setQuizAnswer(null);
         } else {
           setQuizComplete(true);
+          // 記錄測驗完成成就
+          const finalScore = quizScore + (quizAnswer === selectedCourse.quiz[quizIndex].correct ? 1 : 0);
+          const isPerfect = finalScore === selectedCourse.quiz.length;
+          recordQuizComplete(isPerfect);
         }
       };
 
@@ -634,9 +706,19 @@
                 <Icon name="menu" size={24} />
               </button>
               <h1 className="text-lg font-bold">TSOC Echo 學習</h1>
-              <button onClick={() => setShowAbbrModal(true)} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
-                <Icon name="bookmark" size={24} />
-              </button>
+              <div className="flex items-center gap-1">
+                <button onClick={() => setShowAchievements(true)} className="p-2 hover:bg-white/10 rounded-lg transition-colors relative">
+                  <span className="text-xl">🏆</span>
+                  {progress.unlockedAchievements.length > 0 && (
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 text-yellow-900 text-xs font-bold rounded-full flex items-center justify-center">
+                      {progress.unlockedAchievements.length}
+                    </span>
+                  )}
+                </button>
+                <button onClick={() => setShowAbbrModal(true)} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                  <Icon name="bookmark" size={24} />
+                </button>
+              </div>
             </div>
             <p className="text-blue-100 text-sm text-center">台灣心臟學會 2025 心臟超音波指南</p>
             
@@ -1075,7 +1157,7 @@
       // 縮寫對照表彈窗
       const renderAbbrModal = () => (
         <div className={`fixed inset-0 z-50 transition-all duration-300 ${showAbbrModal ? 'visible' : 'invisible'}`}>
-          <div 
+          <div
             className={`absolute inset-0 bg-black/50 transition-opacity ${showAbbrModal ? 'opacity-100' : 'opacity-0'}`}
             onClick={() => setShowAbbrModal(false)}
           ></div>
@@ -1103,14 +1185,94 @@
         </div>
       );
 
+      // 成就彈窗
+      const renderAchievementsModal = () => (
+        <div className={`fixed inset-0 z-50 transition-all duration-300 ${showAchievements ? 'visible' : 'invisible'}`}>
+          <div
+            className={`absolute inset-0 bg-black/50 transition-opacity ${showAchievements ? 'opacity-100' : 'opacity-0'}`}
+            onClick={() => setShowAchievements(false)}
+          ></div>
+          <div className={`absolute inset-4 md:inset-10 bg-white rounded-2xl shadow-2xl transition-transform ${showAchievements ? 'scale-100' : 'scale-95'} flex flex-col`}>
+            <div className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-4 rounded-t-2xl flex items-center justify-between">
+              <h2 className="font-bold text-lg">🏆 成就系統</h2>
+              <button onClick={() => setShowAchievements(false)} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                <Icon name="x" size={24} />
+              </button>
+            </div>
+            <div className="p-4 bg-gradient-to-r from-yellow-50 to-orange-50 border-b">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-600">已解鎖成就</p>
+                  <p className="text-2xl font-bold text-orange-600">{progress.unlockedAchievements.length} / {achievementDefinitions.length}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm text-slate-600">學習進度</p>
+                  <p className="text-sm text-slate-800">📚 {progress.lessonsCompleted} 章節 | ✏️ {progress.quizzesCompleted} 測驗</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4">
+              <div className="grid gap-3">
+                {achievementDefinitions.map((achievement) => {
+                  const isUnlocked = progress.unlockedAchievements.includes(achievement.id);
+                  return (
+                    <div
+                      key={achievement.id}
+                      className={`flex items-center gap-4 p-4 rounded-xl border-2 transition-all ${
+                        isUnlocked
+                          ? 'bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-300'
+                          : 'bg-slate-50 border-slate-200 opacity-60'
+                      }`}
+                    >
+                      <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-3xl ${
+                        isUnlocked ? 'bg-yellow-100' : 'bg-slate-200 grayscale'
+                      }`}>
+                        {achievement.icon}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className={`font-bold ${isUnlocked ? 'text-slate-800' : 'text-slate-500'}`}>
+                          {achievement.title}
+                          {isUnlocked && <span className="ml-2 text-green-500">✓</span>}
+                        </h3>
+                        <p className="text-sm text-slate-500">{achievement.desc}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
+      // 新成就通知
+      const renderNewAchievementPopup = () => (
+        newAchievement && (
+          <div className="fixed top-4 left-4 right-4 z-50 animate-fade-in">
+            <div className="bg-gradient-to-r from-yellow-400 to-orange-400 rounded-2xl p-4 shadow-2xl flex items-center gap-4">
+              <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center text-4xl shadow-lg">
+                {newAchievement.icon}
+              </div>
+              <div className="flex-1 text-white">
+                <p className="text-sm font-medium opacity-90">🎉 成就解鎖！</p>
+                <h3 className="text-xl font-bold">{newAchievement.title}</h3>
+                <p className="text-sm opacity-90">{newAchievement.desc}</p>
+              </div>
+            </div>
+          </div>
+        )
+      );
+
       return (
         <div className="font-sans">
-          {quizMode ? renderQuiz() : 
-           currentView === 'course' ? renderCourse() : 
+          {quizMode ? renderQuiz() :
+           currentView === 'course' ? renderCourse() :
            renderHome()}
-          
+
           {renderMenu()}
           {renderAbbrModal()}
+          {renderAchievementsModal()}
+          {renderNewAchievementPopup()}
         </div>
       );
     }
