@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#A855F7">
+  <title>二尖瓣疾病 - TSOC Echo Learning</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>* { font-family: 'Noto Sans TC', 'Inter', sans-serif; } .font-mono { font-family: 'SF Mono', 'Consolas', monospace; } @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } .animate-fade-in { animation: fade-in 0.3s ease-out; } body { margin: 0; padding: 0; } #root { min-height: 100vh; }</style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState } = React;
+    const Icon = ({ name, className = "", size = 20, ...props }) => { const [svg, setSvg] = React.useState(''); React.useEffect(() => { if (lucide.icons[name]) { setSvg(lucide.icons[name].toSvg({ width: size, height: size, class: className })); } }, [name, className, size]); return <span dangerouslySetInnerHTML={{ __html: svg }} {...props} />; };
+
+    const chapters = {
+      ms: {
+        id: 'ms', title: 'Chapter 11: 二尖瓣狹窄', titleEn: 'Mitral Stenosis', icon: '🟣', color: '#A855F7',
+        sections: [
+          { id: 'ms-overview', title: 'MS 概述', content: [
+            { type: 'heading', text: '病因' },
+            { type: 'point', text: '風濕性心臟病（最常見）' },
+            { type: 'point', text: '退化性鈣化（老年）' },
+            { type: 'point', text: '先天性' },
+            { type: 'heading', text: '風濕性 MS 特徵' },
+            { type: 'step', text: '瓣葉增厚、纖維化' },
+            { type: 'step', text: '瓣葉交連融合' },
+            { type: 'step', text: '瓣下裝置增厚、縮短' },
+            { type: 'step', text: '"Hockey stick" 或 "Doming" 外觀' },
+            { type: 'warning', text: '⚠️ MS 常合併三尖瓣疾病和心房顫動' },
+          ]},
+          { id: 'ms-severity', title: 'MS 嚴重度', content: [
+            { type: 'heading', text: '嚴重度分級' },
+            { type: 'table', headers: ['參數', '輕度', '中度', '重度'],
+              rows: [['MVA', '> 1.5 cm²', '1.0-1.5 cm²', '< 1.0 cm²'],['Mean PG', '< 5 mmHg', '5-10 mmHg', '> 10 mmHg'],['PHT', '< 150 ms', '150-220 ms', '> 220 ms'],['PASP', 'Normal', '30-50 mmHg', '> 50 mmHg']]
+            },
+            { type: 'heading', text: 'MVA 測量方法' },
+            { type: 'table', headers: ['方法', '公式/說明'],
+              rows: [['Planimetry', '直接勾勒瓣口（最準確）'],['PHT', 'MVA = 220 / PHT'],['Continuity', 'MVA = (LVOT 面積 × LVOT VTI) / MV VTI']]
+            },
+            { type: 'formula', text: 'PHT = 0.29 × 減速時間 (DT)' },
+            { type: 'tip', text: '💡 Planimetry 需在 PSAX 切面的瓣葉尖端水平測量' },
+          ]},
+          { id: 'ms-balloon', title: 'PMBV 評估', content: [
+            { type: 'heading', text: 'Wilkins Score (經皮球囊瓣膜成形術評估)' },
+            { type: 'table', headers: ['參數', '1 分', '4 分'],
+              rows: [['活動度', '活動良好', '幾乎無活動'],['瓣下裝置', '輕度增厚', '嚴重縮短'],['瓣葉增厚', '接近正常', '顯著增厚'],['鈣化', '少量', '廣泛']]
+            },
+            { type: 'point', text: '總分 ≤ 8 分：PMBV 適應症佳' },
+            { type: 'point', text: '總分 > 10 分：考慮手術' },
+            { type: 'warning', text: '⚠️ 中重度 MR 或 LA 血栓為 PMBV 禁忌' },
+          ]},
+        ],
+        quiz: [
+          { q: '重度 MS 的 MVA 標準是？', options: ['< 2.0 cm²', '< 1.5 cm²', '< 1.0 cm²', '< 0.5 cm²'], correct: 2, explanation: '重度 MS：MVA < 1.0 cm²' },
+          { q: 'PHT 法計算 MVA 的公式是？', options: ['MVA = 220 / PHT', 'MVA = 180 / PHT', 'MVA = PHT / 220', 'MVA = PHT × 0.29'], correct: 0, explanation: 'MVA = 220 / PHT' },
+          { q: 'Wilkins Score ≤ 多少分適合 PMBV？', options: ['≤ 6', '≤ 8', '≤ 10', '≤ 12'], correct: 1, explanation: 'Wilkins Score ≤ 8 分：PMBV 適應症佳' },
+        ]
+      },
+      mr: {
+        id: 'mr', title: 'Chapter 12: 二尖瓣逆流', titleEn: 'Mitral Regurgitation', icon: '💜', color: '#9333EA',
+        sections: [
+          { id: 'mr-classification', title: 'MR 分類', content: [
+            { type: 'heading', text: 'Carpentier 分類' },
+            { type: 'table', headers: ['類型', '瓣葉運動', '病因'],
+              rows: [['Type I', '正常', '瓣環擴大、穿孔'],['Type II', '過度', '腱索斷裂、prolapse'],['Type IIIa', '受限（收縮+舒張）', '風濕性'],['Type IIIb', '受限（收縮期）', '缺血性/功能性']]
+            },
+            { type: 'heading', text: '原發性 vs 續發性 MR' },
+            { type: 'table', headers: ['', '原發性 MR', '續發性 MR'],
+              rows: [['病變', '瓣膜本身', 'LV 擴大/功能障礙'],['常見病因', 'MVP, 風濕, IE', 'DCM, 缺血性'],['手術適應症', 'MR 嚴重度', '需考慮 LV 狀態']]
+            },
+          ]},
+          { id: 'mr-severity', title: 'MR 嚴重度', content: [
+            { type: 'heading', text: '定性評估' },
+            { type: 'table', headers: ['參數', '輕度', '中度', '重度'],
+              rows: [['Vena Contracta', '< 3 mm', '3-6.9 mm', '≥ 7 mm'],['Jet 面積/LA', '< 20%', '20-40%', '> 40%'],['肺靜脈', '正常', 'S 波減弱', 'S 波逆轉']]
+            },
+            { type: 'heading', text: '定量評估' },
+            { type: 'table', headers: ['參數', '輕度', '中度', '重度'],
+              rows: [['EROA', '< 0.20 cm²', '0.20-0.39 cm²', '≥ 0.40 cm²'],['RVol', '< 30 mL', '30-59 mL', '≥ 60 mL'],['RF', '< 30%', '30-49%', '≥ 50%']]
+            },
+            { type: 'tip', text: '💡 續發性 MR 使用較低閾值：EROA ≥ 0.20, RVol ≥ 30 mL' },
+          ]},
+          { id: 'mr-pisa', title: 'PISA 方法', content: [
+            { type: 'heading', text: 'PISA 測量步驟' },
+            { type: 'step', text: '放大 MV 區域' },
+            { type: 'step', text: '將 aliasing velocity 調低（通常 30-40 cm/s）' },
+            { type: 'step', text: '測量 PISA 半徑 (r)' },
+            { type: 'step', text: '測量 MR Vmax (CW Doppler)' },
+            { type: 'formula', text: 'EROA = (2πr² × Valiasing) / MR Vmax' },
+            { type: 'formula', text: 'RVol = EROA × MR VTI' },
+            { type: 'warning', text: '⚠️ 偏心 jet 可能低估嚴重度' },
+          ]},
+          { id: 'mr-lv', title: 'LV 評估與手術時機', content: [
+            { type: 'heading', text: '原發性 MR 手術指徵' },
+            { type: 'step', text: '症狀性重度 MR' },
+            { type: 'step', text: '無症狀但 LVEF 30-60% 或 LVESD ≥ 40 mm' },
+            { type: 'step', text: '新發心房顫動' },
+            { type: 'step', text: 'PASP > 50 mmHg' },
+            { type: 'heading', text: 'LV 惡化指標' },
+            { type: 'table', headers: ['參數', '手術考慮閾值'],
+              rows: [['LVEF', '≤ 60%'],['LVESD', '≥ 40 mm'],['LAVI', '≥ 60 mL/m²']]
+            },
+            { type: 'tip', text: '💡 原發性 MR：修補優於置換' },
+          ]},
+        ],
+        quiz: [
+          { q: '重度原發性 MR 的 EROA 標準是？', options: ['≥ 0.20 cm²', '≥ 0.30 cm²', '≥ 0.40 cm²', '≥ 0.50 cm²'], correct: 2, explanation: '重度原發性 MR：EROA ≥ 0.40 cm²' },
+          { q: 'Vena Contracta ≥ 7 mm 代表什麼？', options: ['輕度 MR', '中度 MR', '重度 MR', '無法判斷'], correct: 2, explanation: 'Vena Contracta ≥ 7 mm = 重度 MR' },
+          { q: '原發性 MR 建議手術的 LVEF 閾值是？', options: ['≤ 50%', '≤ 55%', '≤ 60%', '≤ 65%'], correct: 2, explanation: '無症狀重度 MR：LVEF ≤ 60% 考慮手術' },
+        ]
+      },
+    };
+
+    const abbreviations = [
+      { abbr: 'MS', full: 'Mitral Stenosis', chinese: '二尖瓣狹窄' },
+      { abbr: 'MR', full: 'Mitral Regurgitation', chinese: '二尖瓣逆流' },
+      { abbr: 'MVA', full: 'Mitral Valve Area', chinese: '二尖瓣面積' },
+      { abbr: 'PHT', full: 'Pressure Half Time', chinese: '壓力半衰時間' },
+      { abbr: 'PMBV', full: 'Percutaneous Mitral Balloon Valvuloplasty', chinese: '經皮球囊瓣膜成形術' },
+      { abbr: 'MVP', full: 'Mitral Valve Prolapse', chinese: '二尖瓣脫垂' },
+      { abbr: 'PISA', full: 'Proximal Isovelocity Surface Area', chinese: '近端等速面積' },
+      { abbr: 'EROA', full: 'Effective Regurgitant Orifice Area', chinese: '有效逆流口面積' },
+      { abbr: 'RVol', full: 'Regurgitant Volume', chinese: '逆流容積' },
+      { abbr: 'RF', full: 'Regurgitant Fraction', chinese: '逆流分率' },
+      { abbr: 'VC', full: 'Vena Contracta', chinese: '縮流頸' },
+      { abbr: 'LA', full: 'Left Atrium', chinese: '左心房' },
+      { abbr: 'PASP', full: 'Pulmonary Artery Systolic Pressure', chinese: '肺動脈收縮壓' },
+    ];
+
+    function MitralValveApp() {
+      const [currentView, setCurrentView] = useState('home');
+      const [selectedChapter, setSelectedChapter] = useState(null);
+      const [selectedSection, setSelectedSection] = useState(0);
+      const [quizMode, setQuizMode] = useState(false);
+      const [quizIndex, setQuizIndex] = useState(0);
+      const [quizAnswer, setQuizAnswer] = useState(null);
+      const [quizScore, setQuizScore] = useState(0);
+      const [quizComplete, setQuizComplete] = useState(false);
+      const [showAbbrModal, setShowAbbrModal] = useState(false);
+      const chapterList = Object.values(chapters);
+      const startQuiz = (chapter) => { setSelectedChapter(chapter); setQuizMode(true); setQuizIndex(0); setQuizAnswer(null); setQuizScore(0); setQuizComplete(false); };
+      const handleQuizAnswer = (index) => { if (quizAnswer !== null) return; setQuizAnswer(index); if (index === selectedChapter.quiz[quizIndex].correct) setQuizScore(prev => prev + 1); };
+      const nextQuestion = () => { if (quizIndex < selectedChapter.quiz.length - 1) { setQuizIndex(prev => prev + 1); setQuizAnswer(null); } else setQuizComplete(true); };
+      const renderContentItem = (item, idx) => {
+        switch (item.type) {
+          case 'heading': return <h3 key={idx} className="text-lg font-bold text-slate-800 mt-6 mb-3 flex items-center gap-2"><div className="w-1 h-5 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></div>{item.text}</h3>;
+          case 'step': return <div key={idx} className="flex gap-3 my-2 items-start"><div className="w-6 h-6 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">{idx + 1}</div><p className="text-slate-700 leading-relaxed">{item.text}</p></div>;
+          case 'point': return <p key={idx} className="my-2 text-slate-700 pl-4 border-l-2 border-purple-200">{item.text}</p>;
+          case 'formula': return <div key={idx} className="my-3 bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-xl border border-amber-200 font-mono text-sm text-amber-900 overflow-x-auto">{item.text}</div>;
+          case 'tip': return <div key={idx} className="my-3 bg-gradient-to-r from-emerald-50 to-teal-50 p-4 rounded-xl border border-emerald-200 text-emerald-800">{item.text}</div>;
+          case 'warning': return <div key={idx} className="my-3 bg-gradient-to-r from-red-50 to-rose-50 p-4 rounded-xl border border-red-200 text-red-800">{item.text}</div>;
+          case 'table': return (<div key={idx} className="my-4 overflow-x-auto rounded-xl border border-slate-200 shadow-sm"><table className="w-full text-sm"><thead className="bg-gradient-to-r from-purple-50 to-pink-50"><tr>{item.headers.map((h, i) => <th key={i} className="px-4 py-3 text-left font-semibold text-slate-700 border-b border-slate-200">{h}</th>)}</tr></thead><tbody>{item.rows.map((row, i) => <tr key={i} className="hover:bg-purple-50/50 transition-colors">{row.map((cell, j) => <td key={j} className="px-4 py-3 border-b border-slate-100 text-slate-700">{cell}</td>)}</tr>)}</tbody></table></div>);
+          default: return null;
+        }
+      };
+      const renderHome = () => (<div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50"><div className="bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 text-white px-4 py-6 shadow-lg"><div className="flex items-center justify-between mb-2"><a href="tsoc-echo-learning-2025.html" className="p-2 hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2"><Icon name="arrow-left" size={20} /><span className="text-sm">返回主頁</span></a><button onClick={() => setShowAbbrModal(true)} className="p-2 hover:bg-white/10 rounded-lg transition-colors"><Icon name="bookmark" size={24} /></button></div><h1 className="text-2xl font-bold text-center">🟣 二尖瓣疾病</h1><p className="text-purple-100 text-sm text-center mt-1">Chapters 11-12: MS & MR</p></div><div className="px-4 py-6 space-y-4"><h2 className="text-lg font-bold text-slate-800 mb-4">選擇章節</h2>{chapterList.map((chapter) => (<button key={chapter.id} onClick={() => { setSelectedChapter(chapter); setSelectedSection(0); setCurrentView('chapter'); }} className="w-full bg-white rounded-2xl p-4 shadow-sm hover:shadow-lg transition-all border border-slate-100 text-left group"><div className="flex items-center gap-4"><div className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl shadow-sm" style={{ backgroundColor: `${chapter.color}15` }}>{chapter.icon}</div><div className="flex-1"><h3 className="font-bold text-slate-800 group-hover:text-purple-600 transition-colors">{chapter.title}</h3><p className="text-sm text-slate-500">{chapter.titleEn}</p><div className="flex items-center gap-4 mt-2 text-xs text-slate-400"><span>📄 {chapter.sections.length} 小節</span><span>🏆 {chapter.quiz.length} 題測驗</span></div></div><Icon name="chevron-right" className="text-slate-400 group-hover:text-purple-600" size={20} /></div></button>))}</div><div className="px-4 pb-6"><h2 className="text-lg font-bold text-slate-800 mb-4">🔗 相關主題</h2><div className="grid grid-cols-2 gap-3"><a href="echo-aortic-valve.html" className="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-all border border-slate-100 flex items-center gap-2"><span className="text-lg">🔴</span><span className="text-sm font-medium text-slate-700">主動脈瓣</span></a><a href="echo-right-heart.html" className="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-all border border-slate-100 flex items-center gap-2"><span className="text-lg">🔵</span><span className="text-sm font-medium text-slate-700">右心系統</span></a></div></div></div>);
+      const renderChapter = () => { if (!selectedChapter) return null; const section = selectedChapter.sections[selectedSection]; return (<div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50"><div className="sticky top-0 z-10 px-4 py-4 shadow-lg" style={{ background: `linear-gradient(135deg, ${selectedChapter.color}, ${selectedChapter.color}dd)` }}><div className="flex items-center justify-between text-white"><button onClick={() => setCurrentView('home')} className="p-2 hover:bg-white/10 rounded-lg transition-colors"><Icon name="chevron-left" size={24} /></button><h1 className="font-bold text-lg flex-1 text-center px-2 truncate">{selectedChapter.title}</h1><div className="w-10"></div></div></div><div className="overflow-x-auto bg-white border-b border-slate-100 shadow-sm"><div className="flex p-2 gap-2 min-w-max">{selectedChapter.sections.map((sec, idx) => (<button key={sec.id} onClick={() => setSelectedSection(idx)} className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all ${selectedSection === idx ? 'text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`} style={selectedSection === idx ? { backgroundColor: selectedChapter.color } : {}}>{sec.title}</button>))}</div></div><div className="px-4 py-6"><h2 className="text-xl font-bold text-slate-800 mb-4">{section.title}</h2><div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">{section.content.map((item, idx) => renderContentItem(item, idx))}</div></div><div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-4 py-3 flex items-center justify-between shadow-lg"><button onClick={() => setSelectedSection(prev => Math.max(0, prev - 1))} disabled={selectedSection === 0} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 text-slate-700 disabled:opacity-50 hover:bg-slate-200 transition-colors"><Icon name="chevron-left" size={20} />上一節</button><button onClick={() => startQuiz(selectedChapter)} className="flex items-center gap-2 px-4 py-2 rounded-xl text-white shadow-md hover:shadow-lg transition-all" style={{ backgroundColor: selectedChapter.color }}>🏆 測驗</button><button onClick={() => setSelectedSection(prev => Math.min(selectedChapter.sections.length - 1, prev + 1))} disabled={selectedSection === selectedChapter.sections.length - 1} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 text-slate-700 disabled:opacity-50 hover:bg-slate-200 transition-colors">下一節<Icon name="chevron-right" size={20} /></button></div><div className="h-20"></div></div>); };
+      const renderQuiz = () => { if (!selectedChapter?.quiz) return null; const currentQuestion = selectedChapter.quiz[quizIndex]; return (<div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50"><div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-4 shadow-lg"><div className="flex items-center justify-between"><button onClick={() => { setQuizMode(false); setCurrentView('chapter'); }} className="p-2 hover:bg-white/10 rounded-lg transition-colors"><Icon name="x" size={24} /></button><h1 className="font-bold text-lg">{selectedChapter.title} - 測驗</h1><div className="w-10"></div></div><div className="mt-4 flex items-center gap-2"><div className="flex-1 h-2 bg-white/20 rounded-full overflow-hidden"><div className="h-full bg-white rounded-full transition-all duration-300" style={{ width: `${((quizIndex + 1) / selectedChapter.quiz.length) * 100}%` }}></div></div><span className="text-sm text-white/80">{quizIndex + 1}/{selectedChapter.quiz.length}</span></div></div>{quizComplete ? (<div className="px-4 py-8 text-center"><div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg text-4xl">🏆</div><h2 className="text-2xl font-bold text-slate-800 mb-2">測驗完成！</h2><p className="text-slate-600 mb-6">你的得分：<span className="text-3xl font-bold text-purple-600 mx-2">{quizScore}</span>/ {selectedChapter.quiz.length}</p><div className="space-y-3"><button onClick={() => { setQuizIndex(0); setQuizAnswer(null); setQuizScore(0); setQuizComplete(false); }} className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-semibold shadow-md">🔄 重新測驗</button><button onClick={() => { setQuizMode(false); setCurrentView('chapter'); }} className="w-full py-3 rounded-xl bg-slate-100 text-slate-700 font-semibold">返回章節</button></div></div>) : (<div className="px-4 py-6"><div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 mb-6"><h3 className="text-lg font-bold text-slate-800 mb-6 leading-relaxed">{currentQuestion.q}</h3><div className="space-y-3">{currentQuestion.options.map((option, idx) => { const isCorrect = idx === currentQuestion.correct; const isSelected = quizAnswer === idx; let buttonStyle = 'bg-slate-50 border-slate-200 text-slate-700'; if (quizAnswer !== null) { if (isCorrect) buttonStyle = 'bg-emerald-50 border-emerald-500 text-emerald-700'; else if (isSelected) buttonStyle = 'bg-red-50 border-red-500 text-red-700'; } return (<button key={idx} onClick={() => handleQuizAnswer(idx)} disabled={quizAnswer !== null} className={`w-full p-4 rounded-xl border-2 text-left transition-all ${buttonStyle} ${quizAnswer === null ? 'hover:border-purple-300 hover:bg-purple-50' : ''}`}><div className="flex items-center gap-3"><div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${quizAnswer !== null && isCorrect ? 'bg-emerald-500 text-white' : quizAnswer !== null && isSelected ? 'bg-red-500 text-white' : 'bg-slate-200 text-slate-600'}`}>{quizAnswer !== null && isCorrect ? '✓' : quizAnswer !== null && isSelected ? '✗' : String.fromCharCode(65 + idx)}</div><span className="font-medium">{option}</span></div></button>); })}</div></div>{quizAnswer !== null && (<><div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-5 border border-blue-200 mb-6 animate-fade-in"><h4 className="font-bold text-blue-800 mb-2">💡 解釋</h4><p className="text-blue-700">{currentQuestion.explanation}</p></div><button onClick={nextQuestion} className="w-full py-4 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold shadow-md">{quizIndex < selectedChapter.quiz.length - 1 ? '下一題 →' : '查看結果 →'}</button></>)}</div>)}</div>); };
+      const renderAbbrModal = () => (<div className={`fixed inset-0 z-50 transition-all duration-300 ${showAbbrModal ? 'visible' : 'invisible'}`}><div className={`absolute inset-0 bg-black/50 transition-opacity ${showAbbrModal ? 'opacity-100' : 'opacity-0'}`} onClick={() => setShowAbbrModal(false)}></div><div className={`absolute inset-4 md:inset-10 bg-white rounded-2xl shadow-2xl transition-transform ${showAbbrModal ? 'scale-100' : 'scale-95'} flex flex-col`}><div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-4 rounded-t-2xl flex items-center justify-between"><h2 className="font-bold text-lg">📖 縮寫對照表</h2><button onClick={() => setShowAbbrModal(false)} className="p-2 hover:bg-white/10 rounded-lg transition-colors"><Icon name="x" size={24} /></button></div><div className="flex-1 overflow-y-auto p-4"><div className="grid gap-2">{abbreviations.map((item, idx) => (<div key={idx} className="flex items-center gap-4 p-3 bg-slate-50 rounded-xl"><span className="font-mono font-bold text-purple-600 w-16 text-sm">{item.abbr}</span><div className="flex-1"><p className="text-slate-800 text-sm">{item.full}</p><p className="text-slate-500 text-xs">{item.chinese}</p></div></div>))}</div></div></div></div>);
+      return (<div className="font-sans">{quizMode ? renderQuiz() : currentView === 'chapter' ? renderChapter() : renderHome()}{renderAbbrModal()}</div>);
+    }
+    ReactDOM.render(<MitralValveApp />, document.getElementById('root'));
+  </script>
+</body>
+</html>

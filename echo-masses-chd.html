@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心臟腫瘤與先天性心臟病 - TSOC Echo Learning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #9333EA 0%, #EC4899 50%, #F97316 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.15);
+        }
+        .quiz-option {
+            transition: all 0.2s ease;
+        }
+        .quiz-option:hover {
+            background-color: #EEF2FF;
+            border-color: #818CF8;
+        }
+        .quiz-option.selected {
+            background-color: #E0E7FF;
+            border-color: #6366F1;
+        }
+        .quiz-option.correct {
+            background-color: #D1FAE5;
+            border-color: #10B981;
+        }
+        .quiz-option.incorrect {
+            background-color: #FEE2E2;
+            border-color: #EF4444;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Chapter data for Masses and CHD
+        const chapters = [
+            {
+                id: 'cardiac-masses',
+                title: '心臟腫瘤與腫塊',
+                titleEn: 'Cardiac Tumors and Masses',
+                chapter: 19,
+                icon: '🔬',
+                color: '#7C3AED',
+                sections: [
+                    {
+                        title: '心臟腫塊概論',
+                        content: [
+                            { type: 'heading', text: '心臟腫塊分類' },
+                            { type: 'point', text: '原發性腫瘤：良性（75%）、惡性（25%）' },
+                            { type: 'point', text: '轉移性腫瘤：比原發性多 20-40 倍' },
+                            { type: 'point', text: '血栓' },
+                            { type: 'point', text: 'Vegetation（感染性心內膜炎）' },
+                            { type: 'point', text: '正常變異或 pseudo-mass' },
+                            { type: 'heading', text: '評估要點' },
+                            { type: 'step', text: '1. 位置：哪個腔室？附著點？' },
+                            { type: 'step', text: '2. 形態：大小、形狀、邊緣' },
+                            { type: 'step', text: '3. 回音特性：均勻 vs 不均勻' },
+                            { type: 'step', text: '4. 活動度：固定 vs 可動' },
+                            { type: 'step', text: '5. 血流供應：有無內部血流' },
+                            { type: 'tip', text: 'TEE 較 TTE 敏感，特別對小病灶和 LA appendage 血栓' }
+                        ]
+                    },
+                    {
+                        title: '良性原發性腫瘤',
+                        content: [
+                            { type: 'heading', text: 'Myxoma（黏液瘤）' },
+                            { type: 'point', text: '最常見的原發性心臟腫瘤（50%）' },
+                            { type: 'point', text: '好發位置：LA（75%）> RA > ventricles' },
+                            { type: 'point', text: '典型附著點：Interatrial septum, fossa ovalis 區域' },
+                            { type: 'point', text: '超音波特徵：有蒂、可動、不均勻回音、可能有鈣化' },
+                            { type: 'point', text: '併發症：栓塞、MV obstruction、constitutional symptoms' },
+                            { type: 'warning', text: 'Carney complex：多發性 myxoma + 皮膚病灶 + 內分泌異常' },
+                            { type: 'heading', text: 'Papillary Fibroelastoma' },
+                            { type: 'point', text: '第二常見良性腫瘤' },
+                            { type: 'point', text: '好發位置：瓣膜表面（aortic > mitral）' },
+                            { type: 'point', text: '超音波：小（< 2 cm）、有蒂、shimmer/stippled appearance' },
+                            { type: 'point', text: '栓塞風險：可造成中風或 MI' },
+                            { type: 'heading', text: '其他良性腫瘤' },
+                            { type: 'point', text: 'Rhabdomyoma：兒童最常見，常多發，與 tuberous sclerosis 相關' },
+                            { type: 'point', text: 'Fibroma：兒童第二常見，常單發於 ventricle' },
+                            { type: 'point', text: 'Lipoma：少見，常位於 interatrial septum' },
+                            { type: 'point', text: 'Hemangioma：血管豐富，可有內部血流' }
+                        ]
+                    },
+                    {
+                        title: '惡性心臟腫瘤',
+                        content: [
+                            { type: 'heading', text: '原發性惡性腫瘤' },
+                            { type: 'point', text: 'Sarcoma：最常見原發惡性腫瘤' },
+                            { type: 'step', text: 'Angiosarcoma：最常見，好發 RA，預後差' },
+                            { type: 'step', text: 'Rhabdomyosarcoma：好發 ventricle' },
+                            { type: 'step', text: 'Leiomyosarcoma：常侵犯 LA 或 pulmonary veins' },
+                            { type: 'point', text: '超音波特徵：浸潤性、不規則邊緣、心包積液' },
+                            { type: 'heading', text: '轉移性腫瘤' },
+                            { type: 'point', text: '最常見來源：肺癌、乳癌、黑色素瘤、淋巴癌、白血病' },
+                            { type: 'point', text: '轉移途徑：直接侵犯、血行轉移、淋巴轉移' },
+                            { type: 'point', text: '超音波表現：心包積液、心包腫塊、心肌浸潤' },
+                            { type: 'table', headers: ['特徵', '良性腫瘤', '惡性腫瘤'], rows: [
+                                ['邊緣', '清楚', '不規則、浸潤性'],
+                                ['生長速度', '慢', '快'],
+                                ['心包積液', '少見', '常見'],
+                                ['多發性', '少見（除 Carney）', '較常見'],
+                                ['位置', 'LA 為主', 'RA 較多']
+                            ]},
+                            { type: 'warning', text: 'RA 腫塊 + 心包積液 → 高度懷疑惡性' }
+                        ]
+                    },
+                    {
+                        title: '心臟血栓',
+                        content: [
+                            { type: 'heading', text: 'LA Thrombus（左心房血栓）' },
+                            { type: 'point', text: '最常與 AF 和 MS 相關' },
+                            { type: 'point', text: '好發位置：LA appendage（90%）' },
+                            { type: 'point', text: 'TEE 敏感度遠高於 TTE' },
+                            { type: 'point', text: 'Spontaneous echo contrast（SEC）：血栓形成前兆' },
+                            { type: 'heading', text: 'LV Thrombus（左心室血栓）' },
+                            { type: 'point', text: '好發於前壁或心尖 MI 後' },
+                            { type: 'point', text: '與 LV aneurysm 相關' },
+                            { type: 'point', text: '超音波特徵：心尖區域、與 akinetic/dyskinetic wall 相鄰' },
+                            { type: 'table', headers: ['特徵', 'LV Thrombus', 'LV Mass'], rows: [
+                                ['位置', '心尖、與壁運動異常相鄰', '任何位置'],
+                                ['回音', '通常均勻', '可能不均勻'],
+                                ['活動度', '可動或固定', '依類型而異'],
+                                ['血流', '無內部血流', '可能有'],
+                                ['臨床背景', 'MI 後、DCM', '無特定']
+                            ]},
+                            { type: 'heading', text: 'RA Thrombus' },
+                            { type: 'point', text: '常與中央靜脈導管或 PM lead 相關' },
+                            { type: 'point', text: 'Thrombus-in-transit：肺栓塞的高風險徵象' },
+                            { type: 'warning', text: 'Mobile RA thrombus → 緊急處置，高猝死風險' }
+                        ]
+                    },
+                    {
+                        title: '假性腫塊（Pseudo-masses）',
+                        content: [
+                            { type: 'heading', text: '常見正常變異' },
+                            { type: 'point', text: 'Crista terminalis：RA 內的肌肉嵴' },
+                            { type: 'point', text: 'Eustachian valve：IVC 進入 RA 處的殘留瓣膜' },
+                            { type: 'point', text: 'Chiari network：RA 內的網狀結構' },
+                            { type: 'point', text: 'Moderator band：RV 內的肌肉束' },
+                            { type: 'point', text: 'Trabeculations：正常心肌小梁' },
+                            { type: 'point', text: 'Lipomatous hypertrophy of IAS：心房中膈脂肪增厚' },
+                            { type: 'heading', text: '區分要點' },
+                            { type: 'step', text: '1. 位置固定且典型' },
+                            { type: 'step', text: '2. 與周圍組織回音相同' },
+                            { type: 'step', text: '3. 多切面觀察形態一致' },
+                            { type: 'step', text: '4. 追蹤無變化' },
+                            { type: 'tip', text: 'Lipomatous IAS 特徵：中膈增厚但 fossa ovalis 不受影響（dumbbell sign）' }
+                        ]
+                    }
+                ],
+                quiz: [
+                    {
+                        question: '最常見的原發性心臟腫瘤是？',
+                        options: ['Papillary fibroelastoma', 'Myxoma', 'Rhabdomyoma', 'Angiosarcoma'],
+                        correct: 1,
+                        explanation: 'Myxoma（黏液瘤）是最常見的原發性心臟腫瘤，約占 50%，其中 75% 發生在左心房。'
+                    },
+                    {
+                        question: 'Myxoma 最典型的附著位置是？',
+                        options: ['左心房後壁', '心房中膈 fossa ovalis 區域', '二尖瓣', '左心室心尖'],
+                        correct: 1,
+                        explanation: 'Myxoma 最典型附著於心房中膈的 fossa ovalis 區域，這是重要的診斷特徵。'
+                    },
+                    {
+                        question: 'Papillary fibroelastoma 最常發生在哪裡？',
+                        options: ['左心房', '右心房', '瓣膜表面', '心室壁'],
+                        correct: 2,
+                        explanation: 'Papillary fibroelastoma 好發於瓣膜表面，以主動脈瓣最常見，其次是二尖瓣。'
+                    },
+                    {
+                        question: '兒童最常見的心臟腫瘤是？',
+                        options: ['Myxoma', 'Rhabdomyoma', 'Fibroma', 'Lipoma'],
+                        correct: 1,
+                        explanation: 'Rhabdomyoma 是兒童最常見的心臟腫瘤，常為多發性，且與 tuberous sclerosis 相關。'
+                    },
+                    {
+                        question: '下列何者是惡性心臟腫瘤的特徵？',
+                        options: ['位於 LA、邊緣清楚', 'RA 腫塊合併心包積液', '瓣膜上小腫塊', 'IAS 脂肪增厚'],
+                        correct: 1,
+                        explanation: 'RA 腫塊合併心包積液高度提示惡性腫瘤，特別是 Angiosarcoma。良性腫瘤較少造成心包積液。'
+                    }
+                ]
+            },
+            {
+                id: 'congenital-heart-disease',
+                title: '成人先天性心臟病',
+                titleEn: 'Adult Congenital Heart Disease',
+                chapter: 20,
+                icon: '💜',
+                color: '#EC4899',
+                sections: [
+                    {
+                        title: '心房中膈缺損',
+                        content: [
+                            { type: 'heading', text: 'ASD 分類' },
+                            { type: 'point', text: 'Secundum ASD（75%）：位於 fossa ovalis' },
+                            { type: 'point', text: 'Primum ASD（15-20%）：位於 AV valve 層級' },
+                            { type: 'point', text: 'Sinus venosus ASD（5-10%）：上腔或下腔型' },
+                            { type: 'point', text: 'Coronary sinus ASD：最少見' },
+                            { type: 'heading', text: '超音波評估' },
+                            { type: 'step', text: '1. 2D：直接看到中膈缺損' },
+                            { type: 'step', text: '2. Color Doppler：左到右分流（紅色跨過中膈）' },
+                            { type: 'step', text: '3. 測量缺損大小與 rim' },
+                            { type: 'step', text: '4. RV 容積負荷徵象' },
+                            { type: 'heading', text: 'RV 容積負荷表現' },
+                            { type: 'point', text: 'RV 擴大' },
+                            { type: 'point', text: '室間隔 paradoxical motion（D-shaped LV）' },
+                            { type: 'point', text: 'PA 擴張' },
+                            { type: 'heading', text: 'Qp/Qs 計算' },
+                            { type: 'formula', text: 'Qp/Qs = (RVOT VTI × RVOT area) / (LVOT VTI × LVOT area)' },
+                            { type: 'point', text: 'Qp/Qs > 1.5 提示 significant shunt' },
+                            { type: 'tip', text: 'Secundum ASD 若 rim 足夠可考慮 device closure' }
+                        ]
+                    },
+                    {
+                        title: '心室中膈缺損',
+                        content: [
+                            { type: 'heading', text: 'VSD 分類' },
+                            { type: 'point', text: 'Perimembranous（80%）：最常見，位於 membranous septum' },
+                            { type: 'point', text: 'Muscular（5-20%）：位於 muscular septum 任何部位' },
+                            { type: 'point', text: 'Outlet/Supracristal（5-8%）：位於 RVOT 下方' },
+                            { type: 'point', text: 'Inlet（3-5%）：位於 AV valves 下方' },
+                            { type: 'heading', text: '超音波評估' },
+                            { type: 'step', text: '1. 2D：直接看到中膈缺損（多切面確認）' },
+                            { type: 'step', text: '2. Color Doppler：左到右分流 jet' },
+                            { type: 'step', text: '3. CW Doppler：測量分流 velocity' },
+                            { type: 'formula', text: 'RV systolic pressure = SBP - 4V²(VSD jet)' },
+                            { type: 'heading', text: '分流方向判斷' },
+                            { type: 'table', headers: ['情況', '分流方向', 'VSD jet 方向'], rows: [
+                                ['正常 PVR', '左到右', 'LV → RV（收縮期）'],
+                                ['Eisenmenger', '右到左', 'RV → LV'],
+                                ['等壓', '雙向或無明顯 jet', '-']
+                            ]},
+                            { type: 'warning', text: 'Supracristal VSD 需注意 AR（主動脈瓣脫垂）' }
+                        ]
+                    },
+                    {
+                        title: '開放性動脈導管',
+                        content: [
+                            { type: 'heading', text: 'Patent Ductus Arteriosus (PDA)' },
+                            { type: 'point', text: '連接降主動脈與左肺動脈' },
+                            { type: 'point', text: '分流：主動脈 → 肺動脈（全心週期）' },
+                            { type: 'heading', text: '超音波評估' },
+                            { type: 'step', text: '1. PSAX at PA level：MPA 內 continuous flow' },
+                            { type: 'step', text: '2. Suprasternal view：看 ductal arch' },
+                            { type: 'step', text: '3. Color Doppler：diastolic reversal in descending Ao' },
+                            { type: 'heading', text: '血行動力學影響' },
+                            { type: 'point', text: 'LA、LV 擴大（容積負荷）' },
+                            { type: 'point', text: '降主動脈舒張期逆流' },
+                            { type: 'point', text: '長期可發展為肺高壓' },
+                            { type: 'tip', text: 'Continuous murmur（machinery murmur）是典型聽診表現' }
+                        ]
+                    },
+                    {
+                        title: '主動脈瓣二葉畸形',
+                        content: [
+                            { type: 'heading', text: 'Bicuspid Aortic Valve (BAV)' },
+                            { type: 'point', text: '最常見先天性心臟異常（1-2%）' },
+                            { type: 'point', text: '常合併主動脈病變（aortopathy）' },
+                            { type: 'heading', text: '超音波診斷' },
+                            { type: 'step', text: '1. PSAX：收縮期呈橢圓形開口（fish mouth）' },
+                            { type: 'step', text: '2. PSAX：舒張期可見 raphe（融合嵴）' },
+                            { type: 'step', text: '3. PLAX：異常 cusp coaptation' },
+                            { type: 'heading', text: 'Fusion patterns' },
+                            { type: 'point', text: 'R-L fusion（最常見，70-80%）' },
+                            { type: 'point', text: 'R-N fusion（較少見）' },
+                            { type: 'point', text: 'L-N fusion（最少見）' },
+                            { type: 'heading', text: '相關併發症' },
+                            { type: 'point', text: 'AS：隨年齡增加風險' },
+                            { type: 'point', text: 'AR' },
+                            { type: 'point', text: '升主動脈擴張（需追蹤）' },
+                            { type: 'point', text: 'Coarctation of aorta（常合併）' },
+                            { type: 'point', text: '感染性心內膜炎風險增加' },
+                            { type: 'warning', text: 'BAV 患者需同時評估升主動脈尺寸' }
+                        ]
+                    },
+                    {
+                        title: '法洛氏四重症',
+                        content: [
+                            { type: 'heading', text: 'Tetralogy of Fallot (TOF)' },
+                            { type: 'point', text: '最常見的發紺型先天性心臟病' },
+                            { type: 'heading', text: '四個特徵' },
+                            { type: 'step', text: '1. VSD（large, malalignment type）' },
+                            { type: 'step', text: '2. RVOT obstruction（infundibular ± valvular PS）' },
+                            { type: 'step', text: '3. Overriding aorta（> 50% 跨越 VSD）' },
+                            { type: 'step', text: '4. RV hypertrophy（續發）' },
+                            { type: 'heading', text: '術後評估重點' },
+                            { type: 'point', text: 'Pulmonary regurgitation：最常見術後問題' },
+                            { type: 'point', text: 'RV 大小與功能' },
+                            { type: 'point', text: '殘餘 RVOT obstruction' },
+                            { type: 'point', text: '殘餘 VSD' },
+                            { type: 'point', text: 'PA branch stenosis' },
+                            { type: 'table', headers: ['參數', '換瓣考量指標'], rows: [
+                                ['RVEDVi', '> 150-170 mL/m²'],
+                                ['RVESVi', '> 80 mL/m²'],
+                                ['RVEF', '< 45%'],
+                                ['Symptoms', 'NYHA ≥ II']
+                            ]},
+                            { type: 'tip', text: 'CMR 是評估 RV 大小與 PR 程度的 gold standard' }
+                        ]
+                    },
+                    {
+                        title: '完全性大血管轉位',
+                        content: [
+                            { type: 'heading', text: 'D-Transposition of Great Arteries (D-TGA)' },
+                            { type: 'point', text: '主動脈起源於 RV，肺動脈起源於 LV' },
+                            { type: 'point', text: '平行循環，需有分流才能存活' },
+                            { type: 'heading', text: '手術方式' },
+                            { type: 'point', text: 'Arterial switch operation（目前標準）' },
+                            { type: 'point', text: 'Atrial switch（Mustard/Senning）：舊式手術' },
+                            { type: 'heading', text: 'Atrial Switch 術後評估' },
+                            { type: 'point', text: 'Systemic RV 功能' },
+                            { type: 'point', text: 'TR（systemic AV regurgitation）' },
+                            { type: 'point', text: 'Baffle obstruction 或 leak' },
+                            { type: 'point', text: '心律不整' },
+                            { type: 'heading', text: 'Arterial Switch 術後評估' },
+                            { type: 'point', text: 'Neoaortic root 擴張與 AR' },
+                            { type: 'point', text: 'Coronary artery 問題（reimplantation site）' },
+                            { type: 'point', text: 'PA branch stenosis' },
+                            { type: 'warning', text: 'Atrial switch 患者的 systemic RV 長期功能下降是主要問題' }
+                        ]
+                    },
+                    {
+                        title: '其他常見成人 CHD',
+                        content: [
+                            { type: 'heading', text: 'Ebstein Anomaly' },
+                            { type: 'point', text: 'TV septal 和 posterior leaflet 向下移位' },
+                            { type: 'point', text: '造成 atrialized RV' },
+                            { type: 'point', text: '超音波診斷：TV septal leaflet apical displacement > 8 mm/m²' },
+                            { type: 'point', text: '常合併 ASD、WPW' },
+                            { type: 'heading', text: 'Coarctation of Aorta' },
+                            { type: 'point', text: '位於 left subclavian 遠端' },
+                            { type: 'point', text: '常合併 BAV（50-80%）' },
+                            { type: 'point', text: '超音波：suprasternal view 看狹窄與 diastolic tail' },
+                            { type: 'heading', text: 'Partial AV Canal (Primum ASD + Cleft MV)' },
+                            { type: 'point', text: 'Primum ASD 合併 MV cleft' },
+                            { type: 'point', text: '常見 MR（cleft 造成）' },
+                            { type: 'point', text: 'A4C 可見 goose-neck deformity of LVOT' },
+                            { type: 'heading', text: 'Fontan Circulation（單心室術後）' },
+                            { type: 'point', text: 'SVC 和 IVC 直接連到 PA' },
+                            { type: 'point', text: '評估：ventricular function、AV valve regurgitation、Fontan pathway obstruction' },
+                            { type: 'tip', text: '成人 CHD 評估需了解手術史與解剖' }
+                        ]
+                    }
+                ],
+                quiz: [
+                    {
+                        question: '最常見的心房中膈缺損類型是？',
+                        options: ['Primum ASD', 'Secundum ASD', 'Sinus venosus ASD', 'Coronary sinus ASD'],
+                        correct: 1,
+                        explanation: 'Secundum ASD 是最常見的 ASD 類型，約占 75%，位於 fossa ovalis 區域。'
+                    },
+                    {
+                        question: '評估 VSD 時，下列何者可用來估算 RV 收縮壓？',
+                        options: ['VSD 大小', 'VSD jet velocity', 'E/A ratio', 'TAPSE'],
+                        correct: 1,
+                        explanation: 'RV systolic pressure = SBP - 4V²(VSD jet)，利用 VSD jet velocity 和 systemic BP 可估算 RV 收縮壓。'
+                    },
+                    {
+                        question: '最常見的先天性心臟異常是？',
+                        options: ['VSD', 'ASD', 'Bicuspid aortic valve', 'PDA'],
+                        correct: 2,
+                        explanation: 'Bicuspid aortic valve 是最常見的先天性心臟異常，發生率約 1-2%。'
+                    },
+                    {
+                        question: '法洛氏四重症不包括下列何者？',
+                        options: ['VSD', 'Overriding aorta', 'ASD', 'RVOT obstruction'],
+                        correct: 2,
+                        explanation: 'TOF 四個特徵：VSD、RVOT obstruction、Overriding aorta、RV hypertrophy。不包括 ASD。'
+                    },
+                    {
+                        question: 'Ebstein anomaly 的超音波診斷標準是？',
+                        options: ['TR velocity > 2.8 m/s', 'TV septal leaflet apical displacement > 8 mm/m²', 'RV/LV ratio > 1.0', 'TAPSE < 17 mm'],
+                        correct: 1,
+                        explanation: 'Ebstein anomaly 診斷標準：三尖瓣 septal leaflet 向心尖方向移位 > 8 mm/m²（相對於 MV annulus）。'
+                    },
+                    {
+                        question: 'TOF 術後最常見的問題是？',
+                        options: ['殘餘 VSD', 'Aortic regurgitation', 'Pulmonary regurgitation', 'Mitral stenosis'],
+                        correct: 2,
+                        explanation: 'TOF 術後最常見的問題是 pulmonary regurgitation（肺動脈瓣逆流），長期可導致 RV 擴大與功能下降。'
+                    }
+                ]
+            }
+        ];
+
+        // Abbreviations for this topic
+        const abbreviations = [
+            { abbr: 'ASD', full: 'Atrial Septal Defect', chinese: '心房中膈缺損' },
+            { abbr: 'VSD', full: 'Ventricular Septal Defect', chinese: '心室中膈缺損' },
+            { abbr: 'PDA', full: 'Patent Ductus Arteriosus', chinese: '開放性動脈導管' },
+            { abbr: 'BAV', full: 'Bicuspid Aortic Valve', chinese: '主動脈瓣二葉畸形' },
+            { abbr: 'TOF', full: 'Tetralogy of Fallot', chinese: '法洛氏四重症' },
+            { abbr: 'TGA', full: 'Transposition of Great Arteries', chinese: '大血管轉位' },
+            { abbr: 'RVOT', full: 'Right Ventricular Outflow Tract', chinese: '右心室出口道' },
+            { abbr: 'LVOT', full: 'Left Ventricular Outflow Tract', chinese: '左心室出口道' },
+            { abbr: 'PS', full: 'Pulmonary Stenosis', chinese: '肺動脈瓣狹窄' },
+            { abbr: 'PR', full: 'Pulmonary Regurgitation', chinese: '肺動脈瓣逆流' },
+            { abbr: 'TR', full: 'Tricuspid Regurgitation', chinese: '三尖瓣逆流' },
+            { abbr: 'AR', full: 'Aortic Regurgitation', chinese: '主動脈瓣逆流' },
+            { abbr: 'MR', full: 'Mitral Regurgitation', chinese: '二尖瓣逆流' },
+            { abbr: 'LA', full: 'Left Atrium', chinese: '左心房' },
+            { abbr: 'RA', full: 'Right Atrium', chinese: '右心房' },
+            { abbr: 'LV', full: 'Left Ventricle', chinese: '左心室' },
+            { abbr: 'RV', full: 'Right Ventricle', chinese: '右心室' },
+            { abbr: 'PA', full: 'Pulmonary Artery', chinese: '肺動脈' },
+            { abbr: 'IAS', full: 'Interatrial Septum', chinese: '心房中膈' },
+            { abbr: 'IVS', full: 'Interventricular Septum', chinese: '心室中膈' },
+            { abbr: 'SEC', full: 'Spontaneous Echo Contrast', chinese: '自發性迴音對比' },
+            { abbr: 'Qp/Qs', full: 'Pulmonary to Systemic Flow Ratio', chinese: '肺循環與體循環流量比' },
+            { abbr: 'CHD', full: 'Congenital Heart Disease', chinese: '先天性心臟病' },
+            { abbr: 'PVR', full: 'Pulmonary Vascular Resistance', chinese: '肺血管阻力' },
+            { abbr: 'CMR', full: 'Cardiac Magnetic Resonance', chinese: '心臟磁振造影' },
+            { abbr: 'RVEDVi', full: 'RV End-Diastolic Volume Index', chinese: '右心室舒張末期容積指數' }
+        ];
+
+        // Main App Component
+        function App() {
+            const [currentView, setCurrentView] = useState('home');
+            const [selectedChapter, setSelectedChapter] = useState(null);
+            const [quizState, setQuizState] = useState({
+                currentQuestion: 0,
+                answers: [],
+                showResult: false
+            });
+            const [showAbbreviations, setShowAbbreviations] = useState(false);
+
+            const handleChapterSelect = (chapter) => {
+                setSelectedChapter(chapter);
+                setCurrentView('chapter');
+            };
+
+            const handleStartQuiz = (chapter) => {
+                setSelectedChapter(chapter);
+                setQuizState({
+                    currentQuestion: 0,
+                    answers: [],
+                    showResult: false
+                });
+                setCurrentView('quiz');
+            };
+
+            const handleQuizAnswer = (answerIndex) => {
+                const newAnswers = [...quizState.answers, answerIndex];
+                if (newAnswers.length < selectedChapter.quiz.length) {
+                    setQuizState({
+                        ...quizState,
+                        currentQuestion: quizState.currentQuestion + 1,
+                        answers: newAnswers
+                    });
+                } else {
+                    setQuizState({
+                        ...quizState,
+                        answers: newAnswers,
+                        showResult: true
+                    });
+                }
+            };
+
+            const calculateScore = () => {
+                let correct = 0;
+                quizState.answers.forEach((answer, index) => {
+                    if (answer === selectedChapter.quiz[index].correct) {
+                        correct++;
+                    }
+                });
+                return correct;
+            };
+
+            return (
+                <div className="min-h-screen bg-slate-50">
+                    {/* Header */}
+                    <header className="gradient-bg text-white py-6 px-4 shadow-lg">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <a href="tsoc-echo-learning-2025.html" className="text-white/80 hover:text-white text-sm flex items-center gap-1 mb-2">
+                                        ← 返回主頁
+                                    </a>
+                                    <h1 className="text-2xl font-bold">心臟腫瘤與先天性心臟病</h1>
+                                    <p className="text-white/80 text-sm mt-1">Cardiac Masses & Congenital Heart Disease | Chapters 19-20</p>
+                                </div>
+                                <button
+                                    onClick={() => setShowAbbreviations(true)}
+                                    className="bg-white/20 hover:bg-white/30 px-3 py-2 rounded-lg text-sm transition-colors"
+                                >
+                                    📖 縮寫表
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Main Content */}
+                    <main className="max-w-4xl mx-auto p-4">
+                        {currentView === 'home' && (
+                            <HomeView
+                                chapters={chapters}
+                                onSelectChapter={handleChapterSelect}
+                                onStartQuiz={handleStartQuiz}
+                            />
+                        )}
+                        {currentView === 'chapter' && selectedChapter && (
+                            <ChapterView
+                                chapter={selectedChapter}
+                                onBack={() => setCurrentView('home')}
+                                onStartQuiz={() => handleStartQuiz(selectedChapter)}
+                            />
+                        )}
+                        {currentView === 'quiz' && selectedChapter && (
+                            <QuizView
+                                chapter={selectedChapter}
+                                quizState={quizState}
+                                onAnswer={handleQuizAnswer}
+                                onBack={() => setCurrentView('home')}
+                                score={calculateScore()}
+                            />
+                        )}
+                    </main>
+
+                    {/* Abbreviation Modal */}
+                    {showAbbreviations && (
+                        <AbbreviationModal
+                            abbreviations={abbreviations}
+                            onClose={() => setShowAbbreviations(false)}
+                        />
+                    )}
+
+                    {/* Footer */}
+                    <footer className="bg-slate-800 text-white py-6 px-4 mt-12">
+                        <div className="max-w-4xl mx-auto text-center">
+                            <p className="text-slate-400 text-sm">TSOC Echo Learning 2025</p>
+                            <p className="text-slate-500 text-xs mt-1">台灣心臟學會心臟超音波教育訓練</p>
+                        </div>
+                    </footer>
+                </div>
+            );
+        }
+
+        // Home View Component
+        function HomeView({ chapters, onSelectChapter, onStartQuiz }) {
+            return (
+                <div className="space-y-6">
+                    <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-6 text-white">
+                        <h2 className="text-xl font-bold mb-2">📚 學習內容</h2>
+                        <p className="text-white/90">
+                            本單元涵蓋心臟腫瘤、腫塊鑑別診斷，以及成人先天性心臟病的超音波評估，包含 ASD、VSD、TOF、TGA 等常見病變。
+                        </p>
+                    </div>
+
+                    <div className="grid gap-4">
+                        {chapters.map((chapter) => (
+                            <div
+                                key={chapter.id}
+                                className="bg-white rounded-xl shadow-sm overflow-hidden card-hover"
+                            >
+                                <div
+                                    className="p-4 cursor-pointer"
+                                    onClick={() => onSelectChapter(chapter)}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div
+                                            className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
+                                            style={{ backgroundColor: `${chapter.color}20` }}
+                                        >
+                                            {chapter.icon}
+                                        </div>
+                                        <div className="flex-1">
+                                            <h3 className="font-bold text-slate-800">{chapter.title}</h3>
+                                            <p className="text-sm text-slate-500">{chapter.titleEn} | Chapter {chapter.chapter}</p>
+                                        </div>
+                                        <span className="text-slate-400">→</span>
+                                    </div>
+                                </div>
+                                <div className="px-4 pb-4 flex gap-2">
+                                    <button
+                                        onClick={() => onSelectChapter(chapter)}
+                                        className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-lg text-sm transition-colors"
+                                    >
+                                        📖 閱讀內容
+                                    </button>
+                                    <button
+                                        onClick={() => onStartQuiz(chapter)}
+                                        className="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-700 py-2 rounded-lg text-sm transition-colors"
+                                    >
+                                        ✏️ 開始測驗
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Related Topics */}
+                    <div className="bg-white rounded-xl p-4 shadow-sm">
+                        <h3 className="font-bold text-slate-800 mb-3">🔗 相關主題</h3>
+                        <div className="grid grid-cols-2 gap-2">
+                            <a href="echo-right-heart.html" className="bg-slate-50 hover:bg-slate-100 p-3 rounded-lg text-sm text-slate-600 transition-colors">
+                                🫁 右心疾病
+                            </a>
+                            <a href="echo-aortic-valve.html" className="bg-slate-50 hover:bg-slate-100 p-3 rounded-lg text-sm text-slate-600 transition-colors">
+                                🫀 主動脈瓣疾病
+                            </a>
+                            <a href="echo-prosthetics-endocarditis.html" className="bg-slate-50 hover:bg-slate-100 p-3 rounded-lg text-sm text-slate-600 transition-colors">
+                                🔧 人工瓣膜與心內膜炎
+                            </a>
+                            <a href="echo-aorta-pericardium.html" className="bg-slate-50 hover:bg-slate-100 p-3 rounded-lg text-sm text-slate-600 transition-colors">
+                                💧 主動脈與心包膜
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Chapter View Component
+        function ChapterView({ chapter, onBack, onStartQuiz }) {
+            const [expandedSection, setExpandedSection] = useState(0);
+
+            const renderContent = (item, index) => {
+                switch (item.type) {
+                    case 'heading':
+                        return <h4 key={index} className="font-bold text-slate-800 mt-4 mb-2">{item.text}</h4>;
+                    case 'point':
+                        return <p key={index} className="text-slate-600 ml-4 mb-1">• {item.text}</p>;
+                    case 'step':
+                        return <p key={index} className="text-slate-600 ml-4 mb-1 flex items-start gap-2">
+                            <span className="text-purple-500">▸</span> {item.text}
+                        </p>;
+                    case 'tip':
+                        return <div key={index} className="bg-green-50 border-l-4 border-green-500 p-3 my-2 text-sm text-green-800">
+                            💡 {item.text}
+                        </div>;
+                    case 'warning':
+                        return <div key={index} className="bg-amber-50 border-l-4 border-amber-500 p-3 my-2 text-sm text-amber-800">
+                            ⚠️ {item.text}
+                        </div>;
+                    case 'formula':
+                        return <div key={index} className="bg-purple-50 p-3 rounded-lg my-2 font-mono text-purple-800 text-center">
+                            {item.text}
+                        </div>;
+                    case 'table':
+                        return (
+                            <div key={index} className="overflow-x-auto my-3">
+                                <table className="w-full text-sm border-collapse">
+                                    <thead>
+                                        <tr className="bg-slate-100">
+                                            {item.headers.map((header, i) => (
+                                                <th key={i} className="border border-slate-200 px-3 py-2 text-left font-medium text-slate-700">
+                                                    {header}
+                                                </th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {item.rows.map((row, i) => (
+                                            <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+                                                {row.map((cell, j) => (
+                                                    <td key={j} className="border border-slate-200 px-3 py-2 text-slate-600">
+                                                        {cell}
+                                                    </td>
+                                                ))}
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        );
+                    default:
+                        return null;
+                }
+            };
+
+            return (
+                <div className="space-y-4">
+                    <button
+                        onClick={onBack}
+                        className="flex items-center gap-2 text-slate-600 hover:text-slate-800 transition-colors"
+                    >
+                        ← 返回章節列表
+                    </button>
+
+                    <div
+                        className="rounded-xl p-6 text-white"
+                        style={{ backgroundColor: chapter.color }}
+                    >
+                        <div className="text-4xl mb-2">{chapter.icon}</div>
+                        <h2 className="text-2xl font-bold">{chapter.title}</h2>
+                        <p className="text-white/80">{chapter.titleEn} | Chapter {chapter.chapter}</p>
+                    </div>
+
+                    <div className="space-y-3">
+                        {chapter.sections.map((section, index) => (
+                            <div key={index} className="bg-white rounded-xl shadow-sm overflow-hidden">
+                                <button
+                                    onClick={() => setExpandedSection(expandedSection === index ? -1 : index)}
+                                    className="w-full p-4 text-left flex items-center justify-between hover:bg-slate-50 transition-colors"
+                                >
+                                    <span className="font-medium text-slate-800">{section.title}</span>
+                                    <span className={`transform transition-transform ${expandedSection === index ? 'rotate-180' : ''}`}>
+                                        ▼
+                                    </span>
+                                </button>
+                                {expandedSection === index && (
+                                    <div className="px-4 pb-4 border-t border-slate-100">
+                                        {section.content.map((item, i) => renderContent(item, i))}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+
+                    <button
+                        onClick={onStartQuiz}
+                        className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-medium transition-colors"
+                    >
+                        ✏️ 開始本章測驗
+                    </button>
+                </div>
+            );
+        }
+
+        // Quiz View Component
+        function QuizView({ chapter, quizState, onAnswer, onBack, score }) {
+            const currentQ = chapter.quiz[quizState.currentQuestion];
+
+            if (quizState.showResult) {
+                return (
+                    <div className="space-y-4">
+                        <div className="bg-white rounded-xl p-6 shadow-sm text-center">
+                            <div className="text-6xl mb-4">
+                                {score === chapter.quiz.length ? '🎉' : score >= chapter.quiz.length / 2 ? '👍' : '📚'}
+                            </div>
+                            <h2 className="text-2xl font-bold text-slate-800 mb-2">測驗完成！</h2>
+                            <p className="text-xl text-slate-600">
+                                得分：<span className="text-purple-600 font-bold">{score}</span> / {chapter.quiz.length}
+                            </p>
+                            <p className="text-slate-500 mt-2">
+                                {score === chapter.quiz.length ? '太厲害了！全對！' :
+                                 score >= chapter.quiz.length / 2 ? '做得不錯，繼續加油！' : '多複習一下內容吧！'}
+                            </p>
+                        </div>
+
+                        <div className="space-y-3">
+                            {chapter.quiz.map((q, index) => (
+                                <div key={index} className="bg-white rounded-xl p-4 shadow-sm">
+                                    <p className="font-medium text-slate-800 mb-2">
+                                        {index + 1}. {q.question}
+                                    </p>
+                                    <div className="space-y-2">
+                                        {q.options.map((option, optIndex) => (
+                                            <div
+                                                key={optIndex}
+                                                className={`p-2 rounded-lg text-sm ${
+                                                    optIndex === q.correct
+                                                        ? 'bg-green-100 text-green-800'
+                                                        : optIndex === quizState.answers[index]
+                                                            ? 'bg-red-100 text-red-800'
+                                                            : 'bg-slate-50 text-slate-600'
+                                                }`}
+                                            >
+                                                {optIndex === q.correct && '✓ '}
+                                                {optIndex === quizState.answers[index] && optIndex !== q.correct && '✗ '}
+                                                {option}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <p className="text-sm text-slate-500 mt-2 bg-slate-50 p-2 rounded">
+                                        💡 {q.explanation}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+
+                        <button
+                            onClick={onBack}
+                            className="w-full bg-slate-600 hover:bg-slate-700 text-white py-3 rounded-xl font-medium transition-colors"
+                        >
+                            返回章節列表
+                        </button>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <button
+                            onClick={onBack}
+                            className="text-slate-600 hover:text-slate-800 transition-colors"
+                        >
+                            ← 返回
+                        </button>
+                        <span className="text-slate-500">
+                            {quizState.currentQuestion + 1} / {chapter.quiz.length}
+                        </span>
+                    </div>
+
+                    <div className="bg-white rounded-xl p-6 shadow-sm">
+                        <div className="w-full bg-slate-200 rounded-full h-2 mb-6">
+                            <div
+                                className="bg-purple-600 h-2 rounded-full transition-all"
+                                style={{ width: `${((quizState.currentQuestion + 1) / chapter.quiz.length) * 100}%` }}
+                            />
+                        </div>
+
+                        <h3 className="text-lg font-medium text-slate-800 mb-4">
+                            {currentQ.question}
+                        </h3>
+
+                        <div className="space-y-3">
+                            {currentQ.options.map((option, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => onAnswer(index)}
+                                    className="w-full p-4 text-left border-2 border-slate-200 rounded-xl quiz-option"
+                                >
+                                    <span className="inline-block w-8 h-8 rounded-full bg-slate-100 text-center leading-8 mr-3 text-slate-600">
+                                        {String.fromCharCode(65 + index)}
+                                    </span>
+                                    {option}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Abbreviation Modal Component
+        function AbbreviationModal({ abbreviations, onClose }) {
+            const [searchTerm, setSearchTerm] = useState('');
+
+            const filteredAbbr = abbreviations.filter(item =>
+                item.abbr.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.full.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.chinese.includes(searchTerm)
+            );
+
+            return (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-2xl max-w-lg w-full max-h-[80vh] overflow-hidden">
+                        <div className="p-4 border-b border-slate-200">
+                            <div className="flex items-center justify-between mb-3">
+                                <h3 className="text-lg font-bold text-slate-800">📖 縮寫對照表</h3>
+                                <button
+                                    onClick={onClose}
+                                    className="text-slate-400 hover:text-slate-600"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="搜尋縮寫..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            />
+                        </div>
+                        <div className="overflow-y-auto max-h-[60vh] p-4">
+                            <div className="space-y-2">
+                                {filteredAbbr.map((item, index) => (
+                                    <div key={index} className="bg-slate-50 rounded-lg p-3">
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-bold text-purple-600">{item.abbr}</span>
+                                            <span className="text-slate-400">-</span>
+                                            <span className="text-slate-700">{item.full}</span>
+                                        </div>
+                                        <p className="text-sm text-slate-500 mt-1">{item.chinese}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Render the app
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

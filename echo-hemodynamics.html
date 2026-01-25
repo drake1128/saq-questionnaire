@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#8B5CF6">
+  <title>舒張功能評估 - TSOC Echo Learning</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Noto Sans TC', 'Inter', sans-serif; }
+    .font-mono { font-family: 'SF Mono', 'Consolas', monospace; }
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in { animation: fade-in 0.3s ease-out; }
+    body { margin: 0; padding: 0; }
+    #root { min-height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useMemo } = React;
+
+    // Lucide Icons
+    const Icon = ({ name, className = "", size = 20, ...props }) => {
+      const [svg, setSvg] = React.useState('');
+      React.useEffect(() => {
+        if (lucide.icons[name]) {
+          const iconData = lucide.icons[name];
+          setSvg(iconData.toSvg({ width: size, height: size, class: className }));
+        }
+      }, [name, className, size]);
+      return <span dangerouslySetInnerHTML={{ __html: svg }} {...props} />;
+    };
+
+    // Chapter Data - Diastolic Dysfunction
+    const chapterData = {
+      id: 'diastolic',
+      title: 'Chapter 04: 舒張功能',
+      titleEn: 'Diastolic Dysfunction',
+      icon: '💨',
+      color: '#8B5CF6',
+      sections: [
+        {
+          id: 'overview',
+          title: '舒張功能概述',
+          content: [
+            { type: 'heading', text: '什麼是舒張功能障礙？' },
+            { type: 'point', text: '左心室鬆弛能力下降和/或僵硬度增加' },
+            { type: 'point', text: '導致充盈壓升高，即使 LVEF 正常' },
+            { type: 'point', text: 'HFpEF (射出分率保留心衰竭) 的主要機轉' },
+            { type: 'heading', text: '評估參數' },
+            { type: 'table', headers: ['參數', '來源', '意義'],
+              rows: [
+                ['E/A 比值', 'MV inflow', '充盈模式'],
+                ['e\'', 'TDI', '心肌鬆弛'],
+                ['E/e\'', '計算', 'LV 充盈壓'],
+                ['TR Vmax', 'CW Doppler', 'PA 壓力'],
+                ['LAVI', '2D/3D', 'LA 擴大'],
+              ]
+            },
+            { type: 'tip', text: '💡 舒張功能評估需要整合多個參數' },
+          ]
+        },
+        {
+          id: 'mv-inflow',
+          title: 'MV Inflow (E/A)',
+          content: [
+            { type: 'heading', text: '測量方法' },
+            { type: 'step', text: '使用 A4C 切面' },
+            { type: 'step', text: '將 PW sample volume 放在二尖瓣葉尖' },
+            { type: 'step', text: '記錄 E 波和 A 波' },
+            { type: 'heading', text: '正常值' },
+            { type: 'table', headers: ['年齡', 'E/A 比值'],
+              rows: [
+                ['< 40 歲', '1.0-2.0'],
+                ['40-60 歲', '0.8-1.5'],
+                ['> 60 歲', '0.6-1.0'],
+              ]
+            },
+            { type: 'heading', text: '充盈模式' },
+            { type: 'table', headers: ['模式', 'E/A', '臨床意義'],
+              rows: [
+                ['正常', '≈ 1', '正常充盈'],
+                ['鬆弛異常', '< 0.8', 'Grade I 舒張障礙'],
+                ['假性正常', '0.8-1.5', 'Grade II 舒張障礙'],
+                ['限制型', '> 2', 'Grade III 舒張障礙'],
+              ]
+            },
+            { type: 'warning', text: '⚠️ E/A 受年齡和心率影響，需結合其他參數' },
+          ]
+        },
+        {
+          id: 'tissue-doppler',
+          title: 'TDI e\' 測量',
+          content: [
+            { type: 'heading', text: '測量方法' },
+            { type: 'step', text: '使用 A4C 切面，啟用組織都卜勒模式' },
+            { type: 'step', text: '將 sample volume 放在二尖瓣環側壁 (lateral)' },
+            { type: 'step', text: '同樣測量室間隔側 (septal)' },
+            { type: 'step', text: '計算平均 e\' = (septal e\' + lateral e\') / 2' },
+            { type: 'heading', text: '正常值' },
+            { type: 'table', headers: ['位置', '正常值', '異常'],
+              rows: [
+                ['Septal e\'', '≥ 7 cm/s', '< 7 cm/s'],
+                ['Lateral e\'', '≥ 10 cm/s', '< 10 cm/s'],
+              ]
+            },
+            { type: 'heading', text: 'e\' 減低的意義' },
+            { type: 'point', text: '反映心肌主動鬆弛能力下降' },
+            { type: 'point', text: '不受前負荷影響，較 E 波穩定' },
+            { type: 'point', text: 'HCM、限制型心肌病、冠心病常見降低' },
+            { type: 'tip', text: '💡 Lateral e\' 通常高於 Septal e\'（約高 2-3 cm/s）' },
+          ]
+        },
+        {
+          id: 'e-eprime',
+          title: 'E/e\' 比值',
+          content: [
+            { type: 'heading', text: 'E/e\' 計算' },
+            { type: 'formula', text: 'E/e\' = MV E wave / 平均 e\'' },
+            { type: 'heading', text: '判讀標準' },
+            { type: 'table', headers: ['E/e\' (平均)', 'PCWP 估計', '意義'],
+              rows: [
+                ['< 8', '< 10 mmHg', 'LV 充盈壓正常'],
+                ['9-14', '10-15 mmHg', '灰色地帶'],
+                ['> 14', '> 15 mmHg', 'LV 充盈壓升高'],
+              ]
+            },
+            { type: 'heading', text: '臨床應用' },
+            { type: 'point', text: '估計 PCWP（肺微血管楔壓）的無創方法' },
+            { type: 'point', text: '診斷 HFpEF 的關鍵參數' },
+            { type: 'point', text: '預後評估價值' },
+            { type: 'warning', text: '⚠️ 在 AF、二尖瓣疾病、心臟手術後可能不準確' },
+          ]
+        },
+        {
+          id: 'tr-velocity',
+          title: 'TR 最大速度',
+          content: [
+            { type: 'heading', text: '測量方法' },
+            { type: 'step', text: '使用 A4C、RV-focused 或 PSAX 切面' },
+            { type: 'step', text: '將 CW Doppler 對準 TR jet' },
+            { type: 'step', text: '測量最大速度 (Vmax)' },
+            { type: 'heading', text: '正常值與意義' },
+            { type: 'table', headers: ['TR Vmax', 'PASP 估計', '意義'],
+              rows: [
+                ['< 2.8 m/s', '< 36 mmHg', '正常'],
+                ['2.8-3.4 m/s', '36-50 mmHg', '輕度升高'],
+                ['> 3.4 m/s', '> 50 mmHg', '明顯升高'],
+              ]
+            },
+            { type: 'formula', text: 'PASP = 4 × (TR Vmax)² + RAP' },
+            { type: 'heading', text: 'RAP 估計 (從 IVC)' },
+            { type: 'table', headers: ['IVC 直徑', '呼吸變化', 'RAP'],
+              rows: [
+                ['≤ 21 mm', '> 50% 塌陷', '3 mmHg'],
+                ['≤ 21 mm', '< 50% 塌陷', '8 mmHg'],
+                ['> 21 mm', '< 50% 塌陷', '15 mmHg'],
+              ]
+            },
+            { type: 'tip', text: '💡 TR Vmax > 2.8 m/s 是舒張功能障礙的指標之一' },
+          ]
+        },
+        {
+          id: 'lavi',
+          title: 'LAVI 測量',
+          content: [
+            { type: 'heading', text: '測量方法' },
+            { type: 'step', text: '使用 A4C 和 A2C 切面' },
+            { type: 'step', text: '在心室收縮末期（二尖瓣開前）測量' },
+            { type: 'step', text: '勾勒 LA 邊緣，排除肺靜脈和 LA appendage' },
+            { type: 'step', text: '使用 biplane disk method 計算容積' },
+            { type: 'step', text: '除以 BSA 得到 LAVI' },
+            { type: 'heading', text: '正常值' },
+            { type: 'table', headers: ['LAVI', '程度'],
+              rows: [
+                ['< 34 mL/m²', '正常'],
+                ['34-41 mL/m²', '輕度擴大'],
+                ['42-48 mL/m²', '中度擴大'],
+                ['> 48 mL/m²', '重度擴大'],
+              ]
+            },
+            { type: 'heading', text: '臨床意義' },
+            { type: 'point', text: 'LA 擴大反映長期充盈壓升高' },
+            { type: 'point', text: '心房顫動風險評估' },
+            { type: 'point', text: '舒張功能障礙的「記憶參數」' },
+            { type: 'warning', text: '⚠️ LAVI > 34 mL/m² 是舒張功能障礙的指標之一' },
+          ]
+        },
+        {
+          id: 'grading',
+          title: '舒張功能分級',
+          content: [
+            { type: 'heading', text: '2016 ASE/EACVI 指引' },
+            { type: 'point', text: '使用四個參數評估舒張功能障礙' },
+            { type: 'table', headers: ['參數', '正常', '異常'],
+              rows: [
+                ['Septal e\'', '≥ 7 cm/s', '< 7 cm/s'],
+                ['Lateral e\'', '≥ 10 cm/s', '< 10 cm/s'],
+                ['E/e\' (平均)', '< 14', '> 14'],
+                ['TR Vmax', '< 2.8 m/s', '> 2.8 m/s'],
+                ['LAVI', '< 34 mL/m²', '≥ 34 mL/m²'],
+              ]
+            },
+            { type: 'heading', text: 'LVEF 正常 (≥ 50%) 的評估流程' },
+            { type: 'step', text: '計算異常參數數量（上述 4 項）' },
+            { type: 'step', text: '≤ 1 項異常 = 舒張功能正常' },
+            { type: 'step', text: '≥ 3 項異常 = 舒張功能障礙' },
+            { type: 'step', text: '2 項異常 = 無法判定' },
+            { type: 'heading', text: '分級 (確認有舒張功能障礙後)' },
+            { type: 'table', headers: ['Grade', 'E/A', 'E/e\'', '說明'],
+              rows: [
+                ['I (輕度)', '< 0.8', '< 10', '鬆弛異常，充盈壓正常'],
+                ['II (中度)', '0.8-2', '10-14', '假性正常'],
+                ['III (重度)', '> 2', '> 14', '限制型充盈'],
+              ]
+            },
+            { type: 'tip', text: '💡 Grade III 需進一步用 Valsalva 確認是否可逆' },
+          ]
+        },
+        {
+          id: 'special',
+          title: '特殊情況',
+          content: [
+            { type: 'heading', text: '心房顫動' },
+            { type: 'point', text: '無 A 波，無法計算 E/A' },
+            { type: 'point', text: '使用 E/e\'、TR Vmax、LAVI 評估' },
+            { type: 'point', text: 'E/e\' 可能不穩定，需多次測量取平均' },
+            { type: 'heading', text: 'HFrEF (LVEF < 50%)' },
+            { type: 'table', headers: ['參數', '正常充盈壓', '升高充盈壓'],
+              rows: [
+                ['E/A', '< 0.8 + E < 50 cm/s', '≥ 2'],
+                ['E/e\'', '-', '> 14'],
+                ['TR Vmax', '-', '> 2.8 m/s'],
+                ['LAVI', '-', '≥ 34 mL/m²'],
+              ]
+            },
+            { type: 'heading', text: 'HCM 特殊考量' },
+            { type: 'point', text: 'e\' 通常明顯降低（常 < 5 cm/s）' },
+            { type: 'point', text: '即使 E/e\' 正常也可能有升高的充盈壓' },
+            { type: 'warning', text: '⚠️ 特殊情況下需綜合臨床判斷' },
+          ]
+        },
+      ],
+      quiz: [
+        {
+          q: 'E/e\' (平均) > 14 代表什麼？',
+          options: ['LV 充盈壓正常', 'LV 充盈壓升高', '無法判定', 'LV 收縮功能異常'],
+          correct: 1,
+          explanation: 'E/e\' > 14 提示 LV 充盈壓升高（PCWP > 15 mmHg）'
+        },
+        {
+          q: 'Lateral e\' 正常下限是？',
+          options: ['≥ 5 cm/s', '≥ 7 cm/s', '≥ 10 cm/s', '≥ 12 cm/s'],
+          correct: 2,
+          explanation: 'Lateral e\' ≥ 10 cm/s 為正常'
+        },
+        {
+          q: 'TR Vmax > 2.8 m/s 估計 PASP 約多少？',
+          options: ['< 25 mmHg', '約 36 mmHg', '約 50 mmHg', '> 60 mmHg'],
+          correct: 1,
+          explanation: 'TR Vmax 2.8 m/s → 4 × 2.8² + RAP ≈ 31 + 5 = 36 mmHg'
+        },
+        {
+          q: 'LAVI 正常上限是？',
+          options: ['28 mL/m²', '34 mL/m²', '40 mL/m²', '48 mL/m²'],
+          correct: 1,
+          explanation: 'LAVI < 34 mL/m² 為正常'
+        },
+        {
+          q: '在 LVEF 正常的患者，幾項參數異常可判定舒張功能障礙？',
+          options: ['≥ 1 項', '≥ 2 項', '≥ 3 項', '全部 4 項'],
+          correct: 2,
+          explanation: '根據 2016 指引，≥ 3/4 項異常 = 舒張功能障礙'
+        },
+        {
+          q: 'Grade II (假性正常) 舒張功能障礙的 E/A 範圍是？',
+          options: ['< 0.8', '0.8-2.0', '> 2.0', '任何值'],
+          correct: 1,
+          explanation: 'Grade II 的 E/A 通常在 0.8-2.0 之間（假性正常化）'
+        },
+      ]
+    };
+
+    // Abbreviations
+    const abbreviations = [
+      { abbr: 'E', full: 'Early diastolic mitral inflow velocity', chinese: '二尖瓣早期舒張血流速度' },
+      { abbr: 'A', full: 'Late diastolic (atrial) mitral inflow velocity', chinese: '二尖瓣晚期舒張血流速度' },
+      { abbr: 'e\'', full: 'Early diastolic mitral annular velocity', chinese: '二尖瓣環早期舒張組織速度' },
+      { abbr: 'E/e\'', full: 'Ratio of E to e\'', chinese: 'E 與 e\' 比值' },
+      { abbr: 'TDI', full: 'Tissue Doppler Imaging', chinese: '組織都卜勒' },
+      { abbr: 'LAVI', full: 'Left Atrial Volume Index', chinese: '左心房容積指數' },
+      { abbr: 'TR', full: 'Tricuspid Regurgitation', chinese: '三尖瓣逆流' },
+      { abbr: 'PASP', full: 'Pulmonary Artery Systolic Pressure', chinese: '肺動脈收縮壓' },
+      { abbr: 'RAP', full: 'Right Atrial Pressure', chinese: '右心房壓力' },
+      { abbr: 'PCWP', full: 'Pulmonary Capillary Wedge Pressure', chinese: '肺微血管楔壓' },
+      { abbr: 'HFpEF', full: 'Heart Failure with Preserved EF', chinese: '射出分率保留心衰竭' },
+      { abbr: 'HFrEF', full: 'Heart Failure with Reduced EF', chinese: '射出分率降低心衰竭' },
+      { abbr: 'HCM', full: 'Hypertrophic Cardiomyopathy', chinese: '肥厚型心肌病' },
+      { abbr: 'AF', full: 'Atrial Fibrillation', chinese: '心房顫動' },
+      { abbr: 'BSA', full: 'Body Surface Area', chinese: '體表面積' },
+      { abbr: 'IVC', full: 'Inferior Vena Cava', chinese: '下腔靜脈' },
+    ];
+
+    // Main App Component
+    function DiastolicApp() {
+      const [selectedSection, setSelectedSection] = useState(0);
+      const [quizMode, setQuizMode] = useState(false);
+      const [quizIndex, setQuizIndex] = useState(0);
+      const [quizAnswer, setQuizAnswer] = useState(null);
+      const [quizScore, setQuizScore] = useState(0);
+      const [quizComplete, setQuizComplete] = useState(false);
+      const [showAbbrModal, setShowAbbrModal] = useState(false);
+
+      const section = chapterData.sections[selectedSection];
+
+      const startQuiz = () => {
+        setQuizMode(true);
+        setQuizIndex(0);
+        setQuizAnswer(null);
+        setQuizScore(0);
+        setQuizComplete(false);
+      };
+
+      const handleQuizAnswer = (index) => {
+        if (quizAnswer !== null) return;
+        setQuizAnswer(index);
+        if (index === chapterData.quiz[quizIndex].correct) {
+          setQuizScore(prev => prev + 1);
+        }
+      };
+
+      const nextQuestion = () => {
+        if (quizIndex < chapterData.quiz.length - 1) {
+          setQuizIndex(prev => prev + 1);
+          setQuizAnswer(null);
+        } else {
+          setQuizComplete(true);
+        }
+      };
+
+      // Render content item
+      const renderContentItem = (item, idx) => {
+        switch (item.type) {
+          case 'heading':
+            return (
+              <h3 key={idx} className="text-lg font-bold text-slate-800 mt-6 mb-3 flex items-center gap-2">
+                <div className="w-1 h-5 bg-gradient-to-b from-purple-500 to-indigo-500 rounded-full"></div>
+                {item.text}
+              </h3>
+            );
+          case 'step':
+            return (
+              <div key={idx} className="flex gap-3 my-2 items-start">
+                <div className="w-6 h-6 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+                  {idx + 1}
+                </div>
+                <p className="text-slate-700 leading-relaxed">{item.text}</p>
+              </div>
+            );
+          case 'point':
+            return (
+              <p key={idx} className="my-2 text-slate-700 pl-4 border-l-2 border-purple-200">
+                {item.text}
+              </p>
+            );
+          case 'formula':
+            return (
+              <div key={idx} className="my-3 bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-xl border border-amber-200 font-mono text-sm text-amber-900 overflow-x-auto">
+                {item.text}
+              </div>
+            );
+          case 'tip':
+            return (
+              <div key={idx} className="my-3 bg-gradient-to-r from-emerald-50 to-teal-50 p-4 rounded-xl border border-emerald-200 text-emerald-800">
+                {item.text}
+              </div>
+            );
+          case 'warning':
+            return (
+              <div key={idx} className="my-3 bg-gradient-to-r from-red-50 to-rose-50 p-4 rounded-xl border border-red-200 text-red-800">
+                {item.text}
+              </div>
+            );
+          case 'table':
+            return (
+              <div key={idx} className="my-4 overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                <table className="w-full text-sm">
+                  <thead className="bg-gradient-to-r from-purple-50 to-indigo-50">
+                    <tr>
+                      {item.headers.map((h, i) => (
+                        <th key={i} className="px-4 py-3 text-left font-semibold text-slate-700 border-b border-slate-200">
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {item.rows.map((row, i) => (
+                      <tr key={i} className="hover:bg-purple-50/50 transition-colors">
+                        {row.map((cell, j) => (
+                          <td key={j} className="px-4 py-3 border-b border-slate-100 text-slate-700">
+                            {cell}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          default:
+            return null;
+        }
+      };
+
+      // Main content page
+      const renderContent = () => (
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50">
+          <div className="bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 text-white px-4 py-6 shadow-lg">
+            <div className="flex items-center justify-between mb-2">
+              <a href="tsoc-echo-learning-2025.html" className="p-2 hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2">
+                <Icon name="arrow-left" size={20} />
+                <span className="text-sm">返回主頁</span>
+              </a>
+              <button onClick={() => setShowAbbrModal(true)} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                <Icon name="bookmark" size={24} />
+              </button>
+            </div>
+            <h1 className="text-2xl font-bold text-center">💨 舒張功能評估</h1>
+            <p className="text-purple-100 text-sm text-center mt-1">Chapter 04: Diastolic Dysfunction</p>
+          </div>
+
+          <div className="overflow-x-auto bg-white border-b border-slate-100 shadow-sm">
+            <div className="flex p-2 gap-2 min-w-max">
+              {chapterData.sections.map((sec, idx) => (
+                <button
+                  key={sec.id}
+                  onClick={() => setSelectedSection(idx)}
+                  className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all ${
+                    selectedSection === idx
+                      ? 'bg-purple-600 text-white shadow-md'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  {sec.title}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="px-4 py-6">
+            <h2 className="text-xl font-bold text-slate-800 mb-4">{section.title}</h2>
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+              {section.content.map((item, idx) => renderContentItem(item, idx))}
+            </div>
+          </div>
+
+          {/* Related Topics */}
+          <div className="px-4 pb-6">
+            <h2 className="text-lg font-bold text-slate-800 mb-4">🔗 相關主題</h2>
+            <div className="grid grid-cols-2 gap-3">
+              <a href="echo-basics.html" className="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-all border border-slate-100 flex items-center gap-2">
+                <span className="text-lg">📖</span>
+                <span className="text-sm font-medium text-slate-700">基礎原理</span>
+              </a>
+              <a href="echo-cardiomyopathy.html" className="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-all border border-slate-100 flex items-center gap-2">
+                <span className="text-lg">💔</span>
+                <span className="text-sm font-medium text-slate-700">心肌病變</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-4 py-3 flex items-center justify-between shadow-lg">
+            <button
+              onClick={() => setSelectedSection(prev => Math.max(0, prev - 1))}
+              disabled={selectedSection === 0}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 text-slate-700 disabled:opacity-50 hover:bg-slate-200 transition-colors"
+            >
+              <Icon name="chevron-left" size={20} />
+              上一節
+            </button>
+
+            <button
+              onClick={startQuiz}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600 text-white shadow-md hover:shadow-lg transition-all"
+            >
+              🏆 測驗
+            </button>
+
+            <button
+              onClick={() => setSelectedSection(prev => Math.min(chapterData.sections.length - 1, prev + 1))}
+              disabled={selectedSection === chapterData.sections.length - 1}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 text-slate-700 disabled:opacity-50 hover:bg-slate-200 transition-colors"
+            >
+              下一節
+              <Icon name="chevron-right" size={20} />
+            </button>
+          </div>
+
+          <div className="h-20"></div>
+        </div>
+      );
+
+      // Quiz page
+      const renderQuiz = () => {
+        const currentQuestion = chapterData.quiz[quizIndex];
+
+        return (
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50">
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-4 shadow-lg">
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => setQuizMode(false)}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                >
+                  <Icon name="x" size={24} />
+                </button>
+                <h1 className="font-bold text-lg">舒張功能 - 測驗</h1>
+                <div className="w-10"></div>
+              </div>
+
+              <div className="mt-4 flex items-center gap-2">
+                <div className="flex-1 h-2 bg-white/20 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-white rounded-full transition-all duration-300"
+                    style={{ width: `${((quizIndex + 1) / chapterData.quiz.length) * 100}%` }}
+                  ></div>
+                </div>
+                <span className="text-sm text-white/80">{quizIndex + 1}/{chapterData.quiz.length}</span>
+              </div>
+            </div>
+
+            {quizComplete ? (
+              <div className="px-4 py-8 text-center">
+                <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg text-4xl">
+                  🏆
+                </div>
+                <h2 className="text-2xl font-bold text-slate-800 mb-2">測驗完成！</h2>
+                <p className="text-slate-600 mb-6">
+                  你的得分：
+                  <span className="text-3xl font-bold text-purple-600 mx-2">{quizScore}</span>
+                  / {chapterData.quiz.length}
+                </p>
+                <div className="space-y-3">
+                  <button
+                    onClick={() => {
+                      setQuizIndex(0);
+                      setQuizAnswer(null);
+                      setQuizScore(0);
+                      setQuizComplete(false);
+                    }}
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-semibold shadow-md"
+                  >
+                    🔄 重新測驗
+                  </button>
+                  <button
+                    onClick={() => setQuizMode(false)}
+                    className="w-full py-3 rounded-xl bg-slate-100 text-slate-700 font-semibold"
+                  >
+                    返回學習
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="px-4 py-6">
+                <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 mb-6">
+                  <h3 className="text-lg font-bold text-slate-800 mb-6 leading-relaxed">
+                    {currentQuestion.q}
+                  </h3>
+                  <div className="space-y-3">
+                    {currentQuestion.options.map((option, idx) => {
+                      const isCorrect = idx === currentQuestion.correct;
+                      const isSelected = quizAnswer === idx;
+                      let buttonStyle = 'bg-slate-50 border-slate-200 text-slate-700';
+
+                      if (quizAnswer !== null) {
+                        if (isCorrect) {
+                          buttonStyle = 'bg-emerald-50 border-emerald-500 text-emerald-700';
+                        } else if (isSelected && !isCorrect) {
+                          buttonStyle = 'bg-red-50 border-red-500 text-red-700';
+                        }
+                      }
+
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => handleQuizAnswer(idx)}
+                          disabled={quizAnswer !== null}
+                          className={`w-full p-4 rounded-xl border-2 text-left transition-all ${buttonStyle} ${
+                            quizAnswer === null ? 'hover:border-purple-300 hover:bg-purple-50' : ''
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
+                              quizAnswer !== null && isCorrect ? 'bg-emerald-500 text-white' :
+                              quizAnswer !== null && isSelected && !isCorrect ? 'bg-red-500 text-white' :
+                              'bg-slate-200 text-slate-600'
+                            }`}>
+                              {quizAnswer !== null && isCorrect ? '✓' :
+                               quizAnswer !== null && isSelected && !isCorrect ? '✗' :
+                               String.fromCharCode(65 + idx)}
+                            </div>
+                            <span className="font-medium">{option}</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {quizAnswer !== null && (
+                  <>
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-5 border border-blue-200 mb-6 animate-fade-in">
+                      <h4 className="font-bold text-blue-800 mb-2">💡 解釋</h4>
+                      <p className="text-blue-700">{currentQuestion.explanation}</p>
+                    </div>
+                    <button
+                      onClick={nextQuestion}
+                      className="w-full py-4 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold shadow-md"
+                    >
+                      {quizIndex < chapterData.quiz.length - 1 ? '下一題 →' : '查看結果 →'}
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      // Abbreviation modal
+      const renderAbbrModal = () => (
+        <div className={`fixed inset-0 z-50 transition-all duration-300 ${showAbbrModal ? 'visible' : 'invisible'}`}>
+          <div
+            className={`absolute inset-0 bg-black/50 transition-opacity ${showAbbrModal ? 'opacity-100' : 'opacity-0'}`}
+            onClick={() => setShowAbbrModal(false)}
+          ></div>
+          <div className={`absolute inset-4 md:inset-10 bg-white rounded-2xl shadow-2xl transition-transform ${showAbbrModal ? 'scale-100' : 'scale-95'} flex flex-col`}>
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-4 rounded-t-2xl flex items-center justify-between">
+              <h2 className="font-bold text-lg">📖 縮寫對照表</h2>
+              <button onClick={() => setShowAbbrModal(false)} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                <Icon name="x" size={24} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4">
+              <div className="grid gap-2">
+                {abbreviations.map((item, idx) => (
+                  <div key={idx} className="flex items-center gap-4 p-3 bg-slate-50 rounded-xl">
+                    <span className="font-mono font-bold text-purple-600 w-16 text-sm">{item.abbr}</span>
+                    <div className="flex-1">
+                      <p className="text-slate-800 text-sm">{item.full}</p>
+                      <p className="text-slate-500 text-xs">{item.chinese}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
+      return (
+        <div className="font-sans">
+          {quizMode ? renderQuiz() : renderContent()}
+          {renderAbbrModal()}
+        </div>
+      );
+    }
+
+    // Render App
+    ReactDOM.render(<DiastolicApp />, document.getElementById('root'));
+  </script>
+</body>
+</html>

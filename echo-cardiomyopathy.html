@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#EC4899">
+  <title>心肌病變 - TSOC Echo Learning</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Noto Sans TC', 'Inter', sans-serif; }
+    .font-mono { font-family: 'SF Mono', 'Consolas', monospace; }
+    @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fade-in 0.3s ease-out; }
+    body { margin: 0; padding: 0; }
+    #root { min-height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const Icon = ({ name, className = "", size = 20, ...props }) => {
+      const [svg, setSvg] = React.useState('');
+      React.useEffect(() => {
+        if (lucide.icons[name]) {
+          const iconData = lucide.icons[name];
+          setSvg(iconData.toSvg({ width: size, height: size, class: className }));
+        }
+      }, [name, className, size]);
+      return <span dangerouslySetInnerHTML={{ __html: svg }} {...props} />;
+    };
+
+    // Chapter Data
+    const chapters = {
+      dcm: {
+        id: 'dcm',
+        title: 'Chapter 05: 擴張型心肌病',
+        titleEn: 'Dilated Cardiomyopathy',
+        icon: '💔',
+        color: '#EC4899',
+        sections: [
+          {
+            id: 'dcm-overview',
+            title: 'DCM 概述',
+            content: [
+              { type: 'heading', text: '定義' },
+              { type: 'point', text: '左心室擴大合併收縮功能降低' },
+              { type: 'point', text: '排除冠狀動脈疾病和瓣膜疾病' },
+              { type: 'heading', text: '病因' },
+              { type: 'table', headers: ['類別', '病因'],
+                rows: [
+                  ['遺傳性', 'TTN, LMNA, MYH7 等基因突變'],
+                  ['毒素', '酒精、化療藥物（蒽環類）'],
+                  ['感染', '病毒性心肌炎後遺症'],
+                  ['代謝', '甲狀腺疾病、糖尿病'],
+                  ['圍產期', '圍產期心肌病'],
+                ]
+              },
+              { type: 'tip', text: '💡 約 30-40% 的 DCM 有遺傳因素' },
+            ]
+          },
+          {
+            id: 'dcm-echo',
+            title: 'DCM 超音波特徵',
+            content: [
+              { type: 'heading', text: '結構變化' },
+              { type: 'step', text: 'LV 擴大：LVIDd > 58 mm (男) 或 > 52 mm (女)' },
+              { type: 'step', text: 'LV 呈球形：球形指數 < 1.6（正常 > 1.6）' },
+              { type: 'step', text: '壁厚相對變薄（非絕對變薄）' },
+              { type: 'step', text: 'LA 和 RV 可能繼發性擴大' },
+              { type: 'heading', text: '功能變化' },
+              { type: 'table', headers: ['參數', 'DCM 特徵'],
+                rows: [
+                  ['LVEF', '< 40%（通常 < 30%）'],
+                  ['GLS', '減低（通常 > -10%）'],
+                  ['壁運動', '瀰漫性運動減低'],
+                  ['E/A', '可能呈限制型充盈'],
+                ]
+              },
+              { type: 'heading', text: '繼發變化' },
+              { type: 'point', text: '功能性二尖瓣逆流（瓣環擴大、拉扯）' },
+              { type: 'point', text: 'LV 血栓形成風險增加' },
+              { type: 'warning', text: '⚠️ 心尖血栓好發於嚴重運動減低區域' },
+            ]
+          },
+          {
+            id: 'dcm-diff',
+            title: 'DCM 與缺血性心肌病鑑別',
+            content: [
+              { type: 'heading', text: '鑑別要點' },
+              { type: 'table', headers: ['特徵', 'DCM', '缺血性心肌病'],
+                rows: [
+                  ['壁運動異常', '瀰漫性', '節段性'],
+                  ['壁厚', '均勻變薄', '疤痕區域薄'],
+                  ['冠脈分佈', '不符合', '符合冠脈領域'],
+                  ['心室形狀', '球形', '不規則'],
+                ]
+              },
+              { type: 'tip', text: '💡 節段性壁運動異常強烈提示缺血性病因' },
+            ]
+          },
+        ],
+        quiz: [
+          {
+            q: 'DCM 的 LV 球形指數通常是？',
+            options: ['> 2.0', '> 1.6', '< 1.6', '= 1.0'],
+            correct: 2,
+            explanation: 'DCM 的 LV 呈球形，球形指數 < 1.6（正常 > 1.6）'
+          },
+          {
+            q: '區分 DCM 和缺血性心肌病的關鍵是？',
+            options: ['LVEF 程度', '壁運動異常模式', 'LA 大小', 'RV 功能'],
+            correct: 1,
+            explanation: 'DCM 呈瀰漫性壁運動減低，缺血性心肌病呈節段性異常'
+          },
+        ]
+      },
+      hcm: {
+        id: 'hcm',
+        title: 'Chapter 06: 肥厚型心肌病',
+        titleEn: 'Hypertrophic Cardiomyopathy',
+        icon: '💪',
+        color: '#F97316',
+        sections: [
+          {
+            id: 'hcm-overview',
+            title: 'HCM 概述',
+            content: [
+              { type: 'heading', text: '定義' },
+              { type: 'point', text: '心室壁肥厚（≥ 15 mm），無法用負荷情況解釋' },
+              { type: 'point', text: '一等親有 HCM 時，≥ 13 mm 即可診斷' },
+              { type: 'heading', text: '遺傳學' },
+              { type: 'point', text: '體染色體顯性遺傳' },
+              { type: 'point', text: '約 60% 由肌節蛋白基因突變引起' },
+              { type: 'table', headers: ['基因', '蛋白質'],
+                rows: [
+                  ['MYH7', 'β-myosin heavy chain'],
+                  ['MYBPC3', 'Myosin-binding protein C'],
+                  ['TNNT2', 'Troponin T'],
+                  ['TPM1', 'α-tropomyosin'],
+                ]
+              },
+              { type: 'warning', text: '⚠️ 需排除高血壓、主動脈瓣狹窄等續發性肥厚' },
+            ]
+          },
+          {
+            id: 'hcm-types',
+            title: 'HCM 形態分類',
+            content: [
+              { type: 'heading', text: '肥厚分佈' },
+              { type: 'table', headers: ['類型', '位置', '比例'],
+                rows: [
+                  ['非對稱中膈型', '室間隔（前部）', '60-70%'],
+                  ['心尖型', '心尖區域', '10-15%'],
+                  ['對稱型', '整個 LV', '5-10%'],
+                  ['中段型', 'LV 中段', '< 5%'],
+                ]
+              },
+              { type: 'heading', text: '測量方法' },
+              { type: 'step', text: '在舒張末期測量最厚處' },
+              { type: 'step', text: '排除 RV 調節束' },
+              { type: 'step', text: '多個切面確認' },
+              { type: 'formula', text: 'ASH = 室間隔厚度 / 後壁厚度 ≥ 1.3' },
+            ]
+          },
+          {
+            id: 'hcm-lvot',
+            title: 'LVOT 阻塞',
+            content: [
+              { type: 'heading', text: 'SAM 現象' },
+              { type: 'point', text: 'SAM = Systolic Anterior Motion' },
+              { type: 'point', text: '二尖瓣前葉在收縮期向前移動接觸室間隔' },
+              { type: 'point', text: '造成動態 LVOT 阻塞和 MR' },
+              { type: 'heading', text: 'LVOT 梯度評估' },
+              { type: 'step', text: '使用 A5C 切面' },
+              { type: 'step', text: 'CW Doppler 通過 LVOT' },
+              { type: 'step', text: '測量峰值速度' },
+              { type: 'table', headers: ['LVOT 梯度', '分類'],
+                rows: [
+                  ['< 30 mmHg', '無阻塞'],
+                  ['30-50 mmHg', '輕度阻塞'],
+                  ['≥ 50 mmHg', '顯著阻塞'],
+                ]
+              },
+              { type: 'heading', text: '激發試驗' },
+              { type: 'point', text: 'Valsalva 動作' },
+              { type: 'point', text: '站立位' },
+              { type: 'point', text: '運動負荷' },
+              { type: 'warning', text: '⚠️ 靜息時 < 50 mmHg 但激發後 ≥ 50 mmHg = 潛在阻塞型' },
+            ]
+          },
+          {
+            id: 'hcm-mri',
+            title: 'HCM 進階評估',
+            content: [
+              { type: 'heading', text: '舒張功能' },
+              { type: 'point', text: 'e\' 通常顯著減低（常 < 5 cm/s）' },
+              { type: 'point', text: '舒張功能障礙是 HCM 的特徵' },
+              { type: 'heading', text: 'MR 評估' },
+              { type: 'point', text: 'SAM 相關 MR：收縮中後期 jet' },
+              { type: 'point', text: 'Jet 方向通常朝向後外側' },
+              { type: 'heading', text: 'CMR 的角色' },
+              { type: 'table', headers: ['評估項目', 'CMR 優勢'],
+                rows: [
+                  ['心尖肥厚', '比心超更敏感'],
+                  ['LGE', '纖維化/疤痕評估'],
+                  ['精確定量', '壁厚、質量'],
+                ]
+              },
+              { type: 'tip', text: '💡 LGE > 15% 與猝死風險增加相關' },
+            ]
+          },
+        ],
+        quiz: [
+          {
+            q: 'HCM 診斷的壁厚標準是？',
+            options: ['≥ 10 mm', '≥ 12 mm', '≥ 15 mm', '≥ 18 mm'],
+            correct: 2,
+            explanation: 'HCM 定義為壁厚 ≥ 15 mm，無法用負荷情況解釋'
+          },
+          {
+            q: 'LVOT 梯度 ≥ 多少為顯著阻塞？',
+            options: ['≥ 20 mmHg', '≥ 30 mmHg', '≥ 50 mmHg', '≥ 70 mmHg'],
+            correct: 2,
+            explanation: 'LVOT 梯度 ≥ 50 mmHg 定義為顯著阻塞'
+          },
+          {
+            q: 'SAM 是什麼的縮寫？',
+            options: ['Septal Asymmetric Motion', 'Systolic Anterior Motion', 'Subaortic Membrane', 'Septal Ablation Method'],
+            correct: 1,
+            explanation: 'SAM = Systolic Anterior Motion，二尖瓣前葉收縮期前移'
+          },
+        ]
+      },
+      rcm: {
+        id: 'rcm',
+        title: 'Chapter 07: 限制型心肌病',
+        titleEn: 'Restrictive Cardiomyopathy',
+        icon: '🔒',
+        color: '#14B8A6',
+        sections: [
+          {
+            id: 'rcm-overview',
+            title: 'RCM 概述',
+            content: [
+              { type: 'heading', text: '定義' },
+              { type: 'point', text: '心室順應性降低，充盈受限' },
+              { type: 'point', text: 'LV 大小正常或輕度減小，壁厚正常或輕度增加' },
+              { type: 'point', text: '收縮功能通常保留' },
+              { type: 'heading', text: '病因' },
+              { type: 'table', headers: ['類別', '疾病'],
+                rows: [
+                  ['浸潤性', '心臟澱粉樣變性、Fabry 病'],
+                  ['儲積性', '血色素沉著症、糖原儲積病'],
+                  ['非浸潤性', '心內膜心肌纖維化、放射後'],
+                  ['特發性', '特發性限制型心肌病'],
+                ]
+              },
+            ]
+          },
+          {
+            id: 'rcm-echo',
+            title: 'RCM 超音波特徵',
+            content: [
+              { type: 'heading', text: '形態特徵' },
+              { type: 'step', text: 'LV 大小正常，壁厚正常或輕度增加' },
+              { type: 'step', text: '雙側心房顯著擴大' },
+              { type: 'step', text: '心包正常（與縮窄性心包炎鑑別）' },
+              { type: 'step', text: '室間隔可能增厚（如澱粉樣變）' },
+              { type: 'heading', text: '血流動力學特徵' },
+              { type: 'table', headers: ['參數', '特徵'],
+                rows: [
+                  ['E/A', '> 2（限制型充盈）'],
+                  ['DT', '< 160 ms'],
+                  ['e\'', '明顯減低'],
+                  ['E/e\'', '顯著升高'],
+                ]
+              },
+              { type: 'warning', text: '⚠️ 限制型充盈模式 + 雙房擴大 = RCM 特徵' },
+            ]
+          },
+          {
+            id: 'amyloid',
+            title: '心臟澱粉樣變性',
+            content: [
+              { type: 'heading', text: '分類' },
+              { type: 'table', headers: ['類型', '蛋白質', '特點'],
+                rows: [
+                  ['AL 型', '輕鏈蛋白', '預後差，需化療'],
+                  ['ATTR-wt', '野生型 TTR', '老年男性，心臟為主'],
+                  ['ATTR-v', '變異型 TTR', '遺傳性，可有神經病變'],
+                ]
+              },
+              { type: 'heading', text: '超音波特徵' },
+              { type: 'point', text: '同心性 LV 壁增厚（但非真正肥厚）' },
+              { type: 'point', text: '心肌顆粒狀 (granular sparkling) 外觀' },
+              { type: 'point', text: '瓣膜增厚' },
+              { type: 'point', text: '房間隔增厚 (> 6 mm)' },
+              { type: 'point', text: '心包積液' },
+              { type: 'heading', text: 'Strain 模式' },
+              { type: 'point', text: '\"Apical sparing\" pattern：心尖應變相對保留' },
+              { type: 'formula', text: '心尖/(基底+中段) Strain 比值 > 1 提示澱粉樣變' },
+              { type: 'tip', text: '💡 壁增厚 + 低電壓心電圖 = 強烈提示澱粉樣變' },
+            ]
+          },
+          {
+            id: 'rcm-vs-cp',
+            title: 'RCM vs 縮窄性心包炎',
+            content: [
+              { type: 'heading', text: '鑑別要點' },
+              { type: 'table', headers: ['特徵', 'RCM', '縮窄性心包炎'],
+                rows: [
+                  ['心包', '正常', '增厚/鈣化'],
+                  ['室間隔運動', '正常', '呼吸變化 (septal bounce)'],
+                  ['e\'', '減低', '正常或增加 (annulus reversus)'],
+                  ['呼吸變化', 'MV E 變化 < 25%', 'MV E 變化 ≥ 25%'],
+                  ['肝靜脈', '舒張期逆流增加', '呼氣時舒張期逆流增加'],
+                ]
+              },
+              { type: 'heading', text: 'Annulus Reversus' },
+              { type: 'point', text: '正常：Lateral e\' > Septal e\'' },
+              { type: 'point', text: '縮窄性心包炎：Septal e\' > Lateral e\'' },
+              { type: 'warning', text: '⚠️ 鑑別困難時需結合 CT/MRI 評估心包' },
+            ]
+          },
+        ],
+        quiz: [
+          {
+            q: 'RCM 的典型二尖瓣 E/A 比值是？',
+            options: ['< 0.8', '0.8-1.2', '> 2', '無法測量'],
+            correct: 2,
+            explanation: 'RCM 呈限制型充盈，E/A 通常 > 2'
+          },
+          {
+            q: '心臟澱粉樣變的特徵性 strain 模式是？',
+            options: ['Apical sparing', 'Basal sparing', '均勻減低', '無法評估'],
+            correct: 0,
+            explanation: '心臟澱粉樣變呈 \"Apical sparing\" pattern：心尖應變相對保留'
+          },
+          {
+            q: 'Annulus reversus 見於？',
+            options: ['RCM', '縮窄性心包炎', 'DCM', 'HCM'],
+            correct: 1,
+            explanation: 'Annulus reversus (Septal e\' > Lateral e\') 是縮窄性心包炎的特徵'
+          },
+        ]
+      },
+    };
+
+    const abbreviations = [
+      { abbr: 'DCM', full: 'Dilated Cardiomyopathy', chinese: '擴張型心肌病' },
+      { abbr: 'HCM', full: 'Hypertrophic Cardiomyopathy', chinese: '肥厚型心肌病' },
+      { abbr: 'RCM', full: 'Restrictive Cardiomyopathy', chinese: '限制型心肌病' },
+      { abbr: 'SAM', full: 'Systolic Anterior Motion', chinese: '收縮期前移' },
+      { abbr: 'LVOT', full: 'LV Outflow Tract', chinese: '左心室流出道' },
+      { abbr: 'ASH', full: 'Asymmetric Septal Hypertrophy', chinese: '非對稱性室間隔肥厚' },
+      { abbr: 'GLS', full: 'Global Longitudinal Strain', chinese: '全球縱向應變' },
+      { abbr: 'LGE', full: 'Late Gadolinium Enhancement', chinese: '延遲釓增強' },
+      { abbr: 'CMR', full: 'Cardiac MRI', chinese: '心臟磁振造影' },
+      { abbr: 'AL', full: 'Amyloid Light-chain', chinese: '輕鏈澱粉樣變' },
+      { abbr: 'ATTR', full: 'Transthyretin Amyloidosis', chinese: '轉甲狀腺素澱粉樣變' },
+      { abbr: 'TTR', full: 'Transthyretin', chinese: '轉甲狀腺素' },
+      { abbr: 'DT', full: 'Deceleration Time', chinese: '減速時間' },
+    ];
+
+    function CardiomyopathyApp() {
+      const [currentView, setCurrentView] = useState('home');
+      const [selectedChapter, setSelectedChapter] = useState(null);
+      const [selectedSection, setSelectedSection] = useState(0);
+      const [quizMode, setQuizMode] = useState(false);
+      const [quizIndex, setQuizIndex] = useState(0);
+      const [quizAnswer, setQuizAnswer] = useState(null);
+      const [quizScore, setQuizScore] = useState(0);
+      const [quizComplete, setQuizComplete] = useState(false);
+      const [showAbbrModal, setShowAbbrModal] = useState(false);
+
+      const chapterList = Object.values(chapters);
+
+      const startQuiz = (chapter) => {
+        setSelectedChapter(chapter);
+        setQuizMode(true);
+        setQuizIndex(0);
+        setQuizAnswer(null);
+        setQuizScore(0);
+        setQuizComplete(false);
+      };
+
+      const handleQuizAnswer = (index) => {
+        if (quizAnswer !== null) return;
+        setQuizAnswer(index);
+        if (index === selectedChapter.quiz[quizIndex].correct) {
+          setQuizScore(prev => prev + 1);
+        }
+      };
+
+      const nextQuestion = () => {
+        if (quizIndex < selectedChapter.quiz.length - 1) {
+          setQuizIndex(prev => prev + 1);
+          setQuizAnswer(null);
+        } else {
+          setQuizComplete(true);
+        }
+      };
+
+      const renderContentItem = (item, idx) => {
+        switch (item.type) {
+          case 'heading':
+            return (
+              <h3 key={idx} className="text-lg font-bold text-slate-800 mt-6 mb-3 flex items-center gap-2">
+                <div className="w-1 h-5 bg-gradient-to-b from-pink-500 to-orange-500 rounded-full"></div>
+                {item.text}
+              </h3>
+            );
+          case 'step':
+            return (
+              <div key={idx} className="flex gap-3 my-2 items-start">
+                <div className="w-6 h-6 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">✓</div>
+                <p className="text-slate-700 leading-relaxed">{item.text}</p>
+              </div>
+            );
+          case 'point':
+            return <p key={idx} className="my-2 text-slate-700 pl-4 border-l-2 border-pink-200">{item.text}</p>;
+          case 'formula':
+            return (
+              <div key={idx} className="my-3 bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-xl border border-amber-200 font-mono text-sm text-amber-900 overflow-x-auto">
+                {item.text}
+              </div>
+            );
+          case 'tip':
+            return <div key={idx} className="my-3 bg-gradient-to-r from-emerald-50 to-teal-50 p-4 rounded-xl border border-emerald-200 text-emerald-800">{item.text}</div>;
+          case 'warning':
+            return <div key={idx} className="my-3 bg-gradient-to-r from-red-50 to-rose-50 p-4 rounded-xl border border-red-200 text-red-800">{item.text}</div>;
+          case 'table':
+            return (
+              <div key={idx} className="my-4 overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                <table className="w-full text-sm">
+                  <thead className="bg-gradient-to-r from-pink-50 to-orange-50">
+                    <tr>{item.headers.map((h, i) => <th key={i} className="px-4 py-3 text-left font-semibold text-slate-700 border-b border-slate-200">{h}</th>)}</tr>
+                  </thead>
+                  <tbody>
+                    {item.rows.map((row, i) => (
+                      <tr key={i} className="hover:bg-pink-50/50 transition-colors">
+                        {row.map((cell, j) => <td key={j} className="px-4 py-3 border-b border-slate-100 text-slate-700">{cell}</td>)}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          default:
+            return null;
+        }
+      };
+
+      const renderHome = () => (
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-pink-50 to-orange-50">
+          <div className="bg-gradient-to-r from-pink-600 via-pink-500 to-orange-500 text-white px-4 py-6 shadow-lg">
+            <div className="flex items-center justify-between mb-2">
+              <a href="tsoc-echo-learning-2025.html" className="p-2 hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2">
+                <Icon name="arrow-left" size={20} /><span className="text-sm">返回主頁</span>
+              </a>
+              <button onClick={() => setShowAbbrModal(true)} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                <Icon name="bookmark" size={24} />
+              </button>
+            </div>
+            <h1 className="text-2xl font-bold text-center">💔 心肌病變</h1>
+            <p className="text-pink-100 text-sm text-center mt-1">Chapters 05-07: DCM, HCM, RCM</p>
+          </div>
+
+          <div className="px-4 py-6 space-y-4">
+            <h2 className="text-lg font-bold text-slate-800 mb-4">選擇章節</h2>
+            {chapterList.map((chapter) => (
+              <button
+                key={chapter.id}
+                onClick={() => { setSelectedChapter(chapter); setSelectedSection(0); setCurrentView('chapter'); }}
+                className="w-full bg-white rounded-2xl p-4 shadow-sm hover:shadow-lg transition-all border border-slate-100 text-left group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl shadow-sm" style={{ backgroundColor: `${chapter.color}15` }}>{chapter.icon}</div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-slate-800 group-hover:text-pink-600 transition-colors">{chapter.title}</h3>
+                    <p className="text-sm text-slate-500">{chapter.titleEn}</p>
+                    <div className="flex items-center gap-4 mt-2 text-xs text-slate-400">
+                      <span>📄 {chapter.sections.length} 小節</span>
+                      <span>🏆 {chapter.quiz.length} 題測驗</span>
+                    </div>
+                  </div>
+                  <Icon name="chevron-right" className="text-slate-400 group-hover:text-pink-600" size={20} />
+                </div>
+              </button>
+            ))}
+          </div>
+
+          <div className="px-4 pb-6">
+            <h2 className="text-lg font-bold text-slate-800 mb-4">🔗 相關主題</h2>
+            <div className="grid grid-cols-2 gap-3">
+              <a href="echo-hemodynamics.html" className="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-all border border-slate-100 flex items-center gap-2">
+                <span className="text-lg">💨</span><span className="text-sm font-medium text-slate-700">舒張功能</span>
+              </a>
+              <a href="echo-ischemic.html" className="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-all border border-slate-100 flex items-center gap-2">
+                <span className="text-lg">🩺</span><span className="text-sm font-medium text-slate-700">缺血性心病</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      );
+
+      const renderChapter = () => {
+        if (!selectedChapter) return null;
+        const section = selectedChapter.sections[selectedSection];
+        return (
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 via-pink-50 to-orange-50">
+            <div className="sticky top-0 z-10 px-4 py-4 shadow-lg" style={{ background: `linear-gradient(135deg, ${selectedChapter.color}, ${selectedChapter.color}dd)` }}>
+              <div className="flex items-center justify-between text-white">
+                <button onClick={() => setCurrentView('home')} className="p-2 hover:bg-white/10 rounded-lg transition-colors"><Icon name="chevron-left" size={24} /></button>
+                <h1 className="font-bold text-lg flex-1 text-center px-2 truncate">{selectedChapter.title}</h1>
+                <div className="w-10"></div>
+              </div>
+            </div>
+            <div className="overflow-x-auto bg-white border-b border-slate-100 shadow-sm">
+              <div className="flex p-2 gap-2 min-w-max">
+                {selectedChapter.sections.map((sec, idx) => (
+                  <button key={sec.id} onClick={() => setSelectedSection(idx)}
+                    className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all ${selectedSection === idx ? 'text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+                    style={selectedSection === idx ? { backgroundColor: selectedChapter.color } : {}}>
+                    {sec.title}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="px-4 py-6">
+              <h2 className="text-xl font-bold text-slate-800 mb-4">{section.title}</h2>
+              <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+                {section.content.map((item, idx) => renderContentItem(item, idx))}
+              </div>
+            </div>
+            <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-4 py-3 flex items-center justify-between shadow-lg">
+              <button onClick={() => setSelectedSection(prev => Math.max(0, prev - 1))} disabled={selectedSection === 0}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 text-slate-700 disabled:opacity-50 hover:bg-slate-200 transition-colors">
+                <Icon name="chevron-left" size={20} />上一節
+              </button>
+              <button onClick={() => startQuiz(selectedChapter)} className="flex items-center gap-2 px-4 py-2 rounded-xl text-white shadow-md hover:shadow-lg transition-all" style={{ backgroundColor: selectedChapter.color }}>🏆 測驗</button>
+              <button onClick={() => setSelectedSection(prev => Math.min(selectedChapter.sections.length - 1, prev + 1))} disabled={selectedSection === selectedChapter.sections.length - 1}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 text-slate-700 disabled:opacity-50 hover:bg-slate-200 transition-colors">
+                下一節<Icon name="chevron-right" size={20} />
+              </button>
+            </div>
+            <div className="h-20"></div>
+          </div>
+        );
+      };
+
+      const renderQuiz = () => {
+        if (!selectedChapter?.quiz) return null;
+        const currentQuestion = selectedChapter.quiz[quizIndex];
+        return (
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50">
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-4 shadow-lg">
+              <div className="flex items-center justify-between">
+                <button onClick={() => { setQuizMode(false); setCurrentView('chapter'); }} className="p-2 hover:bg-white/10 rounded-lg transition-colors"><Icon name="x" size={24} /></button>
+                <h1 className="font-bold text-lg">{selectedChapter.title} - 測驗</h1>
+                <div className="w-10"></div>
+              </div>
+              <div className="mt-4 flex items-center gap-2">
+                <div className="flex-1 h-2 bg-white/20 rounded-full overflow-hidden">
+                  <div className="h-full bg-white rounded-full transition-all duration-300" style={{ width: `${((quizIndex + 1) / selectedChapter.quiz.length) * 100}%` }}></div>
+                </div>
+                <span className="text-sm text-white/80">{quizIndex + 1}/{selectedChapter.quiz.length}</span>
+              </div>
+            </div>
+            {quizComplete ? (
+              <div className="px-4 py-8 text-center">
+                <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg text-4xl">🏆</div>
+                <h2 className="text-2xl font-bold text-slate-800 mb-2">測驗完成！</h2>
+                <p className="text-slate-600 mb-6">你的得分：<span className="text-3xl font-bold text-purple-600 mx-2">{quizScore}</span>/ {selectedChapter.quiz.length}</p>
+                <div className="space-y-3">
+                  <button onClick={() => { setQuizIndex(0); setQuizAnswer(null); setQuizScore(0); setQuizComplete(false); }} className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-semibold shadow-md">🔄 重新測驗</button>
+                  <button onClick={() => { setQuizMode(false); setCurrentView('chapter'); }} className="w-full py-3 rounded-xl bg-slate-100 text-slate-700 font-semibold">返回章節</button>
+                </div>
+              </div>
+            ) : (
+              <div className="px-4 py-6">
+                <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 mb-6">
+                  <h3 className="text-lg font-bold text-slate-800 mb-6 leading-relaxed">{currentQuestion.q}</h3>
+                  <div className="space-y-3">
+                    {currentQuestion.options.map((option, idx) => {
+                      const isCorrect = idx === currentQuestion.correct;
+                      const isSelected = quizAnswer === idx;
+                      let buttonStyle = 'bg-slate-50 border-slate-200 text-slate-700';
+                      if (quizAnswer !== null) {
+                        if (isCorrect) buttonStyle = 'bg-emerald-50 border-emerald-500 text-emerald-700';
+                        else if (isSelected) buttonStyle = 'bg-red-50 border-red-500 text-red-700';
+                      }
+                      return (
+                        <button key={idx} onClick={() => handleQuizAnswer(idx)} disabled={quizAnswer !== null}
+                          className={`w-full p-4 rounded-xl border-2 text-left transition-all ${buttonStyle} ${quizAnswer === null ? 'hover:border-purple-300 hover:bg-purple-50' : ''}`}>
+                          <div className="flex items-center gap-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${quizAnswer !== null && isCorrect ? 'bg-emerald-500 text-white' : quizAnswer !== null && isSelected ? 'bg-red-500 text-white' : 'bg-slate-200 text-slate-600'}`}>
+                              {quizAnswer !== null && isCorrect ? '✓' : quizAnswer !== null && isSelected ? '✗' : String.fromCharCode(65 + idx)}
+                            </div>
+                            <span className="font-medium">{option}</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+                {quizAnswer !== null && (
+                  <>
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-5 border border-blue-200 mb-6 animate-fade-in">
+                      <h4 className="font-bold text-blue-800 mb-2">💡 解釋</h4>
+                      <p className="text-blue-700">{currentQuestion.explanation}</p>
+                    </div>
+                    <button onClick={nextQuestion} className="w-full py-4 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold shadow-md">
+                      {quizIndex < selectedChapter.quiz.length - 1 ? '下一題 →' : '查看結果 →'}
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      const renderAbbrModal = () => (
+        <div className={`fixed inset-0 z-50 transition-all duration-300 ${showAbbrModal ? 'visible' : 'invisible'}`}>
+          <div className={`absolute inset-0 bg-black/50 transition-opacity ${showAbbrModal ? 'opacity-100' : 'opacity-0'}`} onClick={() => setShowAbbrModal(false)}></div>
+          <div className={`absolute inset-4 md:inset-10 bg-white rounded-2xl shadow-2xl transition-transform ${showAbbrModal ? 'scale-100' : 'scale-95'} flex flex-col`}>
+            <div className="bg-gradient-to-r from-pink-600 to-orange-600 text-white p-4 rounded-t-2xl flex items-center justify-between">
+              <h2 className="font-bold text-lg">📖 縮寫對照表</h2>
+              <button onClick={() => setShowAbbrModal(false)} className="p-2 hover:bg-white/10 rounded-lg transition-colors"><Icon name="x" size={24} /></button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4">
+              <div className="grid gap-2">
+                {abbreviations.map((item, idx) => (
+                  <div key={idx} className="flex items-center gap-4 p-3 bg-slate-50 rounded-xl">
+                    <span className="font-mono font-bold text-pink-600 w-16 text-sm">{item.abbr}</span>
+                    <div className="flex-1"><p className="text-slate-800 text-sm">{item.full}</p><p className="text-slate-500 text-xs">{item.chinese}</p></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
+      return (
+        <div className="font-sans">
+          {quizMode ? renderQuiz() : currentView === 'chapter' ? renderChapter() : renderHome()}
+          {renderAbbrModal()}
+        </div>
+      );
+    }
+
+    ReactDOM.render(<CardiomyopathyApp />, document.getElementById('root'));
+  </script>
+</body>
+</html>

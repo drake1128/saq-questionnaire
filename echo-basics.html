@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#3B82F6">
+  <title>Echo 基礎原理 - TSOC Echo Learning</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Noto Sans TC', 'Inter', sans-serif; }
+    .font-mono { font-family: 'SF Mono', 'Consolas', monospace; }
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in { animation: fade-in 0.3s ease-out; }
+    body { margin: 0; padding: 0; }
+    #root { min-height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useMemo } = React;
+
+    // Lucide Icons
+    const Icon = ({ name, className = "", size = 20, ...props }) => {
+      const [svg, setSvg] = React.useState('');
+      React.useEffect(() => {
+        if (lucide.icons[name]) {
+          const iconData = lucide.icons[name];
+          setSvg(iconData.toSvg({ width: size, height: size, class: className }));
+        }
+      }, [name, className, size]);
+      return <span dangerouslySetInnerHTML={{ __html: svg }} {...props} />;
+    };
+
+    // Chapter Data
+    const chapters = {
+      focus: {
+        id: 'focus',
+        title: 'Chapter 00: FOCUS',
+        titleEn: 'Focused Cardiac Ultrasound',
+        icon: '🎯',
+        color: '#3B82F6',
+        sections: [
+          {
+            id: 'focus-intro',
+            title: 'FOCUS 簡介',
+            content: [
+              { type: 'heading', text: '什麼是 FOCUS?' },
+              { type: 'point', text: 'FOCUS = Focused Cardiac Ultrasound（聚焦式心臟超音波）' },
+              { type: 'point', text: '用於快速評估急性心臟問題的床邊超音波技術' },
+              { type: 'point', text: '目標：回答特定臨床問題，而非完整的心臟超音波檢查' },
+              { type: 'heading', text: 'FOCUS 適應症' },
+              { type: 'step', text: '血流動力學不穩定的快速評估' },
+              { type: 'step', text: '呼吸困難的鑑別診斷' },
+              { type: 'step', text: '胸痛的初步評估' },
+              { type: 'step', text: '創傷患者的心臟評估' },
+              { type: 'tip', text: '💡 FOCUS 不能取代完整的心臟超音波檢查，但可以快速回答關鍵問題' },
+            ]
+          },
+          {
+            id: 'focus-views',
+            title: 'FOCUS 標準切面',
+            content: [
+              { type: 'heading', text: '五個標準切面' },
+              { type: 'table', headers: ['切面', '英文', '主要評估'],
+                rows: [
+                  ['胸骨旁長軸', 'PLAX', 'LV 大小與功能、心包積液'],
+                  ['胸骨旁短軸', 'PSAX', 'LV 功能、室間隔運動'],
+                  ['心尖四腔', 'A4C', 'RV/LV 比例、瓣膜'],
+                  ['肋下四腔', 'SC4C', '心包積液、RV 大小'],
+                  ['肋下 IVC', 'SC-IVC', '容積狀態、RAP 估計'],
+                ]
+              },
+              { type: 'warning', text: '⚠️ 每個切面都有特定的探頭位置和標記方向' },
+            ]
+          },
+          {
+            id: 'focus-questions',
+            title: 'FOCUS 核心問題',
+            content: [
+              { type: 'heading', text: '五個關鍵問題' },
+              { type: 'step', text: 'LV 收縮功能是否正常？' },
+              { type: 'step', text: 'RV 是否擴大？' },
+              { type: 'step', text: '是否有心包積液？' },
+              { type: 'step', text: 'IVC 是否擴張/塌陷？' },
+              { type: 'step', text: '是否有明顯的瓣膜異常？' },
+              { type: 'formula', text: 'RV:LV 比例 > 1:1 = RV 擴大（可能 PE/PH）' },
+            ]
+          },
+        ],
+        quiz: [
+          {
+            q: 'FOCUS 的主要目的是什麼？',
+            options: ['完整的心臟超音波檢查', '回答特定臨床問題', '測量所有心臟參數', '取代 CT 檢查'],
+            correct: 1,
+            explanation: 'FOCUS 是聚焦式檢查，目標是快速回答特定臨床問題'
+          },
+          {
+            q: 'FOCUS 標準切面共有幾個？',
+            options: ['3 個', '4 個', '5 個', '6 個'],
+            correct: 2,
+            explanation: 'FOCUS 有五個標準切面：PLAX, PSAX, A4C, SC4C, SC-IVC'
+          },
+        ]
+      },
+      principles: {
+        id: 'principles',
+        title: 'Chapter 01: 超音波原理',
+        titleEn: 'Principles of Echocardiography',
+        icon: '📡',
+        color: '#8B5CF6',
+        sections: [
+          {
+            id: 'physics-basics',
+            title: '超音波物理基礎',
+            content: [
+              { type: 'heading', text: '超音波的特性' },
+              { type: 'point', text: '醫用超音波頻率：2-10 MHz' },
+              { type: 'point', text: '心臟超音波常用：2-5 MHz（穿透力與解析度平衡）' },
+              { type: 'formula', text: '波長 = 聲速 / 頻率' },
+              { type: 'formula', text: '軟組織中聲速 ≈ 1540 m/s' },
+              { type: 'heading', text: '頻率與解析度的關係' },
+              { type: 'table', headers: ['頻率', '穿透力', '解析度'],
+                rows: [
+                  ['低 (2 MHz)', '深', '較低'],
+                  ['高 (5 MHz)', '淺', '較高'],
+                ]
+              },
+              { type: 'tip', text: '💡 肥胖或胸壁厚的患者使用較低頻率探頭' },
+            ]
+          },
+          {
+            id: 'doppler-basics',
+            title: '都卜勒原理',
+            content: [
+              { type: 'heading', text: '都卜勒效應' },
+              { type: 'point', text: '當聲源與接收器之間有相對運動時，接收頻率會改變' },
+              { type: 'formula', text: 'Δf = 2 × f₀ × v × cos(θ) / c' },
+              { type: 'point', text: 'Δf = 頻移, f₀ = 發射頻率, v = 血流速度, θ = 夾角, c = 聲速' },
+              { type: 'heading', text: '都卜勒類型' },
+              { type: 'table', headers: ['類型', '用途', '特點'],
+                rows: [
+                  ['PW Doppler', '特定位置血流', '有速度限制 (Nyquist)'],
+                  ['CW Doppler', '高速血流', '無速度限制，無位置選擇'],
+                  ['Color Doppler', '視覺化血流', '顯示方向和速度'],
+                  ['TDI', '組織速度', '評估心肌運動'],
+                ]
+              },
+              { type: 'warning', text: '⚠️ 都卜勒角度 > 20° 會造成顯著誤差' },
+            ]
+          },
+          {
+            id: 'artifacts',
+            title: '常見偽影',
+            content: [
+              { type: 'heading', text: '辨識偽影' },
+              { type: 'table', headers: ['偽影', '原因', '處理'],
+                rows: [
+                  ['Reverberation', '強反射體多次反射', '調整探頭角度'],
+                  ['Shadowing', '鈣化或金屬遮蔽', '改變切面'],
+                  ['Side lobe', '非主波束反射', '調整增益'],
+                  ['Mirror image', '強反射面反射', '辨識對稱結構'],
+                ]
+              },
+            ]
+          },
+        ],
+        quiz: [
+          {
+            q: '心臟超音波常用頻率範圍是？',
+            options: ['1-2 MHz', '2-5 MHz', '7-10 MHz', '10-15 MHz'],
+            correct: 1,
+            explanation: '心臟超音波常用 2-5 MHz，平衡穿透力與解析度'
+          },
+          {
+            q: '都卜勒夾角應小於多少度？',
+            options: ['10°', '20°', '45°', '60°'],
+            correct: 1,
+            explanation: '都卜勒角度 > 20° 會造成顯著的速度測量誤差'
+          },
+          {
+            q: '哪種都卜勒模式沒有速度限制？',
+            options: ['PW Doppler', 'CW Doppler', 'Color Doppler', 'TDI'],
+            correct: 1,
+            explanation: 'CW Doppler 沒有 Nyquist 限制，可測量高速血流'
+          },
+        ]
+      },
+      imaging: {
+        id: 'imaging',
+        title: 'Chapter 02: 影像擷取',
+        titleEn: 'How to Image',
+        icon: '📸',
+        color: '#EC4899',
+        sections: [
+          {
+            id: 'probe-position',
+            title: '探頭位置與方向',
+            content: [
+              { type: 'heading', text: '標準切面探頭位置' },
+              { type: 'table', headers: ['切面', '位置', '標記方向'],
+                rows: [
+                  ['PLAX', '左胸骨旁 3-4 肋間', '右肩'],
+                  ['PSAX', '左胸骨旁 3-4 肋間', '左肩'],
+                  ['A4C', '心尖搏動點', '左側'],
+                  ['A2C', '心尖搏動點', '脊柱'],
+                  ['A3C/LAX', '心尖搏動點', '右肩'],
+                  ['肋下', '劍突下', '左側'],
+                ]
+              },
+              { type: 'tip', text: '💡 讓患者左側臥可改善心尖切面品質' },
+            ]
+          },
+          {
+            id: 'optimization',
+            title: '影像優化',
+            content: [
+              { type: 'heading', text: '優化步驟' },
+              { type: 'step', text: '調整深度 (Depth)：確保感興趣區域在畫面中央' },
+              { type: 'step', text: '調整增益 (Gain)：整體亮度適中' },
+              { type: 'step', text: '調整 TGC：補償深度衰減' },
+              { type: 'step', text: '調整焦點 (Focus)：置於感興趣區域' },
+              { type: 'step', text: '調整扇區寬度：提高幀率' },
+              { type: 'heading', text: '常見問題' },
+              { type: 'table', headers: ['問題', '可能原因', '解決方案'],
+                rows: [
+                  ['影像太暗', '增益太低', '增加增益'],
+                  ['影像太亮', '增益太高', '減少增益'],
+                  ['近場太亮', 'TGC 設定', '調整近場 TGC'],
+                  ['影像模糊', '焦點位置', '移動焦點位置'],
+                ]
+              },
+            ]
+          },
+          {
+            id: 'views-quality',
+            title: '切面品質標準',
+            content: [
+              { type: 'heading', text: 'PLAX 品質檢核' },
+              { type: 'step', text: '主動脈瓣與二尖瓣清楚可見' },
+              { type: 'step', text: 'LV 長軸通過心尖' },
+              { type: 'step', text: '室間隔與後壁平行' },
+              { type: 'step', text: '可見冠狀竇和降主動脈' },
+              { type: 'heading', text: 'A4C 品質檢核' },
+              { type: 'step', text: '心尖位於扇形頂部中央' },
+              { type: 'step', text: '室間隔垂直顯示' },
+              { type: 'step', text: '四個腔室清楚可見' },
+              { type: 'step', text: '無心室短縮 (foreshortening)' },
+              { type: 'warning', text: '⚠️ 心室短縮會低估 LV 容積和 EF' },
+            ]
+          },
+        ],
+        quiz: [
+          {
+            q: 'PLAX 切面探頭標記應指向？',
+            options: ['左肩', '右肩', '脊柱', '左側'],
+            correct: 1,
+            explanation: 'PLAX 切面探頭標記指向患者右肩'
+          },
+          {
+            q: '如何改善心尖切面的影像品質？',
+            options: ['讓患者仰臥', '讓患者左側臥', '增加深度', '使用高頻探頭'],
+            correct: 1,
+            explanation: '左側臥位可使心臟更靠近胸壁，改善心尖切面品質'
+          },
+        ]
+      },
+      chambers: {
+        id: 'chambers',
+        title: 'Chapter 03: 心腔與心壁',
+        titleEn: 'Heart Chambers and Walls',
+        icon: '🫀',
+        color: '#EF4444',
+        sections: [
+          {
+            id: 'lv-measurement',
+            title: 'LV 測量',
+            content: [
+              { type: 'heading', text: 'LV 線性測量 (M-mode/2D)' },
+              { type: 'table', headers: ['參數', '男性正常值', '女性正常值'],
+                rows: [
+                  ['LVIDd', '42-58 mm', '38-52 mm'],
+                  ['LVIDs', '25-40 mm', '22-35 mm'],
+                  ['IVSd', '6-10 mm', '6-9 mm'],
+                  ['PWd', '6-10 mm', '6-9 mm'],
+                ]
+              },
+              { type: 'heading', text: '測量規則' },
+              { type: 'step', text: '在二尖瓣葉尖水平測量' },
+              { type: 'step', text: '使用內緣到內緣法' },
+              { type: 'step', text: '排除小梁和乳頭肌' },
+              { type: 'step', text: '舒張末期 = QRS 起始或二尖瓣關閉' },
+              { type: 'step', text: '收縮末期 = T 波終點或最小腔室' },
+              { type: 'formula', text: 'LV mass = 0.8 × 1.04 × [(IVSd + LVIDd + PWd)³ – LVIDd³] + 0.6 g' },
+            ]
+          },
+          {
+            id: 'lv-function',
+            title: 'LV 收縮功能',
+            content: [
+              { type: 'heading', text: 'LVEF 測量' },
+              { type: 'point', text: 'Biplane Simpson\'s method 為首選' },
+              { type: 'formula', text: 'EF = (EDV - ESV) / EDV × 100%' },
+              { type: 'table', headers: ['EF', '男性', '女性'],
+                rows: [
+                  ['正常', '≥ 52%', '≥ 54%'],
+                  ['輕度降低', '41-51%', '41-53%'],
+                  ['中度降低', '30-40%', '30-40%'],
+                  ['重度降低', '< 30%', '< 30%'],
+                ]
+              },
+              { type: 'heading', text: 'GLS (全球縱向應變)' },
+              { type: 'point', text: '正常值：-18% 到 -22% (負值更負 = 更好)' },
+              { type: 'point', text: 'GLS 可早期偵測亞臨床心肌功能障礙' },
+              { type: 'warning', text: '⚠️ GLS 測量需要廠商特定軟體' },
+            ]
+          },
+          {
+            id: 'rv-la-ra',
+            title: 'RV, LA, RA 評估',
+            content: [
+              { type: 'heading', text: 'RV 尺寸 (A4C)' },
+              { type: 'table', headers: ['參數', '男性', '女性'],
+                rows: [
+                  ['RVD1 (基底)', '≤ 47 mm', '≤ 43 mm'],
+                  ['RVD2 (中段)', '≤ 42 mm', '≤ 35 mm'],
+                  ['RVD3 (長度)', '≤ 87 mm', '≤ 80 mm'],
+                ]
+              },
+              { type: 'heading', text: 'LA 評估' },
+              { type: 'point', text: 'LAVI (容積指數) < 34 mL/m² 為正常' },
+              { type: 'point', text: 'LA 擴大與舒張功能障礙、心房顫動相關' },
+              { type: 'heading', text: 'RA 評估' },
+              { type: 'table', headers: ['RA 面積', '程度'],
+                rows: [
+                  ['< 18 cm²', '正常'],
+                  ['18-26 cm²', '輕度擴大'],
+                  ['27-35 cm²', '中度擴大'],
+                  ['> 35 cm²', '重度擴大'],
+                ]
+              },
+            ]
+          },
+          {
+            id: 'wall-segments',
+            title: '室壁分段',
+            content: [
+              { type: 'heading', text: '17 段模型' },
+              { type: 'point', text: '基底段 6 個、中段 6 個、心尖段 4 個 + 心尖帽 1 個' },
+              { type: 'table', headers: ['冠狀動脈', '供應區域'],
+                rows: [
+                  ['LAD', '前壁、前室間隔、心尖'],
+                  ['LCX', '後側壁、側壁'],
+                  ['RCA', '下壁、後室間隔、RV'],
+                ]
+              },
+              { type: 'heading', text: '壁運動評分' },
+              { type: 'table', headers: ['評分', '描述', '壁增厚'],
+                rows: [
+                  ['1', '正常/高動', '> 40%'],
+                  ['2', '運動減低', '< 40%'],
+                  ['3', '無運動', '無增厚'],
+                  ['4', '運動異常', '反向運動'],
+                  ['5', '動脈瘤', '舒張期外凸'],
+                ]
+              },
+              { type: 'formula', text: 'WMSI = 總分 / 可評估段數' },
+            ]
+          },
+        ],
+        quiz: [
+          {
+            q: '男性 LVIDd 正常上限是？',
+            options: ['52 mm', '55 mm', '58 mm', '62 mm'],
+            correct: 2,
+            explanation: '男性 LVIDd 正常範圍是 42-58 mm'
+          },
+          {
+            q: '男性 LVEF 正常下限是？',
+            options: ['≥ 45%', '≥ 50%', '≥ 52%', '≥ 55%'],
+            correct: 2,
+            explanation: '男性 LVEF ≥ 52% 為正常'
+          },
+          {
+            q: 'LAVI 正常上限是？',
+            options: ['28 mL/m²', '34 mL/m²', '40 mL/m²', '46 mL/m²'],
+            correct: 1,
+            explanation: 'LAVI < 34 mL/m² 為正常'
+          },
+          {
+            q: 'LAD 主要供應哪些心壁？',
+            options: ['後壁、側壁', '下壁、後室間隔', '前壁、前室間隔、心尖', '只供應心尖'],
+            correct: 2,
+            explanation: 'LAD 供應前壁、前室間隔及心尖區域'
+          },
+        ]
+      },
+    };
+
+    // Abbreviations for this module
+    const abbreviations = [
+      { abbr: 'FOCUS', full: 'Focused Cardiac Ultrasound', chinese: '聚焦式心臟超音波' },
+      { abbr: 'PLAX', full: 'Parasternal Long Axis', chinese: '胸骨旁長軸切面' },
+      { abbr: 'PSAX', full: 'Parasternal Short Axis', chinese: '胸骨旁短軸切面' },
+      { abbr: 'A4C', full: 'Apical 4-Chamber', chinese: '心尖四腔切面' },
+      { abbr: 'A2C', full: 'Apical 2-Chamber', chinese: '心尖二腔切面' },
+      { abbr: 'SC4C', full: 'Subcostal 4-Chamber', chinese: '肋下四腔切面' },
+      { abbr: 'IVC', full: 'Inferior Vena Cava', chinese: '下腔靜脈' },
+      { abbr: 'PW', full: 'Pulsed Wave', chinese: '脈衝波' },
+      { abbr: 'CW', full: 'Continuous Wave', chinese: '連續波' },
+      { abbr: 'TDI', full: 'Tissue Doppler Imaging', chinese: '組織都卜勒' },
+      { abbr: 'TGC', full: 'Time Gain Compensation', chinese: '時間增益補償' },
+      { abbr: 'LVIDd', full: 'LV Internal Diameter (diastole)', chinese: '左心室舒張末期內徑' },
+      { abbr: 'LVIDs', full: 'LV Internal Diameter (systole)', chinese: '左心室收縮末期內徑' },
+      { abbr: 'IVSd', full: 'Interventricular Septum (diastole)', chinese: '室間隔舒張期厚度' },
+      { abbr: 'PWd', full: 'Posterior Wall (diastole)', chinese: '後壁舒張期厚度' },
+      { abbr: 'LVEF', full: 'LV Ejection Fraction', chinese: '左心室射出分率' },
+      { abbr: 'EDV', full: 'End-Diastolic Volume', chinese: '舒張末期容積' },
+      { abbr: 'ESV', full: 'End-Systolic Volume', chinese: '收縮末期容積' },
+      { abbr: 'GLS', full: 'Global Longitudinal Strain', chinese: '全球縱向應變' },
+      { abbr: 'LAVI', full: 'Left Atrial Volume Index', chinese: '左心房容積指數' },
+      { abbr: 'RVD', full: 'Right Ventricular Dimension', chinese: '右心室內徑' },
+      { abbr: 'WMSI', full: 'Wall Motion Score Index', chinese: '室壁運動評分指數' },
+      { abbr: 'LAD', full: 'Left Anterior Descending', chinese: '左前降支' },
+      { abbr: 'LCX', full: 'Left Circumflex', chinese: '左迴旋支' },
+      { abbr: 'RCA', full: 'Right Coronary Artery', chinese: '右冠狀動脈' },
+    ];
+
+    // Main App Component
+    function EchoBasicsApp() {
+      const [currentView, setCurrentView] = useState('home');
+      const [selectedChapter, setSelectedChapter] = useState(null);
+      const [selectedSection, setSelectedSection] = useState(0);
+      const [quizMode, setQuizMode] = useState(false);
+      const [quizIndex, setQuizIndex] = useState(0);
+      const [quizAnswer, setQuizAnswer] = useState(null);
+      const [quizScore, setQuizScore] = useState(0);
+      const [quizComplete, setQuizComplete] = useState(false);
+      const [showAbbrModal, setShowAbbrModal] = useState(false);
+
+      const chapterList = Object.values(chapters);
+
+      const startQuiz = (chapter) => {
+        setSelectedChapter(chapter);
+        setQuizMode(true);
+        setQuizIndex(0);
+        setQuizAnswer(null);
+        setQuizScore(0);
+        setQuizComplete(false);
+      };
+
+      const handleQuizAnswer = (index) => {
+        if (quizAnswer !== null) return;
+        setQuizAnswer(index);
+        if (index === selectedChapter.quiz[quizIndex].correct) {
+          setQuizScore(prev => prev + 1);
+        }
+      };
+
+      const nextQuestion = () => {
+        if (quizIndex < selectedChapter.quiz.length - 1) {
+          setQuizIndex(prev => prev + 1);
+          setQuizAnswer(null);
+        } else {
+          setQuizComplete(true);
+        }
+      };
+
+      const restartQuiz = () => {
+        setQuizIndex(0);
+        setQuizAnswer(null);
+        setQuizScore(0);
+        setQuizComplete(false);
+      };
+
+      // Render content item
+      const renderContentItem = (item, idx) => {
+        switch (item.type) {
+          case 'heading':
+            return (
+              <h3 key={idx} className="text-lg font-bold text-slate-800 mt-6 mb-3 flex items-center gap-2">
+                <div className="w-1 h-5 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full"></div>
+                {item.text}
+              </h3>
+            );
+          case 'step':
+            return (
+              <div key={idx} className="flex gap-3 my-2 items-start">
+                <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+                  {idx + 1}
+                </div>
+                <p className="text-slate-700 leading-relaxed">{item.text}</p>
+              </div>
+            );
+          case 'point':
+            return (
+              <p key={idx} className="my-2 text-slate-700 pl-4 border-l-2 border-slate-200">
+                {item.text}
+              </p>
+            );
+          case 'measure':
+            return (
+              <div key={idx} className="my-2 bg-gradient-to-r from-blue-50 to-indigo-50 p-3 rounded-lg border border-blue-100">
+                <span className="font-mono font-bold text-blue-700">{item.name}</span>
+                <span className="text-slate-600 ml-2">— {item.desc}</span>
+              </div>
+            );
+          case 'formula':
+            return (
+              <div key={idx} className="my-3 bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-xl border border-amber-200 font-mono text-sm text-amber-900 overflow-x-auto">
+                {item.text}
+              </div>
+            );
+          case 'tip':
+            return (
+              <div key={idx} className="my-3 bg-gradient-to-r from-emerald-50 to-teal-50 p-4 rounded-xl border border-emerald-200 text-emerald-800">
+                {item.text}
+              </div>
+            );
+          case 'warning':
+            return (
+              <div key={idx} className="my-3 bg-gradient-to-r from-red-50 to-rose-50 p-4 rounded-xl border border-red-200 text-red-800">
+                {item.text}
+              </div>
+            );
+          case 'table':
+            return (
+              <div key={idx} className="my-4 overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                <table className="w-full text-sm">
+                  <thead className="bg-gradient-to-r from-slate-100 to-slate-50">
+                    <tr>
+                      {item.headers.map((h, i) => (
+                        <th key={i} className="px-4 py-3 text-left font-semibold text-slate-700 border-b border-slate-200">
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {item.rows.map((row, i) => (
+                      <tr key={i} className="hover:bg-blue-50/50 transition-colors">
+                        {row.map((cell, j) => (
+                          <td key={j} className="px-4 py-3 border-b border-slate-100 text-slate-700">
+                            {cell}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          default:
+            return null;
+        }
+      };
+
+      // Home page
+      const renderHome = () => (
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+          <div className="bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 text-white px-4 py-6 shadow-lg">
+            <div className="flex items-center justify-between mb-2">
+              <a href="tsoc-echo-learning-2025.html" className="p-2 hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2">
+                <Icon name="arrow-left" size={20} />
+                <span className="text-sm">返回主頁</span>
+              </a>
+              <button onClick={() => setShowAbbrModal(true)} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                <Icon name="bookmark" size={24} />
+              </button>
+            </div>
+            <h1 className="text-2xl font-bold text-center">📖 Echo 基礎原理</h1>
+            <p className="text-blue-100 text-sm text-center mt-1">Chapters 00-03</p>
+          </div>
+
+          <div className="px-4 py-6 space-y-4">
+            <h2 className="text-lg font-bold text-slate-800 mb-4">選擇章節</h2>
+
+            {chapterList.map((chapter) => (
+              <button
+                key={chapter.id}
+                onClick={() => {
+                  setSelectedChapter(chapter);
+                  setSelectedSection(0);
+                  setCurrentView('chapter');
+                }}
+                className="w-full bg-white rounded-2xl p-4 shadow-sm hover:shadow-lg transition-all border border-slate-100 text-left group"
+              >
+                <div className="flex items-center gap-4">
+                  <div
+                    className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl shadow-sm"
+                    style={{ backgroundColor: `${chapter.color}15`, borderColor: chapter.color, borderWidth: 1 }}
+                  >
+                    {chapter.icon}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-slate-800 group-hover:text-blue-600 transition-colors">
+                      {chapter.title}
+                    </h3>
+                    <p className="text-sm text-slate-500">{chapter.titleEn}</p>
+                    <div className="flex items-center gap-4 mt-2 text-xs text-slate-400">
+                      <span>📄 {chapter.sections.length} 小節</span>
+                      {chapter.quiz && <span>🏆 {chapter.quiz.length} 題測驗</span>}
+                    </div>
+                  </div>
+                  <Icon name="chevron-right" className="text-slate-400 group-hover:text-blue-600" size={20} />
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* Related Topics */}
+          <div className="px-4 pb-6">
+            <h2 className="text-lg font-bold text-slate-800 mb-4">🔗 相關主題</h2>
+            <div className="grid grid-cols-2 gap-3">
+              <a href="echo-hemodynamics.html" className="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-all border border-slate-100 flex items-center gap-2">
+                <span className="text-lg">💨</span>
+                <span className="text-sm font-medium text-slate-700">舒張功能</span>
+              </a>
+              <a href="tsoc-echo-learning-2025.html" className="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-all border border-slate-100 flex items-center gap-2">
+                <span className="text-lg">🫀</span>
+                <span className="text-sm font-medium text-slate-700">標準切面</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      );
+
+      // Chapter detail
+      const renderChapter = () => {
+        if (!selectedChapter) return null;
+        const section = selectedChapter.sections[selectedSection];
+
+        return (
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+            <div
+              className="sticky top-0 z-10 px-4 py-4 shadow-lg"
+              style={{ background: `linear-gradient(135deg, ${selectedChapter.color}, ${selectedChapter.color}dd)` }}
+            >
+              <div className="flex items-center justify-between text-white">
+                <button
+                  onClick={() => setCurrentView('home')}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                >
+                  <Icon name="chevron-left" size={24} />
+                </button>
+                <h1 className="font-bold text-lg flex-1 text-center px-2 truncate">{selectedChapter.title}</h1>
+                <div className="w-10"></div>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto bg-white border-b border-slate-100 shadow-sm">
+              <div className="flex p-2 gap-2 min-w-max">
+                {selectedChapter.sections.map((sec, idx) => (
+                  <button
+                    key={sec.id}
+                    onClick={() => setSelectedSection(idx)}
+                    className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all ${
+                      selectedSection === idx
+                        ? 'text-white shadow-md'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                    style={selectedSection === idx ? { backgroundColor: selectedChapter.color } : {}}
+                  >
+                    {sec.title}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="px-4 py-6">
+              <h2 className="text-xl font-bold text-slate-800 mb-4">{section.title}</h2>
+              <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+                {section.content.map((item, idx) => renderContentItem(item, idx))}
+              </div>
+            </div>
+
+            <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-4 py-3 flex items-center justify-between shadow-lg">
+              <button
+                onClick={() => setSelectedSection(prev => Math.max(0, prev - 1))}
+                disabled={selectedSection === 0}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 text-slate-700 disabled:opacity-50 hover:bg-slate-200 transition-colors"
+              >
+                <Icon name="chevron-left" size={20} />
+                上一節
+              </button>
+
+              {selectedChapter.quiz && (
+                <button
+                  onClick={() => startQuiz(selectedChapter)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-white shadow-md hover:shadow-lg transition-all"
+                  style={{ backgroundColor: selectedChapter.color }}
+                >
+                  🏆 測驗
+                </button>
+              )}
+
+              <button
+                onClick={() => setSelectedSection(prev => Math.min(selectedChapter.sections.length - 1, prev + 1))}
+                disabled={selectedSection === selectedChapter.sections.length - 1}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 text-slate-700 disabled:opacity-50 hover:bg-slate-200 transition-colors"
+              >
+                下一節
+                <Icon name="chevron-right" size={20} />
+              </button>
+            </div>
+
+            <div className="h-20"></div>
+          </div>
+        );
+      };
+
+      // Quiz page
+      const renderQuiz = () => {
+        if (!selectedChapter || !selectedChapter.quiz) return null;
+        const currentQuestion = selectedChapter.quiz[quizIndex];
+
+        return (
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50">
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-4 shadow-lg">
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => {
+                    setQuizMode(false);
+                    setCurrentView('chapter');
+                  }}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                >
+                  <Icon name="x" size={24} />
+                </button>
+                <h1 className="font-bold text-lg">{selectedChapter.title} - 測驗</h1>
+                <div className="w-10"></div>
+              </div>
+
+              <div className="mt-4 flex items-center gap-2">
+                <div className="flex-1 h-2 bg-white/20 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-white rounded-full transition-all duration-300"
+                    style={{ width: `${((quizIndex + 1) / selectedChapter.quiz.length) * 100}%` }}
+                  ></div>
+                </div>
+                <span className="text-sm text-white/80">{quizIndex + 1}/{selectedChapter.quiz.length}</span>
+              </div>
+            </div>
+
+            {quizComplete ? (
+              <div className="px-4 py-8 text-center">
+                <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg text-4xl">
+                  🏆
+                </div>
+                <h2 className="text-2xl font-bold text-slate-800 mb-2">測驗完成！</h2>
+                <p className="text-slate-600 mb-6">
+                  你的得分：
+                  <span className="text-3xl font-bold text-purple-600 mx-2">{quizScore}</span>
+                  / {selectedChapter.quiz.length}
+                </p>
+                <div className="space-y-3">
+                  <button
+                    onClick={restartQuiz}
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-semibold shadow-md hover:shadow-lg transition-all"
+                  >
+                    🔄 重新測驗
+                  </button>
+                  <button
+                    onClick={() => {
+                      setQuizMode(false);
+                      setCurrentView('chapter');
+                    }}
+                    className="w-full py-3 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition-colors"
+                  >
+                    返回章節
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="px-4 py-6">
+                <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 mb-6">
+                  <h3 className="text-lg font-bold text-slate-800 mb-6 leading-relaxed">
+                    {currentQuestion.q}
+                  </h3>
+                  <div className="space-y-3">
+                    {currentQuestion.options.map((option, idx) => {
+                      const isCorrect = idx === currentQuestion.correct;
+                      const isSelected = quizAnswer === idx;
+                      let buttonStyle = 'bg-slate-50 border-slate-200 text-slate-700';
+
+                      if (quizAnswer !== null) {
+                        if (isCorrect) {
+                          buttonStyle = 'bg-emerald-50 border-emerald-500 text-emerald-700';
+                        } else if (isSelected && !isCorrect) {
+                          buttonStyle = 'bg-red-50 border-red-500 text-red-700';
+                        }
+                      }
+
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => handleQuizAnswer(idx)}
+                          disabled={quizAnswer !== null}
+                          className={`w-full p-4 rounded-xl border-2 text-left transition-all ${buttonStyle} ${
+                            quizAnswer === null ? 'hover:border-purple-300 hover:bg-purple-50' : ''
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
+                              quizAnswer !== null && isCorrect ? 'bg-emerald-500 text-white' :
+                              quizAnswer !== null && isSelected && !isCorrect ? 'bg-red-500 text-white' :
+                              'bg-slate-200 text-slate-600'
+                            }`}>
+                              {quizAnswer !== null && isCorrect ? '✓' :
+                               quizAnswer !== null && isSelected && !isCorrect ? '✗' :
+                               String.fromCharCode(65 + idx)}
+                            </div>
+                            <span className="font-medium">{option}</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {quizAnswer !== null && (
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-5 border border-blue-200 mb-6 animate-fade-in">
+                    <h4 className="font-bold text-blue-800 mb-2 flex items-center gap-2">
+                      💡 解釋
+                    </h4>
+                    <p className="text-blue-700">{currentQuestion.explanation}</p>
+                  </div>
+                )}
+
+                {quizAnswer !== null && (
+                  <button
+                    onClick={nextQuestion}
+                    className="w-full py-4 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold shadow-md hover:shadow-lg transition-all"
+                  >
+                    {quizIndex < selectedChapter.quiz.length - 1 ? '下一題 →' : '查看結果 →'}
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      // Abbreviation modal
+      const renderAbbrModal = () => (
+        <div className={`fixed inset-0 z-50 transition-all duration-300 ${showAbbrModal ? 'visible' : 'invisible'}`}>
+          <div
+            className={`absolute inset-0 bg-black/50 transition-opacity ${showAbbrModal ? 'opacity-100' : 'opacity-0'}`}
+            onClick={() => setShowAbbrModal(false)}
+          ></div>
+          <div className={`absolute inset-4 md:inset-10 bg-white rounded-2xl shadow-2xl transition-transform ${showAbbrModal ? 'scale-100' : 'scale-95'} flex flex-col`}>
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-t-2xl flex items-center justify-between">
+              <h2 className="font-bold text-lg">📖 縮寫對照表</h2>
+              <button onClick={() => setShowAbbrModal(false)} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                <Icon name="x" size={24} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4">
+              <div className="grid gap-2">
+                {abbreviations.map((item, idx) => (
+                  <div key={idx} className="flex items-center gap-4 p-3 bg-slate-50 rounded-xl">
+                    <span className="font-mono font-bold text-blue-600 w-16 text-sm">{item.abbr}</span>
+                    <div className="flex-1">
+                      <p className="text-slate-800 text-sm">{item.full}</p>
+                      <p className="text-slate-500 text-xs">{item.chinese}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
+      return (
+        <div className="font-sans">
+          {quizMode ? renderQuiz() :
+           currentView === 'chapter' ? renderChapter() :
+           renderHome()}
+
+          {renderAbbrModal()}
+        </div>
+      );
+    }
+
+    // Render App
+    ReactDOM.render(<EchoBasicsApp />, document.getElementById('root'));
+  </script>
+</body>
+</html>

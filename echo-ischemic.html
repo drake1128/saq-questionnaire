@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#EF4444">
+  <title>缺血性心臟病 - TSOC Echo Learning</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Noto Sans TC', 'Inter', sans-serif; }
+    .font-mono { font-family: 'SF Mono', 'Consolas', monospace; }
+    @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fade-in 0.3s ease-out; }
+    body { margin: 0; padding: 0; }
+    #root { min-height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const Icon = ({ name, className = "", size = 20, ...props }) => {
+      const [svg, setSvg] = React.useState('');
+      React.useEffect(() => {
+        if (lucide.icons[name]) {
+          setSvg(lucide.icons[name].toSvg({ width: size, height: size, class: className }));
+        }
+      }, [name, className, size]);
+      return <span dangerouslySetInnerHTML={{ __html: svg }} {...props} />;
+    };
+
+    const chapterData = {
+      id: 'cad',
+      title: 'Chapter 08: 缺血性心臟病',
+      titleEn: 'Coronary Artery Disease',
+      icon: '🩺',
+      color: '#EF4444',
+      sections: [
+        {
+          id: 'overview',
+          title: 'CAD 超音波概述',
+          content: [
+            { type: 'heading', text: '超音波在 CAD 的角色' },
+            { type: 'point', text: '評估整體和區域 LV 收縮功能' },
+            { type: 'point', text: '偵測急性心肌梗塞的併發症' },
+            { type: 'point', text: '評估心肌存活性' },
+            { type: 'point', text: '風險分層和預後評估' },
+            { type: 'heading', text: '17 段 LV 模型' },
+            { type: 'table', headers: ['層次', '節段數', '冠脈供應'],
+              rows: [
+                ['基底段', '6 段', 'LAD, LCX, RCA'],
+                ['中段', '6 段', 'LAD, LCX, RCA'],
+                ['心尖段', '4 段', 'LAD 為主'],
+                ['心尖帽', '1 段', 'LAD'],
+              ]
+            },
+            { type: 'tip', text: '💡 壁運動異常的範圍與冠脈阻塞位置相關' },
+          ]
+        },
+        {
+          id: 'coronary',
+          title: '冠脈領域分佈',
+          content: [
+            { type: 'heading', text: '左前降支 (LAD)' },
+            { type: 'point', text: '前壁、前室間隔、心尖' },
+            { type: 'point', text: '佔 LV 最大供血範圍' },
+            { type: 'heading', text: '左迴旋支 (LCX)' },
+            { type: 'point', text: '後側壁、側壁' },
+            { type: 'point', text: '部分供應下壁（取決於優勢）' },
+            { type: 'heading', text: '右冠狀動脈 (RCA)' },
+            { type: 'point', text: '下壁、後室間隔、RV' },
+            { type: 'point', text: '右優勢型佔 85%' },
+            { type: 'table', headers: ['切面', '可見節段'],
+              rows: [
+                ['PLAX', '前室間隔（基底、中段）、後壁'],
+                ['PSAX-PM', '全部 6 段中段節段'],
+                ['A4C', '室間隔、側壁'],
+                ['A2C', '前壁、下壁'],
+                ['A3C', '前室間隔、後側壁'],
+              ]
+            },
+          ]
+        },
+        {
+          id: 'wma',
+          title: '壁運動評估',
+          content: [
+            { type: 'heading', text: '壁運動評分' },
+            { type: 'table', headers: ['評分', '描述', '壁增厚'],
+              rows: [
+                ['1 - 正常', '正常收縮，正常增厚', '> 40%'],
+                ['2 - 運動減低', '收縮減弱，增厚減少', '< 40%'],
+                ['3 - 無運動', '無收縮，無增厚', '0%'],
+                ['4 - 運動異常', '反向運動', '無或變薄'],
+                ['5 - 動脈瘤', '舒張期外凸，變薄', 'N/A'],
+              ]
+            },
+            { type: 'formula', text: 'WMSI = 各節段分數總和 / 可評估節段數' },
+            { type: 'heading', text: '判讀要點' },
+            { type: 'step', text: '觀察心內膜向內運動' },
+            { type: 'step', text: '評估收縮期壁增厚' },
+            { type: 'step', text: '比較相鄰節段' },
+            { type: 'step', text: '多個切面確認' },
+            { type: 'warning', text: '⚠️ 單獨心內膜運動可能受鄰近節段牽引影響' },
+          ]
+        },
+        {
+          id: 'acute-mi',
+          title: '急性心肌梗塞',
+          content: [
+            { type: 'heading', text: 'STEMI 超音波評估' },
+            { type: 'step', text: '確認區域壁運動異常' },
+            { type: 'step', text: '評估整體 LV 功能' },
+            { type: 'step', text: '排除機械併發症' },
+            { type: 'heading', text: '機械併發症' },
+            { type: 'table', headers: ['併發症', '時間', '超音波特徵'],
+              rows: [
+                ['心室中膈穿孔', '3-5 天', '室間隔缺損 + 分流'],
+                ['游離壁破裂', '3-5 天', '心包積液/血腫'],
+                ['乳頭肌斷裂', '2-7 天', '急性嚴重 MR'],
+                ['LV 真性動脈瘤', '> 2 週', '持續外凸、變薄'],
+                ['LV 假性動脈瘤', '> 1 週', '窄頸通道'],
+              ]
+            },
+            { type: 'heading', text: '真性 vs 假性動脈瘤' },
+            { type: 'table', headers: ['特徵', '真性動脈瘤', '假性動脈瘤'],
+              rows: [
+                ['壁組成', '心肌（變薄）', '心包/血栓'],
+                ['頸部', '寬（比值 < 0.5）', '窄（比值 > 0.5）'],
+                ['破裂風險', '低', '高'],
+              ]
+            },
+            { type: 'warning', text: '⚠️ 假性動脈瘤需緊急手術' },
+          ]
+        },
+        {
+          id: 'viability',
+          title: '心肌存活性評估',
+          content: [
+            { type: 'heading', text: '存活心肌的特徵' },
+            { type: 'point', text: '壁厚度 > 6 mm（非變薄）' },
+            { type: 'point', text: '無顯著疤痕或鈣化' },
+            { type: 'point', text: '對低劑量 dobutamine 有反應' },
+            { type: 'heading', text: '低劑量 Dobutamine 負荷超音波' },
+            { type: 'step', text: '起始：5 μg/kg/min' },
+            { type: 'step', text: '增量：10 μg/kg/min' },
+            { type: 'step', text: '觀察運動減低區域的改善' },
+            { type: 'heading', text: '反應模式' },
+            { type: 'table', headers: ['模式', '低劑量', '高劑量', '意義'],
+              rows: [
+                ['雙相反應', '改善', '惡化', '存活 + 缺血（最佳）'],
+                ['持續改善', '改善', '維持', '存活'],
+                ['無改善', '無變化', '無變化', '疤痕'],
+                ['缺血', '無變化', '惡化', '缺血'],
+              ]
+            },
+            { type: 'tip', text: '💡 雙相反應預測血管重建後功能恢復的準確性最高' },
+          ]
+        },
+        {
+          id: 'complications',
+          title: 'MI 後其他併發症',
+          content: [
+            { type: 'heading', text: 'LV 血栓' },
+            { type: 'point', text: '好發於心尖部無運動/運動異常區域' },
+            { type: 'point', text: '前壁 MI 風險最高（達 25%）' },
+            { type: 'point', text: '使用對比劑可提高偵測率' },
+            { type: 'heading', text: 'RV 梗塞' },
+            { type: 'point', text: '多合併下壁 MI' },
+            { type: 'point', text: 'RV 擴大、功能降低' },
+            { type: 'point', text: 'TAPSE < 17 mm 提示 RV 功能障礙' },
+            { type: 'heading', text: '心包炎' },
+            { type: 'point', text: '早期（24-48 小時）或 Dressler 症候群（2-10 週）' },
+            { type: 'point', text: '心包積液' },
+            { type: 'warning', text: '⚠️ 大量心包積液 + 血流動力學不穩定 = 可能心包填塞' },
+          ]
+        },
+      ],
+      quiz: [
+        {
+          q: 'WMSI 的計算方法是？',
+          options: ['最高分數 - 最低分數', '各節段分數相乘', '各節段分數總和 / 可評估節段數', '異常節段數 / 總節段數'],
+          correct: 2,
+          explanation: 'WMSI = 各節段分數總和 / 可評估節段數'
+        },
+        {
+          q: 'LAD 主要供應哪些區域？',
+          options: ['下壁、後室間隔', '前壁、前室間隔、心尖', '側壁、後壁', 'RV 游離壁'],
+          correct: 1,
+          explanation: 'LAD 供應前壁、前室間隔及心尖區域'
+        },
+        {
+          q: '假性動脈瘤的頸/體比值通常是？',
+          options: ['< 0.25', '< 0.5', '> 0.5', '= 1.0'],
+          correct: 2,
+          explanation: '假性動脈瘤頸部窄，頸/體比值 > 0.5'
+        },
+        {
+          q: '低劑量 Dobutamine 負荷的「雙相反應」代表什麼？',
+          options: ['疤痕組織', '存活心肌 + 缺血', '單純缺血', '正常心肌'],
+          correct: 1,
+          explanation: '雙相反應（低劑量改善、高劑量惡化）= 存活心肌 + 缺血'
+        },
+        {
+          q: '壁運動評分 3 分代表？',
+          options: ['正常', '運動減低', '無運動', '運動異常'],
+          correct: 2,
+          explanation: '評分 3 = 無運動 (Akinesis)，無收縮、無壁增厚'
+        },
+      ]
+    };
+
+    const abbreviations = [
+      { abbr: 'CAD', full: 'Coronary Artery Disease', chinese: '冠狀動脈疾病' },
+      { abbr: 'LAD', full: 'Left Anterior Descending', chinese: '左前降支' },
+      { abbr: 'LCX', full: 'Left Circumflex', chinese: '左迴旋支' },
+      { abbr: 'RCA', full: 'Right Coronary Artery', chinese: '右冠狀動脈' },
+      { abbr: 'WMA', full: 'Wall Motion Abnormality', chinese: '壁運動異常' },
+      { abbr: 'WMSI', full: 'Wall Motion Score Index', chinese: '壁運動評分指數' },
+      { abbr: 'STEMI', full: 'ST-Elevation MI', chinese: 'ST 上升型心肌梗塞' },
+      { abbr: 'MI', full: 'Myocardial Infarction', chinese: '心肌梗塞' },
+      { abbr: 'VSD', full: 'Ventricular Septal Defect', chinese: '心室中膈缺損' },
+      { abbr: 'MR', full: 'Mitral Regurgitation', chinese: '二尖瓣逆流' },
+      { abbr: 'TAPSE', full: 'Tricuspid Annular Plane Systolic Excursion', chinese: '三尖瓣環收縮位移' },
+      { abbr: 'RV', full: 'Right Ventricle', chinese: '右心室' },
+    ];
+
+    function IschemicApp() {
+      const [selectedSection, setSelectedSection] = useState(0);
+      const [quizMode, setQuizMode] = useState(false);
+      const [quizIndex, setQuizIndex] = useState(0);
+      const [quizAnswer, setQuizAnswer] = useState(null);
+      const [quizScore, setQuizScore] = useState(0);
+      const [quizComplete, setQuizComplete] = useState(false);
+      const [showAbbrModal, setShowAbbrModal] = useState(false);
+
+      const section = chapterData.sections[selectedSection];
+
+      const handleQuizAnswer = (index) => {
+        if (quizAnswer !== null) return;
+        setQuizAnswer(index);
+        if (index === chapterData.quiz[quizIndex].correct) setQuizScore(prev => prev + 1);
+      };
+
+      const nextQuestion = () => {
+        if (quizIndex < chapterData.quiz.length - 1) { setQuizIndex(prev => prev + 1); setQuizAnswer(null); }
+        else setQuizComplete(true);
+      };
+
+      const renderContentItem = (item, idx) => {
+        switch (item.type) {
+          case 'heading': return <h3 key={idx} className="text-lg font-bold text-slate-800 mt-6 mb-3 flex items-center gap-2"><div className="w-1 h-5 bg-gradient-to-b from-red-500 to-orange-500 rounded-full"></div>{item.text}</h3>;
+          case 'step': return <div key={idx} className="flex gap-3 my-2 items-start"><div className="w-6 h-6 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">{idx + 1}</div><p className="text-slate-700 leading-relaxed">{item.text}</p></div>;
+          case 'point': return <p key={idx} className="my-2 text-slate-700 pl-4 border-l-2 border-red-200">{item.text}</p>;
+          case 'formula': return <div key={idx} className="my-3 bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-xl border border-amber-200 font-mono text-sm text-amber-900 overflow-x-auto">{item.text}</div>;
+          case 'tip': return <div key={idx} className="my-3 bg-gradient-to-r from-emerald-50 to-teal-50 p-4 rounded-xl border border-emerald-200 text-emerald-800">{item.text}</div>;
+          case 'warning': return <div key={idx} className="my-3 bg-gradient-to-r from-red-50 to-rose-50 p-4 rounded-xl border border-red-200 text-red-800">{item.text}</div>;
+          case 'table': return (
+            <div key={idx} className="my-4 overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+              <table className="w-full text-sm">
+                <thead className="bg-gradient-to-r from-red-50 to-orange-50"><tr>{item.headers.map((h, i) => <th key={i} className="px-4 py-3 text-left font-semibold text-slate-700 border-b border-slate-200">{h}</th>)}</tr></thead>
+                <tbody>{item.rows.map((row, i) => <tr key={i} className="hover:bg-red-50/50 transition-colors">{row.map((cell, j) => <td key={j} className="px-4 py-3 border-b border-slate-100 text-slate-700">{cell}</td>)}</tr>)}</tbody>
+              </table>
+            </div>
+          );
+          default: return null;
+        }
+      };
+
+      const renderContent = () => (
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-orange-50">
+          <div className="bg-gradient-to-r from-red-600 via-red-500 to-orange-500 text-white px-4 py-6 shadow-lg">
+            <div className="flex items-center justify-between mb-2">
+              <a href="tsoc-echo-learning-2025.html" className="p-2 hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2"><Icon name="arrow-left" size={20} /><span className="text-sm">返回主頁</span></a>
+              <button onClick={() => setShowAbbrModal(true)} className="p-2 hover:bg-white/10 rounded-lg transition-colors"><Icon name="bookmark" size={24} /></button>
+            </div>
+            <h1 className="text-2xl font-bold text-center">🩺 缺血性心臟病</h1>
+            <p className="text-red-100 text-sm text-center mt-1">Chapter 08: Coronary Artery Disease</p>
+          </div>
+          <div className="overflow-x-auto bg-white border-b border-slate-100 shadow-sm">
+            <div className="flex p-2 gap-2 min-w-max">
+              {chapterData.sections.map((sec, idx) => (
+                <button key={sec.id} onClick={() => setSelectedSection(idx)} className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all ${selectedSection === idx ? 'bg-red-600 text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>{sec.title}</button>
+              ))}
+            </div>
+          </div>
+          <div className="px-4 py-6">
+            <h2 className="text-xl font-bold text-slate-800 mb-4">{section.title}</h2>
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">{section.content.map((item, idx) => renderContentItem(item, idx))}</div>
+          </div>
+          <div className="px-4 pb-6">
+            <h2 className="text-lg font-bold text-slate-800 mb-4">🔗 相關主題</h2>
+            <div className="grid grid-cols-2 gap-3">
+              <a href="echo-cardiomyopathy.html" className="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-all border border-slate-100 flex items-center gap-2"><span className="text-lg">💔</span><span className="text-sm font-medium text-slate-700">心肌病變</span></a>
+              <a href="echo-mitral-valve.html" className="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-all border border-slate-100 flex items-center gap-2"><span className="text-lg">🟣</span><span className="text-sm font-medium text-slate-700">二尖瓣疾病</span></a>
+            </div>
+          </div>
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-4 py-3 flex items-center justify-between shadow-lg">
+            <button onClick={() => setSelectedSection(prev => Math.max(0, prev - 1))} disabled={selectedSection === 0} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 text-slate-700 disabled:opacity-50 hover:bg-slate-200 transition-colors"><Icon name="chevron-left" size={20} />上一節</button>
+            <button onClick={() => { setQuizMode(true); setQuizIndex(0); setQuizAnswer(null); setQuizScore(0); setQuizComplete(false); }} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-600 text-white shadow-md hover:shadow-lg transition-all">🏆 測驗</button>
+            <button onClick={() => setSelectedSection(prev => Math.min(chapterData.sections.length - 1, prev + 1))} disabled={selectedSection === chapterData.sections.length - 1} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 text-slate-700 disabled:opacity-50 hover:bg-slate-200 transition-colors">下一節<Icon name="chevron-right" size={20} /></button>
+          </div>
+          <div className="h-20"></div>
+        </div>
+      );
+
+      const renderQuiz = () => {
+        const currentQuestion = chapterData.quiz[quizIndex];
+        return (
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50">
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-4 shadow-lg">
+              <div className="flex items-center justify-between">
+                <button onClick={() => setQuizMode(false)} className="p-2 hover:bg-white/10 rounded-lg transition-colors"><Icon name="x" size={24} /></button>
+                <h1 className="font-bold text-lg">缺血性心臟病 - 測驗</h1>
+                <div className="w-10"></div>
+              </div>
+              <div className="mt-4 flex items-center gap-2">
+                <div className="flex-1 h-2 bg-white/20 rounded-full overflow-hidden"><div className="h-full bg-white rounded-full transition-all duration-300" style={{ width: `${((quizIndex + 1) / chapterData.quiz.length) * 100}%` }}></div></div>
+                <span className="text-sm text-white/80">{quizIndex + 1}/{chapterData.quiz.length}</span>
+              </div>
+            </div>
+            {quizComplete ? (
+              <div className="px-4 py-8 text-center">
+                <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg text-4xl">🏆</div>
+                <h2 className="text-2xl font-bold text-slate-800 mb-2">測驗完成！</h2>
+                <p className="text-slate-600 mb-6">你的得分：<span className="text-3xl font-bold text-purple-600 mx-2">{quizScore}</span>/ {chapterData.quiz.length}</p>
+                <div className="space-y-3">
+                  <button onClick={() => { setQuizIndex(0); setQuizAnswer(null); setQuizScore(0); setQuizComplete(false); }} className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-semibold shadow-md">🔄 重新測驗</button>
+                  <button onClick={() => setQuizMode(false)} className="w-full py-3 rounded-xl bg-slate-100 text-slate-700 font-semibold">返回學習</button>
+                </div>
+              </div>
+            ) : (
+              <div className="px-4 py-6">
+                <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 mb-6">
+                  <h3 className="text-lg font-bold text-slate-800 mb-6 leading-relaxed">{currentQuestion.q}</h3>
+                  <div className="space-y-3">
+                    {currentQuestion.options.map((option, idx) => {
+                      const isCorrect = idx === currentQuestion.correct;
+                      const isSelected = quizAnswer === idx;
+                      let buttonStyle = 'bg-slate-50 border-slate-200 text-slate-700';
+                      if (quizAnswer !== null) {
+                        if (isCorrect) buttonStyle = 'bg-emerald-50 border-emerald-500 text-emerald-700';
+                        else if (isSelected) buttonStyle = 'bg-red-50 border-red-500 text-red-700';
+                      }
+                      return (
+                        <button key={idx} onClick={() => handleQuizAnswer(idx)} disabled={quizAnswer !== null} className={`w-full p-4 rounded-xl border-2 text-left transition-all ${buttonStyle} ${quizAnswer === null ? 'hover:border-purple-300 hover:bg-purple-50' : ''}`}>
+                          <div className="flex items-center gap-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${quizAnswer !== null && isCorrect ? 'bg-emerald-500 text-white' : quizAnswer !== null && isSelected ? 'bg-red-500 text-white' : 'bg-slate-200 text-slate-600'}`}>{quizAnswer !== null && isCorrect ? '✓' : quizAnswer !== null && isSelected ? '✗' : String.fromCharCode(65 + idx)}</div>
+                            <span className="font-medium">{option}</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+                {quizAnswer !== null && (
+                  <>
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-5 border border-blue-200 mb-6 animate-fade-in"><h4 className="font-bold text-blue-800 mb-2">💡 解釋</h4><p className="text-blue-700">{currentQuestion.explanation}</p></div>
+                    <button onClick={nextQuestion} className="w-full py-4 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold shadow-md">{quizIndex < chapterData.quiz.length - 1 ? '下一題 →' : '查看結果 →'}</button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      const renderAbbrModal = () => (
+        <div className={`fixed inset-0 z-50 transition-all duration-300 ${showAbbrModal ? 'visible' : 'invisible'}`}>
+          <div className={`absolute inset-0 bg-black/50 transition-opacity ${showAbbrModal ? 'opacity-100' : 'opacity-0'}`} onClick={() => setShowAbbrModal(false)}></div>
+          <div className={`absolute inset-4 md:inset-10 bg-white rounded-2xl shadow-2xl transition-transform ${showAbbrModal ? 'scale-100' : 'scale-95'} flex flex-col`}>
+            <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white p-4 rounded-t-2xl flex items-center justify-between">
+              <h2 className="font-bold text-lg">📖 縮寫對照表</h2>
+              <button onClick={() => setShowAbbrModal(false)} className="p-2 hover:bg-white/10 rounded-lg transition-colors"><Icon name="x" size={24} /></button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4">
+              <div className="grid gap-2">
+                {abbreviations.map((item, idx) => (
+                  <div key={idx} className="flex items-center gap-4 p-3 bg-slate-50 rounded-xl">
+                    <span className="font-mono font-bold text-red-600 w-16 text-sm">{item.abbr}</span>
+                    <div className="flex-1"><p className="text-slate-800 text-sm">{item.full}</p><p className="text-slate-500 text-xs">{item.chinese}</p></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
+      return (
+        <div className="font-sans">
+          {quizMode ? renderQuiz() : renderContent()}
+          {renderAbbrModal()}
+        </div>
+      );
+    }
+
+    ReactDOM.render(<IschemicApp />, document.getElementById('root'));
+  </script>
+</body>
+</html>
