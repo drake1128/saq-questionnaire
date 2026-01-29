@@ -338,10 +338,155 @@
             .share-btn { justify-content: center; }
             .case-vitals { grid-template-columns: 1fr; }
         }
+        /* Floating share button styles */
+        .floating-share-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .floating-share-toggle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+            border: none;
+            color: white;
+            font-size: 1.4em;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .floating-share-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(233, 69, 96, 0.5);
+        }
+        .floating-share-menu {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            display: none;
+            min-width: 280px;
+            animation: fadeIn 0.3s ease;
+        }
+        .floating-share-menu.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .floating-share-menu h4 {
+            color: #333;
+            margin: 0 0 15px 0;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .floating-share-close {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            color: #999;
+            padding: 0;
+            line-height: 1;
+        }
+        .floating-share-close:hover {
+            color: #333;
+        }
+        .floating-qr-container {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        .floating-qr-container img {
+            width: 150px;
+            height: 150px;
+            border-radius: 8px;
+        }
+        .floating-qr-container p {
+            color: #666;
+            font-size: 0.85em;
+            margin: 10px 0 0 0;
+        }
+        .floating-share-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .floating-share-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: white;
+        }
+        .floating-share-btn:hover {
+            transform: translateX(5px);
+        }
+        .floating-share-btn-line {
+            background: linear-gradient(135deg, #00B900 0%, #00C300 100%);
+        }
+        .floating-share-btn-email {
+            background: linear-gradient(135deg, #EA4335 0%, #FBBC05 100%);
+        }
+        .floating-share-btn-copy {
+            background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
+        }
+        .floating-share-btn span {
+            font-size: 1.1em;
+        }
     </style>
 </head>
 <body>
     <div id="root"></div>
+
+    <!-- Floating Share Button -->
+    <div class="floating-share-button">
+        <button class="floating-share-toggle" onclick="toggleFloatingShareMenu()" title="分享此頁面">
+            📤
+        </button>
+        <div class="floating-share-menu" id="floatingShareMenu">
+            <h4>
+                <span>📤 分享此教學資源</span>
+                <button class="floating-share-close" onclick="toggleFloatingShareMenu()">✕</button>
+            </h4>
+            <div class="floating-qr-container">
+                <img id="floatingQRCode" src="" alt="QR Code">
+                <p>使用 LINE 或手機相機掃描</p>
+            </div>
+            <div class="floating-share-buttons">
+                <button class="floating-share-btn floating-share-btn-line" onclick="floatingShareLine()">
+                    <span>📱</span> LINE 分享
+                </button>
+                <button class="floating-share-btn floating-share-btn-email" onclick="floatingShareEmail()">
+                    <span>📧</span> Email 分享
+                </button>
+                <button class="floating-share-btn floating-share-btn-copy" onclick="floatingCopyLink()">
+                    <span>📋</span> 複製連結
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script type="text/babel">
         const { useState, useEffect } = React;
 
@@ -1748,6 +1893,67 @@
         }
 
         ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+
+    <!-- Floating Share Button JavaScript -->
+    <script>
+        // Initialize QR Code when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initFloatingShareButton();
+        });
+
+        function initFloatingShareButton() {
+            const pageUrl = window.location.href;
+            const qrImg = document.getElementById('floatingQRCode');
+            if (qrImg) {
+                qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(pageUrl)}`;
+            }
+        }
+
+        function toggleFloatingShareMenu() {
+            const menu = document.getElementById('floatingShareMenu');
+            if (menu) {
+                menu.classList.toggle('active');
+            }
+        }
+
+        function floatingShareLine() {
+            const pageUrl = window.location.href;
+            window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(pageUrl)}`, '_blank');
+        }
+
+        function floatingShareEmail() {
+            const pageUrl = window.location.href;
+            const pageTitle = 'PAOD 周邊動脈阻塞疾病 - 糖尿病足照護完整指南';
+            const subject = encodeURIComponent(pageTitle);
+            const body = encodeURIComponent(`推薦您這份 PAOD 教學資源：\n\n${pageUrl}\n\n內容包含最新 NEJM 2026 回顧文獻的治療建議。`);
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+
+        function floatingCopyLink() {
+            const pageUrl = window.location.href;
+            navigator.clipboard.writeText(pageUrl).then(() => {
+                alert('連結已複製到剪貼簿！');
+            }).catch(err => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = pageUrl;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('連結已複製到剪貼簿！');
+            });
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const shareButton = document.querySelector('.floating-share-button');
+            const menu = document.getElementById('floatingShareMenu');
+            if (shareButton && menu && !shareButton.contains(event.target)) {
+                menu.classList.remove('active');
+            }
+        });
     </script>
 </body>
 </html>
