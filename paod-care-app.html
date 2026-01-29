@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAOD 周邊動脈阻塞疾病 - 糖尿病足照護完整指南 v3</title>
+    <title>PAOD 周邊動脈阻塞疾病 - 糖尿病足照護完整指南 v4 (NEJM 2026)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
@@ -271,12 +271,72 @@
             color: #e8e8e8; cursor: pointer; font-size: 0.9em; margin-top: 15px; transition: all 0.3s ease;
         }
         .reset-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        /* Sharing buttons styles */
+        .share-section {
+            background: linear-gradient(135deg, rgba(0, 150, 136, 0.15) 0%, rgba(38, 166, 154, 0.15) 100%);
+            border: 1px solid #26a69a; border-radius: 12px; padding: 15px; margin: 15px 0;
+        }
+        .share-title { color: #4db6ac; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .share-buttons { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        .share-btn {
+            display: flex; align-items: center; gap: 8px; padding: 12px 20px;
+            border-radius: 25px; border: none; cursor: pointer;
+            font-size: 0.9em; font-weight: bold; transition: all 0.3s ease;
+            text-decoration: none; color: white;
+        }
+        .share-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .share-btn-line { background: linear-gradient(135deg, #00B900 0%, #00C300 100%); }
+        .share-btn-email { background: linear-gradient(135deg, #EA4335 0%, #FBBC05 100%); }
+        .share-btn-copy { background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%); }
+        .share-btn-qr { background: linear-gradient(135deg, #333 0%, #555 100%); }
+        .qr-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); display: flex; align-items: center;
+            justify-content: center; z-index: 1000;
+        }
+        .qr-modal-content {
+            background: white; padding: 25px; border-radius: 16px;
+            text-align: center; max-width: 320px; width: 90%;
+        }
+        .qr-modal-content img { max-width: 200px; margin: 15px auto; }
+        .qr-modal-content h3 { color: #333; margin-bottom: 10px; }
+        .qr-modal-content p { color: #666; font-size: 0.9em; margin-bottom: 15px; }
+        .qr-close-btn {
+            background: #e94560; color: white; border: none;
+            padding: 10px 25px; border-radius: 20px; cursor: pointer; font-weight: bold;
+        }
+        /* Reference section styles */
+        .reference-card {
+            background: linear-gradient(135deg, rgba(63, 81, 181, 0.1) 0%, rgba(103, 58, 183, 0.1) 100%);
+            border: 1px solid #5c6bc0; border-radius: 12px; padding: 15px; margin: 10px 0;
+        }
+        .reference-link {
+            color: #7986cb; text-decoration: none; display: block;
+            padding: 10px; margin: 5px 0; background: rgba(255,255,255,0.03);
+            border-radius: 8px; transition: all 0.3s ease;
+        }
+        .reference-link:hover { background: rgba(121, 134, 203, 0.2); transform: translateX(5px); }
+        .reference-doi { color: #b0bec5; font-size: 0.8em; margin-top: 3px; }
+        /* Case study styles */
+        .case-box {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 152, 0, 0.1) 100%);
+            border: 2px solid #ffc107; border-radius: 16px; padding: 20px; margin: 15px 0;
+        }
+        .case-title { color: #ffc107; font-size: 1.2em; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .case-patient-info { background: rgba(0,0,0,0.2); border-radius: 10px; padding: 15px; margin: 10px 0; }
+        .case-vitals { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 15px 0; }
+        .case-vital-item { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; text-align: center; }
+        .case-vital-label { color: #b0bec5; font-size: 0.8em; }
+        .case-vital-value { color: #ffc107; font-weight: bold; font-size: 1.1em; }
         @media (max-width: 480px) {
             .header h1 { font-size: 1.2em; }
             .assessment-grid { grid-template-columns: 1fr; }
             .card { padding: 15px; }
             .wifi-score-display { gap: 10px; }
             .wifi-score-item { min-width: 70px; padding: 10px 15px; }
+            .share-buttons { flex-direction: column; }
+            .share-btn { justify-content: center; }
+            .case-vitals { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -290,6 +350,7 @@
             const [searchTerm, setSearchTerm] = useState('');
             const tabs = [
                 { id: 'basics', label: '基礎知識' },
+                { id: 'casestudy', label: '案例教學' },
                 { id: 'screening', label: '篩檢評估' },
                 { id: 'wifi', label: 'WIfI評分' },
                 { id: 'dmcare', label: '糖尿病照護' },
@@ -298,14 +359,15 @@
                 { id: 'postcath', label: '術後照護' },
                 { id: 'wound', label: '傷口照護' },
                 { id: 'quality', label: '品質監測' },
-                { id: 'quiz', label: '自我測驗' }
+                { id: 'quiz', label: '自我測驗' },
+                { id: 'references', label: '參考文獻' }
             ];
             return (
                 <div className="app-container">
                     <header className="header">
                         <h1>PAOD 周邊動脈阻塞疾病</h1>
                         <p>糖尿病足照護完整指南</p>
-                        <div className="header-badge">整合版 v3 - 2025</div>
+                        <div className="header-badge">整合版 v4 - 2026 NEJM Update</div>
                     </header>
                     <nav className="nav-tabs">
                         {tabs.map(tab => (
@@ -315,6 +377,7 @@
                     <main className="content">
                         <input type="text" className="search-box" placeholder="搜尋關鍵字..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                         {activeTab === 'basics' && <BasicsSection />}
+                        {activeTab === 'casestudy' && <CaseStudySection />}
                         {activeTab === 'screening' && <ScreeningSection />}
                         {activeTab === 'wifi' && <WIfISection />}
                         {activeTab === 'dmcare' && <DMCareSection />}
@@ -324,6 +387,7 @@
                         {activeTab === 'wound' && <WoundCareSection />}
                         {activeTab === 'quality' && <QualitySection />}
                         {activeTab === 'quiz' && <QuizSection />}
+                        {activeTab === 'references' && <ReferencesSection />}
                     </main>
                 </div>
             );
@@ -346,31 +410,49 @@
             return (
                 <div className="tab-section">
                     <div className="card">
-                        <div className="card-title"><span className="card-icon"></span>流行病學統計<span className="reference-badge">NTUH 新竹 2015-2020</span></div>
+                        <div className="card-title"><span className="card-icon">📊</span>流行病學統計<span className="reference-badge">NEJM 2026</span></div>
                         <div style={{display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', margin: '15px 0'}}>
                             <div className="stat-card">
-                                <div className="stat-number">15.4%</div>
-                                <div className="stat-label">CAD 病患合併嚴重 PAD</div>
+                                <div className="stat-number">2.36億</div>
+                                <div className="stat-label">全球 PAD 患者人數</div>
                             </div>
                             <div className="stat-card">
-                                <div className="stat-number">11.6%</div>
-                                <div className="stat-label">多血管疾病住院死亡率</div>
+                                <div className="stat-number">1,250萬</div>
+                                <div className="stat-label">美國 PAD 患者 (≥40歲)</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-number">10-15%</div>
+                                <div className="stat-label">65 歲以上盛行率</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-number">15-20%</div>
+                                <div className="stat-label">80 歲以上盛行率</div>
                             </div>
                         </div>
                         <div className="danger-box">
-                            <div className="danger-title">多血管疾病 (Polyvascular Disease) 風險</div>
+                            <div className="danger-title">⚠️ 心血管死亡風險 (10年追蹤)</div>
                             <div className="info-content">
-                                <strong>單純 CAD：</strong>住院死亡率 5.7%<br/>
-                                <strong>CAD + PAD (PolyVD)：</strong>住院死亡率 <span className="highlight">11.6%</span><br/><br/>
-                                多血管疾病患者的死亡風險是單純 CAD 的 <strong>2 倍</strong>
+                                PAD 患者心血管事件及死亡率為無 PAD 者的 <strong>2-3 倍</strong><br/><br/>
+                                <strong>男性：</strong>PAD <span className="highlight">18.7%</span> vs. 無 PAD 4.4%<br/>
+                                <strong>女性：</strong>PAD <span className="highlight">12.6%</span> vs. 無 PAD 4.1%<br/><br/>
+                                症狀性 PAD 患者 30 個月內有 <span className="highlight">10.7%</span> 發生 MI、stroke 或心血管死亡
                             </div>
                         </div>
                         <div className="info-box">
-                            <div className="info-box-title">重要發現</div>
+                            <div className="info-box-title">⭐ NEJM 2026 重要發現</div>
                             <div className="info-content">
-                                • 僅 <span className="highlight">32%</span> 的 PAD 病患有典型間歇性跛行症狀<br/>
-                                • 大多數病患症狀不典型或無症狀<br/>
-                                • DM 病患因神經病變，疼痛感知降低，更容易漏診
+                                • <span className="highlight">68-90%</span> 的 PAD 病患沒有典型 claudication 症狀或完全無症狀！<br/>
+                                • 典型 claudication (classic)：僅約 <span className="highlight">10-32%</span><br/>
+                                • 無症狀 (asymptomatic)：約 <span className="highlight">58.5%</span>（德國研究）<br/>
+                                • 許多患者會減少行走活動以避免症狀，導致診斷不足
+                            </div>
+                        </div>
+                        <div className="warning-box">
+                            <div className="warning-title">本院數據 (NTUH 新竹 2015-2020)</div>
+                            <div className="info-content">
+                                <strong>CAD 病患合併嚴重 PAD：</strong>15.4%<br/>
+                                <strong>單純 CAD 住院死亡率：</strong>5.7%<br/>
+                                <strong>CAD + PAD (PolyVD) 住院死亡率：</strong><span className="highlight">11.6%</span> (2倍風險)
                             </div>
                         </div>
                     </div>
@@ -473,7 +555,7 @@
                     </div>
 
                     <div className="card">
-                        <div className="card-title"><span className="card-icon"></span>不治療的風險</div>
+                        <div className="card-title"><span className="card-icon">⚠️</span>不治療的風險</div>
                         <div className="danger-box">
                             <div className="danger-title">CLI 不治療的後果</div>
                             <div className="info-content">
@@ -483,6 +565,36 @@
                                 洗腎/糖尿病患者預後更差<br/><br/>
                                 <strong>vs. 治療併發症 &lt;0.5%</strong><br/>
                                 不治療風險是治療風險的 <span className="highlight">220 倍</span>
+                            </div>
+                        </div>
+                        <div className="warning-box">
+                            <div className="warning-title">Major Adverse Limb Events (MALE)</div>
+                            <div className="info-content">
+                                <strong>定義：</strong>嚴重下肢缺血導致 revascularization 或 amputation<br/>
+                                <strong>發生率：</strong>1.8-2.7 年追蹤期間約 <span className="highlight">12.9-15.2%</span><br/>
+                                <strong>注意：</strong>接受 leg revascularization 後更常見
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="card">
+                        <div className="card-title"><span className="card-icon">🚶</span>行走能力與疾病嚴重度<span className="reference-badge">NEJM 2026</span></div>
+                        <div className="table-responsive">
+                            <table className="data-table">
+                                <thead><tr><th>ABI</th><th>疾病嚴重度</th><th>無法完成6分鐘步行測試需中途休息比例</th></tr></thead>
+                                <tbody>
+                                    <tr><td style={{color:'#4caf50'}}>1.10 - 1.40</td><td>正常</td><td>3.3%</td></tr>
+                                    <tr><td style={{color:'#8bc34a'}}>0.70 - &lt;0.90</td><td>輕度 (mild)</td><td>18.1%</td></tr>
+                                    <tr><td style={{color:'#ffc107'}}>0.50 - &lt;0.70</td><td>中度 (moderate)</td><td>31.6%</td></tr>
+                                    <tr><td style={{color:'#f44336'}}>&lt;0.50</td><td>重度 (severe)</td><td><span className="highlight">52.0%</span></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="info-box">
+                            <div className="info-box-title">PAD 患者行走能力隨時間下降</div>
+                            <div className="info-content">
+                                • 6 個月：6-minute walk distance 平均減少 <span className="highlight">10.2 m</span><br/>
+                                • 18 個月：6-minute walk distance 平均減少 <span className="highlight">34 m</span>
                             </div>
                         </div>
                     </div>
@@ -880,23 +992,53 @@
                             <div className="info-content">建立提示系統，提醒使用對於 ASCVD 有幫助的藥物</div>
                         </div>
                         <div className="dm-medication-card">
-                            <div className="dm-med-name">SGLT-2 inhibitor</div>
-                            <div className="med-detail">鈉-葡萄糖共同轉運蛋白2抑制劑<br/>具有心血管及腎臟保護效益</div>
+                            <div className="dm-med-name">SGLT-2 inhibitor<span className="reference-badge">NEJM 2026</span></div>
+                            <div className="med-detail">
+                                鈉-葡萄糖共同轉運蛋白2抑制劑，具有心血管及腎臟保護效益<br/><br/>
+                                <strong>PAD + T2DM 患者建議：</strong><br/>
+                                • <span className="highlight">Empagliflozin 或 Dapagliflozin</span> 可能是較安全的選擇<br/>
+                                • Canagliflozin 在 CANVAS 試驗中有較高截肢風險<br/>
+                                • 但 CREDENCE (CKD 患者) 中截肢風險無顯著增加
+                            </div>
                         </div>
                         <div className="dm-medication-card">
-                            <div className="dm-med-name">GLP-1 receptor agonist</div>
-                            <div className="med-detail">類升糖素胜肽-1 受體促效劑<br/>降低心血管事件風險</div>
+                            <div className="dm-med-name">GLP-1 receptor agonist<span className="reference-badge">NEJM 2026</span></div>
+                            <div className="med-detail">
+                                類升糖素胜肽-1 受體促效劑，降低心血管事件風險<br/><br/>
+                                <strong>最新證據：</strong><br/>
+                                • <strong>SELECT Trial：</strong>Semaglutide vs placebo，CV events <span className="highlight">6.5% vs 8.0%</span><br/>
+                                • <strong>SOUL Trial：</strong>Oral semaglutide 14mg，CV events <span className="highlight">12.0% vs 13.8%</span><br/>
+                                • <strong>STRIDE Trial：</strong>Semaglutide 改善 maximal treadmill walking distance <span className="highlight">+39.9 m</span>
+                            </div>
                         </div>
                     </div>
                     <div className="card">
-                        <div className="card-title"><span className="card-icon"></span>血脂控制<span className="reference-badge">2024 ACC/AHA</span></div>
+                        <div className="card-title"><span className="card-icon">💊</span>血脂控制<span className="reference-badge">NEJM 2026 / ESC 2024</span></div>
                         <div className="danger-box">
                             <div className="danger-title">治療目標</div>
-                            <div className="info-content"><span className="highlight">LDL 降低 50%</span><br/><span className="highlight">LDL &lt; 55 mg/dL</span></div>
+                            <div className="info-content">
+                                <span className="highlight">LDL 降低至少 50%</span><br/>
+                                <span className="highlight">LDL &lt; 55 mg/dL</span> (ESC 2024 建議)
+                            </div>
                         </div>
-                        <div className="medication-card"><div className="med-name">高強度 Statin</div><div className="med-detail">第一線治療<br/>如：Atorvastatin 40-80mg、Rosuvastatin 20-40mg</div></div>
-                        <div className="medication-card"><div className="med-name">Ezetimibe</div><div className="med-detail">若在可耐受的最高劑量 statin 下仍無法達標時加用</div></div>
-                        <div className="medication-card"><div className="med-name">PCSK9 抑制劑</div><div className="med-detail">用於 statin + ezetimibe 仍無法達標者</div></div>
+                        <div className="medication-card">
+                            <div className="med-name">高強度 Statin<span className="reference-badge">第一線</span></div>
+                            <div className="med-detail">
+                                使用<strong>可耐受的最高劑量</strong><br/>
+                                • Atorvastatin 40-80 mg<br/>
+                                • Rosuvastatin 20-40 mg<br/><br/>
+                                <strong>Heart Protection Study 證據：</strong><br/>
+                                Simvastatin 40 mg vs placebo：全因死亡 12.9% vs 14.7%
+                            </div>
+                        </div>
+                        <div className="medication-card">
+                            <div className="med-name">Ezetimibe</div>
+                            <div className="med-detail">若在可耐受的最高劑量 statin 下仍無法達標時加用<br/>可進一步減少 CV events 及 MALE</div>
+                        </div>
+                        <div className="medication-card">
+                            <div className="med-name">PCSK9 抑制劑</div>
+                            <div className="med-detail">用於 statin + ezetimibe 仍無法達標者<br/>可進一步減少 CV events 及 MALE</div>
+                        </div>
                     </div>
                     <div className="card">
                         <div className="card-title"><span className="card-icon"></span>足部預防措施</div>
@@ -952,7 +1094,18 @@
                                 <div className="medication-card"><div className="med-name">Aspirin (Bokey)</div><div className="med-detail">標準用藥<br/>若合併 upper GI bleeding 徵兆則不開立</div></div>
                                 <div className="medication-card"><div className="med-name">Cilostazol (Pletaal)</div><div className="med-detail">100 mg PO BID<br/>洗腎/CKD (eGFR &lt; 30) <span className="highlight">不用調整劑量</span><br/>臨床已見 gangrene 且摸不到脈搏可直接開立</div></div>
                                 <div className="medication-card"><div className="med-name">Clopidogrel (Plavix)</div><div className="med-detail">ALI 診斷：需開立<br/>CLI 合併下肢循環惡化：需開立</div></div>
-                                <div className="medication-card"><div className="med-name">Rivaroxaban</div><div className="med-detail">可以與 Aspirin 併用，以減少心血管風險<span className="reference-badge">2024 ACC/AHA</span></div></div>
+                                <div className="medication-card">
+                                    <div className="med-name">Rivaroxaban<span className="reference-badge">NEJM 2026</span></div>
+                                    <div className="med-detail">
+                                        <strong>Dual Pathway Inhibition：</strong>Rivaroxaban 2.5 mg BID + Aspirin 100 mg/day<br/><br/>
+                                        <strong>COMPASS Trial (PAD/carotid disease, n=7,470)：</strong><br/>
+                                        • CV events：<span className="highlight">5% vs 7%</span> (P=0.005)<br/>
+                                        • MALE：<span className="highlight">1% vs 2%</span> (P=0.004)<br/>
+                                        • Major bleeding 較高：3% vs 2%<br/><br/>
+                                        <strong>VOYAGER PAD Trial (post-revasc, n=6,564)：</strong><br/>
+                                        • 3年 composite outcome：<span className="highlight">17.3% vs 19.9%</span> (P=0.009)
+                                    </div>
+                                </div>
                                 <div className="medication-card"><div className="med-name">PPI (胃藥保護)</div><div className="med-detail">自費：Nexium, Takepron, Pariet<br/>只有 Nexium 可用於 NG tube 病人</div></div>
                             </div>
                             <div className="card">
@@ -1208,6 +1361,296 @@
                         <div className="success-box"><div className="success-title">定期檢視</div><div className="info-content">每季由核心團隊檢視照護成效</div></div>
                         <div className="warning-box"><div className="warning-title">異常處理</div><div className="info-content">發現異常時，召開檢討會議並訂定改善計畫</div></div>
                         <div className="info-box"><div className="info-box-title">持續更新</div><div className="info-content">持續更新流程與衛教內容，確保與最新臨床建議一致</div></div>
+                    </div>
+                </div>
+            );
+        }
+
+        function CaseStudySection() {
+            return (
+                <div className="tab-section">
+                    <div className="card">
+                        <div className="card-title"><span className="card-icon">📋</span>NEJM 2026 臨床案例<span className="reference-badge">McDermott MM</span></div>
+                        <div className="case-box">
+                            <div className="case-title">👩‍⚕️ 案例導讀 (Clinical Vignette)</div>
+                            <div className="case-patient-info">
+                                <p style={{marginBottom: '10px'}}><strong>病患：</strong>62 歲女性</p>
+                                <p style={{marginBottom: '10px'}}><strong>過去病史：</strong></p>
+                                <ul style={{marginLeft: '20px', color: '#e8e8e8'}}>
+                                    <li>Type 2 Diabetes Mellitus (第二型糖尿病)</li>
+                                    <li>Hypertension (高血壓)</li>
+                                    <li>吸菸史 (History of cigarette smoking)</li>
+                                </ul>
+                            </div>
+                            <div className="info-item">
+                                <div className="info-label">主訴 (Chief Complaint)</div>
+                                <div className="info-content">
+                                    行走時出現下肢症狀，描述行走時<span className="highlight">臀部及小腿疼痛</span>，休息 10 分鐘內可緩解。<br/>
+                                    因症狀限制，步行超過一至兩個街區即感困難。<br/>
+                                    因行走困難，已無法從事她喜歡的活動。
+                                </div>
+                            </div>
+                            <div className="case-vitals">
+                                <div className="case-vital-item"><div className="case-vital-label">血壓</div><div className="case-vital-value">150/70 mmHg</div></div>
+                                <div className="case-vital-item"><div className="case-vital-label">心率</div><div className="case-vital-value">82 bpm</div></div>
+                                <div className="case-vital-item"><div className="case-vital-label">Femoral bruits</div><div className="case-vital-value">無</div></div>
+                                <div className="case-vital-item"><div className="case-vital-label">Calf muscles</div><div className="case-vital-value">萎縮</div></div>
+                            </div>
+                            <div className="warning-box">
+                                <div className="warning-title">理學檢查發現</div>
+                                <div className="info-content">
+                                    <strong>Dorsalis pedis pulse：</strong>雙側 Grade 1+ (正常為 3+)<br/>
+                                    <strong>Posterior tibial pulse：</strong>雙側 Grade 1+ (正常為 3+)<br/><br/>
+                                    <strong>Ankle-Brachial Index (ABI)：</strong><br/>
+                                    • 右側：<span className="highlight">0.56</span><br/>
+                                    • 左側：<span className="highlight">0.64</span>
+                                </div>
+                            </div>
+                            <div className="danger-box">
+                                <div className="danger-title">診斷結論</div>
+                                <div className="info-content">
+                                    此案例為典型的 <strong>Peripheral Artery Disease (PAD)</strong> 合併 <strong>Claudication</strong>，<br/>
+                                    ABI 顯示<span className="highlight">中度至重度疾病 (ABI 0.50 - &lt; 0.70)</span>。<br/><br/>
+                                    無心衰竭症狀或病史。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="card">
+                        <div className="card-title"><span className="card-icon">💊</span>案例治療建議<span className="reference-badge">NEJM 2026</span></div>
+                        <ExpandableSection title="改善行走障礙治療" defaultOpen={true}>
+                            <div className="success-box">
+                                <div className="success-title">第一線治療選擇</div>
+                                <div className="info-content">
+                                    <strong>1. Supervised Exercise (有保險給付時優先)：</strong><br/>
+                                    若能配合每週三次就診且有保險給付 → 12 週 Supervised exercise<br/><br/>
+                                    <strong>2. Home-based Walking Exercise：</strong><br/>
+                                    若無法配合 supervised exercise → Structured home-based walking exercise<br/>
+                                    <span className="highlight">必須誘發缺血性腿部症狀 (high intensity)</span>
+                                </div>
+                            </div>
+                            <div className="info-box">
+                                <div className="info-box-title">輔助藥物治療</div>
+                                <div className="info-content">
+                                    <strong>Cilostazol：</strong>50-100 mg BID（此案例無心衰竭禁忌）<br/>
+                                    <strong>Semaglutide：</strong>可考慮（此案例有 T2DM）<br/><br/>
+                                    若以上治療仍無法改善症狀 → 考慮 <span className="highlight">Revascularization</span>
+                                </div>
+                            </div>
+                        </ExpandableSection>
+                        <ExpandableSection title="心血管事件預防">
+                            <div className="danger-box">
+                                <div className="danger-title">必要藥物治療</div>
+                                <div className="info-content">
+                                    <strong>1. Statin：</strong>Atorvastatin 或 Rosuvastatin 可耐受的最高劑量<br/>
+                                    目標：LDL 降低至少 50%（ESC 建議 &lt;55 mg/dL）<br/><br/>
+                                    <strong>2. 血壓控制：</strong>&lt;130/80 mmHg<br/><br/>
+                                    <strong>3. 抗血栓治療 (二選一)：</strong><br/>
+                                    • Rivaroxaban 2.5 mg BID + low-dose Aspirin<br/>
+                                    • 或 Clopidogrel alone<br/><br/>
+                                    <strong>4. 考慮加用（此案例有 T2DM）：</strong><br/>
+                                    • SGLT2 inhibitor (如 Empagliflozin/Dapagliflozin)<br/>
+                                    • Semaglutide
+                                </div>
+                            </div>
+                        </ExpandableSection>
+                    </div>
+
+                    <div className="card">
+                        <div className="card-title"><span className="card-icon">📊</span>治療效果比較<span className="reference-badge">NEJM 2026</span></div>
+                        <div className="table-responsive">
+                            <table className="data-table">
+                                <thead><tr><th>治療方式</th><th>Maximal Treadmill Distance 增加</th><th>6-min Walk Distance 增加</th></tr></thead>
+                                <tbody>
+                                    <tr><td><strong>Supervised treadmill exercise</strong></td><td style={{color:'#4caf50'}}>+186 m</td><td>+31.8 m</td></tr>
+                                    <tr><td><strong>Aortoiliac endovascular</strong></td><td style={{color:'#4caf50'}}>+202 m</td><td>–</td></tr>
+                                    <tr><td>Femoropopliteal endovascular</td><td>+69 m</td><td>–</td></tr>
+                                    <tr><td>Home-based walking exercise</td><td>+53.7 m</td><td style={{color:'#8bc34a'}}>+55.6 m</td></tr>
+                                    <tr><td>Cilostazol</td><td>+40 m</td><td>–</td></tr>
+                                    <tr><td>Semaglutide</td><td>+39.9 m</td><td>–</td></tr>
+                                    <tr><td>Liraglutide</td><td>–</td><td>+25 m</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="info-box" style={{marginTop: '15px'}}>
+                            <div className="info-box-title">重要發現</div>
+                            <div className="info-content">
+                                <strong>LITE Trial：</strong>High-intensity home-based exercise (誘發缺血症狀) 使 6-minute walk distance 增加 <span className="highlight">49.6 m</span>，<br/>
+                                而 low-intensity exercise (不誘發症狀) 僅增加 8.7 m，與對照組無顯著差異。<br/><br/>
+                                <strong>結論：</strong>居家運動必須達到誘發缺血症狀的強度才有效！
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="card">
+                        <div className="card-title"><span className="card-icon">⚠️</span>PAD 重要提醒<span className="reference-badge">NEJM 2026</span></div>
+                        <div className="pitfall-box">
+                            <div className="pitfall-title">高達 68-90% 的 PAD 患者沒有典型 claudication 症狀！</div>
+                            <div className="info-content">
+                                • 典型 claudication (classic)：僅約 <span className="highlight">10-32%</span><br/>
+                                • 非典型症狀 (atypical)：如髖部疼痛、下背痛<br/>
+                                • 無症狀 (asymptomatic)：約 <span className="highlight">58.5%</span>（德國研究）<br/><br/>
+                                許多患者會減少行走活動或速度以避免缺血症狀，這可能導致診斷不足。
+                            </div>
+                        </div>
+                        <div className="warning-box">
+                            <div className="warning-title">10 年心血管死亡率</div>
+                            <div className="info-content">
+                                <strong>男性：</strong>PAD <span className="highlight">18.7%</span> vs. 無 PAD 4.4%<br/>
+                                <strong>女性：</strong>PAD <span className="highlight">12.6%</span> vs. 無 PAD 4.1%<br/><br/>
+                                PAD 患者心血管事件及死亡率為無 PAD 者的 <strong>2-3 倍</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function ReferencesSection() {
+            const [showQR, setShowQR] = useState(false);
+            const pageUrl = typeof window !== 'undefined' ? window.location.href : '';
+            const pageTitle = 'PAOD 周邊動脈阻塞疾病 - 糖尿病足照護完整指南';
+
+            const handleCopyLink = () => {
+                navigator.clipboard.writeText(pageUrl).then(() => {
+                    alert('連結已複製到剪貼簿！');
+                });
+            };
+
+            const handleLineShare = () => {
+                window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(pageUrl)}`, '_blank');
+            };
+
+            const handleEmailShare = () => {
+                const subject = encodeURIComponent(pageTitle);
+                const body = encodeURIComponent(`推薦您這份 PAOD 教學資源：\n\n${pageUrl}\n\n內容包含最新 NEJM 2026 回顧文獻的治療建議。`);
+                window.location.href = `mailto:?subject=${subject}&body=${body}`;
+            };
+
+            return (
+                <div className="tab-section">
+                    <div className="card">
+                        <div className="card-title"><span className="card-icon">📤</span>分享此教學資源</div>
+                        <div className="share-section">
+                            <div className="share-title">🔗 分享給同事或學生</div>
+                            <div className="share-buttons">
+                                <button className="share-btn share-btn-line" onClick={handleLineShare}>
+                                    <span>📱</span> LINE 分享
+                                </button>
+                                <button className="share-btn share-btn-email" onClick={handleEmailShare}>
+                                    <span>📧</span> Email 分享
+                                </button>
+                                <button className="share-btn share-btn-copy" onClick={handleCopyLink}>
+                                    <span>📋</span> 複製連結
+                                </button>
+                                <button className="share-btn share-btn-qr" onClick={() => setShowQR(true)}>
+                                    <span>📷</span> QR Code
+                                </button>
+                            </div>
+                        </div>
+                        {showQR && (
+                            <div className="qr-modal" onClick={() => setShowQR(false)}>
+                                <div className="qr-modal-content" onClick={e => e.stopPropagation()}>
+                                    <h3>掃描 QR Code</h3>
+                                    <p>使用 LINE 或手機相機掃描</p>
+                                    <img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(pageUrl)}`} alt="QR Code" />
+                                    <p style={{fontSize: '0.8em', color: '#999'}}>分享此頁面給同事</p>
+                                    <button className="qr-close-btn" onClick={() => setShowQR(false)}>關閉</button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="card">
+                        <div className="card-title"><span className="card-icon">📚</span>主要參考文獻<span className="reference-badge">2024-2026</span></div>
+
+                        <div className="reference-card">
+                            <div className="info-label" style={{color: '#ff6b6b'}}>⭐ 核心文獻 - NEJM Clinical Practice</div>
+                            <a href="https://www.nejm.org/doi/full/10.1056/NEJMcp2501200" target="_blank" rel="noopener noreferrer" className="reference-link">
+                                <strong>McDermott MM. Peripheral Artery Disease in the Legs.</strong><br/>
+                                <em>N Engl J Med. 2026;394:486-96.</em>
+                                <div className="reference-doi">DOI: 10.1056/NEJMcp2501200</div>
+                            </a>
+                        </div>
+
+                        <div className="reference-card">
+                            <div className="info-label" style={{color: '#4db6ac'}}>臨床指引 Guidelines</div>
+                            <a href="https://www.ahajournals.org/doi/10.1161/CIR.0000000000001251" target="_blank" rel="noopener noreferrer" className="reference-link">
+                                <strong>Gornik HL, et al. 2024 ACC/AHA/AACVPR/APMA/ABC/SCAI/SVM Guideline for the Management of Lower Extremity Peripheral Artery Disease.</strong><br/>
+                                <em>Circulation. 2024;149:e1313-e1410.</em>
+                            </a>
+                            <a href="https://academic.oup.com/eurheartj/article/45/36/3538/7727665" target="_blank" rel="noopener noreferrer" className="reference-link">
+                                <strong>Mazzolai L, et al. 2024 ESC Guidelines for the Management of Peripheral Arterial and Aortic Diseases.</strong><br/>
+                                <em>Eur Heart J. 2024;45:3538-700.</em>
+                            </a>
+                        </div>
+
+                        <div className="reference-card">
+                            <div className="info-label" style={{color: '#7986cb'}}>重要臨床試驗</div>
+                            <a href="https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(25)00567-9/fulltext" target="_blank" rel="noopener noreferrer" className="reference-link">
+                                <strong>Bonaca MP, et al. Semaglutide and Walking Capacity in People with Symptomatic PAD and Type 2 Diabetes (STRIDE).</strong><br/>
+                                <em>Lancet. 2025;405:1580-93.</em>
+                            </a>
+                            <a href="https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(17)32409-1/fulltext" target="_blank" rel="noopener noreferrer" className="reference-link">
+                                <strong>Anand SS, et al. Rivaroxaban with or without Aspirin in Patients with Stable Peripheral or Carotid Artery Disease (COMPASS).</strong><br/>
+                                <em>Lancet. 2018;391:219-29.</em>
+                            </a>
+                            <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa1910307" target="_blank" rel="noopener noreferrer" className="reference-link">
+                                <strong>Bonaca MP, et al. Rivaroxaban in Peripheral Artery Disease after Revascularization (VOYAGER PAD).</strong><br/>
+                                <em>N Engl J Med. 2020;382:1994-2004.</em>
+                            </a>
+                            <a href="https://jamanetwork.com/journals/jama/fullarticle/2779759" target="_blank" rel="noopener noreferrer" className="reference-link">
+                                <strong>McDermott MM, et al. Effect of Low-Intensity vs High-Intensity Home-Based Walking Exercise on Walk Distance in Patients with PAD (LITE).</strong><br/>
+                                <em>JAMA. 2021;325:1266-76.</em>
+                            </a>
+                        </div>
+
+                        <div className="reference-card">
+                            <div className="info-label" style={{color: '#ffc107'}}>心血管預防相關</div>
+                            <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2307563" target="_blank" rel="noopener noreferrer" className="reference-link">
+                                <strong>Lincoff AM, et al. Semaglutide and Cardiovascular Outcomes in Obesity without Diabetes (SELECT).</strong><br/>
+                                <em>N Engl J Med. 2023;389:2221-32.</em>
+                            </a>
+                            <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2418305" target="_blank" rel="noopener noreferrer" className="reference-link">
+                                <strong>McGuire DK, et al. Oral Semaglutide and Cardiovascular Outcomes in High-Risk Type 2 Diabetes (SOUL).</strong><br/>
+                                <em>N Engl J Med. 2025;392:2001-12.</em>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div className="card">
+                        <div className="card-title"><span className="card-icon">📖</span>延伸閱讀</div>
+                        <div className="info-item">
+                            <div className="info-label">SGLT2 抑制劑與截肢風險</div>
+                            <div className="info-content">
+                                • <strong>EMPA-REG OUTCOME：</strong>Empagliflozin 未觀察到截肢風險增加<br/>
+                                • <strong>CANVAS：</strong>Canagliflozin 有較高截肢風險 (6.3 vs. 3.4/1000 pt-yr)<br/>
+                                • <strong>CREDENCE：</strong>CKD 患者中 Canagliflozin 截肢風險無顯著增加<br/><br/>
+                                <span className="highlight">臨床建議：</span>PAD + T2DM 患者，Empagliflozin 或 Dapagliflozin 可能是較安全的選擇
+                            </div>
+                        </div>
+                        <div className="info-item">
+                            <div className="info-label">戒菸的重要性</div>
+                            <div className="info-content">
+                                PAD 患者接受 leg angiography 後 1 年追蹤：<br/>
+                                • 戒菸者 vs. 持續吸菸者<br/>
+                                • 全因死亡：<span className="highlight">14% vs. 31%</span><br/>
+                                • Amputation-free survival：<span className="highlight">81% vs. 60%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="card">
+                        <div className="card-title"><span className="card-icon">👨‍⚕️</span>教材製作資訊</div>
+                        <div className="info-box">
+                            <div className="info-box-title">製作與整理</div>
+                            <div className="info-content">
+                                整理者：謝慕揚 MD, PhD, FESC<br/>
+                                更新日期：2026-01-29<br/>
+                                資料來源：NEJM Clinical Practice 2026, ACC/AHA Guidelines 2024, ESC Guidelines 2024
+                            </div>
+                        </div>
                     </div>
                 </div>
             );
