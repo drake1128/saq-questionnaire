@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBTI 職場人格測驗</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            overflow: hidden;
+        }
+
+        /* ===== Header ===== */
+        .header {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            color: #fff;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+        .header h1 { font-size: 28px; margin-bottom: 8px; }
+        .header p { font-size: 15px; opacity: 0.9; }
+        .header .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+        .back-link {
+            position: absolute; top: 16px; left: 20px;
+            color: #fff; text-decoration: none; font-size: 14px; opacity: 0.8;
+        }
+        .back-link:hover { opacity: 1; }
+
+        /* ===== Screens ===== */
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        /* ===== Welcome ===== */
+        .welcome { padding: 30px; text-align: center; }
+        .welcome h2 { color: #6366f1; font-size: 22px; margin-bottom: 16px; }
+        .welcome p { color: #555; margin-bottom: 12px; font-size: 15px; }
+        .dimension-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 24px 0;
+        }
+        .dim-card {
+            background: #f8f7ff;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #e8e5ff;
+        }
+        .dim-card .icon { font-size: 28px; margin-bottom: 6px; }
+        .dim-card h4 { color: #6366f1; font-size: 14px; margin-bottom: 4px; }
+        .dim-card p { font-size: 12px; color: #777; }
+
+        /* ===== Progress ===== */
+        .progress-section {
+            padding: 16px 30px;
+            background: #fafafa;
+            border-bottom: 1px solid #eee;
+        }
+        .progress-bar-bg {
+            background: #e8e5ff;
+            border-radius: 10px;
+            height: 10px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #6366f1, #a855f7);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.4s ease;
+            width: 0%;
+        }
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #888;
+            margin-top: 6px;
+        }
+
+        /* ===== Question ===== */
+        .question-area { padding: 30px; }
+        .question-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            color: #fff;
+            width: 36px; height: 36px;
+            line-height: 36px;
+            text-align: center;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 12px;
+        }
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option-btn {
+            background: #f8f7ff;
+            border: 2px solid #e8e5ff;
+            border-radius: 14px;
+            padding: 18px 20px;
+            text-align: left;
+            font-size: 15px;
+            color: #444;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: inherit;
+            line-height: 1.5;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .option-btn:hover {
+            border-color: #a855f7;
+            background: #f0edff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99,102,241,0.15);
+        }
+        .option-btn:active { transform: translateY(0); }
+        .option-btn .label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: #6366f1;
+            color: #fff;
+            font-weight: 700;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        /* ===== Buttons ===== */
+        .btn {
+            display: inline-block;
+            padding: 14px 36px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: inherit;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(99,102,241,0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99,102,241,0.4);
+        }
+        .btn-outline {
+            background: transparent;
+            color: #6366f1;
+            border: 2px solid #6366f1;
+        }
+        .btn-outline:hover { background: #f0edff; }
+
+        /* ===== Result ===== */
+        .result-area { padding: 30px; }
+        .result-type-card {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            border-radius: 20px;
+            padding: 36px;
+            text-align: center;
+            color: #fff;
+            margin-bottom: 28px;
+        }
+        .result-type-card .type-code {
+            font-size: 48px;
+            font-weight: 700;
+            letter-spacing: 6px;
+            margin-bottom: 6px;
+        }
+        .result-type-card .type-name {
+            font-size: 22px;
+            font-weight: 600;
+            opacity: 0.95;
+            margin-bottom: 4px;
+        }
+        .result-type-card .type-subtitle {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        .dimension-results {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        .dim-result {
+            background: #f8f7ff;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        .dim-result .dim-label { font-size: 12px; color: #888; margin-bottom: 4px; }
+        .dim-result .dim-value { font-size: 20px; font-weight: 700; color: #6366f1; }
+        .dim-result .dim-pct { font-size: 12px; color: #999; }
+
+        .result-section {
+            background: #f8f7ff;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border-left: 4px solid #6366f1;
+        }
+        .result-section h3 {
+            color: #6366f1;
+            font-size: 17px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .result-section p, .result-section li {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        .result-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .result-section ul li {
+            padding: 6px 0 6px 24px;
+            position: relative;
+        }
+        .result-section ul li::before {
+            content: '✦';
+            position: absolute;
+            left: 0;
+            color: #a855f7;
+        }
+        .result-section.communication { border-left-color: #22c55e; }
+        .result-section.communication h3 { color: #16a34a; }
+        .result-section.meeting { border-left-color: #f59e0b; }
+        .result-section.meeting h3 { color: #d97706; }
+        .result-section.cooperation { border-left-color: #3b82f6; }
+        .result-section.cooperation h3 { color: #2563eb; }
+        .result-section.growth { border-left-color: #ef4444; }
+        .result-section.growth h3 { color: #dc2626; }
+
+        .result-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 28px;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .header { padding: 28px 20px; }
+            .header h1 { font-size: 22px; }
+            .question-area, .welcome, .result-area { padding: 20px; }
+            .question-text { font-size: 16px; }
+            .dimension-cards { grid-template-columns: 1fr; }
+            .dimension-results { grid-template-columns: 1fr 1fr; }
+            .result-type-card .type-code { font-size: 36px; }
+            .result-actions { flex-direction: column; }
+            .result-actions .btn { width: 100%; text-align: center; }
+        }
+
+        /* ===== Animations ===== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeInUp 0.4s ease forwards; }
+
+        /* Print */
+        @media print {
+            body { background: #fff; padding: 0; }
+            .container { box-shadow: none; }
+            .btn, .back-link, .result-actions { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <a href="index.html" class="back-link" aria-label="返回首頁">← 返回首頁</a>
+        <h1>MBTI 職場人格測驗</h1>
+        <p>了解自己，讓團隊合作更順暢</p>
+        <span class="badge">共 28 題 ｜ 約 5-8 分鐘</span>
+    </div>
+
+    <!-- Screen 1: Welcome -->
+    <div id="welcome-screen" class="screen active">
+        <div class="welcome">
+            <h2>認識你的職場人格</h2>
+            <p>這份測驗將透過 28 道情境題，分析你在四個面向上的偏好，<br>幫助你了解自己的溝通風格，並學會如何與不同個性的同事合作。</p>
+            <div class="dimension-cards">
+                <div class="dim-card">
+                    <div class="icon">🔋</div>
+                    <h4>精力來源</h4>
+                    <p>外向 (E) vs 內向 (I)</p>
+                </div>
+                <div class="dim-card">
+                    <div class="icon">🔍</div>
+                    <h4>認知方式</h4>
+                    <p>實感 (S) vs 直覺 (N)</p>
+                </div>
+                <div class="dim-card">
+                    <div class="icon">⚖️</div>
+                    <h4>決策模式</h4>
+                    <p>思考 (T) vs 情感 (F)</p>
+                </div>
+                <div class="dim-card">
+                    <div class="icon">📋</div>
+                    <h4>生活態度</h4>
+                    <p>判斷 (J) vs 感知 (P)</p>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="startTest()">開始測驗</button>
+        </div>
+    </div>
+
+    <!-- Screen 2: Questions -->
+    <div id="question-screen" class="screen">
+        <div class="progress-section">
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-text">
+                <span id="progress-label">第 1 / 28 題</span>
+                <span id="progress-pct">0%</span>
+            </div>
+        </div>
+        <div class="question-area" id="question-area"></div>
+    </div>
+
+    <!-- Screen 3: Result -->
+    <div id="result-screen" class="screen">
+        <div class="result-area" id="result-area"></div>
+    </div>
+</div>
+
+<script>
+// ===== MBTI Questions (28 questions, 7 per dimension) =====
+const questions = [
+    // === E/I 精力來源 (7 questions) ===
+    { dim: 'EI', text: '開會討論時，你比較傾向？', a: '主動發言，喜歡在討論中激發靈感', b: '先聽大家說完，在心中整理後再發表看法' },
+    { dim: 'EI', text: '午休時間，你通常會？', a: '和同事一起吃飯聊天，覺得社交很放鬆', b: '找個安靜的地方獨處，為下午充電' },
+    { dim: 'EI', text: '遇到工作上的問題，你的第一反應是？', a: '找同事討論，邊講邊想比較有思路', b: '自己先研究思考，有初步想法後再跟人討論' },
+    { dim: 'EI', text: '參加團隊活動（如聚餐、團建）時，你覺得？', a: '很開心，這是增進感情的好機會', b: '偶爾參加可以，但太頻繁會覺得累' },
+    { dim: 'EI', text: '需要進行腦力激盪時，你偏好？', a: '一群人圍在一起討論，越多人越好', b: '先個別思考，再把想法彙整討論' },
+    { dim: 'EI', text: '一整天開了很多會之後，你會？', a: '覺得還好，跟人互動是有能量的', b: '覺得非常疲憊，需要獨處恢復精力' },
+    { dim: 'EI', text: '在工作中認識新同事或新夥伴，你的態度是？', a: '很自然地主動聊天，認識新朋友很有趣', b: '需要一些時間暖場，不太習慣主動攀談' },
+
+    // === S/N 認知方式 (7 questions) ===
+    { dim: 'SN', text: '接到一個新專案時，你會先關注？', a: '具體的細節：時程、資源、執行步驟', b: '大方向和願景：這個專案的意義與可能性' },
+    { dim: 'SN', text: '做簡報的時候，你偏好？', a: '用數據、案例和事實來支持論點', b: '用概念圖、比喻和未來藍圖來傳達想法' },
+    { dim: 'SN', text: '同事跟你報告工作進度時，你比較想聽到？', a: '完成了什麼、還有哪些待辦事項', b: '整體方向是否正確、有沒有新的發現' },
+    { dim: 'SN', text: '學習新技能時，你偏好？', a: '按照步驟、看操作手冊一步步來', b: '先理解原理和框架，細節之後再補' },
+    { dim: 'SN', text: '面對「公司未來三年發展方向」這種議題，你？', a: '覺得太抽象了，不如先把眼前的事做好', b: '很有興趣，喜歡思考和規劃長遠策略' },
+    { dim: 'SN', text: '撰寫工作文件時，你的風格是？', a: '詳細列出每個步驟，確保任何人都能照著做', b: '先寫架構和重點，細節留給執行時再補充' },
+    { dim: 'SN', text: '對於工作流程的改善，你的看法是？', a: '在現有流程上優化，穩定最重要', b: '可以大膽嘗試全新的做法，創新帶來突破' },
+
+    // === T/F 決策模式 (7 questions) ===
+    { dim: 'TF', text: '當團隊意見分歧時，你會？', a: '分析各方案的利弊，用邏輯找出最佳選項', b: '考慮每個人的感受，盡量找到大家都能接受的方案' },
+    { dim: 'TF', text: '給同事回饋時，你的風格是？', a: '直接指出問題，提出具體改善建議', b: '先肯定對方的努力，再委婉地提出建議' },
+    { dim: 'TF', text: '主管做了一個你覺得不太對的決定，你會？', a: '私下用數據和邏輯向主管提出不同看法', b: '考慮主管的立場和壓力，觀察一下情勢再說' },
+    { dim: 'TF', text: '有位同事工作表現不佳影響了團隊，你認為？', a: '應該直接跟他談，畢竟工作績效最重要', b: '先了解他是不是遇到什麼困難，給予支持' },
+    { dim: 'TF', text: '制定新規則時，你比較重視？', a: '公平一致，每個人都適用相同標準', b: '彈性通融，考慮個別差異和特殊狀況' },
+    { dim: 'TF', text: '評估一個提案時，你最先看的是？', a: '可行性分析、成本效益、數據支撐', b: '對團隊士氣的影響、是否符合團隊價值觀' },
+    { dim: 'TF', text: '同事因為工作壓力向你訴苦，你會？', a: '幫他分析問題，建議具體解決方案', b: '先傾聽、同理他的感受，讓他覺得被理解' },
+
+    // === J/P 生活態度 (7 questions) ===
+    { dim: 'JP', text: '對於工作行程，你偏好？', a: '提前規劃好，按照計畫執行最安心', b: '保持彈性，視情況隨時調整' },
+    { dim: 'JP', text: '面對一個截止日期還很遠的任務，你會？', a: '馬上開始規劃和準備，越早完成越好', b: '先放一下，等靈感來了或快到期時再全力衝刺' },
+    { dim: 'JP', text: '你的辦公桌通常是？', a: '整齊有序，東西都有固定的位置', b: '看起來有點亂但我知道東西在哪裡' },
+    { dim: 'JP', text: '臨時被交代一個緊急任務，你的反應是？', a: '有點焦慮，因為打亂了原本的計畫', b: '還好，很快就能切換模式來處理' },
+    { dim: 'JP', text: '團隊聚餐的安排，你偏好？', a: '事先決定好餐廳、時間和人數', b: '到時候再看大家心情決定去哪裡就好' },
+    { dim: 'JP', text: '做一個大專案時，你的工作方式是？', a: '列出詳細的待辦清單，按順序逐步完成', b: '同時進行多條線，根據狀態靈活切換' },
+    { dim: 'JP', text: '對於會議，你的期待是？', a: '有明確議程和時間控制，準時結束', b: '允許自由延伸討論，不要太多限制' },
+];
+
+// ===== 16 MBTI Type Data =====
+const typeData = {
+    'ISTJ': {
+        name: '盡責檢查官',
+        subtitle: '務實可靠的團隊支柱',
+        desc: '你是團隊中最值得信賴的夥伴。做事有條有理，注重細節與流程。你說到做到，對承諾的事情絕不馬虎，是讓專案如期完成的關鍵人物。',
+        strengths: ['執行力強，任務交給你就放心', '細心嚴謹，不容易出錯', '守時守信，團隊的穩定力量', '善於整理與建立 SOP'],
+        communication: ['與你溝通時，請提供具體事實與數據', '不喜歡模糊的指示，請說清楚「什麼時候要做什麼」', '你重視規矩和流程，在提出改變時請說明合理原因', '回饋你時要具體，不要只說「做得很好」，要指出哪裡好'],
+        meeting: ['你可以試著更早在會議中分享意見，你的務實觀點很有價值', '當討論太發散時，你可以幫忙把大家拉回正軌', '練習對新想法保持開放，不要太快用「以前不是這樣做」來否定', '善用你的組織能力，主動幫忙做會議記錄'],
+        cooperation: ['和創意型 (NP) 同事合作時，試著理解他們「為什麼想改變」', '適時分享你的擔憂，不要悶在心裡到最後才爆發', '你的穩定是團隊資產，但也要給自己接受變化的空間']
+    },
+    'ISFJ': {
+        name: '溫暖守護者',
+        subtitle: '默默付出的團隊暖心人',
+        desc: '你是團隊中溫暖而細心的存在。總是能注意到別人忽略的小事，默默照顧每個人的需求。你的貼心讓團隊氣氛更融洽，是不可或缺的潤滑劑。',
+        strengths: ['觀察力敏銳，能察覺同事的情緒變化', '做事認真細膩，不容易遺漏', '樂於助人，團隊的幕後英雄', '記憶力好，能記住重要的細節與承諾'],
+        communication: ['與你溝通時語氣要溫和，太直接的批評會讓你受傷', '你習慣把事情做好但不邀功，主管需要主動關心你的狀態', '你重視和諧，衝突時需要有安全的空間表達想法', '感謝你的付出時要具體說明，讓你知道自己被看見'],
+        meeting: ['練習在會議中主動表達意見，你的觀察往往很有價值', '不用擔心說錯話，你的體貼觀點正是團隊需要的', '當你不同意某個決定時，試著當場說出來，不要事後才鬱悶', '善用你的細心，幫忙提醒大家容易忽略的執行細節'],
+        cooperation: ['學習適度說「不」，不要總是犧牲自己來配合別人', '和直接型 (TJ) 同事合作時，理解他們的直接不是針對你', '記得照顧自己的需求，你的健康和快樂對團隊同樣重要']
+    },
+    'INFJ': {
+        name: '理想引導師',
+        subtitle: '有遠見的幕後推手',
+        desc: '你具有深刻的洞察力和強烈的使命感。擅長理解人心，能看見組織的深層需求。你不追求鎂光燈，但往往是推動團隊走向正確方向的關鍵人物。',
+        strengths: ['洞察力強，能看見問題的本質', '善於理解不同人的需求和動機', '有願景與使命感，能激勵團隊', '文字表達能力強，善於傳達複雜的想法'],
+        communication: ['與你溝通時可以深入討論「為什麼」，你重視意義', '你需要時間思考，不要期待你當場給出答案', '你對虛偽和表面話很敏感，請真誠地和你互動', '書面溝通可能比口頭更能表達你的想法'],
+        meeting: ['試著把你的深層洞察用簡潔的語言表達，不要怕別人不理解', '當你感覺團隊方向有偏差時，勇敢提出來，你的直覺很準', '練習接受不完美的結論，有時候「夠好」就是最好', '善用你的同理心，在會議中幫忙化解人際的緊張'],
+        cooperation: ['和務實型 (ST) 同事合作時，試著把你的理想轉化為具體行動方案', '不要獨自承擔太多情緒勞動，適時向信任的人傾訴', '你的遠見對團隊很重要，不要因為怕被誤解就不說']
+    },
+    'INTJ': {
+        name: '策略規劃師',
+        subtitle: '高瞻遠矚的獨立思考者',
+        desc: '你是團隊中的戰略家。擅長系統性思考，能從複雜的資訊中找出規律並制定長遠計畫。你追求效率和品質，不滿足於現狀，總是想讓事情做得更好。',
+        strengths: ['策略思維強，能規劃長遠方向', '分析問題深入，善於找到根本原因', '獨立自主，可以信任的高效執行者', '追求卓越，對品質有高標準'],
+        communication: ['與你溝通時請直奔主題，不需要太多寒暄', '你重視邏輯和效率，討論時請有理有據', '你不喜歡被微管理，給你目標和信任就好', '批評你的方案時請拿出替代方案，不要只說「不行」'],
+        meeting: ['練習更有耐心聆聽其他人（特別是經驗分享型的）發言', '你的分析很有價值，但請用大家能理解的語言表達', '試著更包容不同的工作風格，不是每個人都像你一樣高效', '當你覺得討論沒效率時，可以建議具體的議程調整'],
+        cooperation: ['和情感型 (F) 同事合作時，記得關注人的感受，不要只看結果', '適時給予正面回饋，不要只在有問題時才開口', '你的高標準很好，但要注意不要讓其他人覺得壓力太大']
+    },
+    'ISTP': {
+        name: '冷靜分析師',
+        subtitle: '沉著應變的問題解決者',
+        desc: '你是團隊中的冷靜高手。遇到突發狀況不慌不忙，擅長在壓力下找到最務實的解決方案。你動手能力強，喜歡用最精簡的方式搞定問題。',
+        strengths: ['臨危不亂，壓力下表現更出色', '動手能力強，擅長解決實際問題', '邏輯清晰，能快速抓到問題核心', '務實不囉唆，效率至上'],
+        communication: ['與你溝通時請簡潔有力，不需要太多修飾', '你偏好實際行動勝過空談，請給你動手的空間', '你不太主動分享想法，同事可以直接問你意見', '你的沉默不代表沒在聽，只是在觀察和思考'],
+        meeting: ['試著更主動分享你的分析，不要等別人來問', '你的務實觀點能幫團隊避免「想太多、做太少」', '當理論討論太久時，你可以提議先試做小規模測試', '練習用更多的語言解釋你的推理過程，不要只說結論'],
+        cooperation: ['和話多的同事合作時，耐心聽他們說，他們也需要表達', '適時讓團隊知道你的進度，不要總是悶頭做', '你的冷靜是團隊的穩定劑，在危機時刻更要善用這個優勢']
+    },
+    'ISFP': {
+        name: '細膩行動派',
+        subtitle: '溫柔而堅定的實踐者',
+        desc: '你是團隊中安靜但有力量的存在。重視和諧的工作關係，用行動而非言語表達關心。你有自己堅持的價值觀，在重要時刻會為所信展現勇氣。',
+        strengths: ['善於營造和諧的團隊氛圍', '對細節有獨特的敏感度和品味', '實際行動力強，做比說多', '重視團隊中每個人的感受'],
+        communication: ['與你溝通時請保持尊重和溫和的語氣', '你不喜歡衝突，但需要安全的空間表達不同意見', '你用行動表達善意，周圍的人要懂得觀察和感謝', '給你足夠的自主空間，不要過度指導細節'],
+        meeting: ['練習在會議中至少分享一個想法，你的觀點很有價值', '當你看到團隊氣氛不對時，可以溫和地提出來', '不用勉強自己變成話多的人，但重要的事一定要說', '善用你的觀察力，為討論帶來別人沒注意到的面向'],
+        cooperation: ['和主導型 (ETJ) 同事合作時，堅定但溫和地表達你的底線', '不要把不滿壓在心裡太久，找信任的人聊聊', '你的溫柔是一種力量，在團隊需要凝聚力時特別珍貴']
+    },
+    'INFP': {
+        name: '理想調和者',
+        subtitle: '富同理心的創意靈魂',
+        desc: '你是團隊中的理想主義者。對人有深刻的理解和關懷，總能從不同角度看問題。你的創意和真誠能為團隊帶來獨特的觀點和溫暖的力量。',
+        strengths: ['同理心強，能理解不同立場的人', '創意豐富，擅長提出新的可能性', '文字與表達能力出色', '真誠關心團隊成員的福祉'],
+        communication: ['與你溝通時請真誠，你能感受到虛偽', '給你時間整理想法，不要催促你立即回答', '批評時請注意措辭，你比較敏感但不代表脆弱', '你重視意義感，解釋「為什麼做」比「怎麼做」更能激勵你'],
+        meeting: ['你有很棒的想法，練習在會議中勇敢說出來', '把你的感受和直覺轉化為具體建議，更容易被採納', '當氣氛僵硬時，你可以用同理心幫助大家換位思考', '不需要每個想法都完美了才說，未成形的點子也可能啟發別人'],
+        cooperation: ['和邏輯型 (T) 同事合作時，試著用數據輔助你的直覺', '照顧好自己的情緒界線，助人之前先確保自己狀態好', '你的理想性是團隊的指南針，不要因為現實的阻力就放棄']
+    },
+    'INTP': {
+        name: '邏輯探索家',
+        subtitle: '追根究底的思想家',
+        desc: '你是團隊中的知識引擎。對複雜問題有天生的好奇心，擅長分析系統性的問題。你的深度思考常常能找到別人想不到的解決方案。',
+        strengths: ['分析能力強，擅長拆解複雜問題', '創新思維，能提出獨特的解決方案', '學習能力強，快速掌握新知識', '客觀理性，不容易被情緒左右判斷'],
+        communication: ['與你溝通時可以討論深層的邏輯和原理', '你需要獨立思考的時間，不要用太多會議塞滿你的行程', '你可能會質疑和反駁，這是在釐清想法不是在攻擊', '你不擅長閒聊，直接進入正題會讓你更自在'],
+        meeting: ['試著把你的分析用更簡潔的語言表達，避免太多專業術語', '當你發現邏輯漏洞時，用建設性的方式提出而非直接否定', '練習給予正面回饋，不要只看到需要改進的地方', '你的批判性思維很珍貴，但請搭配可行的替代方案'],
+        cooperation: ['和行動型 (SJ) 同事合作時，配合他們的時程需求', '分享你的思考過程而不只是結論，讓團隊跟上你的邏輯', '適度參與團隊社交活動，關係的經營也是工作的一部分']
+    },
+    'ESTP': {
+        name: '活力實踐家',
+        subtitle: '說做就做的行動派',
+        desc: '你是團隊中的行動先鋒。充滿活力和冒險精神，擅長在不確定中找到機會。你的果斷和實戰能力讓團隊能快速行動、搶得先機。',
+        strengths: ['行動力強，想到就做', '應變能力出色，擅長處理突發狀況', '直覺敏銳，能抓住機會', '善於說服和激勵他人'],
+        communication: ['與你溝通時請直接了當，你不喜歡繞圈子', '你偏好實際案例勝過理論分析', '你的熱情有感染力，但注意不要搶了別人的發言', '你需要自由度和挑戰，太多規矩會讓你窒息'],
+        meeting: ['練習在發言前先聽完別人的觀點，不要急著下結論', '你的能量很棒，但記得留空間給安靜的同事發言', '當討論陷入僵局時，你可以提議用具體行動來測試', '耐心聽取謹慎型同事的顧慮，他們能幫你避開風險'],
+        cooperation: ['和計畫型 (IJ) 同事合作時，尊重他們需要規劃的時間', '你的快速行動力配上穩健同事的計畫力，會是最強組合', '適時慢下來確認細節，一味求快有時反而更慢']
+    },
+    'ESFP': {
+        name: '陽光帶動者',
+        subtitle: '讓團隊充滿歡樂的開心果',
+        desc: '你是團隊的活力泉源！天生的樂觀和熱情讓周圍的人都被你感染。你擅長活絡氣氛，在壓力大的時候為大家帶來輕鬆的氛圍，是團隊的開心果。',
+        strengths: ['社交能力強，能跟任何人打成一片', '正向樂觀，能提升團隊士氣', '擅長活絡會議和團隊活動的氣氛', '務實且有行動力，做事不拖泥帶水'],
+        communication: ['與你溝通時可以輕鬆自然，你喜歡有互動的對話', '你偏好面對面溝通勝過冷冰冰的文字', '太多嚴肅和枯燥的內容會讓你失去注意力', '你樂於接受回饋，但請用溫暖的方式給予'],
+        meeting: ['練習聆聽和記住討論的重點，不要被分心的話題帶走', '你的正面能量對會議很有幫助，但注意不要離題太遠', '在嚴肅議題上也要投入，表現出你認真的一面', '善用你的社交天賦，幫助害羞的同事融入討論'],
+        cooperation: ['和分析型 (IT) 同事合作時，尊重他們需要安靜的工作空間', '在重要決定上多花一些時間思考，不要全憑直覺', '你帶來的歡樂對團隊很珍貴，但也要讓大家看到你專業的實力']
+    },
+    'ENFP': {
+        name: '靈感催化師',
+        subtitle: '創意無限的點子王',
+        desc: '你是團隊中的創意引擎。永遠充滿新點子，熱情洋溢地感染每個人。你善於發現人的潛力，擅長把不同的想法連結在一起，激發團隊的無限可能。',
+        strengths: ['創意豐富，點子源源不絕', '善於激勵和鼓舞團隊', '能把不同的想法和人才串聯起來', '適應力強，擁抱變化'],
+        communication: ['與你溝通時允許自由聯想和發散，你在奔放中產生靈感', '你喜歡有深度但也有趣的對話', '太多規則和限制會扼殺你的創造力', '你重視真誠的連結，不是表面的客套'],
+        meeting: ['練習控制發言時間，把機會也留給其他人', '你的點子很多，試著聚焦在最重要的 1-2 個深入討論', '把天馬行空的想法搭配具體的執行計畫，更容易被採納', '善用你的同理心和熱情，讓會議不只有效率還有溫度'],
+        cooperation: ['和執行型 (STJ) 同事合作時，把創意轉化為他們能理解的行動方案', '開始的熱情很棒，但練習堅持到完成，不要半途被新想法吸引', '你是天生的團隊催化劑，善用這個優勢帶動正向的改變']
+    },
+    'ENTP': {
+        name: '思辨挑戰者',
+        subtitle: '打破框架的創新者',
+        desc: '你是團隊中的思辨高手。喜歡挑戰既有思維，擅長從反面論證中找到更好的答案。你的機智和創新精神能推動團隊不斷進步，避免落入舒適圈。',
+        strengths: ['創新思維，擅長找到新的角度和方法', '辯論能力強，能幫團隊想得更周全', '反應快，擅長即興發揮', '不怕挑戰權威，敢於說出不同意見'],
+        communication: ['與你溝通時可以進行有深度的辯論，你樂在其中', '你喜歡被智識上刺激，太簡單的工作會讓你無聊', '你的質疑是想讓事情更好，不是在否定別人', '你需要變化和自由，不要用太多框架綁住你'],
+        meeting: ['練習辨別何時該辯論、何時該配合團隊決定', '你的挑戰精神很有價值，但注意語氣不要太犀利', '在否定別人的想法之前，先肯定他們的出發點', '善用你的創新能力，當團隊卡住時提出突破性的方案'],
+        cooperation: ['和穩定型 (ISJ) 同事合作時，理解他們重視的規範和流程', '把辯論的精力轉化為具體的提案，光批評不建設沒有意義', '你的智慧和遠見是團隊的寶藏，搭配尊重就更有影響力']
+    },
+    'ESTJ': {
+        name: '效率指揮官',
+        subtitle: '有擔當的組織領導者',
+        desc: '你是團隊中的組織能手。天生的領導氣質讓你擅長統籌規劃，確保事情按計畫推進。你果斷、高效、負責，是帶領團隊達成目標的可靠指揮官。',
+        strengths: ['組織規劃能力強，能有效管理資源和時程', '果斷有擔當，敢於做決定', '重視效率和成果，推動力強', '忠誠可靠，說到做到'],
+        communication: ['與你溝通時請有條理地陳述，你重視效率', '你偏好明確的結論和行動方案，不喜歡模稜兩可', '你的指導很直接，但出發點是想幫助團隊更好', '需要向你報告時，先說結果再說過程'],
+        meeting: ['練習給予更多正面的鼓勵，不要只關注問題和改進', '留空間讓大家自由發表，不要太早做出結論', '試著理解不同工作風格的同事，效率不是唯一標準', '善用你的統籌力，幫會議保持在軌道上'],
+        cooperation: ['和創意型 (NP) 同事合作時，給他們探索的空間，不要要求馬上見成果', '你的高標準很好，但記得也要慶祝小勝利，不要只看不足', '適時放手讓團隊成員自主決策，不要事事都想管']
+    },
+    'ESFJ': {
+        name: '和諧協調師',
+        subtitle: '維繫團隊的社交達人',
+        desc: '你是團隊的連結者。天生善於營造和諧的人際關係，總是記得每個人的需求和偏好。你的貼心和組織能力讓團隊運轉順暢，是不可或缺的協調核心。',
+        strengths: ['人際關係維護能力強，是團隊的黏著劑', '善於組織活動和協調資源', '責任感強，言出必行', '能記住每個人的需求和偏好'],
+        communication: ['與你溝通時請保持友善和禮貌', '你重視團隊和諧，衝突會讓你很不安', '你喜歡被感謝和認可，適時的鼓勵對你很重要', '你善於察言觀色，團隊氛圍的變化你最先感知'],
+        meeting: ['練習在衝突中保持中立，不要急著打圓場', '你的協調能力很棒，善用它來化解意見分歧', '試著接受「有建設性的衝突是健康的」這個觀念', '不要為了和諧而壓抑自己的真實想法'],
+        cooperation: ['和獨立型 (IT) 同事合作時，給他們獨處的空間，不要頻繁打擾', '你的關懷是真心的，但注意不要變成控制', '練習接受不是每個人都想要同樣的社交密度']
+    },
+    'ENFJ': {
+        name: '魅力導師',
+        subtitle: '啟發人心的天生領袖',
+        desc: '你是天生的導師型領袖。擅長看見每個人的潛力，善於用言語激勵和引導團隊。你關心每個成員的成長，以身作則地帶領大家邁向共同目標。',
+        strengths: ['善於激勵和帶領團隊', '能看見每個人的潛力和獨特之處', '溝通表達能力出色', '有使命感，願意為團隊犧牲奉獻'],
+        communication: ['與你溝通時可以分享願景和價值觀，你對此很有共鳴', '你善於傾聽，也期望別人能真誠回應', '給你有意義的任務，你會全力以赴', '你對人際衝突很敏感，需要時間處理情緒'],
+        meeting: ['注意不要過度主導討論，也要讓安靜的同事有表現機會', '你很會讀氣氛，善用這個能力在適當時機轉換話題', '練習接受批評性的意見，不要太快進入「捍衛模式」', '善用你的引導力，幫助團隊把理念化為具體行動'],
+        cooperation: ['和獨行型 (ITP) 同事合作時，不要強迫他們融入團體', '照顧好自己的需求，不要為了幫助別人而耗盡自己', '你的領導力是禮物，但要記得適時讓其他人也有機會帶頭']
+    },
+    'ENTJ': {
+        name: '決策統帥',
+        subtitle: '高效果斷的戰略領導者',
+        desc: '你是天生的決策者。擁有強大的邏輯思維和領導力，擅長制定策略並帶領團隊執行。你追求卓越，目標明確，是讓整個團隊保持高效運轉的指揮塔。',
+        strengths: ['戰略眼光，能制定清晰的方向', '決策果斷，不拖泥帶水', '擅長組織資源和帶領大型專案', '對目標有強烈的驅動力'],
+        communication: ['與你溝通時請直接、高效、有重點', '你尊重有能力的人，用實力贏得你的信任', '提出異議時請有數據和方案，你歡迎有建設性的挑戰', '你可能顯得太強勢，提醒自己放慢語速和語氣'],
+        meeting: ['練習更多聆聽，特別是基層同事的實際經驗', '你的果斷很有效率，但記得在重要決策前多蒐集不同意見', '適時展現溫暖的一面，讓團隊知道你關心人而不只是成果', '善用你的決策力，在會議尾聲幫忙做出明確的結論和分工'],
+        cooperation: ['和感受型 (F) 同事合作時，多花一點時間了解他們的感受', '你的權威感可能讓人不敢表達意見，主動創造安全的發言空間', '記住：帶人要帶心，最強的領導者是讓人心甘情願跟隨的']
+    }
+};
+
+// ===== State =====
+let currentQ = 0;
+let scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+
+// ===== Functions =====
+function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+function startTest() {
+    currentQ = 0;
+    scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+    showScreen('question-screen');
+    renderQuestion();
+}
+
+function renderQuestion() {
+    const q = questions[currentQ];
+    const pct = Math.round((currentQ / questions.length) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = `第 ${currentQ + 1} / ${questions.length} 題`;
+    document.getElementById('progress-pct').textContent = pct + '%';
+
+    const area = document.getElementById('question-area');
+    area.innerHTML = `
+        <div class="fade-in">
+            <div class="question-number">${currentQ + 1}</div>
+            <div class="question-text">${q.text}</div>
+            <div class="options">
+                <button class="option-btn" onclick="answer('a')">
+                    <span class="label">A</span>
+                    <span>${q.a}</span>
+                </button>
+                <button class="option-btn" onclick="answer('b')">
+                    <span class="label">B</span>
+                    <span>${q.b}</span>
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function answer(choice) {
+    const q = questions[currentQ];
+    const dim = q.dim; // 'EI', 'SN', 'TF', 'JP'
+    if (choice === 'a') {
+        scores[dim[0]]++;
+    } else {
+        scores[dim[1]]++;
+    }
+    currentQ++;
+    if (currentQ < questions.length) {
+        renderQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function showResult() {
+    showScreen('result-screen');
+    const type = getType();
+    const data = typeData[type];
+    const dims = getDimDetails();
+
+    document.getElementById('result-area').innerHTML = `
+        <div class="fade-in">
+            <div class="result-type-card">
+                <div class="type-code">${type}</div>
+                <div class="type-name">${data.name}</div>
+                <div class="type-subtitle">${data.subtitle}</div>
+            </div>
+
+            <div class="dimension-results">
+                ${dims.map(d => `
+                    <div class="dim-result">
+                        <div class="dim-label">${d.label}</div>
+                        <div class="dim-value">${d.winner} ${d.pct}%</div>
+                        <div class="dim-pct">${d.detail}</div>
+                    </div>
+                `).join('')}
+            </div>
+
+            <div class="result-section">
+                <h3>🧬 你的人格特質</h3>
+                <p>${data.desc}</p>
+            </div>
+
+            <div class="result-section">
+                <h3>💪 你的職場優勢</h3>
+                <ul>${data.strengths.map(s => `<li>${s}</li>`).join('')}</ul>
+            </div>
+
+            <div class="result-section communication">
+                <h3>💬 溝通相處指南</h3>
+                <ul>${data.communication.map(s => `<li>${s}</li>`).join('')}</ul>
+            </div>
+
+            <div class="result-section meeting">
+                <h3>🏢 開會調整建議</h3>
+                <ul>${data.meeting.map(s => `<li>${s}</li>`).join('')}</ul>
+            </div>
+
+            <div class="result-section cooperation">
+                <h3>🤝 團隊合作秘訣</h3>
+                <ul>${data.cooperation.map(s => `<li>${s}</li>`).join('')}</ul>
+            </div>
+
+            <div class="result-section growth">
+                <h3>🌱 給你的小提醒</h3>
+                <ul>
+                    <li>了解自己的人格類型不是為了貼標籤，而是更有意識地發揮優勢、彌補盲點</li>
+                    <li>每個類型都有獨特的價值，沒有「最好的」或「最差的」人格</li>
+                    <li>團隊的力量來自多元組合，學會欣賞和你不同的人</li>
+                    <li>把測驗結果當作自我認識的起點，而非終點</li>
+                </ul>
+            </div>
+
+            <div class="result-actions">
+                <button class="btn btn-primary" onclick="startTest()">重新測驗</button>
+                <button class="btn btn-outline" onclick="copyResult()">複製結果</button>
+                <button class="btn btn-outline" onclick="window.print()">列印結果</button>
+            </div>
+        </div>
+    `;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function getType() {
+    let type = '';
+    type += scores.E >= scores.I ? 'E' : 'I';
+    type += scores.S >= scores.N ? 'S' : 'N';
+    type += scores.T >= scores.F ? 'T' : 'F';
+    type += scores.J >= scores.P ? 'J' : 'P';
+    return type;
+}
+
+function getDimDetails() {
+    return [
+        {
+            label: '精力來源',
+            winner: scores.E >= scores.I ? '外向 E' : '內向 I',
+            pct: Math.round(Math.max(scores.E, scores.I) / 7 * 100),
+            detail: `E ${scores.E} : ${scores.I} I`
+        },
+        {
+            label: '認知方式',
+            winner: scores.S >= scores.N ? '實感 S' : '直覺 N',
+            pct: Math.round(Math.max(scores.S, scores.N) / 7 * 100),
+            detail: `S ${scores.S} : ${scores.N} N`
+        },
+        {
+            label: '決策模式',
+            winner: scores.T >= scores.F ? '思考 T' : '情感 F',
+            pct: Math.round(Math.max(scores.T, scores.F) / 7 * 100),
+            detail: `T ${scores.T} : ${scores.F} F`
+        },
+        {
+            label: '生活態度',
+            winner: scores.J >= scores.P ? '判斷 J' : '感知 P',
+            pct: Math.round(Math.max(scores.J, scores.P) / 7 * 100),
+            detail: `J ${scores.J} : ${scores.P} P`
+        }
+    ];
+}
+
+function copyResult() {
+    const type = getType();
+    const data = typeData[type];
+    const dims = getDimDetails();
+    const text = `【我的 MBTI 職場人格】\n` +
+        `類型：${type} - ${data.name}\n` +
+        `${data.subtitle}\n\n` +
+        dims.map(d => `${d.label}：${d.winner} (${d.pct}%)`).join('\n') +
+        `\n\n📝 ${data.desc}\n\n` +
+        `💪 優勢：\n${data.strengths.map(s => '• ' + s).join('\n')}\n\n` +
+        `💬 溝通建議：\n${data.communication.map(s => '• ' + s).join('\n')}\n\n` +
+        `🏢 開會調整：\n${data.meeting.map(s => '• ' + s).join('\n')}`;
+
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => showToast('已複製到剪貼簿！'));
+    } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('已複製到剪貼簿！');
+    }
+}
+
+function showToast(msg) {
+    const toast = document.createElement('div');
+    toast.textContent = msg;
+    Object.assign(toast.style, {
+        position: 'fixed', bottom: '30px', left: '50%', transform: 'translateX(-50%)',
+        background: '#333', color: '#fff', padding: '12px 24px', borderRadius: '10px',
+        fontSize: '14px', zIndex: '9999', boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+    });
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2500);
+}
+</script>
+
+</body>
+</html>
