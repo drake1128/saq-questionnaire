@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>川崎症診斷查核與教學 Kawasaki Disease</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+            min-height: 100vh; padding: 20px; line-height: 1.7;
+        }
+        .container {
+            max-width: 960px; margin: 0 auto; background: #fff;
+            border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+            color: #fff; padding: 36px 30px; text-align: center; position: relative;
+        }
+        .header h1 { font-size: 26px; margin-bottom: 6px; }
+        .header p { font-size: 14px; opacity: 0.9; }
+        .back-link {
+            position: absolute; top: 14px; left: 18px;
+            color: #fff; text-decoration: none; font-size: 14px; opacity: 0.8;
+        }
+        .back-link:hover { opacity: 1; }
+
+        /* Share Button */
+        .share-container { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+        .share-toggle {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            border: none; color: #fff; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(239,68,68,0.4);
+            transition: all 0.3s; display: flex; align-items: center; justify-content: center;
+        }
+        .share-toggle:hover { transform: scale(1.1); }
+        .share-toggle svg { width: 22px; height: 22px; }
+        .share-menu {
+            position: absolute; top: 58px; right: 0; background: #fff;
+            border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 20px; min-width: 280px; display: none;
+        }
+        .share-menu.active { display: block; animation: fadeInUp 0.3s ease; }
+        .share-menu h4 { color: #333; margin-bottom: 14px; font-size: 15px; }
+        .share-menu .qr-box {
+            background: #fef2f2; border-radius: 12px; padding: 14px;
+            text-align: center; margin-bottom: 14px;
+        }
+        .share-menu .qr-box img { max-width: 140px; border-radius: 8px; }
+        .share-menu .qr-box p { font-size: 12px; color: #888; margin-top: 6px; }
+        .share-links { display: flex; flex-direction: column; gap: 8px; }
+        .share-link {
+            display: flex; align-items: center; gap: 10px;
+            padding: 11px 16px; border: none; border-radius: 10px;
+            font-size: 14px; font-weight: 600; cursor: pointer;
+            text-decoration: none; color: #fff; transition: all 0.2s; font-family: inherit;
+        }
+        .share-link:hover { transform: translateX(4px); }
+        .share-link.line { background: #00B900; }
+        .share-link.email { background: #EA4335; }
+        .share-link.copy { background: #ef4444; }
+        .share-close {
+            position: absolute; top: 10px; right: 12px; background: none;
+            border: none; font-size: 20px; cursor: pointer; color: #999;
+        }
+
+        /* Tab Navigation */
+        .tabs {
+            display: flex; background: #f8f8f8; border-bottom: 2px solid #eee;
+            overflow-x: auto; -webkit-overflow-scrolling: touch;
+        }
+        .tab-btn {
+            flex: 1; min-width: 120px; padding: 14px 10px; border: none; background: none;
+            font-size: 14px; font-weight: 600; color: #888; cursor: pointer;
+            border-bottom: 3px solid transparent; transition: all 0.25s; font-family: inherit;
+            white-space: nowrap;
+        }
+        .tab-btn.active { color: #ef4444; border-bottom-color: #ef4444; background: #fff; }
+        .tab-btn:hover { color: #ef4444; background: #fef2f2; }
+        .tab-panel { display: none; padding: 28px; }
+        .tab-panel.active { display: block; }
+
+        /* Section Cards */
+        .section-card {
+            background: #f9fafb; border-radius: 16px; padding: 24px;
+            margin-bottom: 20px; border-left: 4px solid #ef4444;
+        }
+        .section-card h3 {
+            color: #dc2626; font-size: 17px; margin-bottom: 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .section-card.blue { border-left-color: #3b82f6; }
+        .section-card.blue h3 { color: #2563eb; }
+        .section-card.green { border-left-color: #22c55e; }
+        .section-card.green h3 { color: #16a34a; }
+        .section-card.purple { border-left-color: #8b5cf6; }
+        .section-card.purple h3 { color: #7c3aed; }
+        .section-card.orange { border-left-color: #f97316; }
+        .section-card.orange h3 { color: #ea580c; }
+        .section-card.amber { border-left-color: #f59e0b; }
+        .section-card.amber h3 { color: #d97706; }
+
+        /* Checklist */
+        .checklist { list-style: none; }
+        .checklist li {
+            display: flex; align-items: flex-start; gap: 12px;
+            padding: 10px 0; border-bottom: 1px solid #eee; font-size: 14px; color: #444;
+        }
+        .checklist li:last-child { border-bottom: none; }
+        .checklist input[type="checkbox"] {
+            width: 20px; height: 20px; margin-top: 2px; accent-color: #ef4444;
+            flex-shrink: 0; cursor: pointer;
+        }
+        .checklist .item-text { flex: 1; }
+        .checklist .item-text strong { color: #333; }
+        .checklist .item-text .hint { display: block; font-size: 12px; color: #888; margin-top: 2px; }
+        .check-count {
+            display: inline-block; background: #fef2f2; color: #dc2626;
+            padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        /* Teaching Content */
+        .teach-img {
+            width: 100%; border-radius: 12px; margin: 12px 0;
+            background: #fef2f2; padding: 20px; text-align: center;
+            font-size: 40px; line-height: 1.4;
+        }
+        .key-point {
+            background: #fef2f2; border-radius: 10px; padding: 14px 18px;
+            margin: 10px 0; border-left: 3px solid #ef4444;
+            font-size: 14px; color: #555;
+        }
+        .key-point strong { color: #dc2626; }
+        .warning-box {
+            background: #fffbeb; border-radius: 10px; padding: 14px 18px;
+            margin: 10px 0; border-left: 3px solid #f59e0b;
+            font-size: 14px; color: #92400e;
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%; border-collapse: collapse; margin: 14px 0;
+            font-size: 13px;
+        }
+        .data-table th {
+            background: #fef2f2; color: #dc2626; padding: 10px 12px;
+            text-align: left; font-weight: 600; border-bottom: 2px solid #fecaca;
+        }
+        .data-table td {
+            padding: 10px 12px; border-bottom: 1px solid #f3f4f6; color: #555;
+        }
+        .data-table tr:hover td { background: #fef2f2; }
+
+        /* Reference */
+        .ref-card {
+            background: #f0f9ff; border-radius: 12px; padding: 16px;
+            margin: 10px 0; border: 1px solid #bae6fd;
+        }
+        .ref-card a {
+            color: #2563eb; text-decoration: none; font-weight: 600; font-size: 14px;
+        }
+        .ref-card a:hover { text-decoration: underline; }
+        .ref-card .authors { font-size: 12px; color: #64748b; margin-top: 4px; }
+        .ref-card .journal { font-size: 12px; color: #94a3b8; font-style: italic; }
+
+        /* Family Education Cards */
+        .edu-card {
+            background: #fff; border-radius: 16px; padding: 24px;
+            margin-bottom: 16px; border: 2px solid #e5e7eb;
+            transition: all 0.25s;
+        }
+        .edu-card:hover { border-color: #fbbf24; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        .edu-card h4 {
+            font-size: 16px; color: #333; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .edu-card p, .edu-card li {
+            font-size: 14px; color: #555; line-height: 1.8;
+        }
+        .edu-card ul { list-style: none; padding: 0; }
+        .edu-card ul li { padding: 4px 0 4px 20px; position: relative; }
+        .edu-card ul li::before { content: '•'; position: absolute; left: 4px; color: #f97316; font-weight: bold; }
+
+        /* Flowchart */
+        .flow-step {
+            display: flex; align-items: flex-start; gap: 16px; margin-bottom: 4px;
+        }
+        .flow-num {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            color: #fff; display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 15px; flex-shrink: 0;
+        }
+        .flow-content { flex: 1; padding-bottom: 16px; border-left: 2px dashed #fecaca; padding-left: 20px; margin-left: -27px; margin-top: 36px; }
+        .flow-step:last-child .flow-content { border-left: none; }
+        .flow-content h4 { font-size: 15px; color: #dc2626; margin-bottom: 4px; }
+        .flow-content p { font-size: 13px; color: #666; }
+
+        /* Progress Banner */
+        .progress-banner {
+            background: linear-gradient(135deg, #fef2f2, #fff7ed);
+            padding: 16px 24px; display: flex; align-items: center;
+            justify-content: space-between; border-bottom: 1px solid #fecaca;
+        }
+        .progress-banner .label { font-size: 14px; color: #dc2626; font-weight: 600; }
+        .progress-banner .bar-bg {
+            flex: 1; max-width: 200px; height: 8px; background: #fecaca;
+            border-radius: 10px; overflow: hidden; margin: 0 14px;
+        }
+        .progress-banner .bar-fill {
+            height: 100%; background: linear-gradient(90deg, #ef4444, #f97316);
+            border-radius: 10px; transition: width 0.4s; width: 0%;
+        }
+        .progress-banner .count { font-size: 13px; color: #888; }
+
+        /* Buttons */
+        .btn {
+            display: inline-block; padding: 12px 28px; border-radius: 12px;
+            font-size: 15px; font-weight: 600; border: none; cursor: pointer;
+            transition: all 0.25s; font-family: inherit;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            color: #fff; box-shadow: 0 4px 15px rgba(239,68,68,0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); }
+        .btn-outline { background: transparent; color: #ef4444; border: 2px solid #ef4444; }
+        .btn-outline:hover { background: #fef2f2; }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            body { padding: 10px; }
+            .header { padding: 28px 20px; }
+            .header h1 { font-size: 20px; }
+            .tab-panel { padding: 18px; }
+            .section-card { padding: 18px; }
+            .data-table { font-size: 12px; }
+            .data-table th, .data-table td { padding: 8px 6px; }
+            .progress-banner { flex-wrap: wrap; gap: 8px; }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeInUp 0.4s ease forwards; }
+
+        /* Print */
+        @media print {
+            body { background: #fff; padding: 0; }
+            .container { box-shadow: none; }
+            .tabs, .share-container, .back-link, .btn, .progress-banner { display: none !important; }
+            .tab-panel { display: block !important; page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Share Button -->
+<div class="share-container">
+    <button class="share-toggle" onclick="toggleShare()" aria-label="分享此頁面">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+    </button>
+    <div class="share-menu" id="shareMenu">
+        <button class="share-close" onclick="toggleShare()">&times;</button>
+        <h4>📤 分享此頁面</h4>
+        <div class="qr-box">
+            <img id="qrCode" src="" alt="QR Code">
+            <p>掃描 QR Code 開啟頁面</p>
+        </div>
+        <div class="share-links">
+            <a class="share-link line" id="lineShare" href="#" target="_blank" rel="noopener noreferrer">💬 LINE 分享</a>
+            <a class="share-link email" id="emailShare" href="#">📧 Email 分享</a>
+            <button class="share-link copy" onclick="copyUrl()">📋 複製連結</button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="header">
+        <a href="index.html" class="back-link" aria-label="返回首頁">← 返回首頁</a>
+        <h1>川崎症診斷查核與教學</h1>
+        <p>Kawasaki Disease — Diagnosis, Teaching &amp; Family Education</p>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-banner" id="progressBanner">
+        <span class="label">查核進度</span>
+        <div class="bar-bg"><div class="bar-fill" id="progressFill"></div></div>
+        <span class="count" id="progressCount">0 / 0</span>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs" role="tablist">
+        <button class="tab-btn active" onclick="switchTab('checklist')" role="tab">診斷查核</button>
+        <button class="tab-btn" onclick="switchTab('teaching')" role="tab">臨床教學</button>
+        <button class="tab-btn" onclick="switchTab('treatment')" role="tab">治療指引</button>
+        <button class="tab-btn" onclick="switchTab('family')" role="tab">家屬衛教</button>
+        <button class="tab-btn" onclick="switchTab('references')" role="tab">參考文獻</button>
+    </div>
+
+    <!-- ============ TAB 1: 診斷查核 ============ -->
+    <div id="tab-checklist" class="tab-panel active">
+        <div class="section-card">
+            <h3>🔥 典型川崎症診斷標準 (Classic KD)</h3>
+            <p style="font-size:14px;color:#555;margin-bottom:14px;">
+                <strong>發燒 ≥ 5 天</strong> 加上以下 5 項主要臨床特徵中的 <strong>≥ 4 項</strong>即可診斷。<br>
+                若發燒 ≥ 4 天且符合 ≥ 4 項主要特徵（尤其合併肢端變化），有經驗的醫師可提前診斷。
+            </p>
+            <div class="check-count" id="classicCount">已勾選 0 / 5 項主要特徵</div>
+            <ul class="checklist" id="classicChecklist">
+                <li>
+                    <input type="checkbox" onchange="updateProgress()">
+                    <div class="item-text">
+                        <strong>1. 雙側非化膿性結膜充血 (Bilateral Conjunctival Injection)</strong>
+                        <span class="hint">非化膿性、無分泌物；通常不累及邊緣角膜（limbic sparing）</span>
+                    </div>
+                </li>
+                <li>
+                    <input type="checkbox" onchange="updateProgress()">
+                    <div class="item-text">
+                        <strong>2. 口腔黏膜變化 (Oral Mucous Membrane Changes)</strong>
+                        <span class="hint">草莓舌 (strawberry tongue)、嘴唇紅腫乾裂、口咽部瀰漫性紅腫</span>
+                    </div>
+                </li>
+                <li>
+                    <input type="checkbox" onchange="updateProgress()">
+                    <div class="item-text">
+                        <strong>3. 肢端變化 (Extremity Changes)</strong>
+                        <span class="hint">急性期：手掌/腳掌紅腫；恢復期：指/趾尖脫皮 (periungual desquamation)</span>
+                    </div>
+                </li>
+                <li>
+                    <input type="checkbox" onchange="updateProgress()">
+                    <div class="item-text">
+                        <strong>4. 多形性皮疹 (Polymorphous Rash)</strong>
+                        <span class="hint">斑丘疹、瀰漫性紅皮症或多形性紅斑樣；不會出現水泡或大疱</span>
+                    </div>
+                </li>
+                <li>
+                    <input type="checkbox" onchange="updateProgress()">
+                    <div class="item-text">
+                        <strong>5. 頸部淋巴結腫大 (Cervical Lymphadenopathy)</strong>
+                        <span class="hint">通常單側、直徑 ≥ 1.5 cm</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section-card orange">
+            <h3>⚠️ 不完全川崎症 (Incomplete KD)</h3>
+            <p style="font-size:14px;color:#555;margin-bottom:14px;">
+                發燒 ≥ 5 天 + 僅符合 2-3 項主要特徵時，應考慮不完全川崎症。<br>
+                <strong>嬰兒 (≤ 6 個月) 不明原因發燒 ≥ 7 天也需高度懷疑。</strong>
+            </p>
+            <p style="font-size:14px;color:#555;margin-bottom:12px;">
+                需進一步檢驗：CRP ≥ 3.0 mg/dL 及/或 ESR ≥ 40 mm/hr，<strong>加上以下 ≥ 3 項</strong>：
+            </p>
+            <ul class="checklist" id="incompleteChecklist">
+                <li>
+                    <input type="checkbox" onchange="updateProgress()">
+                    <div class="item-text"><strong>白蛋白 (Albumin) ≤ 3.0 g/dL</strong></div>
+                </li>
+                <li>
+                    <input type="checkbox" onchange="updateProgress()">
+                    <div class="item-text"><strong>年齡相應之貧血 (Anemia for age)</strong></div>
+                </li>
+                <li>
+                    <input type="checkbox" onchange="updateProgress()">
+                    <div class="item-text"><strong>ALT 上升 (Elevation of ALT)</strong></div>
+                </li>
+                <li>
+                    <input type="checkbox" onchange="updateProgress()">
+                    <div class="item-text">
+                        <strong>血小板 ≥ 450,000/mm³（第 7 天後）</strong>
+                        <span class="hint">發病初期血小板可能正常，第二週開始上升</span>
+                    </div>
+                </li>
+                <li>
+                    <input type="checkbox" onchange="updateProgress()">
+                    <div class="item-text"><strong>白血球 ≥ 15,000/mm³</strong></div>
+                </li>
+                <li>
+                    <input type="checkbox" onchange="updateProgress()">
+                    <div class="item-text">
+                        <strong>尿液白血球 ≥ 10 WBC/hpf（無菌性膿尿）</strong>
+                        <span class="hint">Sterile pyuria</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section-card blue">
+            <h3>🫀 冠狀動脈評估 — Z-Score 分類</h3>
+            <p style="font-size:14px;color:#555;margin-bottom:14px;">
+                心臟超音波是關鍵檢查，冠狀動脈尺寸以 Z-Score（依體表面積校正）分級：
+            </p>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>分類</th>
+                        <th>Z-Score 標準</th>
+                        <th>10 年消退率</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>正常 (No involvement)</td><td>Z &lt; 2</td><td>—</td></tr>
+                    <tr><td>擴張 (Dilation)</td><td>Z 2 ~ &lt; 2.5</td><td>—</td></tr>
+                    <tr><td>小型動脈瘤 (Small)</td><td>Z ≥ 2.5 ~ &lt; 5</td><td>~95%</td></tr>
+                    <tr><td>中型動脈瘤 (Medium)</td><td>Z ≥ 5 ~ &lt; 10 且 &lt; 8mm</td><td>~80-83%</td></tr>
+                    <tr><td><strong>大型/巨大動脈瘤 (Giant)</strong></td><td><strong>Z ≥ 10 或 ≥ 8mm</strong></td><td>~29-36%</td></tr>
+                </tbody>
+            </table>
+            <div class="warning-box">
+                <strong>⚡ 2024 高風險定義：</strong>年齡 ≤ 6 個月 或 診斷時 LAD/RCA Z-score ≥ 2.5 → 需加強初始治療
+            </div>
+        </div>
+
+        <div style="text-align:center;margin-top:20px;">
+            <button class="btn btn-outline" onclick="resetChecklist()">清除所有勾選</button>
+        </div>
+    </div>
+
+    <!-- ============ TAB 2: 臨床教學 ============ -->
+    <div id="tab-teaching" class="tab-panel">
+        <div class="section-card">
+            <h3>📚 川崎症概述</h3>
+            <p style="font-size:14px;color:#555;">
+                川崎症 (Kawasaki Disease, KD) 是一種好發於 <strong>5 歲以下兒童</strong>的急性全身性血管炎，
+                為已開發國家中兒童後天性心臟病最常見的原因。若未治療，約 <strong>25%</strong> 會發展出冠狀動脈異常。
+                早期診斷與治療可將冠狀動脈損傷風險降至 <strong>4-5%</strong> 以下。
+            </p>
+        </div>
+
+        <div class="section-card orange">
+            <h3>🍓 五大主要臨床特徵 — 教學圖解</h3>
+            <div class="teach-img">
+                👁️ 雙側結膜充血（無分泌物）<br>
+                👄 草莓舌 + 嘴唇乾裂紅腫<br>
+                🖐️ 手腳紅腫 → 恢復期脫皮<br>
+                🔴 多形性皮疹（非水泡）<br>
+                🦠 頸部淋巴結腫（通常單側 ≥1.5cm）
+            </div>
+            <div class="key-point">
+                <strong>臨床珠璣：</strong>
+                川崎症的特徵並非同時出現，往往在發燒數天內陸續浮現。
+                BCG 注射處紅腫是亞洲兒童的重要附帶發現。會陰部脫皮在急性期常見但容易被忽略。
+            </div>
+        </div>
+
+        <div class="section-card purple">
+            <h3>🔬 不完全川崎症辨識流程</h3>
+            <div style="margin-top:10px;">
+                <div class="flow-step">
+                    <div class="flow-num">1</div>
+                    <div style="flex:1;">
+                        <h4>不明原因發燒 ≥ 5 天 + 2-3 項主要特徵</h4>
+                        <p>或嬰兒 ≤ 6 個月不明原因發燒 ≥ 7 天</p>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-num">2</div>
+                    <div style="flex:1;">
+                        <h4>抽血檢驗：CRP 及/或 ESR</h4>
+                        <p>CRP ≥ 3.0 mg/dL 及/或 ESR ≥ 40 mm/hr → 進入下一步</p>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-num">3</div>
+                    <div style="flex:1;">
+                        <h4>評估輔助實驗室指標（6 項中 ≥ 3 項陽性）</h4>
+                        <p>白蛋白↓、貧血、ALT↑、血小板↑、WBC↑、無菌膿尿</p>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-num">4</div>
+                    <div style="flex:1;">
+                        <h4>心臟超音波評估冠狀動脈</h4>
+                        <p>即使輔助指標未達標，若 echo 顯示冠狀動脈異常亦可支持診斷</p>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-num">5</div>
+                    <div style="flex:1;">
+                        <h4>符合條件 → 儘早開始治療 (IVIG + Aspirin)</h4>
+                        <p>治療不應因等待完整診斷而延遲</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card green">
+            <h3>🩺 鑑別診斷</h3>
+            <table class="data-table">
+                <thead>
+                    <tr><th>鑑別疾病</th><th>與川崎症的區別要點</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>猩紅熱 (Scarlet Fever)</td><td>砂紙樣皮疹、對抗生素反應良好</td></tr>
+                    <tr><td>病毒感染（麻疹、腺病毒）</td><td>結膜有分泌物、特徵性皮疹型態</td></tr>
+                    <tr><td>Stevens-Johnson Syndrome</td><td>標靶型皮疹、黏膜潰瘍糜爛</td></tr>
+                    <tr><td>全身性幼年型關節炎 (sJIA)</td><td>關節炎、鮭魚粉紅色皮疹、肝脾腫大</td></tr>
+                    <tr><td>MIS-C（兒童多系統炎症症候群）</td><td>年齡較大、GI 症狀明顯、SARS-CoV-2 相關</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============ TAB 3: 治療指引 ============ -->
+    <div id="tab-treatment" class="tab-panel">
+        <div class="section-card">
+            <h3>💉 標準初始治療</h3>
+            <table class="data-table">
+                <thead>
+                    <tr><th>藥物</th><th>劑量</th><th>說明</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>IVIG</strong></td>
+                        <td>2 g/kg</td>
+                        <td>單次靜脈輸注，8-12 小時完成</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Aspirin（急性期）</strong></td>
+                        <td>30-50 mg/kg/day</td>
+                        <td>分次給予，直到退燒 48-72 小時</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Aspirin（恢復期）</strong></td>
+                        <td>3-5 mg/kg/day</td>
+                        <td>單次給予，持續 6-8 週（冠狀動脈正常者）</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="key-point">
+                <strong>時機關鍵：</strong>理想治療窗口為發病後 <strong>第 5-10 天</strong>，越早給予 IVIG 效果越好。
+            </div>
+        </div>
+
+        <div class="section-card purple">
+            <h3>⚡ 高風險患者 — 加強初始治療 (2024 新建議)</h3>
+            <p style="font-size:14px;color:#555;margin-bottom:12px;">
+                高風險定義：年齡 ≤ 6 個月 或 LAD/RCA Z-score ≥ 2.5
+            </p>
+            <table class="data-table">
+                <thead>
+                    <tr><th>方案</th><th>內容</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>IVIG + 類固醇</strong></td>
+                        <td>IV Methylprednisolone → 口服 Prednisolone 漸減</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IVIG + Infliximab</strong></td>
+                        <td>Infliximab 10 mg/kg IV（TNF-α 抑制劑）</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="warning-box">
+                <strong>2024 更新：</strong>對高風險患者，類固醇或 Infliximab 作為輔助初始治療（而非僅在抗藥時使用）已獲得更明確建議。
+            </div>
+        </div>
+
+        <div class="section-card orange">
+            <h3>🔄 IVIG 抗藥性 (Refractory KD)</h3>
+            <p style="font-size:14px;color:#555;margin-bottom:12px;">
+                定義：IVIG 輸注完成後 <strong>≥ 36 小時</strong>仍持續或再度發燒。
+            </p>
+            <table class="data-table">
+                <thead>
+                    <tr><th>治療選項</th><th>劑量</th><th>反應率</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>第二劑 IVIG</td>
+                        <td>2 g/kg</td>
+                        <td>~65.6% (KIDCARE trial)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Infliximab</strong></td>
+                        <td>10 mg/kg IV</td>
+                        <td><strong>~90.9% (KIDCARE trial)</strong></td>
+                    </tr>
+                    <tr>
+                        <td>IV Methylprednisolone pulse</td>
+                        <td>30 mg/kg (max 1g)</td>
+                        <td>依個案而定</td>
+                    </tr>
+                    <tr>
+                        <td>其他（Anakinra, Cyclosporine）</td>
+                        <td>依協議</td>
+                        <td>資料有限</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section-card blue">
+            <h3>💊 長期抗血栓治療</h3>
+            <table class="data-table">
+                <thead>
+                    <tr><th>冠狀動脈狀態</th><th>Z-Score</th><th>治療</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>正常</td><td>&lt; 2</td><td>低劑量 Aspirin 6-8 週後停藥</td></tr>
+                    <tr><td>擴張</td><td>2 ~ &lt; 2.5</td><td>低劑量 Aspirin 至恢復正常</td></tr>
+                    <tr><td>小型動脈瘤</td><td>2.5 ~ &lt; 5</td><td>低劑量 Aspirin 至消退</td></tr>
+                    <tr><td>中型動脈瘤</td><td>5 ~ &lt; 10</td><td>低劑量 Aspirin ± 抗凝血</td></tr>
+                    <tr><td>大型/巨大動脈瘤</td><td>≥ 10 或 ≥ 8mm</td><td>低劑量 Aspirin + 抗凝血 (Warfarin/LMWH)</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section-card green">
+            <h3>📅 追蹤時程 (2024 更新)</h3>
+            <ul class="checklist">
+                <li>
+                    <input type="checkbox" onchange="updateProgress()">
+                    <div class="item-text"><strong>出院前：</strong>確認退燒、安排門診追蹤</div>
+                </li>
+                <li>
+                    <input type="checkbox" onchange="updateProgress()">
+                    <div class="item-text"><strong>1 週後：</strong>門診追蹤（原為 1-2 週，2024 提前至 1 週）</div>
+                </li>
+                <li>
+                    <input type="checkbox" onchange="updateProgress()">
+                    <div class="item-text"><strong>2-3 天內：</strong>即使初始 echo 正常，仍需於 2-3 天內複查（2024 新建議）</div>
+                </li>
+                <li>
+                    <input type="checkbox" onchange="updateProgress()">
+                    <div class="item-text"><strong>2 週：</strong>重複心臟超音波</div>
+                </li>
+                <li>
+                    <input type="checkbox" onchange="updateProgress()">
+                    <div class="item-text"><strong>6-8 週：</strong>心臟超音波；冠狀動脈正常者可停 Aspirin</div>
+                </li>
+                <li>
+                    <input type="checkbox" onchange="updateProgress()">
+                    <div class="item-text"><strong>長期：</strong>有冠狀動脈異常者依風險等級持續追蹤</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============ TAB 4: 家屬衛教 ============ -->
+    <div id="tab-family" class="tab-panel">
+        <div class="section-card amber">
+            <h3>👨‍👩‍👧 家屬衛教專區</h3>
+            <p style="font-size:14px;color:#555;">
+                以下內容專為護理師、專科護理師及醫師設計，可直接用於向家屬說明川崎症的相關知識。
+                語言力求淺顯易懂，適合直接口頭說明或列印交付家屬。
+            </p>
+        </div>
+
+        <div class="edu-card">
+            <h4>❓ 什麼是川崎症？</h4>
+            <p>
+                川崎症是一種好發於 <strong>5 歲以下幼童</strong> 的疾病，會造成全身血管發炎。
+                目前確切原因不明，但不是家長的錯，也不具傳染性。
+            </p>
+            <p style="margin-top:8px;">
+                最需要擔心的是它可能影響到 <strong>心臟的冠狀動脈</strong>（供應心臟的血管），
+                如果沒有及時治療，可能造成冠狀動脈膨大（動脈瘤）。好消息是，只要 <strong>及早診斷和治療</strong>，
+                絕大多數的孩子都能完全康復。
+            </p>
+        </div>
+
+        <div class="edu-card">
+            <h4>🌡️ 川崎症有什麼症狀？</h4>
+            <p>您的孩子可能會出現以下幾種症狀（不一定全部都有）：</p>
+            <ul>
+                <li><strong>持續高燒</strong> — 通常超過 5 天，退燒藥效果不佳</li>
+                <li><strong>眼睛紅</strong> — 雙眼結膜充血，但不會有膿或分泌物</li>
+                <li><strong>嘴唇紅腫乾裂、草莓舌</strong> — 舌頭表面呈顆粒狀紅腫</li>
+                <li><strong>手腳紅腫</strong> — 急性期腫脹，恢復期手指腳趾會脫皮</li>
+                <li><strong>身體出疹子</strong> — 不規則的紅疹（不是水泡）</li>
+                <li><strong>脖子淋巴結腫大</strong> — 通常單側，摸起來有腫塊</li>
+            </ul>
+            <div class="warning-box" style="margin-top:12px;">
+                <strong>重要提醒：</strong>這些症狀不一定同時出現，有些小朋友只會有部分症狀。
+                如果您的孩子持續發燒超過 5 天且有以上任何幾項表現，請盡快就醫！
+            </div>
+        </div>
+
+        <div class="edu-card">
+            <h4>💉 治療方式是什麼？</h4>
+            <ul>
+                <li><strong>免疫球蛋白 (IVIG)</strong> — 從靜脈注射，一次約 8-12 小時完成。
+                    這是最重要的治療，可以大幅降低心臟受損的風險</li>
+                <li><strong>阿斯匹靈 (Aspirin)</strong> — 急性期用較高劑量抗發炎，退燒後改為低劑量預防血栓。
+                    這是少數兒童可以吃阿斯匹靈的狀況</li>
+                <li>如果打完免疫球蛋白仍持續發燒，醫師可能會使用第二線藥物</li>
+            </ul>
+            <div class="key-point" style="margin-top:12px;">
+                <strong>家長放心：</strong>大部分的孩子在接受免疫球蛋白治療後 24-48 小時內就會退燒，
+                精神和食慾也會明顯改善。
+            </div>
+        </div>
+
+        <div class="edu-card">
+            <h4>🫀 為什麼要做心臟超音波？</h4>
+            <p>
+                川崎症最重要的併發症是影響心臟的冠狀動脈。
+                心臟超音波可以觀察這些血管有沒有膨大或異常。
+            </p>
+            <ul>
+                <li>住院期間會先做第一次超音波（確認基準值）</li>
+                <li>治療後 <strong>2-3 天內</strong> 會再做一次</li>
+                <li>出院後 <strong>1-2 週</strong> 門診追蹤</li>
+                <li><strong>6-8 週</strong> 後再做一次，確認冠狀動脈恢復正常</li>
+            </ul>
+            <p style="margin-top:8px;">
+                大部分孩子的冠狀動脈都是正常的，即使有輕微膨大，大多數也會自行消退。
+            </p>
+        </div>
+
+        <div class="edu-card">
+            <h4>🏠 出院後居家照護注意事項</h4>
+            <ul>
+                <li><strong>按時服藥</strong> — Aspirin 需持續服用 6-8 週（或更久），不可自行停藥</li>
+                <li><strong>定期回診</strong> — 務必按照醫師安排的時間回來做心臟超音波追蹤</li>
+                <li><strong>注意脫皮</strong> — 恢復期手指腳趾脫皮是正常現象，不需特別處理</li>
+                <li><strong>避免接種活性疫苗</strong> — 接受 IVIG 後，<strong>麻疹/水痘疫苗</strong>需延後約 11 個月</li>
+                <li><strong>觀察警示徵兆</strong> — 如再次發燒、異常疲倦、胸痛，請立即就醫</li>
+                <li><strong>日常活動</strong> — 冠狀動脈正常者恢復期後可正常活動；有動脈瘤者需依醫師指示</li>
+            </ul>
+        </div>
+
+        <div class="edu-card">
+            <h4>📋 常見家屬問題 Q&A</h4>
+            <div style="margin-top:8px;">
+                <p><strong>Q: 川崎症會傳染嗎？</strong></p>
+                <p style="margin-bottom:12px;">A: 不會。川崎症不是傳染病，不需要隔離。</p>
+
+                <p><strong>Q: 川崎症會復發嗎？</strong></p>
+                <p style="margin-bottom:12px;">A: 復發率約 1-3%，機率很低。如果之後又出現類似症狀，請儘速就醫。</p>
+
+                <p><strong>Q: 孩子以後心臟會不會有問題？</strong></p>
+                <p style="margin-bottom:12px;">A: 如果及時治療且冠狀動脈正常，絕大多數孩子可以完全康復，不留後遺症。有冠狀動脈異常的孩子需要長期追蹤。</p>
+
+                <p><strong>Q: 為什麼可以吃阿斯匹靈？小孩不是不能吃嗎？</strong></p>
+                <p>A: 一般兒童確實應避免使用阿斯匹靈（因雷氏症候群風險）。但川崎症是特殊例外，使用的好處遠大於風險。服藥期間若有水痘或流感症狀請告知醫師。</p>
+            </div>
+        </div>
+
+        <div class="edu-card">
+            <h4>🖨️ 列印衛教單張</h4>
+            <p>需要紙本衛教單張嗎？點選下方按鈕可列印本頁衛教內容。</p>
+            <div style="margin-top:12px;">
+                <button class="btn btn-primary" onclick="window.print()">列印衛教內容</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ TAB 5: 參考文獻 ============ -->
+    <div id="tab-references" class="tab-panel">
+        <div class="section-card blue">
+            <h3>📖 核心參考文獻</h3>
+
+            <div class="ref-card">
+                <a href="https://www.ahajournals.org/doi/10.1161/CIR.0000000000001295" target="_blank" rel="noopener noreferrer">
+                    2024 AHA Scientific Statement: Update on Diagnosis and Management of Kawasaki Disease
+                </a>
+                <div class="authors">
+                    Jone P-N, Tremoulet A, Choueiter N, Dominguez SR, Harahsheh AS, Mitani Y, Zimmerman M, Lin M-T, Friedman KG; et al.
+                </div>
+                <div class="journal">Circulation. 2024;150(23):e481-e500. PMID: 39534969</div>
+            </div>
+
+            <div class="ref-card">
+                <a href="https://www.ahajournals.org/doi/10.1161/CIR.0000000000001313" target="_blank" rel="noopener noreferrer">
+                    2024 AHA Scientific Statement — Correction (Feb 2025)
+                </a>
+                <div class="authors">Correction to: Update on Diagnosis and Management of Kawasaki Disease</div>
+                <div class="journal">Circulation. 2025. DOI: 10.1161/CIR.0000000000001313</div>
+            </div>
+
+            <div class="ref-card">
+                <a href="https://www.ahajournals.org/doi/10.1161/cir.0000000000000484" target="_blank" rel="noopener noreferrer">
+                    2017 AHA Scientific Statement: Diagnosis, Treatment, and Long-Term Management of Kawasaki Disease
+                </a>
+                <div class="authors">
+                    McCrindle BW, Rowley AH, Newburger JW, Burns JC, Bolger AF, Gewitz M, et al.
+                </div>
+                <div class="journal">Circulation. 2017;135(17):e927-e999. PMID: 28356445</div>
+            </div>
+
+            <div class="ref-card">
+                <a href="https://link.springer.com/article/10.1007/s12519-025-00892-9" target="_blank" rel="noopener noreferrer">
+                    Navigating the 2024 AHA guidelines for Kawasaki disease: practical insights for clinicians
+                </a>
+                <div class="authors">Tong &amp; Gong</div>
+                <div class="journal">World Journal of Pediatrics. 2025. PMID: 40119222</div>
+            </div>
+        </div>
+
+        <div class="section-card green">
+            <h3>🔗 實用資源連結</h3>
+            <div class="ref-card">
+                <a href="https://pubmed.ncbi.nlm.nih.gov/39534969/" target="_blank" rel="noopener noreferrer">
+                    PubMed — 2024 AHA Statement (PMID: 39534969)
+                </a>
+                <div class="journal">National Library of Medicine</div>
+            </div>
+            <div class="ref-card">
+                <a href="https://pubmed.ncbi.nlm.nih.gov/28356445/" target="_blank" rel="noopener noreferrer">
+                    PubMed — 2017 AHA Statement (PMID: 28356445)
+                </a>
+                <div class="journal">National Library of Medicine</div>
+            </div>
+            <div class="ref-card">
+                <a href="https://www.acc.org/latest-in-cardiology/ten-points-to-remember/2024/11/15/18/52/update-on-diagnosis" target="_blank" rel="noopener noreferrer">
+                    ACC — Ten Points to Remember: 2024 KD Update
+                </a>
+                <div class="journal">American College of Cardiology</div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h3>📌 2024 vs 2017 主要更新摘要</h3>
+            <table class="data-table">
+                <thead>
+                    <tr><th>項目</th><th>2017 指引</th><th>2024 更新</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>高風險定義</td>
+                        <td>未明確統一定義</td>
+                        <td>年齡 ≤ 6 個月 或 Z-score ≥ 2.5</td>
+                    </tr>
+                    <tr>
+                        <td>首次門診追蹤</td>
+                        <td>1-2 週</td>
+                        <td>1 週</td>
+                    </tr>
+                    <tr>
+                        <td>Echo 複查（初始正常者）</td>
+                        <td>未特別要求</td>
+                        <td>2-3 天內複查</td>
+                    </tr>
+                    <tr>
+                        <td>高風險初始治療</td>
+                        <td>輔助治療用於抗藥性</td>
+                        <td>Steroid/Infliximab 可用於初始輔助</td>
+                    </tr>
+                    <tr>
+                        <td>IVIG 抗藥性治療</td>
+                        <td>第二劑 IVIG 為首選</td>
+                        <td>Infliximab 反應率更高 (KIDCARE trial)</td>
+                    </tr>
+                    <tr>
+                        <td>MIS-C 鑑別</td>
+                        <td>未提及</td>
+                        <td>列為重要鑑別診斷</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+// ===== Tab Switching =====
+function switchTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.currentTarget.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== Progress =====
+function updateProgress() {
+    const all = document.querySelectorAll('.checklist input[type="checkbox"]');
+    const checked = document.querySelectorAll('.checklist input[type="checkbox"]:checked');
+    const pct = all.length > 0 ? Math.round((checked.length / all.length) * 100) : 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressCount').textContent = checked.length + ' / ' + all.length;
+
+    // Update classic KD count
+    const classicBoxes = document.querySelectorAll('#classicChecklist input[type="checkbox"]');
+    const classicChecked = document.querySelectorAll('#classicChecklist input[type="checkbox"]:checked');
+    document.getElementById('classicCount').textContent = '已勾選 ' + classicChecked.length + ' / 5 項主要特徵';
+    if (classicChecked.length >= 4) {
+        document.getElementById('classicCount').style.background = '#dcfce7';
+        document.getElementById('classicCount').style.color = '#16a34a';
+    } else {
+        document.getElementById('classicCount').style.background = '#fef2f2';
+        document.getElementById('classicCount').style.color = '#dc2626';
+    }
+}
+
+function resetChecklist() {
+    document.querySelectorAll('.checklist input[type="checkbox"]').forEach(cb => cb.checked = false);
+    updateProgress();
+}
+
+// ===== Share Functions =====
+(function initShare() {
+    const url = encodeURIComponent(window.location.href);
+    document.getElementById('qrCode').src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + url;
+    document.getElementById('lineShare').href = 'https://social-plugins.line.me/lineit/share?url=' + url;
+    document.getElementById('emailShare').href = 'mailto:?subject=' + encodeURIComponent('分享：川崎症診斷查核與教學') + '&body=' + encodeURIComponent('川崎症診斷查核與教學資源：\n' + window.location.href);
+})();
+
+function toggleShare() {
+    document.getElementById('shareMenu').classList.toggle('active');
+}
+
+function copyUrl() {
+    navigator.clipboard.writeText(window.location.href).then(() => showToast('連結已複製！')).catch(() => {
+        const t = document.createElement('textarea'); t.value = window.location.href;
+        document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
+        showToast('連結已複製！');
+    });
+}
+
+function showToast(msg) {
+    const toast = document.createElement('div');
+    toast.textContent = msg;
+    Object.assign(toast.style, {
+        position: 'fixed', bottom: '30px', left: '50%', transform: 'translateX(-50%)',
+        background: '#333', color: '#fff', padding: '12px 24px', borderRadius: '10px',
+        fontSize: '14px', zIndex: '9999', boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+    });
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2500);
+}
+
+document.addEventListener('click', function(e) {
+    const sc = document.querySelector('.share-container');
+    const sm = document.getElementById('shareMenu');
+    if (sc && sm && !sc.contains(e.target) && sm.classList.contains('active')) sm.classList.remove('active');
+});
+
+// Init progress
+updateProgress();
+</script>
+
+</body>
+</html>

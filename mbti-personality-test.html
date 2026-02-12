@@ -49,6 +49,47 @@
         }
         .back-link:hover { opacity: 1; }
 
+        /* ===== Share Button (top-right) ===== */
+        .share-container { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+        .share-toggle {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            border: none; color: #fff; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(99,102,241,0.4);
+            transition: all 0.3s; display: flex; align-items: center; justify-content: center;
+        }
+        .share-toggle:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(99,102,241,0.5); }
+        .share-toggle svg { width: 22px; height: 22px; }
+        .share-menu {
+            position: absolute; top: 58px; right: 0; background: #fff;
+            border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 20px; min-width: 280px; display: none;
+        }
+        .share-menu.active { display: block; animation: fadeInUp 0.3s ease; }
+        .share-menu h4 { color: #333; margin-bottom: 14px; font-size: 15px; }
+        .share-menu .qr-box {
+            background: #f8f7ff; border-radius: 12px; padding: 14px;
+            text-align: center; margin-bottom: 14px;
+        }
+        .share-menu .qr-box img { max-width: 140px; border-radius: 8px; }
+        .share-menu .qr-box p { font-size: 12px; color: #888; margin-top: 6px; }
+        .share-links { display: flex; flex-direction: column; gap: 8px; }
+        .share-link {
+            display: flex; align-items: center; gap: 10px;
+            padding: 11px 16px; border: none; border-radius: 10px;
+            font-size: 14px; font-weight: 600; cursor: pointer;
+            text-decoration: none; color: #fff; transition: all 0.2s; font-family: inherit;
+        }
+        .share-link:hover { transform: translateX(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .share-link.line { background: #00B900; }
+        .share-link.email { background: #EA4335; }
+        .share-link.copy { background: #6366f1; }
+        .share-close {
+            position: absolute; top: 10px; right: 12px; background: none;
+            border: none; font-size: 20px; cursor: pointer; color: #999;
+        }
+        .share-close:hover { color: #333; }
+
         /* ===== Screens ===== */
         .screen { display: none; }
         .screen.active { display: block; }
@@ -309,6 +350,26 @@
     </style>
 </head>
 <body>
+
+<!-- Share Button -->
+<div class="share-container">
+    <button class="share-toggle" onclick="toggleShare()" aria-label="分享此頁面">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+    </button>
+    <div class="share-menu" id="shareMenu">
+        <button class="share-close" onclick="toggleShare()">&times;</button>
+        <h4>📤 分享此頁面</h4>
+        <div class="qr-box">
+            <img id="qrCode" src="" alt="QR Code">
+            <p>掃描 QR Code 開啟頁面</p>
+        </div>
+        <div class="share-links">
+            <a class="share-link line" id="lineShare" href="#" target="_blank" rel="noopener noreferrer">💬 LINE 分享</a>
+            <a class="share-link email" id="emailShare" href="#">📧 Email 分享</a>
+            <button class="share-link copy" onclick="copyUrl()">📋 複製連結</button>
+        </div>
+    </div>
+</div>
 
 <div class="container">
     <!-- Header -->
@@ -762,6 +823,31 @@ function showToast(msg) {
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 2500);
 }
+
+// ===== Share Functions =====
+(function initShare() {
+    const url = encodeURIComponent(window.location.href);
+    const title = encodeURIComponent(document.title);
+    document.getElementById('qrCode').src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + url;
+    document.getElementById('lineShare').href = 'https://social-plugins.line.me/lineit/share?url=' + url;
+    document.getElementById('emailShare').href = 'mailto:?subject=' + encodeURIComponent('分享：' + document.title) + '&body=' + encodeURIComponent('推薦你做這個職場人格測驗：\n\n' + document.title + '\n' + window.location.href);
+})();
+
+function toggleShare() {
+    document.getElementById('shareMenu').classList.toggle('active');
+}
+function copyUrl() {
+    navigator.clipboard.writeText(window.location.href).then(() => showToast('連結已複製！')).catch(() => {
+        const t = document.createElement('textarea'); t.value = window.location.href;
+        document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
+        showToast('連結已複製！');
+    });
+}
+document.addEventListener('click', function(e) {
+    const sc = document.querySelector('.share-container');
+    const sm = document.getElementById('shareMenu');
+    if (sc && sm && !sc.contains(e.target) && sm.classList.contains('active')) sm.classList.remove('active');
+});
 </script>
 
 </body>
