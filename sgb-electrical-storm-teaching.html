@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>星狀神經節阻斷術 SGB — Electrical Storm 急救教學</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Noto Sans TC', sans-serif; }
+    body { margin: 0; background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #1e293b; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #14b8a6, #0d9488); border-radius: 3px; }
+    .fade-in { animation: fadeIn 0.4s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 8px rgba(20, 184, 166, 0.3); } 50% { box-shadow: 0 0 20px rgba(20, 184, 166, 0.6); } }
+    .pulse-glow { animation: pulse-glow 2s infinite; }
+    .glass-card { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .share-button { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+    .share-toggle { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%); border: none; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+    .share-toggle:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5); }
+    .share-menu { position: absolute; top: 60px; right: 0; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 20px; min-width: 280px; display: none; animation: fadeInShare 0.3s ease; }
+    .share-menu.active { display: block; }
+    @keyframes fadeInShare { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .share-menu h4 { color: #1e293b; margin: 0 0 15px 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+    .qr-container { background: #f8fafc; border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 15px; }
+    .qr-container img { max-width: 150px; height: auto; border-radius: 8px; }
+    .qr-container p { font-size: 0.75rem; color: #64748b; margin: 8px 0 0 0; }
+    .share-buttons { display: flex; flex-direction: column; gap: 10px; }
+    .share-btn { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: none; border-radius: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 500; transition: all 0.2s ease; text-decoration: none; color: white; }
+    .share-btn.line { background: #00B900; } .share-btn.email { background: #EA4335; } .share-btn.copy { background: #3B82F6; }
+    .share-btn:hover { transform: translateX(5px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .share-btn svg { width: 20px; height: 20px; fill: currentColor; }
+    .share-close { position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0; }
+    .share-close:hover { color: #1e293b; }
+  </style>
+</head>
+<body>
+  <!-- Share Button -->
+  <div class="share-button">
+    <button class="share-toggle" onclick="toggleShareMenu()" title="分享此頁面"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></button>
+    <div class="share-menu" id="shareMenu">
+      <button class="share-close" onclick="toggleShareMenu()">&times;</button>
+      <h4>分享此頁面</h4>
+      <div class="qr-container"><img id="qrCode" src="" alt="QR Code"><p>掃描 QR Code 開啟頁面</p></div>
+      <div class="share-buttons">
+        <a class="share-btn line" href="#" id="lineShare" target="_blank"><svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>LINE 分享</a>
+        <a class="share-btn email" href="#" id="emailShare"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>Email 分享</a>
+        <button class="share-btn copy" onclick="copyPageUrl()"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>複製連結</button>
+      </div>
+    </div>
+  </div>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // ─── Data ────────────────────────────────────────────────────────────────────
+    const youtubeResources = {
+      procedural: [
+        { keyword: 'Ultrasound-guided stellate ganglion block technique', focus: 'C6 水平的 longus colli 肌肉、頸動脈、椎動脈辨認' },
+        { keyword: 'SGB ultrasound in-plane needle technique', focus: 'Lateral-to-medial in-plane 進針示範' },
+        { keyword: 'Stellate ganglion block NYSORA', focus: 'NYSORA 解剖動畫與操作步驟' },
+      ],
+      cardiac: [
+        { keyword: 'Stellate ganglion block electrical storm', focus: '急重症及電生理科醫師臨床講解' },
+        { keyword: 'SGB ventricular tachycardia ICU bedside', focus: 'ICU 床邊執行情境' },
+      ],
+    };
+
+    const platforms = [
+      { name: 'NYSORA', feature: '互動解剖圖、動畫、臨床操作步驟', url: 'https://www.nysora.com/pain-management/ultrasound-guided-cervical-sympathetic-block/', cost: '付費' },
+      { name: 'ASRA "How I Do It"', feature: '專為 VES 心臟適應症設計的操作文章，含圖解', url: 'https://www.asra.com/news-publications/asra-newsletter/newsletter-item/asra-news/2022/11/01/how-i-do-it-stellate-ganglion-blocks-for-refractory-ventricular-electrical-storm', cost: '免費' },
+      { name: 'OpenAnesthesia', feature: '免費，完整解剖 + 超音波技術說明', url: 'https://www.openanesthesia.org/keywords/stellate-ganglion-block/', cost: '免費' },
+    ];
+
+    const techniqueSteps = [
+      {
+        title: '超音波定位',
+        items: [
+          '辨認 C6（有雙結節，anterior tubercle = Chassaignac 結節）vs C7（無前結節）',
+          '確認 longus colli 肌肉、頸動脈、椎動脈位置',
+        ],
+      },
+      {
+        title: '進針方式',
+        items: [
+          'Lateral-to-medial，in-plane 進針',
+          '針尖目標位置：prevertebral fascia 深面、longus colli 肌肉表面',
+        ],
+      },
+      {
+        title: '注射平面',
+        items: [
+          '藥物需在頸動脈鞘外側擴散',
+          '避免沿 carotid sheath 擴散（否則無法到達 stellate ganglion）',
+        ],
+      },
+      {
+        title: '藥物劑量（心臟適應症）',
+        items: [
+          '標準配方：0.25% ropivacaine 或低濃度 bupivacaine，共 10 mL',
+          '若病人已接受 lidocaine 滴注（常見於 VT/VES 治療），需特別評估 LAST 風險，建議改用 ropivacaine',
+          '不建議同時雙側 SGB，除非病人已插管且左側無效',
+        ],
+      },
+      {
+        title: '成功標誌',
+        items: [
+          '同側 Horner 症候群（ptosis、miosis、anhidrosis）',
+          '插管鎮靜病人不易觀察 Horner，應以心律不整是否減少作為主要評估指標',
+        ],
+      },
+    ];
+
+    const safetyRisks = [
+      { risk: '血管誤穿（頸動脈、椎動脈）', prevention: '超音波全程 in-plane 視覺化，每次注射前抽回血確認' },
+      { risk: 'LAST（局麻藥全身毒性）', prevention: '低濃度藥物、分次注射、備好 Intralipid 20%' },
+      { risk: '橫膈神經麻痺', prevention: '雙側 SGB 僅限已插管病人執行' },
+      { risk: '喉返神經麻痺', prevention: '注射後觀察聲音沙啞（清醒病人）' },
+    ];
+
+    const learningPath = [
+      { step: 1, action: '先閱讀 ASRA "How I Do It" 文章', goal: '建立心臟科應用的概念框架' },
+      { step: 2, action: '收聽 EMCrit 395 Podcast', goal: '掌握臨床決策時機與多科協作流程' },
+      { step: 3, action: 'YouTube 反覆觀看超音波操作影片', goal: '建立解剖辨認與手感記憶' },
+      { step: 4, action: '聯繫麻醉科疼痛專科醫師', goal: '安排 simulation / wet lab / cadaver workshop' },
+      { step: 5, action: '建立心血管中心 SGB 標準操作流程（SOP）', goal: '制度化臨床應用' },
+    ];
+
+    const references = [
+      { authors: 'Savastano S, et al.', title: 'Electrical storm treatment by percutaneous stellate ganglion block: the STAR study.', journal: 'Eur Heart J. 2024;45(10):823-833.', url: 'https://doi.org/10.1093/eurheartj/ehae021' },
+      { authors: 'Tian Y, et al.', title: 'Effective Use of Percutaneous Stellate Ganglion Blockade in Patients With Electrical Storm.', journal: 'Circ Arrhythm Electrophysiol. 2019;12(9):e007118.', url: '' },
+      { authors: 'Jentzer JC, et al.', title: 'Multidisciplinary Critical Care Management of Electrical Storm.', journal: 'J Am Coll Cardiol. 2023;81(22):2189-2206.', url: '' },
+      { authors: 'Yang SC, et al.', title: 'Left Stellate Ganglion Block, a Rescue Treatment for Ventricular Arrhythmia Refractory to Radiofrequency Catheter Ablation.', journal: 'Medicine. 2019;98(44):e17790.', url: '' },
+      { authors: 'Narouze S.', title: 'Ultrasound-guided stellate ganglion block: safety and efficacy.', journal: 'Curr Pain Headache Rep. 2014;18(6):424.', url: '' },
+    ];
+
+    const quizData = [
+      { q: 'SGB 超音波定位時，C6 橫突的特徵標誌是什麼？', opts: ['沒有前結節', '有雙結節（anterior tubercle = Chassaignac 結節）', '有明顯的椎動脈溝', '橫突最長'], ans: 1, exp: 'C6 橫突具有雙結節，其中 anterior tubercle 稱為 Chassaignac 結節，是 SGB 定位最重要的超音波地標。C7 則無前結節。' },
+      { q: 'SGB 的針尖目標位置應位於下列哪個解剖結構？', opts: ['頸動脈鞘內', 'Longus colli 肌肉表面、prevertebral fascia 深面', '椎動脈旁', '甲狀腺後方'], ans: 1, exp: '針尖應到達 prevertebral fascia 深面、longus colli 肌肉表面，藥物需在頸動脈鞘外側擴散才能有效到達 stellate ganglion。' },
+      { q: '心臟適應症 SGB 的標準藥物配方為何？', opts: ['1% Lidocaine 5 mL', '0.5% Bupivacaine 20 mL', '0.25% Ropivacaine 或低濃度 Bupivacaine 10 mL', '2% Lidocaine 3 mL'], ans: 2, exp: '心臟適應症使用 0.25% ropivacaine 或低濃度 bupivacaine，總量 10 mL。特別注意若病人已使用 lidocaine drip，應改用 ropivacaine 以降低 LAST 風險。' },
+      { q: '關於雙側 SGB，下列何者正確？', opts: ['建議常規雙側同時執行以增加效果', '雙側 SGB 僅限已插管病人，且左側無效時才考慮', '雙側 SGB 的安全性與單側相同', '應先右側再左側'], ans: 1, exp: '不建議同時雙側 SGB，除非病人已插管且左側 SGB 無效。雙側 SGB 的主要風險是雙側橫膈神經麻痺導致呼吸衰竭。' },
+      { q: 'SGB 成功的標誌 Horner 症候群不包含下列哪項？', opts: ['Ptosis（上眼瞼下垂）', 'Miosis（瞳孔縮小）', 'Anhidrosis（無汗）', 'Mydriasis（瞳孔放大）'], ans: 3, exp: 'Horner 症候群包含 ptosis（上眼瞼下垂）、miosis（瞳孔縮小）、anhidrosis（同側顏面無汗）。Mydriasis 是瞳孔放大，為交感興奮表現，恰好相反。' },
+      { q: '若病人正在接受 IV lidocaine infusion 治療 VT storm，SGB 藥物選擇應注意什麼？', opts: ['可正常使用 lidocaine', '應改用 ropivacaine 以降低 LAST 風險', '應使用更高濃度的 bupivacaine', '應先停止 lidocaine infusion 再執行 SGB'], ans: 1, exp: '同時使用 IV lidocaine infusion + SGB 局麻藥會增加 LAST（Local Anesthetic Systemic Toxicity）風險，建議改用 ropivacaine，因其心臟毒性較低。' },
+      { q: 'STAR study（EHJ 2024）關於 SGB 在 electrical storm 的主要發現為何？', opts: ['SGB 無效，不建議使用', 'SGB 是經皮執行的有效治療，可減少心室心律不整復發', 'SGB 僅對 VF 有效，對 VT 無效', 'SGB 需要全身麻醉才能執行'], ans: 1, exp: 'STAR study 是目前最大型的 SGB 在 electrical storm 治療研究，證實經皮 SGB 可有效減少難治性心室心律不整的復發。' },
+      { q: '預防 LAST（Local Anesthetic Systemic Toxicity）的措施不包含下列哪項？', opts: ['使用低濃度局麻藥', '分次注射', '備妥 Intralipid 20%', '使用 epinephrine 混合液增加吸收'], ans: 3, exp: '預防 LAST 的三大措施為：使用低濃度局麻藥、分次注射、備好 Intralipid 20% 做為解毒劑。加入 epinephrine 會增加心臟毒性風險，在 SGB 中不建議使用。' },
+    ];
+
+    // ─── Components ──────────────────────────────────────────────────────────────
+    const Icons = {
+      ChevronDown: ({className="w-5 h-5"}) => <svg aria-hidden="true" className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/></svg>,
+      Check: ({className="w-5 h-5"}) => <svg aria-hidden="true" className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
+      X: ({className="w-5 h-5"}) => <svg aria-hidden="true" className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
+      ExternalLink: ({className="w-4 h-4"}) => <svg aria-hidden="true" className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>,
+    };
+
+    const Card = ({ title, children, gradient = 'from-slate-600 to-slate-700', className = '' }) => (
+      <div className={`glass-card rounded-2xl overflow-hidden ${className}`}>
+        {title && <div className={`bg-gradient-to-r ${gradient} px-5 py-4 border-b border-white/10`}><h3 className="font-bold text-white">{title}</h3></div>}
+        <div className="p-5">{children}</div>
+      </div>
+    );
+
+    const Expandable = ({ title, children, defaultOpen = false, gradient = 'from-slate-600 to-slate-700' }) => {
+      const [open, setOpen] = useState(defaultOpen);
+      return (
+        <div className="glass-card rounded-2xl overflow-hidden mb-4">
+          <button onClick={() => setOpen(!open)} className={`w-full bg-gradient-to-r ${gradient} px-5 py-4 flex items-center justify-between`}>
+            <span className="font-bold text-white text-left">{title}</span>
+            <Icons.ChevronDown className={`w-5 h-5 text-white/60 transition-transform flex-shrink-0 ${open ? 'rotate-180' : ''}`} />
+          </button>
+          {open && <div className="p-5 fade-in border-t border-white/10">{children}</div>}
+        </div>
+      );
+    };
+
+    // ─── Pages ───────────────────────────────────────────────────────────────────
+    const HomePage = ({ setSection }) => (
+      <div className="fade-in space-y-6">
+        {/* Hero */}
+        <div className="glass-card rounded-3xl p-8 bg-gradient-to-br from-teal-500/20 via-cyan-500/10 to-transparent">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="text-teal-400 p-3 bg-teal-500/10 rounded-full pulse-glow">
+              <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 24 24"><path d="M13 3C9.23 3 6.19 5.95 6 9.66l-1.92 2.53c-.24.31 0 .81.42.81H6v3c0 1.1.9 2 2 2h1v3h7v-4.69c2.37-1.12 4-3.51 4-6.31 0-3.87-3.13-7-7-7zm-1 16h-2v-2h2v2zm2.77-4.75l-.77.38V17h-4v-2.37l-.77-.38A4.99 4.99 0 018 10c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.95-1.13 3.64-2.77 4.45l-.46.8z"/></svg>
+            </div>
+            <div>
+              <h1 className="text-3xl font-black text-white">星狀神經節阻斷術</h1>
+              <p className="text-gray-400">Stellate Ganglion Block (SGB) for Electrical Storm</p>
+            </div>
+          </div>
+          <p className="text-gray-300 text-lg">當難治性心室頻脈 / 心室顫動（Electrical Storm）無法以藥物控制時，<span className="text-teal-400 font-bold">SGB 是重要的急救橋接治療手段</span>，透過阻斷交感神經活性來穩定心律。</p>
+          <div className="mt-4">
+            <a href="https://doi.org/10.1093/eurheartj/ehae021" target="_blank" rel="noopener noreferrer" className="inline-block text-sm text-teal-300/80 hover:text-teal-300 transition-colors">
+              Reference: Savastano S, et al. <em>Eur Heart J.</em> 2024;45(10):823-833
+              <Icons.ExternalLink className="w-3 h-3 inline ml-1" />
+            </a>
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { l: '適應症', v: 'VT/VF Storm', c: 'from-red-500 to-rose-600' },
+            { l: '注射劑量', v: '10 mL', c: 'from-teal-500 to-cyan-600' },
+            { l: '定位方式', v: 'US-guided', c: 'from-blue-500 to-indigo-600' },
+            { l: '成功標誌', v: 'Horner Sign', c: 'from-purple-500 to-violet-600' },
+          ].map((s, i) => (
+            <div key={i} className="glass-card rounded-2xl p-4 text-center">
+              <div className={`text-xl font-black bg-gradient-to-r ${s.c} bg-clip-text text-transparent`}>{s.v}</div>
+              <div className="text-xs text-gray-400 mt-1">{s.l}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Navigation */}
+        <div className="grid md:grid-cols-2 gap-4">
+          {[
+            { s: 'technique', t: '操作技術重點', d: '超音波定位、進針、藥物', c: 'from-teal-500/20 to-cyan-500/10', icon: '🎯' },
+            { s: 'resources', t: '學習資源', d: 'YouTube、Podcast、教學平台', c: 'from-blue-500/20 to-indigo-500/10', icon: '📚' },
+            { s: 'safety', t: '安全提醒', d: '併發症預防與處置', c: 'from-red-500/20 to-orange-500/10', icon: '⚠️' },
+            { s: 'pathway', t: '學習路徑', d: '五步驟進階學習建議', c: 'from-purple-500/20 to-violet-500/10', icon: '🗺️' },
+            { s: 'references', t: '參考文獻', d: '關鍵研究與指引', c: 'from-amber-500/20 to-yellow-500/10', icon: '📖' },
+            { s: 'quiz', t: '自我測驗', d: '8 題快速複習', c: 'from-green-500/20 to-emerald-500/10', icon: '✏️' },
+          ].map(item => (
+            <button key={item.s} onClick={() => setSection(item.s)} className={`glass-card rounded-2xl p-6 text-left hover:scale-[1.02] transition-transform bg-gradient-to-br ${item.c}`}>
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">{item.icon}</span>
+                <div>
+                  <h3 className="font-bold text-white text-lg">{item.t}</h3>
+                  <p className="text-gray-400 text-sm mt-1">{item.d}</p>
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {/* Key Points */}
+        <Card title="重點摘要 Key Points" gradient="from-teal-600 to-cyan-700">
+          <ul className="space-y-2">
+            {[
+              'SGB 是 Electrical Storm 的重要急救橋接治療',
+              '超音波導引 C6 水平 lateral-to-medial in-plane 進針',
+              '標準劑量：0.25% ropivacaine 10 mL',
+              '已用 IV lidocaine 者應改用 ropivacaine，避免 LAST',
+              '成功標誌：同側 Horner 症候群（ptosis、miosis、anhidrosis）',
+              '不建議同時雙側 SGB，除非已插管且左側無效',
+            ].map((p, i) => (
+              <li key={i} className="flex items-start gap-2 text-gray-300"><Icons.Check className="w-5 h-5 text-teal-400 flex-shrink-0 mt-0.5" />{p}</li>
+            ))}
+          </ul>
+        </Card>
+      </div>
+    );
+
+    const TechniquePage = () => {
+      const [checked, setChecked] = useState({});
+      const toggle = (id) => setChecked(prev => ({ ...prev, [id]: !prev[id] }));
+      const total = techniqueSteps.reduce((s, sec) => s + sec.items.length, 0);
+      const done = Object.values(checked).filter(Boolean).length;
+
+      return (
+        <div className="fade-in space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-black text-white">操作技術重點</h2>
+            <span className="text-sm text-teal-400 font-bold">{done}/{total} 已學習</span>
+          </div>
+          <div className="w-full bg-white/10 rounded-full h-2">
+            <div className="bg-gradient-to-r from-teal-500 to-cyan-400 h-2 rounded-full transition-all" style={{ width: `${total ? (done / total) * 100 : 0}%` }} />
+          </div>
+          {techniqueSteps.map((section, si) => (
+            <Expandable key={si} title={`${si + 1}. ${section.title}`} gradient="from-teal-600/80 to-cyan-700/80" defaultOpen={si === 0}>
+              <div className="space-y-3">
+                {section.items.map((item, ii) => {
+                  const id = `${si}-${ii}`;
+                  return (
+                    <button key={id} onClick={() => toggle(id)} className={`w-full flex items-start gap-3 p-3 rounded-xl text-left transition-all ${checked[id] ? 'bg-teal-500/15' : 'bg-white/5 hover:bg-white/10'}`}>
+                      <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${checked[id] ? 'bg-teal-500 border-teal-500' : 'border-gray-500'}`}>
+                        {checked[id] && <span className="text-white text-sm font-bold">✓</span>}
+                      </div>
+                      <span className={`text-sm ${checked[id] ? 'text-teal-300' : 'text-gray-300'}`}>{item}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </Expandable>
+          ))}
+          {/* Drug Warning */}
+          <div className="glass-card rounded-2xl p-5 border-l-4 border-amber-500 bg-gradient-to-r from-amber-500/10 to-transparent">
+            <h4 className="text-amber-400 font-bold mb-2 flex items-center gap-2"><span>⚠️</span> Lidocaine Drip 合併用藥警示</h4>
+            <p className="text-gray-300 text-sm">若病人正在接受 IV lidocaine infusion 治療 VT/VES，執行 SGB 時局麻藥累積劑量增加，<strong className="text-amber-300">LAST 風險顯著上升</strong>。此情境下強烈建議改用 ropivacaine（心臟毒性較低）。</p>
+          </div>
+        </div>
+      );
+    };
+
+    const ResourcesPage = () => (
+      <div className="fade-in space-y-6">
+        <h2 className="text-2xl font-black text-white">學習資源</h2>
+
+        {/* EMCrit Podcast - Top Recommendation */}
+        <div className="glass-card rounded-2xl overflow-hidden border border-teal-500/30">
+          <div className="bg-gradient-to-r from-teal-600 to-cyan-700 px-5 py-4">
+            <div className="flex items-center gap-2">
+              <span className="text-xl">🎙️</span>
+              <h3 className="font-bold text-white">強烈推薦：EMCrit Podcast</h3>
+            </div>
+          </div>
+          <div className="p-5 space-y-3">
+            <p className="text-white font-bold text-lg">EMCrit 395 — "Stellate Ganglion Block: Not Whether, but When?"</p>
+            <p className="text-gray-400 text-sm">主講：Robert Stenberg, MD（Cleveland Clinic 急診超音波主任，RDMS/RDCS 認證）</p>
+            <div className="space-y-2 mt-3">
+              {['SGB 在電風暴的適應症時機', '超音波操作技巧', 'Local Anesthetic Systemic Toxicity（LAST）風險管理', '與麻醉科協作流程建立'].map((item, i) => (
+                <div key={i} className="flex items-start gap-2"><Icons.Check className="w-4 h-4 text-teal-400 flex-shrink-0 mt-0.5" /><span className="text-gray-300 text-sm">{item}</span></div>
+              ))}
+            </div>
+            <a href="https://emcrit.org/emcrit/stellate-ganglion-block/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-teal-500/20 hover:bg-teal-500/30 border border-teal-500/30 rounded-xl text-teal-300 text-sm transition-colors">
+              前往 EMCrit 網站 <Icons.ExternalLink className="w-4 h-4" />
+            </a>
+            <p className="text-xs text-gray-500 mt-2">目前針對急重症心臟科醫師最完整的實務討論資源，附詳細 show notes 及文獻</p>
+          </div>
+        </div>
+
+        {/* YouTube */}
+        <Expandable title="🎬 YouTube 影片推薦" gradient="from-red-600/80 to-red-700/80" defaultOpen>
+          <div className="space-y-4">
+            <h4 className="text-white font-bold">超音波導引操作技術</h4>
+            {youtubeResources.procedural.map((r, i) => (
+              <div key={i} className="bg-white/5 rounded-xl p-4">
+                <p className="text-teal-300 font-mono text-sm mb-1">搜尋：{r.keyword}</p>
+                <p className="text-gray-400 text-sm">學習重點：{r.focus}</p>
+              </div>
+            ))}
+            <h4 className="text-white font-bold mt-4">心臟電風暴應用</h4>
+            {youtubeResources.cardiac.map((r, i) => (
+              <div key={i} className="bg-white/5 rounded-xl p-4">
+                <p className="text-teal-300 font-mono text-sm mb-1">搜尋：{r.keyword}</p>
+                <p className="text-gray-400 text-sm">學習重點：{r.focus}</p>
+              </div>
+            ))}
+          </div>
+        </Expandable>
+
+        {/* Professional Platforms */}
+        <Expandable title="📱 專業教學平台" gradient="from-indigo-600/80 to-blue-700/80">
+          <div className="space-y-4">
+            {platforms.map((p, i) => (
+              <div key={i} className="bg-white/5 rounded-xl p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="text-white font-bold">{p.name}</h4>
+                  <span className={`text-xs px-2 py-1 rounded-full ${p.cost === '免費' ? 'bg-green-500/20 text-green-400' : 'bg-amber-500/20 text-amber-400'}`}>{p.cost}</span>
+                </div>
+                <p className="text-gray-400 text-sm mb-2">{p.feature}</p>
+                <a href={p.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-blue-400 text-sm hover:text-blue-300 transition-colors">
+                  前往網站 <Icons.ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+            ))}
+          </div>
+        </Expandable>
+      </div>
+    );
+
+    const SafetyPage = () => (
+      <div className="fade-in space-y-6">
+        <h2 className="text-2xl font-black text-white">安全提醒</h2>
+        <div className="glass-card rounded-2xl p-5 border-l-4 border-red-500 bg-gradient-to-r from-red-500/10 to-transparent mb-4">
+          <p className="text-red-300 font-bold">執行 SGB 前務必確認以下安全項目</p>
+        </div>
+        <div className="space-y-4">
+          {safetyRisks.map((r, i) => (
+            <div key={i} className="glass-card rounded-2xl overflow-hidden">
+              <div className="bg-gradient-to-r from-red-600/60 to-orange-600/40 px-5 py-3">
+                <h4 className="text-white font-bold flex items-center gap-2"><span className="text-red-400">⚠️</span> {r.risk}</h4>
+              </div>
+              <div className="p-5">
+                <div className="flex items-start gap-2">
+                  <span className="text-green-400 font-bold text-sm mt-0.5">預防</span>
+                  <p className="text-gray-300 text-sm">{r.prevention}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* Intralipid */}
+        <Card title="🧴 Intralipid 20% 急救流程" gradient="from-green-600 to-emerald-700">
+          <div className="space-y-3">
+            <div className="bg-white/5 rounded-xl p-4">
+              <h4 className="text-green-400 font-bold mb-2">LAST 出現時（抽搐/心律不整）</h4>
+              <ol className="space-y-2 text-gray-300 text-sm list-decimal list-inside">
+                <li>立即停止注射局麻藥</li>
+                <li>呼叫幫忙，準備 ACLS</li>
+                <li><strong className="text-white">Intralipid 20% bolus</strong>：1.5 mL/kg IV（約 100 mL / 70kg）</li>
+                <li><strong className="text-white">Intralipid 20% infusion</strong>：0.25 mL/kg/min 持續至少 10 分鐘</li>
+                <li>可每 5 分鐘重複 bolus，最大總量 12 mL/kg</li>
+              </ol>
+            </div>
+          </div>
+        </Card>
+      </div>
+    );
+
+    const PathwayPage = () => {
+      const [completed, setCompleted] = useState({});
+      const toggle = (step) => setCompleted(prev => ({ ...prev, [step]: !prev[step] }));
+      return (
+        <div className="fade-in space-y-6">
+          <h2 className="text-2xl font-black text-white">建議學習路徑</h2>
+          <p className="text-gray-400">循序漸進掌握 SGB 從理論到臨床的完整技能</p>
+          <div className="relative">
+            {/* Timeline Line */}
+            <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-teal-500 via-cyan-500 to-purple-500"></div>
+            <div className="space-y-6">
+              {learningPath.map((item) => (
+                <button key={item.step} onClick={() => toggle(item.step)} className="w-full flex items-start gap-4 text-left group">
+                  <div className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 font-black text-lg transition-all ${completed[item.step] ? 'bg-teal-500 text-white' : 'bg-slate-700 text-gray-400 border-2 border-teal-500/30 group-hover:border-teal-500'}`}>
+                    {completed[item.step] ? '✓' : item.step}
+                  </div>
+                  <div className={`glass-card rounded-2xl p-5 flex-1 transition-all ${completed[item.step] ? 'border-teal-500/30' : 'hover:border-white/20'}`}>
+                    <h4 className={`font-bold mb-1 ${completed[item.step] ? 'text-teal-300' : 'text-white'}`}>{item.action}</h4>
+                    <p className="text-gray-400 text-sm">{item.goal}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const ReferencesPage = () => (
+      <div className="fade-in space-y-6">
+        <h2 className="text-2xl font-black text-white">參考文獻</h2>
+        <div className="space-y-4">
+          {references.map((ref, i) => (
+            <div key={i} className="glass-card rounded-2xl p-5">
+              <div className="flex items-start gap-3">
+                <span className="text-teal-400 font-bold text-lg">{i + 1}.</span>
+                <div>
+                  <p className="text-gray-300 text-sm">
+                    <span className="text-white font-medium">{ref.authors}</span> {ref.title}
+                  </p>
+                  <p className="text-teal-400/80 text-sm mt-1"><em>{ref.journal}</em></p>
+                  {ref.url && (
+                    <a href={ref.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-blue-400 text-xs mt-2 hover:text-blue-300 transition-colors">
+                      DOI 連結 <Icons.ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+
+    const QuizPage = () => {
+      const [current, setCurrent] = useState(0);
+      const [selected, setSelected] = useState(null);
+      const [showResult, setShowResult] = useState(false);
+      const [score, setScore] = useState(0);
+      const [finished, setFinished] = useState(false);
+
+      const handleAnswer = (idx) => {
+        if (showResult) return;
+        setSelected(idx);
+        setShowResult(true);
+        if (idx === quizData[current].ans) setScore(s => s + 1);
+      };
+
+      const next = () => {
+        if (current < quizData.length - 1) {
+          setCurrent(c => c + 1);
+          setSelected(null);
+          setShowResult(false);
+        } else {
+          setFinished(true);
+        }
+      };
+
+      const restart = () => {
+        setCurrent(0);
+        setSelected(null);
+        setShowResult(false);
+        setScore(0);
+        setFinished(false);
+      };
+
+      if (finished) {
+        const pct = Math.round((score / quizData.length) * 100);
+        return (
+          <div className="fade-in space-y-6">
+            <div className="glass-card rounded-3xl p-8 text-center bg-gradient-to-br from-teal-500/20 to-cyan-500/10">
+              <div className="text-6xl mb-4">{pct >= 80 ? '🏆' : pct >= 60 ? '👍' : '📖'}</div>
+              <h2 className="text-3xl font-black text-white mb-2">{score} / {quizData.length}</h2>
+              <p className="text-gray-400">{pct >= 80 ? '優秀！你已掌握 SGB 核心知識' : pct >= 60 ? '不錯！建議再複習部分章節' : '建議重新閱讀學習資源後再測驗'}</p>
+              <button onClick={restart} className="mt-6 px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold rounded-xl hover:scale-105 transition-transform">重新測驗</button>
+            </div>
+          </div>
+        );
+      }
+
+      const q = quizData[current];
+      return (
+        <div className="fade-in space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-black text-white">自我測驗</h2>
+            <span className="text-sm text-teal-400 font-bold">{current + 1} / {quizData.length}</span>
+          </div>
+          <div className="w-full bg-white/10 rounded-full h-2">
+            <div className="bg-gradient-to-r from-teal-500 to-cyan-400 h-2 rounded-full transition-all" style={{ width: `${((current + 1) / quizData.length) * 100}%` }} />
+          </div>
+          <Card>
+            <p className="text-white font-bold text-lg mb-6">{q.q}</p>
+            <div className="space-y-3">
+              {q.opts.map((opt, i) => {
+                let cls = 'bg-white/5 hover:bg-white/10 border-white/10';
+                if (showResult) {
+                  if (i === q.ans) cls = 'bg-green-500/20 border-green-500';
+                  else if (i === selected) cls = 'bg-red-500/20 border-red-500';
+                  else cls = 'bg-white/5 border-white/5 opacity-50';
+                }
+                return (
+                  <button key={i} onClick={() => handleAnswer(i)} disabled={showResult} className={`w-full text-left p-4 rounded-xl border transition-all flex items-start gap-3 ${cls}`}>
+                    <span className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 text-sm font-bold text-gray-400">{String.fromCharCode(65 + i)}</span>
+                    <span className="text-gray-200 text-sm">{opt}</span>
+                    {showResult && i === q.ans && <Icons.Check className="w-5 h-5 text-green-400 flex-shrink-0 ml-auto" />}
+                    {showResult && i === selected && i !== q.ans && <Icons.X className="w-5 h-5 text-red-400 flex-shrink-0 ml-auto" />}
+                  </button>
+                );
+              })}
+            </div>
+            {showResult && (
+              <div className="mt-4 fade-in">
+                <div className={`p-4 rounded-xl ${selected === q.ans ? 'bg-green-500/10 border border-green-500/30' : 'bg-red-500/10 border border-red-500/30'}`}>
+                  <p className={`font-bold mb-1 ${selected === q.ans ? 'text-green-400' : 'text-red-400'}`}>{selected === q.ans ? '✓ 正確！' : '✗ 答錯了'}</p>
+                  <p className="text-gray-300 text-sm">{q.exp}</p>
+                </div>
+                <button onClick={next} className="mt-4 w-full py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold rounded-xl hover:scale-[1.02] transition-transform">
+                  {current < quizData.length - 1 ? '下一題' : '查看結果'}
+                </button>
+              </div>
+            )}
+          </Card>
+        </div>
+      );
+    };
+
+    // ─── Main App ────────────────────────────────────────────────────────────────
+    const App = () => {
+      const [section, setSection] = useState('home');
+
+      const sections = [
+        { id: 'home', label: '首頁' },
+        { id: 'technique', label: '操作技術' },
+        { id: 'resources', label: '學習資源' },
+        { id: 'safety', label: '安全提醒' },
+        { id: 'pathway', label: '學習路徑' },
+        { id: 'references', label: '文獻' },
+        { id: 'quiz', label: '測驗' },
+      ];
+
+      const renderContent = () => {
+        switch (section) {
+          case 'home': return <HomePage setSection={setSection} />;
+          case 'technique': return <TechniquePage />;
+          case 'resources': return <ResourcesPage />;
+          case 'safety': return <SafetyPage />;
+          case 'pathway': return <PathwayPage />;
+          case 'references': return <ReferencesPage />;
+          case 'quiz': return <QuizPage />;
+          default: return <HomePage setSection={setSection} />;
+        }
+      };
+
+      return (
+        <div className="min-h-screen">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-teal-600 to-cyan-700 text-white px-5 py-4 sticky top-0 z-50 shadow-lg shadow-teal-900/30">
+            <div className="max-w-4xl mx-auto flex items-center justify-between">
+              <div>
+                <h1 className="text-lg font-black">SGB 教學</h1>
+                <p className="text-xs text-teal-200/80">Stellate Ganglion Block for Electrical Storm</p>
+              </div>
+              {section !== 'home' && (
+                <button onClick={() => setSection('home')} className="text-sm px-3 py-1.5 bg-white/15 hover:bg-white/25 rounded-lg transition-colors">← 首頁</button>
+              )}
+            </div>
+          </div>
+
+          {/* Nav Tabs */}
+          <div className="sticky top-[68px] z-40 bg-slate-900/95 backdrop-blur border-b border-teal-500/20">
+            <div className="max-w-4xl mx-auto flex overflow-x-auto gap-1 px-4 py-2" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
+              {sections.map(s => (
+                <button key={s.id} onClick={() => setSection(s.id)} className={`flex-shrink-0 px-3 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${section === s.id ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/30' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Content */}
+          <main className="max-w-4xl mx-auto px-4 py-6 pb-20">
+            {renderContent()}
+          </main>
+
+          {/* Footer */}
+          <footer className="text-center py-6 text-gray-500 text-xs border-t border-white/5">
+            <p>NTUH Hsinchu Branch — Cardiovascular Center</p>
+            <p className="mt-1">SGB 教學資源 | 2026.02</p>
+          </footer>
+        </div>
+      );
+    };
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+
+  <!-- Share Button JavaScript -->
+  <script>
+    function initShareButtons() {
+      const pageUrl = window.location.href;
+      const pageTitle = document.title;
+      const encodedUrl = encodeURIComponent(pageUrl);
+      const qrCodeImg = document.getElementById('qrCode');
+      if (qrCodeImg) qrCodeImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodedUrl;
+      const lineShare = document.getElementById('lineShare');
+      if (lineShare) lineShare.href = 'https://social-plugins.line.me/lineit/share?url=' + encodedUrl;
+      const emailShare = document.getElementById('emailShare');
+      if (emailShare) {
+        const emailSubject = encodeURIComponent('Share: ' + pageTitle);
+        const emailBody = encodeURIComponent('I want to share this page with you:\n\n' + pageTitle + '\n\n' + pageUrl);
+        emailShare.href = 'mailto:?subject=' + emailSubject + '&body=' + emailBody;
+      }
+    }
+    function toggleShareMenu() { const menu = document.getElementById('shareMenu'); if (menu) menu.classList.toggle('active'); }
+    function copyPageUrl() {
+      const pageUrl = window.location.href;
+      navigator.clipboard.writeText(pageUrl).then(() => { alert('連結已複製！'); }).catch(() => {
+        const ta = document.createElement('textarea'); ta.value = pageUrl; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); alert('連結已複製！');
+      });
+    }
+    document.addEventListener('click', function(e) { const sb = document.querySelector('.share-button'); const sm = document.getElementById('shareMenu'); if (sb && sm && !sb.contains(e.target) && sm.classList.contains('active')) sm.classList.remove('active'); });
+    document.addEventListener('DOMContentLoaded', initShareButtons);
+  </script>
+</body>
+</html>
