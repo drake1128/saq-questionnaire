@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CCU 教育訓練評核 2026 年 2 月 27 日 | ACLS 急救藥物與呼吸道處置</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #273549;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-purple: #8b5cf6;
+            --accent-red: #ef4444;
+            --accent-yellow: #fbbf24;
+            --accent-orange: #f97316;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        #root {
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Share Button Styles */
+        .share-button { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+        .share-toggle { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%); border: none; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+        .share-toggle:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5); }
+        .share-menu { position: absolute; top: 60px; right: 0; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 20px; min-width: 280px; display: none; animation: fadeInShare 0.3s ease; }
+        .share-menu.active { display: block; }
+        @keyframes fadeInShare { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .share-menu h4 { color: #1e293b; margin: 0 0 15px 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+        .qr-container { background: #f8fafc; border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 15px; }
+        .qr-container img { max-width: 150px; height: auto; border-radius: 8px; }
+        .qr-container p { font-size: 0.75rem; color: #64748b; margin: 8px 0 0 0; }
+        .share-buttons { display: flex; flex-direction: column; gap: 10px; }
+        .share-btn { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 12px; text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: all 0.2s; border: none; cursor: pointer; width: 100%; }
+        .share-btn.line { background: #06C755; color: white; }
+        .share-btn.email { background: #3b82f6; color: white; }
+        .share-btn.copy { background: #f1f5f9; color: #334155; }
+        .share-btn:hover { transform: translateY(-1px); opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <!-- Share Button -->
+    <div class="share-button">
+        <button class="share-toggle" onclick="toggleShareMenu()" title="分享">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+        </button>
+        <div class="share-menu" id="shareMenu">
+            <h4>📤 分享此頁面</h4>
+            <div class="qr-container">
+                <img id="qrCode" src="" alt="QR Code" width="150" height="150">
+                <p>掃描 QR Code 開啟頁面</p>
+            </div>
+            <div class="share-buttons">
+                <a id="lineShare" class="share-btn line" href="#" target="_blank" rel="noopener noreferrer">💬 LINE 分享</a>
+                <a id="emailShare" class="share-btn email" href="#">📧 Email 分享</a>
+                <button class="share-btn copy" onclick="copyPageUrl()">📋 複製連結</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // ========== 50 Quiz Questions ==========
+        const quizQuestions = [
+            // --- Epinephrine (1-6) ---
+            {
+                id: 1,
+                question: "Epinephrine (Bosmin) 的規格為何？",
+                options: [
+                    "1mg/1ml/Amp",
+                    "2mg/1ml/Amp",
+                    "1mg/2ml/Amp",
+                    "0.5mg/1ml/Amp"
+                ],
+                correct: 0,
+                explanation: "Epinephrine (Adrenalin/Bosmin) 規格為 1mg/1ml/Amp。心臟停止時劑量為 1mg/3~5 分鐘 IVP。"
+            },
+            {
+                id: 2,
+                question: "Epinephrine 用於心臟停止急救時，成人劑量為何？",
+                options: [
+                    "0.5mg/3~5 分鐘 IVP",
+                    "1mg/3~5 分鐘 IVP",
+                    "2mg/3~5 分鐘 IVP",
+                    "1mg/1~2 分鐘 IVP"
+                ],
+                correct: 1,
+                explanation: "成人心臟停止劑量為 1mg/3~5 分鐘 IVP。小兒劑量為 0.2mg/kg。"
+            },
+            {
+                id: 3,
+                question: "關於 Epinephrine 的藥理作用，下列何者正確？",
+                options: [
+                    "降低心輸出量 (CO)",
+                    "增加每博輸出量 (SV)，增加心輸出量 (CO)",
+                    "降低全身血管阻力 (SVR)",
+                    "僅作用於 beta 受體"
+                ],
+                correct: 1,
+                explanation: "Epinephrine 可增加 SV 和 CO（CO = HR × SV），並使血管收縮增加 SVR（BP = CO × SVR）。同時作用於 alpha 與 beta 受體。"
+            },
+            {
+                id: 4,
+                question: "當無法建立靜脈通路，需經由氣管內管給予 Epinephrine 時，劑量應如何調整？",
+                options: [
+                    "與靜脈注射劑量相同 (1mg)",
+                    "為靜脈注射的 2~2.5 倍 (2~2.5mg)",
+                    "為靜脈注射的一半 (0.5mg)",
+                    "為靜脈注射的 5 倍 (5mg)"
+                ],
+                correct: 1,
+                explanation: "經氣管內管 (endo) 給藥時，劑量為 IV 的 2~2.5 倍，即 Bosmin 2~2.5mg，以 0.9%NS 10ml 稀釋後注入，再以 Ambu bagging 促進吸收。"
+            },
+            {
+                id: 5,
+                question: "Epinephrine 不可與下列哪種藥物同時由同一管路給予？",
+                options: [
+                    "Normal Saline",
+                    "Sodium Bicarbonate (NaHCO3)",
+                    "Dopamine",
+                    "Atropine"
+                ],
+                correct: 1,
+                explanation: "Epinephrine 不可與 Sodium Bicarbonate (NaHCO3) 同一管路給予，兩者會產生化學反應使藥物失效。"
+            },
+            {
+                id: 6,
+                question: "Epinephrine 持續滴注 (drip) 時，建議濃度為？",
+                options: [
+                    "0.01 mg/ml",
+                    "0.05 mg/ml",
+                    "0.1 mg/ml",
+                    "1 mg/ml"
+                ],
+                correct: 1,
+                explanation: "Epinephrine 持續滴注時建議濃度為 0.05 mg/ml。常見配法為 Adrenaline 10mg (10 amp) in 0.9%N/S 100ml。"
+            },
+            // --- Dopamine (7-12) ---
+            {
+                id: 7,
+                question: "Dopamine (Easydopa) 的規格為何？",
+                options: [
+                    "200mg/250ml",
+                    "400mg/250ml",
+                    "400mg/500ml",
+                    "200mg/500ml"
+                ],
+                correct: 1,
+                explanation: "Dopamine (Easydopa) 規格為 400mg/250ml。給藥劑量範圍為 5~20 μg/kg/min。"
+            },
+            {
+                id: 8,
+                question: "Dopamine 在 1~2 μg/kg/min 的低劑量下，主要作用於何種受體？",
+                options: [
+                    "Alpha-1 受體",
+                    "Beta-1 受體",
+                    "Dopamine (D1) 受體",
+                    "Beta-2 受體"
+                ],
+                correct: 2,
+                explanation: "低劑量 (1-2 μg/kg/min) Dopamine 主要活化 D1 受體，可增加腎血流量。中劑量 (2-10) 活化 β1，高劑量 (10-20) 活化 α 受體。"
+            },
+            {
+                id: 9,
+                question: "Dopamine 劑量在 2~10 μg/kg/min 時，主要產生何種作用？",
+                options: [
+                    "增加腎血流量 (Dopamine 受體)",
+                    "Beta-1 受體 — 增加心肌收縮力與心跳",
+                    "Alpha 受體 — 強烈血管收縮",
+                    "減緩心跳速率"
+                ],
+                correct: 1,
+                explanation: "中劑量 (2-10 μg/kg/min) Dopamine 主要活化 β1 受體，可增加心肌收縮力和心跳速率。"
+            },
+            {
+                id: 10,
+                question: "Dopamine 不可與下列哪種藥物同一管路輸注？",
+                options: [
+                    "Norepinephrine",
+                    "Normal Saline",
+                    "NaHCO3 (Rolikan)",
+                    "D5W"
+                ],
+                correct: 2,
+                explanation: "Dopamine 不可與 NaHCO3 (Rolikan) 同一管路輸注，因鹼性溶液會使 Dopamine 分解失效。"
+            },
+            {
+                id: 11,
+                question: "Dopamine 建議使用何種靜脈通路給藥？",
+                options: [
+                    "周邊靜脈 (PIV) 即可",
+                    "中心靜脈導管 (CVC)",
+                    "肌肉注射 (IM)",
+                    "皮下注射 (SC)"
+                ],
+                correct: 1,
+                explanation: "Dopamine 建議使用中心靜脈導管 (CVC) 給藥。高濃度 Dopamine 若由周邊靜脈滲漏可導致局部組織壞死。"
+            },
+            {
+                id: 12,
+                question: "Dopamine 劑量超過 20 μg/kg/min 時，可能產生什麼問題？",
+                options: [
+                    "腎血流增加過多",
+                    "心跳過慢",
+                    "類似 Norepinephrine 的強烈血管收縮作用",
+                    "血壓下降"
+                ],
+                correct: 2,
+                explanation: "Dopamine 劑量 >20 μg/kg/min 時，alpha 受體效應極為明顯，產生強烈血管收縮，類似 Norepinephrine 作用。"
+            },
+            // --- Norepinephrine (13-16) ---
+            {
+                id: 13,
+                question: "Norepinephrine 的規格為何？",
+                options: [
+                    "2mg/2ml/Amp",
+                    "4mg/4ml/Amp",
+                    "8mg/4ml/Amp",
+                    "4mg/2ml/Amp"
+                ],
+                correct: 1,
+                explanation: "Norepinephrine 規格為 4mg/4ml/Amp。起始劑量 0.5~1 μg/min，最大劑量可至 30 μg/kg/min。"
+            },
+            {
+                id: 14,
+                question: "Norepinephrine 的起始劑量為何？",
+                options: [
+                    "0.1~0.2 μg/min",
+                    "0.5~1 μg/min",
+                    "2~5 μg/min",
+                    "10~20 μg/min"
+                ],
+                correct: 1,
+                explanation: "Norepinephrine 起始劑量為 0.5~1 μg/min，再依據血壓反應調整，最大劑量可至 30 μg/kg/min。"
+            },
+            {
+                id: 15,
+                question: "關於 Norepinephrine 的給藥注意事項，下列何者正確？",
+                options: [
+                    "可由周邊靜脈安全給予",
+                    "可與 NTG 同一管路給藥",
+                    "必須經由中心靜脈導管 (CVC) 給藥",
+                    "只能肌肉注射"
+                ],
+                correct: 2,
+                explanation: "Norepinephrine 必須經由 CVC 給藥，避免周邊滲漏造成組織壞死。且不可與 NTG (Nitroglycerin) 同一管路。"
+            },
+            {
+                id: 16,
+                question: "Norepinephrine 主要的藥理作用為何？",
+                options: [
+                    "純 beta 受體促效劑",
+                    "強 alpha-1 受體促效劑（血管收縮），兼有 beta-1 作用",
+                    "Dopamine 受體促效劑",
+                    "抗膽鹼作用"
+                ],
+                correct: 1,
+                explanation: "Norepinephrine 是強效 alpha-1 促效劑，可強力收縮血管升高血壓，同時兼有 beta-1 作用增加心肌收縮力。"
+            },
+            // --- Atropine (17-19) ---
+            {
+                id: 17,
+                question: "Atropine 用於心搏過緩時，成人靜脈注射劑量為何？",
+                options: [
+                    "0.1~0.3 mg/dose",
+                    "0.5~1 mg/dose，每 3~5 分鐘可重複",
+                    "2~3 mg/dose",
+                    "5 mg/dose"
+                ],
+                correct: 1,
+                explanation: "Atropine 靜脈注射劑量為 0.5~1 mg/dose (0.5~1 amp)，每 3~5 分鐘可重複，最大總劑量 3mg。"
+            },
+            {
+                id: 18,
+                question: "Atropine 的最大總劑量為何？",
+                options: [
+                    "1 mg",
+                    "2 mg",
+                    "3 mg",
+                    "5 mg"
+                ],
+                correct: 2,
+                explanation: "Atropine 最大總劑量為 3mg。超過此劑量不建議再給予，因副作用（如心搏過速、瞳孔散大）會增加。"
+            },
+            {
+                id: 19,
+                question: "下列何者為 Atropine 的禁忌症？",
+                options: [
+                    "竇性心搏過緩",
+                    "閉角型青光眼 (Angle closure glaucoma)",
+                    "心房顫動",
+                    "低血壓"
+                ],
+                correct: 1,
+                explanation: "Atropine 為抗膽鹼藥物，會造成瞳孔散大，禁用於閉角型青光眼 (Angle closure glaucoma) 患者，可能誘發急性眼壓升高。"
+            },
+            // --- Adenosine (20-23) ---
+            {
+                id: 20,
+                question: "Adenosine (Adenocor) 的主要適應症為何？",
+                options: [
+                    "心室顫動 (VF)",
+                    "心室頻脈 (VT)",
+                    "陣發性上心室頻脈 (PSVT) 及 WPW 症候群",
+                    "心房顫動 (AF)"
+                ],
+                correct: 2,
+                explanation: "Adenosine 主要用於 PSVT (Paroxysmal Supraventricular Tachycardia) 及 Wolff-Parkinson-White (WPW) 症候群。其作用於 AV node 和 SA node。"
+            },
+            {
+                id: 21,
+                question: "Adenosine 經周邊靜脈給藥時，首次劑量為何？",
+                options: [
+                    "3 mg rapid IV push",
+                    "6 mg rapid IV push",
+                    "12 mg rapid IV push",
+                    "18 mg rapid IV push"
+                ],
+                correct: 1,
+                explanation: "周邊靜脈給藥首次劑量 6mg (1 vial)，若無效可追加 12mg (2 vials)，間隔 1~2 分鐘。經 CVC 給藥時劑量減半為 3mg。"
+            },
+            {
+                id: 22,
+                question: "Adenosine 的給藥方式及注意事項，下列何者正確？",
+                options: [
+                    "緩慢靜脈滴注 30 分鐘",
+                    "快速 IV bolus 1~2 秒內推完，隨後以 20mL N/S 沖管",
+                    "稀釋於 D5W 250ml 滴注 1 小時",
+                    "肌肉注射"
+                ],
+                correct: 1,
+                explanation: "Adenosine 半衰期極短（約 10 秒），必須以快速 IV bolus 1~2 秒內推完，隨後立即以 20mL N/S 快速沖管，確保藥物到達心臟。"
+            },
+            {
+                id: 23,
+                question: "下列何者為 Adenosine 的禁忌症？",
+                options: [
+                    "高血壓",
+                    "氣喘 (Asthma) 及病竇症候群 (SSS)",
+                    "糖尿病",
+                    "腎衰竭"
+                ],
+                correct: 1,
+                explanation: "Adenosine 禁用於氣喘 (Asthma) 患者（可誘發支氣管痙攣）及病竇症候群 (Sick Sinus Syndrome, SSS) 患者（可能加重心搏過緩）。"
+            },
+            // --- Amiodarone (24-30) ---
+            {
+                id: 24,
+                question: "Amiodarone (Cordarone) 的規格為何？",
+                options: [
+                    "150mg/3ml/Amp",
+                    "300mg/3ml/Amp",
+                    "150mg/10ml/Amp",
+                    "300mg/10ml/Amp"
+                ],
+                correct: 0,
+                explanation: "Amiodarone (Cordarone) 規格為 150mg/3ml/Amp。它是一種多通道阻斷劑，可阻斷 Na、K、Ca 離子通道。"
+            },
+            {
+                id: 25,
+                question: "Amiodarone 用於無脈性心室頻脈 (Pulseless VT) 或心室顫動 (VF) 心臟停止時，首次劑量為何？",
+                options: [
+                    "150 mg IVP",
+                    "300 mg IVP",
+                    "450 mg IVP",
+                    "600 mg IVP"
+                ],
+                correct: 1,
+                explanation: "心臟停止 (pulseless VT/VF) 時，首次劑量 300mg IVP，可追加 150mg IVP，每 5~10 分鐘。每日最大劑量 2.2g。"
+            },
+            {
+                id: 26,
+                question: "Amiodarone 經周邊靜脈給藥時，濃度建議不可超過？",
+                options: [
+                    "1 mg/ml",
+                    "2 mg/ml",
+                    "4 mg/ml",
+                    "6 mg/ml"
+                ],
+                correct: 1,
+                explanation: "Amiodarone 經周邊靜脈給藥時，濃度不可超過 2 mg/ml，以避免靜脈炎。建議濃度為 0.6 mg/ml (1 amp in 250 ml D5W)。"
+            },
+            {
+                id: 27,
+                question: "Amiodarone 高濃度 (>6 mg/mL) 輸注時，應使用何種材質的輸液管路？",
+                options: [
+                    "PVC 材質管路即可",
+                    "一般塑膠管路",
+                    "非 PVC 管路（避免 DEHP 釋出）",
+                    "橡膠管路"
+                ],
+                correct: 2,
+                explanation: "Amiodarone 濃度 >6 mg/mL 時會使 PVC 管路釋出塑化劑 DEHP（鄰苯二甲酸二酯），必須使用非 PVC 管路。"
+            },
+            {
+                id: 28,
+                question: "Amiodarone 靜脈 Loading 時，150mg in D5W 100mL 輸注時間至少需要？",
+                options: [
+                    "5 分鐘",
+                    "10 分鐘",
+                    "30 分鐘",
+                    "60 分鐘"
+                ],
+                correct: 1,
+                explanation: "Loading dose: Cordarone 150mg in D5W 100mL 輸注時間至少 10 分鐘。過快會導致低血壓等嚴重副作用。"
+            },
+            {
+                id: 29,
+                question: "Amiodarone 可能引起的心律不整副作用為何？",
+                options: [
+                    "QT 間期縮短",
+                    "QT 間期延長及 2~3 度房室傳導阻斷 (AV block)",
+                    "ST 段上升",
+                    "P 波消失"
+                ],
+                correct: 1,
+                explanation: "Amiodarone 會延長 QT 間期，並可能導致 2~3 度 AV block。使用前需評估 QT 間期，使用中需持續心電圖監測。"
+            },
+            {
+                id: 30,
+                question: "下列何者為 Amiodarone 在 CCU 常見的靜脈連續輸注配法？",
+                options: [
+                    "Cordarone 150mg in D5W 500ml run 5ml/hr",
+                    "Cordarone 900mg (6amp) in D5W 500ml，初始 run 34ml/hr (6 小時)，之後 run 17ml/hr (18 小時)",
+                    "Cordarone 300mg in N/S 100ml run 100ml/hr",
+                    "Cordarone 600mg in D5W 250ml run 50ml/hr"
+                ],
+                correct: 1,
+                explanation: "常見配法：Cordarone 900mg (6amp) in D5W 500ml。前 6 小時 run 34ml/hr (=60mg/hr)，之後 run 17ml/hr 維持 18 小時。"
+            },
+            // --- Lidocaine (31-33) ---
+            {
+                id: 31,
+                question: "Lidocaine (Xylocaine) 的給藥途徑及首次劑量為何？",
+                options: [
+                    "IV bolus 0.5 mg/kg",
+                    "IV bolus 1~1.5 mg/kg (約 50~100mg)",
+                    "IV bolus 3 mg/kg",
+                    "IM 200 mg"
+                ],
+                correct: 1,
+                explanation: "Lidocaine IV bolus 首次劑量 1~1.5 mg/kg (約 50~100mg)，可每 5~10 分鐘追加 0.5~0.75 mg/kg。每小時最大劑量 3mg/kg (300mg)。"
+            },
+            {
+                id: 32,
+                question: "在何種情況下，Lidocaine 可替代 Amiodarone 使用？",
+                options: [
+                    "所有心室心律不整",
+                    "Amiodarone 過敏或 QT 延長時",
+                    "心搏過緩時",
+                    "上心室頻脈時"
+                ],
+                correct: 1,
+                explanation: "當 Amiodarone 不適用（如過敏）或病人已有 QT prolongation 時，可改用 Lidocaine 治療心室心律不整 (VT/VF)。Lidocaine 不會延長 QT 間期。"
+            },
+            {
+                id: 33,
+                question: "肝功能不全的病人使用 Lidocaine 時，劑量應如何調整？",
+                options: [
+                    "不需調整",
+                    "減少 25%",
+                    "減少 50%",
+                    "完全禁用"
+                ],
+                correct: 2,
+                explanation: "Lidocaine 主要經肝臟代謝，肝功能不全（如 AMI 併肝功能異常、年齡 >70 歲）病人需減少 50% 劑量，以避免毒性蓄積。"
+            },
+            // --- Sodium Bicarbonate (34-36) ---
+            {
+                id: 34,
+                question: "Sodium Bicarbonate (Rolikan) 的規格及首次劑量為何？",
+                options: [
+                    "7% 20ml/Amp，首次 0.5 mEq/kg",
+                    "7% 20ml/Amp，首次 1 mEq/kg",
+                    "8.4% 50ml/Amp，首次 2 mEq/kg",
+                    "5% 10ml/Amp，首次 1 mEq/kg"
+                ],
+                correct: 1,
+                explanation: "Sodium Bicarbonate (Rolikan/Jusomine) 規格為 7% 20ml/Amp。首次劑量 1 mEq/kg，之後 0.5 mEq/kg。"
+            },
+            {
+                id: 35,
+                question: "Sodium Bicarbonate 的作用機轉為何？",
+                options: [
+                    "直接中和血中乳酸",
+                    "H⁺ + HCO₃⁻ → H₂CO₃ → H₂O + CO₂，矯正代謝性酸中毒",
+                    "增加血中氧氣攜帶量",
+                    "促進腎臟排酸"
+                ],
+                correct: 1,
+                explanation: "NaHCO₃ 中的 HCO₃⁻ 與 H⁺ 結合形成碳酸 (H₂CO₃)，再分解為 H₂O 和 CO₂，藉此矯正代謝性酸中毒。"
+            },
+            {
+                id: 36,
+                question: "下列何者為 Sodium Bicarbonate 在急救中的適應症？",
+                options: [
+                    "單純呼吸性酸中毒",
+                    "心臟停止及三環抗鬱劑 (Cyclic)/Aspirin/Barbiturate 中毒",
+                    "低血鉀",
+                    "高血糖"
+                ],
+                correct: 1,
+                explanation: "NaHCO₃ 適應症包括：(1) 心臟停止伴代謝性酸中毒、(2) 三環抗鬱劑 (Cyclic)、Aspirin、Barbiturate 中毒。呼吸性酸中毒應以改善通氣為主。"
+            },
+            // --- Vitagen / Glucose (37-38) ---
+            {
+                id: 37,
+                question: "Vitagen 50% (Glucose) 用於高血鉀急救時，應如何搭配使用？",
+                options: [
+                    "單獨給予 Vitagen 50% 2 amp IV",
+                    "Vitagen 50% 2 amp 搭配 Insulin IV 推注（10 分鐘以上）",
+                    "Vitagen 50% 1 amp IM",
+                    "Vitagen 50% 與 Calcium 同時推注"
+                ],
+                correct: 1,
+                explanation: "高血鉀急救時，給予 Vitagen 50% 2 amp 搭配 Insulin IV 推注（10 分鐘以上），利用 Insulin 促進鉀離子進入細胞內，降低血鉀濃度。"
+            },
+            {
+                id: 38,
+                question: "Vitagen 50% 給藥時應注意什麼？",
+                options: [
+                    "只能口服",
+                    "可由任何周邊靜脈快速推注",
+                    "高滲透壓溶液，建議經 CVC 給予以避免靜脈炎",
+                    "必須稀釋到 5% 才能靜脈給予"
+                ],
+                correct: 2,
+                explanation: "Vitagen 50% (Glucose) 為高滲透壓溶液，由周邊靜脈注射易造成靜脈炎及血管損傷，建議經 CVC 或大口徑靜脈給藥。"
+            },
+            // --- Magnesium Sulfate (39-40) ---
+            {
+                id: 39,
+                question: "Magnesium Sulfate (MgSO₄) 在 ACLS 中的主要適應症為何？",
+                options: [
+                    "竇性心搏過緩",
+                    "Torsade de Pointes (TdP, 多形性心室頻脈)",
+                    "心房顫動",
+                    "二度 AV block"
+                ],
+                correct: 1,
+                explanation: "Magnesium Sulfate 在 ACLS 中的主要適應症為 Torsade de Pointes (TdP)。劑量為 1~2g 稀釋於 D5W 50~100mL，15 分鐘以上輸注。"
+            },
+            {
+                id: 40,
+                question: "給予 Magnesium Sulfate 時，需監測下列哪些項目？",
+                options: [
+                    "僅監測血壓",
+                    "心跳 (HR)、血壓 (BP)、深部肌腱反射 (DTR)",
+                    "僅監測尿量",
+                    "僅監測體溫"
+                ],
+                correct: 1,
+                explanation: "MgSO₄ 輸注時需密切監測 HR（可能心搏過緩）、BP（可能低血壓）、DTR（深部肌腱反射消失為鎂中毒早期徵象）。"
+            },
+            // --- Calcium Gluconate (41-43) ---
+            {
+                id: 41,
+                question: "Calcium Gluconate (Calglon) 的規格為何？",
+                options: [
+                    "500mg/5mL/amp",
+                    "1g/10mL/amp",
+                    "2g/20mL/amp",
+                    "100mg/10mL/amp"
+                ],
+                correct: 1,
+                explanation: "Calcium Gluconate (Calglon) 規格為 1g/10mL/amp。每 mL 含 100mg calcium gluconate = 0.456 mEq/mL。"
+            },
+            {
+                id: 42,
+                question: "Calcium Gluconate 不可與下列哪種藥物同一管路給藥？",
+                options: [
+                    "Normal Saline",
+                    "D5W",
+                    "NaHCO₃ (Sodium Bicarbonate)",
+                    "Dopamine"
+                ],
+                correct: 2,
+                explanation: "Calcium Gluconate 不可與 NaHCO₃ 同一管路，兩者混合會產生�ite酸鈣沉澱，可能阻塞管路並使藥物失效。"
+            },
+            {
+                id: 43,
+                question: "Calcium Gluconate 靜脈注射速率（非 CPR 情況下）建議為何？",
+                options: [
+                    "不限速率，可快速推注",
+                    "0.7~1.8 mEq/min",
+                    "5 mEq/min",
+                    "10 mEq/min"
+                ],
+                correct: 1,
+                explanation: "非 CPR 情況下，Calcium Gluconate IV 速率應控制在 0.7~1.8 mEq/min。過快注射可能導致心搏過緩、低血壓等不良反應。CPR 時可較快給予。"
+            },
+            // --- Airway Management (44-47) ---
+            {
+                id: 44,
+                question: "打開呼吸道的兩種基本手法為何？",
+                options: [
+                    "壓額抬頦法 (Head-tilt chin lift) 及推下顎法 (Jaw-thrust)",
+                    "壓額抬頦法及 Heimlich 法",
+                    "推下顎法及胸部按壓",
+                    "頸部過伸法及下巴前推法"
+                ],
+                correct: 0,
+                explanation: "打開呼吸道的兩種基本手法：(1) 壓額抬頦法 (Head-tilt chin lift)：適用於非頸椎損傷患者；(2) 推下顎法 (Jaw-thrust)：適用於疑似頸椎損傷患者。"
+            },
+            {
+                id: 45,
+                question: "關於 LMA (Laryngeal Mask Airway) 的尺寸選擇，50~70 公斤成人應使用幾號？",
+                options: [
+                    "2 號",
+                    "3 號",
+                    "4 號",
+                    "5 號"
+                ],
+                correct: 2,
+                explanation: "LMA 尺寸選擇：3 號 (30~50kg)、4 號 (50~70kg)、5 號 (70~100kg)。50~70 公斤成人使用 4 號。"
+            },
+            {
+                id: 46,
+                question: "關於 iGel 與 LMA 的比較，下列何者正確？",
+                options: [
+                    "iGel 和 LMA 的尺寸選擇體重範圍完全相同",
+                    "iGel 不需充氣氣囊，各尺寸適用體重範圍較 LMA 寬",
+                    "iGel 僅適用於小兒",
+                    "LMA 不需充氣氣囊"
+                ],
+                correct: 1,
+                explanation: "iGel 為免充氣凝膠式聲門上氣道，各尺寸適用範圍較 LMA 寬：iGel 3 號 (30~60kg)、4 號 (50~90kg)、5 號 (>90kg)。LMA 需充氣氣囊。"
+            },
+            {
+                id: 47,
+                question: "關於鼻咽呼吸道 (Nasopharyngeal Airway) 與口咽呼吸道 (Oropharyngeal Airway) 的比較，下列何者正確？",
+                options: [
+                    "口咽呼吸道適用於意識清楚且有嘔吐反射的病人",
+                    "鼻咽呼吸道比口咽呼吸道更容易引發嘔吐反射",
+                    "鼻咽呼吸道適用於意識程度較佳、仍有嘔吐反射的病人",
+                    "口咽呼吸道可用於所有病人"
+                ],
+                correct: 2,
+                explanation: "鼻咽呼吸道 (Nasal Airway) 較不易引發嘔吐反射，適用於意識程度較佳的病人。口咽呼吸道 (Oral Airway) 會觸發嘔吐反射，僅適用於無意識的病人。"
+            },
+            // --- Ventilation & Oxygen (48-50) ---
+            {
+                id: 48,
+                question: "使用 BVM (Bag-Valve-Mask) 進行通氣時，氧氣流量及濃度應設定為？",
+                options: [
+                    "6 L/min，60% 氧氣",
+                    "10 L/min，80% 氧氣",
+                    "15 L/min，100% 氧氣",
+                    "20 L/min，100% 氧氣"
+                ],
+                correct: 2,
+                explanation: "BVM 搭配 reservoir bag 使用時，氧氣流量應設定 15 L/min，可提供接近 100% 的氧氣濃度。呼吸速率低於 10 次/分鐘或 OHCA 時應使用 BVM。"
+            },
+            {
+                id: 49,
+                question: "CPR 過程中，在建立進階氣道（如氣管內管）之前，胸部按壓與通氣的比例為何？",
+                options: [
+                    "15 : 2",
+                    "30 : 2",
+                    "50 : 2",
+                    "持續按壓不需通氣"
+                ],
+                correct: 1,
+                explanation: "未建立進階氣道時，CPR 按壓通氣比為 30:2（30 下按壓 + 2 次通氣）。建立進階氣道後，改為持續按壓搭配每 6 秒 1 次通氣（8~10 次/分鐘）。"
+            },
+            {
+                id: 50,
+                question: "關於氧氣面罩的選擇，簡單型氧氣面罩 (Simple Mask) 的氧氣流量範圍為何？",
+                options: [
+                    "1~4 L/min",
+                    "6~10 L/min",
+                    "10~15 L/min",
+                    "15~20 L/min"
+                ],
+                correct: 1,
+                explanation: "Simple Mask 流量範圍 6~10 L/min，可提供 35~60% FiO₂。流量不可低於 6 L/min，否則面罩內 CO₂ 會蓄積。非再呼吸面罩 (NRM) 則使用 10~15 L/min。"
+            }
+        ];
+
+        // ========== Teaching Content ==========
+        const teachingContent = [
+            {
+                icon: "💉",
+                title: "Epinephrine (Adrenalin/Bosmin)",
+                content: [
+                    { subtitle: "規格", text: "1mg/1ml/Amp" },
+                    { subtitle: "劑量", text: "心臟停止：1mg / 3~5 分鐘 IVP\n小兒：0.2mg/kg" },
+                    { subtitle: "藥理作用", text: "增加 SV、CO（CO = HR × SV）\n血管收縮（BP = CO × SVR）\n適應症：心臟停止、VF" },
+                    { subtitle: "氣管內管給藥", text: "劑量為 IV 的 2~2.5 倍\nBosmin 2~2.5mg in 0.9%NS 10ml flush + Ambu bagging" },
+                    { subtitle: "Drip 配法", text: "Adrenaline 10mg (10 amp) in 0.9%N/S 100ml (CV)\nAdrenaline 1mg (1 amp) in 0.9%N/S 20ml (CVS)\n建議濃度 0.05 mg/ml" }
+                ],
+                keyPoints: [
+                    "不可與 Sodium Bicarbonate 同一管路",
+                    "使用 MAO 抑制劑患者須謹慎",
+                    "氣管內管給藥劑量為 IV 的 2~2.5 倍",
+                    "心臟停止首選藥物"
+                ]
+            },
+            {
+                icon: "💊",
+                title: "Dopamine (Easydopa)",
+                content: [
+                    { subtitle: "規格", text: "400mg/250ml" },
+                    { subtitle: "劑量範圍", text: "5~20 μg/kg/min，>20 μg/kg/min 類似 Norepinephrine" },
+                    { subtitle: "劑量依賴效應", text: "1~2 μg/kg/min：Dopamine (D1) 受體 → 增加腎血流\n2~10 μg/kg/min：β1 受體 → 增加心肌收縮力與心跳\n10~20 μg/kg/min：α 受體 → 血管收縮" }
+                ],
+                keyPoints: [
+                    "不可與 NaHCO₃ (Rolikan) 同一管路",
+                    "建議使用 CVC 給藥",
+                    "外滲會造成組織壞死",
+                    "劑量不同，作用受體不同"
+                ]
+            },
+            {
+                icon: "🔴",
+                title: "Norepinephrine",
+                content: [
+                    { subtitle: "規格", text: "4mg/4ml/Amp" },
+                    { subtitle: "劑量", text: "起始 0.5~1 μg/min\n最大 30 μg/kg/min" },
+                    { subtitle: "藥理作用", text: "強效 α1 促效劑（血管收縮）\n兼有 β1 作用（增加心肌收縮力）" },
+                    { subtitle: "Drip 配法", text: "Norepinephrine 4amp (16mg) in D5W 250ml (CV/CVS)\nNorepinephrine 8mg (2 vial) in D5W 250mL (CV)\nNorepinephrine 1amp (4mg) in D5W 100ml (CVS)" }
+                ],
+                keyPoints: [
+                    "必須經 CVC 給藥",
+                    "不可與 NTG 同一管路",
+                    "外滲造成組織壞死",
+                    "是感染性休克首選升壓藥"
+                ]
+            },
+            {
+                icon: "💚",
+                title: "Atropine",
+                content: [
+                    { subtitle: "規格", text: "1mg/1ml/Amp" },
+                    { subtitle: "劑量", text: "IV 0.5~1 mg/dose (0.5~1 amp)\n每 3~5 分鐘可重複\n最大總劑量 3mg" },
+                    { subtitle: "適應症", text: "症狀性心搏過緩" },
+                    { subtitle: "禁忌症", text: "閉角型青光眼 (Angle Closure Glaucoma)" }
+                ],
+                keyPoints: [
+                    "最大總劑量 3mg",
+                    "禁用於閉角型青光眼",
+                    "為抗膽鹼藥物",
+                    "可能造成瞳孔散大、口乾"
+                ]
+            },
+            {
+                icon: "⚡",
+                title: "Adenosine (Adenocor)",
+                content: [
+                    { subtitle: "規格", text: "6mg/2ml/Amp" },
+                    { subtitle: "適應症", text: "PSVT、Wolff-Parkinson-White (WPW) syndrome\n作用於 AV node 和 SA node" },
+                    { subtitle: "劑量", text: "周邊 IV：6mg → 12mg（間隔 1~2 min）\nCVC：3mg（劑量減半）\n使用 Dipyridamole/Carbamazepine 者劑量減半" },
+                    { subtitle: "給藥方式", text: "快速 IV bolus 1~2 秒內推完\n隨後立即 20mL N/S 沖管" }
+                ],
+                keyPoints: [
+                    "半衰期極短（約 10 秒），必須快速推注",
+                    "禁用於 Asthma 及 SSS",
+                    "CVC 給藥劑量減半 (3mg)",
+                    "推藥後立即以 20mL N/S 快速沖管"
+                ]
+            },
+            {
+                icon: "💜",
+                title: "Amiodarone (Cordarone)",
+                content: [
+                    { subtitle: "規格", text: "150mg/3ml/Amp" },
+                    { subtitle: "作用機轉", text: "阻斷 Na、K、Ca 離子通道" },
+                    { subtitle: "心臟停止劑量", text: "Pulseless VT/VF：300mg IVP → 追加 150mg IVP q5~10min\n每日最大 2.2g" },
+                    { subtitle: "靜脈連續輸注", text: "Pump 配法：900mg/6amp in D5W 50ml\nLoading 10~20ml for 20~30mins → run 2ml/hr\n\n一般配法：\n900mg (6amp) in D5W 500ml\n前 6hr run 34ml/hr → 後 18hr run 17ml/hr" },
+                    { subtitle: "濃度限制", text: "周邊靜脈：≤ 2 mg/ml\n建議濃度：0.6 mg/ml (1 amp in 250ml D5W)\nLoading：150mg in D5W 100mL，≥10 min" }
+                ],
+                keyPoints: [
+                    "副作用：QT 延長、2~3 度 AV block",
+                    "高濃度 (>6 mg/mL) 須用非 PVC 管路避免 DEHP",
+                    "周邊靜脈濃度不可超過 2 mg/ml",
+                    "Loading 至少 10 分鐘"
+                ]
+            },
+            {
+                icon: "🟡",
+                title: "Lidocaine (Xylocaine)",
+                content: [
+                    { subtitle: "規格", text: "2% 5ml/100mg/Amp" },
+                    { subtitle: "作用機轉", text: "鈉離子 (Na) 通道阻斷劑" },
+                    { subtitle: "劑量", text: "IV bolus 1~1.5 mg/kg (約 50~100mg)\n追加 0.5~0.75 mg/kg q5~10min\n最大 3mg/kg (300mg/hr)" },
+                    { subtitle: "連續輸注", text: "Xylocaine 1000mg (10amp) in 0.9%N/S or D5W 100ml" },
+                    { subtitle: "適應症", text: "心室心律不整 (VT/VF)\n特別是 Amiodarone 不適用或 QT 延長時" }
+                ],
+                keyPoints: [
+                    "肝臟代謝：肝功能不全需減量 50%",
+                    "AMI 併肝功能異常、>70 歲需減量",
+                    "不會延長 QT 間期",
+                    "Amiodarone 替代藥物"
+                ]
+            },
+            {
+                icon: "🧪",
+                title: "Sodium Bicarbonate (Rolikan/Jusomine)",
+                content: [
+                    { subtitle: "規格", text: "7% 20ml/Amp" },
+                    { subtitle: "劑量", text: "首次 1 mEq/kg\n之後 0.5 mEq/kg" },
+                    { subtitle: "機轉", text: "H⁺ + HCO₃⁻ → H₂CO₃ → H₂O + CO₂\n矯正代謝性酸中毒" },
+                    { subtitle: "適應症", text: "心臟停止伴代謝性酸中毒\n三環抗鬱劑 (Cyclic)、Aspirin、Barbiturate 中毒" }
+                ],
+                keyPoints: [
+                    "不可與 Epinephrine、Dopamine、Calcium 同一管路",
+                    "給予後須確保足夠通氣以排出 CO₂",
+                    "藥物中毒鹼化尿液可加速排泄",
+                    "不建議常規使用於所有心臟停止"
+                ]
+            },
+            {
+                icon: "🍬",
+                title: "Vitagen 50% (Glucose) / MgSO₄ / Calcium Gluconate",
+                content: [
+                    { subtitle: "Vitagen 50% (20ml/amp)", text: "低血糖急救\n高血鉀：2 amp + Insulin IV（≥10 min）\n建議 CVC 給藥避免靜脈炎" },
+                    { subtitle: "MgSO₄ 10% (2g/20ml/Amp)", text: "適應症：Torsade de Pointes (TdP)\n劑量：1~2g in D5W 50~100mL over ≥15 min\n輸注：0.5~1 g/hr，max 240~360 mEq/day\n監測：HR、BP、DTR" },
+                    { subtitle: "Calcium Gluconate (1g/10mL/amp)", text: "適應症：Cardiac arrest、高血鉀\n速率：0.7~1.8 mEq/min (except CPR)\n不可與 NaHCO₃ 同管路" }
+                ],
+                keyPoints: [
+                    "MgSO₄ 為 TdP 首選治療",
+                    "Calcium 給藥過快可能致心搏過緩、低血壓",
+                    "Vitagen 50% + Insulin 是高血鉀急救重要組合",
+                    "監測 DTR 消失為鎂中毒早期徵象"
+                ]
+            },
+            {
+                icon: "🫁",
+                title: "呼吸道處置 (Airway Management)",
+                content: [
+                    { subtitle: "打開呼吸道", text: "壓額抬頦法 (Head-tilt chin lift)：非頸椎損傷\n推下顎法 (Jaw-thrust)：疑似頸椎損傷" },
+                    { subtitle: "輔助呼吸道", text: "鼻咽呼吸道 (Nasopharyngeal Airway)：適用有嘔吐反射者\n口咽呼吸道 (Oropharyngeal Airway)：僅適用無意識者" },
+                    { subtitle: "聲門上氣道", text: "LMA 尺寸：3 號 (30~50kg)、4 號 (50~70kg)、5 號 (70~100kg)\niGel 尺寸：3 號 (30~60kg)、4 號 (50~90kg)、5 號 (>90kg)" },
+                    { subtitle: "BVM 使用", text: "氧氣 15 L/min、100% 濃度\n呼吸次數 <10/min 或 OHCA 時使用\nC-E 手法固定面罩" },
+                    { subtitle: "潮氣容積", text: "一般：8~10 ml/kg (60kg → 480~600ml)，<1500ml\nOHCA：6~7 ml/kg (60kg → 360~420ml)，約 Ambu 的 1/4" }
+                ],
+                keyPoints: [
+                    "頸椎損傷疑慮用 Jaw-thrust",
+                    "iGel 免充氣，各尺寸體重範圍較 LMA 寬",
+                    "BVM 搭配 reservoir 提供近 100% 氧氣",
+                    "OHCA 不宜過度通氣"
+                ]
+            },
+            {
+                icon: "🌬️",
+                title: "氧氣治療與通氣",
+                content: [
+                    { subtitle: "CPR 通氣", text: "未建立進階氣道：30:2（按壓:通氣）\n已建立進階氣道：持續按壓 + 8~10 次/分鐘通氣" },
+                    { subtitle: "鼻導管 (Nasal Cannula)", text: "流量：≤6 L/min\n提供 24~44% FiO₂" },
+                    { subtitle: "簡單型面罩 (Simple Mask)", text: "流量：6~10 L/min\n提供 35~60% FiO₂\n不可低於 6 L/min" },
+                    { subtitle: "非再呼吸面罩 (Nonrebreather Mask)", text: "流量：10~15 L/min\n可提供高達 95% FiO₂" }
+                ],
+                keyPoints: [
+                    "Simple Mask 流量不可低於 6 L/min",
+                    "NRM 可提供最高濃度氧氣 (95%)",
+                    "進階氣道後通氣頻率 8~10 次/分鐘",
+                    "過度通氣會降低靜脈回流"
+                ]
+            },
+            {
+                icon: "🔧",
+                title: "氣管內插管與 RSI 藥物",
+                content: [
+                    { subtitle: "插管步驟重點", text: "1. ETT cuff 充氣 10cc，確認氣囊完整\n2. 喉頭鏡置入 vallecular（會厭谷）\n3. 45° 向上提起，暴露 vocal cord\n4. 確認 vocal cord 後置入 ETT\n5. BVM 連接確認位置（聽診、X-ray）" },
+                    { subtitle: "RSI 藥物", text: "Ketamine (Ketalar) 500mg/10ml/vial：鎮靜\nMidazolam (Dormicum) 15mg/3ml/amp：鎮靜\nSuccinylcholine (Relaxin) 500mg/vial：去極化型肌鬆劑\nEsmeron (Rocuronium) 50mg/5ml/amp (0.6~1.2mg/kg)：非去極化型肌鬆劑" }
+                ],
+                keyPoints: [
+                    "Ketamine 兼具鎮靜與鎮痛",
+                    "Succinylcholine 為去極化型，作用快但短",
+                    "Esmeron (Rocuronium) 為非去極化型，可用 Sugammadex 拮抗",
+                    "插管前先 BVM 預充氧"
+                ]
+            },
+            {
+                icon: "📐",
+                title: "藥物劑量計算公式",
+                content: [
+                    { subtitle: "Bosmin (1mg/1ml/amp) micro drip", text: "配法：1mg + N/S 100ml\n公式：1×1000 / (60min × BW × 100cc) = μg/kg/min" },
+                    { subtitle: "Norepinephrine (4mg/4ml)", text: "公式：(mg×1000) / (ml × 60min × BW) = μg/kg/min" },
+                    { subtitle: "Dopamine (400mg/250ml/bag)", text: "公式：400×1000 / (250ml × 60min × BW)\n簡化：26.66 / BW = μg/kg/min per ml/hr" }
+                ],
+                keyPoints: [
+                    "學會藥物劑量換算是 CCU 護理師基本功",
+                    "注意單位換算：mg → μg 乘以 1000",
+                    "BW 為病人體重 (kg)",
+                    "Micro drip: 1ml = 60 drops"
+                ]
+            }
+        ];
+
+        // ========== Styles ==========
+        const styles = `
+            .app-container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 16px;
+                padding-bottom: 100px;
+            }
+
+            .back-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                color: #94a3b8;
+                text-decoration: none;
+                font-size: 0.9rem;
+                margin-bottom: 16px;
+                transition: color 0.2s;
+            }
+
+            .back-link:hover {
+                color: #06b6d4;
+            }
+
+            .header {
+                text-align: center;
+                padding: 30px 20px;
+                margin-bottom: 24px;
+            }
+
+            .header-icon {
+                font-size: 3.5rem;
+                margin-bottom: 12px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+                font-weight: 700;
+                margin-bottom: 8px;
+                background: linear-gradient(135deg, #ef4444, #f97316);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .header p {
+                color: #94a3b8;
+                font-size: 0.9rem;
+            }
+
+            .header .date-badge {
+                display: inline-block;
+                margin-top: 12px;
+                padding: 6px 16px;
+                background: rgba(239, 68, 68, 0.15);
+                border: 1px solid rgba(239, 68, 68, 0.3);
+                border-radius: 20px;
+                color: #fca5a5;
+                font-size: 0.85rem;
+                font-weight: 500;
+            }
+
+            .tabs {
+                display: flex;
+                background: #1e293b;
+                border-radius: 12px;
+                padding: 4px;
+                margin-bottom: 24px;
+                border: 1px solid #334155;
+            }
+
+            .tab {
+                flex: 1;
+                padding: 12px;
+                border: none;
+                background: transparent;
+                color: #94a3b8;
+                font-size: 0.9rem;
+                font-weight: 500;
+                cursor: pointer;
+                border-radius: 8px;
+                transition: all 0.2s;
+                font-family: inherit;
+            }
+
+            .tab.active {
+                background: #ef4444;
+                color: white;
+            }
+
+            .tab:hover:not(.active) {
+                background: #273549;
+            }
+
+            .section-card {
+                background: #1e293b;
+                border: 1px solid #334155;
+                border-radius: 16px;
+                margin-bottom: 16px;
+                overflow: hidden;
+            }
+
+            .section-header {
+                padding: 16px 20px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                cursor: pointer;
+                transition: background 0.2s;
+            }
+
+            .section-header:hover {
+                background: #273549;
+            }
+
+            .section-icon {
+                font-size: 1.5rem;
+            }
+
+            .section-title {
+                flex: 1;
+                font-size: 1rem;
+                font-weight: 600;
+            }
+
+            .expand-icon {
+                color: #64748b;
+                transition: transform 0.3s;
+            }
+
+            .expand-icon.expanded {
+                transform: rotate(180deg);
+            }
+
+            .section-content {
+                padding: 0 20px 20px;
+                border-top: 1px solid #334155;
+            }
+
+            .content-block {
+                margin-top: 16px;
+            }
+
+            .content-subtitle {
+                font-size: 0.95rem;
+                font-weight: 600;
+                color: #f97316;
+                margin-bottom: 8px;
+            }
+
+            .content-text {
+                font-size: 0.9rem;
+                color: #cbd5e1;
+                line-height: 1.7;
+                white-space: pre-line;
+            }
+
+            .key-points {
+                margin-top: 16px;
+                padding: 16px;
+                background: rgba(239, 68, 68, 0.1);
+                border: 1px solid rgba(239, 68, 68, 0.2);
+                border-radius: 12px;
+            }
+
+            .key-points-title {
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: #ef4444;
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .key-point-item {
+                font-size: 0.85rem;
+                color: #94a3b8;
+                padding: 4px 0;
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .key-point-item::before {
+                content: "\\2713";
+                color: #10b981;
+                font-weight: bold;
+            }
+
+            /* Quiz Styles */
+            .quiz-container {
+                background: #1e293b;
+                border: 1px solid #334155;
+                border-radius: 16px;
+                padding: 24px;
+                margin-bottom: 16px;
+            }
+
+            .quiz-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+
+            .quiz-progress {
+                font-size: 0.85rem;
+                color: #94a3b8;
+            }
+
+            .quiz-question {
+                font-size: 1rem;
+                font-weight: 500;
+                color: #f1f5f9;
+                margin-bottom: 20px;
+                line-height: 1.6;
+            }
+
+            .quiz-options {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .quiz-option {
+                padding: 14px 16px;
+                background: #0f172a;
+                border: 1px solid #334155;
+                border-radius: 10px;
+                cursor: pointer;
+                transition: all 0.2s;
+                font-size: 0.9rem;
+                color: #f1f5f9;
+                text-align: left;
+                font-family: inherit;
+            }
+
+            .quiz-option:hover:not(.disabled) {
+                border-color: #ef4444;
+                background: rgba(239, 68, 68, 0.1);
+            }
+
+            .quiz-option.selected {
+                border-color: #ef4444;
+                background: rgba(239, 68, 68, 0.15);
+            }
+
+            .quiz-option.correct {
+                border-color: #10b981;
+                background: rgba(16, 185, 129, 0.15);
+            }
+
+            .quiz-option.incorrect {
+                border-color: #ef4444;
+                background: rgba(239, 68, 68, 0.15);
+            }
+
+            .quiz-option.disabled {
+                pointer-events: none;
+            }
+
+            .quiz-explanation {
+                margin-top: 20px;
+                padding: 16px;
+                background: rgba(6, 182, 212, 0.1);
+                border: 1px solid rgba(6, 182, 212, 0.2);
+                border-radius: 12px;
+            }
+
+            .quiz-explanation-title {
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: #06b6d4;
+                margin-bottom: 8px;
+            }
+
+            .quiz-explanation-text {
+                font-size: 0.85rem;
+                color: #94a3b8;
+                line-height: 1.6;
+            }
+
+            .quiz-btn {
+                width: 100%;
+                padding: 14px;
+                border: none;
+                border-radius: 10px;
+                font-size: 0.95rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+                margin-top: 16px;
+                font-family: inherit;
+            }
+
+            .quiz-btn.primary {
+                background: linear-gradient(135deg, #ef4444, #f97316);
+                color: white;
+            }
+
+            .quiz-btn.primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+            }
+
+            .quiz-btn:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+            /* Result */
+            .result-container {
+                text-align: center;
+                padding: 40px 20px;
+            }
+
+            .result-icon {
+                font-size: 4rem;
+                margin-bottom: 16px;
+            }
+
+            .result-title {
+                font-size: 1.5rem;
+                font-weight: 700;
+                margin-bottom: 8px;
+            }
+
+            .result-score {
+                font-size: 3rem;
+                font-weight: 700;
+                background: linear-gradient(135deg, #ef4444, #f97316);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin-bottom: 8px;
+            }
+
+            .result-message {
+                color: #94a3b8;
+                margin-bottom: 24px;
+            }
+
+            .result-details {
+                display: flex;
+                justify-content: center;
+                gap: 24px;
+                margin-bottom: 24px;
+            }
+
+            .result-stat {
+                text-align: center;
+            }
+
+            .result-stat-value {
+                font-size: 1.5rem;
+                font-weight: 700;
+            }
+
+            .result-stat-value.correct-val {
+                color: #10b981;
+            }
+
+            .result-stat-value.incorrect-val {
+                color: #ef4444;
+            }
+
+            .result-stat-label {
+                font-size: 0.8rem;
+                color: #64748b;
+            }
+
+            /* Progress Bar */
+            .progress-container {
+                background: #1e293b;
+                border: 1px solid #334155;
+                border-radius: 12px;
+                padding: 16px 20px;
+                margin-bottom: 24px;
+            }
+
+            .progress-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 10px;
+            }
+
+            .progress-title {
+                font-size: 0.9rem;
+                color: #f1f5f9;
+            }
+
+            .progress-percentage {
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: #f97316;
+            }
+
+            .progress-bar {
+                height: 8px;
+                background: #0f172a;
+                border-radius: 4px;
+                overflow: hidden;
+            }
+
+            .progress-fill {
+                height: 100%;
+                background: linear-gradient(90deg, #ef4444, #f97316);
+                border-radius: 4px;
+                transition: width 0.3s;
+            }
+
+            .footer {
+                text-align: center;
+                padding: 20px;
+                color: #64748b;
+                font-size: 0.8rem;
+                border-top: 1px solid #334155;
+                margin-top: 40px;
+            }
+        `;
+
+        // ========== Components ==========
+
+        // Teaching Section Component
+        const TeachingSection = ({ data, isOpen, onToggle }) => (
+            <div className="section-card fade-in">
+                <div className="section-header" onClick={onToggle}>
+                    <span className="section-icon">{data.icon}</span>
+                    <span className="section-title">{data.title}</span>
+                    <span className={`expand-icon ${isOpen ? 'expanded' : ''}`}>&#x25BC;</span>
+                </div>
+                {isOpen && (
+                    <div className="section-content">
+                        {data.content.map((block, idx) => (
+                            <div key={idx} className="content-block">
+                                <div className="content-subtitle">{block.subtitle}</div>
+                                <div className="content-text">{block.text}</div>
+                            </div>
+                        ))}
+                        <div className="key-points">
+                            <div className="key-points-title">&#x1F4A1; 重點整理</div>
+                            {data.keyPoints.map((point, idx) => (
+                                <div key={idx} className="key-point-item">{point}</div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+
+        // Quiz Component
+        const Quiz = ({ onComplete }) => {
+            const [currentQ, setCurrentQ] = useState(0);
+            const [selected, setSelected] = useState(null);
+            const [showExplanation, setShowExplanation] = useState(false);
+            const [score, setScore] = useState(0);
+            const [finished, setFinished] = useState(false);
+            const [answers, setAnswers] = useState([]);
+
+            const handleSelect = (idx) => {
+                if (showExplanation) return;
+                setSelected(idx);
+                setShowExplanation(true);
+                const isCorrect = idx === quizQuestions[currentQ].correct;
+                if (isCorrect) setScore(s => s + 1);
+                setAnswers([...answers, { q: currentQ, selected: idx, correct: isCorrect }]);
+            };
+
+            const handleNext = () => {
+                if (currentQ < quizQuestions.length - 1) {
+                    setCurrentQ(currentQ + 1);
+                    setSelected(null);
+                    setShowExplanation(false);
+                } else {
+                    setFinished(true);
+                    const finalScore = Math.round((score / quizQuestions.length) * 100);
+                    localStorage.setItem('exam-acls-ccu-score', finalScore);
+                    onComplete(finalScore);
+
+                    if (window.AchievementTracker) {
+                        window.AchievementTracker.trackQuizComplete('exam-acls-ccu', finalScore);
+                    }
+                }
+            };
+
+            const handleRestart = () => {
+                setCurrentQ(0);
+                setSelected(null);
+                setShowExplanation(false);
+                setScore(0);
+                setFinished(false);
+                setAnswers([]);
+            };
+
+            if (finished) {
+                const percentage = Math.round((score / quizQuestions.length) * 100);
+                let icon, message;
+                if (percentage >= 90) {
+                    icon = "\uD83C\uDF89"; message = "太棒了！你對 ACLS 急救藥物與呼吸道處置有很好的掌握！";
+                } else if (percentage >= 80) {
+                    icon = "\uD83D\uDC4D"; message = "很好！大部分重點已掌握，再加強少數不熟的部分。";
+                } else if (percentage >= 60) {
+                    icon = "\uD83D\uDCDA"; message = "建議複習教學內容，特別是答錯的題目。";
+                } else {
+                    icon = "\uD83D\uDCDD"; message = "建議重新閱讀教學內容，務必熟記急救藥物劑量與注意事項！";
+                }
+
+                return (
+                    <div className="quiz-container">
+                        <div className="result-container">
+                            <div className="result-icon">{icon}</div>
+                            <div className="result-title">測驗完成！</div>
+                            <div className="result-score">{percentage}%</div>
+                            <div className="result-message">{message}</div>
+                            <div className="result-details">
+                                <div className="result-stat">
+                                    <div className="result-stat-value correct-val">{score}</div>
+                                    <div className="result-stat-label">答對</div>
+                                </div>
+                                <div className="result-stat">
+                                    <div className="result-stat-value incorrect-val">{quizQuestions.length - score}</div>
+                                    <div className="result-stat-label">答錯</div>
+                                </div>
+                            </div>
+                            <button className="quiz-btn primary" onClick={handleRestart}>
+                                重新測驗
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            const q = quizQuestions[currentQ];
+            const progress = Math.round(((currentQ + 1) / quizQuestions.length) * 100);
+
+            return (
+                <div>
+                    <div className="progress-container">
+                        <div className="progress-header">
+                            <span className="progress-title">測驗進度</span>
+                            <span className="progress-percentage">{currentQ + 1} / {quizQuestions.length}</span>
+                        </div>
+                        <div className="progress-bar">
+                            <div className="progress-fill" style={{ width: `${progress}%` }}></div>
+                        </div>
+                    </div>
+
+                    <div className="quiz-container fade-in">
+                        <div className="quiz-header">
+                            <span className="quiz-progress">第 {currentQ + 1} 題</span>
+                            <span className="quiz-progress">目前得分：{score}</span>
+                        </div>
+                        <div className="quiz-question">{q.question}</div>
+                        <div className="quiz-options">
+                            {q.options.map((opt, idx) => {
+                                let className = "quiz-option";
+                                if (showExplanation) {
+                                    className += " disabled";
+                                    if (idx === q.correct) className += " correct";
+                                    else if (idx === selected) className += " incorrect";
+                                } else if (idx === selected) {
+                                    className += " selected";
+                                }
+                                return (
+                                    <button key={idx} className={className} onClick={() => handleSelect(idx)}>
+                                        {String.fromCharCode(65 + idx)}. {opt}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        {showExplanation && (
+                            <div className="quiz-explanation">
+                                <div className="quiz-explanation-title">&#x1F4A1; 解析</div>
+                                <div className="quiz-explanation-text">{q.explanation}</div>
+                            </div>
+                        )}
+                        {showExplanation && (
+                            <button className="quiz-btn primary" onClick={handleNext}>
+                                {currentQ < quizQuestions.length - 1 ? '下一題' : '完成測驗'}
+                            </button>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // Main App
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('quiz');
+            const [openSections, setOpenSections] = useState({ 0: true });
+            const [quizScore, setQuizScore] = useState(null);
+
+            useEffect(() => {
+                const saved = localStorage.getItem('exam-acls-ccu-score');
+                if (saved) setQuizScore(parseInt(saved));
+            }, []);
+
+            const toggleSection = (idx) => {
+                setOpenSections(prev => ({ ...prev, [idx]: !prev[idx] }));
+            };
+
+            return (
+                <div className="app-container">
+                    <style>{styles}</style>
+
+                    <a href="index.html" className="back-link">&#x2190; 返回首頁</a>
+
+                    <header className="header">
+                        <div className="header-icon">&#x1F6D1;</div>
+                        <h1>ACLS 急救藥物與呼吸道處置</h1>
+                        <p>CCU 教育訓練評核</p>
+                        <div className="date-badge">2026 年 2 月 27 日</div>
+                    </header>
+
+                    <div className="tabs">
+                        <button
+                            className={`tab ${activeTab === 'teaching' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('teaching')}
+                        >
+                            &#x1F4DA; 教學內容
+                        </button>
+                        <button
+                            className={`tab ${activeTab === 'quiz' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('quiz')}
+                        >
+                            &#x270D;&#xFE0F; 測驗 ({quizScore !== null ? `${quizScore}%` : '未完成'})
+                        </button>
+                    </div>
+
+                    {activeTab === 'teaching' && (
+                        <div className="fade-in">
+                            {teachingContent.map((section, idx) => (
+                                <TeachingSection
+                                    key={idx}
+                                    data={section}
+                                    isOpen={openSections[idx] || false}
+                                    onToggle={() => toggleSection(idx)}
+                                />
+                            ))}
+                        </div>
+                    )}
+
+                    {activeTab === 'quiz' && (
+                        <Quiz onComplete={setQuizScore} />
+                    )}
+
+                    <footer className="footer">
+                        <p>CCU 教育訓練 | ACLS 情況演練 — 急救藥物使用與注意事項、呼吸道及呼吸動力處置</p>
+                        <p>新竹台大分院 | 2026.02.27</p>
+                    </footer>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+
+    <script>
+        function initShareButtons() {
+            const pageUrl = window.location.href;
+            const pageTitle = document.title;
+            const encodedUrl = encodeURIComponent(pageUrl);
+            const qrCodeImg = document.getElementById('qrCode');
+            if (qrCodeImg) qrCodeImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodedUrl}`;
+            const lineShare = document.getElementById('lineShare');
+            if (lineShare) lineShare.href = `https://social-plugins.line.me/lineit/share?url=${encodedUrl}`;
+            const emailShare = document.getElementById('emailShare');
+            if (emailShare) {
+                const emailSubject = encodeURIComponent(`分享：${pageTitle}`);
+                const emailBody = encodeURIComponent(`我想和您分享這個頁面：\n\n${pageTitle}\n\n${pageUrl}`);
+                emailShare.href = `mailto:?subject=${emailSubject}&body=${emailBody}`;
+            }
+        }
+        function toggleShareMenu() {
+            const menu = document.getElementById('shareMenu');
+            if (menu) menu.classList.toggle('active');
+        }
+        function copyPageUrl() {
+            const pageUrl = window.location.href;
+            navigator.clipboard.writeText(pageUrl).then(() => {
+                alert('連結已複製到剪貼簿！');
+            }).catch(() => {
+                const textArea = document.createElement('textarea');
+                textArea.value = pageUrl;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('連結已複製到剪貼簿！');
+            });
+        }
+        document.addEventListener('click', function(event) {
+            const shareButton = document.querySelector('.share-button');
+            const shareMenu = document.getElementById('shareMenu');
+            if (shareButton && shareMenu && !shareButton.contains(event.target) && shareMenu.classList.contains('active')) {
+                shareMenu.classList.remove('active');
+            }
+        });
+        document.addEventListener('DOMContentLoaded', initShareButtons);
+    </script>
+
+    <!-- Achievement System Scripts -->
+    <script src="achievements-config.js"></script>
+    <script src="achievements.js"></script>
+</body>
+</html>
