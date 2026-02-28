@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>阻塞性肥厚型心肌病變教學 | HOCM Education</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --bg-dark: #0a0f1a; --bg-card: #141b2d; --bg-card-alt: #1a2340;
+            --accent-purple: #8b5cf6; --accent-pink: #ec4899; --accent-cyan: #06b6d4;
+            --accent-green: #10b981; --accent-red: #ef4444; --accent-yellow: #fbbf24;
+            --accent-orange: #f97316; --accent-blue: #3b82f6;
+            --text-primary: #f1f5f9; --text-secondary: #94a3b8; --text-muted: #64748b;
+            --border: #1e293b; --border-light: #334155;
+        }
+        body { font-family: 'Noto Sans TC', 'Inter', sans-serif; background: linear-gradient(135deg, #0a0f1a 0%, #1a1033 50%, #0a0f1a 100%); min-height: 100vh; color: var(--text-primary); line-height: 1.6; }
+        #root { min-height: 100vh; }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: var(--bg-dark); } ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.3s ease-out; }
+
+        .share-button { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+        .share-toggle { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #3B82F6, #60A5FA); border: none; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(59,130,246,0.4); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+        .share-toggle:hover { transform: scale(1.1); }
+        .share-menu { position: absolute; top: 60px; right: 0; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 20px; min-width: 280px; display: none; }
+        .share-menu.active { display: block; }
+        .share-menu h4 { color: #1e293b; margin: 0 0 15px 0; font-size: 1rem; }
+        .qr-container { background: #f8fafc; border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 15px; }
+        .qr-container img { max-width: 150px; border-radius: 8px; }
+        .qr-container p { font-size: 0.75rem; color: #64748b; margin: 8px 0 0 0; }
+        .share-buttons { display: flex; flex-direction: column; gap: 10px; }
+        .share-btn { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: none; border-radius: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 500; transition: all 0.2s ease; text-decoration: none; color: white; }
+        .share-btn.line { background: #00B900; } .share-btn.email { background: #EA4335; } .share-btn.copy { background: #3B82F6; }
+        .share-btn:hover { transform: translateX(5px); }
+        .share-close { position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+    <div class="share-button">
+        <button class="share-toggle" onclick="toggleShareMenu()" title="Share">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+        </button>
+        <div class="share-menu" id="shareMenu">
+            <button class="share-close" onclick="toggleShareMenu()">&times;</button>
+            <h4>Share</h4>
+            <div class="qr-container">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://drake1128.github.io/saq-questionnaire/hocm-education-app.html" alt="QR Code">
+                <p>Scan QR Code</p>
+            </div>
+            <div class="share-buttons">
+                <a class="share-btn line" href="https://social-plugins.line.me/lineit/share?url=https://drake1128.github.io/saq-questionnaire/hocm-education-app.html" target="_blank">LINE</a>
+                <a class="share-btn email" href="mailto:?subject=HOCM%20Education&body=https://drake1128.github.io/saq-questionnaire/hocm-education-app.html">Email</a>
+                <button class="share-btn copy" onclick="navigator.clipboard.writeText('https://drake1128.github.io/saq-questionnaire/hocm-education-app.html').then(()=>this.textContent='Copied!')">Copy Link</button>
+            </div>
+        </div>
+    </div>
+    <div id="root"></div>
+    <script>function toggleShareMenu(){document.getElementById('shareMenu').classList.toggle('active')}</script>
+    <script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+// ===== DATA =====
+const tabs = [
+    { id: 'case', label: '病例報告', icon: '📋' },
+    { id: 'overview', label: 'HCM 概述', icon: '🫀' },
+    { id: 'guidelines', label: '治療指引', icon: '📖' },
+    { id: 'medications', label: '藥物治療', icon: '💊' },
+    { id: 'trials', label: '臨床試驗', icon: '🔬' },
+    { id: 'literature', label: '最新文獻', icon: '📚' },
+    { id: 'genetics', label: '基因醫學', icon: '🧬' },
+    { id: 'quiz', label: '測驗', icon: '📝' },
+];
+
+const quizQuestions = [
+    { q: 'HCM 一般成人診斷標準，左心室壁厚度須達？', options: ['≥ 10 mm', '≥ 13 mm', '≥ 15 mm', '≥ 20 mm'], answer: 2, explain: '一般成人 ≥ 15 mm；有家族史者 ≥ 13 mm；兒童 Z-score ≥ 2。' },
+    { q: 'LVOT 壓力差達多少定義為阻塞性 HCM？', options: ['≥ 20 mmHg', '≥ 30 mmHg', '≥ 40 mmHg', '≥ 50 mmHg'], answer: 1, explain: '≥ 30 mmHg（靜態或誘發後）為阻塞性 HCM，約佔 70% 患者。' },
+    { q: 'SAM（Systolic Anterior Motion）的主要物理機制？', options: ['Bernoulli effect', 'Venturi effect', 'Coanda effect', 'Frank-Starling effect'], answer: 1, explain: 'SAM 主要由 Venturi effect（文氏效應）造成，二尖瓣前葉在收縮期被吸向流出道。' },
+    { q: 'HCM 第一線藥物治療為？', options: ['ACE inhibitor', '非血管擴張型 β-阻斷劑', 'Digoxin', 'Nitrate'], answer: 1, explain: '非血管擴張型 β-阻斷劑為 Class I, Level B 建議，調整至最大耐受劑量。' },
+    { q: '中隔減積治療（SRT）的 LVOT 壓力差適應症為？', options: ['≥ 30 mmHg', '≥ 40 mmHg', '≥ 50 mmHg', '≥ 60 mmHg'], answer: 2, explain: '靜態或誘發後 LVOT 壓力差 ≥ 50 mmHg，合併 NYHA III-IV，藥物治療無效者。' },
+    { q: 'Mavacamten 的作用機轉為？', options: ['β-receptor blocker', 'Calcium channel blocker', 'Cardiac myosin ATPase inhibitor', 'Na+ channel blocker'], answer: 2, explain: 'Mavacamten 是首創的心肌肌凝蛋白 ATPase 選擇性變構抑制劑，減少 actin-myosin cross-bridge 形成。' },
+    { q: 'Mavacamten 使用中，LVEF 降至多少需中斷治療？', options: ['< 60%', '< 55%', '< 50%', '< 45%'], answer: 2, explain: '任一次回診時 LVEF < 50% 則中斷治療；若 2.5 mg 劑量下發生兩次 LVEF < 50%，則永久停藥。' },
+    { q: 'Aficamten 相比 Mavacamten 的主要優勢？', options: ['更長半衰期', '更短半衰期且較少 CYP 交互作用', '更低 LVEF 下降風險', '可與 BB+CCB 併用'], answer: 1, explain: 'Aficamten 半衰期 3.5 天（vs Mavacamten 6-23 天），且無顯著 CYP 代謝交互作用。' },
+    { q: '以下何者不是 HCM 鑑別診斷須排除的疾病？', options: ['Fabry disease', 'Cardiac amyloidosis', 'Turner syndrome', 'AL amyloidosis'], answer: 2, explain: '須排除 Fabry disease（α-Gal A）、心臟類澱粉沉積症（Tc-99 PYP）、AL amyloidosis（IFE）。' },
+    { q: '2024 AHA 指引中，Mavacamten 的建議等級為？', options: ['Class IIb', 'Class IIa', 'Class 1', 'Class III'], answer: 2, explain: '2024 AHA 將 Mavacamten 提升為 Class 1 建議（2023 ESC 為 Class IIa）。' },
+];
+
+// ===== COMPONENTS =====
+function DataTable({ headers, rows, highlight }) {
+    return (
+        <div style={{overflowX:'auto',margin:'12px 0'}}>
+            <table style={{width:'100%',borderCollapse:'collapse',fontSize:'0.85rem'}}>
+                <thead>
+                    <tr>{headers.map((h,i)=><th key={i} style={{background:'linear-gradient(135deg,#8b5cf6,#6d28d9)',color:'white',padding:'10px 12px',textAlign:'left',fontWeight:600,borderBottom:'2px solid #7c3aed',whiteSpace:'nowrap'}}>{h}</th>)}</tr>
+                </thead>
+                <tbody>
+                    {rows.map((row,i)=><tr key={i} style={{background:i%2===0?'rgba(139,92,246,0.05)':'transparent'}}>
+                        {row.map((cell,j)=><td key={j} style={{padding:'8px 12px',borderBottom:'1px solid var(--border)',color: highlight && highlight.includes(i) ? '#fbbf24' : 'var(--text-primary)'}} dangerouslySetInnerHTML={{__html:cell}}/>)}
+                    </tr>)}
+                </tbody>
+            </table>
+        </div>
+    );
+}
+
+function InfoBox({ type, children }) {
+    const colors = { warning: { bg: 'rgba(239,68,68,0.1)', border: '#ef4444', icon: '⚠️' }, info: { bg: 'rgba(59,130,246,0.1)', border: '#3b82f6', icon: 'ℹ️' }, success: { bg: 'rgba(16,185,129,0.1)', border: '#10b981', icon: '✅' }, highlight: { bg: 'rgba(139,92,246,0.1)', border: '#8b5cf6', icon: '💡' } };
+    const c = colors[type] || colors.info;
+    return <div style={{background:c.bg,borderLeft:`4px solid ${c.border}`,padding:'14px 16px',borderRadius:'0 8px 8px 0',margin:'12px 0',fontSize:'0.9rem',lineHeight:1.7}}>{c.icon} {children}</div>;
+}
+
+function FlowStep({ steps }) {
+    return (
+        <div style={{display:'flex',flexDirection:'column',gap:'8px',margin:'16px 0'}}>
+            {steps.map((s,i)=>(
+                <div key={i} style={{display:'flex',alignItems:'center',gap:'12px'}}>
+                    <div style={{minWidth:36,height:36,borderRadius:'50%',background: s.highlight ? 'linear-gradient(135deg,#ec4899,#8b5cf6)' : 'linear-gradient(135deg,#3b82f6,#06b6d4)',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:'0.85rem',flexShrink:0}}>{i+1}</div>
+                    <div style={{flex:1,padding:'10px 14px',background:'var(--bg-card)',borderRadius:8,border:'1px solid var(--border)'}}><strong>{s.title}</strong>{s.desc && <span style={{color:'var(--text-secondary)',marginLeft:8}}>{s.desc}</span>}</div>
+                    {i < steps.length - 1 && <div style={{position:'absolute'}}></div>}
+                </div>
+            ))}
+        </div>
+    );
+}
+
+// ===== TAB CONTENT =====
+function CaseReport() {
+    return <div className="fade-in">
+        <h2 style={{color:'var(--accent-cyan)',marginBottom:16}}>病例報告 Case Report</h2>
+        <div style={{background:'var(--bg-card)',borderRadius:12,padding:20,marginBottom:16,border:'1px solid var(--border)'}}>
+            <h3 style={{color:'var(--accent-purple)',marginBottom:12}}>基本資料</h3>
+            <p><strong>年齡/性別</strong>：73 歲男性</p>
+            <p><strong>主訴</strong>：長期胸悶及運動性呼吸困難（Chest tightness and exertional dyspnea）</p>
+            <DataTable headers={['疾病','說明']} rows={[['HTN','高血壓'],['DM','糖尿病'],['Gout','痛風'],['DU','十二指腸潰瘍'],['GERD','胃食道逆流'],['<strong>家族史</strong>','無特殊']]} />
+            <p style={{marginTop:8}}><strong>心雜音</strong>：Grade II 收縮期雜音，位於左下胸骨緣（LLSB）→ 高度提示 LVOTO</p>
+        </div>
+
+        <div style={{background:'var(--bg-card)',borderRadius:12,padding:20,marginBottom:16,border:'1px solid var(--border)'}}>
+            <h3 style={{color:'var(--accent-purple)',marginBottom:12}}>心臟超音波（2018/11/19 UCG）</h3>
+            <DataTable headers={['參數','數值','臨床意義']} rows={[
+                ['<strong>IVSd</strong>','2.0 cm','<strong style="color:#fbbf24">顯著增厚</strong>（正常 &lt; 1.1 cm）'],
+                ['LVPWd','0.96 cm','正常範圍'],
+                ['<strong>IVS/LVPW 比值</strong>','2.08','<strong style="color:#fbbf24">非對稱性肥厚</strong>（&gt; 1.3）'],
+                ['LVEF','86%','過度收縮（Hypercontractility）'],
+                ['<strong>LVOT 壓力差</strong>','58 mmHg','<strong style="color:#fbbf24">顯著阻塞</strong>（≥ 30 mmHg）'],
+            ]} highlight={[0,2,4]} />
+            <InfoBox type="highlight">SAM 陽性、舒張功能受損、輕度 MR（與 SAM 相關）</InfoBox>
+        </div>
+
+        <div style={{background:'var(--bg-card)',borderRadius:12,padding:20,marginBottom:16,border:'1px solid var(--border)'}}>
+            <h3 style={{color:'var(--accent-purple)',marginBottom:12}}>心導管檢查（CAG + LVG）</h3>
+            <p><strong>CAG</strong>：冠狀動脈通暢 → 排除冠狀動脈疾病</p>
+            <p><strong>LVG</strong>：LV apex 160 mmHg → LVOT 105 mmHg → <strong style={{color:'#fbbf24'}}>壓力差 55 mmHg</strong></p>
+        </div>
+
+        <div style={{background:'var(--bg-card)',borderRadius:12,padding:20,marginBottom:16,border:'1px solid var(--border)'}}>
+            <h3 style={{color:'var(--accent-orange)',marginBottom:12}}>Mavacamten 治療追蹤</h3>
+            <DataTable headers={['時間點','LVOTO PG（靜態/Valsalva）','LVEF','處置']} rows={[
+                ['<strong>基線</strong>','182/192 mmHg','79.6%','NYHA III'],
+                ['第 4 週','12/13 mmHg','76.9%','依流程評估'],
+                ['第 8 週','10/14 mmHg','72.5%','依流程評估'],
+                ['第 12 週','10/8 mmHg','<strong style="color:#ef4444">62.1%</strong>','<strong>減量至 2.5 mg</strong>'],
+                ['第 24 週','10/16 mmHg','71.1%','維持 2.5 mg'],
+                ['第 40 週','16/<strong>50 mmHg</strong>','71.6%','<strong>增量至 5 mg</strong>'],
+                ['第 44 週','9/22 mmHg','71.4%','維持 5 mg'],
+            ]} />
+        </div>
+
+        <div style={{background:'var(--bg-card)',borderRadius:12,padding:20,border:'1px solid var(--border)'}}>
+            <h3 style={{color:'var(--accent-green)',marginBottom:12}}>治療前後比較</h3>
+            <DataTable headers={['參數','治療前（2018-2024）','治療後（2025-2026）','變化']} rows={[
+                ['NYHA Fc','Class III','Class II','↑ 改善'],
+                ['LVOT PG（靜態）','51-60 mmHg','10-12 mmHg','↓ 顯著下降'],
+                ['LVOT PG（Valsalva）','109 mmHg','8-22 mmHg','↓ 顯著下降'],
+                ['SAM','陽性','陰性','↓ 消失'],
+                ['LVEF','68%-85%','62%-76%','↓ 正常化'],
+                ['NT-proBNP','211-385 pg/mL','61.3-79.1 pg/mL','↓ 顯著下降'],
+            ]} />
+        </div>
+    </div>;
+}
+
+function Overview() {
+    return <div className="fade-in">
+        <h2 style={{color:'var(--accent-cyan)',marginBottom:16}}>肥厚型心肌病變概述</h2>
+        <div style={{background:'var(--bg-card)',borderRadius:12,padding:20,marginBottom:16,border:'1px solid var(--border)'}}>
+            <h3 style={{color:'var(--accent-purple)',marginBottom:12}}>定義</h3>
+            <p>肥厚型心肌病變（HCM）是一種以<strong>左心室壁異常增厚</strong>為特徵的心肌疾病，其肥厚無法以其他心臟或全身性疾病解釋。</p>
+            <DataTable headers={['情況','診斷標準']} rows={[['一般成人','≥ 15 mm'],['有家族史者','≥ 13 mm'],['兒童','Z-score ≥ 2']]} />
+        </div>
+        <div style={{background:'var(--bg-card)',borderRadius:12,padding:20,marginBottom:16,border:'1px solid var(--border)'}}>
+            <h3 style={{color:'var(--accent-purple)',marginBottom:12}}>分類</h3>
+            <DataTable headers={['類型','LVOT 壓力差','比例']} rows={[['<strong>阻塞性 HCM（oHCM）</strong>','≥ 30 mmHg','約 70%'],['非阻塞性 HCM','&lt; 30 mmHg','約 30%']]} />
+        </div>
+        <div style={{background:'var(--bg-card)',borderRadius:12,padding:20,border:'1px solid var(--border)'}}>
+            <h3 style={{color:'var(--accent-purple)',marginBottom:12}}>阻塞機制</h3>
+            <FlowStep steps={[
+                {title:'心室中隔肥厚',desc:'基底部中隔突向流出道'},
+                {title:'SAM（Systolic Anterior Motion）',desc:'二尖瓣前葉被 Venturi effect 吸向流出道',highlight:true},
+                {title:'動態性阻塞',desc:'程度隨生理狀態改變'},
+            ]} />
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginTop:12}}>
+                <div style={{padding:12,background:'rgba(239,68,68,0.1)',borderRadius:8,border:'1px solid rgba(239,68,68,0.3)'}}>
+                    <strong style={{color:'#ef4444'}}>增加阻塞</strong><br/>運動、Valsalva、脫水、血管擴張劑
+                </div>
+                <div style={{padding:12,background:'rgba(16,185,129,0.1)',borderRadius:8,border:'1px solid rgba(16,185,129,0.3)'}}>
+                    <strong style={{color:'#10b981'}}>減少阻塞</strong><br/>蹲下、β-阻斷劑、補充液體
+                </div>
+            </div>
+        </div>
+    </div>;
+}
+
+function Guidelines() {
+    return <div className="fade-in">
+        <h2 style={{color:'var(--accent-cyan)',marginBottom:16}}>HCM 治療指引</h2>
+        {[
+            {year:'2014 ESC',color:'#3b82f6',content:<div><p><strong>第一線（Class I, Level B）：</strong></p><p>1. 非血管擴張型 β-阻斷劑（最大耐受劑量）</p><p>2. Verapamil（β-阻斷劑不耐受者）</p><p>3. Disopyramide（與 β-阻斷劑併用）</p></div>},
+            {year:'2020 AHA',color:'#8b5cf6',content:<div><FlowStep steps={[{title:'確認阻塞性生理學',desc:'有症狀？'},{title:'β-阻斷劑',desc:'第一線'},{title:'Verapamil / Diltiazem',desc:'β-阻斷劑不耐受'},{title:'Disopyramide 或 SRT',desc:'症狀持續時',highlight:true}]} /><InfoBox type="info">SRT 適應症：LVOT PG ≥ 50 mmHg + NYHA III-IV + 藥物治療無效</InfoBox></div>},
+            {year:'2023 ESC',color:'#ec4899',content:<div><p><strong style={{color:'#fbbf24'}}>新增 Mavacamten（Class IIa）</strong>，與 Disopyramide 同級</p><FlowStep steps={[{title:'β-阻斷劑（Class I）',desc:'第一線'},{title:'Verapamil / Diltiazem（Class I）',desc:'第二線'},{title:'Disopyramide 或 Mavacamten',desc:'Class I / Class IIa',highlight:true},{title:'中隔減積治療（Class I）',desc:'症狀持續'}]} /></div>},
+            {year:'2024 AHA',color:'#f97316',content:<div><p><strong style={{color:'#fbbf24'}}>Mavacamten 提升為 Class 1 建議</strong></p><p>Aficamten 標示為問號（?），等待更多證據</p><InfoBox type="highlight">治療典範轉移：從「修改解剖結構」→「針對病理生理機制」</InfoBox></div>},
+        ].map((g,i)=>(
+            <div key={i} style={{background:'var(--bg-card)',borderRadius:12,padding:20,marginBottom:16,border:'1px solid var(--border)',borderLeft:`4px solid ${g.color}`}}>
+                <h3 style={{color:g.color,marginBottom:12}}>{g.year} 指引</h3>
+                {g.content}
+            </div>
+        ))}
+    </div>;
+}
+
+function Medications() {
+    return <div className="fade-in">
+        <h2 style={{color:'var(--accent-cyan)',marginBottom:16}}>藥物治療</h2>
+
+        <div style={{background:'var(--bg-card)',borderRadius:12,padding:20,marginBottom:16,border:'1px solid var(--border)'}}>
+            <h3 style={{color:'var(--accent-purple)',marginBottom:12}}>Mavacamten（Camzyos）</h3>
+            <InfoBox type="highlight">首創（First-in-class）心肌肌凝蛋白 ATPase 選擇性變構抑制劑</InfoBox>
+            <DataTable headers={['作用','說明']} rows={[
+                ['抑制心肌肌凝蛋白 ATPase','減少 actin-myosin cross-bridge 形成'],
+                ['減少過度收縮','降低 LVEF 至正常範圍'],
+                ['改善舒張功能','心肌有更長時間舒張'],
+                ['降低 LVOT 壓力差','減少流出道阻塞'],
+                ['改善心肌能量代謝','減少 ATP 消耗'],
+            ]} />
+            <h4 style={{color:'var(--accent-cyan)',margin:'16px 0 8px'}}>劑量調整原則</h4>
+            <p>起始 5 mg QD（需 LVEF ≥ 55%）→ 第 4/8/12 週調整 → 維持每 12 週追蹤</p>
+            <p>劑量梯度：2.5 → 5 → 10 → 15 mg</p>
+            <InfoBox type="warning"><strong>LVEF &lt; 50% 必須中斷治療！</strong>若 2.5 mg 下兩次 LVEF &lt;50% 則永久停藥。</InfoBox>
+            <InfoBox type="warning"><strong>禁止同時併用 β-阻斷劑 + 鈣離子阻斷劑！</strong><br/>主要經 CYP2C19 及 CYP3A4 代謝。注意 PPI（Omeprazole）、抗黴菌藥、HIV 藥物等交互作用。</InfoBox>
+        </div>
+
+        <div style={{background:'var(--bg-card)',borderRadius:12,padding:20,border:'1px solid var(--border)'}}>
+            <h3 style={{color:'var(--accent-pink)',marginBottom:12}}>Aficamten（MYQORZO）— 2025/12 FDA 核准</h3>
+            <DataTable headers={['特性','Mavacamten','Aficamten']} rows={[
+                ['半衰期','6-23 天','<strong style="color:#fbbf24">3.5 天</strong>'],
+                ['CYP 代謝','CYP 誘導/抑制','<strong style="color:#10b981">無顯著交互</strong>'],
+                ['LVOT 壓力差','↓ 下降','↓ 下降'],
+                ['NT-proBNP, cTn','↓ 下降','↓ 下降'],
+                ['Peak VO₂','↑ 增加','↑ 增加'],
+                ['心肌纖維化','穩定','<strong style="color:#10b981">↓ 間質纖維化（ECV）</strong>'],
+            ]} />
+            <InfoBox type="success">Aficamten 優勢：較短半衰期（藥效調整靈活）、較少藥物交互作用、可能改善心肌纖維化</InfoBox>
+        </div>
+    </div>;
+}
+
+function ClinicalTrials() {
+    return <div className="fade-in">
+        <h2 style={{color:'var(--accent-cyan)',marginBottom:16}}>臨床試驗</h2>
+        {[
+            {name:'EXPLORER-HCM',journal:'Lancet 2021',n:'251',design:'Mavacamten 123 vs Placebo 128',results:[
+                ['主要終點（pVO₂+NYHA）','<strong>37%</strong>','17%','<strong>p=0.0005</strong>'],
+                ['運動後 LVOT PG','<strong>-47 mmHg</strong>','-10 mmHg','p&lt;0.0001'],
+                ['NYHA ≥ 1 級改善','<strong>65%</strong>','31%','p&lt;0.0001'],
+                ['KCCQ-CSS','<strong>+13.6</strong>','+4.2','p&lt;0.0001'],
+            ]},
+            {name:'VALOR-HCM',journal:'JACC 2022',n:'112（符合 SRT 適應症）',design:'Mavacamten 56 vs Placebo 56',results:[
+                ['不再符合 SRT','<strong>82%</strong>','23%','p&lt;0.001'],
+                ['NYHA ≥ 1 級改善','<strong>63%</strong>','21%','p&lt;0.001'],
+                ['NYHA ≥ 2 級改善','<strong>27%</strong>','2%','p&lt;0.001'],
+            ]},
+            {name:'SEQUOIA-HCM（Aficamten Phase 3）',journal:'NEJM 2024',n:'282',design:'Aficamten 142 vs Placebo 142',results:[
+                ['pVO₂ 變化','<strong>+1.74 mL/kg/min</strong>','baseline','p&lt;0.000006'],
+                ['靜態 LVOT PG','~20 mmHg','~60 mmHg','顯著下降'],
+                ['LVEF &lt; 50%','3.5%','0.7%','—'],
+            ]},
+            {name:'MAPLE-HCM（Aficamten vs Metoprolol）',journal:'JACC 2025',n:'175',design:'Aficamten 88 vs Metoprolol 87',results:[
+                ['KCCQ-OSS 改善','<strong>+7.8 pts</strong>','baseline','p&lt;0.001'],
+                ['≥20 pt KCCQ 改善','<strong>38.6%</strong>','18.4%','NNT=4.9'],
+                ['症狀惡化','6.8%','18.4%','Aficamten 優勢'],
+            ]},
+            {name:'MAVA-LTE（長期追蹤）',journal:'EHJ 2024',n:'231',design:'Mavacamten 長期延伸 3.5 年',results:[
+                ['仍在使用','<strong>91.3%</strong>','—','Week 180'],
+                ['NYHA I 比例','<strong>66.3%</strong>','—','Week 180'],
+                ['暫時性 LVEF&lt;50%','8.7%','—','可逆性'],
+                ['永久停藥','1.3%','—','低風險'],
+            ]},
+        ].map((trial,i)=>(
+            <div key={i} style={{background:'var(--bg-card)',borderRadius:12,padding:20,marginBottom:16,border:'1px solid var(--border)'}}>
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',marginBottom:12}}>
+                    <h3 style={{color:'var(--accent-purple)'}}>{trial.name}</h3>
+                    <span style={{background:'var(--bg-card-alt)',padding:'4px 12px',borderRadius:20,fontSize:'0.8rem',color:'var(--accent-cyan)'}}>{trial.journal} | n={trial.n}</span>
+                </div>
+                <p style={{color:'var(--text-secondary)',marginBottom:12,fontSize:'0.9rem'}}>{trial.design}</p>
+                <DataTable headers={['終點','治療組','對照組','p 值']} rows={trial.results} />
+            </div>
+        ))}
+    </div>;
+}
+
+function LatestLiterature() {
+    const sections = [
+        {title:'指引更新',color:'#3b82f6',items:[
+            {ref:'2024 AHA/ACC HCM Guideline (PMID: 38727647)',desc:'首次納入 CMI 建議；更新 SCD 風險分層、基因檢測、運動建議'},
+            {ref:'日本多中心驗證（JACC HF 2025, PMID: 40088231）',desc:'3,611 例驗證：2024 AHA 指引在 ICD Class 2a/2b 風險分層優於 2023 ESC'},
+        ]},
+        {title:'Mavacamten 真實世界數據',color:'#8b5cf6',items:[
+            {ref:'MAVA-LTE 3.5 年追蹤（EHJ 2024, PMID: 39217450）',desc:'91.3% 持續用藥，66.3% 達 NYHA I；永久停藥僅 1.3%'},
+            {ref:'義大利 HOPS Registry（JCM 2025, PMID: 40575860）',desc:'424 例，47.2% 符合 EXPLORER 收案標準；13% 接受恩慈使用'},
+            {ref:'CYP2C19 基因型研究（EJCP 2026, PMID: 41649583）',desc:'除 poor metabolizer 外，CYP2C19 基因型不顯著影響臨床反應'},
+            {ref:'ASA vs Mavacamten 比較（AJC 2025, PMID: 39725347）',desc:'32 週後兩者 Valsalva LVOT gradient 減少 >70%，效果相當'},
+        ]},
+        {title:'Aficamten 最新進展',color:'#ec4899',items:[
+            {ref:'FDA 核准 2025/12/19（MYQORZO, Cytokinetics）',desc:'5/10/15/20 mg，適用有症狀 oHCM 成人'},
+            {ref:'MAPLE-HCM 多面向分析（JACC 2025, PMID: 41348072）',desc:'Aficamten 單藥優於 Metoprolol：LVOT gradient、NYHA、KCCQ、NT-proBNP、pVO₂ 全面勝出'},
+            {ref:'CEDAR-HCM 兒童試驗（Circ HF 2026, PMID: 41347307）',desc:'招募 12-18 歲青少年 ~55 例 + 6-12 歲兒童 ≥10 例（進行中）'},
+        ]},
+        {title:'SCD 風險分層更新',color:'#f97316',items:[
+            {ref:'術後 SCD 預測（JTCVS 2025, PMID: 40317285）',desc:'1,915 例心肌切除後：LWT ≥30mm + LGE ≥15% 是最強預測因子（HR 5.60）'},
+            {ref:'PES 誘發性（Heart 2025, PMID: 40240135）',desc:'587 例：PES 陽性 → 主要心律不整事件風險 10 倍（OR 10.83）'},
+            {ref:'QTc 延長（J Arrhythmia 2025, PMID: 39817027）',desc:'445 例：QTc >450ms → SCD 風險 HR 2.01'},
+            {ref:'社會決定因素（JAMA Cardiol 2026, PMID: 41499131）',desc:'4,431 例 SHaRe：低收入 → HF 風險 HR 2.07，社會剝奪指數影響預後'},
+        ]},
+        {title:'介入治療進展',color:'#10b981',items:[
+            {ref:'SHARE Registry（Circulation 2024, PMID: 39355918）',desc:'1,832 例 SRT：30 天死亡率 0.4%，10 年無事件存活 83%'},
+            {ref:'TA-BSM 經心尖打跳手術（2025, PMID: 41223916）',desc:'40 例 SRT 失敗後救援術：成功率 85%，靜態 LVOT PG 79→17 mmHg'},
+        ]},
+    ];
+    return <div className="fade-in">
+        <h2 style={{color:'var(--accent-cyan)',marginBottom:16}}>最新文獻回顧（2024-2026）</h2>
+        {sections.map((s,i)=>(
+            <div key={i} style={{background:'var(--bg-card)',borderRadius:12,padding:20,marginBottom:16,border:'1px solid var(--border)',borderLeft:`4px solid ${s.color}`}}>
+                <h3 style={{color:s.color,marginBottom:12}}>{s.title}</h3>
+                {s.items.map((item,j)=>(
+                    <div key={j} style={{marginBottom:12,paddingBottom:12,borderBottom: j < s.items.length-1 ? '1px solid var(--border)' : 'none'}}>
+                        <p style={{fontWeight:600,fontSize:'0.9rem',color:'var(--text-primary)'}}>{item.ref}</p>
+                        <p style={{color:'var(--text-secondary)',fontSize:'0.85rem',marginTop:4}}>{item.desc}</p>
+                    </div>
+                ))}
+            </div>
+        ))}
+    </div>;
+}
+
+function GeneticMedicine() {
+    return <div className="fade-in">
+        <h2 style={{color:'var(--accent-cyan)',marginBottom:16}}>心肌病變基因醫學</h2>
+        <div style={{background:'var(--bg-card)',borderRadius:12,padding:20,marginBottom:16,border:'1px solid var(--border)'}}>
+            <h3 style={{color:'var(--accent-purple)',marginBottom:12}}>HCM 遺傳學</h3>
+            <p>HCM 是最常見的遺傳性心血管疾病，<strong>體染色體顯性遺傳</strong>，外顯率不完全（variable penetrance）。</p>
+            <h4 style={{color:'var(--accent-cyan)',margin:'12px 0 8px'}}>主要肌小節基因</h4>
+            <DataTable headers={['基因','蛋白質','佔比']} rows={[
+                ['<strong>MYH7</strong>','β-myosin heavy chain','~25-30%'],
+                ['<strong>MYBPC3</strong>','Myosin-binding protein C','~25-30%'],
+                ['TNNT2','Troponin T','~5%'],
+                ['TNNI3','Troponin I','~5%'],
+                ['TPM1','Tropomyosin','&lt;5%'],
+                ['ACTC1','Cardiac actin','&lt;5%'],
+                ['MYL2 / MYL3','Myosin light chains','罕見'],
+            ]} />
+        </div>
+
+        <div style={{background:'var(--bg-card)',borderRadius:12,padding:20,marginBottom:16,border:'1px solid var(--border)'}}>
+            <h3 style={{color:'var(--accent-pink)',marginBottom:12}}>Phenocopy 須排除的疾病</h3>
+            <DataTable headers={['疾病','基因/檢查','特徵']} rows={[
+                ['Fabry Disease','<strong>GLA</strong> / α-Gal A 酵素','X-linked, LVH, 腎臟/皮膚/神經病變'],
+                ['TTR Amyloidosis','<strong>TTR</strong> / Tc-99 PYP','老年男性, RCM pattern, CTS'],
+                ['AL Amyloidosis','免疫固定電泳（IFE）','Light chain, 多器官侵犯'],
+                ['PRKAG2 syndrome','<strong>PRKAG2</strong>','Pre-excitation + LVH'],
+                ['LAMP2 (Danon)','<strong>LAMP2</strong>','X-linked, 極度 LVH, skeletal myopathy'],
+            ]} />
+        </div>
+
+        <div style={{background:'var(--bg-card)',borderRadius:12,padding:20,marginBottom:16,border:'1px solid var(--border)'}}>
+            <h3 style={{color:'var(--accent-orange)',marginBottom:12}}>本病例鑑別診斷</h3>
+            <DataTable headers={['檢查','結果','排除']} rows={[
+                ['α-Gal A 酵素','4.63 μM/hr（正常 &gt; 1.2）','Fabry disease ✓'],
+                ['Tc-99 PYP 掃描','Visual score 0','心臟類澱粉沉積症 ✓'],
+                ['免疫固定電泳','陰性','AL amyloidosis ✓'],
+                ['基因檢測','無突變','<strong style="color:#fbbf24">基因陰性 HCM</strong>'],
+            ]} />
+            <InfoBox type="info">HCM Risk-SCD 評分：5 年風險 2.1% → 不建議植入 ICD</InfoBox>
+        </div>
+
+        <div style={{background:'var(--bg-card)',borderRadius:12,padding:20,border:'1px solid var(--border)'}}>
+            <h3 style={{color:'var(--accent-green)',marginBottom:12}}>最新基因檢測進展（2024-2026）</h3>
+            <div style={{marginBottom:12}}><strong>ClinGen Cardiomyopathy VCEP（2024）</strong><br/><span style={{color:'var(--text-secondary)'}}>針對 8 個肌小節基因採用 ACMG/AMP adapted criteria，17.4% VUS 被重新分類</span></div>
+            <div style={{marginBottom:12}}><strong>MYBPC3 spliceogenic variants</strong><br/><span style={{color:'var(--text-secondary)'}}>NGS 再分析發現病理性 intronic/spliceogenic MYBPC3 變異，提升診斷率</span></div>
+            <div style={{marginBottom:12}}><strong>基因型影響預後（IJCI 2025）</strong><br/><span style={{color:'var(--text-secondary)'}}>帶有致病變異者 MACE 風險 HR 4.40；Thin filament（TPM1）突變預後最差</span></div>
+            <div><strong>整合基因資訊的 SCD 風險模型（CRC 2024）</strong><br/><span style={{color:'var(--text-secondary)'}}>AUC 0.76，NNT 9（ESC model NNT 13, AHA model NNT 28）</span></div>
+        </div>
+    </div>;
+}
+
+function Quiz() {
+    const [answers, setAnswers] = useState({});
+    const [submitted, setSubmitted] = useState(false);
+
+    const score = Object.entries(answers).filter(([i, a]) => a === quizQuestions[parseInt(i)].answer).length;
+    const total = quizQuestions.length;
+    const pct = Math.round(score / total * 100);
+
+    return <div className="fade-in">
+        <h2 style={{color:'var(--accent-cyan)',marginBottom:16}}>自我測驗（{total} 題）</h2>
+        {quizQuestions.map((q, i) => (
+            <div key={i} style={{background:'var(--bg-card)',borderRadius:12,padding:20,marginBottom:12,border: submitted ? (answers[i] === q.answer ? '2px solid #10b981' : '2px solid #ef4444') : '1px solid var(--border)'}}>
+                <p style={{fontWeight:600,marginBottom:12}}>{i+1}. {q.q}</p>
+                <div style={{display:'flex',flexDirection:'column',gap:8}}>
+                    {q.options.map((opt, j) => {
+                        const selected = answers[i] === j;
+                        const isCorrect = submitted && j === q.answer;
+                        const isWrong = submitted && selected && j !== q.answer;
+                        return (
+                            <button key={j} onClick={() => !submitted && setAnswers({...answers, [i]: j})}
+                                style={{padding:'10px 14px',borderRadius:8,border: selected ? '2px solid var(--accent-purple)' : '1px solid var(--border)',
+                                    background: isCorrect ? 'rgba(16,185,129,0.2)' : isWrong ? 'rgba(239,68,68,0.2)' : selected ? 'rgba(139,92,246,0.15)' : 'var(--bg-card-alt)',
+                                    color:'var(--text-primary)',cursor: submitted ? 'default' : 'pointer',textAlign:'left',fontSize:'0.9rem',transition:'all 0.2s'}}>
+                                {String.fromCharCode(65+j)}. {opt} {isCorrect && '✓'} {isWrong && '✗'}
+                            </button>
+                        );
+                    })}
+                </div>
+                {submitted && <div style={{marginTop:12,padding:12,background:'rgba(139,92,246,0.1)',borderRadius:8,fontSize:'0.85rem',color:'var(--text-secondary)'}}>
+                    <strong style={{color:'var(--accent-green)'}}>解答：</strong> {q.explain}
+                </div>}
+            </div>
+        ))}
+        <div style={{textAlign:'center',marginTop:20}}>
+            {!submitted ? (
+                <button onClick={() => setSubmitted(true)} disabled={Object.keys(answers).length < total}
+                    style={{padding:'14px 40px',borderRadius:12,border:'none',background: Object.keys(answers).length < total ? 'var(--border)' : 'linear-gradient(135deg,#8b5cf6,#ec4899)',color:'white',fontSize:'1.1rem',fontWeight:700,cursor: Object.keys(answers).length < total ? 'not-allowed' : 'pointer'}}>
+                    送出答案（{Object.keys(answers).length}/{total}）
+                </button>
+            ) : (
+                <div style={{background:'var(--bg-card)',borderRadius:16,padding:24,display:'inline-block',border:'1px solid var(--border)'}}>
+                    <div style={{fontSize:'2.5rem',fontWeight:700,color: pct >= 70 ? '#10b981' : '#ef4444'}}>{score}/{total}</div>
+                    <div style={{fontSize:'1.2rem',marginTop:8}}>{pct >= 70 ? '通過！' : '未通過，請再加油！'}（{pct}%）</div>
+                    <button onClick={() => { setAnswers({}); setSubmitted(false); }}
+                        style={{marginTop:16,padding:'10px 24px',borderRadius:8,border:'none',background:'var(--accent-blue)',color:'white',cursor:'pointer',fontWeight:600}}>重新測驗</button>
+                </div>
+            )}
+        </div>
+    </div>;
+}
+
+// ===== MAIN APP =====
+function App() {
+    const [activeTab, setActiveTab] = useState('case');
+    const contentRef = useRef(null);
+
+    const renderTab = () => {
+        switch(activeTab) {
+            case 'case': return <CaseReport />;
+            case 'overview': return <Overview />;
+            case 'guidelines': return <Guidelines />;
+            case 'medications': return <Medications />;
+            case 'trials': return <ClinicalTrials />;
+            case 'literature': return <LatestLiterature />;
+            case 'genetics': return <GeneticMedicine />;
+            case 'quiz': return <Quiz />;
+            default: return <CaseReport />;
+        }
+    };
+
+    return (
+        <div style={{maxWidth:900,margin:'0 auto',padding:'16px 16px 40px'}}>
+            {/* Header */}
+            <div style={{textAlign:'center',padding:'30px 0 20px'}}>
+                <a href="index.html" style={{display:'inline-block',marginBottom:16,padding:'8px 20px',borderRadius:20,background:'rgba(139,92,246,0.15)',border:'1px solid rgba(139,92,246,0.3)',color:'var(--accent-purple)',textDecoration:'none',fontSize:'0.85rem',fontWeight:600}}>← 回首頁</a>
+                <h1 style={{fontSize:'1.6rem',background:'linear-gradient(135deg,#8b5cf6,#ec4899)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',marginBottom:8}}>阻塞性肥厚型心肌病變教學</h1>
+                <p style={{color:'var(--text-secondary)',fontSize:'0.9rem'}}>Obstructive HCM Education | 新竹臺大醫院 心臟內科</p>
+                <p style={{color:'var(--text-muted)',fontSize:'0.8rem',marginTop:4}}>曾新育醫師 | 2026/02/10 CV-CVS Meeting</p>
+            </div>
+
+            {/* Tab Navigation */}
+            <div style={{display:'flex',gap:6,overflowX:'auto',paddingBottom:12,marginBottom:20,WebkitOverflowScrolling:'touch'}}>
+                {tabs.map(t => (
+                    <button key={t.id} onClick={() => { setActiveTab(t.id); contentRef.current?.scrollIntoView({behavior:'smooth'}); }}
+                        style={{padding:'8px 14px',borderRadius:10,border: activeTab === t.id ? '2px solid var(--accent-purple)' : '1px solid var(--border)',
+                            background: activeTab === t.id ? 'rgba(139,92,246,0.2)' : 'var(--bg-card)',
+                            color: activeTab === t.id ? 'var(--accent-purple)' : 'var(--text-secondary)',
+                            cursor:'pointer',fontSize:'0.8rem',fontWeight:600,whiteSpace:'nowrap',transition:'all 0.2s',flexShrink:0}}>
+                        {t.icon} {t.label}
+                    </button>
+                ))}
+            </div>
+
+            {/* Content */}
+            <div ref={contentRef}>{renderTab()}</div>
+
+            {/* Footer */}
+            <div style={{textAlign:'center',padding:'30px 0 10px',borderTop:'1px solid var(--border)',marginTop:30}}>
+                <p style={{color:'var(--text-muted)',fontSize:'0.8rem'}}>
+                    來源：新竹臺大醫院 心臟內科 曾新育醫師 2026/02/10 CV-CVS Meeting<br/>
+                    參考：2024 AHA/ACC | 2023 ESC | Lancet 2021 | JACC 2022 | NEJM 2024
+                </p>
+            </div>
+        </div>
+    );
+}
+
+ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
