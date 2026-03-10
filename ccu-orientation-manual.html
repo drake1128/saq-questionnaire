@@ -111,7 +111,7 @@
 
         const menuItems = [
             { id: 'daily-checklist', title: '每日工作檢查表', subtitle: 'Daily Checklist', icon: 'Checklist', color: '#3182ce', description: '查房前準備、交班重點、疾病認證' },
-            { id: 'safety-cases', title: '安全案例宣導', subtitle: 'Safety Cases', icon: 'Safety', color: '#e53e3e', description: '用藥錯誤、併發症預防' },
+            { id: 'safety-cases', title: '安全案例宣導', subtitle: 'Safety Cases', icon: 'Safety', color: '#e53e3e', description: '用藥錯誤、併發症預防、ECG 判讀與簽署' },
             { id: 'acs-orders', title: 'ACS 常規醫囑', subtitle: 'ACS Orders', icon: 'HeartPulse', color: '#dd6b20', description: '檢查、藥物、心導管前後照護' },
             { id: 'hf-certification', title: '心衰竭疾病認證', subtitle: 'HF Certification', icon: 'Heart', color: '#805ad5', description: '收案條件、文字醫囑、病程紀錄' },
             { id: 'special-care', title: '特殊術後照護', subtitle: 'Special Care', icon: 'Bed', color: '#319795', description: '頸動脈支架、暫時性心律調節器' },
@@ -204,7 +204,80 @@
 
         const DailyChecklistPage = ({ onBack }) => { const [checks, setChecks] = useState({}); const toggleCheck = (id) => setChecks(prev => ({ ...prev, [id]: !prev[id] })); const checklistItems = { morning: [{ id: 'm1', text: '看 central monitor 電腦紀錄：VT and bradycardia events' }, { id: 'm2', text: 'New patients: History, 主訴, ECG, echo (LVEF, valves)' }, { id: 'm3', text: 'Lab: especially Na, K, Ca, Mg' }], handoff: [{ id: 'h1', text: 'ECG, Echo, CAG/cath findings' }, { id: 'h2', text: 'Consciousness, I/O' }, { id: 'h3', text: '疾病認證初評記錄，追蹤有無 ACS/CHF 用藥 checklist' }, { id: 'h4', text: 'DAPT/statin/ACEI/ARB/BB checklist' }, { id: 'h5', text: 'Checklist 內達有照會需求記錄' }, { id: 'h6', text: '家庭會議記錄詢問完畢事項 (key family person, DNR)' }], vsConfirm: [{ id: 'v1', text: 'Antiplatelet agents 調整', highlight: true }, { id: 'v2', text: 'Anticoagulant 調整', highlight: true }, { id: 'v3', text: 'Thrombolytic agent (Alteplase/Urokinase)', highlight: true }, { id: 'v4', text: '病患需出 CCU 進行非預定檢查', highlight: true }, { id: 'v5', text: 'Sheath 異常（滑脫、血腫等）', highlight: true }, { id: 'v6', text: 'IABP 與 ECMO 設定異動', highlight: true }] }; const allItems = [...checklistItems.morning, ...checklistItems.handoff, ...checklistItems.vsConfirm]; const completedCount = Object.values(checks).filter(Boolean).length; return (<div className="fade-in"><Header title="每日工作檢查表" subtitle="Daily Checklist" onBack={onBack} /><div style={{ padding: '20px' }}><div style={{ background: 'var(--bg-card)', borderRadius: '16px', padding: '20px', marginBottom: '20px', border: '1px solid var(--border-color)' }}><div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}><span style={{ fontWeight: '600' }}>完成進度</span><span style={{ color: completedCount === allItems.length ? 'var(--success)' : 'var(--info)', fontWeight: '600' }}>{completedCount} / {allItems.length}</span></div><div style={{ height: '8px', background: 'var(--border-color)', borderRadius: '4px', overflow: 'hidden' }}><div style={{ height: '100%', width: (completedCount / allItems.length * 100) + '%', background: completedCount === allItems.length ? 'linear-gradient(90deg, #38a169, #68d391)' : 'linear-gradient(90deg, #3182ce, #63b3ed)', borderRadius: '4px', transition: 'width 0.3s ease' }} /></div></div><ExpandableSection title="07:30-08:00 查房前準備" icon="Clock" color="#3182ce" defaultExpanded={true}>{checklistItems.morning.map(item => <ChecklistItem key={item.id} text={item.text} checked={checks[item.id]} onChange={() => toggleCheck(item.id)} />)}</ExpandableSection><ExpandableSection title="交班重點" icon="Checklist" color="#805ad5">{checklistItems.handoff.map(item => <ChecklistItem key={item.id} text={item.text} checked={checks[item.id]} onChange={() => toggleCheck(item.id)} />)}</ExpandableSection><ExpandableSection title="必須與主治醫師確認的事項" icon="Warning" color="#e53e3e"><div style={{ background: 'linear-gradient(135deg, rgba(229, 62, 62, 0.15) 0%, rgba(197, 48, 48, 0.1) 100%)', borderLeft: '4px solid var(--accent)', borderRadius: '0 12px 12px 0', padding: '16px 20px', marginBottom: '16px' }}><p style={{ fontSize: '14px', fontWeight: '500', color: '#fc8181' }}>⚠️ 以下事項因病情變化，都應該與主治醫師再確認</p></div>{checklistItems.vsConfirm.map(item => <ChecklistItem key={item.id} text={item.text} checked={checks[item.id]} onChange={() => toggleCheck(item.id)} highlight={item.highlight} />)}</ExpandableSection></div></div>); };
 
-        const SafetyCasesPage = ({ onBack }) => (<div className="fade-in"><Header title="安全案例宣導" subtitle="Safety Cases" onBack={onBack} /><div style={{ padding: '20px' }}><div style={{ background: 'linear-gradient(135deg, rgba(229, 62, 62, 0.15) 0%, rgba(197, 48, 48, 0.1) 100%)', borderLeft: '4px solid var(--accent)', borderRadius: '0 12px 12px 0', padding: '16px 20px', marginBottom: '24px' }}><div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}><Icons.Warning /><span style={{ fontWeight: '600', fontSize: '16px', color: '#fc8181' }}>從錯誤中學習</span></div><p style={{ fontSize: '14px', color: 'var(--text-muted)' }}>以下案例都是實際發生過的安全事件，請仔細閱讀並避免重蹈覆轍。</p></div><SafetyCaseCard caseNumber={1} title="Heparin 劑量錯誤" content="病患使用 CDT 後用 urokinase 溶栓。Sheath routine run heparin: 6 units/kg/hour，但不需要調整 heparin by protocol。結果在晚上仍然依照 protocol 上調了 heparin pump 的劑量。" lesson="Urokinase plus therapeutic heparin dosing 極可能造成嚴重出血。使用溶栓劑時需與主治醫師確認。" /><SafetyCaseCard caseNumber={2} title="未依病情變化確定 Heparin 使用" content="病患 STEMI 術後接上 ECMO，出血發生 cardiac tamponade 行 pericardial drainage 後，夜班仍 run 上 heparin pump 到天亮，造成 persistent cardiac tamponade。" lesson="病情變化時務必與主治醫師確認抗凝血劑使用。" /><SafetyCaseCard caseNumber={3} title="藥物開立劑量錯誤" content="常見錯誤：Brilinta 為 BID 劑型，開立錯誤成 QD；Urokinase 處方為 60000U × 隻數，開立錯誤為 60000U。" lesson="開立藥物前務必確認正確劑量和頻率。" severity="medium" /><SafetyCaseCard caseNumber={4} title="Brachial Artery 穿刺造成 Compartment Syndrome" content="病患已使用 DAPT 和 heparin，為建立 arterial line 穿刺 brachial artery。即便超音波導引穿刺，還是造成 pseudoaneurysm 及 compartment syndrome，需緊急 fasciotomy。" lesson="若病患已使用 DAPT 和 heparin，務必不要在 brachial artery 建立 arterial line。" /></div></div>);
+        const SafetyCasesPage = ({ onBack }) => (<div className="fade-in"><Header title="安全案例宣導" subtitle="Safety Cases" onBack={onBack} /><div style={{ padding: '20px' }}><div style={{ background: 'linear-gradient(135deg, rgba(229, 62, 62, 0.15) 0%, rgba(197, 48, 48, 0.1) 100%)', borderLeft: '4px solid var(--accent)', borderRadius: '0 12px 12px 0', padding: '16px 20px', marginBottom: '24px' }}><div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}><Icons.Warning /><span style={{ fontWeight: '600', fontSize: '16px', color: '#fc8181' }}>從錯誤中學習</span></div><p style={{ fontSize: '14px', color: 'var(--text-muted)' }}>以下案例都是實際發生過的安全事件，請仔細閱讀並避免重蹈覆轍。</p></div><SafetyCaseCard caseNumber={1} title="Heparin 劑量錯誤" content="病患使用 CDT 後用 urokinase 溶栓。Sheath routine run heparin: 6 units/kg/hour，但不需要調整 heparin by protocol。結果在晚上仍然依照 protocol 上調了 heparin pump 的劑量。" lesson="Urokinase plus therapeutic heparin dosing 極可能造成嚴重出血。使用溶栓劑時需與主治醫師確認。" /><SafetyCaseCard caseNumber={2} title="未依病情變化確定 Heparin 使用" content="病患 STEMI 術後接上 ECMO，出血發生 cardiac tamponade 行 pericardial drainage 後，夜班仍 run 上 heparin pump 到天亮，造成 persistent cardiac tamponade。" lesson="病情變化時務必與主治醫師確認抗凝血劑使用。" /><SafetyCaseCard caseNumber={3} title="藥物開立劑量錯誤" content="常見錯誤：Brilinta 為 BID 劑型，開立錯誤成 QD；Urokinase 處方為 60000U × 隻數，開立錯誤為 60000U。" lesson="開立藥物前務必確認正確劑量和頻率。" severity="medium" /><SafetyCaseCard caseNumber={4} title="Brachial Artery 穿刺造成 Compartment Syndrome" content="病患已使用 DAPT 和 heparin，為建立 arterial line 穿刺 brachial artery。即便超音波導引穿刺，還是造成 pseudoaneurysm 及 compartment syndrome，需緊急 fasciotomy。" lesson="若病患已使用 DAPT 和 heparin，務必不要在 brachial artery 建立 arterial line。" />
+
+<div style={{ background: 'linear-gradient(135deg, rgba(229, 62, 62, 0.2) 0%, rgba(197, 48, 48, 0.12) 100%)', borderRadius: '20px', padding: '24px', marginBottom: '16px', border: '2px solid rgba(229, 62, 62, 0.4)' }}>
+<div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+<div style={{ background: 'var(--accent)', color: 'white', padding: '6px 16px', borderRadius: '20px', fontSize: '13px', fontWeight: '700' }}>案例 5 — 重大病安事件</div>
+<span style={{ fontSize: '16px', fontWeight: '700', color: '#fc8181' }}>STEMI 心電圖未被即時判讀</span>
+</div>
+
+<div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+<h4 style={{ fontSize: '14px', fontWeight: '600', color: '#fbd38d', marginBottom: '10px' }}>事件經過 (2026/02/08)</h4>
+<div style={{ fontSize: '14px', lineHeight: '1.9' }}>
+<p>83 歲男性，CAD c/w NSTEMI (GRACE score 233)，住於 CCU。</p>
+<p style={{ marginTop: '8px' }}><strong style={{ color: '#63b3ed' }}>18:58</strong> — 心電圖顯示 Atrial fibrillation with RVR，ST abnormality（尚未達到 STEMI 診斷標準）。</p>
+<p style={{ marginTop: '8px' }}><strong style={{ color: '#fc8181' }}>23:22</strong> — 新做的心電圖已轉變為 <strong style={{ color: '#fc8181', fontSize: '15px' }}>*** ACUTE MI / STEMI ***</strong>（電腦自動判讀），anterior injury pattern。</p>
+<p style={{ marginTop: '8px' }}>然而，這張 23:22 的心電圖因來不及上傳系統，僅有紙本。住院醫師查看電腦時只看到 18:58 的舊資料，<strong style={{ color: '#fc8181' }}>未與護理師查對最新紙本心電圖</strong>。</p>
+<p style={{ marginTop: '8px' }}>護理師於 23 時致電住院醫師請其查看最新心電圖，但醫師<strong style={{ color: '#fc8181' }}>忽略了這通電話背後的急迫性</strong>，最終導致 STEMI 延遲診斷。</p>
+</div>
+</div>
+
+<div style={{ background: 'rgba(214, 158, 46, 0.15)', borderLeft: '4px solid var(--warning)', borderRadius: '0 12px 12px 0', padding: '16px 20px', marginBottom: '12px' }}>
+<h4 style={{ fontSize: '14px', fontWeight: '600', color: '#fbd38d', marginBottom: '8px' }}>問題 1：資訊同步落差</h4>
+<p style={{ fontSize: '14px', lineHeight: '1.7' }}>心電圖來不及上傳系統時，僅有紙本結果。住院醫師只看電腦舊資料，未與護理師面對面查對，導致遺漏最新的紙本心電圖結果。</p>
+</div>
+
+<div style={{ background: 'rgba(214, 158, 46, 0.15)', borderLeft: '4px solid var(--warning)', borderRadius: '0 12px 12px 0', padding: '16px 20px', marginBottom: '16px' }}>
+<h4 style={{ fontSize: '14px', fontWeight: '600', color: '#fbd38d', marginBottom: '8px' }}>問題 2：忽視口頭提醒</h4>
+<p style={{ fontSize: '14px', lineHeight: '1.7' }}>護理師致電請醫師查看心電圖，但醫師完全忽略這通電話背後代表的急迫性與意涵，錯失了即時處理的時機。</p>
+</div>
+
+<div style={{ background: 'rgba(56, 161, 105, 0.15)', borderRadius: '12px', padding: '20px', border: '1px solid rgba(56, 161, 105, 0.3)' }}>
+<h4 style={{ fontSize: '15px', fontWeight: '700', color: '#68d391', marginBottom: '12px' }}>改善措施與學習重點</h4>
+
+<div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '12px' }}>
+<div style={{ background: 'var(--success)', color: 'white', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '13px', fontWeight: '700' }}>1</div>
+<div style={{ fontSize: '14px', lineHeight: '1.7' }}>
+<strong style={{ color: '#68d391' }}>強化 ECG 判讀警覺</strong>
+<p style={{ marginTop: '4px' }}>護理師應注意電腦自動判讀結果。若心電圖上已標示 <strong style={{ color: '#fc8181' }}>STEMI / ACUTE MI</strong>，應確實將<strong>紙本報告親手交付</strong>到主治醫師手上，不能僅以電話通知。</p>
+</div>
+</div>
+
+<div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '12px' }}>
+<div style={{ background: 'var(--success)', color: 'white', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '13px', fontWeight: '700' }}>2</div>
+<div style={{ fontSize: '14px', lineHeight: '1.7' }}>
+<strong style={{ color: '#68d391' }}>確立 ECG 簽署責任</strong>
+<p style={{ marginTop: '4px' }}>護理師執行心電圖後，<strong>都應請住院醫師或主治醫師簽名</strong>，以確保醫師在時效內確實檢視過報告。住院醫師看過報告後，應<strong>與主治醫師討論，隨後兩人共同簽名</strong>，由主治醫師承擔最終判斷責任，避免誤診。</p>
+</div>
+</div>
+
+<div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+<div style={{ background: 'var(--success)', color: 'white', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '13px', fontWeight: '700' }}>3</div>
+<div style={{ fontSize: '14px', lineHeight: '1.7' }}>
+<strong style={{ color: '#68d391' }}>醫護溝通原則</strong>
+<p style={{ marginTop: '4px' }}>當護理師致電請醫師查看檢查結果時，<strong>醫師應確實前往查看或回覆確認</strong>，不可忽略。紙本資料與電腦資料可能存在時間差，務必與護理師面對面查對最新結果。</p>
+</div>
+</div>
+
+</div>
+</div>
+
+<div style={{ background: 'linear-gradient(135deg, rgba(49, 130, 206, 0.15) 0%, rgba(44, 82, 130, 0.1) 100%)', borderRadius: '16px', padding: '20px', border: '1px solid rgba(49, 130, 206, 0.3)' }}>
+<div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+<Icons.Info />
+<span style={{ fontWeight: '600', fontSize: '15px', color: '#63b3ed' }}>ECG 簽署流程 SOP</span>
+</div>
+<div style={{ fontSize: '14px', lineHeight: '2' }}>
+<p><strong>Step 1.</strong> 護理師執行心電圖</p>
+<p><strong>Step 2.</strong> 護理師檢視電腦自動判讀結果，注意是否標示 STEMI / Acute MI</p>
+<p><strong>Step 3.</strong> 將紙本心電圖交給<strong style={{ color: '#fbd38d' }}>住院醫師判讀並簽名</strong></p>
+<p><strong>Step 4.</strong> 住院醫師判讀後與<strong style={{ color: '#fbd38d' }}>主治醫師討論並共同簽名</strong></p>
+<p><strong>Step 5.</strong> 若判讀結果為 STEMI → <strong style={{ color: '#fc8181' }}>立即啟動心導管室 activation</strong></p>
+</div>
+</div>
+
+</div></div>);
 
         const ACSOrdersPage = ({ onBack }) => (<div className="fade-in"><Header title="ACS 常規醫囑" subtitle="Acute Coronary Syndrome Orders" onBack={onBack} /><div style={{ padding: '20px' }}><ExpandableSection title="檢查及檢驗" icon="Medical" color="#3182ce" defaultExpanded={true}><ul style={{ fontSize: '14px', lineHeight: '2', paddingLeft: '20px' }}><li>CK/CKMB/Troponin-T/ECG <strong style={{ color: 'var(--warning)' }}>q6h</strong>, until CK peaking</li><li>若使用 heparin 輸注，需 check aPTT <strong style={{ color: 'var(--warning)' }}>q6h</strong> until off heparin</li><li>Total cholesterol/HDL/LDL/triglycerides/HbA1c/uric acid once</li><li>Cardiac ultrasound（VS 決定）</li></ul></ExpandableSection><ExpandableSection title="抗凝血藥物" icon="Syringe" color="#e53e3e"><div style={{ background: 'linear-gradient(135deg, rgba(49, 130, 206, 0.15) 0%, rgba(44, 82, 130, 0.1) 100%)', borderLeft: '4px solid var(--info)', borderRadius: '0 12px 12px 0', padding: '16px 20px', marginBottom: '16px' }}><h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#63b3ed' }}>Heparin Protocol</h4><ul style={{ fontSize: '14px', lineHeight: '1.8', paddingLeft: '20px' }}><li>Loading: <strong style={{ color: 'var(--warning)' }}>60 U/kg</strong></li><li>Maintenance: <strong style={{ color: 'var(--warning)' }}>12 U/kg/hr</strong></li><li>常規泡法: 25000U in N/S 250ml (即 100U/ml)</li></ul></div><div style={{ background: 'linear-gradient(135deg, rgba(49, 130, 206, 0.15) 0%, rgba(44, 82, 130, 0.1) 100%)', borderLeft: '4px solid var(--info)', borderRadius: '0 12px 12px 0', padding: '16px 20px' }}><h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#63b3ed' }}>Clexane (Enoxaparin)</h4><p style={{ fontSize: '14px' }}>劑量: <strong style={{ color: 'var(--warning)' }}>1 mg/kg q12h</strong>，Total 4 doses</p></div></ExpandableSection><ExpandableSection title="雙重抗血小板治療 (DAPT)" icon="Pill" color="#38a169"><DrugTable drugs={[{ name: 'Aspirin (Bokey)', loading: '300mg', maintenance: '100mg qd', note: '基礎用藥' }, { name: 'Ticagrelor (Brilinta)', loading: '180mg', maintenance: '90mg bid', note: '⚠️ BID！' }, { name: 'Clopidogrel (Plavix)', loading: '300-600mg', maintenance: '75mg qd', note: '-' }, { name: 'Prasugrel (Efient)', loading: '20mg', maintenance: '3.75mg qd', note: '限PCI，禁TIA/stroke' }]} /><div style={{ background: 'linear-gradient(135deg, rgba(229, 62, 62, 0.15) 0%, rgba(197, 48, 48, 0.1) 100%)', borderLeft: '4px solid var(--accent)', borderRadius: '0 12px 12px 0', padding: '16px 20px', marginTop: '16px' }}><p style={{ fontSize: '14px', fontWeight: '500', color: '#fc8181' }}>⚠️ Efient 限用於 PCI 之 ACS 患者，不得用於有 TIA 或 stroke 病史的病患</p></div></ExpandableSection><ExpandableSection title="心導管前後 & Sheath 移除" icon="Medical" color="#dd6b20"><h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: 'var(--warning)' }}>心導管前</h4><ul style={{ fontSize: '14px', lineHeight: '1.8', paddingLeft: '20px', marginBottom: '16px' }}><li>確認心導管時間並開立禁食時間（4-6 小時）</li><li>備血：LP-RBC <strong style={{ color: 'var(--warning)' }}>8 units</strong></li></ul><h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: 'var(--warning)' }}>Sheath 移除注意事項</h4><div style={{ background: 'linear-gradient(135deg, rgba(214, 158, 46, 0.15) 0%, rgba(183, 121, 31, 0.1) 100%)', borderLeft: '4px solid var(--warning)', borderRadius: '0 12px 12px 0', padding: '16px 20px' }}><p style={{ fontSize: '14px', marginBottom: '8px' }}><strong>移除前：</strong></p><ul style={{ fontSize: '14px', lineHeight: '1.8', paddingLeft: '20px', marginBottom: '12px' }}><li>off Heparin <strong style={{ color: 'var(--warning)' }}>2-4 hours</strong> 或 Clexane SC 後 <strong style={{ color: 'var(--warning)' }}>12 hours</strong></li><li>check ACT <strong style={{ color: 'var(--accent)' }}>&lt; 150 seconds</strong></li></ul><p style={{ fontSize: '14px', marginBottom: '8px' }}><strong>移除後：</strong></p><ul style={{ fontSize: '14px', lineHeight: '1.8', paddingLeft: '20px' }}><li>2 公斤沙袋加壓 <strong style={{ color: 'var(--warning)' }}>4-6 小時</strong>，平躺 <strong style={{ color: 'var(--warning)' }}>6-8 小時</strong></li></ul></div></ExpandableSection></div></div>);
 
