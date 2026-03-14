@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>STEMI 急診處置與 ECG 早期判讀 | ER STEMI Protocol</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --bg-dark: #0f172a; --bg-card: #1e293b; --bg-card-alt: #1a2340;
+            --accent-red: #DC2626; --accent-blue: #3b82f6; --accent-cyan: #06b6d4;
+            --accent-green: #10b981; --accent-yellow: #f59e0b; --accent-orange: #f97316;
+            --accent-purple: #8b5cf6; --accent-pink: #ec4899;
+            --text-primary: #f1f5f9; --text-secondary: #94a3b8; --text-muted: #64748b;
+            --border: #1e293b; --border-light: #334155;
+        }
+        body { font-family: 'Noto Sans TC', 'Inter', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1a1033 50%, #0f172a 100%); min-height: 100vh; color: var(--text-primary); line-height: 1.6; }
+        #root { min-height: 100vh; padding-bottom: 80px; }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: var(--bg-dark); } ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .pulse { animation: pulse 2s infinite; }
+
+        .share-button { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+        .share-toggle { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #3B82F6, #60A5FA); border: none; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(59,130,246,0.4); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+        .share-toggle:hover { transform: scale(1.1); }
+        .share-menu { position: absolute; top: 60px; right: 0; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 20px; min-width: 280px; display: none; }
+        .share-menu.active { display: block; }
+        .share-menu h4 { color: #1e293b; margin: 0 0 15px 0; font-size: 1rem; }
+        .qr-container { background: #f8fafc; border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 15px; }
+        .qr-container img { max-width: 150px; border-radius: 8px; }
+        .qr-container p { font-size: 0.75rem; color: #64748b; margin: 8px 0 0 0; }
+        .share-buttons { display: flex; flex-direction: column; gap: 10px; }
+        .share-btn { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: none; border-radius: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 500; transition: all 0.2s ease; text-decoration: none; color: white; }
+        .share-btn.line { background: #00B900; } .share-btn.email { background: #EA4335; } .share-btn.copy { background: #3B82F6; }
+        .share-btn:hover { transform: translateX(5px); }
+        .share-close { position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+    <div class="share-button">
+        <button class="share-toggle" onclick="toggleShareMenu()" title="Share">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+        </button>
+        <div class="share-menu" id="shareMenu">
+            <button class="share-close" onclick="toggleShareMenu()">&times;</button>
+            <h4>Share</h4>
+            <div class="qr-container">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://drake1128.github.io/saq-questionnaire/stemi-er-protocol.html" alt="QR Code">
+                <p>Scan QR Code</p>
+            </div>
+            <div class="share-buttons">
+                <a class="share-btn line" href="https://social-plugins.line.me/lineit/share?url=https://drake1128.github.io/saq-questionnaire/stemi-er-protocol.html" target="_blank">LINE</a>
+                <a class="share-btn email" href="mailto:?subject=STEMI%20ER%20Protocol&body=https://drake1128.github.io/saq-questionnaire/stemi-er-protocol.html">Email</a>
+                <button class="share-btn copy" onclick="navigator.clipboard.writeText('https://drake1128.github.io/saq-questionnaire/stemi-er-protocol.html').then(()=>this.textContent='Copied!')">Copy Link</button>
+            </div>
+        </div>
+    </div>
+    <div id="root"></div>
+    <script>function toggleShareMenu(){document.getElementById('shareMenu').classList.toggle('active')}</script>
+    <script type="text/babel">
+const { useState, useEffect, useCallback, useRef } = React;
+
+// ==================== DATA ====================
+
+const tabs = [
+    { id: 'sop', label: '急診SOP', icon: '⏱️' },
+    { id: 'ecg', label: 'ECG判讀', icon: '📊' },
+    { id: 'coronary', label: '冠脈定位', icon: '🗺️' },
+    { id: 'pitfalls', label: '陷阱', icon: '⚠️' },
+    { id: 'meds', label: '藥物', icon: '💊' },
+    { id: 'ddx', label: '鑑別', icon: '🔍' },
+    { id: 'advanced', label: '進階', icon: '📋' },
+    { id: 'quiz', label: '測驗', icon: '🏆' },
+];
+
+const quizQuestions = [
+    {
+        q: 'Q1: 65歲男性，胸痛2小時到達急診。ECG 顯示 V3-V4 ST 段上升 3mm，V1-V2 輕微上升，II、III、aVF ST 段下降 1mm。最可能的診斷與責任血管為何？',
+        options: ['前壁 AMI，LAD 阻塞', '下壁 AMI，RCA 阻塞', '側壁 AMI，LCX 阻塞', '後壁 AMI，RCA 阻塞'],
+        answer: 0,
+        explain: '前壁 AMI，責任血管為 LAD。V3-V4 ST 段上升為前壁梗塞的典型表現，II、III、aVF ST 段下降為交互變化（reciprocal change），進一步支持前壁 STEMI 的診斷。需緊急啟動心導管進行 PCI。'
+    },
+    {
+        q: 'Q2: 55歲女性，胸痛到急診。ECG: II、III、aVF ST 段上升（III 導程 4mm，II 導程 2mm），V5-V6 ST 上升 2mm。最可能的責任血管？',
+        options: ['RCA 近端阻塞', 'LCX 阻塞', 'LAD 阻塞', 'RCA 遠端阻塞'],
+        answer: 1,
+        explain: '雖然 III > II 通常提示 RCA，但 V5-V6 ST 上升提示側壁受累，這更傾向 LCX 阻塞。LCX 支配下壁及側壁時，可出現 inferior + lateral ST elevation。應進一步檢查 V7-V9（後壁）及 V3R-V6R（右室）以完整評估。'
+    },
+    {
+        q: 'Q3: 70歲男性，已知有 LBBB 病史，胸痛4小時到院。在 LBBB 背景下，哪些 ECG 變化提示急性心肌梗塞？',
+        options: ['任何 ST 段變化', 'Sgarbossa 準則：同向 ST ≥1mm、V1-V3 ST↓≥1mm、反向 ST ≥5mm', '僅看 Troponin 升高', 'LBBB 下無法判斷 AMI'],
+        answer: 1,
+        explain: 'Sgarbossa 準則用於 LBBB 背景下診斷 AMI：(1) QRS 同向 ST 抬高 ≥1mm（5分）；(2) V1-V3 ST 下降 ≥1mm（3分）；(3) QRS 反向 ST 抬高 ≥5mm（2分）。總分 ≥3 分高度提示 AMI。修正 Sgarbossa（ST/QRS 比值 ≥ -0.25）可進一步提高敏感性。'
+    },
+    {
+        q: 'Q4: 45歲男性，胸痛1小時，ECG 顯示 V1-V3 ST 段下降 2mm，R 波增高，T 波直立。下一步應如何處置？',
+        options: ['診斷為前壁缺血，給予 NTG', '加做 V7-V9 導程，排除後壁 AMI', '觀察等待 Troponin 結果', '診斷為 NSTEMI，安排 24-72 小時 PCI'],
+        answer: 1,
+        explain: 'V1-V3 ST 下降 + R 波增高 + T 波直立，這是後壁 MI 的鏡像變化（mirror image）！必須加做 V7-V9 導程確認後壁 ST 抬高。後壁梗塞常被誤認為前壁缺血而延誤治療。責任血管通常為 LCX 或 RCA。'
+    },
+    {
+        q: 'Q5: 80歲女性，胸悶6小時到院。ECG 顯示 II、III、aVF ST 抬高，加做右胸導程 V4R 也有 ST 抬高。這提示什麼？治療上有何注意事項？',
+        options: ['下壁 + 右室 AMI，禁用硝酸鹽，需容積管理', '下壁 AMI，標準治療即可', '下壁 + 後壁 AMI，加強利尿', '單純右室 AMI，給予 NTG 降低前負荷'],
+        answer: 0,
+        explain: '下壁 + 右室 AMI。V4R ST 抬高是右室梗塞最具診斷價值的指標。右室梗塞的血流動力學依賴前負荷（preload-dependent），因此：(1) 禁用硝酸鹽（NTG）——會降低前負荷導致嚴重低血壓；(2) 需積極輸液（volume resuscitation）維持血壓；(3) 責任血管為 RCA 近端阻塞。'
+    },
+    {
+        q: 'Q6: 35歲男性，運動後胸痛，ECG 顯示 V2-V5 ST 上升 1-2mm，ST 段凹面向上，無交互變化。最可能的診斷？',
+        options: ['急性前壁 STEMI', '早期再極化症候群（Early Repolarization）', '急性心包炎', 'Brugada 症候群'],
+        answer: 1,
+        explain: '早期再極化症候群。關鍵鑑別點：(1) ST 段凹面向上（concave upward）而非凸面（convex/tombstone）；(2) 無交互變化（reciprocal change）；(3) 年輕男性運動後常見。但仍需監測 Troponin 及連續 ECG 以排除真正的 AMI。若有疑慮，寧可啟動 STEMI protocol。'
+    },
+    {
+        q: 'Q7: 60歲糖尿病患者，胸痛8小時到院。ECG 顯示 V3-V4 QS 波，ST 段已回到基線，T 波倒置。這代表什麼階段？需要緊急再灌流嗎？',
+        options: ['超急性期，需立即 PCI', '急性期，需立即 PCI', '亞急性期，不符合緊急再灌流指徵', '慢性期，無需處理'],
+        answer: 2,
+        explain: '亞急性前壁 AMI。QS 波 + ST 段回復基線 + T 波倒置 = 亞急性期表現（數天至數週）。此階段不符合緊急再灌流治療（PCI/thrombolysis）的適應症。治療重點在藥物治療：DAPT、Statin、ACEI/ARB、Beta-blocker，並評估殘餘缺血決定是否擇期 PCI。'
+    },
+    {
+        q: 'Q8: 50歲女性，胸痛2小時到院。ECG: I、aVL、V5-V6 ST 下降 1-2mm，T 波倒置。Troponin 15 ng/mL（正常 <0.04）。最佳處置策略？',
+        options: ['立即緊急 PCI', 'GRACE 評分後 24-72 小時內 PCI', '僅藥物治療，門診追蹤', '加做 V7-V9 確認是否為 STEMI'],
+        answer: 1,
+        explain: 'NSTEMI。Troponin 明顯升高 + ST 下降 + T 波倒置 = 高危險 NSTEMI。根據指引，應進行 GRACE 風險評估，高危險群建議 24-72 小時內進行介入治療（early invasive strategy）。不符合 STEMI 標準（無 ST 抬高），因此不需立即緊急 PCI。'
+    },
+    {
+        q: 'Q9: 下壁 AMI 患者，ECG: II ST 抬高 2mm，III ST 抬高 5mm，aVF ST 抬高 3mm，aVL ST 下降 3mm。責任血管為 RCA 或 LCX？',
+        options: ['RCA 阻塞', 'LCX 阻塞', '無法區分', 'LAD 阻塞'],
+        answer: 0,
+        explain: 'RCA 阻塞。判斷依據：(1) III > II（5mm > 2mm）→ 強烈提示 RCA；(2) aVL 明顯 ST 壓低（3mm）→ RCA 的特徵性交互變化。若為 LCX 阻塞，通常 II ≥ III，且常伴隨 V5-V6 ST 抬高（側壁受累）。'
+    },
+    {
+        q: 'Q10: 65歲男性，ECG 顯示廣泛性 ST 抬高，無交互變化，PR 段下降。最可能的診斷？',
+        options: ['廣泛性前壁 STEMI', '急性心包炎', '主動脈剝離', 'Takotsubo 心肌病變'],
+        answer: 1,
+        explain: '急性心包炎。三大鑑別要點：(1) 瀰漫性 ST 抬高（非特定血管領域分布）；(2) 無交互變化（reciprocal change）——AMI 幾乎都有交互變化；(3) PR 段下降（PR depression）——心包炎的特異性表現。此外，心包炎的 ST 抬高通常為凹面向上，且胸痛隨體位變化（前傾減輕）。'
+    },
+];
+
+// ==================== REUSABLE COMPONENTS ====================
+
+function DataTable({ headers, rows, headerBg }) {
+    const bg = headerBg || 'linear-gradient(135deg, #1e3a5f, #2563eb)';
+    return (
+        <div style={{overflowX:'auto',margin:'12px 0',borderRadius:'12px',border:'1px solid var(--border-light)'}}>
+            <table style={{width:'100%',borderCollapse:'collapse',fontSize:'0.85rem'}}>
+                <thead>
+                    <tr>{headers.map((h,i)=><th key={i} style={{background:bg,color:'white',padding:'10px 12px',textAlign:'left',fontWeight:600,borderBottom:'2px solid rgba(255,255,255,0.2)',whiteSpace:'nowrap'}}>{h}</th>)}</tr>
+                </thead>
+                <tbody>
+                    {rows.map((row,i)=><tr key={i} style={{background:i%2===0?'rgba(30,58,95,0.15)':'transparent'}}>
+                        {row.map((cell,j)=><td key={j} style={{padding:'8px 12px',borderBottom:'1px solid var(--border)',color:'var(--text-primary)',lineHeight:1.5}} dangerouslySetInnerHTML={{__html:cell}}/>)}
+                    </tr>)}
+                </tbody>
+            </table>
+        </div>
+    );
+}
+
+function InfoBox({ type, children }) {
+    const colors = {
+        warning: { bg: 'rgba(220,38,38,0.12)', border: '#DC2626', icon: '⚠️' },
+        danger: { bg: 'rgba(220,38,38,0.18)', border: '#DC2626', icon: '🚨' },
+        info: { bg: 'rgba(59,130,246,0.12)', border: '#3b82f6', icon: 'ℹ️' },
+        success: { bg: 'rgba(16,185,129,0.12)', border: '#10b981', icon: '✅' },
+        highlight: { bg: 'rgba(245,158,11,0.12)', border: '#f59e0b', icon: '💡' },
+        emergency: { bg: 'rgba(220,38,38,0.2)', border: '#DC2626', icon: '🔴' }
+    };
+    const c = colors[type] || colors.info;
+    return <div style={{background:c.bg,borderLeft:`4px solid ${c.border}`,padding:'14px 16px',borderRadius:'0 12px 12px 0',margin:'12px 0',fontSize:'0.9rem',lineHeight:1.7}}>{c.icon} {children}</div>;
+}
+
+function Card({ title, icon, children, accentColor, style }) {
+    const accent = accentColor || '#3b82f6';
+    return (
+        <div className="fade-in" style={{background:'rgba(30,41,59,0.8)',backdropFilter:'blur(12px)',borderRadius:'16px',padding:'20px',marginBottom:'16px',border:`1px solid ${accent}33`,boxShadow:`0 4px 20px ${accent}15`,...(style||{})}}>
+            {title && <h3 style={{fontSize:'1.1rem',fontWeight:700,marginBottom:'12px',color:accent,display:'flex',alignItems:'center',gap:'8px'}}>{icon && <span>{icon}</span>}{title}</h3>}
+            {children}
+        </div>
+    );
+}
+
+function SectionTitle({ children, icon }) {
+    return <h2 style={{fontSize:'1.3rem',fontWeight:700,margin:'24px 0 16px',color:'var(--text-primary)',display:'flex',alignItems:'center',gap:'10px',borderBottom:'2px solid var(--accent-red)',paddingBottom:'8px'}}>{icon && <span style={{fontSize:'1.4rem'}}>{icon}</span>}{children}</h2>;
+}
+
+function ImageFigure({ src, caption, alt }) {
+    const [zoomed, setZoomed] = useState(false);
+    return (
+        <div style={{margin:'16px 0',textAlign:'center'}}>
+            <img
+                src={src}
+                alt={alt || caption || ''}
+                onClick={() => setZoomed(!zoomed)}
+                style={{maxWidth:'100%',borderRadius:'12px',border:'1px solid var(--border-light)',cursor:'pointer',transition:'transform 0.3s',transform:zoomed?'scale(1.5)':'scale(1)',zIndex:zoomed?100:1,position:'relative'}}
+            />
+            {caption && <p style={{fontSize:'0.8rem',color:'var(--text-secondary)',marginTop:'8px',fontStyle:'italic'}}>{caption}</p>}
+        </div>
+    );
+}
+
+function ChecklistItem({ text, subItems, checked, onChange }) {
+    return (
+        <div style={{marginBottom:'8px'}}>
+            <label style={{display:'flex',alignItems:'flex-start',gap:'10px',cursor:'pointer',padding:'8px 12px',borderRadius:'8px',background:checked?'rgba(16,185,129,0.12)':'rgba(30,41,59,0.5)',border:`1px solid ${checked?'#10b981':'var(--border-light)'}`,transition:'all 0.2s'}}>
+                <input type="checkbox" checked={checked} onChange={onChange} style={{marginTop:'4px',width:'18px',height:'18px',accentColor:'#10b981',flexShrink:0}} />
+                <span style={{fontSize:'0.9rem',lineHeight:1.6,color:checked?'#10b981':'var(--text-primary)'}}>{text}</span>
+            </label>
+            {subItems && subItems.map((sub,i) => (
+                <div key={i} style={{marginLeft:'36px',marginTop:'4px',fontSize:'0.82rem',color:'var(--text-secondary)',lineHeight:1.5}}>• {sub}</div>
+            ))}
+        </div>
+    );
+}
+
+function TimeTarget({ label, value, unit }) {
+    return (
+        <div style={{textAlign:'center',padding:'16px',background:'linear-gradient(135deg, rgba(220,38,38,0.2), rgba(220,38,38,0.05))',borderRadius:'12px',border:'2px solid #DC2626',minWidth:'140px'}}>
+            <div style={{fontSize:'0.85rem',color:'var(--text-secondary)',marginBottom:'4px'}}>{label}</div>
+            <div className="pulse" style={{fontSize:'2.2rem',fontWeight:700,color:'#DC2626'}}>{value}</div>
+            <div style={{fontSize:'0.8rem',color:'var(--text-muted)'}}>{unit}</div>
+        </div>
+    );
+}
+
+// ==================== TAB CONTENT COMPONENTS ====================
+
+// ===== TAB 1: SOP =====
+function TabSOP() {
+    const [checklist, setChecklist] = useState(() => {
+        try { return JSON.parse(localStorage.getItem('stemi-sop-checklist') || '{}'); } catch(e) { return {}; }
+    });
+
+    const toggle = (key) => {
+        const next = {...checklist, [key]: !checklist[key]};
+        setChecklist(next);
+        localStorage.setItem('stemi-sop-checklist', JSON.stringify(next));
+    };
+
+    const resetChecklist = () => {
+        setChecklist({});
+        localStorage.removeItem('stemi-sop-checklist');
+    };
+
+    return (
+        <div className="fade-in">
+            <SectionTitle icon="⏱️">STEMI 急診處置流程</SectionTitle>
+
+            <InfoBox type="emergency">
+                <strong>時間就是心肌！</strong> STEMI 診斷不應等待心肌酵素結果。每延遲 30 分鐘，死亡率上升 7.5%。
+            </InfoBox>
+
+            <div style={{display:'flex',justifyContent:'flex-end',marginBottom:'12px'}}>
+                <button onClick={resetChecklist} style={{padding:'6px 16px',borderRadius:'8px',border:'1px solid var(--border-light)',background:'transparent',color:'var(--text-secondary)',cursor:'pointer',fontSize:'0.8rem'}}>重置清單</button>
+            </div>
+
+            {/* Section A */}
+            <Card title="A. 第一現場（急診/病房/CCU）" icon="🏥" accentColor="#DC2626">
+                <ChecklistItem text="心電圖：10 分鐘內完成 12-lead ECG" checked={!!checklist['a1']} onChange={() => toggle('a1')} />
+                <ChecklistItem
+                    text="立即判讀（注意機器自動判讀結果），並給專家判讀"
+                    checked={!!checklist['a2']}
+                    onChange={() => toggle('a2')}
+                    subItems={['機器警訊關鍵字：ACUTE MI / STEMI / MEETS ST ELEVATION MI CRITERIA / CONSIDER ACUTE INFARCT']}
+                />
+                <ChecklistItem text="白天：CCU 專責主治醫師" checked={!!checklist['a3']} onChange={() => toggle('a3')} />
+                <ChecklistItem text="晚上/假日：CV1（班表）or CV2（人在 CCU 值班）" checked={!!checklist['a4']} onChange={() => toggle('a4')} />
+                <ChecklistItem text="啟動急導管（電話 call 總機 9）/ 上藥" checked={!!checklist['a5']} onChange={() => toggle('a5')} />
+                <ChecklistItem text="Lab, CXR, ECG, 備血" checked={!!checklist['a6']} onChange={() => toggle('a6')} />
+                <ChecklistItem text="一律術後轉 CCU/ICU" checked={!!checklist['a7']} onChange={() => toggle('a7')} />
+
+                <ImageFigure src="images-stemi/fig machine STEMI 1.png" caption="ECG 機器自動判讀 STEMI 警訊範例 (1)" alt="ECG machine STEMI alert example 1" />
+                <ImageFigure src="images-stemi/fig machine STEMI 2.png" caption="ECG 機器自動判讀 STEMI 警訊範例 (2)" alt="ECG machine STEMI alert example 2" />
+            </Card>
+
+            {/* Section B */}
+            <Card title="B. 緊急處置" icon="💉" accentColor="#f59e0b">
+                <div style={{marginBottom:'12px',fontSize:'0.9rem',color:'var(--text-secondary)'}}>雙抗血小板藥物 Loading（三選一）：</div>
+                <ChecklistItem
+                    text="方案一：Bokey 300mg + Plavix 300-600mg"
+                    checked={!!checklist['b1']}
+                    onChange={() => toggle('b1')}
+                />
+                <ChecklistItem
+                    text="方案二：Bokey 300mg + Brilinta 180mg"
+                    checked={!!checklist['b2']}
+                    onChange={() => toggle('b2')}
+                />
+                <ChecklistItem
+                    text="方案三：Bokey 300mg + Efient 20mg"
+                    checked={!!checklist['b3']}
+                    onChange={() => toggle('b3')}
+                />
+                <ChecklistItem
+                    text="Heparin Loading: 4000-5000 units (60 units/kg)"
+                    checked={!!checklist['b4']}
+                    onChange={() => toggle('b4')}
+                    subItems={['進導管室時再 check ACT（goal: 250-300 sec）']}
+                />
+                <ChecklistItem text="導管術前準備" checked={!!checklist['b5']} onChange={() => toggle('b5')} />
+                <ChecklistItem text="同意書（團隊成員接力解釋）" checked={!!checklist['b6']} onChange={() => toggle('b6')} />
+                <ChecklistItem
+                    text="VT/VF management → 貼 TCP!"
+                    checked={!!checklist['b7']}
+                    onChange={() => toggle('b7')}
+                />
+                <ChecklistItem
+                    text="Complete AV block → 貼 TCP!"
+                    checked={!!checklist['b8']}
+                    onChange={() => toggle('b8')}
+                />
+
+                <ImageFigure src="images-stemi/fig ACS clopidogrel 300 600.png" caption="DAPT Loading 劑量選擇參考" alt="ACS Clopidogrel loading dose" />
+            </Card>
+
+            {/* Section C: Time Targets */}
+            <Card title="C. 時間目標" icon="🎯" accentColor="#DC2626">
+                <div style={{display:'flex',gap:'12px',flexWrap:'wrap',justifyContent:'center',margin:'16px 0'}}>
+                    <TimeTarget label="D2B (Door-to-Balloon)" value="≤ 90" unit="分鐘" />
+                    <TimeTarget label="D2W (轉院 Door-to-Wire)" value="≤ 60" unit="分鐘" />
+                    <TimeTarget label="D2N (Door-to-Needle)" value="≤ 30" unit="分鐘" />
+                </div>
+                <InfoBox type="danger">
+                    <strong>D2B ≤ 90 分鐘</strong>是最核心的品質指標。從病人踏進急診大門到導絲通過冠脈閉塞處，每一分鐘都在決定心肌存活。
+                </InfoBox>
+            </Card>
+        </div>
+    );
+}
+
+// ===== TAB 2: ECG =====
+function TabECG() {
+    return (
+        <div className="fade-in">
+            <SectionTitle icon="📊">AMI 心電圖判讀要點</SectionTitle>
+
+            {/* 2.1 STEMI vs NSTEMI */}
+            <Card title="2.1 STEMI vs NSTEMI 鑑別" icon="⚡" accentColor="#3b82f6">
+                <DataTable
+                    headers={['特徵', 'STEMI', 'NSTEMI']}
+                    rows={[
+                        ['<strong>ST 段變化</strong>', 'ST 抬高 ≥1mm（肢體導程）<br/>或 ≥2mm（胸前導程）', 'ST 下降 或 T 波倒置'],
+                        ['<strong>梗塞範圍</strong>', '透壁性梗塞（transmural）', '非透壁性梗塞（subendocardial）'],
+                        ['<strong>Q 波形成</strong>', '常出現病理性 Q 波', '通常無 Q 波'],
+                        ['<strong>治療急迫性</strong>', '立即再灌流治療（PCI/溶栓）', '依 GRACE 危險分層決定策略'],
+                        ['<strong>預後</strong>', '初期死亡率較高', '長期預後可能相似'],
+                    ]}
+                />
+            </Card>
+
+            {/* 2.2 AMI ECG Timeline */}
+            <Card title="2.2 AMI ECG 時序演變" icon="📈" accentColor="#8b5cf6">
+                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(250px, 1fr))',gap:'12px'}}>
+                    {[
+                        { phase: '超急性期', time: '數分鐘 - 數小時', color: '#DC2626', items: ['增高 T 波（hyperacute T wave）：高聳、對稱', 'ST 段輕微抬高開始出現', '早期缺血徵象易被忽略！'] },
+                        { phase: '急性期', time: '數小時 - 數天', color: '#f59e0b', items: ['ST 段明顯抬高（STEMI 典型表現）', 'T 波倒置開始出現', '病理性 Q 波形成'] },
+                        { phase: '亞急性期', time: '數天 - 數週', color: '#3b82f6', items: ['ST 段逐漸回到基線', 'T 波持續倒置', 'Q 波更加明顯'] },
+                        { phase: '慢性期', time: '數週 - 終生', color: '#64748b', items: ['病理性 Q 波持續存在', 'T 波可能正常化', 'ST 段正常'] },
+                    ].map((p,i) => (
+                        <div key={i} style={{background:`${p.color}15`,border:`1px solid ${p.color}40`,borderRadius:'12px',padding:'16px',borderTop:`3px solid ${p.color}`}}>
+                            <div style={{fontWeight:700,color:p.color,fontSize:'1rem',marginBottom:'4px'}}>{i+1}. {p.phase}</div>
+                            <div style={{fontSize:'0.78rem',color:'var(--text-muted)',marginBottom:'8px'}}>{p.time}</div>
+                            {p.items.map((item,j) => <div key={j} style={{fontSize:'0.85rem',color:'var(--text-primary)',marginBottom:'4px',paddingLeft:'12px',borderLeft:`2px solid ${p.color}40`}}>{item}</div>)}
+                        </div>
+                    ))}
+                </div>
+            </Card>
+
+            {/* 2.3 Three Early Signs */}
+            <Card title="2.3 三大早期徵兆" icon="🔍" accentColor="#DC2626">
+                {/* Sign 1: ST Elevation */}
+                <div style={{background:'rgba(220,38,38,0.1)',borderRadius:'12px',padding:'16px',marginBottom:'12px',border:'1px solid rgba(220,38,38,0.3)'}}>
+                    <h4 style={{color:'#DC2626',marginBottom:'8px',fontSize:'1rem'}}>1. ST 段抬高（ST Elevation）</h4>
+                    <ul style={{fontSize:'0.88rem',lineHeight:1.8,paddingLeft:'20px',color:'var(--text-primary)'}}>
+                        <li>凸型抬高（convex upward），≥1mm（V1-V4）或 ≥0.5mm（其他導聯）</li>
+                        <li>至少兩個連續導聯出現</li>
+                        <li><strong>V1-V4</strong>：LAD 閉塞 → 前壁梗塞</li>
+                        <li><strong>II, III, aVF</strong>：RCA 或 LCX → 下壁梗塞</li>
+                        <li><strong>I, aVL, V5-V6</strong>：LCX 或 LAD 對角枝 → 側壁梗塞</li>
+                    </ul>
+                </div>
+
+                {/* Sign 2: Hyperacute T */}
+                <div style={{background:'rgba(245,158,11,0.1)',borderRadius:'12px',padding:'16px',marginBottom:'12px',border:'1px solid rgba(245,158,11,0.3)'}}>
+                    <h4 style={{color:'#f59e0b',marginBottom:'8px',fontSize:'1rem'}}>2. 增高 T 波（Hyperacute T Wave）</h4>
+                    <ul style={{fontSize:'0.88rem',lineHeight:1.8,paddingLeft:'20px',color:'var(--text-primary)'}}>
+                        <li>高聳、對稱，幅度顯著增加</li>
+                        <li><strong>比 ST 抬高更早出現！</strong>是最早的缺血徵兆</li>
+                        <li>發現後應立即重複 ECG，密切監測 ST 段演變</li>
+                    </ul>
+                </div>
+
+                {/* Sign 3: Reciprocal Change */}
+                <div style={{background:'rgba(59,130,246,0.1)',borderRadius:'12px',padding:'16px',marginBottom:'12px',border:'1px solid rgba(59,130,246,0.3)'}}>
+                    <h4 style={{color:'#3b82f6',marginBottom:'8px',fontSize:'1rem'}}>3. 交互變化（Reciprocal Change）</h4>
+                    <ul style={{fontSize:'0.88rem',lineHeight:1.8,paddingLeft:'20px',color:'var(--text-primary)'}}>
+                        <li>對側導聯出現 ST 段壓低或 T 波倒置</li>
+                        <li>大幅增強 STEMI 診斷的<strong>特異性</strong></li>
+                        <li>前壁（V1-V4 抬高）→ II, III, aVF 壓低</li>
+                        <li>下壁（II, III, aVF 抬高）→ I, aVL 或 V1-V3 壓低</li>
+                    </ul>
+                </div>
+            </Card>
+
+            <ImageFigure src="images-stemi/fig ST elevation ECG.png" caption="歷年新竹台大分院急診經導管確診 STEMI 心電圖收集。越往左邊越難辨認，但都是血管急性全阻塞。" alt="STEMI ECG collection" />
+
+            <InfoBox type="emergency">
+                <strong style={{fontSize:'1.1rem'}}>STEMI 診斷不應等待心肌酵素結果！時間就是心肌。</strong>
+            </InfoBox>
+        </div>
+    );
+}
+
+// ===== TAB 3: Coronary Localization =====
+function TabCoronary() {
+    return (
+        <div className="fade-in">
+            <SectionTitle icon="🗺️">ECG 定位與冠狀動脈對應</SectionTitle>
+
+            {/* 3.1 12-Lead ECG Map */}
+            <Card title="3.1 十二導程 ECG 對應表" icon="📐" accentColor="#3b82f6">
+                <DataTable
+                    headers={['導程分類', '導程名稱', '觀察部位']}
+                    rows={[
+                        ['肢體導程', 'I, II, III', 'I：左側壁 / II, III：下壁'],
+                        ['加強肢體導程', 'aVR, aVL, aVF', 'aVR：右上方（全域缺血指標）<br/>aVL：左側壁高位 / aVF：下壁'],
+                        ['胸前導程 (V1-V2)', 'V1, V2', '間隔壁（interventricular septum）'],
+                        ['胸前導程 (V3-V4)', 'V3, V4', '前壁（anterior wall）'],
+                        ['胸前導程 (V5-V6)', 'V5, V6', '左側壁（lateral wall）'],
+                    ]}
+                />
+            </Card>
+
+            {/* 3.2 Vessel-ECG Correlation */}
+            <Card title="3.2 血管閉塞與 ECG 對應" icon="🫀" accentColor="#DC2626">
+                <DataTable
+                    headerBg="linear-gradient(135deg, #DC2626, #991b1b)"
+                    headers={['閉塞血管', 'ECG 變化', '受影響區域']}
+                    rows={[
+                        ['<strong>LAD</strong><br/>左前降支', 'V1-V4 ST 抬高<br/>II, III, aVF 交互壓低', '前壁、心尖<br/>（嚴重時 V1-V6 + I, aVL）'],
+                        ['<strong>LCX</strong><br/>左迴旋支', 'I, aVL, V5-V6 ST 抬高<br/>V1-V3 交互壓低', '側壁、後壁<br/>（常需 V7-V9 確認）'],
+                        ['<strong>RCA</strong><br/>右冠狀動脈', 'II, III, aVF ST 抬高<br/>I, aVL 交互壓低', '下壁、右室<br/>（近端阻塞加做 V4R）'],
+                    ]}
+                />
+            </Card>
+
+            <ImageFigure src="images-stemi/fig_ACS ECG pattern recognition.png" caption="心電圖能回答的三個關鍵問題：(1) 是否為 AMI？(2) 哪條血管？(3) 阻塞位置在哪？" alt="ECG pattern recognition" />
+            <ImageFigure src="images-stemi/fig_ACS ECG vector and infarction.png" caption="心梗區域與向量心電圖：理解導聯方向與梗塞位置的關係" alt="ECG vector and infarction" />
+
+            {/* 3.3 Regional AMI Quick Reference */}
+            <Card title="3.3 各部位 AMI 特徵速查" icon="📍" accentColor="#f59e0b">
+                {/* Anterior */}
+                <div style={{background:'rgba(220,38,38,0.08)',borderRadius:'12px',padding:'16px',marginBottom:'12px',border:'1px solid rgba(220,38,38,0.25)'}}>
+                    <h4 style={{color:'#DC2626',marginBottom:'8px'}}>前壁 MI（Anterior）— LAD</h4>
+                    <div style={{fontSize:'0.88rem',lineHeight:1.8}}>
+                        <div><strong>導程：</strong>V1-V6（主要 V3-V4）</div>
+                        <div><strong>責任血管：</strong>LAD（左前降支）</div>
+                        <div style={{marginTop:'8px'}}><strong>亞分類：</strong></div>
+                        <ul style={{paddingLeft:'20px',marginTop:'4px'}}>
+                            <li><strong>廣泛前壁</strong>（V1-V6, I, aVL）→ LAD 近端阻塞，預後最差</li>
+                            <li><strong>前壁</strong>（V3-V4）→ LAD 中段阻塞</li>
+                            <li><strong>前間隔</strong>（V1-V3）→ LAD 間隔支</li>
+                            <li><strong>前側壁</strong>（V4-V6, I, aVL）→ LAD 對角枝或 LCX</li>
+                        </ul>
+                    </div>
+                </div>
+
+                {/* Inferior */}
+                <div style={{background:'rgba(59,130,246,0.08)',borderRadius:'12px',padding:'16px',marginBottom:'12px',border:'1px solid rgba(59,130,246,0.25)'}}>
+                    <h4 style={{color:'#3b82f6',marginBottom:'8px'}}>下壁 MI（Inferior）— RCA / LCX</h4>
+                    <div style={{fontSize:'0.88rem',lineHeight:1.8}}>
+                        <div><strong>導程：</strong>II, III, aVF（III 通常最明顯）</div>
+                        <div style={{marginTop:'8px'}}><strong>RCA vs LCX 鑑別：</strong></div>
+                        <ul style={{paddingLeft:'20px',marginTop:'4px'}}>
+                            <li><strong>RCA</strong>：III {'>'} II，aVL 明顯壓低，導程 I ST 壓低</li>
+                            <li><strong>LCX</strong>：II ≥ III，常伴 V5-V6 變化，導程 I 等電位或抬高</li>
+                        </ul>
+                    </div>
+                </div>
+
+                {/* Lateral */}
+                <div style={{background:'rgba(16,185,129,0.08)',borderRadius:'12px',padding:'16px',marginBottom:'12px',border:'1px solid rgba(16,185,129,0.25)'}}>
+                    <h4 style={{color:'#10b981',marginBottom:'8px'}}>側壁 MI（Lateral）— LCX</h4>
+                    <div style={{fontSize:'0.88rem',lineHeight:1.8}}>
+                        <div><strong>高側壁：</strong>I, aVL</div>
+                        <div><strong>低側壁：</strong>V5, V6</div>
+                        <div><strong>責任血管：</strong>LCX 或 LAD 對角枝</div>
+                    </div>
+                </div>
+
+                {/* Posterior */}
+                <div style={{background:'rgba(139,92,246,0.08)',borderRadius:'12px',padding:'16px',marginBottom:'12px',border:'1px solid rgba(139,92,246,0.25)'}}>
+                    <h4 style={{color:'#8b5cf6',marginBottom:'8px'}}>後壁 MI（Posterior）— LCX / RCA</h4>
+                    <div style={{fontSize:'0.88rem',lineHeight:1.8}}>
+                        <div><strong>標準導程線索：</strong>V1-V3 ST 下降 + R 波增高（鏡像變化）</div>
+                        <div><strong>確診導程：</strong>V7-V9 ST 抬高</div>
+                        <div><strong>責任血管：</strong>LCX 或 RCA</div>
+                        <InfoBox type="warning">V1-V3 ST 下降常被誤認為前壁缺血！看到此 pattern 務必加做 V7-V9。</InfoBox>
+                    </div>
+                </div>
+
+                {/* RV */}
+                <div style={{background:'rgba(245,158,11,0.08)',borderRadius:'12px',padding:'16px',marginBottom:'12px',border:'1px solid rgba(245,158,11,0.25)'}}>
+                    <h4 style={{color:'#f59e0b',marginBottom:'8px'}}>右室 MI（Right Ventricular）— RCA 近端</h4>
+                    <div style={{fontSize:'0.88rem',lineHeight:1.8}}>
+                        <div><strong>導程：</strong>V3R-V6R ST 抬高（V4R 最具診斷價值）</div>
+                        <div><strong>合併：</strong>常伴下壁梗塞（RCA 近端閉塞）</div>
+                        <InfoBox type="danger">
+                            <strong>禁用硝酸鹽（NTG）！</strong>右室梗塞依賴前負荷，NTG 會導致嚴重低血壓。需積極容積管理（volume resuscitation）。
+                        </InfoBox>
+                    </div>
+                </div>
+            </Card>
+
+            <ImageFigure src="images-stemi/fig posterior ECG V789.png" caption="V7-V9 導程位置示意圖。V7 位於後腋線，V8 位於左肩胛線，V9 位於脊椎旁線。診斷 posterior wall MI 的關鍵。" alt="V7-V9 lead placement" />
+        </div>
+    );
+}
+
+// ===== TAB 4: Pitfalls =====
+function TabPitfalls() {
+    return (
+        <div className="fade-in">
+            <SectionTitle icon="⚠️">特殊情況下的 AMI 判讀</SectionTitle>
+
+            {/* 4.1 LBBB + AMI */}
+            <Card title="4.1 LBBB + AMI：Sgarbossa 準則" icon="🔑" accentColor="#DC2626">
+                <p style={{fontSize:'0.9rem',marginBottom:'12px',color:'var(--text-secondary)'}}>
+                    左束支傳導阻滯（LBBB）會大幅改變 ST-T 波形態，使 AMI 診斷困難。Sgarbossa 準則為此情境提供評分依據：
+                </p>
+                <DataTable
+                    headerBg="linear-gradient(135deg, #DC2626, #991b1b)"
+                    headers={['Sgarbossa 準則', '分數', '說明']}
+                    rows={[
+                        ['QRS 同向 ST 抬高 ≥1mm', '<strong>5 分</strong>', '最具特異性，ST 抬高方向與 QRS 主波方向相同'],
+                        ['V1-V3 ST 下降 ≥1mm', '<strong>3 分</strong>', 'V1-V3 通常 QRS 負向，ST 下降為異常'],
+                        ['QRS 反向 ST 抬高 ≥5mm', '<strong>2 分</strong>', '特異性較低，但幅度過大仍提示 AMI'],
+                    ]}
+                />
+                <InfoBox type="highlight">
+                    <strong>總分 ≥ 3 分 → 高度提示 AMI。</strong><br/>
+                    <strong>修正 Sgarbossa 準則：</strong>ST 偏移 / QRS 振幅比值 ≥ -0.25（即 ST 偏移至少為 QRS 振幅的 25%），可進一步提高敏感性至 91%。
+                </InfoBox>
+            </Card>
+
+            {/* 4.2 RBBB + STEMI */}
+            <Card title="4.2 RBBB + STEMI（重要！）" icon="🚨" accentColor="#DC2626">
+                <InfoBox type="danger">
+                    <strong style={{fontSize:'1.05rem'}}>RBBB STEMI = LAD proximal 病變 = 預後差！</strong><br/>
+                    看到 RBBB 別放鬆，可能正在梗塞中！新發生的 RBBB 本身就是缺血的警訊。
+                </InfoBox>
+
+                <p style={{fontSize:'0.9rem',marginBottom:'12px',color:'var(--text-secondary)',lineHeight:1.7}}>
+                    RBBB 本身會改變 ST-T 波形態（特別是 V1-V3），使 STEMI 診斷更具挑戰性。但 RBBB 並不會完全掩蓋 STEMI 的 ST 段變化。
+                </p>
+
+                <DataTable
+                    headerBg="linear-gradient(135deg, #f59e0b, #d97706)"
+                    headers={['導程', 'RBBB + STEMI 判讀要點']}
+                    rows={[
+                        ['<strong>V1-V3</strong>', 'ST elevation 可能被 RBBB 混淆（V1-V3 本來就有次發性 ST-T 變化），但若 ST 抬高程度 excessive，仍高度懷疑 STEMI'],
+                        ['<strong>V4-V6, I, aVL</strong>', 'ST elevation 不受 RBBB 影響，<strong>最有診斷價值</strong>，強烈提示 STEMI'],
+                        ['<strong>II, III, aVF</strong>', 'ST elevation 不受 RBBB 影響，可能為 inferior MI'],
+                    ]}
+                />
+
+                <div style={{background:'rgba(220,38,38,0.1)',borderRadius:'12px',padding:'16px',marginTop:'12px'}}>
+                    <h4 style={{color:'#DC2626',marginBottom:'8px'}}>RBBB + STEMI 處置要點：</h4>
+                    <ol style={{fontSize:'0.88rem',lineHeight:1.8,paddingLeft:'20px'}}>
+                        <li><strong>RBBB + 胸痛 = 高度警覺</strong>，不可掉以輕心</li>
+                        <li><strong>新發 RBBB + 胸痛 → 極可能 STEMI</strong>，應按 STEMI protocol 處理</li>
+                        <li><strong>不確定時：寧可 over-call，不可 miss-call</strong></li>
+                        <li><strong>準備 TCP</strong>（體外暫時性節律器）：RBBB STEMI 容易進展成 Complete AV block</li>
+                    </ol>
+                </div>
+
+                <ImageFigure src="images-stemi/fig LBBB RBBB ACS.png" caption="LBBB 與 RBBB 背景下的 ACS 心電圖判讀" alt="LBBB RBBB ACS ECG" />
+            </Card>
+
+            {/* 4.3 Posterior MI */}
+            <Card title="4.3 後壁 MI（容易被漏掉！）" icon="🔄" accentColor="#8b5cf6">
+                <ul style={{fontSize:'0.88rem',lineHeight:1.8,paddingLeft:'20px'}}>
+                    <li>V1-V3 ST 下降 + R 波增高 = 後壁梗塞的<strong>鏡像變化</strong>（mirror image）</li>
+                    <li>必須加做 <strong>V7-V9</strong> 確認（V7-V9 ST 抬高 ≥ 0.5mm）</li>
+                    <li>責任血管通常為 LCX 或 RCA 後降支</li>
+                    <li>常合併下壁或側壁梗塞</li>
+                </ul>
+                <InfoBox type="warning">
+                    V1-V3 ST 下降常被誤認為「前壁缺血」而延誤診斷！看到 V1-V3 ST 下降 + R 波增高，第一反應應該是：<strong>加做 V7-V9！</strong>
+                </InfoBox>
+            </Card>
+
+            {/* 4.4 RV Infarction */}
+            <Card title="4.4 右室梗塞" icon="❤️" accentColor="#f59e0b">
+                <ul style={{fontSize:'0.88rem',lineHeight:1.8,paddingLeft:'20px'}}>
+                    <li>下壁 MI + 低血壓 → <strong>立即加做右胸導程 V3R-V6R</strong></li>
+                    <li>V4R ST 抬高 ≥ 1mm → 診斷 RV infarction（敏感性 88%，特異性 78%）</li>
+                    <li>責任血管：RCA 近端閉塞（marginal branch 之前）</li>
+                </ul>
+                <InfoBox type="danger">
+                    <strong>禁用 NTG！</strong>右室梗塞的血行動力學完全依賴前負荷（preload-dependent）。硝化甘油會降低靜脈回流，導致嚴重低血壓甚至心因性休克。需積極輸液（500-1000mL NS bolus）維持血壓。
+                </InfoBox>
+            </Card>
+
+            {/* 4.5 Pacemaker */}
+            <Card title="4.5 起搏器患者" icon="🔋" accentColor="#06b6d4">
+                <ul style={{fontSize:'0.88rem',lineHeight:1.8,paddingLeft:'20px'}}>
+                    <li>起搏器節律（ventricular pacing）的 ECG 類似 LBBB，ST-T 波形態改變</li>
+                    <li>觀察自身心律窗口（若有 native beats），評估 ST 段變化</li>
+                    <li>注意起搏器感知異常（sensing failure）可能掩蓋 ST 變化</li>
+                    <li><strong>比較先前 ECG</strong>，任何新變化都值得警覺</li>
+                    <li>主要依賴臨床症狀與肌鈣蛋白（Troponin）變化做診斷</li>
+                    <li>可嘗試 Sgarbossa 準則（但在起搏器節律下準確度較低）</li>
+                </ul>
+                <ImageFigure src="images-stemi/fig pacemaker ECG.png" caption="起搏器節律下的 ECG 判讀：注意 ST 段變化可能被掩蓋" alt="Pacemaker ECG" />
+            </Card>
+        </div>
+    );
+}
+
+// ===== TAB 5: Medications =====
+function TabMeds() {
+    return (
+        <div className="fade-in">
+            <SectionTitle icon="💊">抗血栓藥物速查</SectionTitle>
+
+            {/* 5.1 Core Concept */}
+            <Card title="5.1 核心觀念" icon="🧠" accentColor="#3b82f6">
+                <div style={{textAlign:'center',padding:'16px',background:'rgba(59,130,246,0.1)',borderRadius:'12px',marginBottom:'16px'}}>
+                    <div style={{fontSize:'1.2rem',fontWeight:700,color:'#3b82f6',marginBottom:'8px'}}>抗血小板 vs 抗凝血劑：兩個完全不同的機轉！</div>
+                </div>
+
+                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(250px, 1fr))',gap:'12px'}}>
+                    <div style={{background:'rgba(220,38,38,0.08)',borderRadius:'12px',padding:'16px',border:'1px solid rgba(220,38,38,0.25)'}}>
+                        <h4 style={{color:'#DC2626',marginBottom:'8px'}}>抗血小板（Anti-platelet）</h4>
+                        <p style={{fontSize:'0.88rem',lineHeight:1.7,color:'var(--text-secondary)'}}>
+                            像在士兵（血小板）身上噴「防黏劑」，讓它們無法聚集形成血栓。針對的是<strong>白色血栓</strong>（動脈血栓為主）。
+                        </p>
+                    </div>
+                    <div style={{background:'rgba(59,130,246,0.08)',borderRadius:'12px',padding:'16px',border:'1px solid rgba(59,130,246,0.25)'}}>
+                        <h4 style={{color:'#3b82f6',marginBottom:'8px'}}>抗凝血劑（Anticoagulant）</h4>
+                        <p style={{fontSize:'0.88rem',lineHeight:1.7,color:'var(--text-secondary)'}}>
+                            像阻斷「骨牌效應」，讓凝血因子無法串聯啟動凝血瀑布。針對的是<strong>紅色血栓</strong>（靜脈血栓為主）。
+                        </p>
+                    </div>
+                </div>
+            </Card>
+
+            {/* 5.2 Detailed Comparison */}
+            <Card title="5.2 詳細對照表" icon="📋" accentColor="#8b5cf6">
+                <DataTable
+                    headerBg="linear-gradient(135deg, #8b5cf6, #6d28d9)"
+                    headers={['項目', '抗血小板 (Anti-platelet)', '抗凝血劑 (Anticoagulant)']}
+                    rows={[
+                        ['<strong>作用目標</strong>', '血小板 (Platelet)', '凝血因子 (Clotting Factors)'],
+                        ['<strong>主要用途</strong>', '動脈血栓<br/>心肌梗塞<br/>腦中風<br/>冠狀動脈疾病<br/>支架置放後', '靜脈血栓 (DVT)<br/>肺栓塞 (PE)<br/>心房顫動 (AF)<br/>人工瓣膜'],
+                        ['<strong>常用藥物</strong>',
+                            'Aspirin (Bokey)<br/>Clopidogrel (Plavix)<br/>Ticagrelor (Brilinta)<br/>Prasugrel (Efient)<br/>Tirofiban (Aggrastat)',
+                            'Heparin (UFH)<br/>Enoxaparin (Clexane)<br/>Warfarin (Coumadin)<br/>Rivaroxaban (Xarelto)<br/>Edoxaban (Lixiana)<br/>Apixaban (Eliquis)<br/>Dabigatran (Pradaxa)'],
+                        ['<strong>監測</strong>', '出血徵象<br/>不需常規抽血監測', 'Heparin → aPTT / ACT<br/>Warfarin → PT / INR<br/>NOAC 通常不需常規監測'],
+                    ]}
+                />
+            </Card>
+
+            {/* 5.3 Clinical Key Points */}
+            <Card title="5.3 臨床關鍵提醒" icon="💡" accentColor="#f59e0b">
+                <InfoBox type="emergency">
+                    <strong>ACS 病人同時需要兩種！</strong><br/>
+                    抗血小板（Aspirin + P2Y12 inhibitor）<strong>＋</strong> 抗凝血劑（Heparin）= Triple antithrombotic therapy
+                </InfoBox>
+
+                <InfoBox type="warning">
+                    <strong>不可互相取代！</strong><br/>
+                    心肌梗塞不能只給 Heparin（需要抗血小板）<br/>
+                    DVT/PE 不能只給 Aspirin（需要抗凝血劑）
+                </InfoBox>
+
+                <div style={{background:'rgba(16,185,129,0.1)',borderRadius:'12px',padding:'16px',border:'1px solid rgba(16,185,129,0.3)',marginTop:'12px'}}>
+                    <h4 style={{color:'#10b981',marginBottom:'8px'}}>簡單判斷法：</h4>
+                    <ul style={{fontSize:'0.9rem',lineHeight:1.8,paddingLeft:'20px'}}>
+                        <li>看到「<strong>支架</strong>」「<strong>心肌梗塞</strong>」「<strong>ACS</strong>」→ 抗血小板為主角</li>
+                        <li>看到「<strong>DVT</strong>」「<strong>PE</strong>」「<strong>AF</strong>」→ 抗凝血劑為主角</li>
+                    </ul>
+                </div>
+
+                <ImageFigure src="images-stemi/fig ACS DAPT.png" caption="ACS 抗血小板與抗凝血藥物策略總覽" alt="ACS DAPT" />
+            </Card>
+
+            {/* 5.4 STEMI Loading Protocol */}
+            <Card title="5.4 STEMI Loading Protocol" icon="⚡" accentColor="#DC2626">
+                <DataTable
+                    headerBg="linear-gradient(135deg, #DC2626, #991b1b)"
+                    headers={['方案', '藥物組合', 'Loading 劑量']}
+                    rows={[
+                        ['<strong>方案一</strong>', 'Bokey + Plavix', 'Aspirin 300mg + Clopidogrel 300-600mg'],
+                        ['<strong>方案二</strong>', 'Bokey + Brilinta', 'Aspirin 300mg + Ticagrelor 180mg'],
+                        ['<strong>方案三</strong>', 'Bokey + Efient', 'Aspirin 300mg + Prasugrel 20mg'],
+                    ]}
+                />
+                <InfoBox type="info">
+                    <strong>加上 Heparin：</strong>4000-5000 units IV bolus（60 units/kg）<br/>
+                    進導管室時再 check ACT，目標 250-300 秒。若 ACT 不足，追加 Heparin。
+                </InfoBox>
+            </Card>
+        </div>
+    );
+}
+
+// ===== TAB 6: Differential Diagnosis =====
+function TabDDx() {
+    return (
+        <div className="fade-in">
+            <SectionTitle icon="🔍">胸痛鑑別診斷</SectionTitle>
+
+            {/* 6.1 Key Differentials */}
+            <Card title="6.1 致命性胸痛鑑別" icon="🚨" accentColor="#DC2626">
+                <InfoBox type="danger">
+                    <strong>優先排除主動脈剝離與肺栓塞！</strong>兩者均可致命，且治療方向與 ACS 截然不同（抗凝 vs 不抗凝 / 手術 vs PCI）。
+                </InfoBox>
+
+                <DataTable
+                    headerBg="linear-gradient(135deg, #DC2626, #991b1b)"
+                    headers={['鑑別診斷', '臨床特徵', 'ECG / 檢查線索']}
+                    rows={[
+                        ['<strong>主動脈剝離</strong><br/>Aortic Dissection',
+                         '突發撕裂樣胸痛<br/>放射至背部（tearing pain）<br/>雙側血壓不對稱<br/>脈搏不對稱',
+                         '胸片：縱膈增寬<br/>CT Aorta 確診<br/>D-dimer 通常升高<br/><strong>禁忌：抗凝抗栓！</strong>'],
+                        ['<strong>肺栓塞</strong><br/>Pulmonary Embolism',
+                         '急性呼吸困難、缺氧<br/>胸膜性胸痛<br/>下肢腫脹（DVT）<br/>危險因子：久坐、手術、癌症',
+                         'ECG: S1Q3T3 或右心負荷<br/>竇性心搏過速<br/>D-dimer 升高<br/>CT-PA 確診'],
+                        ['<strong>心包炎</strong><br/>Pericarditis',
+                         '胸痛隨體位變化<br/>前傾坐姿減輕<br/>可聽到心包摩擦音<br/>常有先驅感染病史',
+                         'ECG: 瀰漫性 ST 抬高<br/><strong>無交互變化</strong><br/><strong>PR 段下降</strong><br/>Troponin 可輕微升高'],
+                        ['<strong>嗜鉻細胞瘤</strong><br/>Pheochromocytoma',
+                         '陣發性高血壓、心悸<br/>頭痛、盜汗三聯症<br/>年輕高血壓患者',
+                         'ECG 無特異性<br/>可有 ST-T 變化<br/>尿兒茶酚胺（catecholamine）升高<br/>腎上腺 CT/MRI'],
+                        ['<strong>敗血症</strong><br/>Sepsis',
+                         '全身炎症反應<br/>發燒、心跳快、低血壓<br/>感染來源（肺炎、UTI等）',
+                         'ECG 無特異性變化<br/>Troponin 可因 demand ischemia 升高<br/>血培養、Procalcitonin'],
+                        ['<strong>冠狀動脈栓塞</strong><br/>Coronary Embolism',
+                         '感染性心內膜炎患者<br/>AF 患者<br/>無傳統冠心病危險因子',
+                         'ECG 類似 AMI<br/>Echo 可見贅生物（vegetation）<br/>血培養陽性'],
+                    ]}
+                />
+            </Card>
+
+            {/* 6.2 ECG Mimics */}
+            <Card title="6.2 ECG Mimics（ST 抬高但非 AMI）" icon="🎭" accentColor="#f59e0b">
+                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(280px, 1fr))',gap:'12px'}}>
+                    {/* Early Repolarization */}
+                    <div style={{background:'rgba(16,185,129,0.08)',borderRadius:'12px',padding:'16px',border:'1px solid rgba(16,185,129,0.25)'}}>
+                        <h4 style={{color:'#10b981',marginBottom:'8px'}}>Early Repolarization（早期再極化）</h4>
+                        <ul style={{fontSize:'0.85rem',lineHeight:1.7,paddingLeft:'16px'}}>
+                            <li>ST 段凹面向上（concave upward）</li>
+                            <li><strong>無交互變化</strong>（最重要鑑別點！）</li>
+                            <li>常見於年輕健康男性</li>
+                            <li>J-point elevation + notching</li>
+                            <li>隨心率增快 ST 抬高消失</li>
+                        </ul>
+                    </div>
+
+                    {/* LVH */}
+                    <div style={{background:'rgba(59,130,246,0.08)',borderRadius:'12px',padding:'16px',border:'1px solid rgba(59,130,246,0.25)'}}>
+                        <h4 style={{color:'#3b82f6',marginBottom:'8px'}}>LVH with Strain（左室肥厚伴壓力）</h4>
+                        <ul style={{fontSize:'0.85rem',lineHeight:1.7,paddingLeft:'16px'}}>
+                            <li>V1-V3 可有 ST 抬高（次發性 ST-T 變化）</li>
+                            <li>高電壓（Sokolow-Lyon 或 Cornell criteria）</li>
+                            <li>V5-V6 ST 下降 + T 波倒置（strain pattern）</li>
+                            <li>對稱性 T 波倒置與 AMI 不同</li>
+                        </ul>
+                    </div>
+
+                    {/* Brugada */}
+                    <div style={{background:'rgba(245,158,11,0.08)',borderRadius:'12px',padding:'16px',border:'1px solid rgba(245,158,11,0.25)'}}>
+                        <h4 style={{color:'#f59e0b',marginBottom:'8px'}}>Brugada Syndrome</h4>
+                        <ul style={{fontSize:'0.85rem',lineHeight:1.7,paddingLeft:'16px'}}>
+                            <li>V1-V3 coved-type ST 抬高（Type 1 = 診斷型）</li>
+                            <li>RBBB-like pattern</li>
+                            <li>不伴有胸痛或 Troponin 升高</li>
+                            <li>可因發燒、藥物誘發</li>
+                            <li>猝死高風險，需 ICD 評估</li>
+                        </ul>
+                    </div>
+                </div>
+            </Card>
+        </div>
+    );
+}
+
+// ===== TAB 7: Advanced =====
+function TabAdvanced() {
+    return (
+        <div className="fade-in">
+            <SectionTitle icon="📋">進階冠脈定位與 ECG Pattern</SectionTitle>
+
+            {/* 7.1 RCA vs LCX */}
+            <Card title="7.1 下壁 MI：RCA vs LCX 鑑別" icon="🔀" accentColor="#3b82f6">
+                <DataTable
+                    headerBg="linear-gradient(135deg, #3b82f6, #1d4ed8)"
+                    headers={['鑑別指標', 'RCA 阻塞', 'LCX 阻塞']}
+                    rows={[
+                        ['<strong>ST 向量方向</strong>', '向導程 III', '向導程 II'],
+                        ['<strong>III vs II</strong>', 'III > II', 'II ≥ III'],
+                        ['<strong>導程 I</strong>', 'ST 壓低', '等電位或 ST 抬高'],
+                        ['<strong>aVL 變化</strong>', '明顯 ST 壓低', '輕微壓低或等電位'],
+                        ['<strong>後壁受累</strong>', '有（若 RCA 為優勢血管）', '幾乎必然受累'],
+                        ['<strong>側壁受累</strong>', '較少', '常見（V5-V6, I, aVL）'],
+                        ['<strong>右室受累</strong>', '常見（近端阻塞）', '極少'],
+                    ]}
+                />
+
+                <ImageFigure src="images-stemi/fig_ACS ECG RCA vs LCX.png" caption="RCA vs LCX 下壁梗塞 ECG 鑑別示意圖" alt="RCA vs LCX" />
+                <ImageFigure src="images-stemi/fig_ACS ECG RCA vs LCX pattern.png" caption="RCA 與 LCX 阻塞的 ECG pattern 比較" alt="RCA vs LCX pattern" />
+                <ImageFigure src="images-stemi/fig_ACS ECG inferoposterior pattern.png" caption="下壁及後壁梗塞的 ECG pattern 總覽" alt="Inferoposterior pattern" />
+            </Card>
+
+            {/* 7.2 RCA Proximal vs Distal & V4R */}
+            <Card title="7.2 RCA 阻塞部位與 V4R 判讀" icon="📍" accentColor="#DC2626">
+                <DataTable
+                    headerBg="linear-gradient(135deg, #DC2626, #991b1b)"
+                    headers={['阻塞部位', 'V4R 表現', '臨床意義']}
+                    rows={[
+                        ['<strong>Proximal RCA</strong><br/>（RV branch 之前）', 'V4R ST 抬高 + T 波正向<br/>≥1mm 預測準確度 90%', 'RV 梗塞 + 低血壓 + AV block<br/><strong>禁 NTG！需輸液！</strong>'],
+                        ['<strong>Distal RCA</strong><br/>（RV branch 之後）', 'V4R ST 等電位<br/>T 波正向', '單純下壁梗塞<br/>血行動力學通常穩定'],
+                        ['<strong>LCX 阻塞</strong><br/>（非 RCA）', 'V4R ST 壓低 + T 波負向<br/>≥1mm 預測 CX 阻塞準確度 100%', '下壁 + 後壁梗塞<br/>加做 V7-V9 確認'],
+                    ]}
+                />
+
+                <ImageFigure src="images-stemi/fig_ACS ECG RCA proximal V4R.png" caption="V4R 導程在 RCA 近端阻塞的診斷價值" alt="RCA proximal V4R" />
+                <ImageFigure src="images-stemi/fig_ACS ECG LCX and RCA patterns.png" caption="LCX 與 RCA 阻塞的 ECG pattern 鑑別" alt="LCX and RCA ECG patterns" />
+                <ImageFigure src="images-stemi/fig_ACS LCX and RCA patterns.png" caption="LCX 與 RCA 的冠脈造影與 ECG 對應" alt="LCX and RCA patterns" />
+            </Card>
+
+            {/* 7.3 LAD 4 Patterns */}
+            <Card title="7.3 LAD 阻塞 4 種 Pattern" icon="🔬" accentColor="#f59e0b">
+                <ImageFigure src="images-stemi/fig_ACS ECG anterior wall LAD anatomy.png" caption="LAD 解剖：D1（第一對角枝）與 S1（第一間隔支）是關鍵分支標記" alt="LAD anatomy" />
+
+                {/* Pattern 1 */}
+                <div style={{background:'rgba(220,38,38,0.1)',borderRadius:'12px',padding:'16px',marginBottom:'12px',border:'2px solid rgba(220,38,38,0.4)'}}>
+                    <h4 style={{color:'#DC2626',marginBottom:'8px',display:'flex',alignItems:'center',gap:'8px'}}>
+                        Pattern 1 — 近端 LAD（D1+S1 之前）
+                        <span style={{background:'#DC2626',color:'white',padding:'2px 8px',borderRadius:'4px',fontSize:'0.75rem'}}>高風險</span>
+                    </h4>
+                    <ul style={{fontSize:'0.88rem',lineHeight:1.8,paddingLeft:'20px'}}>
+                        <li><strong>RBBB</strong>（S1 之前阻塞的特異性標誌）— 間隔支缺血導致傳導異常</li>
+                        <li><strong>aVR ST 抬高</strong>（最敏感的標誌）— 反映全域缺血/基底部缺血</li>
+                        <li><strong>V1 ST {'>'} 2mm</strong></li>
+                        <li>下壁 II, III, aVF ST 壓低（交互變化）</li>
+                        <li>V5, V6 ST 壓低</li>
+                    </ul>
+                    <ImageFigure src="images-stemi/fig_ACS ECG LAD 1.png" caption="Pattern 1：近端 LAD 阻塞 ECG 範例" alt="LAD Pattern 1" />
+                </div>
+
+                {/* Pattern 2 */}
+                <div style={{background:'rgba(16,185,129,0.08)',borderRadius:'12px',padding:'16px',marginBottom:'12px',border:'1px solid rgba(16,185,129,0.3)'}}>
+                    <h4 style={{color:'#10b981',marginBottom:'8px',display:'flex',alignItems:'center',gap:'8px'}}>
+                        Pattern 2 — 遠端 LAD（D1+S1 之後）
+                        <span style={{background:'#10b981',color:'white',padding:'2px 8px',borderRadius:'4px',fontSize:'0.75rem'}}>較低風險</span>
+                    </h4>
+                    <ul style={{fontSize:'0.88rem',lineHeight:1.8,paddingLeft:'20px'}}>
+                        <li><strong>V4, V5, V6 Q 波</strong>（心尖部梗塞）</li>
+                        <li>下壁無 ST 壓低，或等電位 / 輕微抬高（wrap-around LAD）</li>
+                        <li>梗塞範圍較小，預後相對較好</li>
+                    </ul>
+                    <ImageFigure src="images-stemi/fig_ACS ECG LADd 2.png" caption="Pattern 2：遠端 LAD 阻塞 ECG 範例" alt="LAD Pattern 2" />
+                </div>
+
+                {/* Pattern 3 */}
+                <div style={{background:'rgba(245,158,11,0.08)',borderRadius:'12px',padding:'16px',marginBottom:'12px',border:'1px solid rgba(245,158,11,0.3)'}}>
+                    <h4 style={{color:'#f59e0b',marginBottom:'8px',display:'flex',alignItems:'center',gap:'8px'}}>
+                        Pattern 3 — D1 遠端 / S1 近端
+                        <span style={{background:'#f59e0b',color:'white',padding:'2px 8px',borderRadius:'4px',fontSize:'0.75rem'}}>中等風險</span>
+                    </h4>
+                    <ul style={{fontSize:'0.88rem',lineHeight:1.8,paddingLeft:'20px'}}>
+                        <li><strong>V1 ST {'>'} 2mm</strong>，aVR ST 抬高（S1 近端的特徵）</li>
+                        <li><strong>aVL ST 壓低</strong>（D1 以下阻塞的特異性指標）</li>
+                        <li>間隔支受累但對角枝未受累</li>
+                    </ul>
+                    <ImageFigure src="images-stemi/fig_ACS ECG LAD 3.png" caption="Pattern 3：D1 遠端 / S1 近端 ECG 範例" alt="LAD Pattern 3" />
+                </div>
+
+                {/* Pattern 4 */}
+                <div style={{background:'rgba(59,130,246,0.08)',borderRadius:'12px',padding:'16px',marginBottom:'12px',border:'1px solid rgba(59,130,246,0.3)'}}>
+                    <h4 style={{color:'#3b82f6',marginBottom:'8px',display:'flex',alignItems:'center',gap:'8px'}}>
+                        Pattern 4 — S1 遠端 / D1 近端
+                        <span style={{background:'#3b82f6',color:'white',padding:'2px 8px',borderRadius:'4px',fontSize:'0.75rem'}}>中等風險</span>
+                    </h4>
+                    <ul style={{fontSize:'0.88rem',lineHeight:1.8,paddingLeft:'20px'}}>
+                        <li><strong>aVL, I, V5, V6 ST 抬高</strong>（對角枝受累 → 側壁受累）</li>
+                        <li><strong>III ST 壓低 {'>'} II</strong>（與側壁抬高對應的交互變化）</li>
+                        <li>對角枝受累但間隔支未受累</li>
+                    </ul>
+                    <ImageFigure src="images-stemi/fig_ACS ECG LAD 4.png" caption="Pattern 4：S1 遠端 / D1 近端 ECG 範例" alt="LAD Pattern 4" />
+                </div>
+            </Card>
+
+            {/* 7.4 Left Main */}
+            <Card title="7.4 左主幹阻塞線索" icon="🔴" accentColor="#DC2626">
+                <InfoBox type="danger">
+                    <strong>當 aVR ST 抬高 {'>'} V1 ST 抬高 → 高度懷疑左主幹（LM）阻塞！</strong><br/>
+                    左主幹阻塞造成廣泛性心肌缺血，預後極差。需要緊急手術或 PCI 介入。
+                </InfoBox>
+                <ul style={{fontSize:'0.88rem',lineHeight:1.8,paddingLeft:'20px',marginBottom:'12px'}}>
+                    <li>aVR ST 抬高為全域缺血的指標</li>
+                    <li>多導聯瀰漫性 ST 下降 + aVR ST 抬高 = LM 或 LAD 近端重度病變</li>
+                    <li>常合併血行動力學不穩定（心因性休克）</li>
+                    <li>需要 IABP 或 ECMO 支持</li>
+                </ul>
+                <ImageFigure src="images-stemi/fig_ACS ECG LM.png" caption="左主幹阻塞 ECG：注意 aVR ST 抬高 > V1 ST 抬高" alt="Left Main ECG" />
+            </Card>
+
+            {/* Killip Classification */}
+            <Card title="7.5 Killip 分類與預後" icon="📊" accentColor="#8b5cf6">
+                <DataTable
+                    headerBg="linear-gradient(135deg, #8b5cf6, #6d28d9)"
+                    headers={['Killip Class', '臨床表現', '院內死亡率']}
+                    rows={[
+                        ['<strong>Class I</strong>', '無心衰竭徵象<br/>無肺囉音、無 S3', '<strong style="color:#10b981">6%</strong>'],
+                        ['<strong>Class II</strong>', '輕度心衰竭<br/>肺底囉音、S3、頸靜脈怒張', '<strong style="color:#f59e0b">17%</strong>'],
+                        ['<strong>Class III</strong>', '肺水腫<br/>瀰漫性肺囉音、呼吸困難', '<strong style="color:#f97316">38%</strong>'],
+                        ['<strong>Class IV</strong>', '心因性休克<br/>SBP < 90mmHg、末梢灌流不足', '<strong style="color:#DC2626">81%</strong>'],
+                    ]}
+                />
+            </Card>
+
+            {/* Mechanical Complications */}
+            <Card title="7.6 機械性併發症" icon="⚙️" accentColor="#DC2626">
+                <DataTable
+                    headerBg="linear-gradient(135deg, #DC2626, #991b1b)"
+                    headers={['併發症', '發生時間', '臨床特徵', '處置']}
+                    rows={[
+                        ['<strong>心室中隔穿孔</strong><br/>(VSD)', '梗塞後 2-7 天', '新出現全收縮期雜音<br/>Echo 可見 shunt flow<br/>急性血行動力學惡化', '緊急手術修補<br/>IABP 支持<br/>Afterload reduction'],
+                        ['<strong>二尖瓣逆流</strong><br/>(MR)', '急性或亞急性', '乳頭肌缺血 / 斷裂<br/>急性肺水腫<br/>新出現收縮期雜音', '緊急手術（嚴重 MR）<br/>IABP + Vasodilator<br/>PCI 改善缺血'],
+                        ['<strong>游離壁破裂</strong><br/>(Free Wall Rupture)', '梗塞後 3-5 天', '突發心包填塞<br/>電氣機械解離（PEA）<br/>致命率極高', '緊急心包穿刺引流<br/>緊急開胸手術<br/>多數不及搶救'],
+                    ]}
+                />
+                <InfoBox type="warning">
+                    機械性併發症好發於梗塞後 2-7 天，注意此「危險窗口期」。CCU 照護期間若突發血行動力學變化，應立即 Echo 排除機械性併發症。
+                </InfoBox>
+            </Card>
+        </div>
+    );
+}
+
+// ===== TAB 8: Quiz =====
+function TabQuiz() {
+    const [answers, setAnswers] = useState(() => {
+        try { return JSON.parse(localStorage.getItem('stemi-quiz-answers') || '{}'); } catch(e) { return {}; }
+    });
+    const [revealed, setRevealed] = useState({});
+
+    const selectAnswer = (qIdx, aIdx) => {
+        const next = {...answers, [qIdx]: aIdx};
+        setAnswers(next);
+        localStorage.setItem('stemi-quiz-answers', JSON.stringify(next));
+    };
+
+    const revealAnswer = (qIdx) => {
+        setRevealed(prev => ({...prev, [qIdx]: true}));
+    };
+
+    const resetQuiz = () => {
+        setAnswers({});
+        setRevealed({});
+        localStorage.removeItem('stemi-quiz-answers');
+    };
+
+    const totalAnswered = Object.keys(answers).length;
+    const totalCorrect = Object.entries(answers).filter(([k,v]) => v === quizQuestions[parseInt(k)].answer).length;
+
+    return (
+        <div className="fade-in">
+            <SectionTitle icon="🏆">臨床教育考題</SectionTitle>
+
+            {/* Score Tracker */}
+            <Card title="學習進度" icon="📊" accentColor="#8b5cf6">
+                <div style={{display:'flex',alignItems:'center',gap:'16px',flexWrap:'wrap'}}>
+                    <div style={{flex:1,minWidth:'200px'}}>
+                        <div style={{display:'flex',justifyContent:'space-between',marginBottom:'4px',fontSize:'0.85rem'}}>
+                            <span>已完成：{totalAnswered} / {quizQuestions.length}</span>
+                            <span>正確：{totalCorrect} / {totalAnswered || 0}</span>
+                        </div>
+                        <div style={{height:'8px',background:'var(--border)',borderRadius:'4px',overflow:'hidden'}}>
+                            <div style={{height:'100%',width:`${(totalAnswered/quizQuestions.length)*100}%`,background:'linear-gradient(90deg, #8b5cf6, #3b82f6)',borderRadius:'4px',transition:'width 0.3s'}} />
+                        </div>
+                    </div>
+                    <button onClick={resetQuiz} style={{padding:'8px 16px',borderRadius:'8px',border:'1px solid var(--border-light)',background:'transparent',color:'var(--text-secondary)',cursor:'pointer',fontSize:'0.8rem'}}>重新測驗</button>
+                </div>
+                {totalAnswered === quizQuestions.length && (
+                    <div style={{marginTop:'12px',textAlign:'center',padding:'12px',background:totalCorrect >= 8 ? 'rgba(16,185,129,0.15)' : totalCorrect >= 6 ? 'rgba(245,158,11,0.15)' : 'rgba(220,38,38,0.15)',borderRadius:'8px'}}>
+                        <span style={{fontSize:'1.1rem',fontWeight:700,color:totalCorrect >= 8 ? '#10b981' : totalCorrect >= 6 ? '#f59e0b' : '#DC2626'}}>
+                            {totalCorrect >= 8 ? '太棒了！你已經掌握 STEMI 急診處置的核心知識！' : totalCorrect >= 6 ? '不錯！建議再複習錯誤的題目加強記憶。' : '加油！建議回頭複習各個章節內容再重新測驗。'}
+                        </span>
+                    </div>
+                )}
+            </Card>
+
+            {/* Questions */}
+            {quizQuestions.map((q, qIdx) => {
+                const userAnswer = answers[qIdx];
+                const isRevealed = revealed[qIdx];
+                const isCorrect = userAnswer === q.answer;
+
+                return (
+                    <Card key={qIdx} accentColor={isRevealed ? (isCorrect ? '#10b981' : '#DC2626') : '#3b82f6'} style={{marginBottom:'16px'}}>
+                        <div style={{fontSize:'0.95rem',fontWeight:600,marginBottom:'12px',lineHeight:1.6,color:'var(--text-primary)'}}>
+                            {q.q}
+                        </div>
+
+                        <div style={{display:'flex',flexDirection:'column',gap:'8px',marginBottom:'12px'}}>
+                            {q.options.map((opt, aIdx) => {
+                                const isSelected = userAnswer === aIdx;
+                                const isCorrectOption = q.answer === aIdx;
+                                let optBg = 'rgba(30,41,59,0.6)';
+                                let optBorder = 'var(--border-light)';
+                                let optColor = 'var(--text-primary)';
+
+                                if (isRevealed) {
+                                    if (isCorrectOption) {
+                                        optBg = 'rgba(16,185,129,0.2)';
+                                        optBorder = '#10b981';
+                                        optColor = '#10b981';
+                                    } else if (isSelected && !isCorrectOption) {
+                                        optBg = 'rgba(220,38,38,0.2)';
+                                        optBorder = '#DC2626';
+                                        optColor = '#DC2626';
+                                    }
+                                } else if (isSelected) {
+                                    optBg = 'rgba(59,130,246,0.2)';
+                                    optBorder = '#3b82f6';
+                                    optColor = '#3b82f6';
+                                }
+
+                                return (
+                                    <button
+                                        key={aIdx}
+                                        onClick={() => !isRevealed && selectAnswer(qIdx, aIdx)}
+                                        disabled={isRevealed}
+                                        style={{
+                                            display:'flex',alignItems:'center',gap:'10px',
+                                            padding:'10px 14px',borderRadius:'8px',
+                                            background:optBg,border:`1px solid ${optBorder}`,
+                                            color:optColor,cursor:isRevealed?'default':'pointer',
+                                            fontSize:'0.88rem',textAlign:'left',
+                                            transition:'all 0.2s',lineHeight:1.5
+                                        }}
+                                    >
+                                        <span style={{fontWeight:600,flexShrink:0}}>{String.fromCharCode(65+aIdx)}.</span>
+                                        <span>{opt}</span>
+                                        {isRevealed && isCorrectOption && <span style={{marginLeft:'auto',flexShrink:0}}>&#10003;</span>}
+                                        {isRevealed && isSelected && !isCorrectOption && <span style={{marginLeft:'auto',flexShrink:0}}>&#10007;</span>}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        {!isRevealed && userAnswer !== undefined && (
+                            <button
+                                onClick={() => revealAnswer(qIdx)}
+                                style={{
+                                    padding:'8px 20px',borderRadius:'8px',
+                                    background:'linear-gradient(135deg, #3b82f6, #2563eb)',
+                                    border:'none',color:'white',cursor:'pointer',
+                                    fontSize:'0.88rem',fontWeight:600
+                                }}
+                            >
+                                顯示答案
+                            </button>
+                        )}
+
+                        {isRevealed && (
+                            <div className="fade-in" style={{
+                                marginTop:'12px',padding:'14px',borderRadius:'10px',
+                                background:isCorrect ? 'rgba(16,185,129,0.1)' : 'rgba(220,38,38,0.1)',
+                                borderLeft:`4px solid ${isCorrect ? '#10b981' : '#DC2626'}`
+                            }}>
+                                <div style={{fontWeight:700,marginBottom:'6px',color:isCorrect ? '#10b981' : '#DC2626'}}>
+                                    {isCorrect ? '正確！' : '不正確'}
+                                </div>
+                                <div style={{fontSize:'0.88rem',lineHeight:1.7,color:'var(--text-primary)'}}>
+                                    {q.explain}
+                                </div>
+                            </div>
+                        )}
+                    </Card>
+                );
+            })}
+        </div>
+    );
+}
+
+// ==================== MAIN APP ====================
+
+function App() {
+    const [activeTab, setActiveTab] = useState('sop');
+
+    const renderTab = () => {
+        switch(activeTab) {
+            case 'sop': return <TabSOP />;
+            case 'ecg': return <TabECG />;
+            case 'coronary': return <TabCoronary />;
+            case 'pitfalls': return <TabPitfalls />;
+            case 'meds': return <TabMeds />;
+            case 'ddx': return <TabDDx />;
+            case 'advanced': return <TabAdvanced />;
+            case 'quiz': return <TabQuiz />;
+            default: return <TabSOP />;
+        }
+    };
+
+    return (
+        <div>
+            {/* Header */}
+            <div style={{
+                background:'linear-gradient(135deg, #1e3a5f 0%, #DC2626 100%)',
+                padding:'30px 20px 24px',
+                textAlign:'center',
+                borderBottom:'3px solid #DC2626'
+            }}>
+                <div style={{fontSize:'0.75rem',color:'rgba(255,255,255,0.7)',marginBottom:'4px',letterSpacing:'1px'}}>
+                    國立臺灣大學醫學院附設醫院新竹臺大分院 心血管中心
+                </div>
+                <h1 style={{fontSize:'1.6rem',fontWeight:700,color:'white',marginBottom:'6px',lineHeight:1.3}}>
+                    STEMI 急診處置與 ECG 早期判讀
+                </h1>
+                <div style={{fontSize:'0.85rem',color:'rgba(255,255,255,0.8)',marginBottom:'8px'}}>
+                    ER STEMI Protocol &amp; Early ECG Diagnosis
+                </div>
+                <div style={{fontSize:'0.7rem',color:'rgba(255,255,255,0.5)'}}>
+                    適用對象：急診科、心臟內科醫師、住院醫師、實習醫師
+                </div>
+            </div>
+
+            {/* Content */}
+            <div style={{maxWidth:'800px',margin:'0 auto',padding:'16px'}}>
+                {renderTab()}
+            </div>
+
+            {/* Tab Bar */}
+            <div style={{
+                position:'fixed',bottom:0,left:0,right:0,
+                background:'rgba(15,23,42,0.95)',
+                backdropFilter:'blur(12px)',
+                borderTop:'1px solid var(--border-light)',
+                display:'flex',
+                overflowX:'auto',
+                zIndex:999,
+                padding:'4px 0',
+                WebkitOverflowScrolling:'touch'
+            }}>
+                {tabs.map(tab => (
+                    <button
+                        key={tab.id}
+                        onClick={() => { setActiveTab(tab.id); window.scrollTo({top:0,behavior:'smooth'}); }}
+                        style={{
+                            flex:'1 0 auto',
+                            minWidth:'70px',
+                            display:'flex',
+                            flexDirection:'column',
+                            alignItems:'center',
+                            gap:'2px',
+                            padding:'8px 6px',
+                            border:'none',
+                            background: activeTab === tab.id ? 'rgba(220,38,38,0.15)' : 'transparent',
+                            color: activeTab === tab.id ? '#DC2626' : 'var(--text-muted)',
+                            cursor:'pointer',
+                            transition:'all 0.2s',
+                            borderTop: activeTab === tab.id ? '2px solid #DC2626' : '2px solid transparent',
+                            fontSize:'0.65rem',
+                            fontFamily:'Noto Sans TC, sans-serif'
+                        }}
+                    >
+                        <span style={{fontSize:'1.2rem'}}>{tab.icon}</span>
+                        <span style={{fontWeight: activeTab === tab.id ? 600 : 400, whiteSpace:'nowrap'}}>{tab.label}</span>
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
