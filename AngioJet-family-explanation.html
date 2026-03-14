@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>手術說明 — AngioJet 血栓清除術</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+    background: #f4f6f9;
+    color: #2c3e50;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+  .page {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #6b2d2d 0%, #a04040 100%);
+    color: white;
+    padding: 32px 32px 24px;
+  }
+  .header-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+  .header .subtitle { font-size: 14px; opacity: 0.8; }
+  .hospital-badge {
+    margin-top: 16px;
+    font-size: 13px;
+    opacity: 0.75;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .content { padding: 28px 32px; }
+
+  /* Alert box */
+  .alert-box {
+    background: #fff3cd;
+    border-left: 5px solid #f39c12;
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+  }
+  .alert-box .alert-title {
+    font-weight: 700;
+    color: #856404;
+    font-size: 15px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .alert-box p { color: #533f03; font-size: 14px; line-height: 1.7; }
+
+  /* Section */
+  .section { margin-bottom: 28px; }
+  .section-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #6b2d2d;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f5e6e6;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title .icon {
+    width: 28px;
+    height: 28px;
+    background: #6b2d2d;
+    color: white;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  /* Info card */
+  .info-card {
+    background: #fdf8f8;
+    border: 1px solid #f0dada;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+  .info-card p { font-size: 15px; color: #2c3e50; }
+
+  /* Highlight card */
+  .highlight-card {
+    background: #fff8f0;
+    border: 1px solid #f5d9b0;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    font-size: 14px;
+  }
+  .highlight-card strong { color: #8a4a00; }
+
+  /* Mechanism visual */
+  .mechanism-box {
+    background: #1a1a1a;
+    border-radius: 10px;
+    padding: 20px 24px;
+    color: #f0f0f0;
+    margin-bottom: 16px;
+    text-align: center;
+    font-size: 13px;
+  }
+  .mechanism-box .flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 12px 0;
+  }
+  .mech-bubble {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #ffd180;
+  }
+  .mech-arrow { color: #aaa; font-size: 16px; }
+  .mechanism-box .caption { font-size: 12px; color: #aaa; margin-top: 8px; }
+
+  /* Steps */
+  .steps { display: flex; flex-direction: column; gap: 12px; }
+  .step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    background: #fdf8f8;
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .step-num {
+    width: 30px;
+    height: 30px;
+    background: #6b2d2d;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .step-text { font-size: 14px; line-height: 1.7; }
+  .step-text strong { color: #6b2d2d; }
+
+  /* Indication table */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 14px;
+    font-size: 14px;
+  }
+  .compare-table th {
+    background: #6b2d2d;
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+  }
+  .compare-table th:first-child { border-radius: 8px 0 0 0; }
+  .compare-table th:last-child { border-radius: 0 8px 0 0; }
+  .compare-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+    font-size: 14px;
+  }
+  .compare-table tr:nth-child(even) td { background: #fdf8f8; }
+
+  /* Risk list */
+  .risk-list { list-style: none; }
+  .risk-list li {
+    padding: 8px 0 8px 24px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+    position: relative;
+  }
+  .risk-list li::before {
+    content: "▸";
+    position: absolute;
+    left: 4px;
+    color: #e67e22;
+    font-size: 12px;
+    top: 10px;
+  }
+  .risk-list li.special::before { color: #c0392b; content: "⚠"; font-size: 11px; }
+  .risk-list li:last-child { border-bottom: none; }
+
+  /* Warning box */
+  .warning-box {
+    background: #fdecea;
+    border-left: 5px solid #c0392b;
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin-top: 14px;
+    font-size: 14px;
+    color: #7b1d1d;
+  }
+  .warning-box strong { display: block; margin-bottom: 4px; }
+
+  /* Cost box */
+  .cost-box {
+    background: linear-gradient(135deg, #6b2d2d, #a04040);
+    color: white;
+    border-radius: 10px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .cost-box .label { font-size: 14px; opacity: 0.85; margin-bottom: 4px; }
+  .cost-box .amount { font-size: 32px; font-weight: 700; }
+  .cost-box .note { font-size: 12px; opacity: 0.7; margin-top: 4px; }
+  .cost-box .icon-side { font-size: 48px; opacity: 0.3; flex-shrink: 0; }
+
+  /* Two-col */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .stat-card {
+    background: #fdf8f8;
+    border: 1px solid #f0dada;
+    border-radius: 8px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .stat-card .big { font-size: 26px; font-weight: 700; color: #6b2d2d; }
+  .stat-card .small { font-size: 12px; color: #888; margin-top: 4px; }
+
+  /* Post-op */
+  .post-step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid #f5e6e6;
+  }
+  .post-step:last-child { border-bottom: none; }
+  .post-icon {
+    width: 28px;
+    height: 28px;
+    background: #27ae60;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .post-text { font-size: 14px; line-height: 1.7; }
+  .post-text strong { color: #1e3a2f; }
+
+  /* Footer */
+  .footer {
+    background: #f4f6f9;
+    border-top: 1px solid #e0e6ef;
+    padding: 20px 32px;
+    font-size: 13px;
+    color: #888;
+    text-align: center;
+    line-height: 1.7;
+  }
+  .footer strong { color: #555; }
+
+  @media print {
+    body { background: white; font-size: 14px; }
+    .page { max-width: 100%; box-shadow: none; }
+    .header, .cost-box, .mechanism-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+  @media (max-width: 600px) {
+    .content { padding: 20px 18px; }
+    .two-col { grid-template-columns: 1fr; }
+    .cost-box { flex-direction: column; align-items: flex-start; }
+    .cost-box .icon-side { display: none; }
+  }
+
+  /* Share Button Styles */
+  .share-button { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+  .share-toggle { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%); border: none; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+  .share-toggle:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5); }
+  .share-menu { position: absolute; top: 60px; right: 0; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 20px; min-width: 280px; display: none; animation: fadeInShare 0.3s ease; }
+  .share-menu.active { display: block; }
+  @keyframes fadeInShare { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  .share-menu h4 { color: #1e293b; margin: 0 0 15px 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+  .qr-container { background: #f8fafc; border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 15px; }
+  .qr-container img { max-width: 150px; height: auto; border-radius: 8px; }
+  .qr-container p { font-size: 0.75rem; color: #64748b; margin: 8px 0 0 0; }
+  .share-buttons { display: flex; flex-direction: column; gap: 10px; }
+  .share-btn { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: none; border-radius: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 500; transition: all 0.2s ease; text-decoration: none; color: white; }
+  .share-btn.line { background: #00B900; }
+  .share-btn.email { background: #EA4335; }
+  .share-btn.copy { background: #3B82F6; }
+  .share-btn:hover { transform: translateX(5px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .share-btn svg { width: 20px; height: 20px; fill: currentColor; }
+  .share-close { position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0; }
+  .share-close:hover { color: #1e293b; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- Share Button -->
+<div class="share-button">
+    <button class="share-toggle" onclick="toggleShareMenu()" title="分享此頁面">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+    </button>
+    <div class="share-menu" id="shareMenu">
+        <button class="share-close" onclick="toggleShareMenu()">&times;</button>
+        <h4>📤 分享此頁面</h4>
+        <div class="qr-container">
+            <img id="qrCode" src="" alt="QR Code">
+            <p>掃描 QR Code 開啟頁面</p>
+        </div>
+        <div class="share-buttons">
+            <a class="share-btn line" href="#" id="lineShare" target="_blank">
+                <svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+                LINE 分享
+            </a>
+            <a class="share-btn email" href="#" id="emailShare">
+                <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                Email 分享
+            </a>
+            <button class="share-btn copy" onclick="copyPageUrl()">
+                <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                複製連結
+            </button>
+        </div>
+    </div>
+</div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-tag">手術說明書</div>
+    <h1>AngioJet 血栓清除術</h1>
+    <div class="subtitle">Rheolytic Pharmaco-Mechanical Thrombectomy — 家屬說明</div>
+    <div class="hospital-badge">
+      <span>🏥</span>
+      <span>國立臺灣大學醫學院附設醫院新竹臺大分院　心臟血管中心</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- 緊急說明 -->
+    <div class="alert-box">
+      <div class="alert-title">⚠ 血栓阻塞，為何必須積極處理？</div>
+      <p>
+        血管內的<strong>急性血栓（血塊）</strong>若不及時清除，會造成下游組織持續缺血壞死。AngioJet 是目前技術最成熟的<strong>機械式血栓清除導管</strong>，可以在不開刀的情況下，直接從管腔內將血栓快速抽吸清除。
+      </p>
+    </div>
+
+    <!-- 1. AngioJet 是什麼 -->
+    <div class="section">
+      <div class="section-title"><span class="icon">1</span>AngioJet 是什麼？</div>
+      <div class="info-card">
+        <p>
+          AngioJet 是一套<strong>「流體動力血栓清除系統」（Rheolytic Thrombectomy）</strong>，通俗地說，就是一支會在血管裡「噴水抽吸」的特殊導管。它利用高速生理食鹽水噴射，在導管前端製造強力負壓漩渦，將血栓擊碎並同步抽出體外，達到快速清除血塊的效果。
+        </p>
+      </div>
+
+      <!-- Mechanism visual -->
+      <div class="mechanism-box">
+        <div style="font-size:13px; opacity:0.7; margin-bottom:8px;">作用原理示意（Venturi 效應）</div>
+        <div class="flow">
+          <div class="mech-bubble">高速生食噴射</div>
+          <div class="mech-arrow">→</div>
+          <div class="mech-bubble">產生強力負壓</div>
+          <div class="mech-arrow">→</div>
+          <div class="mech-bubble">血栓碎裂吸入</div>
+          <div class="mech-arrow">→</div>
+          <div class="mech-bubble">排出體外</div>
+        </div>
+        <div class="caption">導管前端噴射速度可達每秒數公尺，血栓在瞬間即被吸碎清除</div>
+      </div>
+
+      <div class="highlight-card">
+        💊 <strong>藥物輔助模式（Power Pulse）：</strong>AngioJet 另有「停止抽吸、只噴藥」的模式，可將血栓溶解藥（如 Alteplase / tPA）直接噴灌於血栓內，讓血栓從內部被藥物溶解後，再啟動抽吸清除，提高清除效率。
+      </div>
+    </div>
+
+    <!-- 2. 適用情況 -->
+    <div class="section">
+      <div class="section-title"><span class="icon">2</span>哪些情況適合使用？</div>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>適用情況</th>
+            <th>說明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>急性周邊動脈阻塞</strong><br><small>（下肢急性缺血）</small></td>
+            <td>腳部動脈突然被血栓堵住，需緊急清除以搶救肢體血流</td>
+          </tr>
+          <tr>
+            <td><strong>靜脈血栓</strong><br><small>（DVT 深層靜脈血栓）</small></td>
+            <td>下肢深層靜脈大量血栓，以機械方式快速清除，預防血栓後症候群</td>
+          </tr>
+          <tr>
+            <td><strong>透析廔管阻塞</strong><br><small>（人工血管 / 自體廔管）</small></td>
+            <td>透析用血管通路因血栓阻塞，清除血栓以恢復透析功能</td>
+          </tr>
+          <tr>
+            <td><strong>肺動脈血栓</strong><br><small>（大面積肺栓塞）</small></td>
+            <td>肺動脈主幹血栓，可作為外科手術外的另一選項</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 3. 手術步驟 -->
+    <div class="section">
+      <div class="section-title"><span class="icon">3</span>手術流程說明</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">①</div>
+          <div class="step-text"><strong>局部麻醉、建立血管通路：</strong>在鼠蹊部或手臂（視部位而定）以局部麻醉穿刺血管，置入引導鞘管（sheath），整個過程病患保持清醒，不需全身麻醉。</div>
+        </div>
+        <div class="step">
+          <div class="step-num">②</div>
+          <div class="step-text"><strong>導絲通過血栓：</strong>在 X 光透視下，將細導絲穿越血栓阻塞段，建立工作通道，讓 AngioJet 導管得以送入。</div>
+        </div>
+        <div class="step">
+          <div class="step-num">③</div>
+          <div class="step-text"><strong>（視情況）藥物浸泡：</strong>若血栓較陳舊或量多，可先以 Power Pulse 模式將血栓溶解藥噴入血栓內，浸泡數分鐘後再進行抽吸，效果更佳。</div>
+        </div>
+        <div class="step">
+          <div class="step-num">④</div>
+          <div class="step-text"><strong>啟動清除：</strong>開啟 AngioJet 系統，以每分鐘固定次數來回通過血栓段，高速水流噴射產生負壓，將血栓擊碎並抽至體外收集袋中。</div>
+        </div>
+        <div class="step">
+          <div class="step-num">⑤</div>
+          <div class="step-text"><strong>評估與補充處置：</strong>清除後以顯影劑確認血流是否通暢，若殘留狹窄，可視情況再進行氣球擴張術或支架置放，確保長期通暢。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. 風險 -->
+    <div class="section">
+      <div class="section-title"><span class="icon">4</span>可能的風險與注意事項</div>
+      <div class="info-card">
+        <ul class="risk-list">
+          <li>穿刺部位出血或血腫（最常見，加壓後通常可控制）</li>
+          <li>血管痙攣（Vasospasm），可用藥物緩解</li>
+          <li>遠端小血管栓塞（血栓碎片移位），可能造成短暫症狀</li>
+          <li>顯影劑過敏或腎功能影響（尤其透析病患需特別注意出入量）</li>
+          <li class="special">心跳過緩（Bradycardia）：AngioJet 於冠狀動脈使用時發生率較高；周邊血管相對少見，但仍需監測</li>
+          <li class="special">溶血（Hemolysis）：高速抽吸可能造成紅血球輕度破壞，通常短暫且可自行恢復，但腎功能不佳者需觀察尿液顏色</li>
+          <li>血栓再形成（Rethrombosis），術後需抗凝治療預防</li>
+          <li>極少數情況下需緊急外科介入</li>
+        </ul>
+      </div>
+      <div class="warning-box">
+        <strong>⚠ 關於溶血與心跳過緩：</strong>
+        這兩項是 AngioJet 較特殊的風險，醫師在手術中會密切監測心律，並限制單次使用時間（通常單段不超過 240 秒），以將風險控制在安全範圍內。
+      </div>
+    </div>
+
+    <!-- 5. 費用 -->
+    <div class="section">
+      <div class="section-title"><span class="icon">5</span>費用說明</div>
+      <div class="cost-box">
+        <div>
+          <div class="label">AngioJet 血栓清除導管器材費用</div>
+          <div class="amount">依實際使用套組計算</div>
+          <div class="note">此費用為自費耗材，健保給付視適應症與申請結果而定。<br>手術費用及住院費用另計，詳情請洽病房護理師或醫療事務人員。</div>
+        </div>
+        <div class="icon-side">💴</div>
+      </div>
+    </div>
+
+    <!-- 6. 術後照護 -->
+    <div class="section">
+      <div class="section-title"><span class="icon">6</span>術後注意事項</div>
+      <div class="info-card">
+        <div class="post-step">
+          <div class="post-icon">✓</div>
+          <div class="post-text"><strong>術後臥床觀察：</strong>穿刺側肢體需保持伸直，臥床時間視穿刺方式（手壓或縫合器）約 4–6 小時。</div>
+        </div>
+        <div class="post-step">
+          <div class="post-icon">✓</div>
+          <div class="post-text"><strong>尿液觀察：</strong>術後若出現茶色或紅色尿液，可能為溶血或血紅素尿，請立即告知護理師，醫師會評估補充水分或其他處置。</div>
+        </div>
+        <div class="post-step">
+          <div class="post-icon">✓</div>
+          <div class="post-text"><strong>抗凝或抗血小板治療：</strong>術後通常需維持抗凝藥物（如 Heparin 靜脈注射，後轉口服抗凝藥），以防血栓再形成，切勿自行停藥。</div>
+        </div>
+        <div class="post-step">
+          <div class="post-icon">✓</div>
+          <div class="post-text"><strong>肢體觀察：</strong>注意術側肢體皮膚顏色、溫度、脈搏是否改善，若再出現蒼白冰冷或疼痛加劇，請立即通知醫護人員。</div>
+        </div>
+        <div class="post-step">
+          <div class="post-icon">✓</div>
+          <div class="post-text"><strong>追蹤與後續治療：</strong>血栓清除後仍需針對原發病因（如心房顫動、動脈硬化、高凝血狀態等）進行長期治療與追蹤，以防復發。</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <div class="footer">
+    <p><strong>如有任何疑問，請隨時向主治醫師或護理師詢問。</strong></p>
+    <p style="margin-top:6px;">國立臺灣大學醫學院附設醫院新竹臺大分院　心臟血管中心</p>
+    <p style="margin-top:4px; font-size:12px;">本說明書僅供衛教參考，不取代醫師個別評估與告知同意書。</p>
+  </div>
+
+</div><!-- /page -->
+<script>
+function initShareButtons() {
+    const pageUrl = window.location.href;
+    const pageTitle = document.title;
+    const encodedUrl = encodeURIComponent(pageUrl);
+    const qrCodeImg = document.getElementById('qrCode');
+    if (qrCodeImg) qrCodeImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodedUrl;
+    const lineShare = document.getElementById('lineShare');
+    if (lineShare) lineShare.href = 'https://social-plugins.line.me/lineit/share?url=' + encodedUrl;
+    const emailShare = document.getElementById('emailShare');
+    if (emailShare) {
+        const emailSubject = encodeURIComponent('分享：' + pageTitle);
+        const emailBody = encodeURIComponent('我想和您分享這個頁面：\n\n' + pageTitle + '\n\n' + pageUrl);
+        emailShare.href = 'mailto:?subject=' + emailSubject + '&body=' + emailBody;
+    }
+}
+function toggleShareMenu() {
+    const menu = document.getElementById('shareMenu');
+    if (menu) menu.classList.toggle('active');
+}
+function copyPageUrl() {
+    const pageUrl = window.location.href;
+    navigator.clipboard.writeText(pageUrl).then(function() {
+        alert('連結已複製到剪貼簿！');
+    }).catch(function() {
+        var textArea = document.createElement('textarea');
+        textArea.value = pageUrl;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert('連結已複製到剪貼簿！');
+    });
+}
+document.addEventListener('click', function(event) {
+    var shareButton = document.querySelector('.share-button');
+    var shareMenu = document.getElementById('shareMenu');
+    if (shareButton && shareMenu && !shareButton.contains(event.target) && shareMenu.classList.contains('active')) {
+        shareMenu.classList.remove('active');
+    }
+});
+document.addEventListener('DOMContentLoaded', initShareButtons);
+</script>
+</body>
+</html>

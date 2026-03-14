@@ -2252,6 +2252,248 @@
             }
         }
 
+        /* ===== Sidebar Navigation ===== */
+        .sidebar-nav {
+            position: fixed;
+            left: 0;
+            top: 64px;
+            bottom: 0;
+            width: 52px;
+            background: white;
+            border-right: 1px solid rgba(0, 119, 182, 0.1);
+            z-index: 90;
+            overflow: hidden;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 2px 0 16px rgba(0, 0, 0, 0.04);
+        }
+
+        .sidebar-nav:hover {
+            width: 260px;
+        }
+
+        .sidebar-nav-title {
+            padding: 14px 14px 8px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease 0.1s;
+        }
+
+        .sidebar-nav:hover .sidebar-nav-title {
+            opacity: 1;
+        }
+
+        .sidebar-nav-list {
+            list-style: none;
+            padding: 8px 0;
+            overflow-y: auto;
+            max-height: calc(100vh - 100px);
+        }
+
+        .sidebar-nav-list::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .sidebar-nav-list::-webkit-scrollbar-thumb {
+            background: rgba(0, 119, 182, 0.2);
+            border-radius: 3px;
+        }
+
+        .sidebar-nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 14px;
+            text-decoration: none;
+            color: var(--text-medium);
+            font-size: 0.82rem;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav-item a:hover {
+            background: var(--bg-blue);
+            color: var(--primary);
+        }
+
+        .sidebar-nav-item a.active {
+            background: var(--bg-blue);
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .sidebar-nav-item .nav-icon {
+            width: 24px;
+            text-align: center;
+            flex-shrink: 0;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-nav-item .nav-label {
+            opacity: 0;
+            transition: opacity 0.2s ease 0.1s;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-nav:hover .nav-label {
+            opacity: 1;
+        }
+
+        /* Sidebar toggle button (mobile) */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            left: 16px;
+            bottom: 80px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 4px 16px rgba(0, 119, 182, 0.35);
+            transition: all 0.2s ease;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 24px rgba(0, 119, 182, 0.45);
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(2px);
+            z-index: 89;
+        }
+
+        .sidebar-overlay.open {
+            display: block;
+        }
+
+        /* Desktop: show sidebar, adjust nothing (sidebar overlaps) */
+        @media (min-width: 993px) {
+            .sidebar-nav {
+                display: block;
+            }
+            .sidebar-toggle {
+                display: none !important;
+            }
+        }
+
+        /* Mobile/Tablet: hide sidebar, show toggle */
+        @media (max-width: 992px) {
+            .sidebar-nav {
+                display: none;
+                width: 280px;
+                top: 0;
+                background: white;
+                z-index: 1000;
+                box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+            }
+
+            .sidebar-nav.open {
+                display: block;
+            }
+
+            .sidebar-nav .nav-label {
+                opacity: 1;
+            }
+
+            .sidebar-nav .sidebar-nav-title {
+                opacity: 1;
+            }
+
+            .sidebar-nav-close {
+                display: flex;
+            }
+
+            .sidebar-toggle {
+                display: flex;
+            }
+        }
+
+        .sidebar-nav-close {
+            display: none;
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-md);
+            background: var(--bg-light);
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text-light);
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .sidebar-nav-close:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* Dark mode for sidebar */
+        body.dark-mode .sidebar-nav {
+            background: var(--bg-dark-secondary);
+            border-right-color: var(--border-dark);
+            box-shadow: 2px 0 16px rgba(0, 0, 0, 0.2);
+        }
+
+        body.dark-mode .sidebar-nav-item a {
+            color: var(--text-dark-secondary);
+        }
+
+        body.dark-mode .sidebar-nav-item a:hover {
+            background: var(--bg-dark-tertiary);
+            color: var(--primary-light);
+        }
+
+        body.dark-mode .sidebar-nav-item a.active {
+            background: var(--bg-dark-tertiary);
+            color: var(--primary-light);
+            border-left-color: var(--primary-light);
+        }
+
+        body.dark-mode .sidebar-nav-title {
+            color: var(--text-dark-secondary);
+        }
+
+        body.dark-mode .sidebar-nav-close {
+            background: var(--bg-dark-tertiary);
+            color: var(--text-dark-secondary);
+        }
+
+        body.dark-mode .sidebar-toggle {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Print: hide sidebar */
+        @media print {
+            .sidebar-nav,
+            .sidebar-toggle,
+            .sidebar-overlay {
+                display: none !important;
+            }
+        }
+
         /* Accessibility: Skip Link */
         .skip-link {
             position: absolute;
@@ -2318,6 +2560,9 @@
             .version-badge,
             .share-modal-overlay,
             .achievement-toast,
+            .sidebar-nav,
+            .sidebar-toggle,
+            .sidebar-overlay,
             .footer {
                 display: none !important;
             }
@@ -2490,6 +2735,31 @@
         </div>
     </header>
 
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar-nav" id="sidebarNav" aria-label="章節導覽">
+        <button class="sidebar-nav-close" onclick="closeSidebar()" aria-label="關閉導覽">×</button>
+        <div class="sidebar-nav-title">章節目錄</div>
+        <ul class="sidebar-nav-list">
+            <li class="sidebar-nav-item"><a href="#sec-cath" onclick="navClick(event)"><span class="nav-icon">🏥</span><span class="nav-label">導管室教學</span></a></li>
+            <li class="sidebar-nav-item"><a href="#sec-icu" onclick="navClick(event)"><span class="nav-icon">⚡</span><span class="nav-label">加護病房 ICU/CCU</span></a></li>
+            <li class="sidebar-nav-item"><a href="#sec-ward" onclick="navClick(event)"><span class="nav-icon">🛏️</span><span class="nav-label">病房照護</span></a></li>
+            <li class="sidebar-nav-item"><a href="#sec-intervention" onclick="navClick(event)"><span class="nav-icon">🔬</span><span class="nav-label">介入性治療</span></a></li>
+            <li class="sidebar-nav-item"><a href="#sec-medication" onclick="navClick(event)"><span class="nav-icon">💊</span><span class="nav-label">藥物學習</span></a></li>
+            <li class="sidebar-nav-item"><a href="#sec-patient" onclick="navClick(event)"><span class="nav-icon">👥</span><span class="nav-label">病人與家屬衛教</span></a></li>
+            <li class="sidebar-nav-item"><a href="#sec-learning" onclick="navClick(event)"><span class="nav-icon">📚</span><span class="nav-label">學習資源與考試</span></a></li>
+            <li class="sidebar-nav-item"><a href="#sec-genetics" onclick="navClick(event)"><span class="nav-icon">🧬</span><span class="nav-label">心肌病變基因醫學</span></a></li>
+            <li class="sidebar-nav-item"><a href="#sec-admin" onclick="navClick(event)"><span class="nav-icon">📁</span><span class="nav-label">行政與新人訓練</span></a></li>
+        </ul>
+    </nav>
+
+    <!-- Sidebar Toggle (mobile) -->
+    <button class="sidebar-toggle" id="sidebarToggle" onclick="openSidebar()" aria-label="開啟章節導覽">
+        📑
+    </button>
+
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
     <div class="container">
         <!-- Hero Section -->
         <section class="hero" role="complementary">
@@ -2541,7 +2811,7 @@
         <!-- Stats -->
         <div class="stats-bar" aria-live="polite">
             <div class="stat-item">
-                <span class="stat-number" id="totalApps">28</span> 個教學資源
+                <span class="stat-number" id="totalApps">30</span> 個教學資源
             </div>
             <div class="stat-item">
                 持續更新中 🔄
@@ -2560,7 +2830,7 @@
         <!-- Main Content Area -->
         <main role="main" aria-label="教學資源列表">
         <!-- Category: 導管室 Cath Lab -->
-        <section class="category" data-category="staff" aria-labelledby="cath-lab-title">
+        <section class="category" id="sec-cath" data-category="staff" aria-labelledby="cath-lab-title">
             <div class="category-header">
                 <span class="category-icon" aria-hidden="true">🏥</span>
                 <h2 class="category-title" id="cath-lab-title">導管室教學 Cath Lab</h2>
@@ -2611,12 +2881,12 @@
             </div>
         </section>
         
-        <!-- Category: 病房與加護病房照護 Ward & ICU Care -->
-        <section class="category" data-category="staff">
+        <!-- Category: 加護病房照護 ICU/CCU Care -->
+        <section class="category" id="sec-icu" data-category="staff">
             <div class="category-header">
-                <span class="category-icon">🛏️</span>
-                <h2 class="category-title">病房與加護病房照護 Ward & ICU Care</h2>
-                <span class="category-count">12</span>
+                <span class="category-icon">⚡</span>
+                <h2 class="category-title">加護病房照護 ICU / CCU Care</h2>
+                <span class="category-count">6</span>
             </div>
             <div class="app-grid">
                 <a href="va-ecmo-echo-checklist.html" class="app-card icu" data-tags="staff ward icu ccu ecmo va-ecmo echo checklist ultrasound weaning mcs impella iabp thrombosis tamponade lvot vti">
@@ -2640,7 +2910,7 @@
                         <span class="tag new">新增</span>
                     </div>
                 </a>
-                
+
                 <a href="cardiogenic-shock-teaching.html" class="app-card icu" data-tags="staff guideline ward icu ccu shock cardiogenic scai mcs impella iabp ecmo vasopressor inotrope ami stemi" data-disease="coronary">
                     <div class="app-icon">⚡</div>
                     <div class="app-title">心因性休克教學</div>
@@ -2662,70 +2932,7 @@
                         <span class="tag new">新增</span>
                     </div>
                 </a>
-                
-                <a href="heart-failure-ward-app.html" class="app-card ward" data-tags="staff guideline ward hf heart failure" data-disease="coronary cardiomyopathy">
-                    <div class="app-icon">💔</div>
-                    <div class="app-title">心衰竭病房管理</div>
-                    <div class="app-desc">DOSE Trial 利尿劑使用、體液評估與監測</div>
-                    <div class="app-tags">
-                        <span class="tag staff">醫護人員</span>
-                        <span class="tag">心衰竭</span>
-                    </div>
-                </a>
-                
-                <a href="af-ward-teaching-app.html" class="app-card ward" data-tags="staff guideline ward afib anticoagulation" data-disease="arrhythmia">
-                    <div class="app-icon">💓</div>
-                    <div class="app-title">心房顫動照護</div>
-                    <div class="app-desc">CHA₂DS₂-VASc、抗凝血劑選擇與監測</div>
-                    <div class="app-tags">
-                        <span class="tag staff">醫護人員</span>
-                        <span class="tag">心房顫動</span>
-                    </div>
-                </a>
-                
-                <a href="paod-care-app.html" class="app-card ward" data-tags="staff guideline ward paod peripheral vascular" data-disease="peripheral">
-                    <div class="app-icon">🦵</div>
-                    <div class="app-title">周邊動脈疾病照護</div>
-                    <div class="app-desc">PAOD 評估、治療與照護流程</div>
-                    <div class="app-tags">
-                        <span class="tag staff">醫護人員</span>
-                        <span class="tag">PAOD</span>
-                    </div>
-                </a>
-                
-                <a href="cv-vaccination-guide.html" class="app-card ward" data-tags="staff patient ward vaccination vaccine flu pneumonia covid rsv shingles">
-                    <div class="app-icon">💉</div>
-                    <div class="app-title">心血管病患疫苗接種指引</div>
-                    <div class="app-desc">五大疫苗建議：流感、肺炎鏈球菌、新冠、RSV、帶狀疱疹｜醫護/病人雙版本</div>
-                    <div class="app-tags">
-                        <span class="tag staff">醫護人員</span>
-                        <span class="tag patient">病人衛教</span>
-                        <span class="tag new">新增</span>
-                    </div>
-                </a>
-                
-                <a href="ph-diagnostic-checklist.html" class="app-card ward" data-tags="staff guideline ward icu ph pulmonary hypertension pah rhc echo diagnosis" data-disease="pe structural">
-                    <div class="app-icon">🫁</div>
-                    <div class="app-title">肺動脈高壓診斷查核表</div>
-                    <div class="app-desc">PH 六階段診斷流程、2022 ESC/ERS 標準、WHO 分類、RHC 血行動力學分型</div>
-                    <div class="app-tags">
-                        <span class="tag staff">醫護人員</span>
-                        <span class="tag icu">ICU</span>
-                        <span class="tag new">新增</span>
-                    </div>
-                </a>
-                
-                <a href="fabry-disease-checklist.html" class="app-card ward" data-tags="staff guideline genetics ward icu fabry lvh hcm cardiomyopathy screening diagnosis ert" data-disease="cardiomyopathy">
-                    <div class="app-icon">🧬</div>
-                    <div class="app-title">Fabry Disease 診斷查檢表</div>
-                    <div class="app-desc">門診篩檢評分、檢驗判讀、心臟分期、ERT 治療指引｜2024 TSOC 共識</div>
-                    <div class="app-tags">
-                        <span class="tag staff">醫護人員</span>
-                        <span class="tag">LVH</span>
-                        <span class="tag new">新增</span>
-                    </div>
-                </a>
-                
+
                 <a href="emb-teaching-app.html" class="app-card icu" data-tags="staff guideline genetics ward icu emb biopsy myocarditis amyloidosis fabry cardiomyopathy" data-disease="cardiomyopathy">
                     <div class="app-icon">🫀</div>
                     <div class="app-title">心內膜心肌切片 EMB 教學</div>
@@ -2736,7 +2943,7 @@
                         <span class="tag new">新增</span>
                     </div>
                 </a>
-                
+
                 <a href="ilvd-revascularization-app.html" class="app-card icu" data-tags="staff guideline ward icu ccu ilvd revascularization cabg pci heart failure lvef stich revived mcs impella gdmt hfrEF ischemic cardiomyopathy" data-disease="coronary">
                     <div class="app-icon">🔄</div>
                     <div class="app-title">iLVD 血管重建教學</div>
@@ -2749,9 +2956,82 @@
                 </a>
             </div>
         </section>
+
+        <!-- Category: 病房照護 Ward Care -->
+        <section class="category" id="sec-ward" data-category="staff">
+            <div class="category-header">
+                <span class="category-icon">🛏️</span>
+                <h2 class="category-title">病房照護 Ward Care</h2>
+                <span class="category-count">6</span>
+            </div>
+            <div class="app-grid">
+                <a href="heart-failure-ward-app.html" class="app-card ward" data-tags="staff guideline ward hf heart failure" data-disease="coronary cardiomyopathy">
+                    <div class="app-icon">💔</div>
+                    <div class="app-title">心衰竭病房管理</div>
+                    <div class="app-desc">DOSE Trial 利尿劑使用、體液評估與監測</div>
+                    <div class="app-tags">
+                        <span class="tag staff">醫護人員</span>
+                        <span class="tag">心衰竭</span>
+                    </div>
+                </a>
+
+                <a href="af-ward-teaching-app.html" class="app-card ward" data-tags="staff guideline ward afib anticoagulation" data-disease="arrhythmia">
+                    <div class="app-icon">💓</div>
+                    <div class="app-title">心房顫動照護</div>
+                    <div class="app-desc">CHA₂DS₂-VASc、抗凝血劑選擇與監測</div>
+                    <div class="app-tags">
+                        <span class="tag staff">醫護人員</span>
+                        <span class="tag">心房顫動</span>
+                    </div>
+                </a>
+
+                <a href="paod-care-app.html" class="app-card ward" data-tags="staff guideline ward paod peripheral vascular" data-disease="peripheral">
+                    <div class="app-icon">🦵</div>
+                    <div class="app-title">周邊動脈疾病照護</div>
+                    <div class="app-desc">PAOD 評估、治療與照護流程</div>
+                    <div class="app-tags">
+                        <span class="tag staff">醫護人員</span>
+                        <span class="tag">PAOD</span>
+                    </div>
+                </a>
+
+                <a href="cv-vaccination-guide.html" class="app-card ward" data-tags="staff patient ward vaccination vaccine flu pneumonia covid rsv shingles">
+                    <div class="app-icon">💉</div>
+                    <div class="app-title">心血管病患疫苗接種指引</div>
+                    <div class="app-desc">五大疫苗建議：流感、肺炎鏈球菌、新冠、RSV、帶狀疱疹｜醫護/病人雙版本</div>
+                    <div class="app-tags">
+                        <span class="tag staff">醫護人員</span>
+                        <span class="tag patient">病人衛教</span>
+                        <span class="tag new">新增</span>
+                    </div>
+                </a>
+
+                <a href="ph-diagnostic-checklist.html" class="app-card ward" data-tags="staff guideline ward icu ph pulmonary hypertension pah rhc echo diagnosis" data-disease="pe structural">
+                    <div class="app-icon">🫁</div>
+                    <div class="app-title">肺動脈高壓診斷查核表</div>
+                    <div class="app-desc">PH 六階段診斷流程、2022 ESC/ERS 標準、WHO 分類、RHC 血行動力學分型</div>
+                    <div class="app-tags">
+                        <span class="tag staff">醫護人員</span>
+                        <span class="tag icu">ICU</span>
+                        <span class="tag new">新增</span>
+                    </div>
+                </a>
+
+                <a href="fabry-disease-checklist.html" class="app-card ward" data-tags="staff guideline genetics ward icu fabry lvh hcm cardiomyopathy screening diagnosis ert" data-disease="cardiomyopathy">
+                    <div class="app-icon">🧬</div>
+                    <div class="app-title">Fabry Disease 診斷查檢表</div>
+                    <div class="app-desc">門診篩檢評分、檢驗判讀、心臟分期、ERT 治療指引｜2024 TSOC 共識</div>
+                    <div class="app-tags">
+                        <span class="tag staff">醫護人員</span>
+                        <span class="tag">LVH</span>
+                        <span class="tag new">新增</span>
+                    </div>
+                </a>
+            </div>
+        </section>
         
         <!-- Category: 介入性治療 Intervention -->
-        <section class="category" data-category="staff">
+        <section class="category" id="sec-intervention" data-category="staff">
             <div class="category-header">
                 <span class="category-icon">🔬</span>
                 <h2 class="category-title">介入性治療教學 Intervention</h2>
@@ -2803,7 +3083,7 @@
         </section>
         
         <!-- Category: 藥物學習 Medication -->
-        <section class="category" data-category="staff">
+        <section class="category" id="sec-medication" data-category="staff">
             <div class="category-header">
                 <span class="category-icon">💊</span>
                 <h2 class="category-title">藥物學習 Medication</h2>
@@ -2859,11 +3139,11 @@
         </section>
         
         <!-- Category: 病人衛教 Patient Education -->
-        <section class="category" data-category="patient">
+        <section class="category" id="sec-patient" data-category="patient">
             <div class="category-header">
                 <span class="category-icon">👥</span>
                 <h2 class="category-title">病人與家屬衛教 Patient Education</h2>
-                <span class="category-count">8</span>
+                <span class="category-count">10</span>
             </div>
             <div class="app-grid">
                 <a href="kawasaki-disease-checklist.html" class="app-card patient" data-tags="patient staff education kawasaki disease coronary aneurysm checklist teaching family 川崎症 冠狀動脈瘤 草莓舌 兒童 衛教 查核表">
@@ -2953,15 +3233,37 @@
                         <span class="tag">兒童</span>
                     </div>
                 </a>
+
+                <a href="AngioJet-family-explanation.html" class="app-card patient" data-tags="patient family education angiojet thrombectomy rheolytic thrombus dvt pe peripheral vascular 血栓清除 家屬說明" data-disease="peripheral pe">
+                    <div class="app-icon">🌊</div>
+                    <div class="app-title">AngioJet 血栓清除術 — 家屬說明</div>
+                    <div class="app-desc">Rheolytic Thrombectomy 手術說明：原理、適用情況、手術流程、風險與術後照護</div>
+                    <div class="app-tags">
+                        <span class="tag patient">家屬說明</span>
+                        <span class="tag new">新增</span>
+                        <span class="tag">血栓清除</span>
+                    </div>
+                </a>
+
+                <a href="IVL-family-explanation.html" class="app-card patient" data-tags="patient family education ivl intravascular lithotripsy shockwave calcification popliteal cli critical limb ischemia 衝擊波 鈣化 家屬說明" data-disease="peripheral">
+                    <div class="app-icon">💥</div>
+                    <div class="app-title">IVL 衝擊波球囊導管治療 — 家屬說明</div>
+                    <div class="app-desc">Intravascular Lithotripsy 手術說明：嚴重鈣化狹窄處理、IVL 原理、手術流程與風險</div>
+                    <div class="app-tags">
+                        <span class="tag patient">家屬說明</span>
+                        <span class="tag new">新增</span>
+                        <span class="tag">IVL</span>
+                    </div>
+                </a>
             </div>
         </section>
         
-        <!-- Category: 學習資源 Learning -->
-        <section class="category" data-category="staff">
+        <!-- Category: 學習資源與考試 Learning & Assessment -->
+        <section class="category" id="sec-learning" data-category="staff">
             <div class="category-header">
                 <span class="category-icon">📚</span>
-                <h2 class="category-title">學習資源 Learning Resources</h2>
-                <span class="category-count">6</span>
+                <h2 class="category-title">學習資源與考試 Learning & Assessment</h2>
+                <span class="category-count">7</span>
             </div>
             <div class="app-grid">
                 <a href="exam.html" class="app-card learning" data-tags="staff learning trainee exam quiz echo vascular abi as">
@@ -3027,11 +3329,22 @@
                         <span class="tag">Echo</span>
                     </div>
                 </a>
+
+                <a href="exam-acls-ccu-2025.html" class="app-card icu" data-tags="staff icu ccu acls emergency drugs airway ventilation epinephrine dopamine norepinephrine amiodarone lidocaine atropine adenosine intubation bvm lma 急救藥物 呼吸道處置 教育訓練 評核">
+                    <div class="app-icon">🛑</div>
+                    <div class="app-title">CCU 教育訓練評核 — ACLS 急救藥物與呼吸道處置</div>
+                    <div class="app-desc">50 題情境式測驗：急救藥物劑量與注意事項、呼吸道管理、氧氣治療、RSI 藥物｜2026.02.27</div>
+                    <div class="app-tags">
+                        <span class="tag staff">醫護人員</span>
+                        <span class="tag icu">CCU</span>
+                        <span class="tag new">新增</span>
+                    </div>
+                </a>
             </div>
         </section>
         
         <!-- Category: 心肌病變基因醫學專區 Cardiomyopathy & Genetic Medicine -->
-        <section class="category" data-category="genetics">
+        <section class="category" id="sec-genetics" data-category="genetics">
             <div class="category-header">
                 <span class="category-icon" aria-hidden="true">🧬</span>
                 <h2 class="category-title">心肌病變基因醫學專區 Cardiomyopathy & Genetic Medicine</h2>
@@ -3084,12 +3397,12 @@
             </div>
         </section>
 
-        <!-- Category: 行政流程 Administrative -->
-        <section class="category" data-category="staff">
+        <!-- Category: 行政與新人訓練 Admin & Onboarding -->
+        <section class="category" id="sec-admin" data-category="staff">
             <div class="category-header">
                 <span class="category-icon">📁</span>
-                <h2 class="category-title">行政流程 Administrative</h2>
-                <span class="category-count">3</span>
+                <h2 class="category-title">行政與新人訓練 Admin & Onboarding</h2>
+                <span class="category-count">5</span>
             </div>
             <div class="app-grid">
                 <a href="cv_center_checklist.html" class="app-card learning" data-tags="staff admin checklist accreditation">
@@ -3134,40 +3447,9 @@
                         <span class="tag">Orientation</span>
                     </div>
                 </a>
-            </div>
-        </section>
 
-        <!-- Category: 教學訓練與考試 Education & Assessment -->
-        <section class="category" data-category="staff">
-            <div class="category-header">
-                <span class="category-icon">📝</span>
-                <h2 class="category-title">教學訓練與考試 Education & Assessment</h2>
-                <span class="category-count">1</span>
-            </div>
-            <div class="app-grid">
-                <a href="exam-acls-ccu-2025.html" class="app-card icu" data-tags="staff icu ccu acls emergency drugs airway ventilation epinephrine dopamine norepinephrine amiodarone lidocaine atropine adenosine intubation bvm lma 急救藥物 呼吸道處置 教育訓練 評核">
-                    <div class="app-icon">🛑</div>
-                    <div class="app-title">CCU 教育訓練評核 — ACLS 急救藥物與呼吸道處置</div>
-                    <div class="app-desc">50 題情境式測驗：急救藥物劑量與注意事項、呼吸道管理、氧氣治療、RSI 藥物｜2026.02.27</div>
-                    <div class="app-tags">
-                        <span class="tag staff">醫護人員</span>
-                        <span class="tag icu">CCU</span>
-                        <span class="tag new">新增</span>
-                    </div>
-                </a>
-            </div>
-        </section>
-
-        <!-- Category: 團隊共學 Team Building -->
-        <section class="category" data-category="staff">
-            <div class="category-header">
-                <span class="category-icon">🧩</span>
-                <h2 class="category-title">團隊共學 Team Building</h2>
-                <span class="category-count">1</span>
-            </div>
-            <div class="app-grid">
                 <a href="mbti-personality-test.html" class="app-card learning" data-tags="staff team mbti personality test communication meeting cooperation 人格測驗 團隊合作 溝通 開會">
-                    <div class="app-icon">🧬</div>
+                    <div class="app-icon">🧩</div>
                     <div class="app-title">MBTI 職場人格測驗</div>
                     <div class="app-desc">28 題情境式測驗，了解自己的溝通風格與職場個性，學習與不同人格同事的相處與合作模式</div>
                     <div class="app-tags">
@@ -3242,13 +3524,15 @@
                     <select class="feedback-select" id="feedbackPage">
                         <option value="">-- 請選擇 --</option>
                         <option value="首頁">首頁</option>
-                        <option value="導管室">導管室相關</option>
-                        <option value="病房/ICU">病房/ICU 相關</option>
-                        <option value="介入治療">介入治療相關</option>
-                        <option value="藥物">藥物相關</option>
-                        <option value="病人衛教">病人衛教相關</option>
-                        <option value="學習資源">學習資源相關</option>
+                        <option value="導管室">導管室教學</option>
+                        <option value="加護病房">加護病房 ICU/CCU</option>
+                        <option value="病房照護">病房照護</option>
+                        <option value="介入治療">介入性治療</option>
+                        <option value="藥物">藥物學習</option>
+                        <option value="病人衛教">病人與家屬衛教</option>
+                        <option value="學習資源">學習資源與考試</option>
                         <option value="心肌病變基因醫學">心肌病變基因醫學</option>
+                        <option value="行政新人訓練">行政與新人訓練</option>
                         <option value="其他">其他</option>
                     </select>
                 </div>
@@ -3376,6 +3660,59 @@
     </div>
 
     <script>
+        // ============================================
+        // Sidebar Navigation
+        // ============================================
+
+        function openSidebar() {
+            document.getElementById('sidebarNav').classList.add('open');
+            document.getElementById('sidebarOverlay').classList.add('open');
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebarNav').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('open');
+        }
+
+        function navClick(e) {
+            e.preventDefault();
+            const href = e.currentTarget.getAttribute('href');
+            const target = document.querySelector(href);
+            if (target) {
+                const headerHeight = document.querySelector('.site-header').offsetHeight;
+                const y = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - 12;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+            }
+            closeSidebar();
+        }
+
+        // Scroll spy: highlight current section in sidebar
+        function initScrollSpy() {
+            const sections = document.querySelectorAll('.category[id]');
+            const navLinks = document.querySelectorAll('.sidebar-nav-item a');
+
+            if (sections.length === 0 || navLinks.length === 0) return;
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.id;
+                        navLinks.forEach(link => {
+                            link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+                        });
+                    }
+                });
+            }, {
+                rootMargin: '-80px 0px -60% 0px',
+                threshold: 0
+            });
+
+            sections.forEach(section => observer.observe(section));
+        }
+
+        // Initialize scroll spy on load
+        document.addEventListener('DOMContentLoaded', initScrollSpy);
+
         // ============================================
         // Dark Mode Functionality
         // ============================================
