@@ -152,6 +152,55 @@
     margin-top: 3px;
   }
 
+  /* Scenario cards */
+  .scenario-cards { display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px; }
+  .scenario-card {
+    border: 1px solid #dde6f5;
+    border-radius: 10px;
+    padding: 16px 18px;
+    transition: all 0.2s;
+    cursor: default;
+  }
+  .scenario-card.coronary {
+    background: linear-gradient(135deg, #fef3f3 0%, #fff8f0 100%);
+    border-color: #e8b4b4;
+    border-width: 2px;
+  }
+  .scenario-card.peripheral {
+    background: #f8faff;
+  }
+  .scenario-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .scenario-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .scenario-card.coronary .scenario-icon { background: #c0392b; color: white; }
+  .scenario-card.peripheral .scenario-icon { background: #1e3a5f; color: white; }
+  .scenario-name {
+    font-size: 15px; font-weight: 700; color: #1e3a5f;
+  }
+  .scenario-name small {
+    font-weight: 400; color: #888; font-size: 12px; display: block;
+  }
+  .scenario-badge {
+    margin-left: auto;
+    background: #c0392b; color: white;
+    font-size: 11px; font-weight: 600;
+    padding: 2px 10px; border-radius: 12px;
+  }
+  .scenario-body { font-size: 13px; color: #555; line-height: 1.7; }
+  .scenario-body strong { color: #1e3a5f; }
+  @media (max-width: 600px) {
+    .scenario-head { flex-wrap: wrap; }
+  }
+
   /* Why IVL comparison table */
   .compare-table {
     width: 100%;
@@ -340,109 +389,170 @@
 
   <div class="content">
 
-    <!-- 緊急狀況說明 -->
+    <!-- 總覽說明 -->
     <div class="alert-box">
-      <div class="alert-title">⚠ 為什麼必須現在處理？</div>
+      <div class="alert-title">⚠ 為什麼需要 IVL 治療？</div>
       <p>
-        病患目前左腳已進入<strong>「關鍵肢體缺血（Critical Limb Ischemia）」</strong>的緊急狀態，且腳趾出現壞疽變化。若不立即打通血管恢復血流，後續可能面臨<strong>截肢</strong>風險，甚至危及生命。
+        當血管壁出現<strong>嚴重鈣化（calcium deposits）</strong>，傳統氣球擴張術往往無法有效撐開血管。IVL 是專門針對鈣化病變的創新治療方式，可應用於<strong>冠狀動脈</strong>及<strong>周邊動脈</strong>等多種臨床情境。
       </p>
     </div>
 
-    <!-- 1. 病況說明 -->
+    <!-- 1. IVL 是什麼 -->
     <div class="section">
-      <div class="section-title"><span class="icon">1</span>目前病情說明</div>
-      <div class="condition-grid">
-        <div class="condition-item">
-          <div class="label">阻塞位置</div>
-          <div class="value">左腳膕動脈</div>
-          <div class="note">Popliteal Artery，膝蓋後方的主要供血血管</div>
-        </div>
-        <div class="condition-item">
-          <div class="label">阻塞原因</div>
-          <div class="value">嚴重鈣化狹窄</div>
-          <div class="note">血管壁已有大量鈣質沉積，如同管道內壁結石</div>
-        </div>
-        <div class="condition-item">
-          <div class="label">目前狀態</div>
-          <div class="value">關鍵肢體缺血</div>
-          <div class="note">Critical Limb Ischemia，血流嚴重不足</div>
-        </div>
-        <div class="condition-item">
-          <div class="label">合併問題</div>
-          <div class="value">腳趾壞疽</div>
-          <div class="note">Gangrene，組織已因缺血開始壞死</div>
-        </div>
+      <div class="section-title"><span class="icon">1</span>IVL 衝擊波球囊導管是什麼？</div>
+      <div class="info-card" style="margin-bottom:16px;">
+        <p>
+          IVL（Intravascular Lithotripsy）源自腎結石碎石術的技術原理，將微型「音波脈衝發射器」置入氣球導管中，送至血管狹窄處，在<strong>血管內部</strong>發射衝擊波，震碎鈣化硬塊，讓血管壁重新變得柔軟，再以低壓氣球安全撐開。
+        </p>
       </div>
       <div class="info-card">
         <p>
-          膕動脈是供應小腿與腳掌的重要血管。當此血管因鈣化而嚴重狹窄，下肢血液循環就像水管被結石堵住，使腳部長期處於缺氧狀態，造成疼痛、傷口難以癒合，最終出現壞疽。
+          <strong>通俗比喻：</strong>就像腎結石碎石一樣 — 用聲波震碎堅硬的鈣化沉積物，但不會傷害周圍的軟組織。差別在於，這次震碎的不是腎臟裡的結石，而是<strong>血管壁上的鈣化斑塊</strong>。
         </p>
       </div>
     </div>
 
-    <!-- 2. 為什麼選擇 IVL -->
+    <!-- 2. 適用臨床情境 -->
     <div class="section">
-      <div class="section-title"><span class="icon">2</span>為什麼選擇 IVL？</div>
-      <p style="font-size:14px;color:#555;margin-bottom:14px;">醫師評估多種治療選項後，基於安全性與成效，建議使用 IVL。以下是各方案的比較：</p>
+      <div class="section-title"><span class="icon">2</span>IVL 適用的臨床情境</div>
+      <p style="font-size:14px;color:#555;margin-bottom:14px;">IVL 可應用於以下血管部位的嚴重鈣化狹窄。醫師會根據病患的實際病況，選擇最適合的治療方案。</p>
+
+      <div class="scenario-cards">
+        <!-- Coronary -->
+        <div class="scenario-card coronary">
+          <div class="scenario-head">
+            <div class="scenario-icon">❤️</div>
+            <div class="scenario-name">冠狀動脈<small>Coronary Artery（左主幹、LAD、LCx、RCA）</small></div>
+            <div class="scenario-badge">最常見適應症</div>
+          </div>
+          <div class="scenario-body">
+            <strong>情境：</strong>心臟冠狀動脈因長期動脈硬化產生嚴重鈣化狹窄，傳統球囊無法撐開或支架無法順利展開。<br>
+            <strong>症狀：</strong>胸悶、胸痛（心絞痛）、運動時呼吸困難，嚴重者可能導致心肌梗塞。<br>
+            <strong>IVL 角色：</strong>先用 IVL 衝擊波震碎鈣化，使血管壁變得順從（compliant），再順利置放支架（stent），確保支架完整貼壁展開。此為目前 IVL 最主要的適應症，已有 Disrupt CAD III 等大型臨床試驗支持。
+          </div>
+        </div>
+
+        <!-- Iliac -->
+        <div class="scenario-card peripheral">
+          <div class="scenario-head">
+            <div class="scenario-icon">🦴</div>
+            <div class="scenario-name">髂動脈<small>Iliac Artery（總髂 / 外髂動脈）</small></div>
+          </div>
+          <div class="scenario-body">
+            <strong>情境：</strong>骨盆腔內的大血管（髂動脈）因嚴重鈣化而狹窄或阻塞，影響整條下肢的血流供應。<br>
+            <strong>症狀：</strong>行走時臀部或大腿疼痛（間歇性跛行），嚴重者影響日常活動。<br>
+            <strong>IVL 角色：</strong>髂動脈管徑較大且鈣化常呈環狀分布，IVL 可有效碎裂深層鈣化，避免傳統高壓球囊造成的血管剝離風險。
+          </div>
+        </div>
+
+        <!-- CFA -->
+        <div class="scenario-card peripheral">
+          <div class="scenario-head">
+            <div class="scenario-icon">🦵</div>
+            <div class="scenario-name">總股動脈<small>Common Femoral Artery（CFA）</small></div>
+          </div>
+          <div class="scenario-body">
+            <strong>情境：</strong>鼠蹊部（大腿根部）的主要血管嚴重鈣化狹窄。CFA 是下肢所有動脈的「大門」，阻塞後影響範圍廣泛。<br>
+            <strong>症狀：</strong>下肢整體血流不足、行走困難、傷口難以癒合。<br>
+            <strong>IVL 角色：</strong>CFA 位於關節摺疊處，傳統支架易因反覆彎曲而斷裂，因此多以 IVL + 球囊擴張（不放支架）的策略處理，避免支架相關併發症。
+          </div>
+        </div>
+
+        <!-- SFA -->
+        <div class="scenario-card peripheral">
+          <div class="scenario-head">
+            <div class="scenario-icon">🦵</div>
+            <div class="scenario-name">淺股動脈<small>Superficial Femoral Artery（SFA）</small></div>
+          </div>
+          <div class="scenario-body">
+            <strong>情境：</strong>大腿段動脈鈣化狹窄，這是周邊動脈阻塞疾病（PAOD）<strong>最常見的阻塞部位</strong>，病灶通常較長。<br>
+            <strong>症狀：</strong>走一段路即需停下休息（間歇性跛行），嚴重時靜止也感到疼痛。<br>
+            <strong>IVL 角色：</strong>長段鈣化病灶可使用 IVL 球囊分段碎裂鈣化後，再以藥物塗層球囊（DCB）或支架處理，有效降低再狹窄率。
+          </div>
+        </div>
+
+        <!-- Popliteal -->
+        <div class="scenario-card peripheral">
+          <div class="scenario-head">
+            <div class="scenario-icon">🦵</div>
+            <div class="scenario-name">膕動脈<small>Popliteal Artery</small></div>
+          </div>
+          <div class="scenario-body">
+            <strong>情境：</strong>膝蓋後方的主要供血血管因鈣化嚴重狹窄，導致小腿與腳掌血流嚴重不足。<br>
+            <strong>症狀：</strong>足部冰冷蒼白、傷口不癒合、嚴重時出現壞疽（組織壞死），屬於<strong>關鍵肢體缺血（CLI）</strong>等級。<br>
+            <strong>IVL 角色：</strong>膕動脈位於膝關節處，使用旋磨術有 No-reflow 風險；IVL 以低壓衝擊波精準碎裂鈣化、不傷害軟組織，是此區域更安全的選擇。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 為什麼選擇 IVL -->
+    <div class="section">
+      <div class="section-title"><span class="icon">3</span>IVL 相較其他治療方式的優勢</div>
+      <p style="font-size:14px;color:#555;margin-bottom:14px;">面對嚴重鈣化病變，醫師有多種處理選項。以下是各方案的比較：</p>
       <table class="compare-table">
         <thead>
           <tr>
             <th>治療方式</th>
-            <th>考量</th>
-            <th>本案適用？</th>
+            <th>原理與限制</th>
+            <th>適合鈣化？</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td><strong>一般氣球擴張術</strong><br><small>（傳統 POBA）</small></td>
-            <td>鈣化過硬，氣球撐開力道不足，血管無法有效擴開，治療效果不佳</td>
-            <td><span class="tag-no">不適合</span></td>
+            <td>以高壓氣球從內部撐開血管，但嚴重鈣化時力道不足，血管無法有效擴開</td>
+            <td><span class="tag-no">效果不佳</span></td>
           </tr>
           <tr>
-            <td><strong>旋磨術 / 斑塊旋切</strong><br><small>（Rotarex / Rota）</small></td>
-            <td>雖可打碎鈣化，但膕動脈處使用有產生「無復流現象 (No-reflow)」的顧慮，可能造成遠端血管急性堵塞</td>
-            <td><span class="tag-no">風險過高</span></td>
+            <td><strong>旋磨術</strong><br><small>（Rotablation / Rotarex）</small></td>
+            <td>以高速旋轉鑽頭磨除鈣化，但有 No-reflow、血管穿孔風險，操作技術門檻高</td>
+            <td><span class="tag-no">風險較高</span></td>
+          </tr>
+          <tr>
+            <td><strong>切割球囊</strong><br><small>（Cutting / Scoring Balloon）</small></td>
+            <td>球囊表面有刀片或金屬絲輔助切割，對輕中度鈣化有幫助，重度鈣化效果有限</td>
+            <td><span class="tag-no">限中度鈣化</span></td>
           </tr>
           <tr>
             <td><strong>衝擊波球囊 IVL</strong><br><small>（本次建議）</small></td>
-            <td>利用音波衝擊波精準碎裂鈣化組織，不傷害血管壁，再以低壓氣球撐開，安全性高</td>
+            <td>音波衝擊波從內部震碎鈣化組織，不傷害軟組織，再以低壓氣球安全撐開，安全性最高</td>
             <td><span class="tag-yes">建議選項</span></td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <!-- 3. IVL 是什麼 -->
+    <!-- 4. 手術流程 -->
     <div class="section">
-      <div class="section-title"><span class="icon">3</span>IVL 衝擊波球囊導管是什麼？</div>
-      <div class="info-card" style="margin-bottom:16px;">
-        <p>
-          IVL（Intravascular Lithotripsy）源自腎結石碎石術的技術原理，將微型「音波脈衝發射器」置入氣球導管中，送至血管狹窄處，在<strong>血管內部</strong>發射衝擊波，震碎鈣化硬塊，讓血管壁重新變得柔軟，再以低壓氣球安全撐開。
-        </p>
-      </div>
+      <div class="section-title"><span class="icon">4</span>手術流程說明</div>
       <div class="steps">
         <div class="step">
           <div class="step-num">①</div>
-          <div class="step-text"><strong>送入導管：</strong>經由鼠蹊部（大腿根部）的血管，將細小的 IVL 球囊導管沿著血管推送到左腳膕動脈的鈣化狹窄處。</div>
+          <div class="step-text"><strong>建立血管通路：</strong>在鼠蹊部（冠狀動脈治療則可能從手腕橈動脈）以局部麻醉穿刺血管，置入引導鞘管（sheath）。</div>
         </div>
         <div class="step">
           <div class="step-num">②</div>
-          <div class="step-text"><strong>發射衝擊波：</strong>球囊輕度充氣後，導管前端的電極發射音波脈衝衝擊波（每次約 10 下為一組），衝擊波震碎血管壁內外層的鈣化斑塊，就像把凍住的水管解凍一樣，使硬化的血管壁變軟。</div>
+          <div class="step-text"><strong>送入 IVL 導管：</strong>在 X 光透視導引下，將 IVL 衝擊波球囊導管推送至鈣化狹窄的目標位置。</div>
         </div>
         <div class="step">
           <div class="step-num">③</div>
-          <div class="step-text"><strong>氣球擴張：</strong>鈣化碎裂後，再以低壓撐開球囊，使血管狹窄處順利擴開，恢復正常血流通道。</div>
+          <div class="step-text"><strong>發射衝擊波：</strong>球囊輕度充氣後，導管前端電極發射音波脈衝衝擊波（每次約 10 下為一組），震碎血管壁內外層的鈣化斑塊，使硬化的血管壁重新變得柔軟。</div>
         </div>
         <div class="step">
           <div class="step-num">④</div>
-          <div class="step-text"><strong>評估是否置放支架：</strong>擴張後醫師會即時評估血管狀況，視情況決定是否需要放置血管支架，以確保血管長期保持暢通。</div>
+          <div class="step-text"><strong>氣球擴張：</strong>鈣化碎裂後，以低壓撐開球囊，使血管狹窄處順利擴開，恢復正常血流通道。</div>
+        </div>
+        <div class="step">
+          <div class="step-num">⑤</div>
+          <div class="step-text"><strong>後續處置：</strong>擴張後醫師即時評估血管狀況，視情況決定是否置放支架、使用藥物塗層球囊（DCB）或其他輔助治療，以確保血管長期保持暢通。</div>
         </div>
       </div>
     </div>
 
-    <!-- 4. 手術風險 -->
+    <!-- 5. 手術風險 -->
     <div class="section">
-      <div class="section-title"><span class="icon">4</span>手術可能的風險</div>
+      <div class="section-title"><span class="icon">5</span>手術可能的風險</div>
       <div class="info-card">
         <p style="margin-bottom:10px;">任何侵入性手術都有風險，醫師會全程監測，盡力將風險降至最低。</p>
         <ul class="risk-list">
@@ -450,44 +560,45 @@
           <li>血管痙攣或血管剝離（dissection），可能需額外處置</li>
           <li>遠端栓塞造成暫時性血流減少</li>
           <li>顯影劑過敏或腎功能影響（事前已評估）</li>
+          <li>冠狀動脈治療時，極少數情況可能出現心律不整或需緊急處置</li>
           <li>極少數情況下需緊急外科介入</li>
-          <li>雖已規避，仍有低機率發生無復流現象（No-reflow）</li>
+          <li>低機率發生無復流現象（No-reflow）</li>
         </ul>
       </div>
     </div>
 
-    <!-- 5. 費用 -->
+    <!-- 6. 費用 -->
     <div class="section">
-      <div class="section-title"><span class="icon">5</span>費用說明</div>
+      <div class="section-title"><span class="icon">6</span>費用說明</div>
       <div class="cost-box">
         <div>
           <div class="label">IVL 衝擊波球囊導管器材費用</div>
-          <div class="amount">NT$ 190,000</div>
-          <div class="note">此費用為自費耗材，目前健保尚未給付。其餘手術及住院費用另計。</div>
+          <div class="amount">依實際使用計算</div>
+          <div class="note">此費用為自費耗材，目前健保尚未給付。冠狀動脈與周邊動脈使用之導管規格不同，費用依實際使用套組計算。<br>手術費用及住院費用另計，詳情請洽病房護理師或醫療事務人員。</div>
         </div>
         <div class="icon-side">💴</div>
       </div>
     </div>
 
-    <!-- 6. 術後說明 -->
+    <!-- 7. 術後說明 -->
     <div class="section">
-      <div class="section-title"><span class="icon">6</span>術後注意事項</div>
+      <div class="section-title"><span class="icon">7</span>術後注意事項</div>
       <div class="steps">
         <div class="step">
           <div class="step-num" style="background:#27ae60;">✓</div>
-          <div class="step-text"><strong>術後臥床：</strong>手術後需平躺並保持穿刺側腳伸直，視傷口情況約 4–6 小時。</div>
+          <div class="step-text"><strong>術後臥床：</strong>手術後需平躺並保持穿刺側肢體伸直（鼠蹊穿刺約 4–6 小時；橈動脈穿刺則可較早下床）。</div>
         </div>
         <div class="step">
           <div class="step-num" style="background:#27ae60;">✓</div>
-          <div class="step-text"><strong>傷口觀察：</strong>注意鼠蹊部穿刺處是否有腫脹、出血，如有異常請立即通知護理師。</div>
+          <div class="step-text"><strong>傷口觀察：</strong>注意穿刺處是否有腫脹、出血，如有異常請立即通知護理師。</div>
         </div>
         <div class="step">
           <div class="step-num" style="background:#27ae60;">✓</div>
-          <div class="step-text"><strong>抗血小板藥物：</strong>術後通常需持續服用抗血小板藥物（如 Aspirin、Clopidogrel），以預防血管再度狹窄，請勿自行停藥。</div>
+          <div class="step-text"><strong>抗血小板藥物：</strong>術後通常需持續服用抗血小板藥物（如 Aspirin、Clopidogrel），若有置放支架則需雙抗血小板治療（DAPT），請勿自行停藥。</div>
         </div>
         <div class="step">
           <div class="step-num" style="background:#27ae60;">✓</div>
-          <div class="step-text"><strong>傷口照護：</strong>腳趾壞疽部分將由傷口護理團隊持續跟進處理，打通血管後有助於傷口癒合。</div>
+          <div class="step-text"><strong>定期追蹤：</strong>術後需依醫師安排回診追蹤，評估血管通暢度與症狀改善情形，必要時安排影像檢查。</div>
         </div>
       </div>
     </div>
