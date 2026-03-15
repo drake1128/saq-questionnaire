@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>手術說明 — Impella 經皮心室輔助器</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+    background: #f4f6f9;
+    color: #2c3e50;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+  .page {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #5b1a3a 0%, #9b2d6b 100%);
+    color: white;
+    padding: 32px 32px 24px;
+  }
+  .header-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+  .header .subtitle { font-size: 14px; opacity: 0.8; }
+  .hospital-badge {
+    margin-top: 16px;
+    font-size: 13px;
+    opacity: 0.75;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .content { padding: 28px 32px; }
+
+  /* Alert box */
+  .alert-box {
+    background: #fff3cd;
+    border-left: 5px solid #f39c12;
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+  }
+  .alert-box .alert-title {
+    font-weight: 700;
+    color: #856404;
+    font-size: 15px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .alert-box p { color: #533f03; font-size: 14px; line-height: 1.7; }
+
+  /* Section */
+  .section { margin-bottom: 28px; }
+  .section-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #5b1a3a;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f5e0ee;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title .icon {
+    width: 28px;
+    height: 28px;
+    background: #5b1a3a;
+    color: white;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  /* Info card */
+  .info-card {
+    background: #fdf6fa;
+    border: 1px solid #f0d4e6;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+  .info-card p { font-size: 15px; color: #2c3e50; }
+
+  /* Mechanism visual */
+  .mechanism-box {
+    background: #1a1a1a;
+    border-radius: 10px;
+    padding: 20px 24px;
+    color: #f0f0f0;
+    margin-bottom: 16px;
+    text-align: center;
+    font-size: 13px;
+  }
+  .mechanism-box .flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 12px 0;
+  }
+  .mech-bubble {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #f0a0d0;
+  }
+  .mech-arrow { color: #aaa; font-size: 16px; }
+  .mechanism-box .caption { font-size: 12px; color: #aaa; margin-top: 8px; }
+
+  /* Compare table */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 14px;
+    font-size: 14px;
+  }
+  .compare-table th {
+    background: #5b1a3a;
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+  }
+  .compare-table th:first-child { border-radius: 8px 0 0 0; }
+  .compare-table th:last-child { border-radius: 0 8px 0 0; }
+  .compare-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+    font-size: 14px;
+  }
+  .compare-table tr:nth-child(even) td { background: #fdf6fa; }
+  .compare-table tr:last-child td:first-child { border-radius: 0 0 0 8px; }
+  .compare-table tr:last-child td:last-child { border-radius: 0 0 8px 0; }
+  .tag-no {
+    display: inline-block; background: #fde8e8; color: #c0392b;
+    border-radius: 4px; padding: 1px 8px; font-size: 12px; font-weight: 600;
+  }
+  .tag-mid {
+    display: inline-block; background: #fff3cd; color: #856404;
+    border-radius: 4px; padding: 1px 8px; font-size: 12px; font-weight: 600;
+  }
+  .tag-yes {
+    display: inline-block; background: #e8f5e9; color: #27ae60;
+    border-radius: 4px; padding: 1px 8px; font-size: 12px; font-weight: 600;
+  }
+
+  /* Steps */
+  .steps { display: flex; flex-direction: column; gap: 12px; }
+  .step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    background: #fdf6fa;
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .step-num {
+    width: 30px;
+    height: 30px;
+    background: #5b1a3a;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .step-text { font-size: 14px; line-height: 1.7; }
+  .step-text strong { color: #5b1a3a; }
+
+  /* Indication cards */
+  .indication-cards { display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px; }
+  .indication-card {
+    border: 1px solid #f0d4e6;
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .indication-card.primary {
+    background: linear-gradient(135deg, #fef3f8 0%, #fff8f0 100%);
+    border-color: #e8a0c8;
+    border-width: 2px;
+  }
+  .indication-card.secondary {
+    background: #fdf6fa;
+  }
+  .indication-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .indication-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .indication-card.primary .indication-icon { background: #c0392b; color: white; }
+  .indication-card.secondary .indication-icon { background: #5b1a3a; color: white; }
+  .indication-name {
+    font-size: 15px; font-weight: 700; color: #5b1a3a;
+  }
+  .indication-name small {
+    font-weight: 400; color: #888; font-size: 12px; display: block;
+  }
+  .indication-badge {
+    margin-left: auto;
+    background: #c0392b; color: white;
+    font-size: 11px; font-weight: 600;
+    padding: 2px 10px; border-radius: 12px;
+  }
+  .indication-body { font-size: 13px; color: #555; line-height: 1.7; }
+  .indication-body strong { color: #5b1a3a; }
+
+  /* Risk list */
+  .risk-list { list-style: none; }
+  .risk-list li {
+    padding: 8px 0 8px 24px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+    position: relative;
+  }
+  .risk-list li::before {
+    content: "\25B8";
+    position: absolute;
+    left: 4px;
+    color: #e67e22;
+    font-size: 12px;
+    top: 10px;
+  }
+  .risk-list li.special::before { color: #c0392b; content: "\26A0"; font-size: 11px; }
+  .risk-list li:last-child { border-bottom: none; }
+
+  /* Warning box */
+  .warning-box {
+    background: #fdecea;
+    border-left: 5px solid #c0392b;
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin-top: 14px;
+    font-size: 14px;
+    color: #7b1d1d;
+  }
+  .warning-box strong { display: block; margin-bottom: 4px; }
+
+  /* Contraindication box */
+  .contra-box {
+    background: #fef2f2;
+    border: 2px solid #fca5a5;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 14px;
+  }
+  .contra-box .contra-title {
+    font-weight: 700;
+    color: #991b1b;
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+  .contra-box ul {
+    list-style: none;
+    font-size: 14px;
+    color: #7f1d1d;
+  }
+  .contra-box ul li {
+    padding: 4px 0 4px 20px;
+    position: relative;
+  }
+  .contra-box ul li::before {
+    content: "\2716";
+    position: absolute;
+    left: 0;
+    color: #dc2626;
+    font-size: 12px;
+  }
+
+  /* Cost box */
+  .cost-box {
+    background: linear-gradient(135deg, #5b1a3a, #9b2d6b);
+    color: white;
+    border-radius: 10px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .cost-box .label { font-size: 14px; opacity: 0.85; margin-bottom: 4px; }
+  .cost-box .amount { font-size: 32px; font-weight: 700; }
+  .cost-box .note { font-size: 12px; opacity: 0.7; margin-top: 4px; }
+  .cost-box .icon-side { font-size: 48px; opacity: 0.3; flex-shrink: 0; }
+
+  /* NHI notice */
+  .nhi-notice {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 14px;
+    font-size: 14px;
+    color: #1e40af;
+  }
+  .nhi-notice strong { color: #1e3a8a; }
+
+  /* Post-op */
+  .post-step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid #f5e0ee;
+  }
+  .post-step:last-child { border-bottom: none; }
+  .post-icon {
+    width: 28px;
+    height: 28px;
+    background: #27ae60;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .post-text { font-size: 14px; line-height: 1.7; }
+  .post-text strong { color: #1e3a2f; }
+
+  /* Two-col stats */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .stat-card {
+    background: #fdf6fa;
+    border: 1px solid #f0d4e6;
+    border-radius: 8px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .stat-card .big { font-size: 26px; font-weight: 700; color: #5b1a3a; }
+  .stat-card .small { font-size: 12px; color: #888; margin-top: 4px; }
+
+  /* Footer */
+  .footer {
+    background: #f4f6f9;
+    border-top: 1px solid #e0e6ef;
+    padding: 20px 32px;
+    font-size: 13px;
+    color: #888;
+    text-align: center;
+    line-height: 1.7;
+  }
+  .footer strong { color: #555; }
+
+  @media print {
+    body { background: white; font-size: 14px; }
+    .page { max-width: 100%; box-shadow: none; }
+    .header, .cost-box, .mechanism-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+  @media (max-width: 600px) {
+    .content { padding: 20px 18px; }
+    .two-col { grid-template-columns: 1fr; }
+    .cost-box { flex-direction: column; align-items: flex-start; }
+    .cost-box .icon-side { display: none; }
+    .indication-head { flex-wrap: wrap; }
+  }
+
+  /* Share Button Styles */
+  .share-button { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+  .share-toggle { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%); border: none; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+  .share-toggle:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5); }
+  .share-menu { position: absolute; top: 60px; right: 0; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 20px; min-width: 280px; display: none; animation: fadeInShare 0.3s ease; }
+  .share-menu.active { display: block; }
+  @keyframes fadeInShare { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  .share-menu h4 { color: #1e293b; margin: 0 0 15px 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+  .qr-container { background: #f8fafc; border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 15px; }
+  .qr-container img { max-width: 150px; height: auto; border-radius: 8px; }
+  .qr-container p { font-size: 0.75rem; color: #64748b; margin: 8px 0 0 0; }
+  .share-buttons { display: flex; flex-direction: column; gap: 10px; }
+  .share-btn { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: none; border-radius: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 500; transition: all 0.2s ease; text-decoration: none; color: white; }
+  .share-btn.line { background: #00B900; }
+  .share-btn.email { background: #EA4335; }
+  .share-btn.copy { background: #3B82F6; }
+  .share-btn:hover { transform: translateX(5px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .share-btn svg { width: 20px; height: 20px; fill: currentColor; }
+  .share-close { position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0; }
+  .share-close:hover { color: #1e293b; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- Share Button -->
+<div class="share-button">
+    <button class="share-toggle" onclick="toggleShareMenu()" title="分享此頁面">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+    </button>
+    <div class="share-menu" id="shareMenu">
+        <button class="share-close" onclick="toggleShareMenu()">&times;</button>
+        <h4>📤 分享此頁面</h4>
+        <div class="qr-container">
+            <img id="qrCode" src="" alt="QR Code">
+            <p>掃描 QR Code 開啟頁面</p>
+        </div>
+        <div class="share-buttons">
+            <a class="share-btn line" href="#" id="lineShare" target="_blank">
+                <svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+                LINE 分享
+            </a>
+            <a class="share-btn email" href="#" id="emailShare">
+                <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                Email 分享
+            </a>
+            <button class="share-btn copy" onclick="copyPageUrl()">
+                <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                複製連結
+            </button>
+        </div>
+    </div>
+</div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-tag">手術說明書</div>
+    <h1>Impella 經皮心室輔助器</h1>
+    <div class="subtitle">Percutaneous Ventricular Assist Device — 家屬說明</div>
+    <div class="hospital-badge">
+      <span>🏥</span>
+      <span>國立臺灣大學醫學院附設醫院新竹臺大分院　心臟血管中心</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- 總覽說明 -->
+    <div class="alert-box">
+      <div class="alert-title">⚠ 為什麼需要 Impella？</div>
+      <p>
+        當心臟的<strong>幫浦功能嚴重衰竭</strong>，無法維持足夠血液輸出供應全身器官時，需要藉由<strong>機械循環輔助裝置（MCS）</strong>暫時接手心臟的工作。目前健保給付的 IABP 心輸出量支持有限，而 ECMO 雖支持力度強但併發症較多。Impella 填補了兩者之間的治療空隙，提供<strong>更有效的心臟輸出量支持，同時併發症相對較少</strong>。
+      </p>
+    </div>
+
+    <!-- 1. Impella 是什麼 -->
+    <div class="section">
+      <div class="section-title"><span class="icon">1</span>Impella 是什麼？</div>
+      <div class="info-card" style="margin-bottom:16px;">
+        <p>
+          Impella 是一種<strong>經皮微軸流心室輔助幫浦（percutaneous micro-axial pump）</strong>，外觀為一根約筷子粗細的細長導管，前端裝有微型馬達驅動的螺旋葉片。它經由大腿動脈（股動脈）送入體內，穿越主動脈瓣膜，將前端置入左心室。啟動後，螺旋葉片旋轉產生連續血流，直接將左心室的血液抽出並推送至主動脈，幫助心臟將血液輸送到全身。
+        </p>
+      </div>
+      <div class="info-card">
+        <p>
+          <strong>通俗比喻：</strong>想像心臟是一個水泵，現在水泵馬力不夠了。Impella 就像是放進水管裡的一支<strong>「迷你抽水機」</strong>，直接幫忙把水抽出來、往前推，讓全身器官能持續得到足夠的血液供應，同時讓疲憊的心臟得以休息、恢復。
+        </p>
+      </div>
+
+      <!-- Mechanism visual -->
+      <div class="mechanism-box">
+        <div style="font-size:13px; opacity:0.7; margin-bottom:8px;">Impella 運作原理</div>
+        <div class="flow">
+          <div class="mech-bubble">導管經股動脈送入</div>
+          <div class="mech-arrow">&rarr;</div>
+          <div class="mech-bubble">穿越主動脈瓣至左心室</div>
+          <div class="mech-arrow">&rarr;</div>
+          <div class="mech-bubble">螺旋葉片旋轉抽血</div>
+          <div class="mech-arrow">&rarr;</div>
+          <div class="mech-bubble">血液推入升主動脈</div>
+        </div>
+        <div class="caption">Impella 提供連續性血流，每分鐘可輔助輸出約 3.5 至 5 公升以上的血液</div>
+      </div>
+    </div>
+
+    <!-- 2. 為什麼選擇 Impella — 三者比較 -->
+    <div class="section">
+      <div class="section-title"><span class="icon">2</span>Impella 與現有輔助裝置的比較</div>
+      <p style="font-size:14px;color:#555;margin-bottom:14px;">目前本院可提供三種機械循環輔助裝置。IABP 與 ECMO 均為健保給付項目，Impella 為自費裝置，以下說明三者差異：</p>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>比較項目</th>
+            <th>IABP<br><small>主動脈氣球幫浦</small></th>
+            <th>ECMO<br><small>體外膜氧合</small></th>
+            <th>Impella<br><small>經皮心室輔助器</small></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>心輸出量支持</strong></td>
+            <td><span class="tag-no">低</span><br>僅約 0.5 L/min 增加</td>
+            <td><span class="tag-yes">高</span><br>可達 3–6 L/min</td>
+            <td><span class="tag-yes">中高</span><br>CP: ~3.5 L/min<br>5.5: ~5.5 L/min</td>
+          </tr>
+          <tr>
+            <td><strong>原理</strong></td>
+            <td>氣球在心臟舒張期充氣、收縮期放氣，間接增加冠脈灌流</td>
+            <td>將靜脈血引出體外，經人工肺氧合後打回動脈（體外循環）</td>
+            <td>微型幫浦直接從左心室將血液抽送至主動脈（直接卸載心臟）</td>
+          </tr>
+          <tr>
+            <td><strong>左心室卸載</strong></td>
+            <td><span class="tag-no">有限</span></td>
+            <td><span class="tag-no">可能增加後負荷</span></td>
+            <td><span class="tag-yes">直接卸載</span></td>
+          </tr>
+          <tr>
+            <td><strong>常見併發症</strong></td>
+            <td>肢體缺血、血管損傷（相對較少）</td>
+            <td>肢體缺血、出血、溶血、感染、左心膨脹（較多）</td>
+            <td>肢體缺血、溶血、血管損傷（相對 ECMO 較少）</td>
+          </tr>
+          <tr>
+            <td><strong>健保給付</strong></td>
+            <td><span class="tag-yes">有</span></td>
+            <td><span class="tag-yes">有</span></td>
+            <td><span class="tag-no">自費</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="info-card">
+        <p style="font-size:14px;">
+          <strong>簡單來說：</strong>IABP 支持力度有限，對嚴重心衰竭的幫助不夠；ECMO 雖然支持力度強，但屬於體外循環、管路較粗、併發症較多，且無法直接減輕左心室的負擔。Impella 能<strong>直接從左心室抽血</strong>，有效卸載心臟、減少心肌耗氧，讓受傷的心臟有更好的恢復機會。
+        </p>
+      </div>
+    </div>
+
+    <!-- 3. 適用情況 -->
+    <div class="section">
+      <div class="section-title"><span class="icon">3</span>哪些情況適合使用 Impella？</div>
+      <div class="indication-cards">
+        <div class="indication-card primary">
+          <div class="indication-head">
+            <div class="indication-icon">❤️</div>
+            <div class="indication-name">心因性休克<small>Cardiogenic Shock</small></div>
+            <div class="indication-badge">最主要適應症</div>
+          </div>
+          <div class="indication-body">
+            <strong>情境：</strong>急性心肌梗塞後心臟幫浦功能急遽衰退，血壓過低、器官灌流不足，屬於危及生命的緊急狀態。<br>
+            <strong>Impella 角色：</strong>直接提供血流動力學支持，穩定血壓與器官灌流，同時讓受損心肌獲得休息與恢復的機會。多項研究（如 RECOVER 系列試驗）顯示 Impella 在心因性休克中可提供優於 IABP 的血流動力學支持。
+          </div>
+        </div>
+
+        <div class="indication-card secondary">
+          <div class="indication-head">
+            <div class="indication-icon">🛡️</div>
+            <div class="indication-name">高風險經皮冠狀動脈介入術<small>Protected PCI / High-Risk PCI</small></div>
+          </div>
+          <div class="indication-body">
+            <strong>情境：</strong>病患需接受高風險的冠狀動脈介入手術（例如嚴重左主幹病灶、多支血管病變、心功能極差），手術過程中暫時阻斷血管可能導致血流動力學不穩定。<br>
+            <strong>Impella 角色：</strong>在手術期間提供「保護性」的血流動力學支持，讓介入醫師能更安全、更完整地處理複雜病灶，而不必擔心術中血壓崩潰。
+          </div>
+        </div>
+
+        <div class="indication-card secondary">
+          <div class="indication-head">
+            <div class="indication-icon">💔</div>
+            <div class="indication-name">急性心肌炎 / 急性失代償性心衰竭<small>Acute Myocarditis / Decompensated HF</small></div>
+          </div>
+          <div class="indication-body">
+            <strong>情境：</strong>急性病毒性心肌炎或慢性心衰竭急性惡化，心臟功能驟降，藥物治療效果不彰。<br>
+            <strong>Impella 角色：</strong>暫時接手心臟的工作，維持全身灌流，作為<strong>「恢復的橋樑」（bridge to recovery）</strong>，等待心臟自行恢復或進一步決定是否需要心臟移植。
+          </div>
+        </div>
+
+        <div class="indication-card secondary">
+          <div class="indication-head">
+            <div class="indication-icon">🔄</div>
+            <div class="indication-name">心臟手術後心因性休克<small>Post-Cardiotomy Cardiogenic Shock</small></div>
+          </div>
+          <div class="indication-body">
+            <strong>情境：</strong>心臟手術後（如開心手術、冠狀動脈繞道術）心臟無法脫離體外循環，或術後出現低心輸出症候群。<br>
+            <strong>Impella 角色：</strong>提供術後短期循環支持，讓受手術影響的心肌有更多時間恢復功能。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. 手術流程 -->
+    <div class="section">
+      <div class="section-title"><span class="icon">4</span>置入流程說明</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">①</div>
+          <div class="step-text"><strong>建立血管通路：</strong>在鼠蹊部（股動脈）進行穿刺，置入大口徑動脈鞘管。Impella 需使用較粗的鞘管（約 14 French），因此會特別評估股動脈的管徑是否適合。</div>
+        </div>
+        <div class="step">
+          <div class="step-num">②</div>
+          <div class="step-text"><strong>導管推送至心臟：</strong>在 X 光透視與血流動力學監測下，將 Impella 導管經股動脈沿主動脈逆行送入，穿越主動脈瓣膜，將導管前端的微型幫浦定位於左心室內。</div>
+        </div>
+        <div class="step">
+          <div class="step-num">③</div>
+          <div class="step-text"><strong>確認位置：</strong>透過 X 光透視及 Impella 控制台上的即時壓力波形，確認導管入口（inlet）位於左心室內、出口（outlet）位於升主動脈，位置正確方可啟動。</div>
+        </div>
+        <div class="step">
+          <div class="step-num">④</div>
+          <div class="step-text"><strong>啟動幫浦：</strong>由低速逐步提升至目標流量（Performance level），控制台會即時顯示輔助流量、馬達電流、置入深度等參數。醫師依病況調整至最佳支持等級。</div>
+        </div>
+        <div class="step">
+          <div class="step-num">⑤</div>
+          <div class="step-text"><strong>持續監測與照護：</strong>Impella 運作期間，醫療團隊會在加護病房持續監測血流動力學、溶血指標、肢體灌流及導管位置，並定時以肝素化的葡萄糖液沖洗（purge solution）維持導管功能。</div>
+        </div>
+        <div class="step">
+          <div class="step-num">⑥</div>
+          <div class="step-text"><strong>撤除：</strong>當心臟功能逐漸恢復（可透過逐步降低支持等級來評估），確認病患可自主維持血流動力學穩定後，由醫師將 Impella 移除，並對穿刺部位加壓止血或使用血管縫合器。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. 風險 -->
+    <div class="section">
+      <div class="section-title"><span class="icon">5</span>可能的風險與併發症</div>
+      <div class="info-card">
+        <p style="margin-bottom:10px;">任何侵入性醫療裝置都有風險。醫療團隊會全程密切監測，盡力將風險降至最低。以下為 Impella 使用時可能發生的風險：</p>
+        <ul class="risk-list">
+          <li class="special"><strong>肢體缺血：</strong>因鞘管較粗（14 Fr），置入側下肢血流可能受阻，出現腳部蒼白、冰冷、疼痛。醫師會放置遠端灌流管（distal perfusion catheter）以降低此風險</li>
+          <li class="special"><strong>溶血：</strong>螺旋葉片高速旋轉可能造成紅血球機械性破壞，導致血色素下降、黃疸或腎功能受損。醫療團隊會每日監測血漿游離血紅素（plasma-free Hb）等溶血指標</li>
+          <li>穿刺部位出血或血腫</li>
+          <li>血管損傷（如主動脈瓣膜損傷、血管剝離、血管穿孔）</li>
+          <li>導管移位，可能造成主動脈瓣閉鎖不全或支持效率下降</li>
+          <li>心律不整（導管通過主動脈瓣膜時可能刺激心室）</li>
+          <li>血栓形成或遠端栓塞（腦中風等）</li>
+          <li>感染（導管留置期間）</li>
+          <li>極少數情況下需緊急外科介入或轉換至其他循環輔助裝置</li>
+        </ul>
+      </div>
+      <div class="warning-box">
+        <strong>⚠ 關於肢體缺血與溶血：</strong>
+        這兩項是 Impella 最需特別留意的併發症。醫療團隊會在置入時放置遠端灌流管保護下肢血流、每日抽血追蹤溶血指標，並依照 Impella 標準照護流程（包含 purge 液維護、位置確認、P-level 調整）將風險降至最低。
+      </div>
+
+      <div class="contra-box">
+        <div class="contra-title">以下狀況不適合使用 Impella：</div>
+        <ul>
+          <li>嚴重主動脈瓣狹窄或主動脈瓣為人工機械瓣膜</li>
+          <li>左心室內血栓</li>
+          <li>嚴重周邊動脈疾病（股動脈 / 髂動脈無法容納鞘管）</li>
+          <li>心室中膈缺損（VSD）</li>
+          <li>嚴重主動脈瓣閉鎖不全（中重度以上）</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 6. 費用 -->
+    <div class="section">
+      <div class="section-title"><span class="icon">6</span>費用說明</div>
+      <div class="cost-box">
+        <div>
+          <div class="label">Impella 經皮心室輔助器耗材費用</div>
+          <div class="amount">依實際使用型號計算</div>
+          <div class="note">Impella 為全自費耗材，健保目前尚未給付。費用依使用型號（Impella CP / 5.0 / 5.5 等）而異。<br>加護病房住院費用、監測費用另計，詳情請洽病房護理師或醫療事務人員。</div>
+        </div>
+        <div class="icon-side">💴</div>
+      </div>
+      <div class="nhi-notice">
+        <strong>為什麼需要自費？</strong>Impella 屬於新一代心臟輔助裝置，目前台灣健保尚未將其納入給付。然而，在心因性休克或高風險介入手術的情境下，Impella 提供的血流動力學支持與左心室卸載效果，可能帶來優於現有健保給付裝置的臨床效益。主治醫師已根據病患的臨床狀況評估後，認為 Impella 的使用在目前情境下具有醫療必要性。
+      </div>
+    </div>
+
+    <!-- 7. 照護期間須知 -->
+    <div class="section">
+      <div class="section-title"><span class="icon">7</span>Impella 使用期間與移除後注意事項</div>
+      <div class="info-card">
+        <div class="post-step">
+          <div class="post-icon">✓</div>
+          <div class="post-text"><strong>加護病房監測：</strong>Impella 運作期間病患會在加護病房接受密切監護，包括持續心電圖監測、動脈血壓、Impella 控制台參數監測，以及定時血液檢驗。</div>
+        </div>
+        <div class="post-step">
+          <div class="post-icon">✓</div>
+          <div class="post-text"><strong>肢體觀察：</strong>請注意置入側（通常為右側）下肢的皮膚顏色、溫度與感覺。若出現異常蒼白、冰冷、疼痛或麻木感，請立即告知護理師。</div>
+        </div>
+        <div class="post-step">
+          <div class="post-icon">✓</div>
+          <div class="post-text"><strong>抗凝治療：</strong>Impella 運作期間需持續靜脈注射 Heparin 抗凝，以預防導管及體內血栓形成。醫師會定時監測 ACT（活化凝血時間）調整劑量。</div>
+        </div>
+        <div class="post-step">
+          <div class="post-icon">✓</div>
+          <div class="post-text"><strong>體位限制：</strong>Impella 經股動脈置入，使用期間置入側肢體不宜彎曲過度，活動範圍受限。翻身或移動時請配合護理師指示。</div>
+        </div>
+        <div class="post-step">
+          <div class="post-icon">✓</div>
+          <div class="post-text"><strong>移除後觀察：</strong>Impella 移除後需加壓止血並臥床觀察（約 6 小時以上），注意穿刺處有無出血或血腫，並持續監測下肢血流恢復情形。</div>
+        </div>
+        <div class="post-step">
+          <div class="post-icon">✓</div>
+          <div class="post-text"><strong>後續治療：</strong>Impella 移除後仍需針對原發心臟疾病（如心肌梗塞、心衰竭、心肌炎等）進行長期藥物治療與追蹤。部分病患可能需要進一步評估心臟移植或長期心室輔助器的需求。</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <div class="footer">
+    <p><strong>如有任何疑問，請隨時向主治醫師或護理師詢問。</strong></p>
+    <p style="margin-top:6px;">國立臺灣大學醫學院附設醫院新竹臺大分院　心臟血管中心</p>
+    <p style="margin-top:4px; font-size:12px;">本說明書僅供衛教參考，不取代醫師個別評估與告知同意書。</p>
+  </div>
+
+</div><!-- /page -->
+<script>
+function initShareButtons() {
+    const pageUrl = window.location.href;
+    const pageTitle = document.title;
+    const encodedUrl = encodeURIComponent(pageUrl);
+    const qrCodeImg = document.getElementById('qrCode');
+    if (qrCodeImg) qrCodeImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodedUrl;
+    const lineShare = document.getElementById('lineShare');
+    if (lineShare) lineShare.href = 'https://social-plugins.line.me/lineit/share?url=' + encodedUrl;
+    const emailShare = document.getElementById('emailShare');
+    if (emailShare) {
+        const emailSubject = encodeURIComponent('分享：' + pageTitle);
+        const emailBody = encodeURIComponent('我想和您分享這個頁面：\n\n' + pageTitle + '\n\n' + pageUrl);
+        emailShare.href = 'mailto:?subject=' + emailSubject + '&body=' + emailBody;
+    }
+}
+function toggleShareMenu() {
+    const menu = document.getElementById('shareMenu');
+    if (menu) menu.classList.toggle('active');
+}
+function copyPageUrl() {
+    const pageUrl = window.location.href;
+    navigator.clipboard.writeText(pageUrl).then(function() {
+        alert('連結已複製到剪貼簿！');
+    }).catch(function() {
+        var textArea = document.createElement('textarea');
+        textArea.value = pageUrl;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert('連結已複製到剪貼簿！');
+    });
+}
+document.addEventListener('click', function(event) {
+    var shareButton = document.querySelector('.share-button');
+    var shareMenu = document.getElementById('shareMenu');
+    if (shareButton && shareMenu && !shareButton.contains(event.target) && shareMenu.classList.contains('active')) {
+        shareMenu.classList.remove('active');
+    }
+});
+document.addEventListener('DOMContentLoaded', initShareButtons);
+</script>
+</body>
+</html>
