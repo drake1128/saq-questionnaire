@@ -1881,69 +1881,172 @@
             const [showResult, setShowResult] = useState(false);
             const [score, setScore] = useState(0);
             const [answered, setAnswered] = useState(false);
+            const [quizMode, setQuizMode] = useState(null);
+            const [activeQuestions, setActiveQuestions] = useState([]);
 
-            const questions = [
-                { question: "PAOD 的診斷標準 ABI 值為何？", options: ["≤ 0.7", "≤ 0.8", "≤ 0.9", "≤ 1.0"], correct: 2, explanation: "ABI ≤ 0.9 為週邊血管疾病的診斷標準" },
-                { question: "WIfI 分類系統中的「I」代表什麼？", options: ["Inflammation (發炎)", "Infection (感染)", "Ischemia (缺血)", "Injury (損傷)"], correct: 2, explanation: "WIfI = Wound(傷口) + Ischemia(缺血) + foot Infection(足部感染)" },
-                { question: "Critical Limb Ischemia (CLI) 與 Acute Limb Ischemia (ALI) 的主要區別是？", options: ["CLI 是急性發作，ALI 是慢性進展", "CLI 是慢性進展，ALI 是兩週內快速惡化", "兩者沒有區別", "CLI 只影響上肢"], correct: 1, explanation: "CLI 是慢性下肢動脈狹窄緩慢進展，ALI 是兩週內新發生且快速惡化" },
-                { question: "移除 Sheath 前，ACT 必須小於多少秒？", options: ["100 秒", "150 秒", "200 秒", "250 秒"], correct: 1, explanation: "ACT 必須小於 150 秒才可以移除 sheath" },
-                { question: "若 Sheath 反抽沒有回血，應該怎麼做？", options: ["打 Normal Saline 進去沖洗", "絕對不能打 Normal Saline，應通知醫師", "直接移除 Sheath", "等待 30 分鐘後再嘗試"], correct: 1, explanation: "絕對不能打 N/S 進去，因為可能已有血塊，打進去會把血塊往腳底沖，造成 gangrene" },
-                { question: "Rutherford Category 4 代表什麼？", options: ["輕度間歇性跛行", "中度間歇性跛行", "重度間歇性跛行", "休息痛"], correct: 3, explanation: "Category 4 表示休息痛 (Resting Pain)，ABI < 0.4，脈搏消失，肢體冷" },
-                { question: "下肢循環評估的四個步驟是？", options: ["看、聽、問、切", "看、摸、觸診、問診", "視、觸、叩、聽", "望、聞、問、切"], correct: 1, explanation: "正確順序為：看（顏色傷口）、摸（溫度）、觸診（脈搏）、問診（痛麻酸無力）" },
-                { question: "ALI 病患除了 CLI 用藥外，還需要加上什麼？", options: ["只需要 Aspirin", "Alprostadil (Promostan) + Anticoagulant", "只需要 PPI", "不需要額外用藥"], correct: 1, explanation: "ALI 需要 CLI 藥物加上 Alprostadil/PGE1 (Promostan) 6 amp in N/S 500ml pump 21ml/hr 及抗凝血劑。PGE1 透過血管擴張、抑制血小板聚集及改善微循環發揮作用" },
-                { question: "Cilostazol 的絕對禁忌症是什麼？", options: ["CKD stage 5", "NYHA Class III-IV 心衰竭", "肝硬化 Child-Pugh A", "年齡 > 80 歲"], correct: 1, explanation: "Cilostazol 為 PDE-III 抑制劑，在 NYHA Class III-IV 心衰竭患者絕對禁忌，因同類藥物長期口服會增加死亡風險。CKD 不需調整劑量（肝臟代謝為主）" },
-                { question: "Rivaroxaban 用於 PAD 的「血管劑量」為何？", options: ["20 mg QD", "15 mg BID", "2.5 mg BID + Aspirin", "10 mg QD"], correct: 2, explanation: "PAD 的 Dual Pathway Inhibition 使用 Rivaroxaban 2.5 mg BID（血管劑量）+ Aspirin 100 mg/day，來自 COMPASS 及 VOYAGER PAD 試驗。注意此劑量遠低於 AF 治療劑量 (20 mg QD)" },
-                { question: "移除 Sheath 後，沙包應加壓多久？", options: ["2 小時", "4 小時", "6 小時", "8 小時"], correct: 3, explanation: "移除 sheath 後以 2 kg 沙包加壓 8 小時" },
-                { question: "糖尿病合併 PAD 病患的 LDL 目標為？", options: ["< 100 mg/dL", "< 70 mg/dL", "< 55 mg/dL", "< 40 mg/dL"], correct: 2, explanation: "根據 2024 ACC/AHA 指南，目標 LDL < 55 mg/dL" },
-                { question: "WIfI Clinical Stage 4 的 1 年截肢風險為？", options: ["極低 (<5%)", "低 (5-20%)", "中 (20-50%)", "高 (>50%)"], correct: 3, explanation: "Stage 4 為高風險，1年截肢風險 >50%，迫切需要血管重建" },
-                { question: "根據 NTUH 新竹分院數據，CAD 病患合併嚴重 PAD 的比例約為多少？", options: ["5%", "10%", "15.4%", "25%"], correct: 2, explanation: "根據 NTUH 新竹 2015-2020 數據，約 15.4% 的 CAD 病患合併嚴重 PAD" },
-                { question: "PAD 病患有典型間歇性跛行症狀的比例約為多少？", options: ["10%", "32%", "50%", "75%"], correct: 1, explanation: "僅約 32% 的 PAD 病患有典型間歇性跛行症狀，大多數症狀不典型或無症狀" },
-                { question: "當 ABI > 1.3 時，應如何處理？", options: ["確診為 PAD", "視為正常", "需做 TBI、SPP 或血管超音波確認", "立即轉介血管外科"], correct: 2, explanation: "ABI > 1.3 表示血管不可壓縮（常見於 DM/CKD 病患的動脈鈣化），此時 ABI 不可靠，需改用 TBI、SPP 或血管超音波" },
-                { question: "SPP (皮膚灌流壓) 的主要優點是什麼？", options: ["測量速度快", "不受血管鈣化影響", "可同時測量雙腳", "不需要特殊儀器"], correct: 1, explanation: "SPP 使用雷射都卜勒測量微循環，最大優點是不受血管鈣化影響，適用於糖尿病、洗腎等血管鈣化嚴重的病人" },
-                { question: "SPP < 30 mmHg 代表什麼臨床意義？", options: ["正常灌流", "輕度缺血，可觀察", "中度缺血，邊緣性癒合", "重度缺血，傷口癒合困難"], correct: 3, explanation: "SPP < 30 mmHg 代表重度缺血 (CLI)，傷口癒合困難，需要血管重建介入治療" },
-                { question: "TASC Type D 病灶的建議治療方式？", options: ["一定要血管內介入", "優先考慮外科繞道手術", "只能藥物治療", "不需要治療"], correct: 1, explanation: "TASC Type D 病灶建議優先考慮外科繞道手術，但高風險病患仍可嘗試血管介入" },
-                { question: "Technical Success 的定義是殘餘狹窄小於多少？", options: ["10%", "20%", "30%", "50%"], correct: 2, explanation: "Technical Success 定義為殘餘狹窄 < 30%" },
-                { question: "WIfI 中的 Ischemia Grade 3 對應的 ABI 範圍是？", options: ["≥ 0.80", "0.6-0.79", "0.4-0.59", "< 0.4"], correct: 3, explanation: "Ischemia Grade 3 (重度缺血)：ABI < 0.4、踝壓 < 50 mmHg、SPP < 30 mmHg" },
-                { question: "根據本院統計，血管介入治療的整體併發症發生率約為？", options: ["< 1%", "1-5%", "5-10%", "> 10%"], correct: 0, explanation: "根據本院 2012-2017 統計，所有併發症發生率均 < 1%，整體安全性極高" }
+            const allQuestions = [
+                // === 診斷與評估 (1-10) ===
+                { question: "PAOD 的診斷標準 ABI 值為何？", options: ["≤ 0.7", "≤ 0.8", "≤ 0.9", "≤ 1.0"], correct: 2, explanation: "ABI ≤ 0.9 為週邊血管疾病的診斷標準", category: "診斷" },
+                { question: "當 ABI > 1.3 時，應如何處理？", options: ["確診為 PAD", "視為正常", "需做 TBI、SPP 或血管超音波確認", "立即轉介血管外科"], correct: 2, explanation: "ABI > 1.3 表示血管不可壓縮（常見於 DM/CKD 病患的動脈鈣化），此時 ABI 不可靠，需改用 TBI、SPP 或血管超音波", category: "診斷" },
+                { question: "ABI 0.91-0.99 屬於哪個分類？", options: ["正常", "邊界值，需做運動後 ABI", "輕度 PAD", "重度 PAD"], correct: 1, explanation: "ABI 0.91-0.99 為邊界值 (Borderline)，需要進一步做運動後 ABI 測試才能確認診斷", category: "診斷" },
+                { question: "TBI (Toe-Brachial Index) 的正常值為何？", options: ["> 0.3", "> 0.5", "> 0.7", "> 0.9"], correct: 2, explanation: "TBI 正常值 > 0.7；< 0.3 為異常。TBI 較不受血管鈣化影響", category: "診斷" },
+                { question: "SPP (皮膚灌流壓) 的主要優點是什麼？", options: ["測量速度快", "不受血管鈣化影響", "可同時測量雙腳", "不需要特殊儀器"], correct: 1, explanation: "SPP 使用雷射都卜勒測量微循環，最大優點是不受血管鈣化影響，適用於糖尿病、洗腎等血管鈣化嚴重的病人", category: "診斷" },
+                { question: "SPP < 30 mmHg 代表什麼臨床意義？", options: ["正常灌流", "輕度缺血，可觀察", "中度缺血，邊緣性癒合", "重度缺血，傷口癒合困難"], correct: 3, explanation: "SPP < 30 mmHg 代表重度缺血 (CLI)，傷口癒合困難，需要血管重建介入治療", category: "診斷" },
+                { question: "TcPO2 (經皮氧分壓) 正常值為何？", options: ["> 20 mmHg", "> 30 mmHg", "> 40 mmHg", "> 60 mmHg"], correct: 2, explanation: "TcPO2 正常值 > 40 mmHg；< 30 mmHg 為異常，表示組織缺氧，傷口癒合困難", category: "診斷" },
+                { question: "踝壓 (Ankle Pressure) < 50 mmHg 代表什麼？", options: ["正常", "輕度缺血", "中度缺血", "重度缺血"], correct: 3, explanation: "踝壓 < 50 mmHg 代表重度缺血。但踝壓容易受血管鈣化影響，產生假性偏高的數值", category: "診斷" },
+                { question: "下肢循環評估的四個步驟是？", options: ["看、聽、問、切", "看、摸、觸診、問診", "視、觸、叩、聽", "望、聞、問、切"], correct: 1, explanation: "正確順序為：看（顏色傷口）、摸（溫度）、觸診（脈搏）、問診（痛麻酸無力）", category: "診斷" },
+                { question: "PAD 病患有典型間歇性跛行症狀的比例約為多少？", options: ["10%", "32%", "50%", "75%"], correct: 1, explanation: "僅約 10-32% 的 PAD 病患有典型間歇性跛行症狀。高達 68-90% 的 PAD 患者無典型症狀或完全無症狀", category: "診斷" },
+
+                // === WIfI 分類 (11-17) ===
+                { question: "WIfI 分類系統中的「I」代表什麼？", options: ["Inflammation (發炎)", "Infection (感染)", "Ischemia (缺血)", "Injury (損傷)"], correct: 2, explanation: "WIfI = Wound(傷口) + Ischemia(缺血) + foot Infection(足部感染)", category: "WIfI" },
+                { question: "WIfI 中的 Ischemia Grade 3 對應的 ABI 範圍是？", options: ["≥ 0.80", "0.6-0.79", "0.4-0.59", "< 0.4"], correct: 3, explanation: "Ischemia Grade 3 (重度缺血)：ABI < 0.4、踝壓 < 50 mmHg、SPP < 30 mmHg", category: "WIfI" },
+                { question: "WIfI Clinical Stage 4 的 1 年截肢風險為？", options: ["極低 (<5%)", "低 (5-20%)", "中 (20-50%)", "高 (>50%)"], correct: 3, explanation: "Stage 4 為高風險，1年截肢風險 >50%，迫切需要血管重建", category: "WIfI" },
+                { question: "WIfI Wound Grade 2 的定義為何？", options: ["無潰瘍", "淺層小潰瘍", "深層潰瘍暴露骨/腱/關節，壞疽限腳趾", "廣泛壞疽涵蓋前/中足"], correct: 2, explanation: "Wound Grade 2：深層潰瘍暴露骨頭、肌腱或關節；壞疽限制在腳趾。Grade 3 才是廣泛壞疽涵蓋前足/中足", category: "WIfI" },
+                { question: "WIfI Infection Grade 3 (嚴重感染) 的 SIRS 標準包含下列何者？", options: ["紅腫 > 2 cm", "體溫 > 38°C 或 < 36°C、心率 > 90、WBC > 12,000", "僅局部紅腫 0.5-2 cm", "深層組織感染但無全身症狀"], correct: 1, explanation: "Infection Grade 3 需有全身性發炎反應 (SIRS)：體溫 > 38°C 或 < 36°C、心率 > 90、呼吸 > 20、WBC > 12,000 或 < 4,000", category: "WIfI" },
+                { question: "WIfI Clinical Stage 1 的截肢風險為？", options: ["極低 (<5%)", "低 (5-20%)", "中 (20-50%)", "高 (>50%)"], correct: 0, explanation: "Stage 1 截肢風險極低 (< 5%)，血管重建的預期效益低", category: "WIfI" },
+                { question: "WIfI Ischemia Grade 0 對應的 SPP 值為？", options: ["< 30 mmHg", "30-40 mmHg", "40-50 mmHg", "≥ 50 mmHg"], correct: 3, explanation: "Ischemia Grade 0（無缺血）：ABI ≥ 0.80、踝壓 > 100 mmHg、SPP ≥ 50 mmHg", category: "WIfI" },
+
+                // === Rutherford 分類與 CLI/ALI (18-24) ===
+                { question: "Critical Limb Ischemia (CLI) 與 Acute Limb Ischemia (ALI) 的主要區別是？", options: ["CLI 是急性發作，ALI 是慢性進展", "CLI 是慢性進展，ALI 是兩週內快速惡化", "兩者沒有區別", "CLI 只影響上肢"], correct: 1, explanation: "CLI 是慢性下肢動脈狹窄緩慢進展，ALI 是兩週內新發生且快速惡化", category: "分類" },
+                { question: "Rutherford Category 4 代表什麼？", options: ["輕度間歇性跛行", "中度間歇性跛行", "重度間歇性跛行", "休息痛"], correct: 3, explanation: "Category 4 表示休息痛 (Resting Pain)，ABI < 0.4，脈搏消失，肢體冷", category: "分類" },
+                { question: "Rutherford Category 5 與 Category 6 的差別為何？", options: ["有無休息痛", "輕度 vs 嚴重組織缺損", "有無感染", "跛行距離不同"], correct: 1, explanation: "Category 5：輕度組織缺損（腳趾或足部小範圍潰瘍/壞疽）；Category 6：嚴重組織缺損（超過腳趾的廣泛壞疽，需截肢）", category: "分類" },
+                { question: "Rutherford Category 0-3 的處理原則為何？", options: ["緊急手術", "立即轉介心臟內科", "門診管理，控制危險因子", "住院觀察 72 小時"], correct: 2, explanation: "Category 0-3 以門診管理為主，控制危險因子。Category 4-6 屬臨界肢體缺血 (CLI)，需立即轉介", category: "分類" },
+                { question: "ALI Rutherford 2B (立即威脅) 的首要治療為何？", options: ["PGE1 輸注觀察", "排程血管影像", "緊急手術取栓或 CDT", "評估截肢"], correct: 2, explanation: "ALI 2B（立即威脅）：抗凝 → 緊急手術取栓或 catheter-directed thrombolysis (CDT)。延遲會導致肢體喪失", category: "分類" },
+                { question: "ALI 確診後應立即給予的藥物為何？", options: ["Cilostazol", "Heparin（抗凝）", "Statin", "SGLT2 inhibitor"], correct: 1, explanation: "ALI 確診後應立即給予 Heparin（bolus + drip），目標 aPTT 1.5-2.5 倍，防止血栓延伸", category: "分類" },
+                { question: "CLI 不治療的 12 個月死亡率約為？", options: ["5%", "12%", "22%", "40%"], correct: 2, explanation: "研究追蹤 1527 名下肢有傷口的 CLI 患者，12 個月後死亡率 22%，傷口 35% 惡化。相較之下，治療併發症 < 0.5%", category: "分類" },
+
+                // === 藥物治療 (25-38) ===
+                { question: "Cilostazol 的藥理機轉為何？", options: ["抑制 COX-1", "抑制 PDE-III → 增加 cAMP", "抑制 Factor Xa", "抑制 ADP 受體"], correct: 1, explanation: "Cilostazol 抑制 Phosphodiesterase III → 增加 cAMP → 血管擴張 + 抑制血小板聚集", category: "藥物" },
+                { question: "Cilostazol 的絕對禁忌症是什麼？", options: ["CKD stage 5", "NYHA Class III-IV 心衰竭", "肝硬化 Child-Pugh A", "年齡 > 80 歲"], correct: 1, explanation: "Cilostazol 為 PDE-III 抑制劑，在 NYHA Class III-IV 心衰竭患者絕對禁忌，因同類藥物長期口服會增加死亡風險。CKD 不需調整劑量（肝臟代謝為主）", category: "藥物" },
+                { question: "Cilostazol 最常見的副作用為何？", options: ["低血壓", "頭痛（約 34%）", "肝功能異常", "血小板低下"], correct: 1, explanation: "Cilostazol 最常見副作用：頭痛（~34%）、腹瀉（~19%）、心悸（~10%）", category: "藥物" },
+                { question: "Cilostazol 在 CKD/洗腎病患需調整劑量嗎？", options: ["需減半劑量", "完全禁忌", "不需調整（肝臟代謝為主）", "需依 eGFR 調整"], correct: 2, explanation: "Cilostazol 主要經肝臟代謝，CKD 及洗腎患者不需調整劑量", category: "藥物" },
+                { question: "Rivaroxaban 用於 PAD 的「血管劑量」為何？", options: ["20 mg QD", "15 mg BID", "2.5 mg BID + Aspirin", "10 mg QD"], correct: 2, explanation: "PAD 的 Dual Pathway Inhibition 使用 Rivaroxaban 2.5 mg BID（血管劑量）+ Aspirin 100 mg/day，來自 COMPASS 及 VOYAGER PAD 試驗。注意此劑量遠低於 AF 治療劑量 (20 mg QD)", category: "藥物" },
+                { question: "COMPASS Trial 中 Rivaroxaban + Aspirin 對 MALE 的降幅為何？", options: ["HR 0.85", "HR 0.72", "HR 0.54", "HR 0.91"], correct: 2, explanation: "COMPASS Trial：MALE (Major Adverse Limb Events) HR 0.54 (P=0.004)，是所有終點中降幅最大的", category: "藥物" },
+                { question: "Rivaroxaban (血管劑量) 的禁忌症不包含下列何者？", options: ["CrCl < 15 mL/min", "活動性出血", "eGFR 30-59 mL/min", "嚴重肝功能不全 (Child-Pugh C)"], correct: 2, explanation: "eGFR 30-59 並非禁忌。禁忌包括：CrCl < 15 mL/min、活動性出血、嚴重肝功能不全 (Child-Pugh C)", category: "藥物" },
+                { question: "高出血風險的 PAD 患者（如近期 GI bleeding），抗血栓治療應選擇？", options: ["Rivaroxaban 2.5 mg BID + Aspirin", "Warfarin + Aspirin", "Clopidogrel alone", "Triple therapy"], correct: 2, explanation: "高出血風險者應選擇 Clopidogrel alone，避免 dual pathway inhibition 增加出血風險", category: "藥物" },
+                { question: "Alprostadil (PGE1/Promostan) 的輸注速率為何？", options: ["10 mL/hour", "15 mL/hour", "21 mL/hour", "30 mL/hour"], correct: 2, explanation: "Alprostadil 6 amp in N/S 500 mL，以 21 mL/hour pump 輸注（約 5-10 ng/kg/min）", category: "藥物" },
+                { question: "PGE1 (Promostan) 的作用機轉不包含下列何者？", options: ["血管擴張", "抑制血小板聚集", "改善紅血球變形能力", "促進凝血因子生成"], correct: 3, explanation: "PGE1 的作用包括：血管擴張、抑制血小板聚集、改善紅血球變形能力、抑制白血球活化。不會促進凝血因子生成", category: "藥物" },
+                { question: "PGE1 輸注最需注意的監測項目為？", options: ["血糖", "血壓（低血壓風險）及輸注部位", "肝功能", "凝血時間"], correct: 1, explanation: "PGE1 可能導致低血壓，需監測血壓及心率。靜脈炎常見，建議使用中央靜脈或大口徑周邊靜脈", category: "藥物" },
+                { question: "ALI 使用 Heparin 的目標 aPTT 為正常值的幾倍？", options: ["1.0-1.5 倍", "1.5-2.5 倍", "2.5-3.5 倍", "3.0-4.0 倍"], correct: 1, explanation: "ALI 使用 Unfractionated Heparin：bolus + drip，目標 aPTT 1.5-2.5 倍", category: "藥物" },
+                { question: "PAD 合併 T2DM 患者，SGLT2 inhibitor 應優先選擇？", options: ["Canagliflozin", "Empagliflozin 或 Dapagliflozin", "任何 SGLT2i 皆可", "PAD 患者禁用 SGLT2i"], correct: 1, explanation: "CANVAS 試驗中 Canagliflozin 有較高截肢風險 (6.3 vs 3.4/1000 pt-yr)。Empagliflozin 或 Dapagliflozin 為較安全的選擇", category: "藥物" },
+                { question: "哪一種 PPI 是 NG tube 病人唯一可用的選擇？", options: ["Takepron", "Pariet", "Nexium", "Pantoprazole"], correct: 2, explanation: "自費 PPI 有 Nexium、Takepron、Pariet，但 NG tube 病人只能用 Nexium", category: "藥物" },
+
+                // === 導管室與術後照護 (39-46) ===
+                { question: "移除 Sheath 前，ACT 必須小於多少秒？", options: ["100 秒", "150 秒", "200 秒", "250 秒"], correct: 1, explanation: "ACT 必須小於 150 秒才可以移除 sheath", category: "導管" },
+                { question: "若 Sheath 反抽沒有回血，應該怎麼做？", options: ["打 Normal Saline 進去沖洗", "絕對不能打 Normal Saline，應通知醫師", "直接移除 Sheath", "等待 30 分鐘後再嘗試"], correct: 1, explanation: "絕對不能打 N/S 進去，因為可能已有血塊，打進去會把血塊往腳底沖，造成 gangrene", category: "導管" },
+                { question: "移除 Sheath 後，沙包應加壓多久？", options: ["2 小時", "4 小時", "6 小時", "8 小時"], correct: 3, explanation: "移除 sheath 後以 2 kg 沙包加壓 8 小時", category: "導管" },
+                { question: "Antegrade (順行) 穿刺的定義為何？", options: ["右進作左、左進作右", "右進作右、左進作左", "均從右側進入", "只適用於上肢"], correct: 1, explanation: "Antegrade (順行)：右進作右、左進作左，穿刺同側的病灶", category: "導管" },
+                { question: "Retrograde (逆行) 穿刺的重要注意事項為何？", options: ["可穿刺任何部位", "必須選擇無病變的血管穿刺", "只能從右側進入", "不需超音波導引"], correct: 1, explanation: "Retrograde 穿刺必須選擇無病變區域的血管，絕不可穿刺有病變的動脈", category: "導管" },
+                { question: "Technical Success 的定義是殘餘狹窄小於多少？", options: ["10%", "20%", "30%", "50%"], correct: 2, explanation: "Technical Success 定義為殘餘狹窄 < 30%", category: "導管" },
+                { question: "Hemodynamic Success 的定義為何？", options: ["殘餘狹窄 < 30%", "病灶壓力梯度 < 10 mmHg", "ABI 增加 ≥ 0.15", "無併發症"], correct: 1, explanation: "Hemodynamic Success 定義為病灶壓力梯度 < 10 mmHg", category: "導管" },
+                { question: "CKD 病患進行血管攝影的替代方案為何？", options: ["不做檢查", "二氧化碳血管攝影", "只用超音波", "直接開刀探查"], correct: 1, explanation: "CKD 病患可使用二氧化碳血管攝影（B1 血管攝影室），搭配依腎功能補液及 Acetylcysteine 降低顯影劑腎毒性", category: "導管" },
+
+                // === 運動與治療比較 (47-50) ===
+                { question: "下列何種治療對 Maximal Treadmill Distance 的增加幅度最大？", options: ["Cilostazol", "Home-based walking exercise", "Supervised treadmill exercise", "Semaglutide"], correct: 2, explanation: "Supervised treadmill exercise 增加 +186 m，為最有效的非侵入性治療。Aortoiliac endovascular +202 m 更高但為侵入性", category: "治療" },
+                { question: "LITE Trial 的重要發現為何？", options: ["低強度運動與高強度同樣有效", "居家運動必須達到誘發缺血症狀的強度才有效", "所有居家運動都無效", "運動頻率比強度重要"], correct: 1, explanation: "LITE Trial：高強度居家運動（誘發缺血症狀）使 6-min walk distance 增加 49.6 m；低強度（不誘發症狀）僅增加 8.7 m，與對照組無顯著差異", category: "治療" },
+                { question: "TASC Type D 病灶的建議治療方式？", options: ["一定要血管內介入", "優先考慮外科繞道手術", "只能藥物治療", "不需要治療"], correct: 1, explanation: "TASC Type D 病灶建議優先考慮外科繞道手術，但高風險病患仍可嘗試血管介入", category: "治療" },
+                { question: "戒菸對 PAD 患者的影響：戒菸 vs 持續吸菸的全因死亡率為？", options: ["10% vs 15%", "14% vs 31%", "20% vs 25%", "5% vs 10%"], correct: 1, explanation: "PAD 患者 1 年追蹤：戒菸者全因死亡 14% vs 持續吸菸 31%；Amputation-free survival：81% vs 60%", category: "治療" },
+
+                // === 流行病學與臨床統計 (bonus questions integrated) ===
+                { question: "全球 PAD 患者人數約為多少？", options: ["5,000 萬", "1 億", "2.36 億", "5 億"], correct: 2, explanation: "全球約 2.36 億 PAD 患者；美國 ≥ 40 歲約 1,250 萬人；≥ 65 歲盛行率 10-15%", category: "流行病學" },
+                { question: "根據 NTUH 新竹分院數據，CAD 病患合併嚴重 PAD 的比例約為多少？", options: ["5%", "10%", "15.4%", "25%"], correct: 2, explanation: "根據 NTUH 新竹 2015-2020 數據，約 15.4% 的 CAD 病患合併嚴重 PAD", category: "流行病學" },
+                { question: "CAD 合併 PAD (polyVD) 住院死亡率是單純 CAD 的幾倍？", options: ["1.5 倍", "2 倍", "3 倍", "4 倍"], correct: 1, explanation: "CAD 住院死亡率 5.7%；CAD + PAD (polyVD) 住院死亡率 11.6%，約為 2 倍風險", category: "流行病學" },
+                { question: "根據本院統計，血管介入治療的整體併發症發生率約為？", options: ["< 1%", "1-5%", "5-10%", "> 10%"], correct: 0, explanation: "根據本院 2012-2017 統計，所有併發症發生率均 < 1%，整體安全性極高", category: "流行病學" },
+                { question: "糖尿病合併 PAD 病患的 LDL 目標為？", options: ["< 100 mg/dL", "< 70 mg/dL", "< 55 mg/dL", "< 40 mg/dL"], correct: 2, explanation: "根據 ESC 2024 指南，極高風險（PAD + DM）患者目標 LDL < 55 mg/dL，且 LDL 至少降低 50%", category: "藥物" },
+                { question: "住院時 ECG 發現 Q waves 合併 CXR cardiomegaly，應進一步安排？", options: ["運動心電圖", "心臟超音波 (Echocardiography)", "心臟 MRI", "冠狀動脈攝影"], correct: 1, explanation: "ECG 出現 Q waves、QS waves、R wave poor progression 合併 CXR cardiomegaly，需進一步安排心臟超音波評估心功能", category: "診斷" },
+                { question: "WBC > 15,000/uL 合併 CRP > 5 mg/dL 的 CLI 患者，建議處置為？", options: ["觀察即可", "口服抗生素出院", "延長抗生素治療或清創/截肢", "僅換藥處理"], correct: 2, explanation: "WBC > 15,000/uL 或 CRP > 5 mg/dL 提示嚴重感染，建議延長抗生素治療或逕行清創/截肢", category: "治療" },
+                { question: "Clopidogrel 裝置下肢支架後健保給付多久？", options: ["2 週", "1 個月", "3 個月", "6 個月"], correct: 1, explanation: "下肢支架裝置後 Clopidogrel (Plavix) 健保給付 1 個月", category: "藥物" },
             ];
+
+            const shuffle = (arr) => { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+            const startQuiz = (mode) => {
+                let selected;
+                if (mode === 'all') {
+                    selected = shuffle(allQuestions);
+                } else if (mode === 'random20') {
+                    selected = shuffle(allQuestions).slice(0, 20);
+                } else {
+                    selected = shuffle(allQuestions.filter(q => q.category === mode));
+                }
+                setActiveQuestions(selected);
+                setQuizMode(mode);
+                setCurrentQuestion(0);
+                setSelectedAnswer(null);
+                setShowResult(false);
+                setScore(0);
+                setAnswered(false);
+            };
 
             const handleAnswer = (index) => { if (answered) return; setSelectedAnswer(index); };
             const submitAnswer = () => {
                 if (selectedAnswer === null) return;
                 setAnswered(true);
-                if (selectedAnswer === questions[currentQuestion].correct) { setScore(score + 1); }
+                if (selectedAnswer === activeQuestions[currentQuestion].correct) { setScore(score + 1); }
             };
             const nextQuestion = () => {
-                if (currentQuestion < questions.length - 1) {
+                if (currentQuestion < activeQuestions.length - 1) {
                     setCurrentQuestion(currentQuestion + 1);
                     setSelectedAnswer(null);
                     setAnswered(false);
                 } else { setShowResult(true); }
             };
-            const restartQuiz = () => { setCurrentQuestion(0); setSelectedAnswer(null); setShowResult(false); setScore(0); setAnswered(false); };
+            const restartQuiz = () => { setQuizMode(null); setActiveQuestions([]); setCurrentQuestion(0); setSelectedAnswer(null); setShowResult(false); setScore(0); setAnswered(false); };
 
-            if (showResult) {
-                const percentage = Math.round((score / questions.length) * 100);
+            const categories = [...new Set(allQuestions.map(q => q.category))];
+            const categoryLabels = { '診斷': '診斷與評估', 'WIfI': 'WIfI 分類', '分類': 'Rutherford / CLI / ALI', '藥物': '藥物治療', '導管': '導管室與術後', '治療': '治療與運動', '流行病學': '流行病學與統計' };
+
+            if (!quizMode) {
                 return (
                     <div className="tab-section">
-                        <div className="score-display">
-                            <div className="score-number">{percentage}%</div>
-                            <div className="score-label">{score} / {questions.length} 題正確</div>
-                            <div style={{ marginTop: '15px', color: '#b0bec5' }}>
-                                {percentage >= 80 ? '優秀！您對 PAOD 護理照護掌握得很好！' : percentage >= 60 ? '不錯！再複習一下可以更好！' : '建議再仔細閱讀各章節內容'}
+                        <div className="card">
+                            <div className="card-title"><span className="card-icon"></span>選擇測驗模式</div>
+                            <div style={{ textAlign: 'center', marginBottom: '15px', color: '#b0bec5' }}>
+                                共 {allQuestions.length} 題，涵蓋 {categories.length} 大類別
                             </div>
+                            <button className="quiz-btn" onClick={() => startQuiz('all')} style={{ marginBottom: '10px' }}>
+                                全部 {allQuestions.length} 題（隨機順序）
+                            </button>
+                            <button className="quiz-btn" onClick={() => startQuiz('random20')} style={{ marginBottom: '20px', background: 'linear-gradient(135deg, #5c6bc0 0%, #7986cb 100%)' }}>
+                                隨機精選 20 題
+                            </button>
+                            <div style={{ color: '#ff8a8a', fontWeight: 'bold', marginBottom: '10px', marginTop: '10px' }}>依類別測驗：</div>
+                            {categories.map(cat => (
+                                <button key={cat} className="quiz-btn" onClick={() => startQuiz(cat)} style={{ marginBottom: '8px', background: 'linear-gradient(135deg, rgba(233, 69, 96, 0.6) 0%, rgba(255, 107, 107, 0.6) 100%)', fontSize: '0.9em' }}>
+                                    {categoryLabels[cat] || cat}（{allQuestions.filter(q => q.category === cat).length} 題）
+                                </button>
+                            ))}
                         </div>
-                        <button className="quiz-btn" onClick={restartQuiz}>重新測驗</button>
                     </div>
                 );
             }
 
-            const q = questions[currentQuestion];
+            if (showResult) {
+                const percentage = Math.round((score / activeQuestions.length) * 100);
+                return (
+                    <div className="tab-section">
+                        <div className="score-display">
+                            <div className="score-number">{percentage}%</div>
+                            <div className="score-label">{score} / {activeQuestions.length} 題正確</div>
+                            <div style={{ marginTop: '15px', color: '#b0bec5' }}>
+                                {percentage >= 90 ? '太優秀了！您是 PAOD 照護專家！' : percentage >= 80 ? '優秀！您對 PAOD 護理照護掌握得很好！' : percentage >= 60 ? '不錯！再複習一下可以更好！' : '建議再仔細閱讀各章節內容'}
+                            </div>
+                        </div>
+                        <button className="quiz-btn" onClick={restartQuiz}>重新選擇測驗模式</button>
+                    </div>
+                );
+            }
+
+            const q = activeQuestions[currentQuestion];
             return (
                 <div className="tab-section">
                     <div className="card">
-                        <div className="progress-bar"><div className="progress-fill" style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }} /></div>
-                        <div style={{ textAlign: 'center', marginBottom: '15px', color: '#b0bec5' }}>第 {currentQuestion + 1} / {questions.length} 題</div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                            <span style={{ color: '#7986cb', fontSize: '0.8em', background: 'rgba(63, 81, 181, 0.15)', padding: '3px 10px', borderRadius: '10px' }}>{categoryLabels[q.category] || q.category}</span>
+                            <span style={{ color: '#888', fontSize: '0.8em', cursor: 'pointer' }} onClick={restartQuiz}>← 返回選單</span>
+                        </div>
+                        <div className="progress-bar"><div className="progress-fill" style={{ width: `${((currentQuestion + 1) / activeQuestions.length) * 100}%` }} /></div>
+                        <div style={{ textAlign: 'center', marginBottom: '15px', color: '#b0bec5' }}>第 {currentQuestion + 1} / {activeQuestions.length} 題</div>
                         <div className="card-title" style={{ borderBottom: 'none', paddingBottom: 0 }}>{q.question}</div>
                         <div style={{ marginTop: '20px' }}>
                             {q.options.map((option, index) => (
@@ -1961,7 +2064,7 @@
                         {!answered ? (
                             <button className="quiz-btn" onClick={submitAnswer} disabled={selectedAnswer === null}>確認答案</button>
                         ) : (
-                            <button className="quiz-btn" onClick={nextQuestion}>{currentQuestion < questions.length - 1 ? '下一題 →' : '查看結果'}</button>
+                            <button className="quiz-btn" onClick={nextQuestion}>{currentQuestion < activeQuestions.length - 1 ? '下一題 →' : '查看結果'}</button>
                         )}
                     </div>
                 </div>
