@@ -426,6 +426,21 @@
   .calc-total-label { font-size: 15px; font-weight: 600; }
   .calc-total-value { font-size: 24px; font-weight: 700; }
   .calc-footnote { font-size: 12px; color: #888; text-align: center; }
+  .calc-des-toggle {
+    width: 100%; display: flex; gap: 6px;
+    margin-top: 6px; padding-top: 8px;
+    border-top: 1px dashed #d0d9ea;
+  }
+  .des-type-btn {
+    flex: 1; padding: 8px 12px; border-radius: 8px;
+    border: 1px solid #d0d9ea; background: white;
+    font-size: 13px; font-weight: 600; color: #666;
+    cursor: pointer; transition: all 0.2s; text-align: center;
+  }
+  .des-type-btn.active {
+    background: #1e2a4a; color: white; border-color: #1e2a4a;
+  }
+  .des-type-btn:hover:not(.active) { border-color: #1e2a4a; color: #1e2a4a; }
   @media (max-width: 600px) {
     .calc-item { padding: 12px; }
     .calc-price { min-width: auto; width: 100%; text-align: right; margin-top: 4px; }
@@ -780,12 +795,22 @@
           </div>
           <div class="cost-item-price">約 NT$ 170,000 / 顆</div>
         </div>
-        <div class="cost-item">
-          <div class="cost-item-info">
-            <div class="cost-item-name">塗藥支架（DES）</div>
-            <div class="cost-item-desc">置放於病灶處以維持血管通暢；使用數量視病灶範圍而定</div>
+        <div class="cost-item" style="flex-direction:column; gap:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
+            <div class="cost-item-info">
+              <div class="cost-item-name">塗藥支架（DES）</div>
+              <div class="cost-item-desc">置放於病灶處以維持血管通暢；使用數量視病灶範圍而定</div>
+            </div>
+            <div class="cost-item-price">約 NT$ 55,000–65,000 / 支</div>
           </div>
-          <div class="cost-item-price">約 NT$ 55,000–65,000 / 支</div>
+          <div style="background:#f0f9ff; border:1px solid #bfdbfe; border-radius:8px; padding:12px 14px; width:100%; font-size:13px; color:#1e40af; line-height:1.7;">
+            <strong style="color:#1e3a8a;">支架費用說明：</strong>塗藥支架屬於健保「差額給付」項目。健保會支付一般裸金屬支架的費用，病患僅需自付塗藥支架與一般支架之間的「差額」。<br>
+            <span style="display:inline-block; margin-top:4px;">
+              <strong>有健保差額給付：</strong>自付約 NT$ 55,000 / 支<br>
+              <strong>無健保差額給付（全額自費）：</strong>約 NT$ 65,000 / 支
+            </span><br>
+            <span style="font-size:12px; color:#6b7280; margin-top:4px; display:inline-block;">大多數病患可適用健保差額給付方案。是否符合資格，以健保署規定為準。</span>
+          </div>
         </div>
         <div class="cost-item">
           <div class="cost-item-info">
@@ -809,7 +834,7 @@
         <p class="calculator-desc">請依據醫師建議勾選可能使用的項目，系統將自動計算概估費用。實際費用以最終批價為準。</p>
 
         <div class="calc-items">
-          <label class="calc-item">
+          <label class="calc-item" style="flex-wrap:wrap;">
             <input type="checkbox" id="calcDES" checked>
             <span class="calc-check"></span>
             <span class="calc-label">塗藥支架（DES）</span>
@@ -819,7 +844,11 @@
               <button class="qty-btn" onclick="adjustQty('desQty', 1)">+</button>
               <span class="calc-unit">支</span>
             </span>
-            <span class="calc-price" id="desPrice">NT$ 120,000</span>
+            <span class="calc-price" id="desPrice">NT$ 110,000</span>
+            <div class="calc-des-toggle" onclick="event.stopPropagation();">
+              <button class="des-type-btn active" id="btnNHI" onclick="setDesType('nhi')">健保差額給付</button>
+              <button class="des-type-btn" id="btnSelf" onclick="setDesType('self')">全額自費</button>
+            </div>
           </label>
 
           <label class="calc-item">
@@ -997,8 +1026,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /* Cost Calculator */
+var desType = 'nhi'; // 'nhi' or 'self'
 var calcConfig = {
-    des:     { price: 60000, min: 1, max: 6 },
+    des:     { nhi: 55000, self: 65000, min: 1, max: 6 },
     ivl:     { price: 170000, min: 1, max: 3 },
     closure: { price: 18000, min: 1, max: 3 },
     impella: { price: 1350000, fixed: 1 }
@@ -1021,7 +1051,8 @@ function updateCalc() {
     // DES
     var desChecked = document.getElementById('calcDES').checked;
     var desQty = parseInt(document.getElementById('desQty').textContent);
-    var desSubtotal = desChecked ? calcConfig.des.price * desQty : 0;
+    var desUnitPrice = desType === 'nhi' ? calcConfig.des.nhi : calcConfig.des.self;
+    var desSubtotal = desChecked ? desUnitPrice * desQty : 0;
     document.getElementById('desPrice').textContent = desChecked ? 'NT$ ' + desSubtotal.toLocaleString() : '-';
     // IVL
     var ivlChecked = document.getElementById('calcIVL').checked;
@@ -1040,6 +1071,13 @@ function updateCalc() {
 
     total = desSubtotal + ivlSubtotal + closureSubtotal + impellaSubtotal;
     document.getElementById('calcTotal').textContent = 'NT$ ' + total.toLocaleString();
+}
+
+function setDesType(type) {
+    desType = type;
+    document.getElementById('btnNHI').className = 'des-type-btn' + (type === 'nhi' ? ' active' : '');
+    document.getElementById('btnSelf').className = 'des-type-btn' + (type === 'self' ? ' active' : '');
+    updateCalc();
 }
 
 function initCalculator() {
