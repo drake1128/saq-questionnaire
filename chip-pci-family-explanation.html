@@ -357,6 +357,81 @@
     .cost-item-price, .cost-item-nhi { margin-left: 0; margin-top: 6px; }
   }
 
+  /* Calculator Styles */
+  .calculator-box {
+    background: linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
+    border: 2px solid #1e2a4a;
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 20px;
+  }
+  .calculator-title {
+    font-size: 17px; font-weight: 700; color: #1e2a4a;
+    margin-bottom: 6px;
+  }
+  .calculator-desc {
+    font-size: 13px; color: #666; margin-bottom: 18px; line-height: 1.6;
+  }
+  .calc-items { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+  .calc-item {
+    display: flex; align-items: center; gap: 10px;
+    background: white; border: 1px solid #d0d9ea;
+    border-radius: 10px; padding: 14px 16px;
+    cursor: pointer; transition: all 0.2s; user-select: none;
+    flex-wrap: wrap;
+  }
+  .calc-item:hover { border-color: #1e2a4a; }
+  .calc-item input[type="checkbox"] { display: none; }
+  .calc-check {
+    width: 22px; height: 22px; border: 2px solid #b0bec5;
+    border-radius: 6px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; font-size: 14px; color: white;
+  }
+  .calc-item input:checked ~ .calc-check {
+    background: #1e2a4a; border-color: #1e2a4a;
+  }
+  .calc-item input:checked ~ .calc-check::after { content: "✓"; }
+  .calc-item input:not(:checked) ~ .calc-label,
+  .calc-item input:not(:checked) ~ .calc-qty-wrap,
+  .calc-item input:not(:checked) ~ .calc-price { opacity: 0.4; }
+  .calc-label { font-size: 14px; font-weight: 600; color: #1e2a4a; flex: 1; min-width: 120px; }
+  .calc-qty-wrap {
+    display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+  }
+  .qty-btn {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 1px solid #b0bec5; background: white;
+    font-size: 16px; font-weight: 700; color: #1e2a4a;
+    cursor: pointer; display: flex; align-items: center;
+    justify-content: center; transition: all 0.2s;
+    line-height: 1;
+  }
+  .qty-btn:hover { background: #1e2a4a; color: white; border-color: #1e2a4a; }
+  .calc-qty, .calc-qty-fixed {
+    font-size: 16px; font-weight: 700; color: #1e2a4a;
+    min-width: 20px; text-align: center;
+  }
+  .calc-unit { font-size: 12px; color: #888; }
+  .calc-price {
+    font-size: 14px; font-weight: 700; color: #c0392b;
+    min-width: 110px; text-align: right; flex-shrink: 0;
+  }
+  .calc-total-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    background: linear-gradient(135deg, #1e2a4a 0%, #34537b 100%);
+    color: white; border-radius: 12px; padding: 18px 22px;
+    margin-bottom: 10px;
+  }
+  .calc-total-label { font-size: 15px; font-weight: 600; }
+  .calc-total-value { font-size: 24px; font-weight: 700; }
+  .calc-footnote { font-size: 12px; color: #888; text-align: center; }
+  @media (max-width: 600px) {
+    .calc-item { padding: 12px; }
+    .calc-price { min-width: auto; width: 100%; text-align: right; margin-top: 4px; }
+    .calc-total-value { font-size: 20px; }
+  }
+
   /* Share Button Styles */
   .share-button { position: fixed; top: 20px; right: 20px; z-index: 1000; }
   .share-toggle { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%); border: none; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
@@ -656,9 +731,34 @@
       </div>
     </div>
 
-    <!-- 6. 自費醫材與費用預估 -->
+    <!-- 6. 機械循環輔助 -->
     <div class="section">
-      <div class="section-title"><span class="icon">6</span>可能使用的自費醫材與費用預估</div>
+      <div class="section-title"><span class="icon">6</span>機械循環輔助裝置（Protected PCI）</div>
+      <div class="info-card">
+        <p>
+          在 CHIP 高風險介入治療中，當病患的<strong>心臟功能較差</strong>或<strong>病灶範圍廣泛</strong>時，手術過程中一旦發生血流動力學不穩定，心臟可能無法自行維持足夠的血液輸出。此時，醫療團隊可能會在手術前或手術中啟用<strong>機械循環輔助裝置</strong>，為心臟提供額外的支撐，讓醫師能在更安全的條件下完成複雜的血管治療。這種策略稱為「Protected PCI」。
+        </p>
+      </div>
+
+      <div class="info-card">
+        <p style="margin-bottom:10px;"><strong>目前常用的機械循環輔助裝置包括：</strong></p>
+        <ul class="risk-list">
+          <li><strong>IABP（主動脈內氣球幫浦）：</strong>透過反搏原理降低心臟後負荷，是最傳統的輔助裝置，健保給付。適用於血流動力學輕度不穩定的情境。</li>
+          <li><strong>Impella（經皮心室輔助器）：</strong>直接從左心室將血液抽出並送入主動脈，提供主動的血流支持（最高可達 3.7 L/min），同時卸載左心室壓力，降低心肌耗氧。在 CHIP PCI 中，Impella 可為術中提供穩定的血流動力學環境，讓醫師有更充裕的時間處理複雜病灶。此為全自費裝置。</li>
+          <li><strong>ECMO（葉克膜）：</strong>提供最強大的循環支持，適用於最危急的情況，健保給付。但對左心室的卸載效果有限，且併發症風險較高。</li>
+        </ul>
+      </div>
+
+      <div class="info-card" style="border-color:#7986cb;">
+        <p style="font-size:14px;">
+          <strong>醫師會如何選擇？</strong>會根據病患的心臟功能（LVEF）、病灶複雜度、預期手術時間與風險等因素，選擇最適合的輔助方式。並非所有 CHIP 病患都需要機械循環輔助 — 僅在評估認為有必要時才會建議使用。關於 Impella 的完整說明，請參閱本院另備的 <a href="impella-family-explanation.html" style="color:#3b82f6; text-decoration:none; font-weight:600;">Impella 經皮心室輔助器家屬說明書</a>。
+        </p>
+      </div>
+    </div>
+
+    <!-- 7. 自費醫材與費用預估 -->
+    <div class="section">
+      <div class="section-title"><span class="icon">7</span>可能使用的自費醫材與費用預估</div>
       <div class="info-card">
         <p>
           高風險心導管治療因複雜度較高，可能需要使用數項非健保給付的特殊醫材。以下為常見的自費項目與費用概估，實際使用項目視病患個別狀況而定。
@@ -694,12 +794,77 @@
           </div>
           <div class="cost-item-price">約 NT$ 18,000 / 組</div>
         </div>
+        <div class="cost-item">
+          <div class="cost-item-info">
+            <div class="cost-item-name">Impella CP 心室輔助器</div>
+            <div class="cost-item-desc">經皮左心室輔助裝置，用於 Protected PCI；僅在心臟功能不佳或病灶極複雜時使用</div>
+          </div>
+          <div class="cost-item-price">NT$ 1,350,000</div>
+        </div>
       </div>
 
-      <div class="info-card" style="border-color:#e0c36a;">
-        <p style="font-size:14px;">
-          <strong>費用範例（僅供參考）：</strong>若治療過程中使用 1 顆碎石氣球 + 2 支塗藥支架 + 2 組血管封阻器，自費醫材費用合計約為 <strong style="color:#c0392b;">NT$ 320,000 – 360,000</strong>。若鈣化程度允許不使用碎石氣球，費用將可降低。
-        </p>
+      <!-- 費用試算器 -->
+      <div class="calculator-box" id="costCalculator">
+        <div class="calculator-title">自費醫材費用試算</div>
+        <p class="calculator-desc">請依據醫師建議勾選可能使用的項目，系統將自動計算概估費用。實際費用以最終批價為準。</p>
+
+        <div class="calc-items">
+          <label class="calc-item">
+            <input type="checkbox" id="calcDES" checked>
+            <span class="calc-check"></span>
+            <span class="calc-label">塗藥支架（DES）</span>
+            <span class="calc-qty-wrap">
+              <button class="qty-btn" onclick="adjustQty('desQty', -1)">−</button>
+              <span class="calc-qty" id="desQty">2</span>
+              <button class="qty-btn" onclick="adjustQty('desQty', 1)">+</button>
+              <span class="calc-unit">支</span>
+            </span>
+            <span class="calc-price" id="desPrice">NT$ 120,000</span>
+          </label>
+
+          <label class="calc-item">
+            <input type="checkbox" id="calcIVL">
+            <span class="calc-check"></span>
+            <span class="calc-label">碎石氣球（IVL）</span>
+            <span class="calc-qty-wrap">
+              <button class="qty-btn" onclick="adjustQty('ivlQty', -1)">−</button>
+              <span class="calc-qty" id="ivlQty">1</span>
+              <button class="qty-btn" onclick="adjustQty('ivlQty', 1)">+</button>
+              <span class="calc-unit">顆</span>
+            </span>
+            <span class="calc-price" id="ivlPrice">NT$ 170,000</span>
+          </label>
+
+          <label class="calc-item">
+            <input type="checkbox" id="calcClosure" checked>
+            <span class="calc-check"></span>
+            <span class="calc-label">血管封阻器</span>
+            <span class="calc-qty-wrap">
+              <button class="qty-btn" onclick="adjustQty('closureQty', -1)">−</button>
+              <span class="calc-qty" id="closureQty">2</span>
+              <button class="qty-btn" onclick="adjustQty('closureQty', 1)">+</button>
+              <span class="calc-unit">組</span>
+            </span>
+            <span class="calc-price" id="closurePrice">NT$ 36,000</span>
+          </label>
+
+          <label class="calc-item">
+            <input type="checkbox" id="calcImpella">
+            <span class="calc-check"></span>
+            <span class="calc-label">Impella CP 心室輔助器</span>
+            <span class="calc-qty-wrap">
+              <span class="calc-qty-fixed">1</span>
+              <span class="calc-unit">組</span>
+            </span>
+            <span class="calc-price" id="impellaPrice">NT$ 1,350,000</span>
+          </label>
+        </div>
+
+        <div class="calc-total-bar">
+          <span class="calc-total-label">自費醫材概估總計</span>
+          <span class="calc-total-value" id="calcTotal">NT$ 156,000</span>
+        </div>
+        <p class="calc-footnote">以上為醫材費用概估。手術費、住院費、加護病房費用、健保部分負擔等另計。</p>
       </div>
 
       <div class="warning-box">
@@ -708,9 +873,9 @@
       </div>
     </div>
 
-    <!-- 7. 術後照護 -->
+    <!-- 8. 術後照護 -->
     <div class="section">
-      <div class="section-title"><span class="icon">7</span>術後照護與注意事項</div>
+      <div class="section-title"><span class="icon">8</span>術後照護與注意事項</div>
       <div class="steps">
         <div class="step">
           <div class="step-num" style="background:#27ae60;">✓</div>
@@ -735,9 +900,9 @@
       </div>
     </div>
 
-    <!-- 8. 常見問題 -->
+    <!-- 9. 常見問題 -->
     <div class="section">
-      <div class="section-title"><span class="icon">8</span>家屬常見問題</div>
+      <div class="section-title"><span class="icon">9</span>家屬常見問題</div>
 
       <div class="info-card">
         <p style="margin-bottom:8px;"><strong style="color:#1e2a4a;">Q：既然風險較高，為什麼不直接做繞道手術（CABG）？</strong></p>
@@ -765,9 +930,9 @@
       </div>
     </div>
 
-    <!-- 9. 參考文獻 -->
+    <!-- 10. 參考文獻 -->
     <div class="section">
-      <div class="section-title"><span class="icon">9</span>參考文獻</div>
+      <div class="section-title"><span class="icon">10</span>參考文獻</div>
       <div class="info-card">
         <p style="font-size:13px; line-height:1.8; color:#555;">
           Fujimoto Y, Sakakura K, Fujita H. <strong>Complex and high-risk intervention in indicated patients (CHIP) in contemporary clinical practice.</strong> <em>Cardiovasc Interv Ther.</em> 2023;38(3):261-272.<br>
@@ -826,7 +991,72 @@ document.addEventListener('click', function(event) {
         shareMenu.classList.remove('active');
     }
 });
-document.addEventListener('DOMContentLoaded', initShareButtons);
+document.addEventListener('DOMContentLoaded', function() {
+    initShareButtons();
+    initCalculator();
+});
+
+/* Cost Calculator */
+var calcConfig = {
+    des:     { price: 60000, min: 1, max: 6 },
+    ivl:     { price: 170000, min: 1, max: 3 },
+    closure: { price: 18000, min: 1, max: 3 },
+    impella: { price: 1350000, fixed: 1 }
+};
+
+function adjustQty(qtyId, delta) {
+    var el = document.getElementById(qtyId);
+    if (!el) return;
+    var key = qtyId.replace('Qty','');
+    var cfg = calcConfig[key];
+    var val = parseInt(el.textContent) + delta;
+    if (val < cfg.min) val = cfg.min;
+    if (val > cfg.max) val = cfg.max;
+    el.textContent = val;
+    updateCalc();
+}
+
+function updateCalc() {
+    var total = 0;
+    // DES
+    var desChecked = document.getElementById('calcDES').checked;
+    var desQty = parseInt(document.getElementById('desQty').textContent);
+    var desSubtotal = desChecked ? calcConfig.des.price * desQty : 0;
+    document.getElementById('desPrice').textContent = desChecked ? 'NT$ ' + desSubtotal.toLocaleString() : '-';
+    // IVL
+    var ivlChecked = document.getElementById('calcIVL').checked;
+    var ivlQty = parseInt(document.getElementById('ivlQty').textContent);
+    var ivlSubtotal = ivlChecked ? calcConfig.ivl.price * ivlQty : 0;
+    document.getElementById('ivlPrice').textContent = ivlChecked ? 'NT$ ' + ivlSubtotal.toLocaleString() : '-';
+    // Closure
+    var closureChecked = document.getElementById('calcClosure').checked;
+    var closureQty = parseInt(document.getElementById('closureQty').textContent);
+    var closureSubtotal = closureChecked ? calcConfig.closure.price * closureQty : 0;
+    document.getElementById('closurePrice').textContent = closureChecked ? 'NT$ ' + closureSubtotal.toLocaleString() : '-';
+    // Impella
+    var impellaChecked = document.getElementById('calcImpella').checked;
+    var impellaSubtotal = impellaChecked ? calcConfig.impella.price : 0;
+    document.getElementById('impellaPrice').textContent = impellaChecked ? 'NT$ ' + impellaSubtotal.toLocaleString() : '-';
+
+    total = desSubtotal + ivlSubtotal + closureSubtotal + impellaSubtotal;
+    document.getElementById('calcTotal').textContent = 'NT$ ' + total.toLocaleString();
+}
+
+function initCalculator() {
+    var checkboxes = document.querySelectorAll('#costCalculator input[type="checkbox"]');
+    checkboxes.forEach(function(cb) {
+        cb.addEventListener('change', updateCalc);
+    });
+    // Prevent qty buttons from toggling checkbox
+    var qtyBtns = document.querySelectorAll('.qty-btn');
+    qtyBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    });
+    updateCalc();
+}
 </script>
 </body>
 </html>
