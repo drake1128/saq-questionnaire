@@ -688,11 +688,11 @@
                         <div class="question-text">10. 與4週前相比，您認為您的胸痛、胸悶或心絞痛的頻率：</div>
                         <div class="radio-group">
                             <div class="radio-option">
-                                <input type="radio" id="q10_1" name="q10" value="1" required>
+                                <input type="radio" id="q10_1" name="q10" value="5" required>
                                 <label for="q10_1">比4週前好很多 (發作次數減少很多)</label>
                             </div>
                             <div class="radio-option">
-                                <input type="radio" id="q10_2" name="q10" value="2">
+                                <input type="radio" id="q10_2" name="q10" value="4">
                                 <label for="q10_2">比4週前稍微好一點 (發作次數稍微減少)</label>
                             </div>
                             <div class="radio-option">
@@ -700,11 +700,11 @@
                                 <label for="q10_3">沒有改變 (發作次數差不多)</label>
                             </div>
                             <div class="radio-option">
-                                <input type="radio" id="q10_4" name="q10" value="4">
+                                <input type="radio" id="q10_4" name="q10" value="2">
                                 <label for="q10_4">比4週前稍微差一點 (發作次數稍微增加)</label>
                             </div>
                             <div class="radio-option">
-                                <input type="radio" id="q10_5" name="q10" value="5">
+                                <input type="radio" id="q10_5" name="q10" value="1">
                                 <label for="q10_5">比4週前差很多 (發作次數增加很多)</label>
                             </div>
                         </div>
@@ -806,19 +806,19 @@
                         <div class="question-text">14. 服用心絞痛的藥物，對您來說有多麻煩或不方便？</div>
                         <div class="radio-group">
                             <div class="radio-option">
-                                <input type="radio" id="q14_1" name="q14" value="4" required>
+                                <input type="radio" id="q14_1" name="q14" value="1" required>
                                 <label for="q14_1">非常麻煩</label>
                             </div>
                             <div class="radio-option">
-                                <input type="radio" id="q14_2" name="q14" value="3">
+                                <input type="radio" id="q14_2" name="q14" value="2">
                                 <label for="q14_2">有點麻煩</label>
                             </div>
                             <div class="radio-option">
-                                <input type="radio" id="q14_3" name="q14" value="2">
+                                <input type="radio" id="q14_3" name="q14" value="3">
                                 <label for="q14_3">不太麻煩</label>
                             </div>
                             <div class="radio-option">
-                                <input type="radio" id="q14_4" name="q14" value="1">
+                                <input type="radio" id="q14_4" name="q14" value="4">
                                 <label for="q14_4">完全不麻煩</label>
                             </div>
                         </div>
@@ -915,7 +915,7 @@
                                 <label for="q18_3">不太可能</label>
                             </div>
                             <div class="radio-option">
-                                <input type="radio" id="q18_4" name="q18" value="2">
+                                <input type="radio" id="q18_4" name="q18" value="4">
                                 <label for="q18_4">不太確定</label>
                             </div>
                         </div>
@@ -1113,7 +1113,7 @@
             const q12 = parseInt(document.querySelector('input[name="q12"]:checked').value);
             const afScore = ((q11 + q12 - 2) / 10) * 100;
 
-            // 治療滿意度 (Q13-Q16) - 注意Q14是反向計分
+            // 治療滿意度 (Q13-Q16) - Q14已在value中校正方向，直接加總即可
             const q13 = parseInt(document.querySelector('input[name="q13"]:checked').value);
             const q14 = parseInt(document.querySelector('input[name="q14"]:checked').value);
             const q15 = parseInt(document.querySelector('input[name="q15"]:checked').value);
@@ -1128,8 +1128,8 @@
             const dpSum = q17 + q18 + q19;
             const dpScore = ((dpSum - 3) / 10) * 100;
 
-            // SAQSS (平均身體限制和心絞痛頻率)
-            const saqss = (plScore + afScore) / 2;
+            // SAQSS (SAQ-7 定義：平均身體限制、心絞痛頻率、生活品質)
+            const saqss = (plScore + afScore + dpScore) / 3;
 
             // 顯示結果
             document.getElementById('plScore').textContent = plScore.toFixed(1);
