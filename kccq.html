@@ -1296,6 +1296,11 @@
                         <span class="score-value" id="tssScore">--</span>
                     </div>
 
+                    <div class="score-card" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);">
+                        <span class="score-label" style="color: white; font-size: 18px;">📋 臨床概要分數 (Clinical Summary Score)</span>
+                        <span class="score-value" style="color: white; font-size: 30px;" id="cssScore">--</span>
+                    </div>
+
                     <div class="score-card">
                         <span class="score-label">社交限制 (Social Limitation)</span>
                         <span class="score-value" id="slScore">--</span>
@@ -1448,25 +1453,26 @@
             }
             const plScore = plCount > 0 ? ((plSum / plCount - 1) / 4) * 100 : 0;
 
-            // Symptom Frequency (Q2-Q6)
-            let sfSum = 0;
+            // Symptom Frequency (Q2-Q6) — per-item rescaling (Q2-Q5: 6級, Q6: 5級)
+            let sfItemScores = [];
             for (let i = 2; i <= 6; i++) {
                 const value = parseInt(document.querySelector(`input[name="q${i}"]:checked`).value);
-                if (i === 6) { // Q6 是 5 級
-                    sfSum += value;
-                } else { // Q2-Q5 是 6 級
-                    sfSum += value;
+                if (i === 6) { // Q6 是 5 級 (1-5)
+                    sfItemScores.push((value - 1) / 4 * 100);
+                } else { // Q2-Q5 是 6 級 (1-6)
+                    sfItemScores.push((value - 1) / 5 * 100);
                 }
             }
-            const sfScore = ((sfSum - 5) / (29 - 5)) * 100; // Q6最小=1,最大=5; Q2-5最小=4,最大=24
+            const sfScore = sfItemScores.reduce((a, b) => a + b, 0) / sfItemScores.length;
 
-            // Symptom Burden (Q7-Q11)
+            // Symptom Burden (Q7-Q11) — recode value=6 ("沒有此症狀") to 5 ("完全不困擾")
             let sbSum = 0;
             for (let i = 7; i <= 11; i++) {
-                const value = parseInt(document.querySelector(`input[name="q${i}"]:checked`).value);
+                let value = parseInt(document.querySelector(`input[name="q${i}"]:checked`).value);
+                if (value === 6) value = 5; // 「沒有此症狀」等同「完全不困擾」
                 sbSum += value;
             }
-            const sbScore = ((sbSum - 5) / (30 - 5)) * 100;
+            const sbScore = ((sbSum - 5) / (25 - 5)) * 100; // range 5-25, denominator=20
 
             // Total Symptom Score (平均SF和SB)
             const tssScore = (sfScore + sbScore) / 2;
@@ -1502,6 +1508,9 @@
             const q21 = parseInt(document.querySelector('input[name="q21"]:checked').value);
             const ssScore = ((q21 - 1) / 4) * 100;
 
+            // Clinical Summary Score (PL + TSS) / 2
+            const cssScore = (plScore + tssScore) / 2;
+
             // Overall Summary Score (PL + TSS + QOL + SL) / 4
             const ossScore = (plScore + tssScore + qolScore + slScore) / 4;
 
@@ -1510,6 +1519,7 @@
             document.getElementById('sfScore').textContent = sfScore.toFixed(1);
             document.getElementById('sbScore').textContent = sbScore.toFixed(1);
             document.getElementById('tssScore').textContent = tssScore.toFixed(1);
+            document.getElementById('cssScore').textContent = cssScore.toFixed(1);
             document.getElementById('slScore').textContent = slScore.toFixed(1);
             document.getElementById('qolScore').textContent = qolScore.toFixed(1);
             document.getElementById('seScore').textContent = seScore.toFixed(1);
@@ -1561,6 +1571,7 @@
             const sf = document.getElementById('sfScore').textContent;
             const sb = document.getElementById('sbScore').textContent;
             const tss = document.getElementById('tssScore').textContent;
+            const css = document.getElementById('cssScore').textContent;
             const sl = document.getElementById('slScore').textContent;
             const qol = document.getElementById('qolScore').textContent;
             const se = document.getElementById('seScore').textContent;
@@ -1578,6 +1589,7 @@
 - 症狀頻率：${sf}
 - 症狀負擔：${sb}
 - 總症狀分數：${tss}
+- 臨床概要分數：${css}
 - 社交限制：${sl}
 - 生活品質：${qol}
 - 自我效能：${se}
