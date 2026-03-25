@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2A 病房護理紀錄書寫指引 | Nursing Record Writing Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #0077B6;
+            --primary-light: #00B4D8;
+            --primary-dark: #03045E;
+            --accent: #FF6B35;
+            --success: #2EC4B6;
+            --success-light: #CBF3F0;
+            --warning: #FFBE0B;
+            --danger: #e74c3c;
+            --info: #4361EE;
+            --bg-light: #FAFBFC;
+            --text-dark: #1A1A2E;
+            --text-medium: #4A4A68;
+            --card-shadow: 0 4px 24px rgba(0, 119, 182, 0.08);
+        }
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.7;
+        }
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+            color: white;
+            padding: 2rem 1.5rem;
+            text-align: center;
+        }
+        .page-header h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+        .page-header .subtitle { opacity: 0.9; font-size: 1rem; }
+        .back-link {
+            display: inline-block;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        .back-link:hover { color: white; }
+
+        /* Navigation Tabs */
+        .tab-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 1rem 1.5rem;
+            background: white;
+            border-bottom: 2px solid #e8ecf1;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            justify-content: center;
+        }
+        .tab-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: inherit;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .tab-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Content */
+        .container { max-width: 960px; margin: 0 auto; padding: 1.5rem; }
+        .section { display: none; }
+        .section.active { display: block; }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--card-shadow);
+        }
+        .card h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 0.5rem;
+        }
+        .card h3 {
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin: 1rem 0 0.5rem;
+        }
+
+        /* Template Box */
+        .template-box {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.8rem 0;
+            position: relative;
+            font-size: 0.92rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .template-box .placeholder {
+            background: #fff3cd;
+            color: #856404;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-weight: 600;
+            border: 1px solid #ffc107;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            padding: 0.3rem 0.8rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover { background: var(--primary-dark); }
+        .copy-btn.copied { background: var(--success); }
+
+        /* Quick Fill Form */
+        .quick-fill {
+            background: #e8f4fd;
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+            border: 2px solid var(--primary-light);
+        }
+        .quick-fill h3 {
+            color: var(--primary-dark);
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+        }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+            align-items: center;
+        }
+        .form-group {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-medium);
+            white-space: nowrap;
+        }
+        .form-group input, .form-group select {
+            padding: 0.35rem 0.6rem;
+            border: 1.5px solid #ccc;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-family: inherit;
+            width: auto;
+        }
+        .form-group input[type="number"] { width: 70px; }
+        .form-group input[type="text"] { width: 120px; }
+        .generate-btn {
+            padding: 0.5rem 1.5rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .generate-btn:hover { background: #e55a2b; transform: translateY(-1px); }
+
+        /* Good vs Bad */
+        .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+        @media (max-width: 700px) { .comparison { grid-template-columns: 1fr; } }
+        .good-example, .bad-example {
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+        .good-example {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+        }
+        .good-example::before { content: "✅ 優良範例"; display: block; font-weight: 700; color: #155724; margin-bottom: 0.5rem; }
+        .bad-example {
+            background: #f8d7da;
+            border-left: 4px solid var(--danger);
+        }
+        .bad-example::before { content: "❌ 待改善"; display: block; font-weight: 700; color: #721c24; margin-bottom: 0.5rem; }
+
+        /* Tips */
+        .tip-box {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 0.8rem 1rem;
+            border-radius: 0 8px 8px 0;
+            margin: 0.8rem 0;
+            font-size: 0.9rem;
+        }
+        .tip-box strong { color: #856404; }
+
+        .info-box {
+            background: #e8f4fd;
+            border-left: 4px solid var(--info);
+            padding: 0.8rem 1rem;
+            border-radius: 0 8px 8px 0;
+            margin: 0.8rem 0;
+            font-size: 0.9rem;
+        }
+
+        /* Checklist */
+        .checklist { list-style: none; padding: 0; }
+        .checklist li {
+            padding: 0.4rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            font-size: 0.92rem;
+        }
+        .checklist li::before {
+            content: "☐";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+        }
+
+        /* Category labels */
+        .category-label {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 0.3rem;
+            margin-bottom: 0.3rem;
+        }
+        .cat-admission { background: #dbeafe; color: #1e40af; }
+        .cat-daily { background: #d1fae5; color: #065f46; }
+        .cat-procedure { background: #fce7f3; color: #9d174d; }
+        .cat-discharge { background: #fef3c7; color: #92400e; }
+        .cat-emergency { background: #fee2e2; color: #991b1b; }
+        .cat-education { background: #e0e7ff; color: #3730a3; }
+
+        /* Output area */
+        .output-area {
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            min-height: 100px;
+            white-space: pre-wrap;
+            font-size: 0.92rem;
+            line-height: 1.8;
+            position: relative;
+        }
+        .output-area:empty::before {
+            content: "請填寫上方資料後按「產生護理紀錄」";
+            color: #999;
+        }
+
+        /* TOC */
+        .toc { background: #f0f7ff; border-radius: 8px; padding: 1rem 1.2rem; margin-bottom: 1.5rem; }
+        .toc h3 { font-size: 1rem; color: var(--primary-dark); margin-bottom: 0.5rem; }
+        .toc ul { list-style: none; padding: 0; }
+        .toc li { padding: 0.2rem 0; }
+        .toc a { color: var(--primary); text-decoration: none; font-size: 0.9rem; }
+        .toc a:hover { text-decoration: underline; }
+
+        /* Accordion */
+        .accordion-header {
+            background: linear-gradient(135deg, #f0f7ff, #e8f4fd);
+            padding: 0.8rem 1rem;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        .accordion-header:hover { background: #dbeafe; }
+        .accordion-header::after { content: "▼"; font-size: 0.7rem; transition: transform 0.2s; }
+        .accordion-header.open::after { transform: rotate(180deg); }
+        .accordion-content { display: none; padding: 0.5rem 0; }
+        .accordion-content.open { display: block; }
+
+        /* Print */
+        @media print {
+            .tab-nav, .copy-btn, .back-link, .generate-btn { display: none; }
+            .section { display: block !important; }
+            .page-header { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-header">
+    <a href="index.html" class="back-link">← 返回教學資源中心</a>
+    <h1>2A 病房護理紀錄書寫指引</h1>
+    <div class="subtitle">Nursing Record Writing Guide for Cardiovascular Ward</div>
+    <div class="subtitle" style="margin-top:0.3rem; font-size:0.85rem; opacity:0.8;">新進同仁必讀 | 含 Copy-Paste 模板庫</div>
+</div>
+
+<nav class="tab-nav">
+    <button class="tab-btn active" onclick="showSection('overview')">書寫原則</button>
+    <button class="tab-btn" onclick="showSection('generator')">快速產生器</button>
+    <button class="tab-btn" onclick="showSection('admission')">入院紀錄</button>
+    <button class="tab-btn" onclick="showSection('daily')">每日紀錄</button>
+    <button class="tab-btn" onclick="showSection('procedure')">術後紀錄</button>
+    <button class="tab-btn" onclick="showSection('discharge')">出院紀錄</button>
+    <button class="tab-btn" onclick="showSection('emergency')">緊急事件</button>
+    <button class="tab-btn" onclick="showSection('education')">衛教紀錄</button>
+    <button class="tab-btn" onclick="showSection('comparison')">優良 vs 待改善</button>
+    <button class="tab-btn" onclick="showSection('checklist')">自我查核</button>
+</nav>
+
+<div class="container">
+
+<!-- ========== SECTION: 書寫原則 ========== -->
+<div class="section active" id="sec-overview">
+    <div class="card">
+        <h2>護理紀錄書寫基本原則</h2>
+        <div class="info-box">
+            <strong>核心理念：</strong>護理紀錄是法律文件，也是臨床溝通的橋樑。好的紀錄應該讓下一班同仁「看完就能接手照護」。
+        </div>
+
+        <h3>一、FOCUS-DAR 架構</h3>
+        <p>本院護理紀錄採用 <strong>FOCUS-DAR</strong> 格式：</p>
+        <table style="width:100%; border-collapse:collapse; margin:0.8rem 0; font-size:0.9rem;">
+            <tr style="background:#e8f4fd;">
+                <td style="padding:0.5rem; border:1px solid #ddd; font-weight:700; width:100px;">Focus</td>
+                <td style="padding:0.5rem; border:1px solid #ddd;">焦點 — 病人的主要問題或照護焦點（如：胸痛、心衰竭、術後照護）</td>
+            </tr>
+            <tr>
+                <td style="padding:0.5rem; border:1px solid #ddd; font-weight:700; color:var(--danger);">D (Data)</td>
+                <td style="padding:0.5rem; border:1px solid #ddd;">資料 — 主觀（病人陳述）+ 客觀（生命徵象、檢驗值、身體評估）</td>
+            </tr>
+            <tr style="background:#f8f9fa;">
+                <td style="padding:0.5rem; border:1px solid #ddd; font-weight:700; color:var(--primary);">A (Action)</td>
+                <td style="padding:0.5rem; border:1px solid #ddd;">行動 — 護理措施（給藥、通知醫師、處置）</td>
+            </tr>
+            <tr>
+                <td style="padding:0.5rem; border:1px solid #ddd; font-weight:700; color:var(--success);">R (Response)</td>
+                <td style="padding:0.5rem; border:1px solid #ddd;">反應 — 病人對措施的反應、效果評值</td>
+            </tr>
+        </table>
+
+        <h3>二、心血管病房書寫要點</h3>
+        <ul style="padding-left:1.5rem; font-size:0.92rem;">
+            <li><strong>生命徵象完整性：</strong>BP、HR、RR、SpO2、體溫缺一不可，並記錄測量方式（如：左臂坐姿）</li>
+            <li><strong>疼痛評估：</strong>使用 NRS 0-10 分、記錄疼痛部位、性質、放射、誘發因素</li>
+            <li><strong>心臟相關評估：</strong>水腫程度（pitting edema 0-4+）、每日體重、I/O 量、呼吸困難程度</li>
+            <li><strong>傷口評估：</strong>穿刺部位（groin/radial）、有無血腫 hematoma、滲血 oozing、脈搏檢查</li>
+            <li><strong>藥物反應：</strong>抗凝血劑使用後的出血徵兆觀察、降壓藥物後的血壓變化</li>
+            <li><strong>心電圖變化：</strong>monitor rhythm、有無 arrhythmia、ST 變化</li>
+        </ul>
+
+        <h3>三、書寫禁忌</h3>
+        <div class="tip-box">
+            <strong>避免以下情況：</strong><br>
+            ✗ 使用模糊字眼：「還好」「正常」「差不多」→ 應具體描述<br>
+            ✗ 漏記時間點：所有評估與處置應有明確時間<br>
+            ✗ 抄前一班紀錄而不更新數據<br>
+            ✗ 缺少病人反應（只寫 D、A 而漏了 R）<br>
+            ✗ 使用非正式縮寫（如：OK、so so）
+        </div>
+    </div>
+</div>
+
+<!-- ========== SECTION: 快速產生器 ========== -->
+<div class="section" id="sec-generator">
+    <div class="card">
+        <h2>護理紀錄快速產生器</h2>
+        <p style="font-size:0.9rem; color:var(--text-medium); margin-bottom:1rem;">填入病人基本資料，選擇情境，即可產生可複製的護理紀錄模板。</p>
+
+        <div class="quick-fill">
+            <h3>病人基本資料</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>年齡</label>
+                    <input type="number" id="pt-age" placeholder="65" min="0" max="120">
+                    <label>歲</label>
+                </div>
+                <div class="form-group">
+                    <label>性別</label>
+                    <select id="pt-gender">
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>診斷</label>
+                    <select id="pt-dx">
+                        <option value="ACS">ACS 急性冠心症</option>
+                        <option value="STEMI">STEMI 心肌梗塞</option>
+                        <option value="NSTEMI">NSTEMI</option>
+                        <option value="UA">Unstable Angina</option>
+                        <option value="HF">Heart Failure 心衰竭</option>
+                        <option value="AF">Atrial Fibrillation 心房顫動</option>
+                        <option value="PAOD">PAOD 周邊動脈疾病</option>
+                        <option value="AS">Aortic Stenosis 主動脈瓣狹窄</option>
+                        <option value="VHD">Valvular Heart Disease</option>
+                        <option value="Arrhythmia">Arrhythmia 心律不整</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>BP</label>
+                    <input type="text" id="pt-bp" placeholder="130/80" style="width:80px;">
+                </div>
+                <div class="form-group">
+                    <label>HR</label>
+                    <input type="number" id="pt-hr" placeholder="72" style="width:60px;">
+                </div>
+                <div class="form-group">
+                    <label>SpO2</label>
+                    <input type="number" id="pt-spo2" placeholder="98" style="width:60px;">
+                </div>
+                <div class="form-group">
+                    <label>BT</label>
+                    <input type="text" id="pt-bt" placeholder="36.5" style="width:60px;">
+                </div>
+                <div class="form-group">
+                    <label>RR</label>
+                    <input type="number" id="pt-rr" placeholder="18" style="width:60px;">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>情境</label>
+                    <select id="pt-scenario" style="width:200px;">
+                        <option value="admission">入院評估</option>
+                        <option value="post-pci">PCI 術後（經橈動脈）</option>
+                        <option value="post-pci-femoral">PCI 術後（經股動脈）</option>
+                        <option value="post-cag">CAG 檢查後</option>
+                        <option value="chest-pain">胸痛評估</option>
+                        <option value="hf-daily">心衰竭每日評估</option>
+                        <option value="af-new">新發心房顫動</option>
+                        <option value="hypotension">低血壓事件</option>
+                        <option value="bleeding">出血事件</option>
+                        <option value="education">衛教紀錄</option>
+                        <option value="discharge">出院準備</option>
+                    </select>
+                </div>
+                <button class="generate-btn" onclick="generateRecord()">產生護理紀錄</button>
+            </div>
+        </div>
+
+        <div class="output-area" id="generated-output"></div>
+        <button class="copy-btn" style="position:relative; margin-top:0.5rem; display:none;" id="output-copy-btn" onclick="copyOutput()">複製紀錄</button>
+    </div>
+</div>
+
+<!-- ========== SECTION: 入院紀錄 ========== -->
+<div class="section" id="sec-admission">
+    <div class="card">
+        <h2>入院護理紀錄模板</h2>
+        <span class="category-label cat-admission">入院</span>
+
+        <h3>ACS（急性冠心症）入院</h3>
+        <div class="template-box" id="tpl-acs-admission">
+            <button class="copy-btn" onclick="copyTemplate(this)">複製</button>
+【Focus】急性冠心症入院評估
+
+【D】
+<span class="placeholder">__歲</span> <span class="placeholder">__性</span>，因 chest pain 由急診入院。
+主訴：胸骨後悶痛約 <span class="placeholder">__</span> 小時，NRS <span class="placeholder">__</span>/10 分，伴隨 <span class="placeholder">冒冷汗/喘/噁心/放射至左臂（擇一或多選）</span>。
+Past Hx：<span class="placeholder">HTN / DM / Dyslipidemia / Old MI / Old CVA（勾選）</span>
+Allergy：<span class="placeholder">NKA 或具體過敏藥物</span>
+入院 VS：BP <span class="placeholder">___/___</span> mmHg, HR <span class="placeholder">___</span> bpm, RR <span class="placeholder">___</span>/min, SpO2 <span class="placeholder">___</span>%, BT <span class="placeholder">___</span>°C
+ECG：<span class="placeholder">NSR / ST elevation in leads ___ / ST depression / AF / 其他</span>
+Lab：Troponin-I <span class="placeholder">___</span>, CK-MB <span class="placeholder">___</span>, Cr <span class="placeholder">___</span>, K <span class="placeholder">___</span>
+意識：alert, oriented, GCS E4V5M6
+皮膚完整，無水腫，peripheral pulse palpable (2+)
+
+【A】
+1. 建立 IV access，執行醫囑：<span class="placeholder">Heparin drip / DAPT loading / NTG 等</span>
+2. 連續心電圖監測，設定 alarm limits
+3. 臥床休息，抬高床頭 30 度
+4. 疼痛處置：依醫囑給予 <span class="placeholder">NTG SL / Morphine</span>
+5. 通知主治醫師評估，安排 <span class="placeholder">CAG / PCI</span>
+6. 入院護理評估完成，跌倒風險評估 <span class="placeholder">___</span> 分，壓傷風險 Braden <span class="placeholder">___</span> 分
+
+【R】
+給予 <span class="placeholder">NTG SL</span> 後，胸痛由 NRS <span class="placeholder">__</span> 分降至 <span class="placeholder">__</span> 分。
+VS 穩定：BP <span class="placeholder">___/___</span>, HR <span class="placeholder">___</span>。
+病人表示疼痛改善，配合臥床休息。
+持續監測中，待 <span class="placeholder">CAG/PCI</span> 安排。</div>
+
+        <h3>心衰竭（Heart Failure）入院</h3>
+        <div class="template-box" id="tpl-hf-admission">
+            <button class="copy-btn" onclick="copyTemplate(this)">複製</button>
+【Focus】心衰竭急性發作入院評估
+
+【D】
+<span class="placeholder">__歲</span> <span class="placeholder">__性</span>，因呼吸困難加劇 <span class="placeholder">__</span> 天，由<span class="placeholder">急診/門診</span>入院。
+主訴：活動後喘、端坐呼吸、夜間陣發性呼吸困難（PND）<span class="placeholder">有/無</span>
+NYHA Fc：<span class="placeholder">II / III / IV</span>
+Past Hx：<span class="placeholder">CAD / DCM / VHD / HTN / DM / CKD</span>
+目前用藥：<span class="placeholder">利尿劑 / ACEI/ARB / β-blocker / SGLT2i / MRA</span>
+入院 VS：BP <span class="placeholder">___/___</span> mmHg, HR <span class="placeholder">___</span> bpm, RR <span class="placeholder">___</span>/min, SpO2 <span class="placeholder">___</span>%, BT <span class="placeholder">___</span>°C
+BW：<span class="placeholder">___</span> kg（較上次增加 <span class="placeholder">___</span> kg）
+身體評估：
+- JVP：<span class="placeholder">elevated / flat</span>
+- 肺部：<span class="placeholder">bilateral crackles at bases / clear</span>
+- 下肢水腫：<span class="placeholder">pitting edema ___+, bilateral</span>
+- 腹部：<span class="placeholder">soft / ascites / hepatomegaly</span>
+Lab：BNP <span class="placeholder">___</span>, Cr <span class="placeholder">___</span>, Na <span class="placeholder">___</span>, K <span class="placeholder">___</span>
+Echo (if available)：LVEF <span class="placeholder">___</span>%
+
+【A】
+1. IV diuretic 依醫囑給予：<span class="placeholder">Lasix ___ mg IV</span>
+2. 嚴格 I/O 監測，每日測量體重
+3. 限水 <span class="placeholder">1000-1500</span> mL/day
+4. O2 supply <span class="placeholder">___ L/min via NC/mask</span>，維持 SpO2 > 94%
+5. 半坐臥姿，抬高床頭 45-60 度
+6. 連續心電圖監測
+7. 評估 Foley 放置需求
+
+【R】
+Lasix <span class="placeholder">___</span> mg IV 給予後，<span class="placeholder">___</span> 小時內排尿 <span class="placeholder">___</span> mL。
+SpO2 由 <span class="placeholder">___</span>% 改善至 <span class="placeholder">___</span>%。
+病人表示呼吸較前改善，可平躺 <span class="placeholder">___</span> 度。
+持續 I/O 監測及 VS 追蹤中。</div>
+
+        <h3>心房顫動（AF）入院</h3>
+        <div class="template-box" id="tpl-af-admission">
+            <button class="copy-btn" onclick="copyTemplate(this)">複製</button>
+【Focus】心房顫動入院評估
+
+【D】
+<span class="placeholder">__歲</span> <span class="placeholder">__性</span>，因<span class="placeholder">心悸/頭暈/喘</span>，診斷 atrial fibrillation，由<span class="placeholder">急診/門診</span>入院。
+AF 類型：<span class="placeholder">Paroxysmal / Persistent / Permanent</span>
+CHA₂DS₂-VASc score：<span class="placeholder">___</span> 分
+HAS-BLED score：<span class="placeholder">___</span> 分
+入院 VS：BP <span class="placeholder">___/___</span> mmHg, HR <span class="placeholder">___</span> bpm (irregular), RR <span class="placeholder">___</span>/min, SpO2 <span class="placeholder">___</span>%
+ECG：AF with <span class="placeholder">RVR / controlled rate</span>, ventricular rate <span class="placeholder">___</span> bpm
+Lab：TSH <span class="placeholder">___</span>, Free T4 <span class="placeholder">___</span>, Cr <span class="placeholder">___</span>, K <span class="placeholder">___</span>
+
+【A】
+1. 連續心電圖監測，記錄 rhythm 及 rate
+2. Rate control 依醫囑：<span class="placeholder">Diltiazem / Metoprolol / Amiodarone</span>
+3. 抗凝血治療：<span class="placeholder">Heparin drip / NOAC (Eliquis/Xarelto/Pradaxa)</span>
+4. 衛教：出血徵兆觀察、規則服藥重要性
+5. 跌倒預防措施
+
+【R】
+Rate control 藥物給予後，HR 由 <span class="placeholder">___</span> 降至 <span class="placeholder">___</span> bpm。
+病人表示心悸症狀改善。
+持續監測 rhythm 及 rate，觀察出血徵兆。</div>
+    </div>
+</div>
+
+<!-- ========== SECTION: 每日紀錄 ========== -->
+<div class="section" id="sec-daily">
+    <div class="card">
+        <h2>每日護理紀錄模板</h2>
+        <span class="category-label cat-daily">每日評估</span>
+
+        <h3>心衰竭每日追蹤</h3>
+        <div class="template-box">
+            <button class="copy-btn" onclick="copyTemplate(this)">複製</button>
+【Focus】心衰竭照護追蹤
+
+【D】
+住院第 <span class="placeholder">___</span> 天。
+今日 BW：<span class="placeholder">___</span> kg（較昨日 <span class="placeholder">增加/減少 ___</span> kg）
+昨日 I/O：Intake <span class="placeholder">___</span> mL / Output <span class="placeholder">___</span> mL（Net <span class="placeholder">___</span> mL）
+VS：BP <span class="placeholder">___/___</span>, HR <span class="placeholder">___</span>, RR <span class="placeholder">___</span>, SpO2 <span class="placeholder">___</span>%, BT <span class="placeholder">___</span>°C
+呼吸狀況：<span class="placeholder">活動耐力改善/仍喘</span>，NYHA Fc <span class="placeholder">___</span>
+肺部聽診：<span class="placeholder">clear / bilateral crackles at bases</span>
+下肢水腫：<span class="placeholder">pitting edema ___+（較昨日改善/持平/惡化）</span>
+目前 O2：<span class="placeholder">Room air / NC ___ L/min</span>
+Lab (if checked)：BNP <span class="placeholder">___</span>, Cr <span class="placeholder">___</span>, K <span class="placeholder">___</span>
+
+【A】
+1. 持續 diuretic：<span class="placeholder">Lasix ___ mg IV/PO q___h</span>
+2. I/O 嚴格監測，限水 <span class="placeholder">___</span> mL/day
+3. Daily weight 執行
+4. GDMT 調整：<span class="placeholder">依醫囑調整藥物劑量</span>
+5. <span class="placeholder">衛教低鈉飲食 / 活動量漸增 / 其他</span>
+
+【R】
+利尿效果 <span class="placeholder">良好/不佳</span>，今日 urine output <span class="placeholder">___</span> mL。
+體重 <span class="placeholder">趨勢下降/持平/上升</span>。
+SpO2 維持 <span class="placeholder">___</span>%，呼吸較 <span class="placeholder">前日改善/穩定</span>。
+病人可 <span class="placeholder">於床邊活動/步行至廁所/下床活動 ___ 公尺</span>。
+續追蹤 I/O 及 VS。</div>
+
+        <h3>ACS 住院追蹤（非手術日）</h3>
+        <div class="template-box">
+            <button class="copy-btn" onclick="copyTemplate(this)">複製</button>
+【Focus】ACS 照護追蹤
+
+【D】
+住院第 <span class="placeholder">___</span> 天，PCI 後第 <span class="placeholder">___</span> 天。
+VS：BP <span class="placeholder">___/___</span>, HR <span class="placeholder">___</span>, RR <span class="placeholder">___</span>, SpO2 <span class="placeholder">___</span>%, BT <span class="placeholder">___</span>°C
+胸痛：<span class="placeholder">無 / NRS ___/10</span>
+穿刺傷口（<span class="placeholder">radial / femoral</span>）：<span class="placeholder">乾燥無滲血 / mild ecchymosis / 血腫 ___×___ cm</span>
+<span class="placeholder">橈/足背</span>動脈脈搏：<span class="placeholder">palpable (2+) / doppler audible</span>
+目前用藥：DAPT (<span class="placeholder">Aspirin + Plavix/Brilinta</span>)、<span class="placeholder">Statin / β-blocker / ACEI</span>
+活動量：<span class="placeholder">臥床 / 床邊活動 / 可下床</span>
+Monitor rhythm：<span class="placeholder">NSR / AF / 偶發 PVC</span>
+
+【A】
+1. 持續 DAPT 依醫囑服用
+2. 傷口觀察 q <span class="placeholder">___</span> h
+3. 漸進式活動，觀察有無胸痛或喘
+4. <span class="placeholder">衛教冠心症危險因子控制 / 服藥順從性</span>
+
+【R】
+穿刺傷口 <span class="placeholder">乾燥無滲血</span>，脈搏正常。
+無胸痛復發，活動耐力 <span class="placeholder">漸增/穩定</span>。
+病人配合服藥及活動計畫。</div>
+    </div>
+</div>
+
+<!-- ========== SECTION: 術後紀錄 ========== -->
+<div class="section" id="sec-procedure">
+    <div class="card">
+        <h2>術後護理紀錄模板</h2>
+        <span class="category-label cat-procedure">術後照護</span>
+
+        <h3>PCI 術後（經橈動脈 Transradial）</h3>
+        <div class="template-box">
+            <button class="copy-btn" onclick="copyTemplate(this)">複製</button>
+【Focus】PCI 術後照護（transradial approach）
+
+【D】
+<span class="placeholder">__歲</span> <span class="placeholder">__性</span>，今日行 CAG + PCI via right radial artery。
+術式：<span class="placeholder">___</span> vessel（<span class="placeholder">LAD / LCx / RCA</span>）stenting with DES × <span class="placeholder">___</span>
+返回病房時間：<span class="placeholder">___:___</span>
+VS：BP <span class="placeholder">___/___</span>, HR <span class="placeholder">___</span>, RR <span class="placeholder">___</span>, SpO2 <span class="placeholder">___</span>%, BT <span class="placeholder">___</span>°C
+意識：clear, alert
+TR Band 加壓止血中，氣量 <span class="placeholder">___</span> mL
+Right hand：膚色 <span class="placeholder">pink/pale</span>，capillary refill <span class="placeholder">< 2 sec</span>，radial pulse <span class="placeholder">palpable</span>
+手指活動度：<span class="placeholder">正常/麻木感</span>
+穿刺處：<span class="placeholder">無滲血 / minimal oozing</span>
+胸痛：<span class="placeholder">無 / NRS ___/10</span>
+
+【A】
+1. TR Band 逐步減壓：依 protocol 每 <span class="placeholder">30-60</span> 分鐘抽 <span class="placeholder">2-3</span> mL 空氣
+2. 觀察穿刺處 q30min × 2h → q1h × 4h
+3. 監測手指末梢循環：膚色、溫度、脈搏、感覺
+4. DAPT loading（if not given prior）：<span class="placeholder">Plavix 300mg / Brilinta 180mg</span>
+5. 鼓勵握球運動促進循環
+6. IV hydration for renal protection：<span class="placeholder">NS ___ mL/hr × ___ hr</span>
+7. 連續心電圖監測 <span class="placeholder">24</span> 小時
+
+【R】
+TR Band 依時程減壓中，穿刺處 <span class="placeholder">無滲血/乾燥</span>。
+右手末梢循環良好，膚色 pink，CRT < 2 sec。
+病人無胸痛，VS 穩定。
+<span class="placeholder">___:___</span> TR Band 完全移除，穿刺處以彈繃加壓，無出血。</div>
+
+        <h3>PCI 術後（經股動脈 Transfemoral）</h3>
+        <div class="template-box">
+            <button class="copy-btn" onclick="copyTemplate(this)">複製</button>
+【Focus】PCI 術後照護（transfemoral approach）
+
+【D】
+<span class="placeholder">__歲</span> <span class="placeholder">__性</span>，今日行 CAG + PCI via right femoral artery。
+術式：<span class="placeholder">___</span> vessel stenting
+使用止血器：<span class="placeholder">ProGlide / AngioSeal / Manual compression</span>
+返回病房時間：<span class="placeholder">___:___</span>
+VS：BP <span class="placeholder">___/___</span>, HR <span class="placeholder">___</span>, SpO2 <span class="placeholder">___</span>%
+右鼠蹊穿刺處：<span class="placeholder">乾燥無滲血 / 紗布加壓中 / 砂袋加壓中</span>
+血腫：<span class="placeholder">無 / ___×___ cm</span>
+右足背動脈：<span class="placeholder">palpable (2+) / doppler audible</span>
+右下肢：膚色 <span class="placeholder">pink</span>，溫暖，感覺 <span class="placeholder">正常</span>
+胸痛：<span class="placeholder">無</span>
+
+【A】
+1. 右下肢伸直平躺 <span class="placeholder">6-8</span> 小時，勿彎曲
+2. 砂袋加壓 <span class="placeholder">___</span> 小時
+3. 觀察穿刺處 q15min × 1h → q30min × 2h → q1h × 4h
+4. 監測足背脈搏、下肢膚色溫度感覺 q1h
+5. 協助翻身及使用便盆
+6. IV hydration：<span class="placeholder">NS ___ mL/hr</span>
+7. 疼痛管理：臥姿不適可依醫囑給予 <span class="placeholder">Acetaminophen</span>
+
+【R】
+穿刺處 <span class="placeholder">乾燥無滲血</span>，右足背脈搏可觸及。
+右下肢末梢循環良好，無麻木或蒼白。
+病人配合平躺及肢體制動。
+<span class="placeholder">___:___</span> 砂袋移除，穿刺處 OK，可側翻。
+<span class="placeholder">___:___</span> 可下床活動，步行穩定，穿刺處無出血。</div>
+
+        <h3>CAG（心導管檢查）後</h3>
+        <div class="template-box">
+            <button class="copy-btn" onclick="copyTemplate(this)">複製</button>
+【Focus】CAG 術後照護
+
+【D】
+<span class="placeholder">__歲</span> <span class="placeholder">__性</span>，今日行 diagnostic CAG via <span class="placeholder">radial / femoral</span> artery。
+結果：<span class="placeholder">正常 / ___-vessel CAD / LM disease / 待後續 PCI/CABG 評估</span>
+返回病房 VS：BP <span class="placeholder">___/___</span>, HR <span class="placeholder">___</span>, SpO2 <span class="placeholder">___</span>%
+穿刺處：<span class="placeholder">TR Band 加壓 / 紗布覆蓋 / 止血器</span>
+末梢循環：<span class="placeholder">正常</span>
+Contrast used：<span class="placeholder">___</span> mL
+Baseline Cr：<span class="placeholder">___</span>
+
+【A】
+1. 穿刺處照護：<span class="placeholder">同 transradial / transfemoral protocol</span>
+2. IV hydration for CIN prevention：<span class="placeholder">NS ___ mL/hr × ___ hr</span>
+3. 鼓勵多飲水（if not fluid restricted）
+4. 追蹤 Cr：<span class="placeholder">明日 / 48-72hr 後</span>
+5. 向病人及家屬說明 CAG 結果及後續計畫
+
+【R】
+穿刺處止血良好，末梢循環正常。
+術後 <span class="placeholder">___</span> hr urine output <span class="placeholder">___</span> mL，鼓勵飲水中。
+病人及家屬已了解 CAG 結果：<span class="placeholder">___</span>。
+後續計畫：<span class="placeholder">安排 PCI / 轉外科評估 CABG / 藥物治療 / 出院</span>。</div>
+    </div>
+</div>
+
+<!-- ========== SECTION: 出院紀錄 ========== -->
+<div class="section" id="sec-discharge">
+    <div class="card">
+        <h2>出院護理紀錄模板</h2>
+        <span class="category-label cat-discharge">出院</span>
+
+        <h3>PCI 後出院</h3>
+        <div class="template-box">
+            <button class="copy-btn" onclick="copyTemplate(this)">複製</button>
+【Focus】PCI 術後出院準備
+
+【D】
+住院第 <span class="placeholder">___</span> 天，PCI 後第 <span class="placeholder">___</span> 天。
+VS 穩定：BP <span class="placeholder">___/___</span>, HR <span class="placeholder">___</span>, SpO2 <span class="placeholder">___</span>%
+穿刺傷口：<span class="placeholder">癒合良好，無紅腫滲液</span>
+胸痛：<span class="placeholder">無復發</span>
+活動耐力：<span class="placeholder">可自由活動，無喘、無胸痛</span>
+Lab：Cr <span class="placeholder">___</span>（vs 術前 <span class="placeholder">___</span>），Hb <span class="placeholder">___</span>
+
+【A】
+出院衛教完成，內容包含：
+1. DAPT 用藥指導：<span class="placeholder">Aspirin 100mg QD + Plavix 75mg/Brilinta 90mg BID</span>，需持續 <span class="placeholder">6-12</span> 個月，切勿自行停藥
+2. 傷口照護：保持乾燥，<span class="placeholder">___</span> 天後可淋浴，勿泡澡
+3. 活動注意事項：<span class="placeholder">1-2</span> 週內避免提重物（> 5 kg），漸進增加活動量
+4. 危險徵兆衛教：若出現胸痛、冒冷汗、呼吸困難、穿刺處出血腫脹，應立即回診
+5. 回診時間：<span class="placeholder">___</span> 週後心臟科門診（醫師：<span class="placeholder">___</span>）
+6. 危險因子控制：戒菸、低鈉低脂飲食、規律運動、控制血壓血糖血脂
+7. 出院帶藥已確認核對
+
+【R】
+病人及家屬對出院衛教內容 <span class="placeholder">了解/部分了解</span>。
+能複述 DAPT 重要性及緊急狀況回診時機。
+出院 VS 穩定，步態穩定，由 <span class="placeholder">家屬/自行</span> 離院。</div>
+
+        <h3>心衰竭出院</h3>
+        <div class="template-box">
+            <button class="copy-btn" onclick="copyTemplate(this)">複製</button>
+【Focus】心衰竭出院準備
+
+【D】
+住院第 <span class="placeholder">___</span> 天。
+入院時 BW <span class="placeholder">___</span> kg → 出院 BW <span class="placeholder">___</span> kg（減少 <span class="placeholder">___</span> kg）
+VS 穩定：BP <span class="placeholder">___/___</span>, HR <span class="placeholder">___</span>, SpO2 <span class="placeholder">___</span>%（room air）
+NYHA Fc 由 <span class="placeholder">___</span> 改善至 <span class="placeholder">___</span>
+下肢水腫：<span class="placeholder">消退 / 改善至 trace</span>
+肺部：<span class="placeholder">clear</span>
+Lab：BNP <span class="placeholder">___</span>（入院 <span class="placeholder">___</span>），Cr <span class="placeholder">___</span>，K <span class="placeholder">___</span>
+
+【A】
+出院衛教完成：
+1. 每日測量體重（晨起排尿後，空腹），若 2 天內增加 > 1 kg 或 1 週增加 > 2 kg，需回診
+2. 限鈉飲食 < <span class="placeholder">2</span> g/day，限水 <span class="placeholder">1000-1500</span> mL/day
+3. 出院用藥指導：<span class="placeholder">利尿劑 / ACEI/ARB/ARNI / β-blocker / SGLT2i / MRA</span>
+4. 漸進式運動，避免過度勞累
+5. 每日 I/O 紀錄（如醫師要求）
+6. 戒菸戒酒
+7. 危險徵兆：喘加劇、水腫惡化、端坐呼吸、體重急速上升 → 立即就醫
+8. 回診：<span class="placeholder">___</span> 週後心臟科門診
+
+【R】
+病人可複述每日體重監測方式及異常回報標準。
+家屬表示了解限水限鈉原則。
+出院 VS 穩定，可步行活動，由家屬陪同離院。</div>
+    </div>
+</div>
+
+<!-- ========== SECTION: 緊急事件 ========== -->
+<div class="section" id="sec-emergency">
+    <div class="card">
+        <h2>緊急事件護理紀錄模板</h2>
+        <span class="category-label cat-emergency">緊急</span>
+
+        <h3>胸痛事件</h3>
+        <div class="template-box">
+            <button class="copy-btn" onclick="copyTemplate(this)">複製</button>
+【Focus】突發胸痛處理
+
+【D】
+<span class="placeholder">___:___</span> 病人按鈴，主訴胸骨後悶痛，NRS <span class="placeholder">___</span>/10 分。
+伴隨症狀：<span class="placeholder">冒冷汗 / 喘 / 噁心 / 無</span>
+疼痛性質：<span class="placeholder">壓迫感 / 刺痛 / 撕裂感</span>，放射至 <span class="placeholder">左臂 / 下巴 / 背部 / 無放射</span>
+VS：BP <span class="placeholder">___/___</span>, HR <span class="placeholder">___</span>, RR <span class="placeholder">___</span>, SpO2 <span class="placeholder">___</span>%
+ECG：<span class="placeholder">NSR / new ST changes / no acute change / AF</span>
+
+【A】
+1. <span class="placeholder">___:___</span> 立即執行 12-lead ECG
+2. <span class="placeholder">___:___</span> 通知值班醫師 Dr. <span class="placeholder">___</span>，報告病情
+3. 依醫囑給予 <span class="placeholder">NTG 0.6mg SL / O2 ___ L/min / Morphine ___ mg IV</span>
+4. 抽血 stat：<span class="placeholder">Troponin, CK-MB, CBC, BMP</span>
+5. 持續心電圖監測，備妥急救設備
+6. 建立 IV access（if not in place）
+
+【R】
+<span class="placeholder">___:___</span> NTG SL × <span class="placeholder">___</span> dose 後，胸痛由 NRS <span class="placeholder">___</span> 降至 <span class="placeholder">___</span> 分。
+VS：BP <span class="placeholder">___/___</span>, HR <span class="placeholder">___</span>。
+ECG：<span class="placeholder">unchanged / ST 回復 / new changes → 通知醫師</span>
+Troponin 結果：<span class="placeholder">pending / ___</span>
+病人目前 <span class="placeholder">疼痛緩解 / 仍有不適</span>，持續監測中。
+醫師指示：<span class="placeholder">觀察 / 安排緊急 CAG / 轉 CCU</span></div>
+
+        <h3>低血壓事件</h3>
+        <div class="template-box">
+            <button class="copy-btn" onclick="copyTemplate(this)">複製</button>
+【Focus】低血壓事件處理
+
+【D】
+<span class="placeholder">___:___</span> 例行 VS 測量發現 BP <span class="placeholder">___/___</span> mmHg（較前值 <span class="placeholder">___/___</span> 下降）。
+HR <span class="placeholder">___</span> bpm, SpO2 <span class="placeholder">___</span>%
+症狀：<span class="placeholder">頭暈 / 冒冷汗 / 意識變化 / 無症狀</span>
+可能原因：<span class="placeholder">利尿過度 / 降壓藥效果 / 出血 / vasovagal / 心因性</span>
+I/O：<span class="placeholder">___</span>
+穿刺傷口（if post-procedure）：<span class="placeholder">乾燥 / 新出血</span>
+Hb (if available)：<span class="placeholder">___</span>
+
+【A】
+1. <span class="placeholder">___:___</span> 立即平躺，抬高雙腿
+2. <span class="placeholder">___:___</span> 通知值班醫師 Dr. <span class="placeholder">___</span>
+3. 依醫囑：<span class="placeholder">NS ___ mL bolus / hold 降壓藥 / hold diuretic</span>
+4. Stat lab：<span class="placeholder">CBC, BMP, Lactate</span>
+5. 持續 VS 監測 q <span class="placeholder">15</span> min
+6. 確認 IV access 通暢
+7. 評估出血可能：穿刺處、GI tract、urine
+
+【R】
+<span class="placeholder">___:___</span> NS <span class="placeholder">___</span> mL bolus 後，BP 回升至 <span class="placeholder">___/___</span> mmHg。
+症狀 <span class="placeholder">改善 / 持續</span>。
+<span class="placeholder">___:___</span> 再測 BP <span class="placeholder">___/___</span>，HR <span class="placeholder">___</span>。
+醫師指示：<span class="placeholder">持續觀察 / 調整藥物 / 轉加護病房</span></div>
+
+        <h3>出血事件（穿刺處）</h3>
+        <div class="template-box">
+            <button class="copy-btn" onclick="copyTemplate(this)">複製</button>
+【Focus】穿刺處出血事件
+
+【D】
+<span class="placeholder">___:___</span> 發現 <span class="placeholder">radial / femoral</span> 穿刺處 <span class="placeholder">active oozing / hematoma 擴大</span>。
+血腫大小：<span class="placeholder">___×___ cm</span>（前次 <span class="placeholder">___×___ cm</span>）
+VS：BP <span class="placeholder">___/___</span>, HR <span class="placeholder">___</span>, SpO2 <span class="placeholder">___</span>%
+末梢循環：<span class="placeholder">脈搏可觸及 / 減弱</span>
+目前抗凝血/抗血小板藥物：<span class="placeholder">___</span>
+最近一次 ACT/PT/INR：<span class="placeholder">___</span>
+
+【A】
+1. <span class="placeholder">___:___</span> 立即加壓止血（manual compression / 重新綁 TR Band）
+2. <span class="placeholder">___:___</span> 通知值班醫師 Dr. <span class="placeholder">___</span>
+3. 標記血腫邊緣範圍，記錄時間
+4. Stat lab：<span class="placeholder">CBC, PT/INR, aPTT</span>
+5. 確認 IV access，備血（if needed）
+6. 持續監測 VS q <span class="placeholder">15</span> min 及末梢循環
+
+【R】
+加壓止血 <span class="placeholder">___</span> 分鐘後，<span class="placeholder">出血停止 / 滲血減少 / 仍有出血</span>。
+血腫 <span class="placeholder">未再擴大 / 擴大至 ___×___ cm</span>。
+VS 穩定：BP <span class="placeholder">___/___</span>, HR <span class="placeholder">___</span>。
+末梢循環 <span class="placeholder">正常</span>。
+醫師指示：<span class="placeholder">持續觀察 / hold anticoagulation / 照會 VS</span></div>
+    </div>
+</div>
+
+<!-- ========== SECTION: 衛教紀錄 ========== -->
+<div class="section" id="sec-education">
+    <div class="card">
+        <h2>衛教護理紀錄模板</h2>
+        <span class="category-label cat-education">衛教</span>
+
+        <h3>DAPT 用藥衛教</h3>
+        <div class="template-box">
+            <button class="copy-btn" onclick="copyTemplate(this)">複製</button>
+【Focus】DAPT 用藥衛教
+
+【D】
+病人為 PCI 術後，目前使用 DAPT：<span class="placeholder">Aspirin 100mg QD + Plavix 75mg QD / Brilinta 90mg BID</span>。
+病人/家屬對 DAPT 重要性之理解：<span class="placeholder">不了解 / 部分了解 / 已了解</span>
+
+【A】
+衛教內容：
+1. 解釋 DAPT 功能：預防支架內血栓形成
+2. 強調不可自行停藥，即使拔牙、手術前也需先諮詢心臟科醫師
+3. 預計使用期間：<span class="placeholder">6-12</span> 個月
+4. 副作用觀察：瘀青、牙齦出血、黑便、血尿 → 回診告知
+5. 若漏服，不可加倍補服
+6. 隨身攜帶用藥卡，就醫時主動告知
+7. 提供書面衛教單張
+
+【R】
+病人能複述：「不能自己停藥」「有出血要回診」。
+家屬表示會協助提醒服藥。
+衛教理解程度評值：<span class="placeholder">良好 / 需再次衛教</span>。</div>
+
+        <h3>Warfarin 用藥衛教</h3>
+        <div class="template-box">
+            <button class="copy-btn" onclick="copyTemplate(this)">複製</button>
+【Focus】Warfarin 用藥衛教
+
+【D】
+病人使用 Warfarin <span class="placeholder">___</span> mg QD，適應症：<span class="placeholder">AF / MVR / DVT/PE</span>。
+目前 INR：<span class="placeholder">___</span>（目標 <span class="placeholder">2.0-3.0 / 2.5-3.5</span>）
+
+【A】
+衛教內容：
+1. 固定時間服藥（建議 <span class="placeholder">晚餐後</span>），不可自行調整劑量
+2. 定期回診抽血監測 INR
+3. 飲食注意：避免大量攝取高維生素 K 食物（深綠色蔬菜），維持飲食一致性
+4. 出血徵兆觀察：瘀青、牙齦出血、血尿、黑便、經血過多
+5. 避免碰撞及危險活動
+6. 就醫或手術前主動告知醫師正在服用 Warfarin
+7. 藥物交互作用：避免自行服用成藥、中藥、保健食品
+8. 提供 Warfarin 衛教手冊及用藥卡
+
+【R】
+病人/家屬能說出：「要固定時間吃」「不能自己加減量」「有出血要回來」。
+理解程度：<span class="placeholder">良好 / 部分了解，需加強飲食衛教</span>。</div>
+    </div>
+</div>
+
+<!-- ========== SECTION: 優良 vs 待改善 ========== -->
+<div class="section" id="sec-comparison">
+    <div class="card">
+        <h2>優良範例 vs 待改善範例</h2>
+        <p style="font-size:0.9rem; color:var(--text-medium); margin-bottom:0.5rem;">以下為 2A 病房實際護理紀錄擷取，經去識別化後整理為教學範例，供同仁對照學習。</p>
+        <p style="font-size:0.85rem; color:var(--text-medium); margin-bottom:1rem;">（資料來源：王欣怡護理師提供，2026/03/24）</p>
+
+        <h3>範例一：檢查前準備（心導管）</h3>
+        <div class="comparison">
+            <div class="good-example">
+<strong>2026/03/23 13:34　檢查前準備</strong><br>
+評估/措施：經主治醫師謝慕揚於門診說明檢查準備之過程及風險，了解並同意，協助簽署相關同意書及衛教指導。<br>
+評值/結果：可了解。　RN：○○○<br><br>
+<strong>2026/03/23 14:43　檢查前準備</strong><br>
+評估/措施：預計於下午 09:00-10:00 導送至心導管檢查室，尚未簽署心導管同意書，雙下肢脈搏皆可觸摸到。另提醒先行沐浴更衣，其中包含雙側腹股溝及手臂之備皮區域。<br>
+評值/結果：已了解。　RN：○○○<br><br>
+<strong>2026/03/23 19:25</strong><br>
+評估/措施：預告明日行心導管檢查，於午夜 12 點後飲食及水分均不可攝取。桌頭已放置禁食告示牌。<br>
+評值/結果：可了解。　RN：○○○
+            </div>
+            <div class="bad-example">
+<strong>2026/03/15 12:28　術前準備</strong><br>
+評估/措施：經主治醫師丁○於門診說明手術過程及風險後，可了解並同意，協助簽署相關同意書及衛教指導。<br>
+評值/結果：可了解。　RN：○○○<br><br>
+<strong>2026/03/15 15:21　術前準備</strong><br>
+評估/措施：追蹤術前準備。<br>
+評值/結果：協助病人入術前抽血：Troponin-T 20.03 ng/L、Creatinine 1.42mg/dL、心電圖：Sinus bradycardia with 1st degree AV block 及胸部X光檢查，現檢查已完成，待值班醫療部判讀。　RN：○○○
+            </div>
+        </div>
+        <div class="tip-box">
+            <strong>差異分析：</strong>優良範例有逐時記錄（13:34→14:43→19:25），每個時間點都有具體的準備事項（同意書、備皮、禁食、脈搏觸診），並記錄病人理解程度。待改善範例「追蹤術前準備」過於模糊，未說明具體做了哪些準備動作；檢驗結果應放在「評估/措施」而非「評值/結果」。
+        </div>
+
+        <h3>範例二：心導管術後照護</h3>
+        <div class="comparison">
+            <div class="good-example">
+<strong>2026/03/23 19:20　檢查與治療</strong><br>
+評估/措施：經主治醫師陪同至導管室，生命徵象：BP 130/70(86)mmHg、體溫 35.8、心跳 61 次/分、呼吸 18 次/分。做完檢查結果 LCA：LAD 近端也有完全阻塞、LCX：回旋支 50%、近端及末端均有阻塞。列入後續追蹤。<br>
+評值/結果：持續觀察。　RN：○○○<br><br>
+<strong>2026/03/23 21:00</strong><br>
+評估/措施：病人入導管室後順利撤除加壓繃帶。依醫囑晚 20:30 給予 Primperan Inj 10 mg/2 mL。IV STAT 及 Taita No.5 400 mL/bag 400 mL(1 bag) IF ONCE 藥已使用。<br>
+評值/結果：續觀。　RN：○○○<br><br>
+<strong>2026/03/23 21:50</strong><br>
+評估/措施：至治療室協助醫師進行拔除 Sheath，自口及反覆加壓腹股溝處至 05:50。<br>
+評值/結果：皮膚末端無麻痺，持續觀察。　RN：○○○
+            </div>
+            <div class="bad-example">
+<strong>2026/03/17 19:40　飲食情形</strong><br>
+評估/措施：現已攝取少量流食及退食。無嘔吐情形。<br>
+評值/結果：持續觀察。　RN：○○○<br><br>
+<strong>2026/03/18 02:29</strong><br>
+評估/措施：監測體溫 37.9。心跳 106 次/分，監測生命徵象。<br>
+評值/結果：持續觀察。　RN：○○○<br><br>
+<strong>2026/03/18 06:52</strong><br>
+評估/措施：協助在左臂靜脈對針口換藥，傷口換藥沖洗。外敷藥血糖體温酯情形。協助清潔清洗。給予傷口敷藥。<br>
+評值/結果：傷進較傷口變之。　RN：○○○
+            </div>
+        </div>
+        <div class="tip-box">
+            <strong>差異分析：</strong>優良範例完整記錄了心導管結果（LAD、LCX 病灶）、藥物名稱劑量路徑、Sheath 拔除過程及加壓時間、末梢循環評估。待改善範例記錄過於片段，「持續觀察」反覆出現但未說明觀察什麼，傷口記錄文字模糊難以辨識。
+        </div>
+
+        <h3>範例三：身體評估</h3>
+        <div class="comparison">
+            <div class="good-example">
+<strong>2026/03/22 19:12　身體評估</strong><br>
+評估/措施：表情柔和、呼吸平順。未使用純鼻氧氣。監測血氧濃度 98%。在左手臂傷口採開放式護理、外敷乾淨紗布覆蓋（雙手用邊靜脈導管仍留置）。未梢血循溫暖，可配合常規口服藥物使用。暫無不適主訴。進內已進食晚餐，無嘔吐及噁心情形。<br>
+評值/結果：續觀察。　RN：○○○<br><br>
+<strong>2026/03/23 03:01　身體評估</strong><br>
+（後續持續追蹤，另記錄活動評估、心電圖變化等）
+            </div>
+            <div class="bad-example">
+<strong>2026/03/18 19:41　身體評估</strong><br>
+評估/措施：GCS:E4V4M6，呼吸平順無費力情形，監測血氧濃度:99%，左肩 PPM 存予以 AG 及散紗覆蓋使用，靜脈留置針及尿管留置。為預防自拔管路情形，依醫囑以雙手手拍及約束帶使用，末梢血循溫暖，依醫囑可配合口服用藥處置量。暫無不適主訴。<br>
+評值/結果：雙側床欄拉起使用，持續觀察。　RN：○○○<br><br>
+<strong>2026/03/18 23:12　保護性約束</strong><br>
+評估/措施：GCS:E4V4M6，身上右頸 TPM 管路、靜脈留置針及尿管留置，為預防自拔管路情形，依醫囑以雙手手拍及約束帶使用，末梢血循溫暖，暫無不適主訴。<br>
+評值/結果：持續觀察。　RN：○○○
+            </div>
+        </div>
+        <div class="tip-box">
+            <strong>差異分析：</strong>優良範例描述了表情、呼吸型態、傷口護理方式（開放式護理）、飲食狀況、藥物配合度，呈現病人整體照護圖像。待改善範例兩筆紀錄內容幾乎雷同（複製貼上），約束評估僅重複管路名稱，缺少約束部位皮膚狀況、末梢循環細節（CRT、膚色）、病人躁動程度等關鍵資訊。
+        </div>
+
+        <h3>範例四：活動與功能評估</h3>
+        <div class="comparison">
+            <div class="good-example">
+<strong>2026/03/22 15:40　6 分鐘步行測試</strong><br>
+評估/措施：予以 6 分鐘度行測試，可獨立行走約 400 公尺，無不適情形。<br>
+評值/結果：續觀。　RN：○○○<br><br>
+<strong>2026/03/22 15:50　心跳與節律素亂</strong><br>
+評估/措施：11:30 監測心跳 58 次/分，無不適情形，續追蹤心跳情形。<br>
+評值/結果：監測心跳 59 次/分，無不適情形。　RN：○○○<br><br>
+<strong>2026/03/22 15:00　檢查與治療</strong><br>
+評估/措施：主訴醫師謝慕揚醫師給予西雅圖心絞痛問卷，心導管手術前分數 39.6，心導管手術後分數 71.5。<br>
+評值/結果：列入交班。　RN：○○○<br><br>
+<strong>2026/03/23 10:50　活動</strong><br>
+評估/措施：採漸進式下床，可獨立行走至病房外約 120 公尺，步態穩，續觀。<br>
+評值/結果：可注意下床活動時間與安全，家屬陪伴。　RN：○○○
+            </div>
+            <div class="bad-example">
+<strong>2026/03/14 11:07　心跳與節律素亂</strong><br>
+評估/措施：監測心跳:105 次/分，無不適，續觀。<br>
+評值/結果：續觀。　RN：○○○<br><br>
+<strong>2026/03/14 14:00　活動</strong><br>
+評估/措施：採漸進式下床，可獨立行走於病室內，步態穩，無不適情形，續觀。<br>
+評值/結果：可配合小心跌倒。　RN：○○○
+            </div>
+        </div>
+        <div class="tip-box">
+            <strong>差異分析：</strong>優良範例活動評估有具體距離（400 公尺、120 公尺）與前後比較，心跳有多次監測趨勢（58→59 次），更納入 SAQ 心絞痛問卷分數（術前 39.6→術後 71.5）量化改善成果。待改善範例活動僅寫「病室內」無距離，心跳 105 次/分為心搏過速但未進一步處置或通知醫師，「續觀」重複使用缺乏具體觀察計畫。
+        </div>
+
+        <h3>範例五：醫師巡視與病情告知</h3>
+        <div class="comparison">
+            <div class="good-example">
+<strong>2026/03/20 17:25　醫師巡視／病情告知</strong><br>
+評估/措施：主治醫師謝慕揚至病房中診療。病人入院前常使用的藥物治療，經醫師評估後預計於下午給予 Glimepiride【Amaryl 2 mg/tab】1 tab PO QD。<br>
+評值/結果：持續追蹤。　RN：○○○<br><br>
+<strong>2026/03/20 19:03　待追蹤事件</strong><br>
+評估/措施：血壓偏低（具體數值），開雙靜脈留置套針。針眼處無紅腫觸痛情形。<br>
+評值/結果：家屬陪伴、雙側床欄拉起。　RN：○○○
+            </div>
+            <div class="bad-example">
+<em>（待改善紀錄中未見醫師巡視相關記載。部分紀錄僅以「持續觀察」帶過，未記錄醫師具體醫囑內容或藥物調整原因。）</em>
+            </div>
+        </div>
+        <div class="tip-box">
+            <strong>差異分析：</strong>優良範例記錄了醫師姓名、巡視時的處置決策（新增藥物名稱、劑量、頻次），讓下一班能理解用藥脈絡。未記錄醫師巡視紀錄會造成醫護溝通斷層，也無法呈現治療計畫的連續性。
+        </div>
+
+        <h3>範例六：傷口照護與夜間觀察</h3>
+        <div class="comparison">
+            <div class="good-example">
+<strong>2026/03/24 02:26</strong><br>
+評估/措施：現巡入、呼吸平順，持續引導至心導管檢查。給予待辦體操並交養飲之養盤。<br>
+評值/結果：雙側床欄拉起使用，家屬陪伴中。　RN：○○○<br><br>
+<strong>2026/03/24 04:55</strong><br>
+評估/措施：約 05:00 發覺體溫 54mg/dL。警腎失適情形。給加值監測警報記。備給予 Taita No.5 400 mL/bag，持續觀察。　RN：○○○<br><br>
+<strong>2026/03/24 06:29　傷口護理</strong><br>
+評估/措施：在左側鎖骨下靜脈留置 Port-A，在皮膚外觀良好存。雙側撓點無滲液。協助清潔清洗。給予傷口換藥。<br>
+評值/結果：續觀察。　RN：○○○
+            </div>
+            <div class="bad-example">
+<strong>2026/03/15 09:19</strong><br>
+評估/措施：左手平臥使用呼吸器。血尿點滴每導管 3L/min。血氧濃度為 100%。右大腿跟地板 in。血液循環（大片紅斑沒有）（一）：未梢循環。混用暫無關期間，可呼吸不需。<br>
+評估/措施：全身、體溫觀察於置於病室內的。觀察多種環視尚不佳。沒有缺乏刺激反應。漲尿前額確認。<br>
+全身命徵結果。可再請當日評核老師至床邊了解。<br>
+評值/結果：持續觀察，列入交班。　RN：○○○
+            </div>
+        </div>
+        <div class="tip-box">
+            <strong>差異分析：</strong>優良範例夜班巡房記錄了病人狀態、傷口護理細節（Port-A 位置、皮膚外觀）、低血糖處置（具體血糖數值及輸液處理）。待改善範例文句不通順，多處語意難以辨識（可能為語音輸入未校正），護理紀錄為法律文件，<strong>書寫後務必回頭檢視文句通順性</strong>。
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>護理長回饋與建議</h2>
+        <div class="info-box">
+            <strong>王欣怡護理師建議：</strong>「待改善的護理紀錄希望可以加入<strong>病人心靈衛教或指導</strong>」——護理紀錄不應只記錄生理層面，也應涵蓋心理支持、靈性照護、情緒評估等全人照護面向。
+        </div>
+
+        <h3>全人照護紀錄範例</h3>
+        <div class="comparison">
+            <div class="good-example">
+<strong>心理/靈性照護紀錄示範：</strong><br>
+病人於晨間表示對心導管手術感到焦慮，擔心術後能否恢復日常活動。予以傾聽及同理，向病人說明手術過程及術後復健計畫，鼓勵表達感受。病人表示「聽完比較安心了」。轉介臨床心理師評估，家屬（太太）在旁陪伴給予支持。持續關心病人情緒變化。
+            </div>
+            <div class="bad-example">
+<em>（紀錄中缺乏心理評估、情緒狀態、焦慮程度、睡眠品質、病人對疾病的認知與感受等全人照護面向的記載。）</em>
+            </div>
+        </div>
+        <div class="tip-box">
+            <strong>改善建議：</strong>心血管病人常伴隨焦慮與憂鬱，紀錄中應包含：(1) 病人情緒狀態（焦慮、害怕、平靜等）(2) 睡眠品質 (3) 疾病認知與自我照顧信心 (4) 護理師的心理支持措施 (5) 是否需要跨團隊照會（臨床心理師、社工師、宗教關懷師）。
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>優良 vs 待改善：關鍵差異總結</h2>
+        <table style="width:100%; border-collapse:collapse; font-size:0.88rem;">
+            <thead>
+                <tr style="background:#e8f4fd;">
+                    <th style="padding:0.6rem; border:1px solid #ddd; text-align:left; width:20%;">面向</th>
+                    <th style="padding:0.6rem; border:1px solid #ddd; text-align:left; width:40%;">優良紀錄特點 ✅</th>
+                    <th style="padding:0.6rem; border:1px solid #ddd; text-align:left;">待改善紀錄常見問題 ❌</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding:0.5rem; border:1px solid #ddd; font-weight:600;">時間記錄</td>
+                    <td style="padding:0.5rem; border:1px solid #ddd;">每筆評估有明確時間，術後追蹤有連續時間軸</td>
+                    <td style="padding:0.5rem; border:1px solid #ddd;">僅記錄單一時間點，缺乏連續監測紀錄</td>
+                </tr>
+                <tr style="background:#f8f9fa;">
+                    <td style="padding:0.5rem; border:1px solid #ddd; font-weight:600;">數據具體性</td>
+                    <td style="padding:0.5rem; border:1px solid #ddd;">步行距離 400m、SAQ 39.6→71.5、心跳 58→59 次</td>
+                    <td style="padding:0.5rem; border:1px solid #ddd;">「病室內」「續觀」「無不適」無量化</td>
+                </tr>
+                <tr>
+                    <td style="padding:0.5rem; border:1px solid #ddd; font-weight:600;">藥物記錄</td>
+                    <td style="padding:0.5rem; border:1px solid #ddd;">藥名+劑量+途徑+頻次（Amaryl 2mg/tab 1 tab PO QD）</td>
+                    <td style="padding:0.5rem; border:1px solid #ddd;">「持續用藥」「給藥後好轉」未記錄藥物細節</td>
+                </tr>
+                <tr style="background:#f8f9fa;">
+                    <td style="padding:0.5rem; border:1px solid #ddd; font-weight:600;">趨勢比較</td>
+                    <td style="padding:0.5rem; border:1px solid #ddd;">「心導管手術前 39.6 → 術後 71.5」前後對照</td>
+                    <td style="padding:0.5rem; border:1px solid #ddd;">單次數據無比較基準，無法判斷改善或惡化</td>
+                </tr>
+                <tr>
+                    <td style="padding:0.5rem; border:1px solid #ddd; font-weight:600;">檢查前準備</td>
+                    <td style="padding:0.5rem; border:1px solid #ddd;">逐項記錄（同意書→備皮→禁食→脈搏）</td>
+                    <td style="padding:0.5rem; border:1px solid #ddd;">「追蹤術前準備」一筆帶過</td>
+                </tr>
+                <tr style="background:#f8f9fa;">
+                    <td style="padding:0.5rem; border:1px solid #ddd; font-weight:600;">避免複製貼上</td>
+                    <td style="padding:0.5rem; border:1px solid #ddd;">每筆紀錄反映當下評估，內容有差異</td>
+                    <td style="padding:0.5rem; border:1px solid #ddd;">相鄰兩筆紀錄內容幾乎相同（約束評估）</td>
+                </tr>
+                <tr>
+                    <td style="padding:0.5rem; border:1px solid #ddd; font-weight:600;">文句通順</td>
+                    <td style="padding:0.5rem; border:1px solid #ddd;">語句完整、可讀性高</td>
+                    <td style="padding:0.5rem; border:1px solid #ddd;">疑似語音輸入未校正，語意不通</td>
+                </tr>
+                <tr style="background:#f8f9fa;">
+                    <td style="padding:0.5rem; border:1px solid #ddd; font-weight:600;">全人照護</td>
+                    <td style="padding:0.5rem; border:1px solid #ddd;">記錄病人情緒、家屬參與、衛教理解度</td>
+                    <td style="padding:0.5rem; border:1px solid #ddd;">僅記錄生理數據，缺乏心理/靈性照護</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ========== SECTION: 自我查核 ========== -->
+<div class="section" id="sec-checklist">
+    <div class="card">
+        <h2>護理紀錄自我查核表</h2>
+        <p style="font-size:0.9rem; color:var(--text-medium); margin-bottom:1rem;">每次書寫完畢，請用以下清單自我檢核：</p>
+
+        <h3>基本要素</h3>
+        <ul class="checklist">
+            <li>是否使用 FOCUS-DAR 格式？（Focus → Data → Action → Response）</li>
+            <li>Data 是否同時包含主觀資料（病人主訴）和客觀資料（VS、Lab）？</li>
+            <li>生命徵象是否完整？（BP、HR、RR、SpO2、BT）</li>
+            <li>所有處置是否有明確的時間記錄？</li>
+            <li>Response 部分是否記錄了病人對處置的反應？</li>
+        </ul>
+
+        <h3>心血管專科要素</h3>
+        <ul class="checklist">
+            <li>胸痛是否有 NRS 分數、部位、性質、放射描述？</li>
+            <li>術後傷口是否評估了穿刺處、末梢循環、脈搏？</li>
+            <li>心衰竭是否記錄了每日體重、I/O、水腫程度、NYHA？</li>
+            <li>抗凝血劑使用後是否觀察出血徵兆？</li>
+            <li>ECG/Monitor rhythm 是否有記錄？</li>
+        </ul>
+
+        <h3>品質指標</h3>
+        <ul class="checklist">
+            <li>是否避免使用模糊字眼（OK、正常、還好）？</li>
+            <li>數據是否為本次評估所得，而非抄錄前一班？</li>
+            <li>通知醫師是否有記錄醫師姓名及醫囑內容？</li>
+            <li>衛教是否記錄了衛教對象、內容、及病人回覆示教？</li>
+            <li>趨勢變化是否有比較（如：較昨日改善/惡化）？</li>
+        </ul>
+
+        <h3>法律層面</h3>
+        <ul class="checklist">
+            <li>所有異常事件是否有「發現時間 → 處置 → 結果」完整記錄？</li>
+            <li>是否記錄了通知醫師的時間及醫師回覆？</li>
+            <li>病人拒絕治療是否有記錄並簽名？</li>
+            <li>約束使用是否有評估理由、核准、定時評估紀錄？</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>常見書寫錯誤速查</h2>
+        <table style="width:100%; border-collapse:collapse; font-size:0.88rem;">
+            <thead>
+                <tr style="background:#e8f4fd;">
+                    <th style="padding:0.6rem; border:1px solid #ddd; text-align:left; width:45%;">錯誤寫法 ❌</th>
+                    <th style="padding:0.6rem; border:1px solid #ddd; text-align:left;">正確寫法 ✅</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td style="padding:0.5rem; border:1px solid #ddd;">VS 正常</td><td style="padding:0.5rem; border:1px solid #ddd;">BP 120/78, HR 72, RR 16, SpO2 98%, BT 36.4°C</td></tr>
+                <tr style="background:#f8f9fa;"><td style="padding:0.5rem; border:1px solid #ddd;">傷口 OK</td><td style="padding:0.5rem; border:1px solid #ddd;">Right radial 穿刺處乾燥無滲血，無血腫，radial pulse (2+)</td></tr>
+                <tr><td style="padding:0.5rem; border:1px solid #ddd;">有跟醫師說</td><td style="padding:0.5rem; border:1px solid #ddd;">14:20 電話通知值班醫師 Dr. 王○○，報告 BP 80/50，醫囑 NS 500mL fast drip</td></tr>
+                <tr style="background:#f8f9fa;"><td style="padding:0.5rem; border:1px solid #ddd;">病人還好</td><td style="padding:0.5rem; border:1px solid #ddd;">病人表示胸痛已緩解（NRS 1/10），可平躺休息</td></tr>
+                <tr><td style="padding:0.5rem; border:1px solid #ddd;">已衛教</td><td style="padding:0.5rem; border:1px solid #ddd;">DAPT 衛教完成，病人能複述不可自行停藥及出血觀察重點</td></tr>
+                <tr style="background:#f8f9fa;"><td style="padding:0.5rem; border:1px solid #ddd;">水腫有消</td><td style="padding:0.5rem; border:1px solid #ddd;">下肢 pitting edema 由昨日 3+ 改善至 2+</td></tr>
+                <tr><td style="padding:0.5rem; border:1px solid #ddd;">給藥後好轉</td><td style="padding:0.5rem; border:1px solid #ddd;">NTG 0.6mg SL 給予後 10 分鐘，胸痛由 NRS 7 降至 2 分</td></tr>
+                <tr style="background:#f8f9fa;"><td style="padding:0.5rem; border:1px solid #ddd;">I/O 有在記</td><td style="padding:0.5rem; border:1px solid #ddd;">昨日 I/O: 1200/2500 mL (Net -1300 mL)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</div><!-- /.container -->
+
+<footer style="text-align:center; padding:2rem; color:var(--text-light); font-size:0.8rem; background:#f0f3f6;">
+    2A 病房護理紀錄書寫指引 | 心血管照護教學資源中心<br>
+    僅供教學用途，實際紀錄請依院內規範
+</footer>
+
+<script>
+// Tab navigation
+function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('sec-' + id).classList.add('active');
+    event.target.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Copy template
+function copyTemplate(btn) {
+    const box = btn.parentElement;
+    // Get text content, excluding the button
+    const clone = box.cloneNode(true);
+    clone.querySelector('.copy-btn')?.remove();
+    let text = clone.textContent.trim();
+    // Replace placeholder markers
+    text = text.replace(/\s+/g, ' ').replace(/【/g, '\n【').replace(/\d\.\s/g, '\n$&').trim();
+
+    // Better: get innerHTML and extract
+    const html = box.innerHTML;
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    div.querySelector('.copy-btn')?.remove();
+    // Replace span.placeholder with bracket text
+    div.querySelectorAll('.placeholder').forEach(el => {
+        el.replaceWith('[' + el.textContent + ']');
+    });
+    const finalText = div.textContent.trim();
+
+    navigator.clipboard.writeText(finalText).then(() => {
+        btn.textContent = '已複製！';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = '複製';
+            btn.classList.remove('copied');
+        }, 2000);
+    });
+}
+
+// Quick generator
+function generateRecord() {
+    const age = document.getElementById('pt-age').value || '___';
+    const gender = document.getElementById('pt-gender').value;
+    const dx = document.getElementById('pt-dx').value;
+    const bp = document.getElementById('pt-bp').value || '___/___';
+    const hr = document.getElementById('pt-hr').value || '___';
+    const spo2 = document.getElementById('pt-spo2').value || '___';
+    const bt = document.getElementById('pt-bt').value || '___';
+    const rr = document.getElementById('pt-rr').value || '___';
+    const scenario = document.getElementById('pt-scenario').value;
+
+    const dxMap = {
+        'ACS': '急性冠心症 (ACS)', 'STEMI': 'ST 上升型心肌梗塞 (STEMI)',
+        'NSTEMI': '非 ST 上升型心肌梗塞 (NSTEMI)', 'UA': '不穩定型心絞痛 (Unstable Angina)',
+        'HF': '心衰竭 (Heart Failure)', 'AF': '心房顫動 (Atrial Fibrillation)',
+        'PAOD': '周邊動脈阻塞疾病 (PAOD)', 'AS': '主動脈瓣狹窄 (Aortic Stenosis)',
+        'VHD': '瓣膜性心臟病 (VHD)', 'Arrhythmia': '心律不整 (Arrhythmia)'
+    };
+
+    const templates = {
+        'admission': () =>
+`【Focus】${dxMap[dx]} 入院評估
+
+【D】
+${age} 歲 ${gender}性，因 ${dxMap[dx]} 由急診入院。
+入院 VS：BP ${bp} mmHg, HR ${hr} bpm, RR ${rr}/min, SpO2 ${spo2}%, BT ${bt}°C
+意識：alert, oriented, GCS E4V5M6
+Past Hx：[HTN / DM / Dyslipidemia / 其他]
+Allergy：[NKA 或具體藥物]
+主訴：[病人主訴症狀、持續時間、嚴重度 NRS]
+ECG：[描述心電圖結果]
+Lab：[相關檢驗數值]
+身體評估：[心音、肺音、水腫、peripheral pulse]
+
+【A】
+1. 建立 IV access，連續心電圖監測
+2. 依醫囑執行：[藥物/處置]
+3. 入院護理評估完成，跌倒風險 [___] 分，Braden [___] 分
+4. 通知主治醫師評估
+
+【R】
+處置後 VS：BP [___/___], HR [___]
+病人症狀 [改善/穩定/惡化]，持續監測中。`,
+
+        'post-pci': () =>
+`【Focus】PCI 術後照護（transradial approach）
+
+【D】
+${age} 歲 ${gender}性，今日行 PCI via radial artery。
+術式：[___] vessel stenting（[LAD/LCx/RCA]）with DES × [___]
+返回病房 VS：BP ${bp} mmHg, HR ${hr} bpm, SpO2 ${spo2}%, BT ${bt}°C
+TR Band 加壓中，air [___] mL
+穿刺側手部：膚色 pink, CRT < 2 sec, radial pulse palpable (2+), 手指活動正常，無麻木
+穿刺處：乾燥無滲血
+胸痛：無
+
+【A】
+1. TR Band 依 protocol 每 30-60 min 抽 2-3 mL air
+2. 觀察穿刺處 q30min × 2h → q1h × 4h
+3. 監測末梢循環（膚色、溫度、脈搏、感覺、活動）
+4. DAPT：[Aspirin + Plavix/Brilinta]
+5. IV hydration：NS [___] mL/hr × [___] hr
+6. 連續心電圖監測 24hr
+7. 鼓勵握球運動
+
+【R】
+TR Band 依時程減壓中，穿刺處乾燥無滲血。
+手部末梢循環良好。
+無胸痛，VS 穩定，持續監測中。`,
+
+        'post-pci-femoral': () =>
+`【Focus】PCI 術後照護（transfemoral approach）
+
+【D】
+${age} 歲 ${gender}性，今日行 PCI via femoral artery。
+術式：[___] vessel stenting
+止血方式：[ProGlide / AngioSeal / Manual compression]
+返回病房 VS：BP ${bp} mmHg, HR ${hr} bpm, SpO2 ${spo2}%
+穿刺處：[乾燥 / 紗布加壓中]，血腫：無
+足背動脈：palpable (2+)，下肢膚色 pink，溫暖
+胸痛：無
+
+【A】
+1. 右下肢伸直平躺 6-8 小時
+2. 砂袋加壓 [___] 小時
+3. 觀察穿刺處 q15min × 1h → q30min × 2h → q1h × 4h
+4. 監測足背脈搏及下肢末梢 q1h
+5. 協助翻身及使用便盆
+6. IV hydration：NS [___] mL/hr
+
+【R】
+穿刺處乾燥無滲血，足背脈搏正常。
+下肢末梢循環良好，無麻木蒼白。
+病人配合平躺及肢體制動。`,
+
+        'post-cag': () =>
+`【Focus】CAG 術後照護
+
+【D】
+${age} 歲 ${gender}性，今日行 diagnostic CAG via [radial/femoral]。
+結果：[正常 / ___-vessel CAD / 待後續評估]
+返回病房 VS：BP ${bp} mmHg, HR ${hr} bpm, SpO2 ${spo2}%
+穿刺處：[TR Band 加壓 / 紗布覆蓋]
+末梢循環正常
+Contrast used：[___] mL，Baseline Cr：[___]
+
+【A】
+1. 穿刺處照護依 protocol
+2. IV hydration：NS [___] mL/hr × [___] hr（CIN prevention）
+3. 鼓勵飲水
+4. 追蹤 Cr：[明日 / 48-72hr]
+5. 說明 CAG 結果及後續計畫
+
+【R】
+穿刺處止血良好，末梢循環正常。
+病人及家屬已了解 CAG 結果。
+後續計畫：[PCI / CABG / 藥物治療 / 出院]。`,
+
+        'chest-pain': () =>
+`【Focus】突發胸痛處理
+
+【D】
+[時間] 病人主訴胸骨後[壓迫感/悶痛]，NRS [___]/10，持續 [___] 分鐘。
+伴隨：[冒冷汗/喘/噁心/無]，放射至 [左臂/下巴/無]
+VS：BP ${bp} mmHg, HR ${hr} bpm, RR ${rr}/min, SpO2 ${spo2}%
+ECG：[結果描述]
+
+【A】
+1. [時間] 立即執行 12-lead ECG
+2. [時間] 通知值班醫師 Dr. [___]
+3. 依醫囑：[NTG SL / O2 / Morphine]
+4. 抽血 stat：Troponin, CK-MB
+5. 持續心電圖監測，備急救設備
+
+【R】
+[時間] 處置後胸痛由 NRS [___] 降至 [___] 分。
+VS：BP [___/___], HR [___]。
+ECG：[unchanged / 變化描述]
+醫師指示：[觀察 / 安排 CAG / 轉 CCU]`,
+
+        'hf-daily': () =>
+`【Focus】心衰竭照護追蹤
+
+【D】
+住院第 [___] 天。
+今日 BW：[___] kg（較昨日 [增/減 ___] kg）
+昨日 I/O：Intake [___] mL / Output [___] mL（Net [___] mL）
+VS：BP ${bp} mmHg, HR ${hr} bpm, RR ${rr}/min, SpO2 ${spo2}%, BT ${bt}°C
+NYHA Fc：[___]
+肺部：[clear / crackles at bases]
+下肢水腫：pitting edema [___]+（較昨日 [改善/持平]）
+O2：[Room air / NC ___ L/min]
+
+【A】
+1. 持續 diuretic：[Lasix ___ mg IV/PO]
+2. I/O 嚴格監測，限水 [___] mL/day
+3. Daily weight
+4. GDMT 調整：[依醫囑]
+5. [衛教/活動安排]
+
+【R】
+利尿效果 [良好/不佳]，今日 UO [___] mL。
+體重趨勢 [下降/持平]。
+呼吸較前 [改善/穩定]，可 [床邊活動/步行]。`,
+
+        'af-new': () =>
+`【Focus】新發心房顫動處理
+
+【D】
+${age} 歲 ${gender}性，[時間] monitor 顯示 irregular rhythm。
+VS：BP ${bp} mmHg, HR ${hr} bpm (irregular), SpO2 ${spo2}%
+症狀：[心悸/頭暈/喘/無症狀]
+ECG：AF with [RVR/controlled rate], ventricular rate [___] bpm
+CHA₂DS₂-VASc：[___] 分
+
+【A】
+1. [時間] 通知值班醫師 Dr. [___]
+2. 12-lead ECG stat
+3. Rate control 依醫囑：[Diltiazem / Metoprolol / Amiodarone]
+4. 抗凝血評估
+5. 持續心電圖監測
+
+【R】
+Rate control 後 HR 由 [___] 降至 [___] bpm。
+症狀 [改善/持續]，VS 穩定。
+持續監測 rhythm。`,
+
+        'hypotension': () =>
+`【Focus】低血壓事件處理
+
+【D】
+[時間] VS 測量 BP ${bp} mmHg（較前值 [___/___] 下降）。
+HR ${hr} bpm, SpO2 ${spo2}%
+症狀：[頭暈/冒冷汗/意識變化/無症狀]
+可能原因：[利尿過度/降壓藥/出血/其他]
+
+【A】
+1. [時間] 立即平躺抬高雙腿
+2. [時間] 通知值班醫師 Dr. [___]
+3. 依醫囑：[NS ___ mL bolus / hold 降壓藥]
+4. Stat lab：CBC, BMP
+5. VS 監測 q15min
+
+【R】
+[時間] NS bolus 後 BP 回升至 [___/___] mmHg。
+症狀 [改善/持續]。
+醫師指示：[觀察/調藥/轉 CCU]`,
+
+        'bleeding': () =>
+`【Focus】穿刺處出血事件
+
+【D】
+[時間] 發現 [radial/femoral] 穿刺處 [active oozing / hematoma 擴大]。
+血腫：[___×___ cm]
+VS：BP ${bp} mmHg, HR ${hr} bpm, SpO2 ${spo2}%
+目前抗凝藥物：[___]
+
+【A】
+1. [時間] 立即加壓止血
+2. [時間] 通知值班醫師 Dr. [___]
+3. 標記血腫範圍
+4. Stat lab：CBC, PT/INR
+5. VS 監測 q15min
+
+【R】
+加壓 [___] 分鐘後出血 [停止/減少]。
+血腫 [未擴大/擴大至 ___]。
+VS 穩定，末梢循環正常。
+醫師指示：[觀察/hold anticoagulation]`,
+
+        'education': () =>
+`【Focus】${dxMap[dx]} 衛教
+
+【D】
+${age} 歲 ${gender}性，診斷 ${dxMap[dx]}。
+病人/家屬對疾病及用藥了解程度：[不了解/部分了解/已了解]
+
+【A】
+衛教內容：
+1. 疾病說明：[疾病簡要說明]
+2. 用藥指導：[藥物名稱、用法、注意事項]
+3. 日常照護：[飲食/活動/自我監測]
+4. 危險徵兆：[需立即就醫的狀況]
+5. 回診安排：[___] 週後 [___] 科門診
+6. 提供書面衛教單張
+
+【R】
+病人能複述：「[病人回覆示教內容]」
+家屬表示 [了解/會協助]。
+理解程度：[良好/需再加強 ___]。`,
+
+        'discharge': () =>
+`【Focus】${dxMap[dx]} 出院準備
+
+【D】
+住院第 [___] 天。
+VS 穩定：BP ${bp} mmHg, HR ${hr} bpm, SpO2 ${spo2}%
+目前狀況：[症狀改善描述]
+Lab：[相關數值]
+
+【A】
+出院衛教完成：
+1. 用藥指導：[出院帶藥及注意事項]
+2. 活動：[活動限制/漸進恢復]
+3. 飲食：[飲食建議]
+4. 傷口照護：[如適用]
+5. 危險徵兆：[需回急診的狀況]
+6. 回診：[___] 週後 [___] 科門診（醫師：[___]）
+7. 出院帶藥已核對確認
+
+【R】
+病人及家屬能複述衛教重點。
+出院 VS 穩定，步態穩定。
+由 [家屬/自行] 離院。`
+    };
+
+    const output = templates[scenario]();
+    const el = document.getElementById('generated-output');
+    el.textContent = output;
+    document.getElementById('output-copy-btn').style.display = 'inline-block';
+}
+
+function copyOutput() {
+    const text = document.getElementById('generated-output').textContent;
+    const btn = document.getElementById('output-copy-btn');
+    navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = '已複製！';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = '複製紀錄';
+            btn.classList.remove('copied');
+        }, 2000);
+    });
+}
+</script>
+
+</body>
+</html>
