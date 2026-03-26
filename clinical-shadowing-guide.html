@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>臨床隨行教學指引 · 新竹臺大內科</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1a2744;
+  --navy-mid: #243560;
+  --navy-light: #2e4580;
+  --gold: #c9972b;
+  --gold-light: #e8b94a;
+  --cream: #faf6f0;
+  --parchment: #f2ede5;
+  --white: #ffffff;
+  --text: #1e2a3a;
+  --text-mid: #3d4f65;
+  --text-muted: #6b7d92;
+  --border: #dde4ee;
+  --success: #2d8a60;
+  --warn: #b85c00;
+  --shadow-sm: 0 2px 8px rgba(26,39,68,0.08);
+  --shadow-md: 0 6px 24px rgba(26,39,68,0.12);
+  --shadow-lg: 0 16px 48px rgba(26,39,68,0.16);
+  --radius: 14px;
+  --radius-sm: 8px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── HEADER ── */
+.site-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, var(--navy-light) 100%);
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 20px rgba(26,39,68,0.35);
+}
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.header-logo {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 22px;
+}
+.header-text h1 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+.header-text p {
+  font-size: 11px;
+  color: rgba(255,255,255,0.65);
+  margin-top: 1px;
+  letter-spacing: 0.3px;
+}
+.header-badge {
+  margin-left: auto;
+  background: rgba(201,151,43,0.25);
+  border: 1px solid rgba(201,151,43,0.5);
+  color: var(--gold-light);
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+/* ── NAV TABS ── */
+.nav-strip {
+  background: var(--navy);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.nav-strip::-webkit-scrollbar { display: none; }
+.nav-inner {
+  display: flex;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 4px;
+}
+.nav-btn {
+  flex-shrink: 0;
+  padding: 11px 16px;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.55);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+}
+.nav-btn.active {
+  color: var(--gold-light);
+  border-bottom-color: var(--gold-light);
+}
+.nav-btn:hover:not(.active) { color: rgba(255,255,255,0.85); }
+
+/* ── MAIN CONTENT ── */
+.main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px 16px 80px;
+}
+
+/* ── SECTION PAGES ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── HERO CARD ── */
+.hero-card {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+.hero-card::before {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 180px; height: 180px;
+  background: radial-gradient(circle, rgba(201,151,43,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero-card::after {
+  content: '🏥';
+  position: absolute;
+  bottom: -10px; right: 16px;
+  font-size: 80px;
+  opacity: 0.08;
+}
+.hero-tag {
+  display: inline-block;
+  background: rgba(201,151,43,0.2);
+  border: 1px solid rgba(201,151,43,0.4);
+  color: var(--gold-light);
+  font-size: 11px;
+  padding: 3px 12px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+.hero-card h2 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+.hero-card p {
+  color: rgba(255,255,255,0.72);
+  font-size: 13px;
+  line-height: 1.75;
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 22px 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.card-title .icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.icon-navy { background: rgba(26,39,68,0.08); }
+.icon-gold { background: rgba(201,151,43,0.12); }
+.icon-green { background: rgba(45,138,96,0.1); }
+.icon-warn { background: rgba(184,92,0,0.1); }
+
+.card-title h3 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--navy);
+}
+.card-title p { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+/* ── INFO ROW ── */
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.info-row:last-child { border-bottom: none; padding-bottom: 0; }
+.info-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  margin-top: 7px;
+  flex-shrink: 0;
+}
+.info-row p { font-size: 13.5px; color: var(--text-mid); line-height: 1.65; }
+.info-row strong { color: var(--text); font-weight: 600; }
+
+/* ── PHASE TIMELINE ── */
+.phase-list { display: flex; flex-direction: column; gap: 0; }
+.phase-item {
+  display: flex;
+  gap: 0;
+  position: relative;
+}
+.phase-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 44px;
+  flex-shrink: 0;
+}
+.phase-circle {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(26,39,68,0.3);
+}
+.phase-line {
+  width: 2px;
+  flex: 1;
+  background: linear-gradient(to bottom, var(--navy-light), var(--border));
+  min-height: 20px;
+}
+.phase-content {
+  flex: 1;
+  padding: 0 0 20px 12px;
+}
+.phase-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.tag-blue { background: rgba(26,39,68,0.1); color: var(--navy); }
+.tag-gold { background: rgba(201,151,43,0.15); color: #8a6200; }
+.tag-green { background: rgba(45,138,96,0.12); color: var(--success); }
+.phase-content h4 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.phase-content p { font-size: 13px; color: var(--text-mid); line-height: 1.65; }
+
+/* ── SCHEDULE TABLE ── */
+.schedule-block {
+  background: var(--parchment);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.schedule-header {
+  background: var(--navy);
+  color: #fff;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.schedule-row {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid rgba(26,39,68,0.07);
+}
+.schedule-row:last-child { border-bottom: none; }
+.sch-time {
+  width: 90px;
+  flex-shrink: 0;
+  background: rgba(26,39,68,0.05);
+  padding: 10px 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  border-right: 1px solid rgba(26,39,68,0.08);
+}
+.sch-body {
+  flex: 1;
+  padding: 10px 14px;
+}
+.sch-body .title { font-size: 13px; font-weight: 600; color: var(--text); }
+.sch-body .sub { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+.sch-type {
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+}
+.type-chip {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.chip-observe { background: #e8f0fe; color: #1a56b0; }
+.chip-active { background: #e6f4ea; color: #1a6b40; }
+.chip-reflect { background: #fef3e2; color: #9a5000; }
+.chip-admin { background: #f3e5f5; color: #6a1b9a; }
+
+/* ── CHECKLIST ── */
+.check-section { margin-bottom: 16px; }
+.check-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  padding: 0 2px;
+}
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  user-select: none;
+}
+.check-item:active { transform: scale(0.98); }
+.check-item.checked {
+  background: #f0faf5;
+  border-color: #a8dfc0;
+}
+.check-box {
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  margin-top: 1px;
+}
+.check-item.checked .check-box {
+  background: var(--success);
+  border-color: var(--success);
+  color: #fff;
+}
+.check-text { font-size: 13.5px; color: var(--text-mid); line-height: 1.55; flex: 1; }
+.check-item.checked .check-text { color: var(--text-muted); text-decoration: line-through; }
+
+/* ── TIP BOXES ── */
+.tip-box {
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.tip-navy { background: rgba(26,39,68,0.06); border-left: 3px solid var(--navy); }
+.tip-gold { background: rgba(201,151,43,0.08); border-left: 3px solid var(--gold); }
+.tip-green { background: rgba(45,138,96,0.08); border-left: 3px solid var(--success); }
+.tip-warn { background: rgba(184,92,0,0.06); border-left: 3px solid var(--warn); }
+.tip-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.tip-body { flex: 1; }
+.tip-body strong { font-size: 13px; font-weight: 600; color: var(--text); display: block; margin-bottom: 4px; }
+.tip-body p { font-size: 12.5px; color: var(--text-mid); line-height: 1.65; }
+
+/* ── GRID 2-COL ── */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.mini-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px 14px;
+  text-align: center;
+}
+.mini-card .big { font-size: 30px; font-weight: 700; color: var(--navy); font-family: 'Noto Serif TC', serif; }
+.mini-card .lbl { font-size: 11px; color: var(--text-muted); margin-top: 4px; line-height: 1.4; }
+
+/* ── ACCORDION ── */
+.accordion-item {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.accordion-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  user-select: none;
+}
+.accordion-header:active { background: var(--parchment); }
+.acc-icon { font-size: 18px; }
+.acc-title { flex: 1; font-size: 14px; font-weight: 600; color: var(--text); }
+.acc-arrow {
+  font-size: 12px;
+  color: var(--text-muted);
+  transition: transform 0.25s;
+}
+.accordion-item.open .acc-arrow { transform: rotate(90deg); }
+.accordion-body {
+  display: none;
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+.accordion-item.open .accordion-body { display: block; }
+.acc-list { display: flex; flex-direction: column; gap: 6px; }
+.acc-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.acc-num {
+  width: 20px; height: 20px;
+  background: var(--navy);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.acc-row p { font-size: 13px; color: var(--text-mid); line-height: 1.6; }
+
+/* ── PROGRESS BAR ── */
+.progress-banner {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.progress-banner .prog-label { font-size: 12px; color: var(--text-muted); }
+.progress-banner .prog-count { font-size: 18px; font-weight: 700; color: var(--navy); font-family: 'Noto Serif TC', serif; }
+.prog-bar-wrap { flex: 1; background: var(--border); border-radius: 4px; height: 8px; overflow: hidden; }
+.prog-bar-fill { height: 100%; background: linear-gradient(90deg, var(--navy), var(--gold)); border-radius: 4px; transition: width 0.4s ease; }
+
+/* ── FOOTER ── */
+.bottom-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(250,246,240,0.95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  padding: 10px 20px;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  text-align: center;
+  z-index: 90;
+}
+.bottom-bar p { font-size: 11px; color: var(--text-muted); }
+.bottom-bar strong { color: var(--navy); font-weight: 600; }
+
+/* ── SECTION DIVIDER ── */
+.sec-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0 14px;
+}
+.sec-divider span {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.sec-divider::before, .sec-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── BADGE ── */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  margin: 2px;
+}
+.badge-navy { background: rgba(26,39,68,0.1); color: var(--navy); }
+.badge-gold { background: rgba(201,151,43,0.15); color: #8a6200; }
+.badge-green { background: rgba(45,138,96,0.12); color: var(--success); }
+
+/* ── QUOTE ── */
+.quote-block {
+  border-left: 3px solid var(--gold);
+  padding: 12px 16px;
+  background: rgba(201,151,43,0.05);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin: 12px 0;
+}
+.quote-block p {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.75;
+  font-style: italic;
+}
+.quote-block cite { font-size: 11px; color: var(--text-muted); margin-top: 4px; display: block; }
+
+/* ── SHARE BUTTON ── */
+.share-button { position: fixed; top: 20px; right: 20px; z-index: 200; }
+.share-toggle { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%); border: none; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(26,39,68,0.4); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+.share-toggle:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(26,39,68,0.5); }
+.share-menu { position: absolute; top: 60px; right: 0; background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 20px; min-width: 280px; display: none; animation: fadeInShare 0.3s ease; }
+.share-menu.active { display: block; }
+@keyframes fadeInShare { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+.share-menu h4 { color: var(--text); margin: 0 0 15px 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+.share-close { position: absolute; top: 10px; right: 14px; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--text-muted); }
+.qr-share-container { text-align: center; margin-bottom: 15px; }
+.qr-share-container img { border-radius: 8px; }
+.qr-share-container p { font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; }
+.share-buttons { display: flex; flex-direction: column; gap: 10px; }
+.share-btn-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: none; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.95rem; font-weight: 500; transition: all 0.2s ease; text-decoration: none; color: white; font-family: inherit; }
+.share-btn-item.line { background: #00B900; }
+.share-btn-item.email { background: #EA4335; }
+.share-btn-item.copy { background: var(--navy); }
+.share-btn-item:hover { transform: translateX(5px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.share-btn-item svg { width: 20px; height: 20px; fill: currentColor; }
+
+@media (max-width: 480px) {
+  .grid2 { grid-template-columns: 1fr 1fr; }
+  .hero-card h2 { font-size: 19px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Share Button -->
+<div class="share-button">
+    <button class="share-toggle" onclick="toggleShareMenu()" title="分享此頁面"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></button>
+    <div class="share-menu" id="shareMenu">
+        <button class="share-close" onclick="toggleShareMenu()">&times;</button>
+        <h4>📤 分享此頁面</h4>
+        <div class="qr-share-container"><img id="qrCode" src="" alt="QR Code" width="150" height="150"><p>掃描 QR Code 開啟頁面</p></div>
+        <div class="share-buttons">
+            <a class="share-btn-item line" href="#" id="lineShare" target="_blank"><svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>LINE 分享</a>
+            <a class="share-btn-item email" href="#" id="emailShare"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>Email 分享</a>
+            <button class="share-btn-item copy" onclick="copyPageUrl()"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>複製連結</button>
+        </div>
+    </div>
+</div>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-logo">🩺</div>
+    <div class="header-text">
+      <h1>臨床隨行教學指引</h1>
+      <p>新竹臺大分院 · 內科部 · Clinical Shadowing</p>
+    </div>
+    <div class="header-badge">2026 版</div>
+  </div>
+  <nav class="nav-strip">
+    <div class="nav-inner">
+      <button class="nav-btn active" onclick="showPage('overview')">📋 總覽</button>
+      <button class="nav-btn" onclick="showPage('prep')">🗂 準備</button>
+      <button class="nav-btn" onclick="showPage('schedule')">🕐 每日流程</button>
+      <button class="nav-btn" onclick="showPage('methods')">🎓 教學策略</button>
+      <button class="nav-btn" onclick="showPage('feedback')">📊 回饋評量</button>
+      <button class="nav-btn" onclick="showPage('checklist')">✅ Checklist</button>
+    </div>
+  </nav>
+</header>
+
+<main class="main">
+
+<!-- ════════════════ PAGE: OVERVIEW ════════════════ -->
+<section class="page active" id="page-overview">
+
+  <div class="hero-card">
+    <div class="hero-tag">NTUH Hsinchu Branch · Internal Medicine</div>
+    <h2>Clinical Shadowing<br>臨床隨行教學</h2>
+    <p>為見習（Clerkship）與實習（Internship）醫學生提供系統性的觀摩及主動學習體驗，協助學員整合課堂知識與真實臨床思維。</p>
+  </div>
+
+  <div class="grid2">
+    <div class="mini-card">
+      <div class="big">2W</div>
+      <div class="lbl">建議最短<br>學習週期</div>
+    </div>
+    <div class="mini-card">
+      <div class="big">5</div>
+      <div class="lbl">核心教學<br>能力面向</div>
+    </div>
+    <div class="mini-card">
+      <div class="big">3</div>
+      <div class="lbl">階段漸進<br>學習架構</div>
+    </div>
+    <div class="mini-card">
+      <div class="big">360°</div>
+      <div class="lbl">多方向回饋<br>評量機制</div>
+    </div>
+  </div>
+
+  <div class="sec-divider"><span>指引核心目標</span></div>
+
+  <div class="card">
+    <div class="card-title">
+      <div class="icon icon-navy">🎯</div>
+      <div>
+        <h3>為什麼需要 Clinical Shadowing？</h3>
+        <p>從知識走向臨床能力的關鍵橋梁</p>
+      </div>
+    </div>
+    <div class="quote-block">
+      <p>「最好的醫學教育，不是告訴學生答案，而是帶著他們一起思考如何找到答案。」</p>
+      <cite>— 以學習者為中心的臨床教學原則</cite>
+    </div>
+    <div class="info-row">
+      <div class="info-dot"></div>
+      <p><strong>見習醫師 Clerk：</strong>以觀察為主，建立病史詢問、理學檢查及臨床推理的基本概念，理解真實醫療環境的運作。</p>
+    </div>
+    <div class="info-row">
+      <div class="info-dot"></div>
+      <p><strong>實習醫師 Intern：</strong>在監督下執行基本診療作業，整合跨科知識，養成獨立思考與醫療決策的習慣。</p>
+    </div>
+    <div class="info-row">
+      <div class="info-dot"></div>
+      <p><strong>指導醫師：</strong>以「榜樣示範 → 引導思考 → 逐步放手」的方式，有意識地傳遞臨床文化與職業精神。</p>
+    </div>
+  </div>
+
+  <div class="sec-divider"><span>五大核心學習能力</span></div>
+
+  <div class="phase-list">
+    <div class="phase-item">
+      <div class="phase-left">
+        <div class="phase-circle">1</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-content">
+        <span class="phase-tag tag-blue">Patient Care</span>
+        <h4>以病人為中心的照護</h4>
+        <p>病史詢問、理學檢查技巧，以及如何建立安全、信任的醫病關係；理解知情同意與文化敏感度。</p>
+      </div>
+    </div>
+    <div class="phase-item">
+      <div class="phase-left">
+        <div class="phase-circle">2</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-content">
+        <span class="phase-tag tag-gold">Clinical Reasoning</span>
+        <h4>臨床推理與鑑別診斷</h4>
+        <p>從主訴出發，系統性建立 problem list，形成鑑別診斷，理解檢查前/後機率的應用。</p>
+      </div>
+    </div>
+    <div class="phase-item">
+      <div class="phase-left">
+        <div class="phase-circle">3</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-content">
+        <span class="phase-tag tag-blue">Teamwork</span>
+        <h4>跨職類團隊合作</h4>
+        <p>觀摩醫護師與醫師的溝通模式，了解病房團隊的角色分工，學習交接（Handoff）的標準化語言（SBAR）。</p>
+      </div>
+    </div>
+    <div class="phase-item">
+      <div class="phase-left">
+        <div class="phase-circle">4</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-content">
+        <span class="phase-tag tag-gold">Communication</span>
+        <h4>醫療溝通與衛教</h4>
+        <p>觀察主治醫師如何向病人及家屬說明病情，練習用平易近人的語言傳達複雜的醫療資訊。</p>
+      </div>
+    </div>
+    <div class="phase-item">
+      <div class="phase-left">
+        <div class="phase-circle">5</div>
+        <div class="phase-line" style="background:transparent;"></div>
+      </div>
+      <div class="phase-content">
+        <span class="phase-tag tag-green">Professionalism</span>
+        <h4>醫學倫理與職業精神</h4>
+        <p>理解醫療資源分配、DNR 討論、病人自主等議題；建立終身自主學習的習慣。</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ════════════════ PAGE: PREP ════════════════ -->
+<section class="page" id="page-prep">
+
+  <div class="hero-card">
+    <div class="hero-tag">Phase 0 · Before Day 1</div>
+    <h2>事前準備<br>Pre-Shadowing Setup</h2>
+    <p>完善的事前規劃，能讓第一天就啟動高品質學習。給自己與學員都做好準備。</p>
+  </div>
+
+  <div class="sec-divider"><span>指導醫師事前應完成</span></div>
+
+  <div class="card">
+    <div class="card-title">
+      <div class="icon icon-gold">👨‍⚕️</div>
+      <div><h3>指導醫師準備事項</h3></div>
+    </div>
+    <div class="info-row">
+      <div class="info-dot"></div>
+      <p><strong>確認學員背景：</strong>年級、先備知識、語言能力（尤其國際學員），以及個人學習目標。</p>
+    </div>
+    <div class="info-row">
+      <div class="info-dot"></div>
+      <p><strong>設定明確學習目標（Learning Objectives）：</strong>2 週計畫建議每週設定 3–5 個具體可觀察的目標，例如「能完成完整內科住院病史詢問」。</p>
+    </div>
+    <div class="info-row">
+      <div class="info-dot"></div>
+      <p><strong>準備學習護照/Log Book：</strong>與教學部協調，確認學員在院期間需完成的紀錄格式與簽核流程。</p>
+    </div>
+    <div class="info-row">
+      <div class="info-dot"></div>
+      <p><strong>通知病房團隊：</strong>提前告知護理站、住院醫師，本週有學員跟診，建立友善學習環境。</p>
+    </div>
+    <div class="info-row">
+      <div class="info-dot"></div>
+      <p><strong>選定 2–3 位「教學型病人」：</strong>病情穩定、配合度高、病史豐富，適合學員練習問診的個案。</p>
+    </div>
+  </div>
+
+  <div class="sec-divider"><span>學員入職引導（Orientation）</span></div>
+
+  <div class="card">
+    <div class="card-title">
+      <div class="icon icon-navy">🏥</div>
+      <div>
+        <h3>Day 1 Orientation 重點</h3>
+        <p>建議 Day 1 上午排 60–90 分鐘的環境介紹</p>
+      </div>
+    </div>
+    <div class="accordion-item" onclick="toggleAcc(this)">
+      <div class="accordion-header">
+        <span class="acc-icon">🗺️</span>
+        <span class="acc-title">環境認識</span>
+        <span class="acc-arrow">▶</span>
+      </div>
+      <div class="accordion-body">
+        <div class="acc-list">
+          <div class="acc-row"><div class="acc-num">1</div><p>帶領學員巡視內科病房、護理站、值班室、醫師辦公室</p></div>
+          <div class="acc-row"><div class="acc-num">2</div><p>介紹 HIS 系統操作（讀取病歷、查閱報告）的基本功能</p></div>
+          <div class="acc-row"><div class="acc-num">3</div><p>說明緊急逃生路線、感控措施（手部衛生、隔離區域）</p></div>
+          <div class="acc-row"><div class="acc-num">4</div><p>介紹醫院識別證、更衣室、餐廳等基本設施</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="accordion-item" onclick="toggleAcc(this)">
+      <div class="accordion-header">
+        <span class="acc-icon">👥</span>
+        <span class="acc-title">團隊介紹</span>
+        <span class="acc-arrow">▶</span>
+      </div>
+      <div class="accordion-body">
+        <div class="acc-list">
+          <div class="acc-row"><div class="acc-num">1</div><p>介紹主治醫師、總醫師、住院醫師、護理長及個管師</p></div>
+          <div class="acc-row"><div class="acc-num">2</div><p>說明請教問題的時間與管道（不打擾正式診療的原則）</p></div>
+          <div class="acc-row"><div class="acc-num">3</div><p>協助學員了解不同角色在病人照護中的分工</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="accordion-item" onclick="toggleAcc(this)">
+      <div class="accordion-header">
+        <span class="acc-icon">📜</span>
+        <span class="acc-title">行為準則與期望</span>
+        <span class="acc-arrow">▶</span>
+      </div>
+      <div class="accordion-body">
+        <div class="acc-list">
+          <div class="acc-row"><div class="acc-num">1</div><p>儀表規範（白袍、名牌、清潔原則）</p></div>
+          <div class="acc-row"><div class="acc-num">2</div><p>病人隱私與保密原則，禁止拍攝病人或病歷</p></div>
+          <div class="acc-row"><div class="acc-num">3</div><p>溝通禮節：見到病人先自我介紹學員身份，徵求問診同意</p></div>
+          <div class="acc-row"><div class="acc-num">4</div><p>學員角色邊界：觀察與輔助為主，不得獨立下診療決策</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-box tip-gold">
+    <span class="tip-icon">💡</span>
+    <div class="tip-body">
+      <strong>建議做法：建立個人學習計畫（ILP）</strong>
+      <p>Day 1 請學員寫下 3 個個人學習目標，並在結束時進行自評。此動作能顯著提升學習動機與自主性。</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- ════════════════ PAGE: SCHEDULE ════════════════ -->
+<section class="page" id="page-schedule">
+
+  <div class="hero-card">
+    <div class="hero-tag">Phase 1–3 · Daily Workflow</div>
+    <h2>每日跟診流程<br>Daily Shadowing Schedule</h2>
+    <p>以下為建議的每日標準流程，可依科別特性與學員進度彈性調整。</p>
+  </div>
+
+  <div class="sec-divider"><span>三週期漸進學習架構</span></div>
+
+  <div class="card">
+    <div class="card-title">
+      <div class="icon icon-gold">📈</div>
+      <div><h3>漸進自主性模型</h3><p>Scaffolding → Fading → Independence</p></div>
+    </div>
+    <div class="tip-box tip-navy" style="margin-bottom:10px;">
+      <span class="tip-icon">🔵</span>
+      <div class="tip-body">
+        <strong>第一週（觀察期）：Watch One — 我做，你看</strong>
+        <p>學員以觀察者角色全程跟診，重點在於感受臨床思維的脈絡，課後由醫師主動說明「剛才我在想什麼」。</p>
+      </div>
+    </div>
+    <div class="tip-box tip-gold" style="margin-bottom:10px;">
+      <span class="tip-icon">🟡</span>
+      <div class="tip-body">
+        <strong>第二週（參與期）：Help One — 你做，我陪</strong>
+        <p>學員在監督下嘗試問診、提呈病例、說明檢查目的，醫師在旁即時引導，結束後立即回饋。</p>
+      </div>
+    </div>
+    <div class="tip-box tip-green" style="margin-bottom:0;">
+      <span class="tip-icon">🟢</span>
+      <div class="tip-body">
+        <strong>第三週以上（獨立期）：Teach One — 你做，我督</strong>
+        <p>學員主導問診並對住院醫師做 Mini-presentation，指導醫師以提問取代糾正，培養臨床自信。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-divider"><span>標準跟診日程表</span></div>
+
+  <div class="schedule-block">
+    <div class="schedule-header">🌅 上午病房查房（Morning Ward Rounds）</div>
+    <div class="schedule-row">
+      <div class="sch-time">07:30–08:00</div>
+      <div class="sch-body">
+        <div class="title">準備晨會（Pre-round）</div>
+        <div class="sub">學員提前至病房瀏覽負責病人的 vital signs、夜班 note、最新 lab</div>
+      </div>
+      <div class="sch-type"><span class="type-chip chip-active">主動</span></div>
+    </div>
+    <div class="schedule-row">
+      <div class="sch-time">08:00–08:30</div>
+      <div class="sch-body">
+        <div class="title">科部晨會 / 病例討論</div>
+        <div class="sub">觀察病例呈報格式與提問文化，紀錄 1–2 個不懂的名詞課後查詢</div>
+      </div>
+      <div class="sch-type"><span class="type-chip chip-observe">觀察</span></div>
+    </div>
+    <div class="schedule-row">
+      <div class="sch-time">08:30–10:30</div>
+      <div class="sch-body">
+        <div class="title">主治醫師查房</div>
+        <div class="sub">全程陪同，第一週觀察，第二週嘗試向病人自我介紹並協助問診</div>
+      </div>
+      <div class="sch-type"><span class="type-chip chip-observe">觀察→主動</span></div>
+    </div>
+    <div class="schedule-row">
+      <div class="sch-time">10:30–11:00</div>
+      <div class="sch-body">
+        <div class="title">Teaching Moment（核心教學時間）</div>
+        <div class="sub">指導醫師與學員 1-on-1，針對今日遇到的 1–2 個重點進行引導式討論（5 分鐘即可）</div>
+      </div>
+      <div class="sch-type"><span class="type-chip chip-reflect">反思</span></div>
+    </div>
+  </div>
+
+  <div class="schedule-block">
+    <div class="schedule-header">☀️ 下午臨床學習（Afternoon Clinical Learning）</div>
+    <div class="schedule-row">
+      <div class="sch-time">13:00–14:30</div>
+      <div class="sch-body">
+        <div class="title">門診或特殊檢查跟診</div>
+        <div class="sub">心超、導管室、內視鏡、超音波等；各科依週次安排不同主題</div>
+      </div>
+      <div class="sch-type"><span class="type-chip chip-observe">觀察</span></div>
+    </div>
+    <div class="schedule-row">
+      <div class="sch-time">14:30–16:00</div>
+      <div class="sch-body">
+        <div class="title">新收病人問診練習</div>
+        <div class="sub">第二週起由學員主導 History Taking，住院醫師陪同；完成後填寫問診紀錄表</div>
+      </div>
+      <div class="sch-type"><span class="type-chip chip-active">主動</span></div>
+    </div>
+    <div class="schedule-row">
+      <div class="sch-time">16:00–16:30</div>
+      <div class="sch-body">
+        <div class="title">每日回顧（Daily Debrief）</div>
+        <div class="sub">請學員說出今天學到什麼 / 不懂什麼 / 明天想做什麼（3W：What / Wonder / Will）</div>
+      </div>
+      <div class="sch-type"><span class="type-chip chip-reflect">反思</span></div>
+    </div>
+    <div class="schedule-row">
+      <div class="sch-time">16:30–17:00</div>
+      <div class="sch-body">
+        <div class="title">自主學習時間</div>
+        <div class="sub">查閱當日遭遇的不熟悉主題，準備明日的 Mini-oral presentation（第二週起）</div>
+      </div>
+      <div class="sch-type"><span class="type-chip chip-admin">自主</span></div>
+    </div>
+  </div>
+
+  <div class="tip-box tip-warn">
+    <span class="tip-icon">⚠️</span>
+    <div class="tip-body">
+      <strong>注意：避免「隱形學員」現象</strong>
+      <p>指導醫師每日至少與學員有 1 次有意義的互動（不限時間長短），確認學員的存在感與學習狀態。被忽略的學員通常在第三天就失去動力。</p>
+    </div>
+  </div>
+
+  <div class="sec-divider"><span>兩週課程建議主題分配</span></div>
+
+  <div class="card">
+    <div class="card-title">
+      <div class="icon icon-navy">📅</div>
+      <div><h3>Week-by-Week Learning Theme</h3></div>
+    </div>
+    <div class="info-row">
+      <div class="info-dot"></div>
+      <p><strong>Week 1：定向與觀察</strong>—病房環境、查房文化、常見主訴的鑑別診斷思路、內科常用藥物分類</p>
+    </div>
+    <div class="info-row">
+      <div class="info-dot"></div>
+      <p><strong>Week 2：參與與應用</strong>—新收病人問診、SOAP note 書寫、一個心臟、一個胸腔、一個腸胃道主題的 Mini lecture</p>
+    </div>
+    <div class="info-row">
+      <div class="info-dot"></div>
+      <p><strong>Week 3+（實習醫師）：</strong>獨立病例管理、參與 MDT 討論、學員自選主題短講（10 分鐘）</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- ════════════════ PAGE: METHODS ════════════════ -->
+<section class="page" id="page-methods">
+
+  <div class="hero-card">
+    <div class="hero-tag">Teaching Strategies</div>
+    <h2>臨床教學策略<br>Bedside Teaching Methods</h2>
+    <p>研究顯示，讓學習者主動參與思考的教學技巧，比單純示範更能產生持久的學習效果。</p>
+  </div>
+
+  <div class="sec-divider"><span>核心教學技巧</span></div>
+
+  <div class="accordion-item" onclick="toggleAcc(this)">
+    <div class="accordion-header">
+      <span class="acc-icon">🎤</span>
+      <span class="acc-title">One-Minute Preceptor（一分鐘教師法）</span>
+      <span class="acc-arrow">▶</span>
+    </div>
+    <div class="accordion-body">
+      <div class="acc-list">
+        <div class="acc-row"><div class="acc-num">1</div><p><strong>請學員表態：</strong>「你覺得這個病人最可能的診斷是什麼？」不要直接告訴答案。</p></div>
+        <div class="acc-row"><div class="acc-num">2</div><p><strong>探詢依據：</strong>「你為什麼這樣想？有什麼支持的證據？」</p></div>
+        <div class="acc-row"><div class="acc-num">3</div><p><strong>傳授通則：</strong>藉機說明一個可廣泛應用的臨床原則（不只針對這個病人）。</p></div>
+        <div class="acc-row"><div class="acc-num">4</div><p><strong>正向回饋：</strong>指出學員做對的事，具體說明為什麼這樣做是好的。</p></div>
+        <div class="acc-row"><div class="acc-num">5</div><p><strong>矯正錯誤：</strong>針對需要改進之處，說明正確做法，而非只指出錯誤。</p></div>
+      </div>
+      <div class="tip-box tip-green" style="margin-top:12px;">
+        <span class="tip-icon">✅</span>
+        <div class="tip-body">
+          <strong>適用時機</strong>
+          <p>查房後快速教學、急診評估後、任何學員遇到不熟悉主題時，只需 3–5 分鐘即可完成。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item" onclick="toggleAcc(this)">
+    <div class="accordion-header">
+      <span class="acc-icon">🗣️</span>
+      <span class="acc-title">Bedside Teaching（床邊教學）最佳實踐</span>
+      <span class="acc-arrow">▶</span>
+    </div>
+    <div class="accordion-body">
+      <div class="acc-list">
+        <div class="acc-row"><div class="acc-num">1</div><p><strong>進病室前預告：</strong>告訴學員「等一下進去後，你來幫我聽這個病人的心音，注意有沒有 murmur」，給學員任務焦點。</p></div>
+        <div class="acc-row"><div class="acc-num">2</div><p><strong>向病人介紹學員：</strong>「這位是我們的醫學生 ___，他也在學習，可以讓他一起問診嗎？」提升學員合法參與感。</p></div>
+        <div class="acc-row"><div class="acc-num">3</div><p><strong>病室外討論：</strong>所有教學討論應在病室外進行，避免讓病人感覺成為「教學材料」。</p></div>
+        <div class="acc-row"><div class="acc-num">4</div><p><strong>即時思考大聲說出（Think Aloud）：</strong>查房時主動說出「我現在看到 JVP elevated，加上水腫，讓我想到 fluid overload 的可能性…」</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item" onclick="toggleAcc(this)">
+    <div class="accordion-header">
+      <span class="acc-icon">❓</span>
+      <span class="acc-title">蘇格拉底提問法（Socratic Questioning）</span>
+      <span class="acc-arrow">▶</span>
+    </div>
+    <div class="accordion-body">
+      <p style="font-size:13px; color:var(--text-mid); line-height:1.65; margin-bottom:12px;">以提問代替直接給答案，引導學員自己建構臨床邏輯。</p>
+      <div class="acc-list">
+        <div class="acc-row"><div class="acc-num">→</div><p>「如果這個病人的 troponin 是正常的，你的鑑別診斷會怎麼改變？」</p></div>
+        <div class="acc-row"><div class="acc-num">→</div><p>「你說的這個藥，它的作用機轉是什麼？為什麼我們在心衰的病人要用它？」</p></div>
+        <div class="acc-row"><div class="acc-num">→</div><p>「如果是你，你下一步想 order 哪個檢查？為什麼先做這個而不是那個？」</p></div>
+        <div class="acc-row"><div class="acc-num">→</div><p>「這個情況你最擔心的最壞狀況（worst case scenario）是什麼？你怎麼 rule it out？」</p></div>
+      </div>
+      <div class="tip-box tip-warn" style="margin-top:12px;">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>注意：避免「射擊式提問」</strong>
+          <p>蘇格拉底提問的目的是引導思考，不是測試或羞辱。若學員答不出來，給出提示而非冷眼等待。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item" onclick="toggleAcc(this)">
+    <div class="accordion-header">
+      <span class="acc-icon">🔬</span>
+      <span class="acc-title">Mini-CEX（小型臨床評核考試）</span>
+      <span class="acc-arrow">▶</span>
+    </div>
+    <div class="accordion-body">
+      <div class="acc-list">
+        <div class="acc-row"><div class="acc-num">1</div><p>選定一個真實臨床情境（如：問診新收病人），請學員在你的觀察下執行。</p></div>
+        <div class="acc-row"><div class="acc-num">2</div><p>全程觀察，不打斷，除非有安全疑慮。在心中記錄「做得好的」與「需要改進的」各 1–2 點。</p></div>
+        <div class="acc-row"><div class="acc-num">3</div><p>結束後給予 SBI（Situation-Behavior-Impact）格式回饋，填寫評估表。</p></div>
+        <div class="acc-row"><div class="acc-num">4</div><p>每 2 週至少完成一次正式 Mini-CEX，記錄於學習護照。</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item" onclick="toggleAcc(this)">
+    <div class="accordion-header">
+      <span class="acc-icon">📊</span>
+      <span class="acc-title">Mini Oral Presentation（小型口頭病例呈報）</span>
+      <span class="acc-arrow">▶</span>
+    </div>
+    <div class="accordion-body">
+      <p style="font-size:13px; color:var(--text-mid); line-height:1.65; margin-bottom:12px;">第二週起，每日請學員以 <strong>2 分鐘</strong>呈報一位病人（SNAPPS 或 SOAP 格式）。</p>
+      <div class="acc-list">
+        <div class="acc-row"><div class="acc-num">S</div><p><strong>Summarize</strong> 病史重點（30 秒）</p></div>
+        <div class="acc-row"><div class="acc-num">N</div><p><strong>Narrow</strong> 鑑別診斷至 2–3 個</p></div>
+        <div class="acc-row"><div class="acc-num">A</div><p><strong>Analyze</strong> 鑑別診斷的支持與反對依據</p></div>
+        <div class="acc-row"><div class="acc-num">P</div><p><strong>Probe</strong> 提出自己不確定的問題</p></div>
+        <div class="acc-row"><div class="acc-num">P</div><p><strong>Plan</strong> 說明治療/檢查計畫</p></div>
+        <div class="acc-row"><div class="acc-num">S</div><p><strong>Select</strong> 請指導醫師針對一個重點教學</p></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ════════════════ PAGE: FEEDBACK ════════════════ -->
+<section class="page" id="page-feedback">
+
+  <div class="hero-card">
+    <div class="hero-tag">Assessment & Feedback</div>
+    <h2>回饋與評量<br>Feedback & Assessment</h2>
+    <p>有效的回饋是臨床教學中最有力的工具。好的回饋不是批評，而是幫助學員看清自己看不到的盲點。</p>
+  </div>
+
+  <div class="sec-divider"><span>回饋的黃金原則</span></div>
+
+  <div class="card">
+    <div class="card-title">
+      <div class="icon icon-gold">⭐</div>
+      <div><h3>SBI 回饋架構</h3><p>Situation → Behavior → Impact</p></div>
+    </div>
+    <div class="quote-block">
+      <p>「你在剛才問診病人的時候（S），我注意到你在病人說到胸痛的時候主動用開放式問句追問（B），這讓病人說出了之前沒說的冷汗症狀，幫助我們修正了診斷方向（I）。」</p>
+      <cite>— SBI 正向回饋範例</cite>
+    </div>
+    <div class="info-row">
+      <div class="info-dot"></div>
+      <p><strong>Situation（情境）：</strong>說清楚是哪個具體的時間和情況，不要模糊說「你今天表現不錯」。</p>
+    </div>
+    <div class="info-row">
+      <div class="info-dot"></div>
+      <p><strong>Behavior（行為）：</strong>描述觀察到的具體行為，不評論性格（「你很積極」→「你主動問了五個追問問題」）。</p>
+    </div>
+    <div class="info-row">
+      <div class="info-dot"></div>
+      <p><strong>Impact（影響）：</strong>說明這個行為帶來了什麼結果，對病人、對學習、或對團隊的影響。</p>
+    </div>
+  </div>
+
+  <div class="sec-divider"><span>回饋的時機與頻率</span></div>
+
+  <div class="card">
+    <div class="card-title">
+      <div class="icon icon-navy">⏰</div>
+      <div><h3>回饋時間表</h3></div>
+    </div>
+    <div class="info-row">
+      <div class="info-dot"></div>
+      <p><strong>即時微回饋（In-the-moment）：</strong>每次觀察到值得稱讚或矯正的行為後 5 分鐘內給予，不超過 2 分鐘，聚焦一個重點。</p>
+    </div>
+    <div class="info-row">
+      <div class="info-dot"></div>
+      <p><strong>每日回顧（Daily Debrief）：</strong>每天結束前 10–15 分鐘，以「3W：What learned / What wondered / What will do tomorrow」結構進行。</p>
+    </div>
+    <div class="info-row">
+      <div class="info-dot"></div>
+      <p><strong>週中評估（Mid-week Check-in）：</strong>每週三與學員 1-on-1 約 15 分鐘，確認目標進度，調整後半週的重點。</p>
+    </div>
+    <div class="info-row">
+      <div class="info-dot"></div>
+      <p><strong>週末總結回饋（End-of-week Feedback）：</strong>填寫結構化評估表，交換雙向回饋（學員也可以回饋指導醫師的教學方式）。</p>
+    </div>
+  </div>
+
+  <div class="sec-divider"><span>常見評量工具</span></div>
+
+  <div class="grid2">
+    <div class="mini-card" style="text-align:left; padding:16px;">
+      <div style="font-size:22px; margin-bottom:6px;">📝</div>
+      <div style="font-size:13px; font-weight:600; color:var(--navy); margin-bottom:4px;">Mini-CEX</div>
+      <div style="font-size:11px; color:var(--text-muted);">直接觀察臨床技能表現，每 2 週 1 次</div>
+      <div class="badge badge-navy" style="margin-top:8px;">臨床技能</div>
+    </div>
+    <div class="mini-card" style="text-align:left; padding:16px;">
+      <div style="font-size:22px; margin-bottom:6px;">🗂</div>
+      <div style="font-size:13px; font-weight:600; color:var(--navy); margin-bottom:4px;">Log Book</div>
+      <div style="font-size:11px; color:var(--text-muted);">學員自填每日病例紀錄與反思</div>
+      <div class="badge badge-gold" style="margin-top:8px;">自主紀錄</div>
+    </div>
+    <div class="mini-card" style="text-align:left; padding:16px;">
+      <div style="font-size:22px; margin-bottom:6px;">🎤</div>
+      <div style="font-size:13px; font-weight:600; color:var(--navy); margin-bottom:4px;">Oral Presentation</div>
+      <div style="font-size:11px; color:var(--text-muted);">結業時 5–10 分鐘病例或主題報告</div>
+      <div class="badge badge-green" style="margin-top:8px;">溝通整合</div>
+    </div>
+    <div class="mini-card" style="text-align:left; padding:16px;">
+      <div style="font-size:22px; margin-bottom:6px;">⭐</div>
+      <div style="font-size:13px; font-weight:600; color:var(--navy); margin-bottom:4px;">360° 評估</div>
+      <div style="font-size:11px; color:var(--text-muted);">主治、住院醫師、護理師、病人多方回饋</div>
+      <div class="badge badge-navy" style="margin-top:8px;">全方位</div>
+    </div>
+  </div>
+
+  <div class="tip-box tip-green">
+    <span class="tip-icon">🌱</span>
+    <div class="tip-body">
+      <strong>雙向回饋文化</strong>
+      <p>鼓勵學員在每週末匿名回饋指導醫師的教學方式（量表 1–5 分 + 一句開放建議）。這不僅提升教學品質，也示範了醫療文化中虛心接受回饋的重要性。</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- ════════════════ PAGE: CHECKLIST ════════════════ -->
+<section class="page" id="page-checklist">
+
+  <div class="hero-card">
+    <div class="hero-tag">Quick Reference</div>
+    <h2>指導醫師 Checklist<br>Teaching Physician Quick Guide</h2>
+    <p>勾選以追蹤您的教學準備完成度。進度會自動儲存在本裝置。</p>
+  </div>
+
+  <div id="progress-banner" class="progress-banner">
+    <div>
+      <div class="prog-label">完成進度</div>
+      <div class="prog-count" id="prog-num">0 / 0</div>
+    </div>
+    <div class="prog-bar-wrap">
+      <div class="prog-bar-fill" id="prog-fill" style="width:0%"></div>
+    </div>
+    <div id="prog-pct" style="font-size:13px; font-weight:700; color:var(--navy);">0%</div>
+  </div>
+
+  <div class="check-section">
+    <div class="check-label">📋 事前準備（Before Day 1）</div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text">確認學員人數、姓名、學習層級（Clerk / Intern）與到達日期</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text">設定本次 2–4 週的核心學習目標（Learning Objectives）</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text">通知病房護理長與住院醫師有學員跟診</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text">準備學習護照 / Log Book 與評估表格（向教學部索取）</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text">選定 2–3 位合適的「教學型病人」供學員問診練習</div>
+    </div>
+  </div>
+
+  <div class="check-section">
+    <div class="check-label">🗓 第一天（Day 1 Orientation）</div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text">完成環境導覽（病房、護理站、值班室、餐廳）</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text">介紹團隊成員與溝通管道</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text">說明行為準則：儀表、隱私保護、學員角色邊界</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text">請學員填寫個人學習計畫（ILP）：3 個個人目標</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text">帶領學員完成第一次查房，全程「Think Aloud」示範臨床思維</div>
+    </div>
+  </div>
+
+  <div class="check-section">
+    <div class="check-label">📆 每週例行（Weekly Routine）</div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text">週一：說明本週重點主題與學習目標</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text">週三：Mid-week check-in（15 分鐘，確認目標進度）</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text">週五：完成正式書面回饋並填寫評估表</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text">每週至少 1 次 One-Minute Preceptor 正式回饋</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text">每週至少安排 1 次特殊科別或技術見習（心超 / 導管室等）</div>
+    </div>
+  </div>
+
+  <div class="check-section">
+    <div class="check-label">🎓 結業（Final Week）</div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text">安排學員進行 5–10 分鐘結業口頭報告（病例呈報或主題小講）</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text">完成最終 Mini-CEX 評估，填寫學習護照並簽名</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text">提供學員書面推薦/評語（如有需要）</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text">收集學員對教學的匿名回饋，供下次改善</div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text">將評估資料繳回教學部存檔</div>
+    </div>
+  </div>
+
+</section>
+
+</main>
+
+<div class="bottom-bar">
+  <p><strong>國立臺灣大學醫學院附設醫院新竹臺大分院</strong> · 內科部臨床教學小組 · 2026</p>
+</div>
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function toggleAcc(item) {
+  item.classList.toggle('open');
+}
+
+function toggleCheck(item) {
+  item.classList.toggle('checked');
+  updateProgress();
+  saveProgress();
+}
+
+function updateProgress() {
+  const all = document.querySelectorAll('.check-item');
+  const done = document.querySelectorAll('.check-item.checked');
+  const pct = all.length ? Math.round(done.length / all.length * 100) : 0;
+  document.getElementById('prog-num').textContent = done.length + ' / ' + all.length;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+}
+
+function saveProgress() {
+  const states = [];
+  document.querySelectorAll('.check-item').forEach((item, i) => {
+    states.push(item.classList.contains('checked'));
+  });
+  try { localStorage.setItem('ntuh-hch-shadowing', JSON.stringify(states)); } catch(e){}
+}
+
+function loadProgress() {
+  try {
+    const saved = localStorage.getItem('ntuh-hch-shadowing');
+    if (saved) {
+      const states = JSON.parse(saved);
+      document.querySelectorAll('.check-item').forEach((item, i) => {
+        if (states[i]) item.classList.add('checked');
+      });
+    }
+  } catch(e){}
+  updateProgress();
+}
+
+window.addEventListener('load', loadProgress);
+
+// Share button functions
+function initShareButtons() {
+    var pageUrl = window.location.href;
+    var pageTitle = document.title;
+    var encodedUrl = encodeURIComponent(pageUrl);
+    var qrCodeImg = document.getElementById('qrCode');
+    if (qrCodeImg) qrCodeImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodedUrl;
+    var lineShare = document.getElementById('lineShare');
+    if (lineShare) lineShare.href = 'https://social-plugins.line.me/lineit/share?url=' + encodedUrl;
+    var emailShare = document.getElementById('emailShare');
+    if (emailShare) {
+        var emailSubject = encodeURIComponent('分享：' + pageTitle);
+        var emailBody = encodeURIComponent('我想和您分享這個頁面：\n\n' + pageTitle + '\n\n' + pageUrl);
+        emailShare.href = 'mailto:?subject=' + emailSubject + '&body=' + emailBody;
+    }
+}
+function toggleShareMenu() { var menu = document.getElementById('shareMenu'); if (menu) menu.classList.toggle('active'); }
+function copyPageUrl() {
+    var pageUrl = window.location.href;
+    navigator.clipboard.writeText(pageUrl).then(function() {
+        alert('✅ 連結已複製到剪貼簿！');
+    }).catch(function() {
+        var textArea = document.createElement('textarea');
+        textArea.value = pageUrl;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert('✅ 連結已複製到剪貼簿！');
+    });
+}
+document.addEventListener('click', function(event) {
+    var shareButton = document.querySelector('.share-button');
+    var shareMenu = document.getElementById('shareMenu');
+    if (shareButton && shareMenu && !shareButton.contains(event.target) && shareMenu.classList.contains('active'))
+        shareMenu.classList.remove('active');
+});
+document.addEventListener('DOMContentLoaded', initShareButtons);
+</script>
+</body>
+</html>
