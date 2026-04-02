@@ -254,6 +254,7 @@
                 { id: 'overview', label: 'AF總覽', icon: <Icons.Heart /> },
                 { id: 'pulse', label: '脈搏vs心率', icon: <Icons.Activity /> },
                 { id: 'rate', label: '心率控制', icon: <Icons.Zap /> },
+                { id: 'cardioversion', label: '整流', icon: <Icons.Zap /> },
                 { id: 'meds', label: '藥物', icon: <Icons.Pill /> },
                 { id: 'chads', label: 'CHA₂DS₂-VASc', icon: <Icons.Calculator /> },
                 { id: 'hasbled', label: 'HAS-BLED', icon: <Icons.AlertTriangle /> },
@@ -924,7 +925,262 @@
                 </Card>
             </div>
         );
-        
+
+        // ============ Cardioversion Tab ============
+        const CardioversionTab = () => (
+            <div style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <Card accent="var(--accent-rose)" className="animate-in stagger-1">
+                    <SectionTitle icon={<Icons.Zap />}>電擊整流 Cardioversion</SectionTitle>
+
+                    <InfoBox type="danger" title="重要提醒">
+                        <strong>整流決策需由 Senior/VS 評估！</strong>
+                        <br/>住院醫師不應自行決定是否執行電擊整流
+                    </InfoBox>
+
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.8, marginTop: '16px' }}>
+                        電擊整流 (Electrical Cardioversion) 是利用同步電擊將心房顫動轉換回正常竇性節律的方法。
+                        依據臨床情境分為<strong style={{color: 'var(--accent-rose)'}}>緊急整流</strong>與<strong style={{color: 'var(--accent-blue)'}}>非緊急整流</strong>。
+                    </p>
+                </Card>
+
+                <Card accent="var(--accent-rose)" className="animate-in stagger-2">
+                    <SubTitle color="var(--accent-rose)">緊急整流適應症</SubTitle>
+
+                    <div style={{
+                        background: 'linear-gradient(135deg, rgba(244,63,94,0.15) 0%, rgba(244,63,94,0.05) 100%)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        marginBottom: '16px',
+                        border: '1px solid rgba(244,63,94,0.3)',
+                    }}>
+                        <div style={{
+                            fontWeight: 700,
+                            color: 'var(--accent-rose)',
+                            fontSize: '1rem',
+                            marginBottom: '12px',
+                        }}>
+                            血行動力學不穩定 (Hemodynamically Unstable)
+                        </div>
+                        <ul style={{
+                            margin: '0 0 0 16px',
+                            color: 'var(--text-secondary)',
+                            fontSize: '0.85rem',
+                            lineHeight: 2,
+                        }}>
+                            <li>低血壓 (SBP &lt;90 mmHg)</li>
+                            <li>意識改變 / 意識不清</li>
+                            <li>急性心衰竭 / 肺水腫</li>
+                            <li>急性冠心症 (胸痛合併 ECG 變化)</li>
+                            <li>休克徵象</li>
+                        </ul>
+                    </div>
+
+                    <InfoBox type="warning" title="緊急整流">
+                        血行動力學不穩定時，<strong>不需等待 TEE 或抗凝血</strong>，應立即執行同步電擊整流！
+                    </InfoBox>
+                </Card>
+
+                <Card accent="var(--accent-blue)" className="animate-in stagger-3">
+                    <SubTitle color="var(--accent-blue)">非緊急整流 (Elective Cardioversion)</SubTitle>
+
+                    <div style={{
+                        background: 'var(--bg-secondary)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        marginBottom: '12px',
+                    }}>
+                        <div style={{ fontWeight: 600, color: 'var(--accent-blue)', marginBottom: '10px' }}>
+                            執行前評估
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                            {[
+                                { step: '1', text: 'AF 發作時間 <48 小時 → 可直接整流' },
+                                { step: '2', text: 'AF ≥48 小時或不確定 → 需做 TEE 排除心房血栓' },
+                                { step: '3', text: '已抗凝血 ≥3 週 → 可考慮不做 TEE' },
+                            ].map((item, i) => (
+                                <div key={i} style={{
+                                    display: 'flex',
+                                    alignItems: 'flex-start',
+                                    gap: '12px',
+                                    padding: '10px',
+                                    background: 'var(--bg-card)',
+                                    borderRadius: '8px',
+                                }}>
+                                    <div style={{
+                                        width: '24px',
+                                        height: '24px',
+                                        borderRadius: '50%',
+                                        background: 'var(--accent-blue)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontWeight: 700,
+                                        fontSize: '0.75rem',
+                                        flexShrink: 0,
+                                    }}>
+                                        {item.step}
+                                    </div>
+                                    <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                                        {item.text}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <InfoBox type="info" title="TEE (經食道心臟超音波)">
+                        用於排除左心耳血栓 (LAA thrombus)<br/>
+                        若發現血栓 → <strong style={{color:'var(--accent-rose)'}}>不可整流</strong>，需抗凝血至少 3-4 週後再評估
+                    </InfoBox>
+                </Card>
+
+                <Card accent="var(--accent-violet)" className="animate-in stagger-4">
+                    <SubTitle color="var(--accent-violet)">整流前準備</SubTitle>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        {[
+                            { icon: '💉', title: '鎮靜止痛', desc: 'Propofol / Midazolam + Fentanyl，需有氣道管理能力' },
+                            { icon: '📋', title: '同意書', desc: '說明風險：栓塞、皮膚灼傷、心律不整、麻醉風險' },
+                            { icon: '🩺', title: '監測設備', desc: '持續 ECG、SpO2、血壓監測、急救設備待命' },
+                            { icon: '⏱️', title: '禁食', desc: '非緊急整流應禁食 6-8 小時以減少吸入性肺炎風險' },
+                        ].map((item, i) => (
+                            <div key={i} style={{
+                                display: 'flex',
+                                gap: '14px',
+                                alignItems: 'flex-start',
+                                background: 'var(--bg-secondary)',
+                                padding: '14px',
+                                borderRadius: '12px',
+                            }}>
+                                <div style={{
+                                    fontSize: '1.3rem',
+                                    flexShrink: 0,
+                                }}>
+                                    {item.icon}
+                                </div>
+                                <div>
+                                    <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.9rem' }}>
+                                        {item.title}
+                                    </div>
+                                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                                        {item.desc}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </Card>
+
+                <Card accent="var(--accent-amber)" className="animate-in stagger-5">
+                    <SubTitle color="var(--accent-amber)">電擊能量 (Joules)</SubTitle>
+
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '12px',
+                        marginBottom: '16px',
+                    }}>
+                        <div style={{
+                            background: 'linear-gradient(135deg, rgba(245,158,11,0.2) 0%, rgba(245,158,11,0.05) 100%)',
+                            borderRadius: '12px',
+                            padding: '16px',
+                            textAlign: 'center',
+                            border: '1px solid rgba(245,158,11,0.3)',
+                        }}>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                                雙相波 (Biphasic)
+                            </div>
+                            <div style={{
+                                fontFamily: "'JetBrains Mono', monospace",
+                                fontSize: '1.8rem',
+                                fontWeight: 700,
+                                color: 'var(--accent-amber)',
+                            }}>
+                                120-200J
+                            </div>
+                            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                                現代除顫器常用
+                            </div>
+                        </div>
+
+                        <div style={{
+                            background: 'linear-gradient(135deg, rgba(139,92,246,0.2) 0%, rgba(139,92,246,0.05) 100%)',
+                            borderRadius: '12px',
+                            padding: '16px',
+                            textAlign: 'center',
+                            border: '1px solid rgba(139,92,246,0.3)',
+                        }}>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                                單相波 (Monophasic)
+                            </div>
+                            <div style={{
+                                fontFamily: "'JetBrains Mono', monospace",
+                                fontSize: '1.8rem',
+                                fontWeight: 700,
+                                color: 'var(--accent-violet)',
+                            }}>
+                                200-360J
+                            </div>
+                            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                                較舊型機器
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style={{
+                        background: 'var(--bg-secondary)',
+                        borderRadius: '10px',
+                        padding: '14px',
+                        fontSize: '0.85rem',
+                        color: 'var(--text-secondary)',
+                    }}>
+                        <div style={{ fontWeight: 600, marginBottom: '8px' }}>建議起始能量：</div>
+                        <ul style={{ margin: '0 0 0 16px', lineHeight: 2 }}>
+                            <li>AF 整流：<strong style={{color:'var(--accent-amber)'}}>雙相波 120-150J</strong> 起始</li>
+                            <li>若無效可逐步增加至 200J</li>
+                            <li>AFL (心房撲動)：能量可較低，50-100J 起始</li>
+                        </ul>
+                    </div>
+
+                    <InfoBox type="warning" title="同步電擊">
+                        <strong>務必開啟同步模式 (Sync Mode)！</strong>
+                        <br/>非同步電擊可能誘發 VF
+                        <br/>確認螢幕顯示 R 波標記後再電擊
+                    </InfoBox>
+                </Card>
+
+                <Card accent="var(--accent-emerald)" className="animate-in">
+                    <SubTitle color="var(--accent-emerald)">整流後處置</SubTitle>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        {[
+                            '持續監測心律至少 2-4 小時',
+                            '記錄整流後心律 (NSR 或 AF 復發)',
+                            '繼續或開始抗凝血治療至少 4 週',
+                            '評估是否需要抗心律不整藥物維持 NSR',
+                            '觀察皮膚灼傷情況',
+                        ].map((text, i) => (
+                            <div key={i} style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '10px',
+                                padding: '10px 12px',
+                                background: 'var(--bg-secondary)',
+                                borderRadius: '8px',
+                                fontSize: '0.85rem',
+                                color: 'var(--text-secondary)',
+                            }}>
+                                <span style={{ color: 'var(--accent-emerald)' }}>
+                                    <Icons.Check />
+                                </span>
+                                {text}
+                            </div>
+                        ))}
+                    </div>
+                </Card>
+            </div>
+        );
+
         // ============ Medications Tab ============
         const MedicationsTab = () => {
             const [activeTab, setActiveTab] = useState('digoxin');
@@ -1409,6 +1665,7 @@
                     case 'overview': return <OverviewTab />;
                     case 'pulse': return <PulseTab />;
                     case 'rate': return <RateControlTab />;
+                    case 'cardioversion': return <CardioversionTab />;
                     case 'meds': return <MedicationsTab />;
                     case 'chads': return <CHADSCalculator />;
                     case 'hasbled': return <HASBLEDCalculator />;
