@@ -14,10 +14,10 @@ style: |
   h3 { color: #fbbf24; font-size: 1.2em; }
   strong { color: #f472b6; }
   a { color: #60a5fa; }
-  table { font-size: 0.8em; width: 100%; border-collapse: collapse; }
-  th { background: #1e293b; color: #38bdf8; padding: 10px; text-align: left; }
-  td { padding: 8px 10px; border-bottom: 1px solid #334155; }
-  tr:nth-child(even) { background: rgba(255,255,255,0.03); }
+  table { font-size: 0.8em; width: 100%; border-collapse: collapse; border-radius: 8px; overflow: hidden; }
+  th { background: #1e3a5f; color: #ffffff; padding: 10px; text-align: left; font-weight: 700; }
+  td { padding: 8px 10px; border-bottom: 1px solid #cbd5e1; color: #0f172a; background: #f8fafc; }
+  tr:nth-child(even) td { background: #e2e8f0; }
   code { background: #1e293b; color: #fbbf24; padding: 2px 6px; border-radius: 4px; }
   blockquote { border-left: 4px solid #f472b6; padding-left: 16px; color: #94a3b8; font-style: italic; }
   section.lead h1 { font-size: 2.8em; text-align: center; }
