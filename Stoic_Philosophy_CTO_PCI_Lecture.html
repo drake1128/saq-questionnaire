@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>斯多葛哲學如何幫助 CTO/Complex PCI - 教學講義</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #2980b9;
+            --highlight: #e74c3c;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --border: #dee2e6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            background: var(--bg);
+            color: var(--primary);
+            line-height: 1.8;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 0 0 20px 20px;
+        }
+        header h1 { font-size: 1.8em; margin-bottom: 10px; }
+        header .subtitle { font-size: 1em; opacity: 0.9; }
+        header .speaker { margin-top: 15px; font-style: italic; opacity: 0.85; }
+
+        .toc {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px 30px;
+            margin: 30px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .toc h2 { color: var(--accent); margin-bottom: 12px; font-size: 1.2em; }
+        .toc ol { padding-left: 20px; }
+        .toc li { margin: 6px 0; }
+        .toc a { color: var(--accent); text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+
+        .section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 25px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 5px solid var(--accent);
+        }
+        .section h2 {
+            color: var(--accent);
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section h3 {
+            color: var(--primary);
+            font-size: 1.1em;
+            margin: 18px 0 8px 0;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 5px;
+        }
+        .section p { margin: 10px 0; }
+
+        .principle-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 0.9em;
+            flex-shrink: 0;
+        }
+
+        .key-point {
+            background: #eaf4fc;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 12px 0;
+            border-left: 4px solid var(--accent);
+        }
+        .key-point strong { color: var(--accent); }
+
+        .warning {
+            background: #fdf2f2;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 12px 0;
+            border-left: 4px solid var(--highlight);
+        }
+        .warning strong { color: var(--highlight); }
+
+        .application-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+        .application-table th {
+            background: var(--accent);
+            color: white;
+            padding: 10px 15px;
+            text-align: left;
+        }
+        .application-table td {
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        .application-table tr:nth-child(even) td {
+            background: #f5f9fc;
+        }
+
+        ul.checklist {
+            list-style: none;
+            padding-left: 5px;
+        }
+        ul.checklist li {
+            padding: 4px 0;
+            padding-left: 24px;
+            position: relative;
+        }
+        ul.checklist li::before {
+            content: "\2713";
+            color: var(--accent);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .quote {
+            font-style: italic;
+            color: #555;
+            padding: 15px 25px;
+            margin: 15px 0;
+            border-left: 3px solid #ccc;
+            background: #fafafa;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .case-box {
+            background: #fff8f0;
+            border: 1px solid #f0d9b5;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 12px 0;
+        }
+        .case-box .case-title {
+            font-weight: bold;
+            color: #c0392b;
+            margin-bottom: 5px;
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, #eaf4fc, #f0f7ff);
+            border-radius: 12px;
+            padding: 25px 30px;
+            margin: 25px 0;
+            border: 2px solid var(--accent);
+        }
+        .summary-box h2 { color: var(--accent); margin-bottom: 12px; }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #888;
+            font-size: 0.85em;
+        }
+
+        @media print {
+            body { background: white; }
+            .section { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
+            header { background: var(--primary); }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>斯多葛哲學如何幫助 CTO / Complex PCI</h1>
+    <div class="subtitle">How the Stoic Philosophy Can Help with CTO & Complex PCI</div>
+    <div class="speaker">講者：Dr. Manos Brilakis</div>
+</header>
+
+<div class="container">
+
+    <div class="toc">
+        <h2>目錄 Table of Contents</h2>
+        <ol>
+            <li><a href="#intro">引言：Complex PCI 的挑戰</a></li>
+            <li><a href="#stoicism">斯多葛哲學簡介</a></li>
+            <li><a href="#p1">原則一：負面想像 (Negative Visualisation)</a></li>
+            <li><a href="#p2">原則二：控制的三分法 (Trichotomy of Control)</a></li>
+            <li><a href="#p3">原則三：宿命論 (Fatalism)</a></li>
+            <li><a href="#p4">原則四：自我克制 (Self-Denial)</a></li>
+            <li><a href="#p5">原則五：冥想反思 (Meditation)</a></li>
+            <li><a href="#summary">總結與應用</a></li>
+        </ol>
+    </div>
+
+    <!-- Section 1: Introduction -->
+    <div class="section" id="intro">
+        <h2>引言：Complex PCI 的挑戰</h2>
+        <p>執行 CTO（Chronic Total Occlusion，慢性完全阻塞）和複雜的經皮冠狀動脈介入治療（PCI）時，常會面臨以下令人沮喪的情境：</p>
+
+        <div class="warning">
+            <strong>常見挫折情境：</strong>
+            <ul style="margin-top:8px; padding-left:20px;">
+                <li>花了 2.5 小時處理阻塞，但最終無法通過而放棄</li>
+                <li>花了 2 小時成功通過 CTO，但助手不慎將導線拉出</li>
+                <li>手術最終失敗，需要面對高期望的家屬</li>
+                <li>手術中發生併發症</li>
+                <li>嚴重併發症導致病患死亡，需向家屬解釋</li>
+            </ul>
+        </div>
+
+        <h3>Complex PCI 的困難之處</h3>
+        <ul class="checklist">
+            <li>技術難度高</li>
+            <li>耗時長，令人疲憊</li>
+            <li>可能失敗</li>
+            <li>可能發生併發症</li>
+        </ul>
+
+        <h3>常見的次優反應</h3>
+        <p>面對這些挑戰，我們可能會以<strong>憤怒</strong>、<strong>沮喪</strong>或<strong>放棄</strong>來回應——但這些都不是最佳策略。</p>
+
+        <div class="key-point">
+            <strong>核心問題：</strong>我們如何才能以最佳方式面對 Complex PCI 中遇到的挑戰？答案來自 2,300 年前的希臘——斯多葛哲學。
+        </div>
+    </div>
+
+    <!-- Section 2: Stoicism Intro -->
+    <div class="section" id="stoicism">
+        <h2>斯多葛哲學簡介</h2>
+        <p>斯多葛哲學誕生於雅典衛城下方的古市集（Agora）中一個名為 <strong>Stoa Poikile</strong>（彩繪柱廊）的地方，由 <strong>Zeno of Citium</strong>（芝諾）在約 2,300 年前創立。</p>
+
+        <div class="key-point">
+            <strong>斯多葛哲學的定義：</strong>一種生活哲學，其目標是依照美德生活，達到「寧靜」（Tranquility）的狀態——即消除悲傷、憤怒、焦慮等負面情緒，培養喜悅等正面情緒。
+        </div>
+
+        <p>五大斯多葛技術出自 <strong>William Irvine</strong> 的著作《<em>A Guide to the Good Life</em>》：</p>
+        <ol style="padding-left:20px; margin-top:8px;">
+            <li>負面想像 (Negative Visualisation)</li>
+            <li>控制的三分法 (Trichotomy of Control)</li>
+            <li>宿命論 (Fatalism)</li>
+            <li>自我克制 (Self-Denial)</li>
+            <li>冥想反思 (Meditation)</li>
+        </ol>
+    </div>
+
+    <!-- Principle 1 -->
+    <div class="section" id="p1">
+        <h2><span class="principle-num">1</span> 負面想像 Negative Visualisation</h2>
+
+        <div class="key-point">
+            <strong>定義：</strong>花時間想像我們可能失去所珍視的事物，想像事情可能比現在糟糕得多。這是解決「享樂適應」（Hedonic Adaptation）問題的方法——一旦達成某件事，我們就視為理所當然並想要更多。
+        </div>
+
+        <h3>在 Complex PCI 三個階段的應用</h3>
+        <table class="application-table">
+            <tr>
+                <th>階段</th>
+                <th>應用方式</th>
+            </tr>
+            <tr>
+                <td><strong>術前 (Before)</strong></td>
+                <td>透過思考可能出錯的事情，為併發症和潛在失敗做準備</td>
+            </tr>
+            <tr>
+                <td><strong>術中 (During)</strong></td>
+                <td>更仔細地監測病患，以偵測任何潛在問題</td>
+            </tr>
+            <tr>
+                <td><strong>術後 (After)</strong></td>
+                <td>即使結果不理想，也能藉由想像「事情本來可能更糟」來獲得安慰</td>
+            </tr>
+        </table>
+
+        <div class="warning">
+            <strong>注意：</strong>負面想像不會使我們焦慮嗎？關鍵在於正確的應用方式：
+            <ul style="margin-top:8px; padding-left:20px;">
+                <li>應該<strong>週期性</strong>進行，而非持續不斷</li>
+                <li>不是「擔心」可能出錯的事，而是<strong>想像</strong>可能發生的事，使我們對現狀更感滿足</li>
+                <li>記住：我們每次做某件事，都可能是最後一次</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Principle 2 -->
+    <div class="section" id="p2">
+        <h2><span class="principle-num">2</span> 控制的三分法 Trichotomy of Control</h2>
+
+        <div class="key-point">
+            <strong>核心概念：</strong>我們應該擔心的是自己能控制的事情。擔心無法控制的事情是徒勞的。我們能控制的是：<strong>思想、行動、目標和價值觀</strong>。
+        </div>
+
+        <p>手術的結果部分取決於我們可控制的因素，但也取決於我們<strong>無法控制</strong>的因素：</p>
+        <ul style="padding-left:20px; margin:8px 0;">
+            <li>病患的解剖結構</li>
+            <li>共病症</li>
+            <li>器材與設備</li>
+        </ul>
+
+        <h3>我們能控制的事情</h3>
+        <table class="application-table">
+            <tr>
+                <th>可控因素</th>
+                <th>具體行動</th>
+            </tr>
+            <tr>
+                <td><strong>學習</strong></td>
+                <td>透過閱讀、虛擬課程、實體課程學習 CTO PCI 和 Complex PCI</td>
+            </tr>
+            <tr>
+                <td><strong>設備</strong></td>
+                <td>確保實驗室有適當的設備，並熟悉其最佳使用方式</td>
+            </tr>
+            <tr>
+                <td><strong>技術</strong></td>
+                <td>學習並練習各種技術以應對困難病例</td>
+            </tr>
+            <tr>
+                <td><strong>影像判讀</strong></td>
+                <td>學習冠狀動脈 CTO 影像判讀，改善對複雜解剖的理解</td>
+            </tr>
+            <tr>
+                <td><strong>演算法</strong></td>
+                <td>發展處理挑戰性情境的心智模型與演算法（如 Balloon Uncrossable CTO 演算法）</td>
+            </tr>
+            <tr>
+                <td><strong>病例選擇</strong></td>
+                <td>控制何時、對哪些病例執行手術</td>
+            </tr>
+            <tr>
+                <td><strong>練習量</strong></td>
+                <td>做得越多，成功率越高</td>
+            </tr>
+        </table>
+
+        <h3>面對併發症的五個階段（快速通過）</h3>
+        <p>當手術中發生不良事件時，我們會經歷類似「悲傷五階段」的過程：</p>
+        <ol style="padding-left:20px; margin:8px 0;">
+            <li><strong>否認 (Denial)</strong> — 併發症發生時很常見</li>
+            <li><strong>憤怒 (Anger)</strong></li>
+            <li><strong>討價還價 (Bargaining)</strong> — 「讓我度過這關，我再也不會做這種事了」</li>
+            <li><strong>沮喪 (Depression)</strong></li>
+            <li><strong>接受 (Acceptance)</strong> — 接受現實並著手找到解決方案</li>
+        </ol>
+
+        <div class="key-point">
+            <strong>重新框架思考：</strong>當不預期的負面事件發生時，不要將其視為終結，而是將其視為<strong>展示問題解決能力的機會</strong>。想想看：「這最終會成為一個很棒的故事。」
+        </div>
+    </div>
+
+    <!-- Principle 3 -->
+    <div class="section" id="p3">
+        <h2><span class="principle-num">3</span> 宿命論 Fatalism</h2>
+
+        <div class="key-point">
+            <strong>關鍵區分：</strong>斯多葛主義主張對<strong>過去和現在</strong>持宿命態度，而<strong>非對未來</strong>。過去已經發生，無法改變；但未來我們仍有部分控制權。
+        </div>
+
+        <h3>臨床案例分享</h3>
+
+        <div class="case-box">
+            <div class="case-title">案例 1：Tornus 裝置夾困</div>
+            <p>一位 RCA CTO 病患使用 Tornus 裝置時，切割器發生扭轉並卡在右冠狀動脈中，病患最終需要緊急冠狀動脈繞道手術（CABG）取出裝置。</p>
+            <p><strong>教訓：</strong>學會如何更好地操作切割器、避免過度旋轉、防止導線移動，此後再未發生同樣問題。</p>
+        </div>
+
+        <div class="case-box">
+            <div class="case-title">案例 2：穿孔致死</div>
+            <p>複雜 RCA CTO 手術中使用 Stingray 系統成功進入遠端真腔並恢復血流，但隨後發生穿孔，導致壁內血腫和 ST 段上升，儘管以 coils 封閉穿孔，病患最終死亡。</p>
+            <p><strong>教訓：</strong>將此案例發表，數月後在另一實驗室指導時遇到類似穿孔，因前次經驗而能迅速處理，最終獲得良好結果。</p>
+        </div>
+
+        <div class="quote">
+            「已經發生的事已經發生了，我們現在做的任何事都無法改變它。但我們可以改變一秒後、一小時後、幾天後、幾年後會發生的事。」
+        </div>
+    </div>
+
+    <!-- Principle 4 -->
+    <div class="section" id="p4">
+        <h2><span class="principle-num">4</span> 自我克制 Self-Denial</h2>
+
+        <div class="key-point">
+            <strong>定義：</strong>主動尋求不適（Voluntary Discomfort），目的是：
+            <ul style="margin-top:5px; padding-left:20px;">
+                <li>使自己對不幸更有抵抗力</li>
+                <li>增強處理逆境的信心</li>
+                <li>更珍惜現有的順境</li>
+            </ul>
+        </div>
+
+        <div class="quote">
+            "You have to be comfortable being uncomfortable."<br>
+            （你必須習慣於不舒適。）
+        </div>
+
+        <h3>在 CTO PCI 中的應用</h3>
+        <ul class="checklist">
+            <li>使用不同的設備以熟悉它們</li>
+            <li>逐步挑戰更複雜的病例</li>
+            <li>練習在不上廁所、不進食的情況下工作數小時</li>
+            <li>主動尋求幫助，不要自吹自擂</li>
+            <li><strong>分享併發症</strong>——雖然不舒服，但這是極好的學習工具</li>
+        </ul>
+
+        <div class="key-point">
+            <strong>紀律 (Discipline)：</strong>根據 Kazantzakis 的說法，紀律是最高的美德之一。只有透過紀律，我們想做的事才能真正實現。每個人都想做所有事，但沒有紀律將努力轉化為具體行動，什麼都不會發生。
+        </div>
+    </div>
+
+    <!-- Principle 5 -->
+    <div class="section" id="p5">
+        <h2><span class="principle-num">5</span> 冥想反思 Meditation</h2>
+
+        <div class="key-point">
+            <strong>定義：</strong>回顧一天中發生的事情、我們的反應如何、我們的反應是否恰當。
+        </div>
+
+        <h3>實踐方法</h3>
+        <ul class="checklist">
+            <li><strong>想像觀察者：</strong>想像一個你信任且尊敬的人正在觀察你的每一個動作，你的行為會如何改變？</li>
+            <li><strong>撰寫與發表：</strong>將具有挑戰性或出現併發症的病例撰寫並發表</li>
+            <li><strong>製作簡報：</strong>建立 PowerPoint 來呈現這些案例</li>
+        </ul>
+
+        <div class="key-point">
+            <strong>個人經驗：</strong>Dr. Brilakis 表示，撰寫和發表困難病例對他個人幫助很大——有助於理解自己做了什麼、可以做得不同的地方，以及未來如何改進。
+        </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary-box" id="summary">
+        <h2>總結：五大斯多葛原則應用於 Complex PCI</h2>
+        <table class="application-table">
+            <tr>
+                <th>斯多葛原則</th>
+                <th>術前應用</th>
+                <th>術中應用</th>
+                <th>術後應用</th>
+            </tr>
+            <tr>
+                <td><strong>負面想像</strong></td>
+                <td>為併發症與失敗做準備</td>
+                <td>仔細監測病患</td>
+                <td>「事情本可更糟」獲得安慰</td>
+            </tr>
+            <tr>
+                <td><strong>控制三分法</strong></td>
+                <td>專注學習、準備設備</td>
+                <td>專注於可控的技術執行</td>
+                <td>接受不可控的結果</td>
+            </tr>
+            <tr>
+                <td><strong>宿命論</strong></td>
+                <td>—</td>
+                <td>接受已發生的事實</td>
+                <td>從失敗中學習並前進</td>
+            </tr>
+            <tr>
+                <td><strong>自我克制</strong></td>
+                <td>訓練耐受不適</td>
+                <td>保持紀律與專注</td>
+                <td>分享併發症經驗</td>
+            </tr>
+            <tr>
+                <td><strong>冥想反思</strong></td>
+                <td>—</td>
+                <td>想像有人在觀察</td>
+                <td>回顧、撰寫、發表</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>參考資料</h2>
+        <ul style="padding-left:20px;">
+            <li>William Irvine, <em>A Guide to the Good Life: The Ancient Art of Stoic Joy</em></li>
+            <li>Brilakis ES. "How Stoic Principles Can Help When Performing Complex Intervention." <em>Journal of Interventional Cardiology</em></li>
+            <li>影片來源：<a href="https://www.youtube.com/watch?v=Enkdl19ROrc" target="_blank">YouTube - How the Stoic Philosophy Can Help with CTO/Complex PCI</a></li>
+        </ul>
+    </div>
+
+</div>
+
+<footer>
+    <p>本講義根據 Dr. Manos Brilakis 演講內容整理製作</p>
+    <p>僅供教學使用 | For Educational Purposes Only</p>
+</footer>
+
+</body>
+</html>
