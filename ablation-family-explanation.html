@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>手術說明 — 心律不整導管電燒治療（RFCA / Cryo / PFA）</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #1e3a5f;
+  --primary-light: #2d5a87;
+  --rfca: #e74c3c;
+  --rfca-light: #fdecea;
+  --cryo: #2980b9;
+  --cryo-light: #eaf4fb;
+  --pfa: #27ae60;
+  --pfa-light: #eafaf1;
+  --warn: #f39c12;
+  --warn-light: #fef9e7;
+  --bg: #f4f6f9;
+  --card: #ffffff;
+  --text: #2c3e50;
+  --muted: #7f8c8d;
+  --border: #dde1e7;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  min-height: 100vh;
+}
+header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white;
+  padding: 20px 16px 16px;
+  text-align: center;
+}
+header h1 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+header p { font-size: 12px; opacity: 0.8; }
+
+.tabs {
+  display: flex;
+  background: white;
+  border-bottom: 2px solid var(--border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.tab {
+  flex: 1;
+  min-width: 90px;
+  padding: 12px 8px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+.content { padding: 16px; max-width: 960px; margin: 0 auto; }
+
+/* Summary cards */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.summary-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 14px 12px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  border-top: 4px solid;
+}
+.summary-card.rfca { border-color: var(--rfca); }
+.summary-card.cryo { border-color: var(--cryo); }
+.summary-card.pfa  { border-color: var(--pfa); }
+.summary-card .label { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+.summary-card .name { font-size: 15px; font-weight: 700; }
+.summary-card.rfca .name { color: var(--rfca); }
+.summary-card.cryo .name { color: var(--cryo); }
+.summary-card.pfa  .name { color: var(--pfa); }
+.summary-card .sub { font-size: 10px; color: var(--muted); margin-top: 4px; }
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 6px;
+}
+.badge.red    { background: #fdecea; color: #c0392b; }
+.badge.blue   { background: #eaf4fb; color: #1a6a9c; }
+.badge.green  { background: #eafaf1; color: #1e8449; }
+.badge.orange { background: #fef5e7; color: #d68910; }
+
+/* Comparison table */
+.section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 20px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 16px;
+  background: var(--primary);
+  border-radius: 2px;
+}
+
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 20px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  min-width: 480px;
+}
+thead tr { background: var(--primary); color: white; }
+thead th {
+  padding: 12px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+thead th:first-child { text-align: left; min-width: 140px; }
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:hover { background: #eef2f7; transition: background 0.15s; }
+td {
+  padding: 11px 10px;
+  font-size: 13px;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+td:first-child { text-align: left; font-weight: 500; color: var(--primary); }
+.risk-tag {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.risk-high   { background: #fdecea; color: #c0392b; }
+.risk-med    { background: #fef9e7; color: #d68910; }
+.risk-low    { background: #eafaf1; color: #1e8449; }
+.risk-vlow   { background: #e8f5ff; color: #1a6a9c; }
+.risk-rare   { background: #f0f0f0; color: #555; }
+.note { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+/* Mechanism cards */
+.mech-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.mech-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+  border-left: 5px solid;
+}
+.mech-card.rfca { border-color: var(--rfca); }
+.mech-card.cryo { border-color: var(--cryo); }
+.mech-card.pfa  { border-color: var(--pfa); }
+.mech-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.mech-card.rfca .mech-title { color: var(--rfca); }
+.mech-card.cryo .mech-title { color: var(--cryo); }
+.mech-card.pfa  .mech-title { color: var(--pfa); }
+.mech-sub { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.pros-cons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+.pros, .cons {
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+.pros { background: #eafaf1; }
+.cons { background: #fdecea; }
+.pros h4 { color: #1e8449; margin-bottom: 6px; }
+.cons h4 { color: #c0392b; margin-bottom: 6px; }
+.pros ul, .cons ul { list-style: none; }
+.pros ul li::before { content: "✓ "; color: #1e8449; }
+.cons ul li::before { content: "✗ "; color: #c0392b; }
+.pros ul li, .cons ul li { margin-bottom: 3px; line-height: 1.4; }
+
+/* Risk indicator */
+.risk-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.risk-item {
+  background: white;
+  border-radius: 10px;
+  padding: 12px 10px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.risk-item .risk-name { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+.donut-wrap { display: flex; justify-content: center; margin-bottom: 6px; }
+.risk-item .risk-pct { font-size: 14px; font-weight: 700; }
+
+/* Legend */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+.info-box {
+  background: #fffbf0;
+  border: 1px solid #f0d58c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 12px;
+  color: #7d6608;
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+.info-box strong { display: block; margin-bottom: 4px; }
+
+footer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  padding: 20px;
+}
+
+.hidden { display: none; }
+
+/* Share Button Styles */
+.share-button { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+.share-toggle { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%); border: none; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+.share-toggle:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5); }
+.share-menu { position: absolute; top: 60px; right: 0; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 20px; min-width: 280px; display: none; animation: fadeInShare 0.3s ease; }
+.share-menu.active { display: block; }
+@keyframes fadeInShare { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+.share-menu h4 { color: #1e293b; margin: 0 0 15px 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+.qr-container { background: #f8fafc; border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 15px; }
+.qr-container img { max-width: 150px; height: auto; border-radius: 8px; }
+.qr-container p { font-size: 0.75rem; color: #64748b; margin: 8px 0 0 0; }
+.share-buttons { display: flex; flex-direction: column; gap: 10px; }
+.share-btn { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: none; border-radius: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 500; transition: all 0.2s ease; text-decoration: none; color: white; }
+.share-btn.line { background: #00B900; }
+.share-btn.email { background: #EA4335; }
+.share-btn.copy { background: #3B82F6; }
+.share-btn:hover { transform: translateX(5px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.share-btn svg { width: 20px; height: 20px; fill: currentColor; }
+.share-close { position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0; }
+.share-close:hover { color: #1e293b; }
+@media print { .share-button { display: none; } }
+</style>
+</head>
+<body>
+
+<!-- Share Button -->
+<div class="share-button">
+    <button class="share-toggle" onclick="toggleShareMenu()" title="分享此頁面">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+    </button>
+    <div class="share-menu" id="shareMenu">
+        <button class="share-close" onclick="toggleShareMenu()">&times;</button>
+        <h4>分享此頁面</h4>
+        <div class="qr-container">
+            <img id="qrCode" src="" alt="QR Code">
+            <p>掃描 QR Code 開啟頁面</p>
+        </div>
+        <div class="share-buttons">
+            <a class="share-btn line" href="#" id="lineShare" target="_blank">
+                <svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+                LINE 分享
+            </a>
+            <a class="share-btn email" href="#" id="emailShare">
+                <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                Email 分享
+            </a>
+            <button class="share-btn copy" onclick="copyPageUrl()">
+                <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                複製連結
+            </button>
+        </div>
+    </div>
+</div>
+
+<header>
+  <h1>⚡ 心律不整導管治療風險比較</h1>
+  <p>RFCA ｜ Cryoablation ｜ PFA</p>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('overview')">總覽</div>
+  <div class="tab" onclick="showTab('risks')">風險比較</div>
+  <div class="tab" onclick="showTab('mechanism')">機轉特性</div>
+  <div class="tab" onclick="showTab('special')">特殊併發症</div>
+</div>
+
+<!-- TAB 1: Overview -->
+<div id="tab-overview" class="content">
+  <div class="summary-grid">
+    <div class="summary-card rfca">
+      <div class="label">熱消融</div>
+      <div class="name">RFCA</div>
+      <div class="sub">Radiofrequency<br>Catheter Ablation</div>
+      <span class="badge orange">最廣泛使用</span>
+    </div>
+    <div class="summary-card cryo">
+      <div class="label">冷凍消融</div>
+      <div class="name">Cryo</div>
+      <div class="sub">Cryoballoon<br>Ablation</div>
+      <span class="badge blue">AF 一線選擇</span>
+    </div>
+    <div class="summary-card pfa">
+      <div class="label">脈衝電場</div>
+      <div class="name">PFA</div>
+      <div class="sub">Pulsed Field<br>Ablation</div>
+      <span class="badge green">新世代技術</span>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <strong>⚠️ 適用範圍提醒</strong>
+    本比較以 <strong>心房顫動 (AF) 肺靜脈隔離</strong> 為主要背景。不同心律不整（AFL、VT、SVT）之風險比例可能有所差異。
+  </div>
+
+  <div class="section-title">能量機轉</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>項目</th>
+          <th style="color:#ff9090">RFCA</th>
+          <th style="color:#90c8f0">Cryo</th>
+          <th style="color:#90e8b0">PFA</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>能量類型</td>
+          <td>射頻 (熱能)</td>
+          <td>冷凍 (-60°C)</td>
+          <td>高壓電脈衝</td>
+        </tr>
+        <tr>
+          <td>組織效應</td>
+          <td>熱凝固壞死</td>
+          <td>冷凍壞死</td>
+          <td>不可逆電穿孔</td>
+        </tr>
+        <tr>
+          <td>組織選擇性</td>
+          <td>❌ 無選擇性</td>
+          <td>❌ 無選擇性</td>
+          <td>✅ 心肌細胞優先</td>
+        </tr>
+        <tr>
+          <td>焦痂形成</td>
+          <td>⚠️ 可能</td>
+          <td>✅ 較少</td>
+          <td>✅ 極少</td>
+        </tr>
+        <tr>
+          <td>即時監測</td>
+          <td>溫度/阻抗</td>
+          <td>溫度</td>
+          <td>EGM 改變</td>
+        </tr>
+        <tr>
+          <td>學習曲線</td>
+          <td>⚠️ 較陡</td>
+          <td>✅ 較易</td>
+          <td>⚠️ 中等</td>
+        </tr>
+        <tr>
+          <td>適用心律不整</td>
+          <td>所有類型</td>
+          <td>主要 AF / AFL</td>
+          <td>主要 AF（擴展中）</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title">整體安全性概覽</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>風險類別</th>
+          <th style="color:#ff9090">RFCA</th>
+          <th style="color:#90c8f0">Cryo</th>
+          <th style="color:#90e8b0">PFA</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>整體主要併發症率</td>
+          <td><span class="risk-tag risk-med">2–5%</span></td>
+          <td><span class="risk-tag risk-med">2–4%</span></td>
+          <td><span class="risk-tag risk-low">≤2%</span></td>
+        </tr>
+        <tr>
+          <td>手術相關死亡率</td>
+          <td><span class="risk-tag risk-low">&lt;0.1%</span></td>
+          <td><span class="risk-tag risk-low">&lt;0.1%</span></td>
+          <td><span class="risk-tag risk-vlow">極罕見</span></td>
+        </tr>
+        <tr>
+          <td>心包填塞</td>
+          <td><span class="risk-tag risk-med">1–2%</span></td>
+          <td><span class="risk-tag risk-low">0.5–1%</span></td>
+          <td><span class="risk-tag risk-low">≤0.5%</span></td>
+        </tr>
+        <tr>
+          <td>腦中風 / TIA</td>
+          <td><span class="risk-tag risk-low">0.5–1%</span></td>
+          <td><span class="risk-tag risk-low">0.5–1%</span></td>
+          <td><span class="risk-tag risk-low">0.5–1%</span></td>
+        </tr>
+        <tr>
+          <td>血管通路併發症</td>
+          <td><span class="risk-tag risk-med">1–3%</span></td>
+          <td><span class="risk-tag risk-med">1–2%</span></td>
+          <td><span class="risk-tag risk-med">1–2%</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TAB 2: Detailed Risks -->
+<div id="tab-risks" class="content hidden">
+  <div class="section-title">器官特定風險比較</div>
+
+  <div class="section-title" style="font-size:13px; color:#666; margin:14px 0 8px;">🫀 心臟相關</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>併發症</th><th style="color:#ff9090">RFCA</th><th style="color:#90c8f0">Cryo</th><th style="color:#90e8b0">PFA</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>心包填塞<br><span class="note">Cardiac tamponade</span></td>
+          <td><span class="risk-tag risk-med">1–2%</span></td>
+          <td><span class="risk-tag risk-low">0.5–1%</span></td>
+          <td><span class="risk-tag risk-low">≤0.5%</span></td>
+        </tr>
+        <tr>
+          <td>心臟穿孔<br><span class="note">Perforation</span></td>
+          <td><span class="risk-tag risk-low">0.5–1%</span></td>
+          <td><span class="risk-tag risk-low">&lt;0.5%</span></td>
+          <td><span class="risk-tag risk-vlow">極罕見</span></td>
+        </tr>
+        <tr>
+          <td>瓣膜損傷<br><span class="note">Valve injury</span></td>
+          <td><span class="risk-tag risk-rare">罕見</span></td>
+          <td><span class="risk-tag risk-rare">罕見</span></td>
+          <td><span class="risk-tag risk-rare">罕見</span></td>
+        </tr>
+        <tr>
+          <td>冠狀動脈痙攣<br><span class="note">Coronary spasm</span></td>
+          <td><span class="risk-tag risk-rare">罕見</span></td>
+          <td><span class="risk-tag risk-rare">罕見</span></td>
+          <td><span class="risk-tag risk-med">⚠️ 報告案例↑</span></td>
+        </tr>
+        <tr>
+          <td>術中心律不整<br><span class="note">Periprocedural arrhythmia</span></td>
+          <td><span class="risk-tag risk-med">常見（短暫）</span></td>
+          <td><span class="risk-tag risk-med">常見（短暫）</span></td>
+          <td><span class="risk-tag risk-high">⚠️ 電刺激/抽搐</span></td>
+        </tr>
+        <tr>
+          <td>房室傳導阻斷<br><span class="note">AV block</span></td>
+          <td><span class="risk-tag risk-low">間隔部位↑</span></td>
+          <td><span class="risk-tag risk-rare">罕見</span></td>
+          <td><span class="risk-tag risk-rare">罕見</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title" style="font-size:13px; color:#666; margin:14px 0 8px;">🫁 肺靜脈 / 食道</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>併發症</th><th style="color:#ff9090">RFCA</th><th style="color:#90c8f0">Cryo</th><th style="color:#90e8b0">PFA</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>肺靜脈狹窄<br><span class="note">PV stenosis</span></td>
+          <td><span class="risk-tag risk-med">2–5%<br><span style="font-size:10px">嚴重 &lt;1%</span></span></td>
+          <td><span class="risk-tag risk-low">0.5–2%</span></td>
+          <td><span class="risk-tag risk-vlow">&lt;0.5%</span></td>
+        </tr>
+        <tr>
+          <td>食道損傷<br><span class="note">Esophageal injury</span></td>
+          <td><span class="risk-tag risk-med">⚠️ 高危（熱擴散）</span></td>
+          <td><span class="risk-tag risk-low">低危</span></td>
+          <td><span class="risk-tag risk-vlow">✅ 極低<br><span style="font-size:10px">組織選擇性保護</span></span></td>
+        </tr>
+        <tr>
+          <td>心房食道瘻管<br><span class="note">Atrioesophageal fistula</span></td>
+          <td><span class="risk-tag risk-low">0.03–0.1%<br><span style="font-size:10px">致命性高</span></span></td>
+          <td><span class="risk-tag risk-rare">極罕見</span></td>
+          <td><span class="risk-tag risk-vlow">目前報告極少</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title" style="font-size:13px; color:#666; margin:14px 0 8px;">🧠 神經系統</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>併發症</th><th style="color:#ff9090">RFCA</th><th style="color:#90c8f0">Cryo</th><th style="color:#90e8b0">PFA</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>腦中風 / TIA</td>
+          <td><span class="risk-tag risk-low">0.5–1%</span></td>
+          <td><span class="risk-tag risk-low">0.5–1%</span></td>
+          <td><span class="risk-tag risk-low">0.5–1%</span></td>
+        </tr>
+        <tr>
+          <td>膈神經麻痺<br><span class="note">Phrenic nerve palsy</span></td>
+          <td><span class="risk-tag risk-low">0.4–0.5%</span></td>
+          <td><span class="risk-tag risk-med">⚠️ 5–15%（短暫）<br><span style="font-size:10px">永久 &lt;0.5%</span></span></td>
+          <td><span class="risk-tag risk-low">1–3%（短暫）<br><span style="font-size:10px">低於 Cryo</span></span></td>
+        </tr>
+        <tr>
+          <td>迷走神經反應<br><span class="note">Vagal reaction</span></td>
+          <td><span class="risk-tag risk-med">常見（術中）</span></td>
+          <td><span class="risk-tag risk-med">常見（術中）</span></td>
+          <td><span class="risk-tag risk-high">⚠️ 較常見<br><span style="font-size:10px">心跳驟降、血壓下降</span></span></td>
+        </tr>
+        <tr>
+          <td>沉默性腦栓塞<br><span class="note">Silent cerebral embolism</span></td>
+          <td><span class="risk-tag risk-med">MRI 偵測 10–15%</span></td>
+          <td><span class="risk-tag risk-low">低於 RFCA</span></td>
+          <td><span class="risk-tag risk-low">類似或更低</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title" style="font-size:13px; color:#666; margin:14px 0 8px;">🩸 血液 / 全身</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>併發症</th><th style="color:#ff9090">RFCA</th><th style="color:#90c8f0">Cryo</th><th style="color:#90e8b0">PFA</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>溶血<br><span class="note">Hemolysis</span></td>
+          <td><span class="risk-tag risk-rare">罕見</span></td>
+          <td><span class="risk-tag risk-rare">罕見</span></td>
+          <td><span class="risk-tag risk-high">⚠️ 20–40% 短暫<br><span style="font-size:10px">通常自限性</span></span></td>
+        </tr>
+        <tr>
+          <td>血栓栓塞<br><span class="note">Thromboembolism</span></td>
+          <td><span class="risk-tag risk-low">1–2%</span></td>
+          <td><span class="risk-tag risk-low">1%</span></td>
+          <td><span class="risk-tag risk-low">1%</span></td>
+        </tr>
+        <tr>
+          <td>血管通路出血<br><span class="note">Vascular access</span></td>
+          <td><span class="risk-tag risk-med">1–3%</span></td>
+          <td><span class="risk-tag risk-med">1–2%</span></td>
+          <td><span class="risk-tag risk-med">1–2%</span></td>
+        </tr>
+        <tr>
+          <td>腹膜後血腫<br><span class="note">Retroperitoneal hematoma</span></td>
+          <td><span class="risk-tag risk-low">0.2–0.5%</span></td>
+          <td><span class="risk-tag risk-low">0.2–0.5%</span></td>
+          <td><span class="risk-tag risk-low">0.2–0.5%</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TAB 3: Mechanism -->
+<div id="tab-mechanism" class="content hidden">
+  <div class="mech-grid">
+    <div class="mech-card rfca">
+      <div class="mech-title">🔴 RFCA — Radiofrequency Catheter Ablation</div>
+      <div class="mech-sub">機轉：交流電 (350–500 kHz) → 電阻熱 → 組織溫度 &gt;50°C → 凝固壞死</div>
+      <div><strong>適應症：</strong>AF、AFL、SVT、VT、WPW 等各類心律不整</div>
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>✅ 優點</h4>
+          <ul>
+            <li>最廣泛臨床經驗</li>
+            <li>適用幾乎所有心律不整</li>
+            <li>精確點消融（ Point-by-point）</li>
+            <li>即時溫度/接觸力回饋</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>❌ 缺點</h4>
+          <ul>
+            <li>食道熱傷風險最高</li>
+            <li>焦痂形成（char）→ 栓塞</li>
+            <li>PV 狹窄發生率較高</li>
+            <li>手術時間較長</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="mech-card cryo">
+      <div class="mech-title">🔵 Cryoballoon — 冷凍球囊消融</div>
+      <div class="mech-sub">機轉：液態 N₂O 注入 → 球囊溫度 –40 至 –60°C → 冷凍壞死（Ice ball 形成）</div>
+      <div><strong>適應症：</strong>主要為 AF（PVI）、部分 AFL</div>
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>✅ 優點</h4>
+          <ul>
+            <li>學習曲線短</li>
+            <li>PV 狹窄率低</li>
+            <li>食道損傷較少</li>
+            <li>手術時間較短</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>❌ 缺點</h4>
+          <ul>
+            <li>膈神經麻痺最高</li>
+            <li>非解剖型 PV 較困難</li>
+            <li>只適用 AF 為主</li>
+            <li>球囊卡頓風險</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="mech-card pfa">
+      <div class="mech-title">🟢 PFA — Pulsed Field Ablation</div>
+      <div class="mech-sub">機轉：高電壓超短脈衝 (&lt;1 ms) → 細胞膜不可逆電穿孔 (IEP) → 細胞凋亡，非熱效應</div>
+      <div><strong>適應症：</strong>AF（PVI、後壁）、未來可能擴展至 VT</div>
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>✅ 優點</h4>
+          <ul>
+            <li>心肌細胞選擇性最高</li>
+            <li>食道保護效果佳</li>
+            <li>PV 狹窄率極低</li>
+            <li>手術速度快</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>❌ 缺點</h4>
+          <ul>
+            <li>溶血（常見但短暫）</li>
+            <li>冠狀動脈痙攣</li>
+            <li>迷走反應強烈</li>
+            <li>長期資料尚少</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">組織選擇性比較</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>組織類型</th><th style="color:#ff9090">RFCA</th><th style="color:#90c8f0">Cryo</th><th style="color:#90e8b0">PFA</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>心肌細胞</td><td>🔴 破壞</td><td>🔴 破壞</td><td>🔴 破壞</td></tr>
+        <tr><td>食道黏膜</td><td>🔴 高風險</td><td>🟡 中風險</td><td>🟢 低風險</td></tr>
+        <tr><td>膈神經</td><td>🟡 中風險</td><td>🔴 高風險</td><td>🟡 低-中風險</td></tr>
+        <tr><td>冠狀動脈</td><td>🟡 中風險</td><td>🟢 低風險</td><td>🔴 需注意痙攣</td></tr>
+        <tr><td>神經叢/迷走神經</td><td>🟡 中風險</td><td>🟡 中風險</td><td>🔴 較敏感</td></tr>
+        <tr><td>肺靜脈壁</td><td>🟡 狹窄風險</td><td>🟢 低風險</td><td>🟢 極低風險</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TAB 4: Special Complications -->
+<div id="tab-special" class="content hidden">
+  <div class="info-box">
+    <strong>🚨 高度警覺併發症</strong>
+    以下為各術式獨特或嚴重之特殊風險，需特別知情同意及術後監測。
+  </div>
+
+  <div class="section-title">RFCA 特殊警示</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>特殊風險</th><th>發生率</th><th>臨床意義</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>心房食道瘻管<br><span class="note">Atrioesophageal fistula</span></td>
+          <td><span class="risk-tag risk-low">0.03–0.1%</span></td>
+          <td>致命性高，術後 1–4 週需警覺（發燒、神經症狀）</td>
+        </tr>
+        <tr>
+          <td>焦痂栓塞<br><span class="note">Char formation → embolism</span></td>
+          <td><span class="risk-tag risk-low">低（優化導管後↓）</span></td>
+          <td>高溫超過 80°C → 焦痂 → 腦栓塞</td>
+        </tr>
+        <tr>
+          <td>肺靜脈狹窄<br><span class="note">PV stenosis</span></td>
+          <td><span class="risk-tag risk-med">嚴重 &lt;1%</span></td>
+          <td>慢性咳嗽、呼吸困難，需 CT 診斷</td>
+        </tr>
+        <tr>
+          <td>心包炎<br><span class="note">Post-ablation pericarditis</span></td>
+          <td><span class="risk-tag risk-med">2–5%</span></td>
+          <td>術後 1–2 週，NSAIDs 治療</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title">Cryoablation 特殊警示</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>特殊風險</th><th>發生率</th><th>臨床意義</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>右側膈神經麻痺<br><span class="note">Right phrenic nerve palsy</span></td>
+          <td><span class="risk-tag risk-med">5–15%（短暫）</span></td>
+          <td>消融右上 PV 時需持續刺激監測；永久性 &lt;0.5%</td>
+        </tr>
+        <tr>
+          <td>球囊卡頓<br><span class="note">Catheter entrapment</span></td>
+          <td><span class="risk-tag risk-rare">極罕見</span></td>
+          <td>PV 口解凍前需確認無卡頓</td>
+        </tr>
+        <tr>
+          <td>空氣栓塞<br><span class="note">Air embolism</span></td>
+          <td><span class="risk-tag risk-rare">罕見</span></td>
+          <td>充氣/洗管時注意排氣</td>
+        </tr>
+        <tr>
+          <td>PV 口損傷</td>
+          <td><span class="risk-tag risk-low">低</span></td>
+          <td>非典型 PV 解剖→球囊密封不佳</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title">PFA 特殊警示</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>特殊風險</th><th>發生率</th><th>臨床意義</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>溶血<br><span class="note">Hemolysis</span></td>
+          <td><span class="risk-tag risk-high">20–40% 短暫↑</span></td>
+          <td>通常術後 24–48 hr 自行恢復；Hgb 監測</td>
+        </tr>
+        <tr>
+          <td>冠狀動脈痙攣<br><span class="note">Coronary vasospasm</span></td>
+          <td><span class="risk-tag risk-med">案例報告增加</span></td>
+          <td>左迴旋支（LCX）附近消融需特別注意</td>
+        </tr>
+        <tr>
+          <td>強烈迷走反應<br><span class="note">Vagal response</span></td>
+          <td><span class="risk-tag risk-high">常見（術中）</span></td>
+          <td>心跳驟降、血壓下降，需 Atropine 備用</td>
+        </tr>
+        <tr>
+          <td>肌肉收縮/抽搐<br><span class="note">Muscle contraction</span></td>
+          <td><span class="risk-tag risk-high">幾乎每次放電</span></td>
+          <td>需全身麻醉或深度鎮靜，不適合局麻</td>
+        </tr>
+        <tr>
+          <td>長期安全性</td>
+          <td><span class="risk-tag risk-rare">資料尚少</span></td>
+          <td>上市後追蹤數據仍在累積（2021年後）</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title">臨床決策參考</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>臨床情境</th><th>建議考量</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>食道緊貼左心房</td>
+          <td>優先 PFA 或 Cryo &gt; RFCA（降低食道損傷）</td>
+        </tr>
+        <tr>
+          <td>右膈神經功能重要（如單肺患者）</td>
+          <td>避免 Cryo（膈神經麻痺風險最高）</td>
+        </tr>
+        <tr>
+          <td>非 AF 心律不整（VT、SVT）</td>
+          <td>RFCA 為主（PFA/Cryo 適應症有限）</td>
+        </tr>
+        <tr>
+          <td>術前嚴重貧血</td>
+          <td>謹慎考量 PFA（術中溶血）</td>
+        </tr>
+        <tr>
+          <td>左迴旋支 (LCX) 鄰近消融目標</td>
+          <td>PFA 時需特別警覺冠狀動脈痙攣</td>
+        </tr>
+        <tr>
+          <td>需要麻醉評估</td>
+          <td>PFA 需全麻/深鎮靜；Cryo/RFCA 可清醒鎮靜</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<footer>
+  NTUH Hsinchu Cardiovascular Center ｜ 謝慕揚醫師 ｜ 2025<br>
+  本資料供臨床教育參考，實際風險依個別患者及術者經驗而定
+</footer>
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.content').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.remove('hidden');
+  event.target.classList.add('active');
+}
+
+// Share Button Functions
+function initShareButtons() {
+    const pageUrl = window.location.href;
+    const pageTitle = document.title;
+    const encodedUrl = encodeURIComponent(pageUrl);
+    const qrCodeImg = document.getElementById('qrCode');
+    if (qrCodeImg) qrCodeImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodedUrl;
+    const lineShare = document.getElementById('lineShare');
+    if (lineShare) lineShare.href = 'https://social-plugins.line.me/lineit/share?url=' + encodedUrl;
+    const emailShare = document.getElementById('emailShare');
+    if (emailShare) {
+        const emailSubject = encodeURIComponent('分享：' + pageTitle);
+        const emailBody = encodeURIComponent('我想和您分享這個頁面：\n\n' + pageTitle + '\n\n' + pageUrl);
+        emailShare.href = 'mailto:?subject=' + emailSubject + '&body=' + emailBody;
+    }
+}
+function toggleShareMenu() {
+    const menu = document.getElementById('shareMenu');
+    if (menu) menu.classList.toggle('active');
+}
+function copyPageUrl() {
+    const pageUrl = window.location.href;
+    navigator.clipboard.writeText(pageUrl).then(function() {
+        alert('連結已複製到剪貼簿！');
+    }).catch(function() {
+        var textArea = document.createElement('textarea');
+        textArea.value = pageUrl;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert('連結已複製到剪貼簿！');
+    });
+}
+document.addEventListener('click', function(event) {
+    var shareButton = document.querySelector('.share-button');
+    var shareMenu = document.getElementById('shareMenu');
+    if (shareButton && shareMenu && !shareButton.contains(event.target) && shareMenu.classList.contains('active')) {
+        shareMenu.classList.remove('active');
+    }
+});
+document.addEventListener('DOMContentLoaded', initShareButtons);
+</script>
+</body>
+</html>
