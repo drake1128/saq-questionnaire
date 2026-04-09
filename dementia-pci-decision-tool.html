@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>失智症病人心導管決策輔助工具 | Dementia + PCI Decision Aid</title>
+<meta name="description" content="失智症病人心導管介入治療決策輔助工具：FAST Scale 評估、心臟疾病嚴重度、預期餘命、家屬溝通重點">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+    background: #f4f6f9;
+    color: #2c3e50;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #5c3d8f 0%, #7c5cb8 100%);
+    color: white;
+    padding: 32px 32px 24px;
+  }
+  .header-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .header h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .header .subtitle { font-size: 14px; opacity: 0.85; }
+  .hospital-badge {
+    margin-top: 16px;
+    font-size: 13px;
+    opacity: 0.75;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .content { padding: 28px 32px; }
+
+  /* Alert box */
+  .alert-box {
+    background: #fff3cd;
+    border-left: 5px solid #f39c12;
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+  }
+  .alert-box .alert-title {
+    font-weight: 700;
+    color: #856404;
+    font-size: 15px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .alert-box p { color: #533f03; font-size: 14px; line-height: 1.7; }
+
+  /* Info box */
+  .info-box {
+    background: #e8f4fd;
+    border-left: 5px solid #3498db;
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+  }
+  .info-box .info-title {
+    font-weight: 700;
+    color: #1a5276;
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+  .info-box p { color: #1a5276; font-size: 14px; line-height: 1.7; }
+
+  /* Section */
+  .section { margin-bottom: 28px; }
+  .section-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #5c3d8f;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e8dff5;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title .icon {
+    width: 28px;
+    height: 28px;
+    background: #5c3d8f;
+    color: white;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  /* Radio group styling */
+  .radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .radio-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+    background: #f8f7fc;
+    border: 2px solid #e8dff5;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .radio-item:hover {
+    border-color: #7c5cb8;
+    background: #f3f0fa;
+  }
+  .radio-item.selected {
+    border-color: #5c3d8f;
+    background: #ede7f6;
+  }
+  .radio-item input[type="radio"] {
+    margin-top: 3px;
+    accent-color: #5c3d8f;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+  .radio-item label {
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .radio-item label strong {
+    color: #5c3d8f;
+    font-weight: 600;
+  }
+  .radio-item .stage-badge {
+    display: inline-block;
+    background: #5c3d8f;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-right: 8px;
+  }
+  .radio-item .severity-indicator {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 8px;
+  }
+  .severity-mild { background: #d4edda; color: #155724; }
+  .severity-moderate { background: #fff3cd; color: #856404; }
+  .severity-severe { background: #f8d7da; color: #721c24; }
+  .severity-terminal { background: #343a40; color: white; }
+
+  /* Cardiac condition section */
+  .cardiac-section {
+    background: #fef5f5;
+    border: 1px solid #f8d7da;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .cardiac-section h3 {
+    color: #c0392b;
+    font-size: 15px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Calculate button */
+  .calc-button {
+    width: 100%;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #5c3d8f 0%, #7c5cb8 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-bottom: 24px;
+  }
+  .calc-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(92, 61, 143, 0.3);
+  }
+  .calc-button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Result section */
+  .result-section {
+    display: none;
+    margin-top: 20px;
+  }
+  .result-section.show {
+    display: block;
+    animation: fadeIn 0.4s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Score card */
+  .score-card {
+    background: linear-gradient(135deg, #5c3d8f 0%, #7c5cb8 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .score-card .score-label {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-bottom: 6px;
+  }
+  .score-card .score-value {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .score-card .score-desc {
+    font-size: 16px;
+    font-weight: 600;
+    padding: 8px 16px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 20px;
+    display: inline-block;
+  }
+
+  /* Recommendation cards */
+  .rec-card {
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .rec-card.green {
+    background: #d4edda;
+    border: 2px solid #28a745;
+  }
+  .rec-card.yellow {
+    background: #fff3cd;
+    border: 2px solid #ffc107;
+  }
+  .rec-card.red {
+    background: #f8d7da;
+    border: 2px solid #dc3545;
+  }
+  .rec-card.purple {
+    background: #e8dff5;
+    border: 2px solid #5c3d8f;
+  }
+  .rec-card h4 {
+    font-size: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .rec-card.green h4 { color: #155724; }
+  .rec-card.yellow h4 { color: #856404; }
+  .rec-card.red h4 { color: #721c24; }
+  .rec-card.purple h4 { color: #5c3d8f; }
+  .rec-card ul {
+    padding-left: 20px;
+    font-size: 14px;
+  }
+  .rec-card li {
+    margin-bottom: 6px;
+  }
+
+  /* Communication checklist */
+  .checklist {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .checklist h4 {
+    color: #5c3d8f;
+    font-size: 15px;
+    margin-bottom: 14px;
+  }
+  .checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #e9ecef;
+  }
+  .checklist-item:last-child {
+    border-bottom: none;
+  }
+  .checklist-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    accent-color: #5c3d8f;
+  }
+  .checklist-item label {
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  /* Reference section */
+  .reference {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 24px;
+  }
+  .reference h5 {
+    font-size: 13px;
+    color: #6c757d;
+    margin-bottom: 8px;
+  }
+  .reference p {
+    font-size: 12px;
+    color: #6c757d;
+    line-height: 1.6;
+  }
+
+  /* Footer */
+  .footer {
+    background: #f8f9fa;
+    padding: 20px 32px;
+    text-align: center;
+    font-size: 12px;
+    color: #6c757d;
+    border-top: 1px solid #e9ecef;
+  }
+  .footer a {
+    color: #5c3d8f;
+    text-decoration: none;
+  }
+
+  /* Share Button Styles */
+  .share-button { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+  .share-toggle { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #5c3d8f 0%, #7c5cb8 100%); border: none; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(92, 61, 143, 0.4); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+  .share-toggle:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(92, 61, 143, 0.5); }
+  .share-menu { position: absolute; top: 60px; right: 0; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 20px; min-width: 280px; display: none; animation: fadeInShare 0.3s ease; }
+  .share-menu.active { display: block; }
+  @keyframes fadeInShare { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  .share-menu h4 { color: #1e293b; margin: 0 0 15px 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+  .qr-container { background: #f8fafc; border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 15px; }
+  .qr-container img { max-width: 150px; height: auto; border-radius: 8px; }
+  .qr-container p { font-size: 0.75rem; color: #64748b; margin: 8px 0 0 0; }
+  .share-buttons { display: flex; flex-direction: column; gap: 10px; }
+  .share-btn { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: none; border-radius: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 500; transition: all 0.2s ease; text-decoration: none; color: white; }
+  .share-btn.line { background: #00B900; }
+  .share-btn.email { background: #EA4335; }
+  .share-btn.copy { background: #5c3d8f; }
+  .share-btn:hover { transform: translateX(5px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .share-btn svg { width: 20px; height: 20px; fill: currentColor; }
+  .share-close { position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0; }
+  .share-close:hover { color: #1e293b; }
+
+  /* Reference links */
+  .reference a { color: #5c3d8f; text-decoration: none; }
+  .reference a:hover { text-decoration: underline; }
+
+  /* Print styles */
+  @media print {
+    .calc-button { display: none; }
+    .result-section { display: block !important; }
+    .share-button { display: none; }
+    body { background: white; }
+    .page { box-shadow: none; }
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 600px) {
+    .content { padding: 20px; }
+    .header { padding: 24px 20px 20px; }
+    .header h1 { font-size: 20px; }
+    .score-card .score-value { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- Share Button -->
+<div class="share-button">
+  <button class="share-toggle" onclick="toggleShareMenu()" title="分享此頁面">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+  </button>
+  <div class="share-menu" id="shareMenu">
+    <button class="share-close" onclick="toggleShareMenu()">&times;</button>
+    <h4>📤 分享此頁面</h4>
+    <div class="qr-container">
+      <img id="qrCode" src="" alt="QR Code">
+      <p>掃描 QR Code 開啟頁面</p>
+    </div>
+    <div class="share-buttons">
+      <a class="share-btn line" href="#" id="lineShare" target="_blank">
+        <svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.349 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+        LINE 分享
+      </a>
+      <a class="share-btn email" href="#" id="emailShare">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        Email 分享
+      </a>
+      <button class="share-btn copy" onclick="copyPageUrl()">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+        複製連結
+      </button>
+    </div>
+  </div>
+</div>
+
+  <header class="header">
+    <span class="header-tag">CLINICAL DECISION SUPPORT</span>
+    <h1>失智症病人心導管決策輔助工具</h1>
+    <div class="subtitle">Dementia + PCI/ACS Decision Aid Tool</div>
+    <div class="hospital-badge">
+      <span>🏥</span>
+      <span>新竹臺大分院 心血管中心</span>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="alert-box">
+      <div class="alert-title">⚠️ 使用說明</div>
+      <p>本工具僅供臨床決策參考，<strong>不能取代個案討論與家屬共同決策</strong>。所有失智合併 ACS 個案建議啟動多專科會議討論（心臟內科 + 神經內科 + 安寧共照 + 家庭醫學）。</p>
+    </div>
+
+    <div class="info-box">
+      <div class="info-title">📖 核心原則（Nijskens 2023）</div>
+      <p>「失智不等於不值得治療，但也不等於應做完整治療」。<strong>先評估預期餘命，再決定心血管介入強度</strong>。失智病人存活時間顯著較短，競爭風險使標準 risk calculator 失準。</p>
+    </div>
+
+    <!-- FAST Scale Assessment -->
+    <section class="section">
+      <h2 class="section-title">
+        <span class="icon">1</span>
+        FAST Scale 失智功能分期評估
+      </h2>
+      <p style="font-size: 14px; color: #666; margin-bottom: 16px;">
+        Functional Assessment Staging Tool — 請選擇病人目前符合的最高等級
+      </p>
+
+      <div class="radio-group" id="fastGroup">
+        <div class="radio-item" onclick="selectRadio('fast', 1)">
+          <input type="radio" name="fast" id="fast1" value="1">
+          <label for="fast1">
+            <span class="stage-badge">Stage 1</span>
+            <strong>無困難</strong>：主觀或客觀皆無認知困難
+            <span class="severity-indicator severity-mild">正常</span>
+          </label>
+        </div>
+
+        <div class="radio-item" onclick="selectRadio('fast', 2)">
+          <input type="radio" name="fast" id="fast2" value="2">
+          <label for="fast2">
+            <span class="stage-badge">Stage 2</span>
+            <strong>主觀困難</strong>：抱怨忘記物品位置、工作上有主觀困難
+            <span class="severity-indicator severity-mild">輕度</span>
+          </label>
+        </div>
+
+        <div class="radio-item" onclick="selectRadio('fast', 3)">
+          <input type="radio" name="fast" id="fast3" value="3">
+          <label for="fast3">
+            <span class="stage-badge">Stage 3</span>
+            <strong>工作功能下降</strong>：同事可察覺、新地點導航困難、組織能力下降
+            <span class="severity-indicator severity-mild">輕度</span>
+          </label>
+        </div>
+
+        <div class="radio-item" onclick="selectRadio('fast', 4)">
+          <input type="radio" name="fast" id="fast4" value="4">
+          <label for="fast4">
+            <span class="stage-badge">Stage 4</span>
+            <strong>複雜任務能力下降</strong>：無法規劃晚餐、處理財務、忘記繳費
+            <span class="severity-indicator severity-moderate">中度</span>
+          </label>
+        </div>
+
+        <div class="radio-item" onclick="selectRadio('fast', 5)">
+          <input type="radio" name="fast" id="fast5" value="5">
+          <label for="fast5">
+            <span class="stage-badge">Stage 5</span>
+            <strong>需協助選擇衣物</strong>：無法依季節、場合選擇適當衣著
+            <span class="severity-indicator severity-moderate">中度</span>
+          </label>
+        </div>
+
+        <div class="radio-item" onclick="selectRadio('fast', 6)">
+          <input type="radio" name="fast" id="fast6" value="6">
+          <label for="fast6">
+            <span class="stage-badge">Stage 6</span>
+            <strong>日常生活依賴</strong>：穿衣錯誤(6A)、無法洗澡(6B)、如廁困難(6C)、<br>
+            尿失禁(6D)、便失禁(6E)
+            <span class="severity-indicator severity-severe">重度</span>
+          </label>
+        </div>
+
+        <div class="radio-item" onclick="selectRadio('fast', 7)">
+          <input type="radio" name="fast" id="fast7" value="7">
+          <label for="fast7">
+            <span class="stage-badge">Stage 7</span>
+            <strong>末期失智</strong>：語言能力剩 6 個詞以下(7A)、單一詞彙(7B)、<br>
+            無法行走(7C)、無法坐起(7D)、無法微笑(7E)、無法抬頭(7F)
+            <span class="severity-indicator severity-terminal">末期</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cardiac Condition -->
+    <section class="section">
+      <h2 class="section-title">
+        <span class="icon">2</span>
+        心臟疾病狀態評估
+      </h2>
+
+      <div class="cardiac-section">
+        <h3>🫀 急性冠心症類型</h3>
+        <div class="radio-group" id="acsGroup">
+          <div class="radio-item" onclick="selectRadio('acs', 'stemi')">
+            <input type="radio" name="acs" id="acs-stemi" value="stemi">
+            <label for="acs-stemi">
+              <strong>STEMI</strong>：ST 上升型心肌梗塞（症狀發作 12 小時內）
+            </label>
+          </div>
+          <div class="radio-item" onclick="selectRadio('acs', 'nstemi-high')">
+            <input type="radio" name="acs" id="acs-nstemi-high" value="nstemi-high">
+            <label for="acs-nstemi-high">
+              <strong>NSTEMI 高風險</strong>：GRACE > 140、血流動力學不穩、惡性心律不整
+            </label>
+          </div>
+          <div class="radio-item" onclick="selectRadio('acs', 'nstemi-mod')">
+            <input type="radio" name="acs" id="acs-nstemi-mod" value="nstemi-mod">
+            <label for="acs-nstemi-mod">
+              <strong>NSTEMI 中風險</strong>：GRACE 109-140、穩定血流動力學
+            </label>
+          </div>
+          <div class="radio-item" onclick="selectRadio('acs', 'stable')">
+            <input type="radio" name="acs" id="acs-stable" value="stable">
+            <label for="acs-stable">
+              <strong>穩定型心絞痛 / CCS</strong>：慢性冠心症、穩定心絞痛
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="cardiac-section" style="background: #f0f4f8; border-color: #bee5eb;">
+        <h3 style="color: #0c5460;">📋 其他考量因素</h3>
+        <div style="display: grid; gap: 8px;">
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+            <input type="checkbox" id="factor-dnr" style="width: 18px; height: 18px; accent-color: #5c3d8f;">
+            已簽署 DNR / 預立醫療決定
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+            <input type="checkbox" id="factor-cancer" style="width: 18px; height: 18px; accent-color: #5c3d8f;">
+            合併末期癌症（預期壽命 < 6 個月）
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+            <input type="checkbox" id="factor-renal" style="width: 18px; height: 18px; accent-color: #5c3d8f;">
+            嚴重腎功能不全（CKD 4-5 期 / 透析）
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+            <input type="checkbox" id="factor-frail" style="width: 18px; height: 18px; accent-color: #5c3d8f;">
+            極度衰弱（CFS ≥ 7 分）
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+            <input type="checkbox" id="factor-family" style="width: 18px; height: 18px; accent-color: #5c3d8f;">
+            家屬明確表達拒絕侵入性治療
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <button class="calc-button" onclick="calculateDecision()" id="calcBtn">
+      📊 產生決策建議
+    </button>
+
+    <!-- Result Section -->
+    <section class="result-section" id="resultSection">
+      <h2 class="section-title">
+        <span class="icon">📋</span>
+        決策建議結果
+      </h2>
+
+      <div class="score-card" id="scoreCard">
+        <div class="score-label">綜合評估分數</div>
+        <div class="score-value" id="totalScore">--</div>
+        <div class="score-desc" id="scoreDesc">請完成評估</div>
+      </div>
+
+      <div id="recommendationCards"></div>
+
+      <!-- Family Communication Checklist -->
+      <section class="section" style="margin-top: 24px;">
+        <h2 class="section-title">
+          <span class="icon">💬</span>
+          家屬溝通查核表
+        </h2>
+
+        <div class="checklist">
+          <h4>與家屬討論時請確認以下重點：</h4>
+          <div class="checklist-item">
+            <input type="checkbox" id="chk1">
+            <label for="chk1">說明失智症對預期餘命的影響（FAST 7 平均存活 1-1.5 年）</label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="chk2">
+            <label for="chk2">解釋心導管的預期效益與風險，考量失智對恢復的影響</label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="chk3">
+            <label for="chk3">說明「舒適導向照護」不等於「放棄治療」</label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="chk4">
+            <label for="chk4">討論術後照護需求（ICU、約束、譫妄風險）</label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="chk5">
+            <label for="chk5">詢問病人過去曾表達的意願（如有）</label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="chk6">
+            <label for="chk6">說明支架選擇與費用（健保支架 vs DES）</label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="chk7">
+            <label for="chk7">啟動安寧共照會診（若 FAST ≥ 6）</label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="chk8">
+            <label for="chk8">記錄家屬決策過程於病歷</label>
+          </div>
+        </div>
+      </section>
+
+      <div class="reference">
+        <h5>📚 參考文獻</h5>
+        <p>
+          • Reisberg B, Ferris SH, Franssen E. An ordinal functional assessment tool for Alzheimer's-type dementia. <em>Hosp Community Psychiatry</em> 1985;36(6):593-5. <a href="https://doi.org/10.1176/ps.36.6.593" target="_blank">DOI: 10.1176/ps.36.6.593</a><br>
+          • Nijskens CMJM, et al. Cardiovascular Risk Management in Persons with Dementia. <em>J Alzheimers Dis</em> 2023;93(3):755-764. <a href="https://doi.org/10.3233/JAD-230019" target="_blank">DOI: 10.3233/JAD-230019</a> | <a href="https://pubmed.ncbi.nlm.nih.gov/37125555/" target="_blank">PMID: 37125555</a><br>
+          • 新竹臺大分院心血管中心「失智症合併心血管疾病照護」工作小組 2026
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>本工具僅供醫療專業人員臨床決策參考使用</p>
+    <p>新竹臺大分院 心血管中心 © 2026 | <a href="index.html">返回首頁</a></p>
+  </footer>
+</div>
+
+<script>
+// Track selections
+let selectedFast = null;
+let selectedAcs = null;
+
+function selectRadio(group, value) {
+  if (group === 'fast') {
+    selectedFast = value;
+    document.querySelectorAll('#fastGroup .radio-item').forEach(item => {
+      item.classList.remove('selected');
+    });
+    document.getElementById('fast' + value).checked = true;
+    document.getElementById('fast' + value).closest('.radio-item').classList.add('selected');
+  } else if (group === 'acs') {
+    selectedAcs = value;
+    document.querySelectorAll('#acsGroup .radio-item').forEach(item => {
+      item.classList.remove('selected');
+    });
+    document.getElementById('acs-' + value).checked = true;
+    document.getElementById('acs-' + value).closest('.radio-item').classList.add('selected');
+  }
+}
+
+function calculateDecision() {
+  // Validate inputs
+  if (!selectedFast || !selectedAcs) {
+    alert('請完成 FAST Scale 和心臟疾病狀態的評估');
+    return;
+  }
+
+  // Get additional factors
+  const hasDnr = document.getElementById('factor-dnr').checked;
+  const hasCancer = document.getElementById('factor-cancer').checked;
+  const hasRenal = document.getElementById('factor-renal').checked;
+  const hasFrail = document.getElementById('factor-frail').checked;
+  const familyRefuse = document.getElementById('factor-family').checked;
+
+  // Calculate score (higher = more conservative approach)
+  let score = 0;
+  let fastScore = parseInt(selectedFast);
+
+  // FAST scoring
+  if (fastScore <= 3) score += 1;
+  else if (fastScore <= 5) score += 3;
+  else if (fastScore === 6) score += 5;
+  else score += 7; // FAST 7
+
+  // ACS type scoring (urgent conditions reduce score)
+  if (selectedAcs === 'stemi') score -= 2;
+  else if (selectedAcs === 'nstemi-high') score -= 1;
+  else if (selectedAcs === 'nstemi-mod') score += 1;
+  else score += 2; // stable
+
+  // Additional factors
+  if (hasDnr) score += 3;
+  if (hasCancer) score += 4;
+  if (hasRenal) score += 1;
+  if (hasFrail) score += 2;
+  if (familyRefuse) score += 5;
+
+  // Normalize score to 0-10
+  score = Math.max(0, Math.min(10, score));
+
+  // Display results
+  document.getElementById('resultSection').classList.add('show');
+  document.getElementById('totalScore').textContent = score;
+
+  // Determine recommendation category
+  let category, desc, recommendations;
+
+  if (familyRefuse || (hasDnr && fastScore >= 7)) {
+    category = 'comfort';
+    desc = '舒適導向照護';
+  } else if (score <= 2) {
+    category = 'full';
+    desc = '建議積極介入';
+  } else if (score <= 5) {
+    category = 'shared';
+    desc = '共享決策討論';
+  } else if (score <= 7) {
+    category = 'conservative';
+    desc = '保守治療優先';
+  } else {
+    category = 'comfort';
+    desc = '舒適導向照護';
+  }
+
+  document.getElementById('scoreDesc').textContent = desc;
+
+  // Update score card color
+  const scoreCard = document.getElementById('scoreCard');
+  scoreCard.style.background = getScoreCardColor(category);
+
+  // Generate recommendation cards
+  generateRecommendations(category, fastScore, selectedAcs, {hasDnr, hasCancer, hasRenal, hasFrail, familyRefuse});
+
+  // Scroll to results
+  document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function getScoreCardColor(category) {
+  switch(category) {
+    case 'full': return 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+    case 'shared': return 'linear-gradient(135deg, #ffc107 0%, #fd7e14 100%)';
+    case 'conservative': return 'linear-gradient(135deg, #dc3545 0%, #e83e8c 100%)';
+    case 'comfort': return 'linear-gradient(135deg, #343a40 0%, #6c757d 100%)';
+    default: return 'linear-gradient(135deg, #5c3d8f 0%, #7c5cb8 100%)';
+  }
+}
+
+function generateRecommendations(category, fastScore, acsType, factors) {
+  const container = document.getElementById('recommendationCards');
+  let html = '';
+
+  // Main recommendation
+  if (category === 'full') {
+    html += `
+      <div class="rec-card green">
+        <h4>✅ 建議積極介入</h4>
+        <ul>
+          <li>失智程度輕微至中度，預期可從心導管介入獲益</li>
+          <li>建議依標準 ACS 治療流程進行</li>
+          <li>仍需與家屬充分說明術後照護需求</li>
+          <li>考慮使用健保塗藥支架減少日後再介入需求</li>
+        </ul>
+      </div>
+    `;
+  } else if (category === 'shared') {
+    html += `
+      <div class="rec-card yellow">
+        <h4>⚖️ 建議共享決策討論</h4>
+        <ul>
+          <li>病人處於中重度失智或有多重共病</li>
+          <li><strong>必須</strong>召開家庭會議，充分說明利弊</li>
+          <li>說明介入與保守治療的預期結果差異</li>
+          <li>建議啟動安寧共照會診參與討論</li>
+          <li>記錄完整決策過程於病歷</li>
+        </ul>
+      </div>
+    `;
+  } else if (category === 'conservative') {
+    html += `
+      <div class="rec-card red">
+        <h4>⚠️ 建議保守治療優先</h4>
+        <ul>
+          <li>重度失智合併多重不利因素</li>
+          <li>侵入性治療的風險可能大於益處</li>
+          <li>建議藥物保守治療為主</li>
+          <li>若需介入，考慮簡化策略（單次、重要血管優先）</li>
+          <li>啟動安寧共照與預立醫療照護諮商 (ACP)</li>
+        </ul>
+      </div>
+    `;
+  } else {
+    html += `
+      <div class="rec-card" style="background: #e9ecef; border: 2px solid #343a40;">
+        <h4 style="color: #343a40;">🕊️ 舒適導向照護</h4>
+        <ul>
+          <li>末期失智或家屬明確表達保守意願</li>
+          <li>以症狀控制與舒適照護為目標</li>
+          <li>避免侵入性檢查與治療</li>
+          <li>轉介安寧團隊提供全人照護</li>
+          <li>給予家屬情緒支持與悲傷輔導資源</li>
+        </ul>
+      </div>
+    `;
+  }
+
+  // STEMI special note
+  if (acsType === 'stemi' && fastScore >= 6) {
+    html += `
+      <div class="rec-card purple">
+        <h4>💡 STEMI 特別考量</h4>
+        <ul>
+          <li>即使重度失智，STEMI 仍是緊急狀況</li>
+          <li>若家屬同意且無絕對禁忌，Primary PCI 仍可考慮</li>
+          <li>但需權衡術後 ICU 照護、譫妄風險、長期預後</li>
+          <li>可考慮血栓溶解後保守策略作為替代</li>
+          <li><strong>關鍵：與家屬即時溝通，記錄決策</strong></li>
+        </ul>
+      </div>
+    `;
+  }
+
+  // Additional recommendations based on factors
+  if (fastScore >= 6) {
+    html += `
+      <div class="rec-card purple">
+        <h4>📋 FAST ≥ 6 重度失智照護要點</h4>
+        <ul>
+          <li>預期中位存活時間約 1-2 年</li>
+          <li>術後譫妄風險極高，需預防性措施</li>
+          <li>考慮「支架選擇」：健保裸支架可接受（預期壽命有限）</li>
+          <li>雙抗血小板療程可考慮縮短（1-3 個月）</li>
+          <li>啟動居家醫療或長照資源轉介</li>
+        </ul>
+      </div>
+    `;
+  }
+
+  container.innerHTML = html;
+}
+
+// Share button functions
+function initShareButtons() {
+  const pageUrl = window.location.href;
+  const pageTitle = document.title;
+  const encodedUrl = encodeURIComponent(pageUrl);
+  const qrCodeImg = document.getElementById('qrCode');
+  if (qrCodeImg) qrCodeImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodedUrl;
+  const lineShare = document.getElementById('lineShare');
+  if (lineShare) lineShare.href = 'https://social-plugins.line.me/lineit/share?url=' + encodedUrl;
+  const emailShare = document.getElementById('emailShare');
+  if (emailShare) {
+    const emailSubject = encodeURIComponent('分享：' + pageTitle);
+    const emailBody = encodeURIComponent('我想和您分享這個頁面：\n\n' + pageTitle + '\n\n' + pageUrl);
+    emailShare.href = 'mailto:?subject=' + emailSubject + '&body=' + emailBody;
+  }
+}
+
+function toggleShareMenu() {
+  const menu = document.getElementById('shareMenu');
+  if (menu) menu.classList.toggle('active');
+}
+
+function copyPageUrl() {
+  const pageUrl = window.location.href;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(pageUrl).then(function() {
+      alert('已複製連結！');
+    }).catch(function() {
+      fallbackCopyTextToClipboard(pageUrl);
+    });
+  } else {
+    fallbackCopyTextToClipboard(pageUrl);
+  }
+}
+
+function fallbackCopyTextToClipboard(text) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-999999px';
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  try {
+    document.execCommand('copy');
+    alert('已複製連結！');
+  } catch (err) {
+    alert('複製失敗，請手動複製：' + text);
+  }
+  document.body.removeChild(textArea);
+}
+
+document.addEventListener('click', function(event) {
+  var shareButton = document.querySelector('.share-button');
+  var shareMenu = document.getElementById('shareMenu');
+  if (shareButton && shareMenu && !shareButton.contains(event.target) && shareMenu.classList.contains('active')) {
+    shareMenu.classList.remove('active');
+  }
+});
+
+document.addEventListener('DOMContentLoaded', initShareButtons);
+</script>
+</body>
+</html>
