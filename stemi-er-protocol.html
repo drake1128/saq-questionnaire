@@ -259,6 +259,34 @@ function TabSOP() {
                 <button onClick={resetChecklist} style={{padding:'6px 16px',borderRadius:'8px',border:'1px solid var(--border-light)',background:'transparent',color:'var(--text-secondary)',cursor:'pointer',fontSize:'0.8rem'}}>重置清單</button>
             </div>
 
+            {/* ECG Initiation Criteria */}
+            <Card title="檢傷站立即啟動心電圖條件" icon="⚡" accentColor="#f59e0b">
+                <div style={{fontSize:'0.85rem',color:'var(--text-secondary)',marginBottom:'10px'}}>
+                    根據 NTUH Hsin-Chu Branch D2E QI protocol（Lee CK et al., <em>PLoS ONE</em> 2019），檢傷護理師遇到以下任一條件時，應<strong>立即啟動 ECG</strong>，不需等醫師指示：
+                </div>
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px',margin:'8px 0'}}>
+                    {[
+                        { num: '1', text: '胸痛 Chest pain' },
+                        { num: '2', text: '胸悶 Chest tightness' },
+                        { num: '3', text: '呼吸困難 Dyspnea' },
+                        { num: '4', text: '上腹不適（>40 歲）' },
+                        { num: '5', text: '昏厥 Syncope' },
+                    ].map(item => (
+                        <div key={item.num} style={{display:'flex',alignItems:'center',gap:'8px',background:'rgba(245,158,11,0.1)',borderRadius:'10px',padding:'10px 12px'}}>
+                            <span style={{background:'#f59e0b',color:'#000',fontWeight:700,borderRadius:'50%',width:'26px',height:'26px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'0.85rem',flexShrink:0}}>{item.num}</span>
+                            <span style={{fontSize:'0.9rem',fontWeight:500}}>{item.text}</span>
+                        </div>
+                    ))}
+                    <div style={{display:'flex',alignItems:'center',gap:'8px',background:'rgba(220,38,38,0.15)',borderRadius:'10px',padding:'10px 12px'}}>
+                        <span style={{background:'#DC2626',color:'#fff',fontWeight:700,borderRadius:'50%',width:'26px',height:'26px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'0.85rem',flexShrink:0}}>6</span>
+                        <span style={{fontSize:'0.9rem',fontWeight:500}}>血行動力學不穩<br/><span style={{fontSize:'0.78rem',color:'var(--text-secondary)'}}>SBP &lt;90 mmHg 或 HR &lt;50/min</span></span>
+                    </div>
+                </div>
+                <InfoBox type="highlight">
+                    <strong>關鍵成效：</strong>實施 protocol-driven ECG 後，Door-to-ECG &lt;10 min 達標率由 79.8% 提升至 93.3%（p=0.005），Door-to-Balloon &lt;90 min 達標率由 76.2% 提升至 91.1%（p=0.007）。延遲最常見原因為<strong>非典型症狀未被辨識</strong>（13.9% → 3.0%）。
+                </InfoBox>
+            </Card>
+
             {/* Section A */}
             <Card title="A. 第一現場（急診/病房/CCU）" icon="🏥" accentColor="#DC2626">
                 <ChecklistItem text="心電圖：10 分鐘內完成 12-lead ECG" checked={!!checklist['a1']} onChange={() => toggle('a1')} />
