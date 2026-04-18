@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LATEX 教學資料庫 — 檔名搜尋</title>
+<meta name="description" content="Cardiovascular teaching materials (LATEX folder) — filename search + direct link to the source Google Drive folder.">
+<link rel="stylesheet" href="design-system.css">
+<style>
+:root {
+    --primary: #0077b6;
+    --primary-dark: #023e8a;
+    --accent: #00b4d8;
+    --bg: #faf9f7;
+    --card: #ffffff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+    font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    min-height: 100vh;
+}
+.wrap { max-width: 960px; margin: 0 auto; padding: 24px 20px 80px; }
+
+header.hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    border-radius: 18px;
+    padding: 28px 26px;
+    margin-bottom: 22px;
+    box-shadow: 0 10px 28px rgba(2, 62, 138, 0.25);
+}
+.hero h1 { margin: 0 0 6px; font-size: 1.45rem; font-weight: 700; }
+.hero p  { margin: 0; opacity: 0.92; font-size: 0.95rem; }
+
+.back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--primary); text-decoration: none; font-size: 0.9rem;
+    margin-bottom: 14px;
+}
+.back-link:hover { text-decoration: underline; }
+
+.open-drive {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 14px; padding: 16px 22px;
+    background: linear-gradient(135deg, #34a853 0%, #1e7e34 100%);
+    color: white; border-radius: 14px; text-decoration: none;
+    box-shadow: 0 6px 18px rgba(52, 168, 83, 0.28);
+    margin-bottom: 18px; transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.open-drive:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(52, 168, 83, 0.36); }
+.open-drive .label { font-weight: 700; font-size: 1.02rem; }
+.open-drive .sub   { font-size: 0.82rem; opacity: 0.9; }
+.open-drive .arrow { font-size: 1.3rem; }
+.open-drive.disabled {
+    background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+    cursor: not-allowed; pointer-events: none;
+    box-shadow: 0 6px 18px rgba(107, 114, 128, 0.28);
+}
+
+.search-bar {
+    display: flex; gap: 10px; align-items: center;
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 6px 12px; box-shadow: var(--shadow); margin-bottom: 12px;
+}
+.search-bar input {
+    flex: 1; border: 0; outline: 0; padding: 12px 8px;
+    font-size: 1rem; background: transparent; color: var(--text);
+    font-family: inherit;
+}
+.search-bar .clear {
+    background: transparent; border: 0; color: var(--muted); cursor: pointer;
+    font-size: 1.1rem; padding: 4px 8px; display: none;
+}
+.search-bar .clear.visible { display: inline-block; }
+
+.meta-row {
+    display: flex; flex-wrap: wrap; gap: 10px 18px;
+    font-size: 0.85rem; color: var(--muted); padding: 0 4px 14px;
+}
+.meta-row strong { color: var(--text); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.chip {
+    background: white; border: 1px solid var(--border); color: var(--text);
+    padding: 6px 12px; border-radius: 999px; font-size: 0.82rem; cursor: pointer;
+    transition: all 0.15s ease;
+}
+.chip:hover { border-color: var(--primary); color: var(--primary); }
+.chip.active {
+    background: var(--primary); border-color: var(--primary); color: white;
+}
+
+ul.file-list { list-style: none; margin: 0; padding: 0; }
+.file-item {
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    gap: 12px; align-items: center;
+    padding: 12px 16px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; margin-bottom: 8px;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.file-item:hover { border-color: var(--primary); transform: translateX(2px); }
+.file-icon { font-size: 1.35rem; text-align: center; }
+.file-name { font-size: 0.95rem; word-break: break-word; }
+.file-name mark { background: #fff3b0; padding: 0 2px; border-radius: 3px; }
+.file-meta {
+    font-size: 0.78rem; color: var(--muted);
+    text-align: right; white-space: nowrap;
+}
+.folder-tag {
+    display: inline-block; font-size: 0.72rem;
+    background: #eef2ff; color: #4338ca;
+    padding: 1px 8px; border-radius: 999px; margin-right: 6px;
+    vertical-align: middle;
+}
+
+.empty {
+    text-align: center; color: var(--muted);
+    padding: 50px 20px; background: var(--card); border-radius: 12px;
+    border: 1px dashed var(--border);
+}
+.empty .big { font-size: 2rem; margin-bottom: 8px; }
+
+.footer-note {
+    margin-top: 30px; padding: 16px; background: #fff8e1;
+    border-left: 4px solid #f59e0b; border-radius: 8px;
+    font-size: 0.85rem; color: #78350f;
+}
+
+@media (max-width: 600px) {
+    .hero h1 { font-size: 1.2rem; }
+    .open-drive { flex-direction: column; text-align: center; gap: 6px; }
+    .file-item { grid-template-columns: 32px 1fr; }
+    .file-meta { grid-column: 1 / -1; text-align: left; padding-left: 44px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+    <a href="index.html" class="back-link">← 回首頁</a>
+
+    <header class="hero">
+        <h1>📚 LATEX 教學資料庫 Teaching Materials Library</h1>
+        <p>Google Drive 資料夾檔名索引 · 支援即時搜尋 · 點擊下方按鈕直接進入 Drive 檢視原檔</p>
+    </header>
+
+    <a id="driveButton" class="open-drive disabled" href="#" target="_blank" rel="noopener">
+        <div>
+            <div class="label">📂 開啟 Google Drive 資料夾</div>
+            <div class="sub" id="driveButtonSub">（尚未設定共用連結 — 請編輯 latex-library.json 的 drive_folder 欄位）</div>
+        </div>
+        <div class="arrow">→</div>
+    </a>
+
+    <div class="search-bar">
+        <span style="font-size:1.2rem;">🔍</span>
+        <input id="searchInput" type="search" placeholder="輸入檔名關鍵字，如 TEER、STEMI、CTO、LAAO..." autocomplete="off" spellcheck="false">
+        <button class="clear" id="clearBtn" aria-label="清除搜尋">✕</button>
+    </div>
+
+    <div class="meta-row" id="metaRow">
+        <span>共 <strong id="totalCount">–</strong> 份檔案</span>
+        <span>目前顯示 <strong id="shownCount">–</strong> 項</span>
+        <span>最後更新 <strong id="genTime">–</strong></span>
+    </div>
+
+    <div class="chips" id="extChips"></div>
+
+    <ul class="file-list" id="fileList"></ul>
+
+    <div class="empty" id="emptyState" style="display:none;">
+        <div class="big">🔍</div>
+        <div>沒有符合「<span id="emptyQ"></span>」的檔案</div>
+    </div>
+
+    <div class="footer-note">
+        <strong>如何更新此清單：</strong>在本機執行 <code>powershell -ExecutionPolicy Bypass -File ./generate-latex-library.ps1</code>，
+        會重新掃描 Drive 資料夾並更新 <code>latex-library.json</code>，然後 git commit &amp; push 即可。
+    </div>
+</div>
+
+<script>
+const EXT_ICONS = {
+    pdf: '📄', pptx: '📊', ppt: '📊',
+    doc: '📝', docx: '📝', md: '📋', mp4: '🎬'
+};
+
+let ALL_FILES = [];
+let DRIVE_URL = null;
+let activeExt = 'all';
+
+const $ = sel => document.querySelector(sel);
+const searchInput = $('#searchInput');
+const clearBtn = $('#clearBtn');
+const list = $('#fileList');
+const emptyState = $('#emptyState');
+
+function humanSize(bytes) {
+    if (!bytes && bytes !== 0) return '';
+    const u = ['B','KB','MB','GB'];
+    let i = 0, n = bytes;
+    while (n >= 1024 && i < u.length - 1) { n /= 1024; i++; }
+    return (i === 0 ? n : n.toFixed(1)) + ' ' + u[i];
+}
+
+function shortDate(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d)) return '';
+    return d.toISOString().slice(0, 10);
+}
+
+function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    })[c]);
+}
+
+function highlight(name, q) {
+    if (!q) return escapeHtml(name);
+    const parts = q.split(/\s+/).filter(Boolean).map(p => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    if (!parts.length) return escapeHtml(name);
+    const re = new RegExp('(' + parts.join('|') + ')', 'ig');
+    return escapeHtml(name).replace(re, '<mark>$1</mark>');
+}
+
+function matchesQuery(file, terms) {
+    if (!terms.length) return true;
+    const hay = (file.name + ' ' + (file.path || '')).toLowerCase();
+    return terms.every(t => hay.includes(t));
+}
+
+function render() {
+    const q = searchInput.value.trim().toLowerCase();
+    const terms = q.split(/\s+/).filter(Boolean);
+    const filtered = ALL_FILES.filter(f => {
+        if (activeExt !== 'all' && f.ext !== activeExt) return false;
+        return matchesQuery(f, terms);
+    });
+
+    $('#shownCount').textContent = filtered.length;
+    clearBtn.classList.toggle('visible', q.length > 0);
+
+    if (!filtered.length) {
+        list.innerHTML = '';
+        emptyState.style.display = 'block';
+        $('#emptyQ').textContent = q || '(目前篩選條件)';
+        return;
+    }
+    emptyState.style.display = 'none';
+
+    const frag = document.createDocumentFragment();
+    const maxRender = 500;
+    filtered.slice(0, maxRender).forEach(f => {
+        const li = document.createElement('li');
+        li.className = 'file-item';
+        const icon = EXT_ICONS[f.ext] || '📎';
+        const folder = f.path && f.path.includes('/')
+            ? '<span class="folder-tag">' + escapeHtml(f.path.split('/').slice(0, -1).join('/')) + '</span>'
+            : '';
+        li.innerHTML =
+            '<div class="file-icon">' + icon + '</div>' +
+            '<div class="file-name">' + folder + highlight(f.name, q) + '</div>' +
+            '<div class="file-meta">' + humanSize(f.size) + ' · ' + shortDate(f.mtime) + '</div>';
+        frag.appendChild(li);
+    });
+    list.innerHTML = '';
+    list.appendChild(frag);
+
+    if (filtered.length > maxRender) {
+        const li = document.createElement('li');
+        li.className = 'empty';
+        li.style.margin = '10px 0';
+        li.textContent = '（另有 ' + (filtered.length - maxRender) + ' 筆結果未顯示，請再細化關鍵字）';
+        list.appendChild(li);
+    }
+}
+
+function buildExtChips() {
+    const counts = {};
+    ALL_FILES.forEach(f => counts[f.ext] = (counts[f.ext] || 0) + 1);
+    const exts = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+    const box = $('#extChips');
+    box.innerHTML = '';
+    const makeChip = (label, key) => {
+        const c = document.createElement('button');
+        c.className = 'chip' + (key === activeExt ? ' active' : '');
+        c.textContent = label;
+        c.addEventListener('click', () => {
+            activeExt = key;
+            buildExtChips();
+            render();
+        });
+        return c;
+    };
+    box.appendChild(makeChip('全部 ' + ALL_FILES.length, 'all'));
+    exts.forEach(e => box.appendChild(makeChip(e.toUpperCase() + ' ' + counts[e], e)));
+}
+
+function wireDriveButton(url) {
+    const btn = $('#driveButton');
+    const sub = $('#driveButtonSub');
+    if (url && url !== '__SET_ME__' && /^https?:\/\//.test(url)) {
+        DRIVE_URL = url;
+        btn.href = url;
+        btn.classList.remove('disabled');
+        sub.textContent = '在新分頁開啟 · 可使用 Drive 內建的全文搜尋';
+    }
+}
+
+async function init() {
+    try {
+        const res = await fetch('latex-library.json?t=' + Date.now());
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        ALL_FILES = data.files || [];
+        $('#totalCount').textContent = ALL_FILES.length;
+        $('#genTime').textContent = shortDate(data.generated_at) || '–';
+        wireDriveButton(data.drive_folder);
+        buildExtChips();
+        render();
+    } catch (err) {
+        list.innerHTML = '';
+        emptyState.style.display = 'block';
+        $('#emptyQ').textContent = '載入 latex-library.json 失敗 (' + err.message + ')';
+    }
+}
+
+searchInput.addEventListener('input', render);
+clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    searchInput.focus();
+    render();
+});
+document.addEventListener('keydown', (e) => {
+    if (e.key === '/' && document.activeElement !== searchInput) {
+        e.preventDefault();
+        searchInput.focus();
+    }
+    if (e.key === 'Escape' && document.activeElement === searchInput) {
+        searchInput.value = '';
+        render();
+    }
+});
+
+init();
+</script>
+</body>
+</html>
