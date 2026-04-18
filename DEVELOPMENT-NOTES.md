@@ -8,6 +8,52 @@ NTUH Hsinchu Branch - Cardiovascular Center
 
 ## Recent Updates
 
+### 2026-04-19: 文獻庫雙軌化 — 修復 journal-reading 頁面 & 新增 LATEX Drive 索引
+
+**背景：**
+- 首頁「心血管教學文獻庫 Reading Library」連結失效（`https://drake1128.github.io/journal-reading/` 回 404）
+- 使用者希望同時保留既有 journal-reading 站，並新增一個直接索引 Google Drive 「Teaching materials by LATEX」資料夾的搜尋介面
+
+**Part 1 — 修復 `drake1128/journal-reading` 的 GitHub Pages：**
+
+| 問題 | 原因 | 修正 |
+|------|------|------|
+| 站點 404 | Pages 設定指向 `master/docs`，但 Quarto Action 實際 publish 到 `gh-pages` 分支 | 透過 `gh api PUT repos/.../pages` 把 source 改成 `gh-pages / root` |
+
+- 動作完全是 GitHub repo settings 層級，無 commit 變更
+- 驗證：`curl -s -o /dev/null -w "%{http_code}" https://drake1128.github.io/journal-reading/` → 200
+- 後續自動化：push 到 `master` 時，Quarto Publish workflow 會自動 render 並 deploy 到 `gh-pages`，不需要手動上傳 JSON
+
+**Part 2 — 新增 LATEX 教學資料庫（本 repo）：**
+
+新增四個檔案：
+
+| 檔案 | 用途 |
+|------|------|
+| `generate-latex-library.ps1` | PowerShell 掃描 `G:\我的雲端硬碟\004 教學資料 at Hsinchu 院內\Teaching materials by LATEX\`，輸出 JSON manifest |
+| `latex-library.json` | 296 筆檔案的 manifest（name, path, ext, size, mtime）+ drive_folder URL |
+| `latex-teaching-library.html` | 搜尋介面：即時檔名 filter、副檔名 chip 篩選、關鍵字 highlight、開啟 Drive 按鈕 |
+| `index.html` | 在原 Reading Library banner 下新增第二個綠色 featured banner（並列，不互相取代） |
+
+**技術眉角：**
+- PS 腳本用 `Join-Path $PSScriptRoot '..\..\Teaching materials by LATEX'` 相對路徑解析，避免 PowerShell 5.1 對 UTF-8 無 BOM 字面中文字符的解碼問題
+- JSON 以 `[System.IO.File]::WriteAllText` + `UTF8Encoding(false)` 寫入，確保無 BOM，中文檔名正確保留
+- PS 腳本有「保留既有 `drive_folder` 欄位」邏輯：re-run 時讀舊 JSON，若已設定 URL 則沿用，不會被 `__SET_ME__` sentinel 蓋掉
+- Drive folder URL：`https://drive.google.com/drive/folders/1WtRhNLr61F_STMg63540lOeHr_pl7D3R?usp=sharing`（已設共用「知道連結皆可檢視」）
+
+**日常維護流程：**
+1. 在 Drive 資料夾新增／刪除檔案
+2. 本機執行 `powershell -ExecutionPolicy Bypass -File ./generate-latex-library.ps1`
+3. `git add latex-library.json && git commit && git push` → GitHub Pages 自動部署
+
+**Trade-off 說明（刻意選擇的簡化）：**
+- 本方案只能搜「檔名」，無法點單一檔案直開 PDF（後者需 Drive API 取每個檔案的 file ID）
+- 設計上「搜到主題 → 點大按鈕進 Drive → 用 Drive 內建搜尋再找一次」即可，維護成本最低
+
+**Git commits:** `dd2e1d7` (Add LATEX teaching materials library with Drive-indexed search)
+
+---
+
 ### 2026-03-25: 資料夾整理 & KCCQ 計分修正
 
 **資料夾清理：**
