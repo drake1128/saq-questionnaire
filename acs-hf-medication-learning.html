@@ -2507,6 +2507,13 @@
                 setQuestions(filteredQuestions);
             }, [mode]);
 
+            useEffect(() => {
+                if (isComplete && questions.length > 0 && window.AchievementTracker) {
+                    const percentage = Math.round((score / questions.length) * 100);
+                    window.AchievementTracker.trackQuizComplete('acs-hf-medication-quiz', percentage);
+                }
+            }, [isComplete, score, questions.length]);
+
             const handleSelectAnswer = (index) => {
                 if (showExplanation) return;
                 setSelectedAnswer(index);
@@ -2533,14 +2540,6 @@
                     </div>
                 );
             }
-
-            // Track achievement when quiz is completed
-            React.useEffect(() => {
-                if (isComplete && window.AchievementTracker) {
-                    const percentage = Math.round((score / questions.length) * 100);
-                    window.AchievementTracker.trackQuizComplete('acs-hf-medication-quiz', percentage);
-                }
-            }, [isComplete, score, questions.length]);
 
             if (isComplete) {
                 const percentage = Math.round((score / questions.length) * 100);
