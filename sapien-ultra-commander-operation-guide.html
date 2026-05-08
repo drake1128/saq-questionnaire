@@ -437,6 +437,91 @@
   }
   .footer strong { color: #555; }
 
+  /* Pacing Protocol — three-operator swimlane table */
+  .pacing-wrap { overflow-x: auto; margin: 14px 0 16px; }
+  .pacing-table {
+    width: 100%;
+    min-width: 720px;
+    border-collapse: separate;
+    border-spacing: 4px;
+    font-size: 13.5px;
+  }
+  .pacing-table th {
+    padding: 10px 8px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 13px;
+    border-radius: 8px;
+    vertical-align: middle;
+    color: white;
+    line-height: 1.4;
+  }
+  .pacing-table th .op-sub {
+    display: block;
+    font-weight: 400;
+    font-size: 11px;
+    opacity: 0.85;
+    margin-top: 2px;
+  }
+  .pacing-table th.op-step { background: #475569; width: 56px; }
+  .pacing-table th.op-primary { background: #1a5c4c; }
+  .pacing-table th.op-pm      { background: #b91c1c; }
+  .pacing-table th.op-sec     { background: #c2410c; }
+
+  .pacing-table td {
+    padding: 10px 12px;
+    border-radius: 8px;
+    vertical-align: top;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    color: #cbd5e1;
+    text-align: center;
+    font-size: 11px;
+    line-height: 1.6;
+  }
+  .pacing-table td:first-child {
+    background: #e2e8f0;
+    color: #334155;
+    font-weight: 700;
+    text-align: center;
+    width: 56px;
+    border: 1px solid #cbd5e1;
+    font-size: 14px;
+  }
+  .pacing-table tbody td.active {
+    text-align: left;
+    color: #1e293b;
+    font-size: 13px;
+    border-style: solid;
+    border-width: 2px;
+  }
+  .pacing-table tbody td:nth-child(2).active { background: #f0faf7; border-color: #1a5c4c; }
+  .pacing-table tbody td:nth-child(3).active { background: #fef2f2; border-color: #b91c1c; }
+  .pacing-table tbody td:nth-child(4).active { background: #fff7ed; border-color: #c2410c; }
+  .pacing-table .verbal {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    background: white;
+    font-weight: 700;
+    font-size: 12.5px;
+    border: 1px solid;
+  }
+  .pacing-table tbody td:nth-child(2).active .verbal { color: #1a5c4c; border-color: #1a5c4c; }
+  .pacing-table tbody td:nth-child(3).active .verbal { color: #b91c1c; border-color: #b91c1c; }
+  .pacing-table tbody td:nth-child(4).active .verbal { color: #c2410c; border-color: #c2410c; }
+  .pacing-table .op-note {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    color: #64748b;
+    font-style: italic;
+    font-weight: 400;
+  }
+  .pacing-table .check-list { margin: 0; padding-left: 18px; font-size: 12.5px; }
+  .pacing-table .check-list li { padding: 1px 0; }
+
   /* Figure (PDF illustration) */
   .figure {
     background: #ffffff;
@@ -898,9 +983,125 @@
       </div>
     </div>
 
-    <!-- 6. Questions to ask CS -->
+    <!-- 6. Pacing Protocol — three-operator command choreography -->
     <div class="section">
-      <div class="section-title"><span class="icon">6</span>第一例應該主動問 CS 的 5 個問題</div>
+      <div class="section-title"><span class="icon">6</span>Deployment 時的三人指揮模式（Pacing Protocol）</div>
+
+      <div class="info-card">
+        <p>
+          Deployment 那關鍵的 30 秒是<strong>三個角色的合作</strong>：<strong>Primary Operator（主術者）</strong>下令、<strong>Pacemaker Operator（節律器手）</strong>控制脈衝、<strong>Secondary Operator（副手 / 送球員）</strong>執行 inflation。每一個動作都採<strong>「下令 → 對方覆誦 → 動作」</strong>的閉環溝通（closed-loop communication），避免在 BP &lt; 50 mmHg 的窗口出現指令誤解。
+        </p>
+      </div>
+
+      <div class="pacing-wrap">
+        <table class="pacing-table">
+          <thead>
+            <tr>
+              <th class="op-step">步驟</th>
+              <th class="op-primary">🩺 Primary Operator<span class="op-sub">主術者</span></th>
+              <th class="op-pm">⚡ Pacemaker Operator<span class="op-sub">節律器手</span></th>
+              <th class="op-sec">🎈 Secondary Operator<span class="op-sub">副手 / 送球員</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>—</td>
+              <td class="active">
+                節律器備妥
+                <span class="verbal">🗣 「Pacemaker Ready」</span>
+                <span class="op-note">向團隊宣告已備妥</span>
+              </td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td class="active">
+                確認 THV 已就位
+                <span class="verbal">🗣 「Pacemaker Ready」</span>
+                <span class="op-note">覆誦確認收到</span>
+              </td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>—</td>
+              <td class="active">
+                啟動 pacing
+                <span class="verbal">🗣 「Pacing On」</span>
+              </td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td class="active">
+                同步確認以下 4 項：
+                <ul class="check-list">
+                  <li>Sustained 1:1 capture</li>
+                  <li>SBP ≤ 50 mmHg</li>
+                  <li>Pulse pressure &lt; 10 mmHg</li>
+                  <li>THV 位置正確</li>
+                </ul>
+                <span class="verbal">🗣 「Inflate」</span>
+              </td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>—</td>
+              <td>—</td>
+              <td class="active">
+                緩慢可控初次充氣 → 完全充飽後 hold 3 秒 → 洩氣
+                <span class="verbal">🗣 「Inflating」→「1…2…3…」→「Deflating」</span>
+                <span class="op-note">同步口述每一步進度</span>
+              </td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td class="active">
+                確認 balloon 完全洩氣
+                <span class="verbal">🗣 「Pacemaker Off」</span>
+              </td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td>—</td>
+              <td class="active">
+                關閉 pacing
+                <span class="verbal">🗣 「Pacemaker Off」</span>
+                <span class="op-note">覆誦並執行</span>
+              </td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="alert-box" style="background:#eff6ff;border-left-color:#3b82f6;">
+        <div class="alert-title" style="color:#1e40af;">📐 Pacing 設定原則</div>
+        <p style="color:#1e3a8a;">
+          • 確認血液動力學穩定後再開始 rapid pacing；速率以術前 BAV 時所確認的數值為基準。<br>
+          • 若未達 <strong>sustained 1:1 capture、SBP ≤ 50 mmHg、pulse pressure &lt; 10 mmHg</strong>，需調整速率並重新跑一次 pacing 序列。<br>
+          • <strong>典型 Pacing Range：160 – 220 bpm</strong>
+        </p>
+      </div>
+
+      <div class="takehome">
+        <div class="takehome-title">🚨 黃金鐵則</div>
+        <ol>
+          <li><strong>Secondary Operator 與 Pacemaker Operator 只能依 Primary Operator 的口令動作</strong> — 沒有 Primary 的明確指令，<strong>不自行 inflate、不自行 pace、不自行關 pacer</strong>。</li>
+          <li>每個指令都要<strong>覆誦回去</strong>（closed-loop）。BP &lt; 50 mmHg 的窗口很短，誤聽 / 漏聽會讓整個 deployment 失節奏。</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- 7. Questions to ask CS -->
+    <div class="section">
+      <div class="section-title"><span class="icon">7</span>第一例應該主動問 CS 的 5 個問題</div>
       <ol class="q-list">
         <li><strong>Edwards logo 朝上</strong>的 reference 在哪個 fluoro view 最好驗證？（防止方向感錯）</li>
         <li><strong>Fine Adjustment Wheel 一格</strong>大概對應幾 mm？我們今天的 implant target 是 annular plane 上方幾 mm？（量化感覺）</li>
@@ -910,9 +1111,9 @@
       </ol>
     </div>
 
-    <!-- 7. Safety net & key reminders -->
+    <!-- 8. Safety net & key reminders -->
     <div class="section">
-      <div class="section-title"><span class="icon">7</span>安全網與最後提醒</div>
+      <div class="section-title"><span class="icon">8</span>安全網與最後提醒</div>
       <div class="safety-net">
         <div class="sn-title">🛡️ 第一例的安全網順序</div>
         <ol>
@@ -927,7 +1128,7 @@
 
     <!-- References -->
     <div class="section">
-      <div class="section-title"><span class="icon">8</span>參考資料</div>
+      <div class="section-title"><span class="icon">9</span>參考資料</div>
       <div class="ref-list">
         <strong>主要來源（交叉確認）：</strong>
         <ul>
