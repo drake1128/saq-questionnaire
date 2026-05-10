@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TEER vs 外科二尖瓣修補決策輔助工具 | TEER vs Surgical MV Repair Decision Aid</title>
+<meta name="description" content="MitraClip / PASCAL TEER vs 外科二尖瓣修補：DMR 與 FMR 平衡證據、COAPT vs MITRA-FR、RESHAPE-HF2、REPAIR-MR、heart team 共享決策、中英對照">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+    background: #f4f7f6;
+    color: #2c3e50;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+  .page {
+    max-width: 920px;
+    margin: 0 auto;
+    background: white;
+    min-height: 100vh;
+    box-shadow: 0 0 30px rgba(0,0,0,0.06);
+  }
+
+  /* Header — teal/emerald to differentiate from LAAO (navy) */
+  .header {
+    background: linear-gradient(135deg, #144848 0%, #1c7474 50%, #2c9c9c 100%);
+    color: white;
+    padding: 36px 32px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    right: -30px;
+    bottom: -30px;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .header-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    margin-bottom: 14px;
+  }
+  .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; line-height: 1.4; }
+  .header .subtitle { font-size: 15px; opacity: 0.92; font-weight: 400; }
+  .hospital-badge {
+    margin-top: 18px;
+    font-size: 13px;
+    opacity: 0.82;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .content { padding: 28px 32px; }
+
+  /* Boxes */
+  .alert-box { background: #fff3cd; border-left: 5px solid #f39c12; border-radius: 0 8px 8px 0; padding: 16px 20px; margin-bottom: 24px; }
+  .alert-box .alert-title { font-weight: 700; color: #856404; font-size: 15px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  .alert-box p { color: #533f03; font-size: 14px; line-height: 1.7; }
+  .alert-box .en { font-size: 12.5px; opacity: 0.78; font-style: italic; margin-top: 4px; }
+
+  .info-box { background: #e6f5f4; border-left: 5px solid #1c7474; border-radius: 0 8px 8px 0; padding: 16px 20px; margin-bottom: 24px; }
+  .info-box .info-title { font-weight: 700; color: #144848; font-size: 15px; margin-bottom: 6px; }
+  .info-box p { color: #144848; font-size: 14px; line-height: 1.7; }
+  .info-box .en { font-size: 13px; opacity: 0.78; font-style: italic; margin-top: 4px; }
+
+  .success-box { background: #e8f7ee; border-left: 5px solid #27ae60; border-radius: 0 8px 8px 0; padding: 16px 20px; margin-bottom: 24px; }
+  .success-box .info-title { color: #1e7e3a; font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+  .success-box p { color: #1e7e3a; font-size: 14px; line-height: 1.7; }
+
+  .danger-box { background: #fdecea; border-left: 5px solid #e74c3c; border-radius: 0 8px 8px 0; padding: 16px 20px; margin-bottom: 24px; }
+  .danger-box .info-title { color: #a93226; font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+  .danger-box p { color: #a93226; font-size: 14px; line-height: 1.7; }
+
+  /* Section */
+  .section { margin-bottom: 32px; }
+  .section-title {
+    font-size: 18px; font-weight: 700; color: #144848;
+    padding-bottom: 8px; border-bottom: 2px solid #c8e0df;
+    margin-bottom: 18px; display: flex; align-items: center; gap: 10px;
+  }
+  .section-title .icon {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: linear-gradient(135deg, #144848, #2c9c9c);
+    color: white; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700;
+  }
+  .section-title .en { font-size: 13px; color: #5a8b8a; font-weight: 400; margin-left: auto; font-style: italic; }
+
+  /* Bilingual paragraph */
+  .bilingual { margin-bottom: 14px; }
+  .bilingual .zh { font-size: 15px; color: #2c3e50; line-height: 1.8; }
+  .bilingual .en { font-size: 13px; color: #5a7d7c; line-height: 1.7; font-style: italic; margin-top: 4px; padding-left: 12px; border-left: 2px solid #c8e0df; }
+
+  /* Subsection title */
+  .subsection-title {
+    font-size: 16px; font-weight: 700; color: #1c7474;
+    margin: 18px 0 10px; padding: 6px 12px;
+    background: linear-gradient(90deg, #e6f5f4 0%, transparent 100%);
+    border-radius: 6px;
+  }
+  .subsection-title .en { font-size: 12.5px; color: #5a8b8a; font-weight: 400; font-style: italic; margin-left: 8px; }
+
+  /* Carpentier table */
+  .carpentier { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  @media (max-width: 700px) { .carpentier { grid-template-columns: 1fr; } }
+  .carpentier-card { background: #f8fafc; border-left: 4px solid #2c9c9c; border-radius: 8px; padding: 12px 14px; }
+  .carpentier-card .type { font-weight: 700; color: #144848; font-size: 14px; margin-bottom: 4px; }
+  .carpentier-card .desc { font-size: 13px; color: #2c3e50; line-height: 1.55; }
+  .carpentier-card .desc-en { font-size: 12px; color: #5a7d7c; font-style: italic; line-height: 1.5; }
+
+  /* Calculator */
+  .calc-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 11px 14px; background: #f8fafc; border-radius: 8px;
+    margin-bottom: 7px; border: 1px solid #e2e8f0;
+    transition: all 0.2s ease; cursor: pointer;
+  }
+  .calc-row:hover { background: #eef5f4; border-color: #2c9c9c; }
+  .calc-row.checked { background: #d9eceb; border-color: #1c7474; }
+  .calc-row label { flex: 1; font-size: 14px; cursor: pointer; }
+  .calc-row .points { font-weight: 700; color: #1c7474; font-size: 14px; min-width: 36px; text-align: right; }
+  .calc-row input[type="checkbox"] { margin-right: 10px; width: 16px; height: 16px; cursor: pointer; accent-color: #1c7474; }
+
+  .score-card {
+    background: linear-gradient(135deg, #144848, #2c9c9c); color: white;
+    border-radius: 12px; padding: 20px; text-align: center; margin-top: 14px;
+  }
+  .score-card .score-label { font-size: 13px; opacity: 0.85; margin-bottom: 4px; letter-spacing: 1px; }
+  .score-card .score-value { font-size: 42px; font-weight: 900; line-height: 1; }
+  .score-card .score-interp { font-size: 14px; margin-top: 8px; opacity: 0.95; }
+
+  /* Trial cards */
+  .trial-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  @media (max-width: 900px) { .trial-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .trial-grid { grid-template-columns: 1fr; } }
+  .trial-card { border-radius: 12px; padding: 16px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; }
+  .trial-card.positive { background: linear-gradient(180deg, #e8f7ee 0%, #f8fcfa 100%); border-left: 4px solid #27ae60; }
+  .trial-card.neutral { background: linear-gradient(180deg, #fdecea 0%, #fdf6f5 100%); border-left: 4px solid #e74c3c; }
+  .trial-card.modest { background: linear-gradient(180deg, #fff8e1 0%, #fffdf5 100%); border-left: 4px solid #f39c12; }
+  .trial-card.surgery { background: linear-gradient(180deg, #ede7f6 0%, #faf7ff 100%); border-left: 4px solid #7e57c2; }
+  .trial-card h4 {
+    font-size: 15px; font-weight: 700; color: #144848;
+    margin-bottom: 6px; display: flex; justify-content: space-between;
+    align-items: center; gap: 6px;
+  }
+  .trial-card .verdict { font-size: 10.5px; padding: 3px 7px; border-radius: 12px; color: white; font-weight: 600; letter-spacing: 0.3px; white-space: nowrap; }
+  .trial-card .verdict.win { background: #27ae60; }
+  .trial-card .verdict.miss { background: #e74c3c; }
+  .trial-card .verdict.modest { background: #f39c12; }
+  .trial-card .verdict.gold { background: #7e57c2; }
+  .trial-card .pop { font-size: 11.5px; color: #5a7d7c; margin-bottom: 8px; font-style: italic; line-height: 1.5; }
+  .trial-card ul { font-size: 13px; padding-left: 18px; margin-bottom: 8px; }
+  .trial-card li { margin-bottom: 3px; line-height: 1.5; }
+  .trial-card .takeaway {
+    font-size: 12.5px; background: rgba(255,255,255,0.7);
+    padding: 8px 10px; border-radius: 8px; margin-top: auto; color: #2c3e50; line-height: 1.55;
+  }
+  .trial-card .takeaway strong { color: #144848; }
+
+  /* Comparison table */
+  table.compare { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0 16px; }
+  table.compare th, table.compare td { padding: 9px 11px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+  table.compare th { background: #144848; color: white; font-weight: 600; font-size: 12.5px; }
+  table.compare tr:nth-child(even) td { background: #f8fafc; }
+  table.compare td.highlight { color: #27ae60; font-weight: 700; }
+  table.compare td.warn { color: #e74c3c; font-weight: 700; }
+  table.compare td.modest { color: #d68910; font-weight: 700; }
+
+  /* Eligibility checklist */
+  .check-list { background: #f8fafc; border-radius: 10px; padding: 14px 18px; }
+  .check-list li { font-size: 14px; padding: 4px 0; list-style: none; padding-left: 22px; position: relative; line-height: 1.6; }
+  .check-list li::before { content: '✓'; position: absolute; left: 0; color: #1c7474; font-weight: 700; }
+  .check-list li.bad::before { content: '✗'; color: #e74c3c; }
+  .check-list .en { color: #5a7d7c; font-style: italic; font-size: 12px; display: block; margin-top: 1px; }
+
+  /* Decision flowchart */
+  .flow-step { background: white; border: 2px solid #2c9c9c; border-radius: 12px; padding: 14px 18px; margin-bottom: 8px; position: relative; }
+  .flow-step .step-num { display: inline-block; background: #1c7474; color: white; width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; font-size: 13px; font-weight: 700; margin-right: 8px; }
+  .flow-step .step-title { font-weight: 700; font-size: 15px; color: #144848; }
+  .flow-step .step-detail { font-size: 13px; color: #555; margin-top: 6px; padding-left: 32px; }
+  .flow-arrow { text-align: center; color: #2c9c9c; font-size: 18px; margin: 4px 0; }
+
+  /* Talk card */
+  .talk-card { background: #f8fafc; border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; border-left: 4px solid #2c9c9c; }
+  .talk-card .zh { font-weight: 600; font-size: 14.5px; color: #2c3e50; margin-bottom: 4px; }
+  .talk-card .en { font-size: 13px; color: #5a7d7c; font-style: italic; line-height: 1.6; }
+
+  /* Quiz */
+  .quiz-container { background: linear-gradient(180deg, #fafbfc 0%, #ffffff 100%); border: 1px solid #e2e8f0; border-radius: 14px; padding: 22px; margin-bottom: 16px; }
+  .quiz-progress { display: flex; justify-content: space-between; font-size: 13px; color: #5a8b8a; margin-bottom: 12px; }
+  .quiz-progress-score { color: #27ae60; font-weight: 700; }
+  .quiz-question { font-size: 16px; font-weight: 700; color: #2c3e50; margin-bottom: 6px; line-height: 1.55; }
+  .quiz-question-en { font-size: 13px; color: #5a7d7c; font-style: italic; margin-bottom: 16px; line-height: 1.5; }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-option { background: white; border: 2px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; font-size: 14px; color: #2c3e50; cursor: pointer; transition: all 0.25s; text-align: left; font-family: inherit; }
+  .quiz-option:hover:not(.disabled) { border-color: #1c7474; transform: translateX(3px); background: #f8fafc; }
+  .quiz-option.selected { border-color: #1c7474; background: #e6f5f4; }
+  .quiz-option.correct { border-color: #27ae60; background: #e8f7ee; }
+  .quiz-option.incorrect { border-color: #e74c3c; background: #fdecea; }
+  .quiz-option.disabled { cursor: default; }
+  .quiz-explanation { margin-top: 14px; padding: 12px 14px; background: #f0f9f8; border-radius: 10px; border-left: 4px solid #1c7474; font-size: 13.5px; color: #2c3e50; line-height: 1.65; animation: fadeIn 0.4s ease; }
+  .quiz-explanation .explain-title { font-weight: 700; color: #144848; margin-bottom: 4px; }
+  .quiz-explanation .explain-en { font-size: 12.5px; color: #5a7d7c; font-style: italic; margin-top: 4px; }
+  .quiz-controls { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { background: linear-gradient(135deg, #144848, #2c9c9c); color: white; border: none; padding: 10px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(20,72,72,0.25); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .btn.secondary { background: #5a8b8a; }
+  .quiz-result { text-align: center; padding: 24px 16px; }
+  .quiz-result-icon { font-size: 56px; margin-bottom: 12px; }
+  .quiz-result-score { font-size: 42px; font-weight: 900; color: #27ae60; margin-bottom: 4px; }
+  .quiz-result-label { font-size: 14px; color: #5a7d7c; margin-bottom: 8px; }
+  .quiz-result-message { font-size: 16px; font-weight: 600; color: #144848; margin-bottom: 18px; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Reference */
+  .reference { background: #f8f9fa; border-radius: 10px; padding: 16px 20px; margin-top: 24px; }
+  .reference h5 { font-size: 14px; color: #495057; margin-bottom: 10px; }
+  .reference ol { font-size: 12.5px; color: #495057; line-height: 1.7; padding-left: 20px; }
+  .reference li { margin-bottom: 6px; }
+  .reference a { color: #1c7474; text-decoration: none; }
+  .reference a:hover { text-decoration: underline; }
+
+  /* Footer */
+  .footer { background: #f8f9fa; padding: 20px 32px; text-align: center; font-size: 12px; color: #6c757d; border-top: 1px solid #e9ecef; }
+  .footer a { color: #1c7474; text-decoration: none; }
+
+  /* Share Button */
+  .share-button { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+  .share-toggle { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #144848, #2c9c9c); border: none; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(20,72,72,0.4); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+  .share-toggle:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(20,72,72,0.5); }
+  .share-menu { position: absolute; top: 60px; right: 0; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 20px; min-width: 280px; display: none; animation: fadeInShare 0.3s ease; }
+  .share-menu.active { display: block; }
+  @keyframes fadeInShare { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  .share-menu h4 { color: #1e293b; margin: 0 0 15px 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+  .qr-container { background: #f8fafc; border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 15px; }
+  .qr-container img { max-width: 150px; height: auto; border-radius: 8px; }
+  .qr-container p { font-size: 0.75rem; color: #64748b; margin: 8px 0 0 0; }
+  .share-buttons { display: flex; flex-direction: column; gap: 10px; }
+  .share-btn { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: none; border-radius: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 500; transition: all 0.2s ease; text-decoration: none; color: white; }
+  .share-btn.line { background: #00B900; }
+  .share-btn.email { background: #EA4335; }
+  .share-btn.copy { background: #144848; }
+  .share-btn:hover { transform: translateX(5px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .share-btn svg { width: 20px; height: 20px; fill: currentColor; }
+  .share-close { position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0; }
+  .share-close:hover { color: #1e293b; }
+
+  @media print {
+    .share-button, .quiz-controls { display: none; }
+    body { background: white; }
+    .page { box-shadow: none; }
+  }
+  @media (max-width: 600px) {
+    .content { padding: 22px 18px; }
+    .header { padding: 28px 22px 22px; }
+    .header h1 { font-size: 20px; }
+    .section-title .en { display: none; }
+    .score-card .score-value { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- Share Button -->
+<div class="share-button">
+  <button class="share-toggle" onclick="toggleShareMenu()" title="分享此頁面 / Share">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+  </button>
+  <div class="share-menu" id="shareMenu">
+    <button class="share-close" onclick="toggleShareMenu()">&times;</button>
+    <h4>📤 分享此頁面 / Share</h4>
+    <div class="qr-container">
+      <img id="qrCode" src="" alt="QR Code">
+      <p>掃描 QR Code 開啟頁面</p>
+    </div>
+    <div class="share-buttons">
+      <a class="share-btn line" href="#" id="lineShare" target="_blank">
+        <svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.349 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+        LINE 分享
+      </a>
+      <a class="share-btn email" href="#" id="emailShare">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        Email 分享
+      </a>
+      <button class="share-btn copy" onclick="copyPageUrl()">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+        複製連結
+      </button>
+    </div>
+  </div>
+</div>
+
+<header class="header">
+  <span class="header-tag">CLINICAL DECISION SUPPORT · 中英對照</span>
+  <h1>TEER vs 外科二尖瓣修補決策輔助工具</h1>
+  <div class="subtitle">MitraClip / PASCAL TEER vs Surgical MV Repair — Decision Aid</div>
+  <div class="hospital-badge">
+    <span>🏥</span>
+    <span>新竹臺大分院 · 心血管中心 × 心臟外科 Heart Team</span>
+  </div>
+</header>
+
+<main class="content">
+
+  <!-- Disclaimer -->
+  <div class="alert-box">
+    <div class="alert-title">⚠️ 使用說明 / Disclaimer</div>
+    <p>本工具供心臟內科、心臟外科、心衰竭團隊、專科護理師、與高度知情家屬使用，協助理解 <strong>TEER (MitraClip / PASCAL)</strong> 與 <strong>外科二尖瓣修補</strong> 的決策邏輯。本工具<u>不產生自動化建議</u>，所有最終決策仍需透過 <strong>Heart Team 會議</strong> (心臟內科 + 介入科 + 心臟外科 + 影像 + 麻醉) 與病人/家屬共享決策完成。</p>
+    <p class="en">For heart-team clinicians, APNs, and informed family members. This tool intentionally does NOT produce automated recommendations — heart-team conference + shared decision making remain essential.</p>
+  </div>
+
+  <div class="info-box">
+    <div class="info-title">📖 為什麼需要這個工具？</div>
+    <p>嚴重 MR 的決策不只看「重不重」，更要先分清楚 <strong>退化性 (DMR / Primary)</strong> 還是 <strong>功能性 (FMR / Secondary)</strong>，因為兩者證據基礎完全不同：DMR 由 <u>瓣膜本身</u>（脫垂、腱索斷裂）造成，外科修補仍是 gold standard；FMR 由 <u>左心室病變</u>（擴大、tethering）造成，TEER 在某些族群有效 (COAPT)、在另一些族群無效 (MITRA-FR)。</p>
+    <p class="en">Severe MR decisions hinge on distinguishing primary (degenerative — leaflet/chordae pathology, surgery is gold standard) from secondary (functional — LV disease driving annular dilation/tethering, where TEER is selectively beneficial per COAPT but not MITRA-FR).</p>
+  </div>
+
+  <!-- ===== Section 1: MR Pathophysiology ===== -->
+  <section class="section">
+    <h2 class="section-title">
+      <span class="icon">1</span>
+      MR 病生理學基礎
+      <span class="en">MR Pathophysiology Primer</span>
+    </h2>
+
+    <h3 class="subsection-title">Carpentier 分類 <span class="en">Carpentier Functional Classification</span></h3>
+    <div class="carpentier">
+      <div class="carpentier-card">
+        <div class="type">Type I — 瓣葉活動正常</div>
+        <div class="desc">瓣環擴大或瓣葉穿孔；瓣葉開合正常但不能對合。</div>
+        <div class="desc-en">Normal leaflet motion; annular dilation or perforation. Includes atrial-FMR.</div>
+      </div>
+      <div class="carpentier-card">
+        <div class="type">Type II — 瓣葉過度活動</div>
+        <div class="desc"><strong>典型 DMR</strong>：脫垂 (prolapse)、腱索斷裂 (flail)；瓣葉超出瓣環平面。</div>
+        <div class="desc-en">Excessive leaflet motion (above annular plane). Classic DMR — prolapse, flail leaflet.</div>
+      </div>
+      <div class="carpentier-card">
+        <div class="type">Type IIIa — 瓣葉舒張期受限</div>
+        <div class="desc">風濕性、放射性纖維化；瓣葉打不開亦對合不良。</div>
+        <div class="desc-en">Restricted opening (rheumatic, radiation). Both stenosis & regurgitation.</div>
+      </div>
+      <div class="carpentier-card">
+        <div class="type">Type IIIb — 瓣葉收縮期受限</div>
+        <div class="desc"><strong>典型 ventricular-FMR</strong>：LV 擴大 → papillary muscle 移位 → leaflet tethering。</div>
+        <div class="desc-en">Restricted closure (LV dilation, tethering). Classic ventricular-FMR.</div>
+      </div>
+    </div>
+
+    <h3 class="subsection-title">DMR vs FMR 機轉 <span class="en">Mechanism Comparison</span></h3>
+    <div class="bilingual">
+      <div class="zh"><strong>Primary / Degenerative MR (DMR)</strong>：瓣膜「本身」壞了 — Barlow 病、纖維彈性缺損 (FED)、腱索斷裂。LV 起初正常，是被慢性 volume overload 拖垮的。<u>修好瓣膜 = 解決問題</u>。</div>
+      <div class="en">DMR: leaflet/chordal pathology (Barlow's, FED, flail). LV initially normal, decompensates from chronic volume overload. Fixing the valve solves the problem.</div>
+    </div>
+    <div class="bilingual">
+      <div class="zh"><strong>Secondary / Functional MR (FMR)</strong>：瓣膜「結構正常」，是 LV 或 LA 病變把瓣膜「拉壞」。分兩種：<br>
+      &nbsp;&nbsp;• <strong>Ventricular-FMR</strong>：心肌梗塞或擴張型心肌病 → LV 擴大 → leaflet tethering (Carpentier IIIb)<br>
+      &nbsp;&nbsp;• <strong>Atrial-FMR</strong>：長期 AF → LA 擴大 → 瓣環過度擴張 (Carpentier I)<br>
+      <u>修瓣膜不見得解決根本問題</u> — 心肌仍在退化，這是 COAPT/MITRA-FR 結論不同的關鍵。</div>
+      <div class="en">FMR: structurally normal leaflets, distorted by LV/LA disease. Two flavors — ventricular-FMR (post-MI or DCM, tethering) and atrial-FMR (chronic AF, annular dilation). Repairing the valve does not necessarily fix the underlying myocardium — the COAPT/MITRA-FR pivot.</div>
+    </div>
+
+    <div class="info-box">
+      <div class="info-title">💡 關鍵概念 / Proportionate vs Disproportionate FMR (Grayburn 2019)</div>
+      <p><strong>Disproportionate MR</strong> — MR 嚴重度「超過」LV 擴大程度 (e.g. EROA 大、LVEDV 不算太大)。瓣膜逆流是「volume overload 的元凶」 → 修瓣膜可解套 → <u>COAPT 族群</u>。</p>
+      <p><strong>Proportionate MR</strong> — MR 嚴重度與 LV 擴大「成比例」 (LV 越大、MR 越多，反之亦然)。瓣膜逆流只是 LV 病變的「結果」 → 修瓣膜不解決根本 → <u>MITRA-FR 族群</u>。</p>
+      <p class="en">Disproportionate MR (severe MR + smaller LV) → MR drives volume overload → fixing it helps (COAPT). Proportionate MR (MR severity tracks LV size) → MR is downstream of cardiomyopathy → fixing it doesn't change trajectory (MITRA-FR).</p>
+    </div>
+  </section>
+
+  <!-- ===== Section 2: STS Calculator ===== -->
+  <section class="section">
+    <h2 class="section-title">
+      <span class="icon">2</span>
+      手術風險快速估算 (STS-PROM 簡化版)
+      <span class="en">Surgical Risk Quick Estimator</span>
+    </h2>
+    <div class="alert-box" style="margin-bottom:14px;">
+      <p style="font-size:13px;"><strong>注意：</strong>本工具僅為 STS-PROM 高風險因子的<u>簡化估算</u>，不取代正式 STS Adult Cardiac Surgery Risk Calculator (<a href="https://acsdriskcalc.research.sts.org/" target="_blank" style="color:#856404;text-decoration:underline;">acsdriskcalc.research.sts.org</a>)。Heart team 仍應使用完整 STS 分數做最終決策。</p>
+      <p class="en" style="font-size:12px;">Approximation only. Use full STS calculator for actual surgical decisions.</p>
+    </div>
+
+    <div id="stsCalc">
+      <div class="calc-row" data-points="2"><label><input type="checkbox" onchange="calcSts()"> 年齡 ≥80 歲 / Age ≥80</label><span class="points">+2</span></div>
+      <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcSts()"> 年齡 70–79 歲 / Age 70–79</label><span class="points">+1</span></div>
+      <div class="calc-row" data-points="2"><label><input type="checkbox" onchange="calcSts()"> 既往心臟手術 / Prior cardiac surgery</label><span class="points">+2</span></div>
+      <div class="calc-row" data-points="2"><label><input type="checkbox" onchange="calcSts()"> LVEF &lt;30% / LVEF &lt;30%</label><span class="points">+2</span></div>
+      <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcSts()"> LVEF 30–40% / LVEF 30–40%</label><span class="points">+1</span></div>
+      <div class="calc-row" data-points="2"><label><input type="checkbox" onchange="calcSts()"> NYHA III–IV / NYHA III–IV</label><span class="points">+2</span></div>
+      <div class="calc-row" data-points="2"><label><input type="checkbox" onchange="calcSts()"> 慢性腎臟病 (Cr ≥2 or 透析) / CKD or dialysis</label><span class="points">+2</span></div>
+      <div class="calc-row" data-points="2"><label><input type="checkbox" onchange="calcSts()"> 嚴重慢性肺病 (FEV1 &lt;50%) / Severe lung disease</label><span class="points">+2</span></div>
+      <div class="calc-row" data-points="2"><label><input type="checkbox" onchange="calcSts()"> 衰弱症 (Frailty) / Frailty (gait, sarcopenia, ≥3 deficits)</label><span class="points">+2</span></div>
+      <div class="calc-row" data-points="2"><label><input type="checkbox" onchange="calcSts()"> 中風病史 / Prior stroke</label><span class="points">+2</span></div>
+      <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcSts()"> 糖尿病、需胰島素 / DM on insulin</label><span class="points">+1</span></div>
+      <div class="calc-row" data-points="2"><label><input type="checkbox" onchange="calcSts()"> 肺高壓 (PASP &gt;60 mmHg) / Pulmonary hypertension</label><span class="points">+2</span></div>
+    </div>
+
+    <div class="score-card">
+      <div class="score-label">Approximate Surgical Risk</div>
+      <div class="score-value"><span id="stsScore">0</span> 點</div>
+      <div class="score-interp" id="stsInterp">勾選風險因子以估算 / Tick risk factors to estimate</div>
+    </div>
+  </section>
+
+  <!-- ===== Section 3: DMR Pathway ===== -->
+  <section class="section">
+    <h2 class="section-title">
+      <span class="icon">3</span>
+      DMR 路徑 — 外科 vs TEER vs 觀察
+      <span class="en">Primary MR Pathway</span>
+    </h2>
+
+    <div class="success-box">
+      <div class="info-title">✅ 立場聲明 / Position Statement</div>
+      <p><strong>對於症狀性嚴重 DMR (Carpentier II)，外科修補仍為 gold standard</strong>。在高量中心 (volume &gt;25 cases/yr surgeon)，repair rate &gt;95%、operative mortality &lt;1%、長期 freedom from reoperation &gt;90% at 10 yr。修補「真正修好」瓣膜 — 與 TEER 「夾住但仍有殘餘 MR」 本質不同。</p>
+      <p class="en">In symptomatic severe primary MR, surgical repair (NOT replacement) remains gold standard at experienced centers — &gt;95% repair rate, &lt;1% operative mortality, excellent durability.</p>
+    </div>
+
+    <div class="info-box">
+      <div class="info-title">🤔 何時 TEER 是合理替代 / When TEER Becomes Reasonable</div>
+      <p>• <strong>STS PROM ≥8%</strong> 或 prohibitive surgical risk (frailty、多次胸骨切開、多重共病)<br>
+        • 年紀 &gt;75 歲且 anatomy 適合<br>
+        • 預期壽命 &lt;5 年但症狀嚴重影響生活品質<br>
+        • Heart team 認為 surgical repair durability 不確定 (e.g. extensive Barlow with bileaflet flail at non-experienced center)</p>
+      <p class="en">TEER is reasonable when STS ≥8%, prohibitive risk, age &gt;75 with suitable anatomy, or limited life expectancy with severe symptoms.</p>
+    </div>
+
+    <h3 class="subsection-title">DMR 重要試驗 <span class="en">Landmark DMR Trials</span></h3>
+    <div class="trial-grid">
+      <div class="trial-card surgery">
+        <h4>Surgical repair (歷史對照) <span class="verdict gold">Gold</span></h4>
+        <div class="pop">High-volume centers: repair rate &gt;95%, operative mortality &lt;1%, 10-yr freedom from reoperation &gt;90%</div>
+        <ul>
+          <li>單向「修好」 — 殘餘 MR 大多 trace–mild</li>
+          <li>長期耐久性最佳</li>
+          <li>需 sternotomy 或 mini-thoracotomy</li>
+          <li>恢復期 4–6 週、住院 5–7 天</li>
+        </ul>
+        <div class="takeaway"><strong>立場：</strong>低中風險、anatomy 適合、有經驗中心 → 外科首選。<br><span style="font-size:11.5px;color:#5a7d7c;font-style:italic;">Gold standard for low-intermediate risk DMR at experienced centers.</span></div>
+      </div>
+
+      <div class="trial-card positive">
+        <h4>REPAIR-MR (ACC 2024) <span class="verdict win">NI met</span></h4>
+        <div class="pop">RCT: TEER vs surgery in primary MR · intermediate-risk (STS ~3–5%) · n=500 · 2-yr follow-up</div>
+        <ul>
+          <li>TEER 對 surgery <u>非劣性</u> (composite primary outcome)</li>
+          <li>TEER 30-d 大併發症顯著較少</li>
+          <li>Surgery 殘餘 MR 較少 (more complete reduction)</li>
+          <li>QOL 與功能恢復短期 favoring TEER</li>
+        </ul>
+        <div class="takeaway"><strong>解讀：</strong>第一次 RCT 顯示 TEER 在 <u>intermediate-risk DMR</u> 不劣於外科。仍待長期耐久性數據。<br><span style="font-size:11.5px;color:#5a7d7c;font-style:italic;">First RCT to support TEER in intermediate-risk DMR; long-term durability awaited.</span></div>
+      </div>
+
+      <div class="trial-card positive">
+        <h4>CLASP IID (JACC 2023) <span class="verdict win">NI met</span></h4>
+        <div class="pop">PASCAL vs MitraClip · primary MR · n=300 · 1-yr</div>
+        <ul>
+          <li>PASCAL 對 MitraClip 安全性與療效 <u>非劣性</u></li>
+          <li>兩裝置 1-yr MR ≤2+ 都 ~95%</li>
+          <li>PASCAL 多葉設計、independent leaflet capture</li>
+          <li>CLASP IIF (FMR) 結果更引人注目</li>
+        </ul>
+        <div class="takeaway"><strong>解讀：</strong>確認 PASCAL 與 MitraClip 在 DMR 等價，裝置選擇可依 anatomy / 中心經驗決定。<br><span style="font-size:11.5px;color:#5a7d7c;font-style:italic;">PASCAL ≈ MitraClip in DMR; device choice driven by anatomy & operator preference.</span></div>
+      </div>
+    </div>
+
+    <h3 class="subsection-title">DMR Anatomy 對 TEER 的影響 <span class="en">Anatomic Suitability for TEER in DMR</span></h3>
+    <ul class="check-list">
+      <li>中央性 jet (A2-P2) 較好處理；<u>commissural jets 較難</u>
+        <span class="en">Central A2-P2 jets are simplest; commissural jets are challenging.</span></li>
+      <li>Posterior leaflet 長度 ≥7–10 mm (避免 single leaflet detachment)
+        <span class="en">Posterior leaflet length ≥7–10 mm to reduce SLDA risk.</span></li>
+      <li>Flail width &lt;15 mm、flail gap &lt;10 mm
+        <span class="en">Flail width &lt;15 mm, flail gap &lt;10 mm.</span></li>
+      <li>無嚴重 MAC (mitral annular calcification)
+        <span class="en">No severe mitral annular calcification.</span></li>
+      <li>MV area ≥4 cm² (避免術後 MS)
+        <span class="en">MV area ≥4 cm² to avoid post-procedural mitral stenosis.</span></li>
+      <li class="bad">Bileaflet Barlow + 大量 prolapse — 外科 repair 較完整
+        <span class="en">Bileaflet Barlow with extensive prolapse favors surgical repair.</span></li>
+    </ul>
+  </section>
+
+  <!-- ===== Section 4: FMR Pathway ===== -->
+  <section class="section">
+    <h2 class="section-title">
+      <span class="icon">4</span>
+      FMR 路徑 — GDMT → TEER → 外科 (少)
+      <span class="en">Secondary MR Pathway</span>
+    </h2>
+
+    <div class="info-box">
+      <div class="info-title">📐 順序原則 / The Sequential Principle</div>
+      <p><strong>1. GDMT 必須先最佳化</strong> — ARNI、β-blocker、MRA、SGLT2i 全部到位至少 3–6 個月，且 device therapy (CRT) 已考慮。<u>FMR severity 在 GDMT 後常會減少 30–50%</u>，部分病人會降到 moderate 以下。<br>
+      <strong>2. 再評估 MR 嚴重度與 LV size</strong> — 此時才判斷是否仍是 severe MR 且為 disproportionate (COAPT-like)。<br>
+      <strong>3. TEER 適合 disproportionate MR</strong>；proportionate MR 的療效不確定。<br>
+      <strong>4. 外科 FMR repair 角色受限</strong> — STICH-MR / CTSN 顯示 repair vs replacement 死亡率無差異，且 repair 復發率高。</p>
+      <p class="en">Sequence: optimize GDMT → reassess → TEER for disproportionate severe MR → surgery rarely (CTSN-MR data discouraging).</p>
+    </div>
+
+    <h3 class="subsection-title">FMR 三大重要試驗 <span class="en">Three Pivotal FMR Trials</span></h3>
+    <div class="trial-grid">
+      <div class="trial-card positive">
+        <h4>COAPT (NEJM 2018) <span class="verdict win">+ Met</span></h4>
+        <div class="pop">n=614 · HF + 3+/4+ FMR · LVEF 31% · LVESD 52 mm · GDMT 高度最佳化</div>
+        <ul>
+          <li>24-mo HF hospitalization: 35.8% vs 67.9% per pt-yr (HR 0.53)</li>
+          <li>All-cause death: 29.1% vs 46.1% (HR 0.62)</li>
+          <li>EROA 平均 41 mm² (大)</li>
+          <li>LV 不算太大 (LVEDV ~190 mL)</li>
+        </ul>
+        <div class="takeaway"><strong>解讀：</strong><u>Disproportionate MR + 充分 GDMT</u> = TEER 顯著降低死亡與住院。族群是 COAPT 成功的核心。<br><span style="font-size:11.5px;color:#5a7d7c;font-style:italic;">Disproportionate MR with optimized GDMT — TEER reduced mortality & HFH.</span></div>
+      </div>
+
+      <div class="trial-card neutral">
+        <h4>MITRA-FR (NEJM 2018) <span class="verdict miss">− Missed</span></h4>
+        <div class="pop">n=304 · HF + 嚴重 FMR · LVEF 33% · LVESD 67 mm (大很多) · GDMT 較不嚴格</div>
+        <ul>
+          <li>12-mo composite (death + HFH): no difference (HR 1.16)</li>
+          <li>EROA 平均 31 mm² (較小)</li>
+          <li>LV 顯著較大 (LVEDV ~250 mL)</li>
+          <li>GDMT optimization 不如 COAPT 嚴謹</li>
+        </ul>
+        <div class="takeaway"><strong>解讀：</strong><u>Proportionate MR + LV 已大到不可逆</u> = TEER 沒有額外益處。提醒「並非所有 severe FMR 都會從 TEER 受益」。<br><span style="font-size:11.5px;color:#5a7d7c;font-style:italic;">Proportionate MR with severely dilated LV — TEER gave no benefit.</span></div>
+      </div>
+
+      <div class="trial-card modest">
+        <h4>RESHAPE-HF2 (NEJM 2024) <span class="verdict modest">~ Modest</span></h4>
+        <div class="pop">n=505 · HF + 中–重度 FMR · LVEF ~31% · GDMT 比 COAPT 寬鬆、比 MITRA-FR 嚴謹</div>
+        <ul>
+          <li>24-mo first HFH or CV death: 37% vs 58.9% (RR 0.64)</li>
+          <li>HF hospitalizations significantly reduced</li>
+          <li>Mortality 單獨並無顯著差異</li>
+          <li>GDMT、LV size 介於 COAPT 與 MITRA-FR 之間</li>
+        </ul>
+        <div class="takeaway"><strong>解讀：</strong>當代 GDMT (含 SGLT2i) 與較寬廣族群下，TEER 仍對 HF 住院有益但死亡率訊號較弱。實證了 COAPT 的可重現性。<br><span style="font-size:11.5px;color:#5a7d7c;font-style:italic;">Confirms COAPT's HFH benefit in modern GDMT era; mortality signal weaker.</span></div>
+      </div>
+    </div>
+
+    <h3 class="subsection-title">三試驗併排比較 <span class="en">Trial Comparison</span></h3>
+    <table class="compare">
+      <thead>
+        <tr><th></th><th>COAPT (+)</th><th>MITRA-FR (−)</th><th>RESHAPE-HF2 (~)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>n</strong></td><td>614</td><td>304</td><td>505</td></tr>
+        <tr><td><strong>LVEF (%)</strong></td><td>31</td><td>33</td><td>~31</td></tr>
+        <tr><td><strong>LVESD (mm)</strong></td><td>52</td><td>67 (大)</td><td>~57</td></tr>
+        <tr><td><strong>EROA (mm²)</strong></td><td>41 (大)</td><td>31 (小)</td><td>~30</td></tr>
+        <tr><td><strong>GDMT 嚴謹度</strong></td><td>高</td><td>較低</td><td>中</td></tr>
+        <tr><td><strong>主要結果</strong></td><td class="highlight">HFH ↓, 死亡 ↓</td><td class="warn">無差異</td><td class="modest">HFH ↓, 死亡持平</td></tr>
+        <tr><td><strong>族群類型</strong></td><td>Disproportionate</td><td>Proportionate</td><td>Mixed</td></tr>
+      </tbody>
+    </table>
+
+    <div class="danger-box">
+      <div class="info-title">❌ FMR 外科修補的角色 / Surgical FMR Repair</div>
+      <p>STICH-MR / CTSN (NEJM 2014–2016) 顯示在嚴重 ischemic FMR：<br>
+        • <strong>Repair vs Replacement</strong>：1 年與 2 年 mortality 無差異 (~19% & 25%)；但 repair 組 MR 復發率 ~58% (vs replacement &lt;4%)<br>
+        • <strong>CABG ± MV repair</strong>：加做 repair 並未改善存活、症狀，但增加 30-day morbidity<br>
+        因此 FMR 的「外科 repair」目前角色非常有限，多以 replacement 處理 (若仍要外科)。大多 FMR 病人在當代以 GDMT + (selective) TEER 處理。</p>
+      <p class="en">CTSN-MR / STICH-MR: Surgical repair for ischemic FMR has high recurrence (~58%) without survival benefit; replacement preferred when surgery chosen. Most FMR managed with GDMT + selective TEER.</p>
+    </div>
+  </section>
+
+  <!-- ===== Section 5: Eligibility Checklist ===== -->
+  <section class="section">
+    <h2 class="section-title">
+      <span class="icon">5</span>
+      TEER 適合性查核表
+      <span class="en">TEER Anatomic & Clinical Eligibility</span>
+    </h2>
+    <ul class="check-list">
+      <li>確認 severe MR (TTE + TEE)：EROA ≥40 mm² (DMR) 或 ≥30 mm² (FMR)、RVol ≥60 mL、vena contracta ≥7 mm
+        <span class="en">Severe MR confirmed by TTE + TEE.</span></li>
+      <li>Leaflet length ≥10 mm (尤其 posterior)
+        <span class="en">Adequate leaflet length, especially posterior.</span></li>
+      <li>MV area ≥4.0 cm²；預期 post-clip mean gradient &lt;5 mmHg
+        <span class="en">MV area ≥4 cm²; expected post-clip gradient &lt;5 mmHg.</span></li>
+      <li>無嚴重 MAC、無 commissural calcification
+        <span class="en">No severe annular or commissural calcification.</span></li>
+      <li>Jet 位置適合 (中央 A2-P2 ≫ commissural)
+        <span class="en">Jet location amenable (central A2-P2 preferred).</span></li>
+      <li>LVEF ≥20% (FMR)、≥30% (DMR 慣例)
+        <span class="en">LVEF ≥20% (FMR) / ≥30% (DMR).</span></li>
+      <li>FMR 需 <strong>GDMT 已最佳化 ≥3 個月</strong>，重新評估 MR 嚴重度
+        <span class="en">FMR: GDMT optimized ≥3 months, MR re-graded.</span></li>
+      <li>無 active endocarditis、無 LA/LAA thrombus、可耐受 TEE 與 transseptal
+        <span class="en">No endocarditis, no LA/LAA thrombus, tolerates TEE/transseptal.</span></li>
+      <li class="bad">Bileaflet Barlow with extensive prolapse → 外科 repair 較完整
+        <span class="en">Bileaflet Barlow → surgical repair preferred.</span></li>
+      <li class="bad">Proportionate MR + LVEDV &gt;230 mL → TEER 益處不確定
+        <span class="en">Proportionate MR + severely dilated LV → uncertain TEER benefit.</span></li>
+    </ul>
+  </section>
+
+  <!-- ===== Section 6: Heart Team Pathway ===== -->
+  <section class="section">
+    <h2 class="section-title">
+      <span class="icon">6</span>
+      Heart Team 決策流程
+      <span class="en">Heart Team Decision Pathway</span>
+    </h2>
+
+    <div class="flow-step">
+      <div><span class="step-num">1</span><span class="step-title">確認嚴重 MR 與機轉</span></div>
+      <div class="step-detail">TTE 篩檢 → TEE 評估 (3D MV)；分清 DMR (Carpentier II) vs FMR (Carpentier I/IIIb)；評估 LV size、EF、PASP、TR、AF 史。<br><em>Confirm severe MR & mechanism by TTE/TEE; classify DMR vs FMR.</em></div>
+    </div>
+    <div class="flow-arrow">▼</div>
+    <div class="flow-step">
+      <div><span class="step-num">2</span><span class="step-title">FMR 先 GDMT 最佳化 ≥3 個月，DMR 評估手術時機</span></div>
+      <div class="step-detail">FMR：ARNI/β-blocker/MRA/SGLT2i 全到位、考慮 CRT；3 個月後 re-grade MR。DMR：症狀性嚴重 MR 或 Class I trigger (LVEF &lt;60%、LVESD ≥40 mm、新 AF、PASP &gt;50) 應啟動手術評估。<br><em>FMR — full GDMT × 3 mo. DMR — operate per Class I/IIa triggers.</em></div>
+    </div>
+    <div class="flow-arrow">▼</div>
+    <div class="flow-step">
+      <div><span class="step-num">3</span><span class="step-title">STS 風險與 anatomy 評估</span></div>
+      <div class="step-detail">完整 STS-PROM；anatomy review (leaflet length, MV area, MAC, jet location, EROA, LVEDV)；估算「如果做 TEER 是 disproportionate-MR like 嗎？」<br><em>Full STS PROM + anatomy review + proportionate vs disproportionate framing.</em></div>
+    </div>
+    <div class="flow-arrow">▼</div>
+    <div class="flow-step">
+      <div><span class="step-num">4</span><span class="step-title">Heart Team 多專科會議</span></div>
+      <div class="step-detail">心臟內科 + 介入科 + 心臟外科 + 影像 + 麻醉 + 心衰科。共識：(a) 外科 repair、(b) TEER、(c) 持續 GDMT、(d) 緩和照護。記錄於病歷。<br><em>Multidisciplinary heart team conference; document consensus pathway.</em></div>
+    </div>
+    <div class="flow-arrow">▼</div>
+    <div class="flow-step">
+      <div><span class="step-num">5</span><span class="step-title">與病人/家屬共享決策 + 術後追蹤</span></div>
+      <div class="step-detail">說明三條路徑的耐久性、恢復期、再介入率。30-d、6-mo、12-mo 與每年追蹤 TTE、KCCQ、6MWT；TEER 後抗血小板 1–6 個月。<br><em>Shared decision making; 30-d/6-mo/12-mo follow-up with TTE, KCCQ, 6MWT.</em></div>
+    </div>
+  </section>
+
+  <!-- ===== Section 7: Family Talking Points ===== -->
+  <section class="section">
+    <h2 class="section-title">
+      <span class="icon">7</span>
+      與病人／家屬的溝通要點
+      <span class="en">Patient & Family Talking Points</span>
+    </h2>
+
+    <div class="talk-card">
+      <div class="zh">「TEER 不是裝新瓣膜、也不是換瓣膜，是用一個或多個小夾子把鬆開、合不起來的瓣葉夾住，讓血液不再倒流。」</div>
+      <div class="en">"TEER is neither valve replacement nor implantation. It's a clip (or two) that pinches the leaflets together so they stop leaking."</div>
+    </div>
+    <div class="talk-card">
+      <div class="zh">「同樣是『嚴重二尖瓣逆流』，根本原因不同 — <strong>退化性</strong>是瓣膜本身壞了，<strong>功能性</strong>是心肌或心房有病拖累瓣膜。治療策略也不同。」</div>
+      <div class="en">"'Severe MR' has two root causes — degenerative (the valve itself) vs functional (the heart muscle or atrium dragging the valve). Treatment differs accordingly."</div>
+    </div>
+    <div class="talk-card">
+      <div class="zh">「<strong>退化性 MR</strong>：年輕、風險低 → 開刀修補仍最徹底，恢復後 10 年以上不需再處理的機會 &gt;90%。年紀大或風險高 → TEER 是合理替代，恢復快、3–5 天可出院。」</div>
+      <div class="en">"DMR: low-risk patients → surgical repair is most durable (&gt;90% reoperation-free at 10 years). Higher-risk → TEER is reasonable, 3–5 day hospital stay."</div>
+    </div>
+    <div class="talk-card">
+      <div class="zh">「<strong>功能性 MR</strong>：要先把心衰竭的藥吃到極致 (3–6 個月) 後再評估。不是每個人做了 TEER 都會比較好 — 心臟太大、太晚介入的，不一定有幫助 (這就是 MITRA-FR 試驗的提醒)。」</div>
+      <div class="en">"FMR: optimize HF medications for 3–6 months first. Not everyone benefits from TEER — very dilated, late-stage hearts may not (the MITRA-FR caution)."</div>
+    </div>
+    <div class="talk-card">
+      <div class="zh">「<strong>外科 vs TEER 比較</strong>：外科住院 5–7 天、恢復 4–6 週、修得最完整；TEER 住院 3–5 天、隔週可恢復活動、殘餘逆流可能稍多。再介入率長期看 TEER 略高。Heart team 會看您的具體狀況一起決定。」</div>
+      <div class="en">"Surgery: 5–7 day stay, 4–6 week recovery, most complete repair. TEER: 3–5 day stay, faster recovery, slightly more residual leak; long-term reintervention rate higher. Heart team decides together with you."</div>
+    </div>
+    <div class="talk-card">
+      <div class="zh">「<strong>沒做 TEER/外科會怎樣？</strong>嚴重 MR 自然病程：5 年內因心衰住院/死亡風險顯著上升；GDMT 可改善但不能根治瓣膜問題。」</div>
+      <div class="en">"Without intervention: severe MR has substantial 5-year HF/mortality risk. GDMT helps but doesn't fix the valve."</div>
+    </div>
+  </section>
+
+  <!-- ===== Section 8: Self-Assessment Quiz ===== -->
+  <section class="section">
+    <h2 class="section-title">
+      <span class="icon">8</span>
+      自我測驗
+      <span class="en">Self-Assessment Quiz</span>
+    </h2>
+    <div class="quiz-container" id="quizContainer">
+      <div class="quiz-progress">
+        <span>第 <span id="qIdx">1</span> / <span id="qTotal">7</span> 題 · Question</span>
+        <span class="quiz-progress-score">答對：<span id="qScore">0</span></span>
+      </div>
+      <div id="quizBody"></div>
+      <div class="quiz-controls" id="quizControls">
+        <button class="btn" id="quizNext" onclick="nextQuiz()" disabled>下一題 / Next</button>
+        <button class="btn secondary" id="quizRestart" onclick="restartQuiz()" style="display:none;">重新測驗 / Restart</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== References ===== -->
+  <div class="reference">
+    <h5>📚 參考文獻 / References</h5>
+    <ol>
+      <li>Stone GW, et al. Transcatheter Mitral-Valve Repair in Patients with Heart Failure (COAPT). <em>N Engl J Med</em> 2018;379:2307-2318. <a href="https://doi.org/10.1056/NEJMoa1806640" target="_blank">DOI: 10.1056/NEJMoa1806640</a></li>
+      <li>Obadia JF, et al. Percutaneous Repair or Medical Treatment for Secondary Mitral Regurgitation (MITRA-FR). <em>N Engl J Med</em> 2018;379:2297-2306. <a href="https://doi.org/10.1056/NEJMoa1805374" target="_blank">DOI: 10.1056/NEJMoa1805374</a></li>
+      <li>Anker SD, et al. Transcatheter Valve Repair in Heart Failure with Moderate to Severe Mitral Regurgitation (RESHAPE-HF2). <em>N Engl J Med</em> 2024;391:1799-1809. <a href="https://doi.org/10.1056/NEJMoa2314328" target="_blank">DOI: 10.1056/NEJMoa2314328</a></li>
+      <li>Ailawadi G, et al. Transcatheter Edge-to-Edge Repair vs Surgical Repair for Primary MR (REPAIR-MR). Late-breaking trial, ACC.24, April 2024. <a href="https://www.acc.org/About-ACC/Press-Releases/2024/04/06/13/52/sun-145pm-repair-mr-acc-2024" target="_blank">ACC press summary</a></li>
+      <li>Lim DS, et al. Edge-to-Edge Repair with PASCAL or MitraClip in Degenerative Mitral Regurgitation: 1-Year Results of CLASP IID. <em>JACC</em> 2023;82(24):2336-2347. <a href="https://doi.org/10.1016/j.jacc.2023.10.001" target="_blank">DOI: 10.1016/j.jacc.2023.10.001</a></li>
+      <li>Grayburn PA, Sannino A, Packer M. Proportionate and Disproportionate Functional Mitral Regurgitation: A New Conceptual Framework. <em>JACC Cardiovasc Imaging</em> 2019;12(2):353-362. <a href="https://doi.org/10.1016/j.jcmg.2018.11.006" target="_blank">DOI: 10.1016/j.jcmg.2018.11.006</a></li>
+      <li>Goldstein D, et al. Two-Year Outcomes of Surgical Treatment of Severe Ischemic Mitral Regurgitation (CTSN). <em>N Engl J Med</em> 2016;374(4):344-353. <a href="https://doi.org/10.1056/NEJMoa1512913" target="_blank">DOI: 10.1056/NEJMoa1512913</a></li>
+      <li>Otto CM, et al. 2020 ACC/AHA Guideline for the Management of Patients With Valvular Heart Disease. <em>Circulation</em> 2021;143:e72-e227 (with 2023 Focused Update). <a href="https://doi.org/10.1161/CIR.0000000000000923" target="_blank">DOI: 10.1161/CIR.0000000000000923</a></li>
+      <li>Vahanian A, et al. 2021 ESC/EACTS Guidelines for the Management of Valvular Heart Disease. <em>Eur Heart J</em> 2022;43(7):561-632. <a href="https://doi.org/10.1093/eurheartj/ehab395" target="_blank">DOI: 10.1093/eurheartj/ehab395</a></li>
+      <li>新竹臺大分院心血管中心 × 心臟外科 Heart Team for Mitral Valve Disease 工作小組共識 2026</li>
+    </ol>
+  </div>
+</main>
+
+<footer class="footer">
+  <p>本工具僅供醫療專業人員與高度知情家屬之臨床決策參考使用 / For healthcare professionals and informed family members only</p>
+  <p>新竹臺大分院 心血管中心 × 心臟外科 © 2026 | <a href="index.html">返回首頁 / Home</a></p>
+</footer>
+
+</div>
+
+<script>
+// ============= STS Calculator =============
+function calcSts() {
+  const rows = document.querySelectorAll('#stsCalc .calc-row');
+  let total = 0;
+  rows.forEach(r => {
+    const cb = r.querySelector('input[type="checkbox"]');
+    const pts = parseInt(r.dataset.points);
+    if (cb.checked) { total += pts; r.classList.add('checked'); }
+    else { r.classList.remove('checked'); }
+  });
+  document.getElementById('stsScore').textContent = total;
+  let interp = '';
+  if (total === 0) interp = '請勾選 / Tick risk factors';
+  else if (total <= 2) interp = '低風險 ≈ STS &lt;3% — 外科修補首選 / Low — surgery preferred';
+  else if (total <= 5) interp = '中度風險 ≈ STS 3–8% — Heart team 討論二者 / Intermediate — discuss both';
+  else if (total <= 9) interp = '高風險 ≈ STS 8–15% — TEER 通常較合理 / High — TEER usually preferred';
+  else interp = '極高風險 ≈ STS ≥15% — TEER 強烈考量；或維持 GDMT / Prohibitive — TEER strongly considered or GDMT only';
+  document.getElementById('stsInterp').innerHTML = interp;
+}
+
+// ============= QUIZ =============
+const QUIZ = [
+  {
+    q_zh: '一位 65 歲病人 TEE 顯示 P2 scallop flail，瓣葉與腱索本身結構異常但 LV 大小正常。這屬於 Carpentier 哪一型？',
+    q_en: 'A 65-year-old has TEE showing flail P2 scallop with abnormal leaflet/chordae but normal LV size. Carpentier type?',
+    opts: [
+      { zh: 'Type I', en: 'Type I (normal motion)' },
+      { zh: 'Type II', en: 'Type II (excessive motion)', correct: true },
+      { zh: 'Type IIIa', en: 'Type IIIa (restricted opening)' },
+      { zh: 'Type IIIb', en: 'Type IIIb (restricted closure)' }
+    ],
+    explain_zh: 'Carpentier Type II = 瓣葉「過度活動」(prolapse / flail)，瓣葉超出瓣環平面。是典型的 Primary / Degenerative MR。Type IIIb 才是 ventricular-FMR 的 tethering。',
+    explain_en: 'Type II = excessive leaflet motion (prolapse/flail) — classic primary/degenerative MR. Type IIIb is ventricular-FMR tethering.'
+  },
+  {
+    q_zh: '在 STS PROM 約 3% 的 60 歲症狀性 severe DMR 病人，目前最有實證支持的首選為何？',
+    q_en: 'For a 60-year-old with symptomatic severe DMR and STS PROM ~3%, which is best supported by evidence?',
+    opts: [
+      { zh: '直接 TEER', en: 'Proceed with TEER' },
+      { zh: '外科二尖瓣 repair (在高量中心)', en: 'Surgical mitral valve repair at high-volume center', correct: true },
+      { zh: '只給 GDMT', en: 'GDMT only' },
+      { zh: '外科 replacement 而非 repair', en: 'Surgical replacement instead of repair' }
+    ],
+    explain_zh: '低中風險的症狀性 severe DMR，外科 repair 仍為 gold standard：&gt;95% repair rate、&lt;1% mortality、10 年 reoperation-free &gt;90%。REPAIR-MR (ACC 2024) 在 intermediate-risk 顯示 TEER non-inferior，但長期耐久性數據仍待累積。',
+    explain_en: 'Low-intermediate risk symptomatic severe DMR — surgical repair remains gold standard at experienced centers (&gt;95% repair, &lt;1% mortality, &gt;90% reoperation-free at 10 yr). REPAIR-MR shows TEER non-inferior in intermediate-risk; long-term durability awaited.'
+  },
+  {
+    q_zh: 'COAPT (+) 與 MITRA-FR (−) 結果不同，最關鍵的族群差異是？',
+    q_en: 'What was the key population difference between positive COAPT and negative MITRA-FR?',
+    opts: [
+      { zh: '使用裝置不同', en: 'Different devices' },
+      { zh: 'COAPT 為 disproportionate MR (LV 不算太大、EROA 大、GDMT 充分)；MITRA-FR 為 proportionate MR (LV 大、EROA 較小、GDMT 寬鬆)', en: 'COAPT had disproportionate MR (smaller LV, larger EROA, optimized GDMT); MITRA-FR had proportionate MR (larger LV, smaller EROA, looser GDMT)', correct: true },
+      { zh: 'COAPT 是 DMR、MITRA-FR 是 FMR', en: 'COAPT was DMR, MITRA-FR was FMR' },
+      { zh: '兩試驗結果其實相同', en: 'Both trials had similar findings' }
+    ],
+    explain_zh: 'COAPT vs MITRA-FR 的關鍵差異：(1) LV size — COAPT LVESD ~52 mm vs MITRA-FR ~67 mm；(2) EROA — COAPT 41 mm² vs MITRA-FR 31 mm²；(3) GDMT — COAPT 高度最佳化、MITRA-FR 較寬鬆。Grayburn 提出 disproportionate vs proportionate framework 解釋此差異。',
+    explain_en: 'COAPT had smaller LV, larger EROA, more rigorous GDMT (disproportionate MR). MITRA-FR had larger LV, smaller EROA, looser GDMT (proportionate MR). Grayburn proposed this conceptual framework.'
+  },
+  {
+    q_zh: 'Disproportionate MR 的定義是？',
+    q_en: 'What defines disproportionate MR?',
+    opts: [
+      { zh: 'MR 嚴重度與 LV 擴大成比例', en: 'MR severity proportional to LV dilation' },
+      { zh: 'MR 嚴重度「超過」LV 擴大程度（EROA 大、LV 不算太大）', en: 'MR severity exceeds LV dilation (large EROA, smaller LV)', correct: true },
+      { zh: '只有 DMR 才會有 disproportionate MR', en: 'Only DMR produces disproportionate MR' },
+      { zh: 'LV 越大、MR 越多就是 disproportionate', en: 'Larger LV with larger MR = disproportionate' }
+    ],
+    explain_zh: 'Disproportionate MR：MR severity 「超過」LV size 該有的程度（e.g. EROA 大但 LVEDV 不算太大）。代表 MR 是 volume overload 的「元凶」，修瓣膜可解套。Proportionate MR 則是 MR 與 LV 擴大成比例，瓣膜逆流是 LV 病變的「結果」，修瓣膜效益有限。',
+    explain_en: 'Disproportionate MR: severity exceeds what LV size predicts (large EROA + smaller LV). MR drives volume overload — fixing it helps. Proportionate MR: severity tracks LV size — MR is downstream, fixing it does not change trajectory.'
+  },
+  {
+    q_zh: 'RESHAPE-HF2 (NEJM 2024) 在 FMR 證據體系中的位置與意義？',
+    q_en: 'What is the role of RESHAPE-HF2 (NEJM 2024) in the FMR evidence?',
+    opts: [
+      { zh: '推翻 COAPT、與 MITRA-FR 一致', en: 'Refuted COAPT, agreed with MITRA-FR' },
+      { zh: '完全複製 COAPT 結果', en: 'Reproduced COAPT exactly' },
+      { zh: '族群介於兩者之間，HF 住院顯著減少但死亡率訊號較弱；確認 TEER 在當代 GDMT 環境仍對 HFH 有益', en: 'Intermediate population; HFH significantly reduced but mortality signal weaker; confirms TEER benefits HFH in modern GDMT era', correct: true },
+      { zh: '只研究 DMR 不適用 FMR 討論', en: 'Studied DMR, not relevant to FMR' }
+    ],
+    explain_zh: 'RESHAPE-HF2 (n=505) 在當代 GDMT (含 SGLT2i) 較寬廣族群中，TEER 顯著減少 HF 住院 (RR 0.64) 與 CV 死亡複合終點，但單純死亡率訊號較弱。族群介於 COAPT 與 MITRA-FR 之間 — 證實 TEER 在較廣 FMR 族群仍對 HFH 有益。',
+    explain_en: 'RESHAPE-HF2 (n=505): broader FMR population on modern GDMT — TEER significantly reduced HFH or CV death (RR 0.64); mortality alone weaker. Intermediate to COAPT and MITRA-FR — confirms HFH benefit in modern era.'
+  },
+  {
+    q_zh: '下列哪一項解剖<u>不利</u>於 TEER？',
+    q_en: 'Which anatomy is hostile to TEER?',
+    opts: [
+      { zh: '中央 A2-P2 jet、leaflet 長度 12 mm、MV area 4.5 cm²', en: 'Central A2-P2 jet, 12mm leaflet, MV area 4.5 cm²' },
+      { zh: '嚴重 mitral annular calcification (MAC) + commissural jet + bileaflet Barlow', en: 'Severe MAC + commissural jet + bileaflet Barlow', correct: true },
+      { zh: 'Posterior leaflet flail，flail width 10 mm', en: 'P2 flail with 10mm flail width' },
+      { zh: 'Functional MR 因 papillary muscle tethering', en: 'FMR with papillary muscle tethering' }
+    ],
+    explain_zh: '不利 TEER：(1) 嚴重 MAC（影響鈣化區夾合與 transseptal puncture）、(2) commissural jets（夾子難以對準邊緣）、(3) bileaflet Barlow with extensive prolapse（外科 repair 較完整）、(4) 短 leaflet (&lt;7 mm) — single leaflet detachment 風險高。Bileaflet Barlow 應以外科處理為主。',
+    explain_en: 'Hostile to TEER: severe MAC, commissural jets, bileaflet Barlow with extensive prolapse, short leaflets (&lt;7 mm). Bileaflet Barlow favors surgical repair.'
+  },
+  {
+    q_zh: '一位 72 歲病人，重度 ischemic FMR、LVEF 28%、ARNI/β-blocker/MRA/SGLT2i 已用 4 個月、CRT 已置入、KCCQ 35。下一步最合適的決策是？',
+    q_en: 'A 72yo with severe ischemic FMR, LVEF 28%, on full GDMT × 4 months, CRT in place, KCCQ 35. Best next step?',
+    opts: [
+      { zh: '再加倍 ARNI、繼續觀察 2 年', en: 'Double ARNI, observe 2 more years' },
+      { zh: '直接外科 mitral valve replacement', en: 'Surgical MV replacement' },
+      { zh: 'Heart team 評估 anatomy 與 disproportionate-MR 程度，若符合 COAPT-like 條件，建議 TEER；否則維持 GDMT 並考慮 advanced HF therapies (LVAD, transplant)', en: 'Heart team assesses anatomy & disproportionate-MR; if COAPT-like → TEER; otherwise continue GDMT and consider advanced HF therapies', correct: true },
+      { zh: '單純加 loop diuretic', en: 'Just add a loop diuretic' }
+    ],
+    explain_zh: '此病人 GDMT 已最佳化、CRT 已置入、症狀仍嚴重 → 應啟動 heart team 評估 TEER。關鍵在 anatomy + disproportionate-MR：若符合 COAPT-like (smaller LV, larger EROA) → TEER 期望益處明顯；若 proportionate (大 LV, 小 EROA) → MITRA-FR 提醒益處不確定，應討論 advanced HF therapies。外科 FMR repair 角色受限 (CTSN-MR)。',
+    explain_en: 'GDMT optimized, CRT done, symptoms persist → heart team for TEER evaluation. Key: COAPT-like (disproportionate) → TEER beneficial; proportionate → uncertain, consider advanced HF therapies. Surgical FMR repair role limited (CTSN-MR).'
+  }
+];
+
+let qIndex = 0, qScore = 0, qAnswered = false;
+
+function renderQuiz() {
+  document.getElementById('qIdx').textContent = qIndex + 1;
+  document.getElementById('qTotal').textContent = QUIZ.length;
+  document.getElementById('qScore').textContent = qScore;
+  const item = QUIZ[qIndex];
+  let html = `<div class="quiz-question">${item.q_zh}</div>
+              <div class="quiz-question-en">${item.q_en}</div>
+              <div class="quiz-options">`;
+  item.opts.forEach((o, i) => {
+    html += `<button class="quiz-option" data-i="${i}" onclick="answerQuiz(${i})">
+               <strong>${String.fromCharCode(65+i)}.</strong> ${o.zh}<br>
+               <span style="font-size:12px;color:#5a7d7c;font-style:italic;">${o.en}</span>
+             </button>`;
+  });
+  html += `</div>`;
+  document.getElementById('quizBody').innerHTML = html;
+  qAnswered = false;
+  document.getElementById('quizNext').disabled = true;
+  document.getElementById('quizNext').textContent = (qIndex < QUIZ.length - 1) ? '下一題 / Next' : '看結果 / Result';
+  document.getElementById('quizRestart').style.display = 'none';
+}
+
+function answerQuiz(idx) {
+  if (qAnswered) return;
+  qAnswered = true;
+  const item = QUIZ[qIndex];
+  const buttons = document.querySelectorAll('.quiz-option');
+  let correctIdx = item.opts.findIndex(o => o.correct);
+  buttons.forEach((b, i) => {
+    b.classList.add('disabled');
+    if (i === correctIdx) b.classList.add('correct');
+    if (i === idx && i !== correctIdx) b.classList.add('incorrect');
+  });
+  if (idx === correctIdx) qScore++;
+  document.getElementById('qScore').textContent = qScore;
+  const explainHtml = `<div class="quiz-explanation">
+      <div class="explain-title">💡 解析</div>
+      <div>${item.explain_zh}</div>
+      <div class="explain-en">${item.explain_en}</div>
+    </div>`;
+  document.getElementById('quizBody').insertAdjacentHTML('beforeend', explainHtml);
+  document.getElementById('quizNext').disabled = false;
+}
+
+function nextQuiz() {
+  if (qIndex < QUIZ.length - 1) { qIndex++; renderQuiz(); }
+  else showQuizResult();
+}
+
+function showQuizResult() {
+  const pct = Math.round(qScore / QUIZ.length * 100);
+  let icon = '🎯', msg = '';
+  if (pct === 100) { icon = '🏆'; msg = '滿分！可放心參與 heart team 討論。'; }
+  else if (pct >= 80) { icon = '🎉'; msg = '非常好！能向病人/家屬清楚說明三種策略。'; }
+  else if (pct >= 60) { icon = '👍'; msg = '基礎扎實 — 再複習 COAPT vs MITRA-FR 的族群差異即可。'; }
+  else { icon = '📖'; msg = '建議重讀 Section 1 (proportionate vs disproportionate) 與 Section 4。'; }
+  document.getElementById('quizBody').innerHTML = `
+    <div class="quiz-result">
+      <div class="quiz-result-icon">${icon}</div>
+      <div class="quiz-result-score">${qScore} / ${QUIZ.length}</div>
+      <div class="quiz-result-label">正確率 ${pct}%</div>
+      <div class="quiz-result-message">${msg}</div>
+    </div>`;
+  document.getElementById('quizNext').style.display = 'none';
+  document.getElementById('quizRestart').style.display = 'inline-flex';
+}
+
+function restartQuiz() {
+  qIndex = 0; qScore = 0;
+  document.getElementById('quizNext').style.display = 'inline-flex';
+  renderQuiz();
+}
+
+// ============= Share =============
+function initShareButtons() {
+  const pageUrl = window.location.href;
+  const pageTitle = document.title;
+  const encodedUrl = encodeURIComponent(pageUrl);
+  const qrCodeImg = document.getElementById('qrCode');
+  if (qrCodeImg) qrCodeImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodedUrl;
+  const lineShare = document.getElementById('lineShare');
+  if (lineShare) lineShare.href = 'https://social-plugins.line.me/lineit/share?url=' + encodedUrl;
+  const emailShare = document.getElementById('emailShare');
+  if (emailShare) {
+    const emailSubject = encodeURIComponent('分享：' + pageTitle);
+    const emailBody = encodeURIComponent('我想和您分享這個臨床決策工具：\n\n' + pageTitle + '\n\n' + pageUrl);
+    emailShare.href = 'mailto:?subject=' + emailSubject + '&body=' + emailBody;
+  }
+}
+function toggleShareMenu() {
+  const menu = document.getElementById('shareMenu');
+  if (menu) menu.classList.toggle('active');
+}
+function copyPageUrl() {
+  const pageUrl = window.location.href;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(pageUrl).then(() => alert('已複製連結！'))
+      .catch(() => fallbackCopyTextToClipboard(pageUrl));
+  } else { fallbackCopyTextToClipboard(pageUrl); }
+}
+function fallbackCopyTextToClipboard(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  try { document.execCommand('copy'); alert('已複製連結！'); }
+  catch (err) { alert('複製失敗，請手動複製：' + text); }
+  document.body.removeChild(ta);
+}
+document.addEventListener('click', (e) => {
+  const btn = document.querySelector('.share-button');
+  const menu = document.getElementById('shareMenu');
+  if (btn && menu && !btn.contains(e.target) && menu.classList.contains('active')) {
+    menu.classList.remove('active');
+  }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  initShareButtons();
+  renderQuiz();
+});
+</script>
+</body>
+</html>
