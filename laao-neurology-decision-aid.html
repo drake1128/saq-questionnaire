@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LAAO 神經內科決策輔助工具 | LAAO Decision Aid for Neurologists</title>
+<meta name="description" content="左心耳封堵術 (LAAO) 神經內科臨床決策輔助：AF 中風預防、CHAMPION-AF vs CLOSURE-AF、洗腎族群、與家屬共享決策">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+    background: #f4f6f9;
+    color: #2c3e50;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+  .page {
+    max-width: 920px;
+    margin: 0 auto;
+    background: white;
+    min-height: 100vh;
+    box-shadow: 0 0 30px rgba(0,0,0,0.06);
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #0f4c81 0%, #2d77b8 60%, #4a90c2 100%);
+    color: white;
+    padding: 36px 32px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    right: -30px;
+    bottom: -30px;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .header-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    margin-bottom: 14px;
+  }
+  .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; line-height: 1.4; }
+  .header .subtitle { font-size: 15px; opacity: 0.92; font-weight: 400; }
+  .hospital-badge {
+    margin-top: 18px;
+    font-size: 13px;
+    opacity: 0.82;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .content { padding: 28px 32px; }
+
+  /* Boxes */
+  .alert-box {
+    background: #fff3cd;
+    border-left: 5px solid #f39c12;
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+  .alert-box .alert-title {
+    font-weight: 700;
+    color: #856404;
+    font-size: 15px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .alert-box p { color: #533f03; font-size: 14px; line-height: 1.7; }
+
+  .info-box {
+    background: #e8f4fd;
+    border-left: 5px solid #2d77b8;
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+  .info-box .info-title {
+    font-weight: 700;
+    color: #0f4c81;
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+  .info-box p { color: #0f4c81; font-size: 14px; line-height: 1.7; }
+  .info-box .en { font-size: 13px; opacity: 0.78; font-style: italic; margin-top: 4px; }
+
+  .success-box {
+    background: #e8f7ee;
+    border-left: 5px solid #27ae60;
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+  .success-box .info-title { color: #1e7e3a; font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+  .success-box p { color: #1e7e3a; font-size: 14px; line-height: 1.7; }
+
+  .danger-box {
+    background: #fdecea;
+    border-left: 5px solid #e74c3c;
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+  .danger-box .info-title { color: #a93226; font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+  .danger-box p { color: #a93226; font-size: 14px; line-height: 1.7; }
+
+  /* Section */
+  .section { margin-bottom: 32px; }
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f4c81;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #d6e6f5;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title .icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0f4c81, #2d77b8);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .section-title .en {
+    font-size: 13px;
+    color: #6c8aa8;
+    font-weight: 400;
+    margin-left: auto;
+    font-style: italic;
+  }
+
+  /* Bilingual paragraph */
+  .bilingual { margin-bottom: 14px; }
+  .bilingual .zh { font-size: 15px; color: #2c3e50; line-height: 1.8; }
+  .bilingual .en { font-size: 13px; color: #5a7290; line-height: 1.7; font-style: italic; margin-top: 4px; padding-left: 12px; border-left: 2px solid #d6e6f5; }
+
+  /* Score row & calculator */
+  .calc-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    background: #f8fafc;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  .calc-row:hover { background: #eef2f7; border-color: #2d77b8; }
+  .calc-row.checked { background: #e3f0fb; border-color: #2d77b8; }
+  .calc-row label { flex: 1; font-size: 14px; cursor: pointer; }
+  .calc-row .points { font-weight: 700; color: #2d77b8; font-size: 14px; min-width: 36px; text-align: right; }
+  .calc-row input[type="checkbox"] { margin-right: 10px; width: 16px; height: 16px; cursor: pointer; accent-color: #2d77b8; }
+
+  .score-card {
+    background: linear-gradient(135deg, #0f4c81, #2d77b8);
+    color: white;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin-top: 14px;
+  }
+  .score-card .score-label { font-size: 13px; opacity: 0.85; margin-bottom: 4px; letter-spacing: 1px; }
+  .score-card .score-value { font-size: 42px; font-weight: 900; line-height: 1; }
+  .score-card .score-interp { font-size: 14px; margin-top: 8px; opacity: 0.95; }
+
+  /* Trial comparison cards */
+  .trial-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 700px) { .trial-grid { grid-template-columns: 1fr; } }
+  .trial-card {
+    border-radius: 12px;
+    padding: 18px;
+    border: 1px solid #e2e8f0;
+  }
+  .trial-card.positive { background: linear-gradient(180deg, #e8f7ee 0%, #f8fcfa 100%); border-left: 4px solid #27ae60; }
+  .trial-card.neutral { background: linear-gradient(180deg, #fdecea 0%, #fdf6f5 100%); border-left: 4px solid #e74c3c; }
+  .trial-card.dialysis { background: linear-gradient(180deg, #f3e8ff 0%, #faf5ff 100%); border-left: 4px solid #8b5cf6; }
+  .trial-card h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f4c81;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .trial-card .verdict {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .trial-card .verdict.win { background: #27ae60; }
+  .trial-card .verdict.miss { background: #e74c3c; }
+  .trial-card .verdict.subgroup { background: #8b5cf6; }
+  .trial-card .pop { font-size: 12px; color: #5a7290; margin-bottom: 10px; font-style: italic; }
+  .trial-card ul { font-size: 13.5px; padding-left: 18px; margin-bottom: 8px; }
+  .trial-card li { margin-bottom: 4px; line-height: 1.6; }
+  .trial-card .takeaway {
+    font-size: 13px;
+    background: rgba(255,255,255,0.7);
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-top: 8px;
+    color: #2c3e50;
+  }
+  .trial-card .takeaway strong { color: #0f4c81; }
+
+  /* Comparison table */
+  table.compare {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin: 12px 0 16px;
+  }
+  table.compare th, table.compare td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  table.compare th { background: #0f4c81; color: white; font-weight: 600; font-size: 13px; }
+  table.compare tr:nth-child(even) td { background: #f8fafc; }
+  table.compare td.highlight { color: #27ae60; font-weight: 700; }
+  table.compare td.warn { color: #e74c3c; font-weight: 700; }
+
+  /* Decision flowchart */
+  .flow-step {
+    background: white;
+    border: 2px solid #2d77b8;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .flow-step .step-num {
+    display: inline-block;
+    background: #2d77b8;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-right: 8px;
+  }
+  .flow-step .step-title { font-weight: 700; font-size: 15px; color: #0f4c81; }
+  .flow-step .step-detail { font-size: 13px; color: #555; margin-top: 6px; padding-left: 32px; }
+  .flow-arrow { text-align: center; color: #2d77b8; font-size: 18px; margin: 4px 0; }
+
+  /* Quiz */
+  .quiz-container {
+    background: linear-gradient(180deg, #fafbfc 0%, #ffffff 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 16px;
+  }
+  .quiz-progress {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #6c8aa8;
+    margin-bottom: 12px;
+  }
+  .quiz-progress-score { color: #27ae60; font-weight: 700; }
+  .quiz-question {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 6px;
+    line-height: 1.55;
+  }
+  .quiz-question-en {
+    font-size: 13px;
+    color: #5a7290;
+    font-style: italic;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-option {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: #2c3e50;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-align: left;
+  }
+  .quiz-option:hover:not(.disabled) {
+    border-color: #2d77b8;
+    transform: translateX(3px);
+    background: #f8fafc;
+  }
+  .quiz-option.selected { border-color: #2d77b8; background: #e3f0fb; }
+  .quiz-option.correct { border-color: #27ae60; background: #e8f7ee; }
+  .quiz-option.incorrect { border-color: #e74c3c; background: #fdecea; }
+  .quiz-option.disabled { cursor: default; }
+  .quiz-explanation {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: #f0f7ff;
+    border-radius: 10px;
+    border-left: 4px solid #2d77b8;
+    font-size: 13.5px;
+    color: #2c3e50;
+    line-height: 1.65;
+    animation: fadeIn 0.4s ease;
+  }
+  .quiz-explanation .explain-title { font-weight: 700; color: #0f4c81; margin-bottom: 4px; }
+  .quiz-explanation .explain-en { font-size: 12.5px; color: #5a7290; font-style: italic; margin-top: 4px; }
+  .quiz-controls { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn {
+    background: linear-gradient(135deg, #0f4c81, #2d77b8);
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(15,76,129,0.25); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .btn.secondary { background: #6c8aa8; }
+  .quiz-result {
+    text-align: center;
+    padding: 24px 16px;
+  }
+  .quiz-result-icon { font-size: 56px; margin-bottom: 12px; }
+  .quiz-result-score {
+    font-size: 42px;
+    font-weight: 900;
+    color: #27ae60;
+    margin-bottom: 4px;
+  }
+  .quiz-result-label { font-size: 14px; color: #5a7290; margin-bottom: 8px; }
+  .quiz-result-message { font-size: 16px; font-weight: 600; color: #0f4c81; margin-bottom: 18px; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Talking points */
+  .talk-card {
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    border-left: 4px solid #2d77b8;
+  }
+  .talk-card .zh { font-weight: 600; font-size: 14.5px; color: #2c3e50; margin-bottom: 4px; }
+  .talk-card .en { font-size: 13px; color: #5a7290; font-style: italic; line-height: 1.6; }
+
+  /* Reference */
+  .reference {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 24px;
+  }
+  .reference h5 { font-size: 14px; color: #495057; margin-bottom: 10px; }
+  .reference ol { font-size: 12.5px; color: #495057; line-height: 1.7; padding-left: 20px; }
+  .reference li { margin-bottom: 6px; }
+  .reference a { color: #2d77b8; text-decoration: none; }
+  .reference a:hover { text-decoration: underline; }
+
+  /* Footer */
+  .footer {
+    background: #f8f9fa;
+    padding: 20px 32px;
+    text-align: center;
+    font-size: 12px;
+    color: #6c757d;
+    border-top: 1px solid #e9ecef;
+  }
+  .footer a { color: #2d77b8; text-decoration: none; }
+
+  /* Share Button Styles */
+  .share-button { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+  .share-toggle { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #0f4c81, #2d77b8); border: none; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(15,76,129,0.4); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+  .share-toggle:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(15,76,129,0.5); }
+  .share-menu { position: absolute; top: 60px; right: 0; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 20px; min-width: 280px; display: none; animation: fadeInShare 0.3s ease; }
+  .share-menu.active { display: block; }
+  @keyframes fadeInShare { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  .share-menu h4 { color: #1e293b; margin: 0 0 15px 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+  .qr-container { background: #f8fafc; border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 15px; }
+  .qr-container img { max-width: 150px; height: auto; border-radius: 8px; }
+  .qr-container p { font-size: 0.75rem; color: #64748b; margin: 8px 0 0 0; }
+  .share-buttons { display: flex; flex-direction: column; gap: 10px; }
+  .share-btn { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: none; border-radius: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 500; transition: all 0.2s ease; text-decoration: none; color: white; }
+  .share-btn.line { background: #00B900; }
+  .share-btn.email { background: #EA4335; }
+  .share-btn.copy { background: #0f4c81; }
+  .share-btn:hover { transform: translateX(5px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .share-btn svg { width: 20px; height: 20px; fill: currentColor; }
+  .share-close { position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0; }
+  .share-close:hover { color: #1e293b; }
+
+  /* Print styles */
+  @media print {
+    .share-button, .quiz-controls { display: none; }
+    body { background: white; }
+    .page { box-shadow: none; }
+  }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    .content { padding: 22px 18px; }
+    .header { padding: 28px 22px 22px; }
+    .header h1 { font-size: 20px; }
+    .section-title .en { display: none; }
+    .score-card .score-value { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- Share Button -->
+<div class="share-button">
+  <button class="share-toggle" onclick="toggleShareMenu()" title="分享此頁面 / Share">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+  </button>
+  <div class="share-menu" id="shareMenu">
+    <button class="share-close" onclick="toggleShareMenu()">&times;</button>
+    <h4>📤 分享此頁面 / Share</h4>
+    <div class="qr-container">
+      <img id="qrCode" src="" alt="QR Code">
+      <p>掃描 QR Code 開啟頁面</p>
+    </div>
+    <div class="share-buttons">
+      <a class="share-btn line" href="#" id="lineShare" target="_blank">
+        <svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.349 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+        LINE 分享
+      </a>
+      <a class="share-btn email" href="#" id="emailShare">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        Email 分享
+      </a>
+      <button class="share-btn copy" onclick="copyPageUrl()">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+        複製連結
+      </button>
+    </div>
+  </div>
+</div>
+
+<header class="header">
+  <span class="header-tag">CLINICAL DECISION SUPPORT · 中英對照</span>
+  <h1>左心耳封堵術神經內科決策輔助工具</h1>
+  <div class="subtitle">LAAO Decision Aid for Neurologists & Stroke Specialists</div>
+  <div class="hospital-badge">
+    <span>🏥</span>
+    <span>新竹臺大分院 · 神經內科 × 心血管中心 跨科共識</span>
+  </div>
+</header>
+
+<main class="content">
+
+  <div class="alert-box">
+    <div class="alert-title">⚠️ 使用說明 / Disclaimer</div>
+    <p><strong>本工具供神經內科醫師、專科護理師及高度知情的家屬使用</strong>，協助理解左心耳封堵術 (LAAO) 在中風二級預防的角色。所有臨床決策仍應透過神經內科 + 心臟內科 (介入科) + 病人/家屬的共享決策 (Shared Decision Making, SDM) 完成。本工具不取代個案討論、TEE 評估或正式 heart-brain team 會議。</p>
+  </div>
+
+  <div class="info-box">
+    <div class="info-title">📖 為什麼神經科醫師要懂 LAAO？</div>
+    <p>非瓣膜性 AF 病人約 <strong>90% 的左心房血栓源自左心耳 (LAA)</strong>。當病人發生過 cardioembolic stroke、又有抗凝血禁忌或 OAC 下仍出血／中風，LAAO 是合理的「非藥物中風二級預防」。神經科常是第一個遇到這群病人的人，需要知道何時轉介、誰會受益、術後如何協同管理。</p>
+    <p class="en">~90% of LAA-related thrombi in non-valvular AF originate from the left atrial appendage. LAAO offers a non-pharmacologic stroke prevention strategy for patients with OAC contraindications, recurrent strokes on OAC, or major bleeding on OAC. Neurologists are often the first to identify these candidates.</p>
+  </div>
+
+  <!-- ===== Section 1: AF & Stroke Background ===== -->
+  <section class="section">
+    <h2 class="section-title">
+      <span class="icon">1</span>
+      AF 與栓塞性中風的病生理
+      <span class="en">AF & Cardioembolic Stroke Pathophysiology</span>
+    </h2>
+
+    <div class="bilingual">
+      <div class="zh">心房顫動使左心房收縮喪失，血流停滯於 <strong>左心耳 (LAA)</strong> 此盲端結構，於 Virchow's triad 三要素 (停滯、內皮損傷、高凝) 共同作用下形成血栓。血栓脫落後造成心源性栓塞 (cardioembolic stroke)，臨床特徵為「突然、皮質性、多灌流區、NIHSS 較重、易出現出血轉化」。</div>
+      <div class="en">AF causes loss of atrial mechanical contraction; stasis in the LAA combined with endothelial dysfunction and hypercoagulability (Virchow's triad) drives thrombus formation. Embolization produces cortical, multi-territory, often severe strokes with high hemorrhagic-transformation risk.</div>
+    </div>
+
+    <div class="bilingual">
+      <div class="zh">經食道超音波 (TEE) 與外科觀察證實 <strong>非瓣膜性 AF 的血栓 90% 在 LAA 內</strong>，這是「為何封堵 LAA 就能大幅降低中風」的解剖學基礎。瓣膜性 AF 則血栓常分布全心房，封堵 LAA 益處有限，故 LAAO 適應症限定 NVAF。</div>
+      <div class="en">In non-valvular AF, ~90% of left atrial thrombi reside within the LAA — the anatomic rationale for LAAO. In valvular AF, thrombus is more diffuse, hence LAAO is restricted to non-valvular AF.</div>
+    </div>
+  </section>
+
+  <!-- ===== Section 2: CHA2DS2-VASc Calculator ===== -->
+  <section class="section">
+    <h2 class="section-title">
+      <span class="icon">2</span>
+      CHA₂DS₂-VASc 中風風險評估
+      <span class="en">Stroke Risk in NVAF</span>
+    </h2>
+    <p style="font-size:13.5px;color:#5a7290;margin-bottom:12px;font-style:italic;">勾選符合的項目以計算分數。≥2 (男) / ≥3 (女) 為長期中風預防適應症。<br>Tick all that apply. Threshold for long-term stroke prevention: ≥2 (M) / ≥3 (F).</p>
+
+    <div id="chadsCalc">
+      <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcChads()"> 心衰竭 / Congestive HF or LV dysfunction</label><span class="points">+1</span></div>
+      <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcChads()"> 高血壓 / Hypertension</label><span class="points">+1</span></div>
+      <div class="calc-row" data-points="2"><label><input type="checkbox" onchange="calcChads()"> 年齡 ≥75 歲 / Age ≥75</label><span class="points">+2</span></div>
+      <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcChads()"> 糖尿病 / Diabetes mellitus</label><span class="points">+1</span></div>
+      <div class="calc-row" data-points="2"><label><input type="checkbox" onchange="calcChads()"> 既往中風 / TIA / 栓塞 / Prior stroke, TIA, or TE</label><span class="points">+2</span></div>
+      <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcChads()"> 血管疾病 (MI / PAD / 主動脈斑塊) / Vascular disease</label><span class="points">+1</span></div>
+      <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcChads()"> 年齡 65–74 歲 / Age 65–74</label><span class="points">+1</span></div>
+      <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcChads()"> 女性 / Sex category — Female</label><span class="points">+1</span></div>
+    </div>
+
+    <div class="score-card">
+      <div class="score-label">CHA₂DS₂-VASc Score</div>
+      <div class="score-value"><span id="chadsScore">0</span> 分</div>
+      <div class="score-interp" id="chadsInterp">勾選病人狀況以計算 / Tick boxes to calculate</div>
+    </div>
+  </section>
+
+  <!-- ===== Section 3: HAS-BLED ===== -->
+  <section class="section">
+    <h2 class="section-title">
+      <span class="icon">3</span>
+      HAS-BLED 出血風險評估
+      <span class="en">Bleeding Risk on OAC</span>
+    </h2>
+    <p style="font-size:13.5px;color:#5a7290;margin-bottom:12px;font-style:italic;">≥3 為「高出血風險」— 應更謹慎追蹤、矯正可逆因子，但<u>不應單獨用作停用 OAC 的理由</u>。在反覆出血或不耐受時，是 LAAO 強適應症的關鍵分數。<br>Score ≥3 = high bleeding risk. Should not solely justify OAC withdrawal, but is a key trigger for LAAO referral when bleeding recurs.</p>
+
+    <div id="hasbledCalc">
+      <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcHasBled()"> 高血壓 (SBP &gt;160) / Hypertension</label><span class="points">+1</span></div>
+      <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcHasBled()"> 異常腎功能 (Cr ≥2.26 mg/dL or 透析) / Abnormal renal</label><span class="points">+1</span></div>
+      <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcHasBled()"> 異常肝功能 / Abnormal liver</label><span class="points">+1</span></div>
+      <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcHasBled()"> 中風病史 / Stroke history</label><span class="points">+1</span></div>
+      <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcHasBled()"> 出血病史或傾向 / Bleeding history</label><span class="points">+1</span></div>
+      <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcHasBled()"> INR 不穩定 (TTR &lt;60%) / Labile INR</label><span class="points">+1</span></div>
+      <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcHasBled()"> 年齡 &gt;65 歲 / Elderly &gt;65</label><span class="points">+1</span></div>
+      <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcHasBled()"> 同時使用 NSAIDs / 抗血小板藥 / Concomitant drugs</label><span class="points">+1</span></div>
+      <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcHasBled()"> 酒精濫用 / Alcohol abuse</label><span class="points">+1</span></div>
+    </div>
+
+    <div class="score-card" style="background:linear-gradient(135deg,#a93226,#e74c3c);">
+      <div class="score-label">HAS-BLED Score</div>
+      <div class="score-value"><span id="hasbledScore">0</span> 分</div>
+      <div class="score-interp" id="hasbledInterp">勾選以計算 / Tick boxes to calculate</div>
+    </div>
+  </section>
+
+  <!-- ===== Section 4: LAAO Indications ===== -->
+  <section class="section">
+    <h2 class="section-title">
+      <span class="icon">4</span>
+      LAAO 適應症與轉介時機
+      <span class="en">When to Refer for LAAO</span>
+    </h2>
+
+    <div class="success-box">
+      <div class="info-title">✅ 應主動轉介 / Strong Indications</div>
+      <p style="margin-bottom:6px;">
+        <strong>1. 「OAC failure」</strong>：服用足量 NOAC/warfarin (TTR &gt;65%) 仍發生缺血性中風 (recurrent stroke on OAC)<br>
+        <strong>2. 「Absolute OAC contraindication」</strong>：自發性 ICH、復發性 GI bleeding 找不到可矯正原因、嚴重出血傾向<br>
+        <strong>3. 「Major bleed on OAC」</strong>：重大出血後雖恢復 OAC 仍復發<br>
+        <strong>4. 「OAC intolerance」</strong>：HAS-BLED ≥3 + 既往出血、或多次小出血造成停藥
+      </p>
+      <p class="en" style="font-size:12.5px;opacity:0.85;margin-top:6px;">Refer when OAC has failed, is contraindicated, has caused major bleeding, or is poorly tolerated despite optimization.</p>
+    </div>
+
+    <div class="info-box">
+      <div class="info-title">🤔 灰色地帶 / Grey Zones — Discuss with Cardiology</div>
+      <p>• 高 CHA₂DS₂-VASc + 高 HAS-BLED 但<u>尚未發生</u>大出血 — 應先優化 OAC 而非直接 LAAO<br>
+        • 跌倒高風險的衰弱長者 — 跌倒本身不是 OAC 禁忌；要評估「跌倒次數 + 顱內結構 + 既往是否曾出血」<br>
+        • <strong>洗腎病人</strong> — 證據顯示 LAAO 可能優於 OAC (見下節 Section 5)，建議積極討論<br>
+        • 病人「不想終生吃藥」— 共享決策；告知 LAAO 仍需 45 天–6 個月過渡期 antithrombotic</p>
+      <p class="en" style="font-size:12.5px;opacity:0.85;">Optimize OAC first in grey zones. ESRD/dialysis is an emerging strong indication. LAAO is not zero-pill: 45 days–6 months of bridging antithrombotic is required.</p>
+    </div>
+
+    <div class="danger-box">
+      <div class="info-title">❌ 不適合 / Not Suitable</div>
+      <p>• 預期餘命 &lt;1 年 (frailty score 高、末期失智、活動性惡性腫瘤)<br>
+        • 已知左心耳血栓 (LAA thrombus) — 需先抗凝治療消除<br>
+        • 風濕性二尖瓣狹窄、機械瓣 — 屬「瓣膜性 AF」，血栓非僅源自 LAA<br>
+        • 計畫 6 個月內接受心臟手術 — 可改外科 LAA 切除/夾閉 (LAAOS III 證據)<br>
+        • 對 dual-antiplatelet 過敏／無法耐受過渡期治療</p>
+      <p class="en" style="font-size:12.5px;opacity:0.85;">Excluded: limited life expectancy, known LAA thrombus, valvular AF, planned cardiac surgery (consider surgical LAA exclusion per LAAOS III), inability to tolerate post-procedure antithrombotic.</p>
+    </div>
+  </section>
+
+  <!-- ===== Section 5: Evidence Summary ===== -->
+  <section class="section">
+    <h2 class="section-title">
+      <span class="icon">5</span>
+      證據摘要：科學中立的平衡視角
+      <span class="en">Evidence Summary — A Balanced View</span>
+    </h2>
+
+    <div class="info-box">
+      <div class="info-title">💡 解讀觀點 / How to Read the Trial Landscape</div>
+      <p>近年三組關鍵試驗對 LAAO 給出「<u>表面矛盾、實則互補</u>」的訊息：</p>
+      <p>• <strong>CHAMPION-AF</strong> 顯示在<u>較廣的 NVAF 族群</u>用「新一代裝置 + 早期介入」的策略，LAAO 與 NOAC 不分伯仲，且出血更少<br>
+        • <strong>CLOSURE-AF</strong> 顯示在<u>已有出血禁忌的高風險長者</u>，LAAO 並未超越「醫師主導的最佳藥物治療」<br>
+        • <strong>JACC Interv 2025 (USRDS)</strong> 顯示<u>洗腎族群</u>，LAAO 顯著優於 apixaban 與 warfarin</p>
+      <p style="margin-top:6px;font-weight:600;">關鍵：LAAO 的價值取決於 <u>裝置世代、介入時機、與目標族群</u>。不是「越多人做越好」，也不是「不做就好」。</p>
+      <p class="en">LAAO efficacy depends on device generation, timing, and patient selection. Trials are complementary, not contradictory.</p>
+    </div>
+
+    <div class="trial-grid">
+      <div class="trial-card positive">
+        <h4>CHAMPION-AF (2026) <span class="verdict win">Met</span></h4>
+        <div class="pop">Broad NVAF, low–moderate bleeding risk · n=3,000 · CHA₂DS₂-VASc 3.5 · Mean age 71.7</div>
+        <ul>
+          <li><strong>Efficacy</strong>: CV death/stroke/SE 5.7% vs 4.8% — <u>non-inferior</u> (P&lt;0.0001)</li>
+          <li><strong>Safety</strong>: ISTH non-procedural bleed 10.9% vs 19.0% — <u>superior</u> (HR 0.55)</li>
+          <li>Net clinical benefit: 15.1% vs 21.8% (HR 0.66)</li>
+          <li>Annualized ischemic stroke 1.1% (在 NOAC 試驗範圍內)</li>
+        </ul>
+        <div class="takeaway"><strong>解讀：</strong>WATCHMAN FLX (新一代裝置) 在「相對年輕、bleeding risk 不高」的 AF 族群可作 first-line，<u>關鍵贏在出血面</u>。<br><span style="font-size:12px;color:#5a7290;font-style:italic;">FLX device + early intervention drives the bleeding-side benefit.</span></div>
+      </div>
+
+      <div class="trial-card neutral">
+        <h4>CLOSURE-AF (NEJM 2026) <span class="verdict miss">Missed</span></h4>
+        <div class="pop">High bleeding risk + AF · n=888 · CHA₂DS₂-VASc 5.2 · HAS-BLED 3.0 · Mean age 77.9</div>
+        <ul>
+          <li><strong>Composite</strong> (stroke/SE/CV death/major bleed): 16.8 vs 13.3 per 100 pt-yrs</li>
+          <li>LAAO did <u>NOT</u> meet non-inferiority vs physician-directed best medical care</li>
+          <li>Best medical care 組仍可使用 NOAC 若主治醫師認為合適</li>
+        </ul>
+        <div class="takeaway"><strong>解讀：</strong>在更年長、共病更多、已有出血禁忌的族群，LAAO <u>不一定贏過個人化的最佳藥物治療</u>。提醒「等到很嚴重才介入」可能已錯失裝置帶來的好處。<br><span style="font-size:12px;color:#5a7290;font-style:italic;">Late, sicker patients may not benefit — argues for earlier referral, not delayed rescue.</span></div>
+      </div>
+
+      <div class="trial-card dialysis" style="grid-column:1/-1;">
+        <h4>USRDS / JACC Interv 2025 — ESRD/洗腎族群 <span class="verdict subgroup">Win in subgroup</span></h4>
+        <div class="pop">AF + ESRD on dialysis · n=14,849 (PSM n=1,947/組) · 全為高出血族群</div>
+        <ul>
+          <li><strong>1-year composite</strong> (stroke/SE + major bleed + death): LAAO 42.1% vs Apixaban 46.1% (HR 1.27) vs Warfarin 46.9% (HR 1.26)，皆 P&lt;0.001 favoring LAAO</li>
+          <li><strong>Major bleeding</strong>: LAAO 19.3% vs Apixaban 24.8% vs Warfarin 29.0%</li>
+          <li>各亞組 (年齡、性別、CHA₂DS₂-VASc、HAS-BLED) 結果一致</li>
+        </ul>
+        <div class="takeaway"><strong>解讀：</strong>洗腎病人凝血機制紊亂、藥物代謝困難 — <u>機械性封堵 LAA 跳過了藥物本身的問題</u>。在這個族群，LAAO 是目前最有「個別化優勢」的選項。<br><span style="font-size:12px;color:#5a7290;font-style:italic;">In dialysis patients, mechanical occlusion bypasses the inherent problems of pharmacologic anticoagulation.</span></div>
+      </div>
+    </div>
+
+    <h3 style="font-size:15px;color:#0f4c81;margin:18px 0 8px;">📊 試驗併排比較 / Trial Comparison Table</h3>
+    <table class="compare">
+      <thead>
+        <tr><th></th><th>CHAMPION-AF</th><th>CLOSURE-AF</th><th>USRDS / ESRD</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>族群 / Population</strong></td><td>Broad NVAF</td><td>High bleed risk + AF</td><td>AF + ESRD on dialysis</td></tr>
+        <tr><td><strong>裝置 / Device</strong></td><td>WATCHMAN FLX</td><td>Mixed</td><td>Mostly WATCHMAN</td></tr>
+        <tr><td><strong>對照 / Comparator</strong></td><td>NOAC</td><td>Best medical care</td><td>Apixaban / Warfarin</td></tr>
+        <tr><td><strong>年齡 (yrs)</strong></td><td>71.7</td><td>77.9</td><td>~71</td></tr>
+        <tr><td><strong>CHA₂DS₂-VASc</strong></td><td>3.5</td><td>5.2</td><td>~5</td></tr>
+        <tr><td><strong>HAS-BLED</strong></td><td>1.3</td><td>3.0</td><td>≥3 (大多數)</td></tr>
+        <tr><td><strong>主要結果 / Result</strong></td><td class="highlight">Met (non-inferior + safer)</td><td class="warn">Did not meet NI</td><td class="highlight">LAAO superior</td></tr>
+        <tr><td><strong>對神經科啟示</strong></td><td>新裝置使 LAAO 進入主流</td><td>勿等到太晚才介入</td><td>洗腎中風病人應討論 LAAO</td></tr>
+      </tbody>
+    </table>
+
+    <div class="info-box">
+      <div class="info-title">📚 較早期關鍵試驗 / Earlier Landmark Trials</div>
+      <p>• <strong>PROTECT-AF (2009)</strong> & <strong>PREVAIL (2014)</strong>：WATCHMAN vs warfarin；patient-level meta-analysis 顯示 5-yr 整體死亡較低、出血性中風減少 (Reddy 2017)。<br>
+        • <strong>PRAGUE-17 (2020)</strong>：Watchman/Amulet vs DOAC 在高風險族群 — non-inferior，並支持 LAAO 在高出血族群的角色。<br>
+        • <strong>LAAOS III (2021, NEJM)</strong>：開心手術同時做<u>外科 LAA 閉合</u>可降低中風 (跨族群均適用)，是 NVAF 族群外的另一條證據線。</p>
+    </div>
+  </section>
+
+  <!-- ===== Section 6: Decision Pathway ===== -->
+  <section class="section">
+    <h2 class="section-title">
+      <span class="icon">6</span>
+      神經內科端的決策流程
+      <span class="en">Neurologist-Side Decision Pathway</span>
+    </h2>
+
+    <div class="flow-step">
+      <div><span class="step-num">1</span><span class="step-title">確認 NVAF 與栓塞性中風機轉</span></div>
+      <div class="step-detail">12-lead ECG / 24-hr Holter / 植入式心電監測 (≥30 sec)；TOAST 分類 cardioembolic；排除 LAA thrombus → TEE 或 cardiac CT。<br><em>Confirm NVAF with cardioembolic stroke; exclude LAA thrombus by TEE/CT.</em></div>
+    </div>
+    <div class="flow-arrow">▼</div>
+    <div class="flow-step">
+      <div><span class="step-num">2</span><span class="step-title">優化 OAC 並追蹤</span></div>
+      <div class="step-detail">先選 NOAC (除非有禁忌)；確認順從性、劑量正確 (依 CrCl/體重/年齡)；INR &gt;65% TTR for warfarin；矯正可逆出血因子 (HTN / NSAIDs / alcohol)。<br><em>First optimize OAC; correct modifiable bleeding factors before considering LAAO.</em></div>
+    </div>
+    <div class="flow-arrow">▼</div>
+    <div class="flow-step">
+      <div><span class="step-num">3</span><span class="step-title">識別「OAC failure」或「OAC contraindication」</span></div>
+      <div class="step-detail">Recurrent stroke on therapeutic OAC、自發性 ICH、復發大出血、or 透析病人 (考慮 early discussion)。<br><em>Identify OAC failure, intolerance, or ESRD as triggers for LAAO discussion.</em></div>
+    </div>
+    <div class="flow-arrow">▼</div>
+    <div class="flow-step">
+      <div><span class="step-num">4</span><span class="step-title">轉介心臟內科 (介入科) — 啟動 Heart-Brain Team</span></div>
+      <div class="step-detail">會診時帶齊：CHA₂DS₂-VASc / HAS-BLED 分數、近期影像 (MRI/CT)、過去出血事件清單、預期餘命評估、TEE/cardiac CT (如有)。<br><em>Multidisciplinary heart-brain team referral with structured documentation.</em></div>
+    </div>
+    <div class="flow-arrow">▼</div>
+    <div class="flow-step">
+      <div><span class="step-num">5</span><span class="step-title">術後協同管理</span></div>
+      <div class="step-detail">過渡期 antithrombotic (DAPT 1–6 個月，依裝置與出血史)；6 週與 6 個月 TEE 確認 seal 與排除 device-related thrombus；維持高血壓控制、跌倒預防、抗癲癇藥物 ↔ DOAC 交互作用評估。<br><em>Co-manage bridging antithrombotic; TEE at 6 wk & 6 mo; ongoing stroke-prevention optimization.</em></div>
+    </div>
+  </section>
+
+  <!-- ===== Section 7: Family Talking Points ===== -->
+  <section class="section">
+    <h2 class="section-title">
+      <span class="icon">7</span>
+      與病人／家屬的溝通要點
+      <span class="en">Patient & Family Talking Points</span>
+    </h2>
+
+    <div class="talk-card">
+      <div class="zh">「左心耳是心臟一個小的盲端結構，AF 時血液停滯容易在這裡形成血栓，再被打到大腦造成中風。」</div>
+      <div class="en">"The LAA is a small pouch in the heart where blood pools during AF, forming clots that travel to the brain."</div>
+    </div>
+    <div class="talk-card">
+      <div class="zh">「LAAO 是用導管放一個傘狀裝置把這個盲端封住。<u>不是治療 AF 本身</u>，AF 還是會在心臟發生，但血栓很難形成。」</div>
+      <div class="en">"LAAO uses a catheter-delivered umbrella to seal off the pouch. It does not treat AF itself, but prevents the clot."</div>
+    </div>
+    <div class="talk-card">
+      <div class="zh">「LAAO 不是『一勞永逸不吃藥』。手術後仍要 1.5 個月到 6 個月的抗血小板藥物過渡期，之後才可能停藥或只用低劑量阿斯匹靈。」</div>
+      <div class="en">"LAAO is not 'no medication forever'. A 1.5–6 month bridging antithrombotic course is required."</div>
+    </div>
+    <div class="talk-card">
+      <div class="zh">「對洗腎、嚴重出血史、或服藥仍中風的人，目前證據比較支持 LAAO。對年紀很大、病很重、預期餘命很短的人，藥物或許更合適。」</div>
+      <div class="en">"Evidence favors LAAO in dialysis, severe bleeding history, or OAC failure. For very elderly/frail patients with limited prognosis, medical therapy may be preferable."</div>
+    </div>
+    <div class="talk-card">
+      <div class="zh">「主要手術風險約 1–2%：心包填塞、裝置脫落、血管併發症；中心經驗很重要。」</div>
+      <div class="en">"Procedural complications (~1–2%): pericardial effusion, device embolization, vascular access — operator experience matters."</div>
+    </div>
+  </section>
+
+  <!-- ===== Section 8: Self-Assessment Quiz ===== -->
+  <section class="section">
+    <h2 class="section-title">
+      <span class="icon">8</span>
+      自我測驗
+      <span class="en">Self-Assessment Quiz</span>
+    </h2>
+    <div class="quiz-container" id="quizContainer">
+      <div class="quiz-progress">
+        <span class="quiz-progress-text">第 <span id="qIdx">1</span> / <span id="qTotal">7</span> 題 · Question</span>
+        <span class="quiz-progress-score">答對：<span id="qScore">0</span></span>
+      </div>
+      <div id="quizBody"></div>
+      <div class="quiz-controls" id="quizControls">
+        <button class="btn" id="quizNext" onclick="nextQuiz()" disabled>下一題 / Next</button>
+        <button class="btn secondary" id="quizRestart" onclick="restartQuiz()" style="display:none;">重新測驗 / Restart</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== References ===== -->
+  <div class="reference">
+    <h5>📚 參考文獻 / References</h5>
+    <ol>
+      <li>Doshi SK, et al. Left Atrial Appendage Closure or Anticoagulation for Atrial Fibrillation (CHAMPION-AF). <em>N Engl J Med</em> 2026. <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2517213" target="_blank">NEJMoa2517213</a></li>
+      <li>Sievert H, et al. Left Atrial Appendage Closure or Medical Therapy in Atrial Fibrillation (CLOSURE-AF). <em>N Engl J Med</em> 2026. <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2513310" target="_blank">NEJMoa2513310</a></li>
+      <li>Al-Abcha A, et al. Outcomes of Stroke Prevention Strategies in Patients With AF and End-Stage Renal Disease. <em>JACC Cardiovasc Interv</em> 2025;18(21):2614-2624. <a href="https://doi.org/10.1016/j.jcin.2025.07.038" target="_blank">DOI: 10.1016/j.jcin.2025.07.038</a></li>
+      <li>Reddy VY, et al. 5-Year Outcomes after LAAC vs Warfarin (PROTECT-AF & PREVAIL meta-analysis). <em>J Am Coll Cardiol</em> 2017;70(24):2964-2975. <a href="https://doi.org/10.1016/j.jacc.2017.10.021" target="_blank">DOI: 10.1016/j.jacc.2017.10.021</a></li>
+      <li>Osmancik P, et al. LAAC vs DOAC in High-Risk AF (PRAGUE-17). <em>J Am Coll Cardiol</em> 2020;75(25):3122-3135. <a href="https://doi.org/10.1016/j.jacc.2020.04.067" target="_blank">DOI: 10.1016/j.jacc.2020.04.067</a></li>
+      <li>Whitlock RP, et al. Left Atrial Appendage Occlusion during Cardiac Surgery (LAAOS III). <em>N Engl J Med</em> 2021;384(22):2081-2091. <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2101897" target="_blank">NEJMoa2101897</a></li>
+      <li>Glikson M, et al. EHRA/EAPCI Expert Consensus Statement on LAAO — 2019 Update. <em>EuroIntervention</em> 2020;15(13):1133-1180. <a href="https://doi.org/10.4244/EIJY19M08_01" target="_blank">DOI: 10.4244/EIJY19M08_01</a></li>
+      <li>Joglar JA, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis and Management of AF. <em>Circulation</em> 2024;149(1):e1-e156. <a href="https://doi.org/10.1161/CIR.0000000000001193" target="_blank">DOI: 10.1161/CIR.0000000000001193</a></li>
+      <li>Van Gelder IC, et al. 2024 ESC Guidelines for AF management. <em>Eur Heart J</em> 2024;45(36):3314-3414. <a href="https://doi.org/10.1093/eurheartj/ehae176" target="_blank">DOI: 10.1093/eurheartj/ehae176</a></li>
+      <li>新竹臺大分院心血管中心 × 神經內科「Heart-Brain Team for AF Stroke Prevention」工作小組共識 2026</li>
+    </ol>
+  </div>
+</main>
+
+<footer class="footer">
+  <p>本工具僅供醫療專業人員與高度知情家屬之臨床決策參考使用 / For healthcare professionals and informed family members only</p>
+  <p>新竹臺大分院 心血管中心 × 神經內科 © 2026 | <a href="index.html">返回首頁 / Home</a></p>
+</footer>
+
+</div>
+
+<script>
+// ============= CHA2DS2-VASc =============
+function calcChads() {
+  const rows = document.querySelectorAll('#chadsCalc .calc-row');
+  let total = 0;
+  rows.forEach(r => {
+    const cb = r.querySelector('input[type="checkbox"]');
+    const pts = parseInt(r.dataset.points);
+    if (cb.checked) { total += pts; r.classList.add('checked'); }
+    else { r.classList.remove('checked'); }
+  });
+  document.getElementById('chadsScore').textContent = total;
+  let interp = '';
+  if (total === 0) interp = '極低風險 — 一般不需 OAC / Very low risk';
+  else if (total === 1) interp = '低風險 — 男性可考慮 OAC，女性 (僅 1 分為 sex) 可不用 / Low — consider';
+  else if (total === 2) interp = '中度風險 — 男性建議 OAC / Moderate — OAC indicated (M)';
+  else if (total <= 4) interp = '高風險 — 強烈建議長期中風預防 / High — OAC strongly indicated';
+  else interp = '極高風險 — 必須中風預防，若 OAC 困難應考慮 LAAO / Very high — consider LAAO if OAC difficult';
+  document.getElementById('chadsInterp').textContent = interp;
+}
+
+// ============= HAS-BLED =============
+function calcHasBled() {
+  const rows = document.querySelectorAll('#hasbledCalc .calc-row');
+  let total = 0;
+  rows.forEach(r => {
+    const cb = r.querySelector('input[type="checkbox"]');
+    const pts = parseInt(r.dataset.points);
+    if (cb.checked) { total += pts; r.classList.add('checked'); }
+    else { r.classList.remove('checked'); }
+  });
+  document.getElementById('hasbledScore').textContent = total;
+  let interp = '';
+  if (total <= 1) interp = '低出血風險 / Low bleeding risk';
+  else if (total === 2) interp = '中度出血風險 — 矯正可逆因子 / Moderate — modify reversible factors';
+  else interp = '高出血風險 — 嚴密追蹤；若反覆出血/不耐受可討論 LAAO / High — close follow-up; consider LAAO if recurrent bleed';
+  document.getElementById('hasbledInterp').textContent = interp;
+}
+
+// ============= QUIZ =============
+const QUIZ = [
+  {
+    q_zh: 'AF 病人發生缺血性中風時，左心房血栓有多大比例源自左心耳 (LAA)？',
+    q_en: 'In non-valvular AF stroke, what proportion of LA thrombi originate in the LAA?',
+    opts: [
+      { zh: '約 30%', en: '~30%' },
+      { zh: '約 60%', en: '~60%' },
+      { zh: '約 90%', en: '~90%', correct: true },
+      { zh: '幾乎 0%（血栓多在心室）', en: '~0% (mostly ventricular)' }
+    ],
+    explain_zh: '非瓣膜性 AF 中約 90% 左心房血栓位於 LAA，這是 LAAO 之解剖學依據。瓣膜性 AF 則血栓較為瀰漫，故 LAAO 不適用。',
+    explain_en: '~90% of LA thrombi reside within the LAA in NVAF — the anatomic basis for LAAO. In valvular AF thrombi are more diffuse, so LAAO is not indicated.'
+  },
+  {
+    q_zh: 'CHAMPION-AF (2026) 主要結果為何？',
+    q_en: 'What was the main finding of CHAMPION-AF (2026)?',
+    opts: [
+      { zh: 'LAAO 顯著優於 NOAC 之中風預防', en: 'LAAO superior to NOAC for stroke prevention' },
+      { zh: 'LAAO 對 NOAC 不分伯仲 (non-inferior) 之 efficacy，且非手術相關出血更少 (superior safety)', en: 'Non-inferior efficacy + superior bleeding safety vs NOAC', correct: true },
+      { zh: 'LAAO 顯著比 NOAC 死亡率高', en: 'LAAO had higher mortality than NOAC' },
+      { zh: 'LAAO 與 NOAC 結果完全相同，看不出差別', en: 'No detectable difference at all' }
+    ],
+    explain_zh: 'CHAMPION-AF 達到雙主要終點：efficacy non-inferior (CV 死亡/中風/SE 5.7% vs 4.8%)，safety superior (ISTH 非手術出血 10.9% vs 19.0%, HR 0.55)。年化缺血性中風 1.1%。',
+    explain_en: 'CHAMPION-AF met both endpoints: efficacy non-inferior (5.7% vs 4.8%) and safety superior (bleed 10.9% vs 19.0%, HR 0.55). Annualized ischemic stroke 1.1%.'
+  },
+  {
+    q_zh: 'CLOSURE-AF (NEJM 2026) 與 CHAMPION-AF 的最大差異在於？',
+    q_en: 'How does CLOSURE-AF differ from CHAMPION-AF?',
+    opts: [
+      { zh: '使用不同的封堵裝置', en: 'Different occlusion device' },
+      { zh: '族群是<u>已有出血禁忌、年紀更大</u>的高風險病人，且 LAAO 未達 non-inferiority', en: 'Older, high-bleeding-risk population; LAAO did NOT meet non-inferiority', correct: true },
+      { zh: 'CLOSURE-AF 證明 LAAO 顯著優於 NOAC', en: 'CLOSURE-AF showed LAAO clearly superior' },
+      { zh: 'CLOSURE-AF 為單臂研究無對照組', en: 'Single-arm without comparator' }
+    ],
+    explain_zh: 'CLOSURE-AF 收 888 名平均 78 歲、HAS-BLED 3.0、CHA₂DS₂-VASc 5.2 之高出血風險族群，比較 LAAO vs 醫師主導之最佳藥物治療。3 年複合事件 16.8 vs 13.3 per 100 pt-yrs，LAAO <u>未達</u>非劣性。提醒「等到很晚才介入」可能錯失裝置好處。',
+    explain_en: 'CLOSURE-AF enrolled 888 elderly high-bleed-risk patients (mean age 78, HAS-BLED 3.0, CHA₂DS₂-VASc 5.2). LAAO did NOT meet non-inferiority vs best medical care — suggesting late rescue may miss the window.'
+  },
+  {
+    q_zh: '在洗腎 (ESRD) 合併 AF 之病人，目前證據顯示？',
+    q_en: 'In ESRD patients with AF, what does current evidence show?',
+    opts: [
+      { zh: 'Warfarin 為最佳選項', en: 'Warfarin is best' },
+      { zh: 'Apixaban 顯著優於 LAAO 與 warfarin', en: 'Apixaban superior to both' },
+      { zh: 'LAAO 在中風/出血/死亡複合終點顯著優於 apixaban 與 warfarin', en: 'LAAO superior to both apixaban and warfarin on composite outcomes', correct: true },
+      { zh: '三者結果完全相同', en: 'All three identical' }
+    ],
+    explain_zh: 'JACC Interv 2025 (USRDS) 14,849 名病人 PSM 分析顯示，1 年複合事件 LAAO 42.1% vs Apixaban 46.1% (HR 1.27) vs Warfarin 46.9% (HR 1.26)。出血率 19.3% vs 24.8% vs 29.0%。LAAO 跳過洗腎病人複雜的藥物代謝與凝血紊亂，是這族群最有「個別優勢」的策略。',
+    explain_en: 'USRDS analysis (JACC Interv 2025, n=14,849, PSM) shows LAAO superior to apixaban and warfarin on composite outcomes. LAAO bypasses dysregulated coagulation and drug clearance in dialysis patients.'
+  },
+  {
+    q_zh: '神經科醫師最該主動考慮轉介 LAAO 的情境是？',
+    q_en: 'When should a neurologist most strongly consider LAAO referral?',
+    opts: [
+      { zh: '初次診斷 AF 但從未中風的低風險年輕病人', en: 'New-onset AF, low risk, never stroked' },
+      { zh: '在足量 OAC 下仍復發中風 / 自發性 ICH 之病史 / OAC 後重大出血復發', en: 'Recurrent stroke on OAC / spontaneous ICH / recurrent major bleed on OAC', correct: true },
+      { zh: '所有 CHA₂DS₂-VASc ≥1 的病人', en: 'Anyone with CHA₂DS₂-VASc ≥1' },
+      { zh: '預期餘命 &lt;6 個月之末期失智', en: 'End-stage dementia, life expectancy &lt;6 months' }
+    ],
+    explain_zh: '強適應症包括：(1) OAC 下仍中風 (OAC failure)、(2) 絕對 OAC 禁忌 (e.g. 自發性 ICH)、(3) OAC 後重大出血、(4) OAC 不耐受。預期餘命太短或末期失智不適合，應走舒適導向。',
+    explain_en: 'Strong indications: OAC failure, absolute contraindication (e.g., spontaneous ICH), major bleed on OAC, OAC intolerance. Limited life expectancy or end-stage dementia is NOT suitable.'
+  },
+  {
+    q_zh: 'LAAO 術後抗栓策略的正確說法為？',
+    q_en: 'Which is true about post-LAAO antithrombotic therapy?',
+    opts: [
+      { zh: '出院當天即可停所有抗栓藥', en: 'Stop all antithrombotic on discharge' },
+      { zh: '需要 1.5–6 個月過渡期 (依裝置 & 出血史)，之後再評估減量或停藥', en: '1.5–6 month bridging course required, then re-assess', correct: true },
+      { zh: '需終生使用 NOAC + DAPT 三合一', en: 'Lifelong triple therapy' },
+      { zh: '只能用 warfarin', en: 'Only warfarin allowed' }
+    ],
+    explain_zh: 'LAAO 不是「零藥物」。常用方案：NOAC 或 warfarin × 45 天 → DAPT 4.5 月 → ASA。若高出血風險可改 DAPT 1–6 個月或 ASA 單獨。應於 6 週/6 個月 TEE 確認 seal 與排除 device-related thrombus 後再考慮減量。',
+    explain_en: 'LAAO is not zero-pill. Typical regimen: OAC × 45 d → DAPT 4.5 mo → ASA. High-bleed patients may use DAPT only or ASA alone. Confirm seal & rule out DRT by TEE at 6 wk & 6 mo.'
+  },
+  {
+    q_zh: '對「洗腎 + 反覆腦中風」的病人在共享決策時，<u>最</u>持平的說法是？',
+    q_en: 'For a dialysis patient with recurrent stroke, the most balanced shared-decision message is:',
+    opts: [
+      { zh: '「藥物無效，必須做 LAAO」', en: '"Drugs failed, you must have LAAO"' },
+      { zh: '「LAAO 跟藥物完全一樣，做不做沒差」', en: '"LAAO and drugs are identical"' },
+      { zh: '「就洗腎族群目前的真實世界證據，LAAO 在中風與出血同時下降的綜合表現勝過 apixaban 與 warfarin；但仍需評估手術風險、TEE 解剖、與您的整體目標」', en: '"Real-world evidence in dialysis favors LAAO on combined stroke and bleeding outcomes vs apixaban/warfarin, but procedural risk, TEE anatomy, and your overall goals must still be weighed"', correct: true },
+      { zh: '「等到第三次中風再考慮」', en: '"Wait until the third stroke"' }
+    ],
+    explain_zh: '共享決策強調「個別化、平衡的證據呈現」——既不誇大 LAAO 的好處，也不忽視已有的真實世界證據。CLOSURE-AF 提醒不可一概而論；ESRD 數據則確實支持積極討論。',
+    explain_en: 'SDM requires balanced framing: do not overstate LAAO benefits, do not ignore real-world evidence. CLOSURE-AF cautions against blanket recommendations; ESRD data supports active discussion in dialysis.'
+  }
+];
+
+let qIndex = 0;
+let qScore = 0;
+let qAnswered = false;
+
+function renderQuiz() {
+  document.getElementById('qIdx').textContent = qIndex + 1;
+  document.getElementById('qTotal').textContent = QUIZ.length;
+  document.getElementById('qScore').textContent = qScore;
+
+  const item = QUIZ[qIndex];
+  const body = document.getElementById('quizBody');
+  let html = `<div class="quiz-question">${item.q_zh}</div>
+              <div class="quiz-question-en">${item.q_en}</div>
+              <div class="quiz-options">`;
+  item.opts.forEach((o, i) => {
+    html += `<button class="quiz-option" data-i="${i}" onclick="answerQuiz(${i})">
+               <strong>${String.fromCharCode(65+i)}.</strong> ${o.zh}<br>
+               <span style="font-size:12px;color:#5a7290;font-style:italic;">${o.en}</span>
+             </button>`;
+  });
+  html += `</div>`;
+  body.innerHTML = html;
+
+  qAnswered = false;
+  document.getElementById('quizNext').disabled = true;
+  document.getElementById('quizNext').textContent = (qIndex < QUIZ.length - 1) ? '下一題 / Next' : '看結果 / Result';
+  document.getElementById('quizRestart').style.display = 'none';
+}
+
+function answerQuiz(idx) {
+  if (qAnswered) return;
+  qAnswered = true;
+  const item = QUIZ[qIndex];
+  const buttons = document.querySelectorAll('.quiz-option');
+  let correctIdx = item.opts.findIndex(o => o.correct);
+  buttons.forEach((b, i) => {
+    b.classList.add('disabled');
+    if (i === correctIdx) b.classList.add('correct');
+    if (i === idx && i !== correctIdx) b.classList.add('incorrect');
+  });
+  if (idx === correctIdx) qScore++;
+  document.getElementById('qScore').textContent = qScore;
+
+  const explainHtml = `<div class="quiz-explanation">
+      <div class="explain-title">💡 解析</div>
+      <div>${item.explain_zh}</div>
+      <div class="explain-en">${item.explain_en}</div>
+    </div>`;
+  document.getElementById('quizBody').insertAdjacentHTML('beforeend', explainHtml);
+  document.getElementById('quizNext').disabled = false;
+}
+
+function nextQuiz() {
+  if (qIndex < QUIZ.length - 1) {
+    qIndex++;
+    renderQuiz();
+  } else {
+    showQuizResult();
+  }
+}
+
+function showQuizResult() {
+  const pct = Math.round(qScore / QUIZ.length * 100);
+  let icon = '🎯', msg = '';
+  if (pct === 100) { icon = '🏆'; msg = '滿分！LAAO 觀念紮實，足以與心臟科同事討論。'; }
+  else if (pct >= 80) { icon = '🎉'; msg = '非常好！可以放心向家屬解釋 LAAO 抉擇。'; }
+  else if (pct >= 60) { icon = '👍'; msg = '基礎扎實 — 再複習試驗差異 (CHAMPION vs CLOSURE) 即可上場。'; }
+  else { icon = '📖'; msg = '建議再讀 Section 5 證據摘要，著重族群差異。'; }
+
+  document.getElementById('quizBody').innerHTML = `
+    <div class="quiz-result">
+      <div class="quiz-result-icon">${icon}</div>
+      <div class="quiz-result-score">${qScore} / ${QUIZ.length}</div>
+      <div class="quiz-result-label">正確率 ${pct}%</div>
+      <div class="quiz-result-message">${msg}</div>
+    </div>`;
+  document.getElementById('quizNext').style.display = 'none';
+  document.getElementById('quizRestart').style.display = 'inline-flex';
+}
+
+function restartQuiz() {
+  qIndex = 0; qScore = 0;
+  document.getElementById('quizNext').style.display = 'inline-flex';
+  renderQuiz();
+}
+
+// ============= Share =============
+function initShareButtons() {
+  const pageUrl = window.location.href;
+  const pageTitle = document.title;
+  const encodedUrl = encodeURIComponent(pageUrl);
+  const qrCodeImg = document.getElementById('qrCode');
+  if (qrCodeImg) qrCodeImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodedUrl;
+  const lineShare = document.getElementById('lineShare');
+  if (lineShare) lineShare.href = 'https://social-plugins.line.me/lineit/share?url=' + encodedUrl;
+  const emailShare = document.getElementById('emailShare');
+  if (emailShare) {
+    const emailSubject = encodeURIComponent('分享：' + pageTitle);
+    const emailBody = encodeURIComponent('我想和您分享這個臨床決策工具：\n\n' + pageTitle + '\n\n' + pageUrl);
+    emailShare.href = 'mailto:?subject=' + emailSubject + '&body=' + emailBody;
+  }
+}
+function toggleShareMenu() {
+  const menu = document.getElementById('shareMenu');
+  if (menu) menu.classList.toggle('active');
+}
+function copyPageUrl() {
+  const pageUrl = window.location.href;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(pageUrl).then(() => alert('已複製連結！'))
+      .catch(() => fallbackCopyTextToClipboard(pageUrl));
+  } else { fallbackCopyTextToClipboard(pageUrl); }
+}
+function fallbackCopyTextToClipboard(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  try { document.execCommand('copy'); alert('已複製連結！'); }
+  catch (err) { alert('複製失敗，請手動複製：' + text); }
+  document.body.removeChild(ta);
+}
+document.addEventListener('click', (e) => {
+  const btn = document.querySelector('.share-button');
+  const menu = document.getElementById('shareMenu');
+  if (btn && menu && !btn.contains(e.target) && menu.classList.contains('active')) {
+    menu.classList.remove('active');
+  }
+});
+
+// init
+document.addEventListener('DOMContentLoaded', () => {
+  initShareButtons();
+  renderQuiz();
+});
+</script>
+</body>
+</html>
