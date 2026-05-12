@@ -530,14 +530,15 @@
     </div>
   </section>
 
-  <!-- ===== Section 2: CHA2DS2-VASc Calculator ===== -->
+  <!-- ===== Section 2: CHA2DS2-VA Calculator ===== -->
   <section class="section">
     <h2 class="section-title">
       <span class="icon">2</span>
-      CHA₂DS₂-VASc 中風風險評估
+      CHA₂DS₂-VA 中風風險評估
       <span class="en">Stroke Risk in NVAF</span>
     </h2>
-    <p style="font-size:13.5px;color:#5a7290;margin-bottom:12px;font-style:italic;">勾選符合的項目以計算分數。≥2 (男) / ≥3 (女) 為長期中風預防適應症。<br>Tick all that apply. Threshold for long-term stroke prevention: ≥2 (M) / ≥3 (F).</p>
+    <p style="font-size:13.5px;color:#5a7290;margin-bottom:6px;font-style:italic;">勾選符合的項目以計算分數。新版閾值：0 分 = 低風險不需 OAC；1 分 = 可考慮 OAC (Class IIa)；≥2 分 = 建議 OAC (Class I)。<br>Tick all that apply. New thresholds: 0 = no OAC; 1 = OAC may be considered (Class IIa); ≥2 = OAC recommended (Class I).</p>
+    <p style="font-size:12.5px;color:#7a8aa3;margin-bottom:12px;background:#f1f5fa;padding:8px 10px;border-radius:6px;border-left:3px solid #5a7290;">⚠️ <strong>2024 起改採 CHA₂DS₂-VA</strong>：TSOC、APHRS、2024 ESC 已取消「Sc (女性)」項目，性別不再單獨計分。男女採同一閾值。<br><span style="font-style:italic;">Since 2024, TSOC/APHRS/ESC have dropped the "Sc" (female sex) component — sex is no longer scored, and a single threshold applies to both sexes.</span></p>
 
     <div id="chadsCalc">
       <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcChads()"> 心衰竭 / Congestive HF or LV dysfunction</label><span class="points">+1</span></div>
@@ -547,11 +548,10 @@
       <div class="calc-row" data-points="2"><label><input type="checkbox" onchange="calcChads()"> 既往中風 / TIA / 栓塞 / Prior stroke, TIA, or TE</label><span class="points">+2</span></div>
       <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcChads()"> 血管疾病 (MI / PAD / 主動脈斑塊) / Vascular disease</label><span class="points">+1</span></div>
       <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcChads()"> 年齡 65–74 歲 / Age 65–74</label><span class="points">+1</span></div>
-      <div class="calc-row" data-points="1"><label><input type="checkbox" onchange="calcChads()"> 女性 / Sex category — Female</label><span class="points">+1</span></div>
     </div>
 
     <div class="score-card">
-      <div class="score-label">CHA₂DS₂-VASc Score</div>
+      <div class="score-label">CHA₂DS₂-VA Score</div>
       <div class="score-value"><span id="chadsScore">0</span> 分</div>
       <div class="score-interp" id="chadsInterp">勾選病人狀況以計算 / Tick boxes to calculate</div>
     </div>
@@ -606,7 +606,7 @@
 
     <div class="info-box">
       <div class="info-title">🤔 灰色地帶 / Grey Zones — Discuss with Cardiology</div>
-      <p>• 高 CHA₂DS₂-VASc + 高 HAS-BLED 但<u>尚未發生</u>大出血 — 應先優化 OAC 而非直接 LAAO<br>
+      <p>• 高 CHA₂DS₂-VA + 高 HAS-BLED 但<u>尚未發生</u>大出血 — 應先優化 OAC 而非直接 LAAO<br>
         • 跌倒高風險的衰弱長者 — 跌倒本身不是 OAC 禁忌；要評估「跌倒次數 + 顱內結構 + 既往是否曾出血」<br>
         • <strong>洗腎病人</strong> — 證據顯示 LAAO 可能優於 OAC (見下節 Section 5)，建議積極討論<br>
         • 病人「不想終生吃藥」— 共享決策；告知 LAAO 仍需 45 天–6 個月過渡期 antithrombotic</p>
@@ -728,7 +728,7 @@
     <div class="flow-arrow">▼</div>
     <div class="flow-step">
       <div><span class="step-num">4</span><span class="step-title">轉介心臟內科 (介入科) — 啟動 Heart-Brain Team</span></div>
-      <div class="step-detail">會診時帶齊：CHA₂DS₂-VASc / HAS-BLED 分數、近期影像 (MRI/CT)、過去出血事件清單、預期餘命評估、TEE/cardiac CT (如有)。<br><em>Multidisciplinary heart-brain team referral with structured documentation.</em></div>
+      <div class="step-detail">會診時帶齊：CHA₂DS₂-VA / HAS-BLED 分數、近期影像 (MRI/CT)、過去出血事件清單、預期餘命評估、TEE/cardiac CT (如有)。<br><em>Multidisciplinary heart-brain team referral with structured documentation.</em></div>
     </div>
     <div class="flow-arrow">▼</div>
     <div class="flow-step">
@@ -813,7 +813,7 @@
 </div>
 
 <script>
-// ============= CHA2DS2-VASc =============
+// ============= CHA2DS2-VA =============
 function calcChads() {
   const rows = document.querySelectorAll('#chadsCalc .calc-row');
   let total = 0;
@@ -825,11 +825,10 @@ function calcChads() {
   });
   document.getElementById('chadsScore').textContent = total;
   let interp = '';
-  if (total === 0) interp = '極低風險 — 一般不需 OAC / Very low risk';
-  else if (total === 1) interp = '低風險 — 男性可考慮 OAC，女性 (僅 1 分為 sex) 可不用 / Low — consider';
-  else if (total === 2) interp = '中度風險 — 男性建議 OAC / Moderate — OAC indicated (M)';
-  else if (total <= 4) interp = '高風險 — 強烈建議長期中風預防 / High — OAC strongly indicated';
-  else interp = '極高風險 — 必須中風預防，若 OAC 困難應考慮 LAAO / Very high — consider LAAO if OAC difficult';
+  if (total === 0) interp = '低風險 — 不需 OAC / Low risk — no OAC';
+  else if (total === 1) interp = '可考慮 OAC (Class IIa) / OAC should be considered (Class IIa)';
+  else if (total <= 4) interp = '建議長期 OAC (Class I) / OAC recommended (Class I)';
+  else interp = '極高風險 — 必須中風預防，若 OAC 困難應考慮 LAAO (Class I) / Very high — OAC recommended; consider LAAO if OAC difficult';
   document.getElementById('chadsInterp').textContent = interp;
 }
 
@@ -907,7 +906,7 @@ const QUIZ = [
     opts: [
       { zh: '初次診斷 AF 但從未中風的低風險年輕病人', en: 'New-onset AF, low risk, never stroked' },
       { zh: '在足量 OAC 下仍復發中風 / 自發性 ICH 之病史 / OAC 後重大出血復發', en: 'Recurrent stroke on OAC / spontaneous ICH / recurrent major bleed on OAC', correct: true },
-      { zh: '所有 CHA₂DS₂-VASc ≥1 的病人', en: 'Anyone with CHA₂DS₂-VASc ≥1' },
+      { zh: '所有 CHA₂DS₂-VA ≥1 的病人', en: 'Anyone with CHA₂DS₂-VA ≥1' },
       { zh: '預期餘命 &lt;6 個月之末期失智', en: 'End-stage dementia, life expectancy &lt;6 months' }
     ],
     explain_zh: '強適應症包括：(1) OAC 下仍中風 (OAC failure)、(2) 絕對 OAC 禁忌 (e.g. 自發性 ICH)、(3) OAC 後重大出血、(4) OAC 不耐受。預期餘命太短或末期失智不適合，應走舒適導向。',
