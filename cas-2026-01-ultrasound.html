@@ -129,6 +129,10 @@
 <script src="achievements.js"></script>
 <script>
 (function () {
+  if (typeof CAS2026 === 'undefined') {
+    console.error('[CAS2026] cas-2026-shared.js not loaded; chapter interaction disabled.');
+    return;
+  }
   const chapterId = document.body.dataset.chapter;
   const cards = document.querySelectorAll('.card');
   const totalCards = cards.length;
@@ -144,15 +148,19 @@
 
   function refreshProgress() {
     const p = CAS2026.chapterProgress(chapterId, totalCards);
-    progressText.textContent = `${p.done} / ${p.total}`;
-    progressFill.style.width = p.pct + '%';
-    progressPct.textContent = p.pct + '%';
+    if (progressText) progressText.textContent = `${p.done} / ${p.total}`;
+    if (progressFill) progressFill.style.width = p.pct + '%';
+    if (progressPct)  progressPct.textContent = p.pct + '%';
   }
 
   // Wire each card's checkbox.
   cards.forEach(card => {
     const key = card.dataset.cardKey;
     const cb  = card.querySelector('.card-check');
+    if (!key || !cb) {
+      console.warn('[CAS2026] skipping malformed card', card);
+      return;
+    }
     cb.checked = CAS2026.isCardChecked(chapterId, key);
     cb.addEventListener('change', () => {
       CAS2026.setCardChecked(chapterId, key, cb.checked);
