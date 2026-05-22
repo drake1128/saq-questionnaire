@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAS 2026 訓練課程 — Hub</title>
+<link rel="stylesheet" href="design-system.css">
+<link rel="stylesheet" href="achievements-ui.css">
+<style>
+  body { font-family:"Noto Sans TC","Microsoft JhengHei",Arial,sans-serif; background:#f5f7fa; color:#2d3748; margin:0; padding:0; line-height:1.6; }
+  .container { max-width:800px; margin:0 auto; padding:16px; }
+  .hub-header { background:linear-gradient(135deg,#1a365d,#2b6cb0); color:#fff; padding:32px 24px; text-align:center; border-radius:12px; margin-bottom:24px; }
+  .hub-header h1 { font-size:1.75rem; margin:0 0 8px 0; }
+  .hub-header p { margin:4px 0; opacity:.9; font-size:.95rem; }
+  .progress-card { background:#fff; border-radius:10px; padding:20px; margin-bottom:20px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  .progress-card h3 { color:#1a365d; margin:0 0 12px 0; }
+  .progress-bar { height:10px; background:#e2e8f0; border-radius:5px; overflow:hidden; margin:8px 0; }
+  .progress-bar-fill { height:100%; background:linear-gradient(90deg,#48bb78,#38a169); transition:width .3s; width:0%; }
+  .progress-stats { display:flex; justify-content:space-around; margin-top:12px; font-size:.9rem; color:#4a5568; }
+  .progress-stats div { text-align:center; }
+  .progress-stats strong { display:block; font-size:1.3rem; color:#1a365d; }
+  .chapter-grid { display:grid; gap:12px; margin-bottom:24px; }
+  .chapter-card { background:#fff; border-radius:10px; padding:16px 20px; box-shadow:0 1px 4px rgba(0,0,0,.08); text-decoration:none; color:inherit; display:flex; align-items:center; gap:16px; transition:transform .15s, box-shadow .15s; }
+  .chapter-card:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,.12); }
+  .chapter-no { width:48px; height:48px; background:#1a365d; color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0; }
+  .chapter-info { flex:1; min-width:0; }
+  .chapter-info .title { font-weight:600; color:#1a365d; }
+  .chapter-info .speakers { font-size:.8rem; color:#718096; margin-top:2px; }
+  .chapter-pct { font-size:.85rem; color:#4a5568; white-space:nowrap; }
+  .chapter-pct.done { color:#38a169; font-weight:600; }
+  .actions { display:flex; gap:12px; margin-top:16px; }
+  .action-btn { flex:1; padding:12px; background:#2b6cb0; color:#fff; text-align:center; border-radius:8px; text-decoration:none; font-weight:600; cursor:pointer; border:none; font-size:1rem; }
+  .footer { margin-top:24px; padding:16px; font-size:.75rem; color:#718096; text-align:center; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="hub-header">
+    <h1>🩺 CAS 2026 訓練課程</h1>
+    <p>頸動脈支架介入學員學習模組</p>
+    <p>中華民國心臟學會 · 週邊血管介入委員會</p>
+  </div>
+
+  <div class="progress-card">
+    <h3>您的學習進度</h3>
+    <div class="progress-bar"><div class="progress-bar-fill" id="overall-fill"></div></div>
+    <div class="progress-stats">
+      <div><strong id="stat-done">0</strong>已完成章</div>
+      <div><strong id="stat-inprogress">0</strong>學習中章</div>
+      <div><strong id="stat-untouched">9</strong>未開始章</div>
+      <div><strong id="stat-pct">0%</strong>整體進度</div>
+    </div>
+  </div>
+
+  <div class="chapter-grid" id="chapter-grid"></div>
+
+  <div class="actions">
+    <button class="action-btn" id="share-btn">📤 分享 QR Code</button>
+    <button class="action-btn" id="export-btn">📊 匯出學習記錄</button>
+  </div>
+
+  <div class="footer">
+    本教學資源圖片來源為各講師於歷年「頸動脈支架訓練課程」之授課投影片，僅供本課程學員學術教育使用。
+  </div>
+
+</div>
+
+<script src="cas-2026-shared.js"></script>
+<script src="achievements.js"></script>
+<script>
+(function () {
+  if (typeof CAS2026 === 'undefined') {
+    console.error('[CAS2026] cas-2026-shared.js not loaded; hub disabled.');
+    return;
+  }
+  const grid = document.getElementById('chapter-grid');
+  const progress = CAS2026.loadProgress();
+
+  let doneCount = 0, inProgressCount = 0, untouchedCount = 0;
+  let totalCards = 0, totalDone = 0;
+
+  CAS2026.CHAPTERS.forEach(ch => {
+    const chProg = progress[ch.id] || { cards:{}, quiz:{}, totalCards:0, completed:false };
+    const total = chProg.totalCards || 0;
+    const done  = Object.values(chProg.cards || {}).filter(Boolean).length;
+    const pct   = total ? Math.round(done * 100 / total) : 0;
+
+    totalCards += total; totalDone += done;
+    if (chProg.completed) doneCount++;
+    else if (done > 0) inProgressCount++;
+    else untouchedCount++;
+
+    const card = document.createElement('a');
+    card.className = 'chapter-card';
+    card.href = `cas-2026-${ch.no.toString().padStart(2,'0')}-${ch.slug}.html`;
+    card.innerHTML = `
+      <div class="chapter-no">${ch.no}</div>
+      <div class="chapter-info">
+        <div class="title">${ch.title}</div>
+        <div class="speakers">${ch.speakers}</div>
+      </div>
+      <div class="chapter-pct ${chProg.completed ? 'done' : ''}">
+        ${chProg.completed ? '✅ 完成' : (total ? `${pct}%` : '⏳ 未開始')}
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  document.getElementById('stat-done').textContent = doneCount;
+  document.getElementById('stat-inprogress').textContent = inProgressCount;
+  document.getElementById('stat-untouched').textContent = untouchedCount;
+  const overallPct = totalCards ? Math.round(totalDone * 100 / totalCards) : 0;
+  document.getElementById('stat-pct').textContent = overallPct + '%';
+  document.getElementById('overall-fill').style.width = overallPct + '%';
+
+  document.getElementById('share-btn').addEventListener('click', () => {
+    const url = location.href;
+    if (navigator.share) {
+      navigator.share({ title:'CAS 2026 訓練課程', url });
+    } else if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(
+        () => alert('已複製課程網址到剪貼簿：\n' + url),
+        () => alert('課程網址：\n' + url)
+      );
+    } else {
+      alert('課程網址：\n' + url);
+    }
+  });
+
+  document.getElementById('export-btn').addEventListener('click', () => {
+    const data = CAS2026.exportRecord();
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `cas-2026-progress-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+  });
+})();
+</script>
+
+</body>
+</html>
