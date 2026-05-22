@@ -7,10 +7,11 @@
 <link rel="stylesheet" href="design-system.css">
 <link rel="stylesheet" href="achievements-ui.css">
 <style>
+  /* Inline body rule intentionally overrides design-system.css; keep <style> after <link>. */
   body { font-family: "Noto Sans TC","Microsoft JhengHei",Arial,sans-serif; background:#f5f7fa; color:#2d3748; line-height:1.6; margin:0; padding:0; }
   .container { max-width:800px; margin:0 auto; padding:16px; }
 
-  .sticky-header { position:sticky; top:0; background:linear-gradient(135deg,#1a365d,#2b6cb0); color:#fff; padding:12px 16px; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,.15); }
+  .sticky-header { position:sticky; top:0; background:linear-gradient(135deg,#1a365d,#2b6cb0); color:#fff; padding:12px 16px; z-index:200; box-shadow:0 2px 8px rgba(0,0,0,.15); }
   .sticky-header .row { display:flex; align-items:center; gap:12px; }
   .back-btn { color:#fff; text-decoration:none; font-size:14px; }
   .chapter-title { font-size:1.05rem; font-weight:600; flex:1; }
@@ -101,6 +102,7 @@
     <h3>🧠 Quick Check</h3>
     <div class="quiz-question" data-q="1">
       <div><strong>Q1.</strong> (placeholder question)</div>
+      <!-- JS applies .correct/.incorrect classes to the <label> element, not the <input>. Walk: input.checked -> .closest('label'). -->
       <div class="quiz-options">
         <label><input type="radio" name="q1" value="A"> A. (placeholder)</label>
         <label><input type="radio" name="q1" value="B" data-correct="true"> B. (placeholder, correct)</label>
@@ -112,7 +114,7 @@
   </div>
 
   <div class="nav-bar">
-    <a class="nav-btn disabled">← 上一章</a>
+    <a class="nav-btn disabled" tabindex="-1" aria-disabled="true">← 上一章</a>
     <a class="nav-btn hub" href="cas-2026-hub.html">🏠 Hub</a>
     <a class="nav-btn" href="cas-2026-02-ct-mr.html">下一章 Ch2 →</a>
   </div>
