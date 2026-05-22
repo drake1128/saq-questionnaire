@@ -510,8 +510,21 @@ updateCount();
 
 document.getElementById('copy-json').addEventListener('click', async () => {
   const data = { chapter: chapterId, selected: collectSelected() };
-  await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
-  alert('JSON 已複製到剪貼簿');
+  const text = JSON.stringify(data, null, 2);
+  try {
+    if (!navigator.clipboard || !navigator.clipboard.writeText) {
+      throw new Error('clipboard API unavailable');
+    }
+    await navigator.clipboard.writeText(text);
+    alert('JSON 已複製到剪貼簿');
+  } catch (e) {
+    // Fallback: show JSON in <pre> so user can copy manually.
+    const pre = document.getElementById('json-output');
+    pre.style.display = 'block';
+    pre.textContent = text;
+    pre.scrollIntoView({ behavior: 'smooth' });
+    alert('無法直接複製到剪貼簿（可能是 file:// 限制）。已顯示 JSON 於頁面下方，請手動複製或改按「下載 JSON」。');
+  }
 });
 
 document.getElementById('download-json').addEventListener('click', () => {

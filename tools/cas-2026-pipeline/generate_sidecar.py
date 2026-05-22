@@ -54,7 +54,7 @@ def generate_for_chapter(chapter_id: str, sources_meta: list[dict]) -> Path:
     out_path.write_text(
         tmpl.render(
             chapter_id=chapter_id,
-            chapter_title=CHAPTER_TITLES[chapter_id],
+            chapter_title=CHAPTER_TITLES.get(chapter_id, f'Chapter {chapter_id}'),
             sources=sources,
         ),
         encoding='utf-8',
