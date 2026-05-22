@@ -26,7 +26,11 @@ const CAS2026 = (() => {
   }
 
   function saveProgress(data) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+      console.warn('CAS2026: could not save progress', e);
+    }
   }
 
   function setCardChecked(chapterId, cardKey, checked) {
@@ -53,9 +57,10 @@ const CAS2026 = (() => {
     let done = 0;
     let total = 0;
     CHAPTERS.forEach(ch => {
-      const c = (p[ch.id] && p[ch.id].cards) || {};
+      const entry = p[ch.id] || {};
+      const c = entry.cards || {};
       done += Object.values(c).filter(Boolean).length;
-      total += ch.totalCards || 0; // populated by chapter HTML on load
+      total += entry.totalCards || 0;
     });
     return { done, total, pct: total ? Math.round(done * 100 / total) : 0 };
   }
