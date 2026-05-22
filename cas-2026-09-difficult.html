@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch9 Difficult CAS — CAS 2026</title>
+<link rel="stylesheet" href="design-system.css">
+<link rel="stylesheet" href="achievements-ui.css">
+<style>
+  /* Inline body rule intentionally overrides design-system.css; keep <style> after <link>. */
+  body { font-family: "Noto Sans TC","Microsoft JhengHei",Arial,sans-serif; background:#f5f7fa; color:#2d3748; line-height:1.6; margin:0; padding:0; }
+  .container { max-width:800px; margin:0 auto; padding:16px; }
+
+  .sticky-header { position:sticky; top:0; background:linear-gradient(135deg,#1a365d,#2b6cb0); color:#fff; padding:12px 16px; z-index:200; box-shadow:0 2px 8px rgba(0,0,0,.15); }
+  .sticky-header .row { display:flex; align-items:center; gap:12px; }
+  .back-btn { color:#fff; text-decoration:none; font-size:14px; }
+  .chapter-title { font-size:1.05rem; font-weight:600; flex:1; }
+  .progress-line { margin-top:8px; font-size:.85rem; opacity:.9; display:flex; align-items:center; gap:8px; }
+  .progress-bar { flex:1; height:6px; background:rgba(255,255,255,.25); border-radius:3px; overflow:hidden; }
+  .progress-bar-fill { height:100%; background:#48bb78; transition:width .3s; width:0%; }
+
+  .speaker-block, .objectives-block { background:#fff; border-radius:10px; padding:16px 20px; margin-top:16px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  .speaker-block h3, .objectives-block h3 { font-size:.95rem; color:#1a365d; margin:0 0 8px 0; }
+  .objectives-block ul { margin:0; padding-left:20px; }
+  .objectives-block li { margin-bottom:4px; }
+
+  .card { background:#fff; border-radius:10px; margin-top:16px; box-shadow:0 1px 4px rgba(0,0,0,.08); overflow:hidden; }
+  .card-header { display:flex; align-items:flex-start; gap:12px; padding:16px 20px; }
+  .card-title { flex:1; font-weight:600; font-size:1rem; color:#1a365d; }
+  .card-check { width:24px; height:24px; accent-color:#38a169; cursor:pointer; min-width:24px; min-height:24px; }
+  .card-img { width:100%; display:block; }
+  .card-img-wrap { background:#f7fafc; }
+  .card-body { padding:12px 20px 16px 20px; font-size:.95rem; color:#4a5568; }
+  .card-tip { margin-top:8px; padding:10px 12px; background:#ebf8ff; border-left:4px solid #3182ce; border-radius:4px; font-size:.88rem; }
+  .card-source { margin-top:8px; font-size:.75rem; color:#718096; }
+
+  .quiz-block { background:#fff; border-radius:10px; padding:20px; margin-top:24px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  .quiz-block h3 { color:#1a365d; margin-bottom:12px; }
+  .quiz-question { margin-bottom:20px; }
+  .quiz-options label { display:block; padding:10px 12px; margin:6px 0; background:#f7fafc; border-radius:6px; cursor:pointer; transition:background .2s; }
+  .quiz-options label:hover { background:#edf2f7; }
+  .quiz-options input { margin-right:8px; }
+  .quiz-options label.correct { background:#c6f6d5; }
+  .quiz-options label.incorrect { background:#fed7d7; }
+  .quiz-explain { margin-top:8px; padding:8px 12px; background:#fffaf0; border-left:4px solid #dd6b20; border-radius:4px; font-size:.88rem; display:none; }
+
+  .nav-bar { display:flex; justify-content:space-between; margin-top:24px; gap:12px; }
+  .nav-btn { flex:1; padding:12px; background:#2b6cb0; color:#fff; text-align:center; border-radius:8px; text-decoration:none; font-weight:600; }
+  .nav-btn.disabled { background:#cbd5e0; pointer-events:none; }
+  .nav-btn.hub { background:#1a365d; }
+
+  .footer { margin-top:24px; padding:16px; font-size:.75rem; color:#718096; text-align:center; }
+</style>
+</head>
+<body data-chapter="cas-09" data-chapter-no="9">
+
+<div class="sticky-header">
+  <div class="row">
+    <a href="cas-2026-hub.html" class="back-btn">← 回 Hub</a>
+    <div class="chapter-title">Ch9 · Difficult CAS Tips &amp; Tricks</div>
+  </div>
+  <div class="progress-line">
+    📊 <span id="progress-text">0 / 0</span>
+    <div class="progress-bar"><div class="progress-bar-fill" id="progress-fill"></div></div>
+    <span id="progress-pct">0%</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="speaker-block">
+    <h3>📚 講師</h3>
+    <div>方修御醫師 (2024)</div>
+  </div>
+
+  <div class="objectives-block">
+    <h3>🎯 學習目標</h3>
+    <ul>
+      <li>辨識 Type I / II / III 主動脈弓及各種解剖變異（Bovine arch、Direct Vertebral 型）對 CAS 的挑戰</li>
+      <li>了解肥胖患者、迂曲血管等特殊情境下替代入路（橈動脈腕部入路）的適應症</li>
+      <li>掌握困難頸動脈插管的三大操作技巧：Direct Method、Double Wire Method、Anchoring Technique</li>
+      <li>能根據弓型與解剖變異選擇最適合的導管策略，降低術中栓塞與器材失控風險</li>
+    </ul>
+  </div>
+
+  <div id="cards-container">
+
+    <!-- Card 1 -->
+    <div class="card" data-card-key="card-1">
+      <div class="card-header">
+        <div class="card-title">1. 困難 CAS 的解剖根源：迂曲主動脈弓</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/09-difficult/2024-fang-hy-seq006.png" alt="CTA 3D Volume Rendering 顯示迂曲主動脈弓與頸動脈走行"></div>
+      <div class="card-body">
+        CTA 3D Volume Rendering 可在術前清楚呈現主動脈弓的類型與頸動脈起始部的成角，是規劃困難 CAS 最重要的影像工具。弓形迂曲（elongated/tortuous arch）不只增加導引鞘到位難度，也導致支撐力不足、器材彈跳（kickback）等風險。
+        <div class="card-tip">💡 Tip: 術前 CTA 應重建主動脈全弓，測量 CCA 起始角度與 ICA 走行，預先選擇最合適的導管與工作入路。</div>
+        <div class="card-source">📌 來源：方修御醫師 2024 / 中華民國心臟學會 CAS 訓練課程 / slide #6</div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card" data-card-key="card-2">
+      <div class="card-header">
+        <div class="card-title">2. 主動脈弓分類：Type I / II / III</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/09-difficult/2024-fang-hy-seq013.png" alt="主動脈弓 Type I II III 分類示意圖"></div>
+      <div class="card-body">
+        以 CCA 直徑為基準：Type I — 無名動脈起始部位於弓頂或以上；Type II — 起始部低於弓頂 1–2 個 CCA 直徑；Type III — 起始部低於弓頂超過 2 個 CCA 直徑。Type III 弓的 CCA 幾乎垂直起自弓底，導引導管進入角度最困難，技術失敗率與栓塞併發症均顯著上升。
+        <div class="card-tip">💡 Tip: Type III 弓建議使用加硬導絲 + 長鞘（長至升主動脈）或考慮非股動脈入路，以確保足夠系統支撐力。</div>
+        <div class="card-source">📌 來源：方修御醫師 2024 / 中華民國心臟學會 CAS 訓練課程 / slide #13</div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card" data-card-key="card-3">
+      <div class="card-header">
+        <div class="card-title">3. 解剖變異：Bovine Arch 與 Direct Vertebral 型</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/09-difficult/2024-fang-hy-seq014.png" alt="主動脈弓變異：Classic / Bovine / Direct Vert 1 / Direct Vert 2 示意"></div>
+      <div class="card-body">
+        主動脈弓變異中，Bovine arch（左 CCA 直接起自無名動脈，約佔 10–22%）在左頸動脈 CAS 時須先進入無名動脈再轉向，增加操作步驟；Direct Vertebral 變異則使左椎動脈直接起自主動脈弓，評估入路時需識別以免誤入。理解這些變異是避免術中器材迷失的基礎。
+        <div class="card-tip">💡 Tip: 術前 CTA 明確標記弓上分支解剖，可減少術中重複造影次數及輻射劑量。</div>
+        <div class="card-source">📌 來源：方修御醫師 2024 / 中華民國心臟學會 CAS 訓練課程 / slide #14</div>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card" data-card-key="card-4">
+      <div class="card-header">
+        <div class="card-title">4. Bovine Arch 的導管路徑策略</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/09-difficult/2024-fang-hy-seq017.png" alt="Bovine Arch 導管行進路徑示意（Mayo 圖）"></div>
+      <div class="card-body">
+        Bovine arch 左側 CAS 時，導管須先進無名動脈後方能上行至左 CCA，路徑較 Classic arch 多一個轉折。此圖顯示導管在兩種 Bovine 變型中的實際走行，提醒術者注意系統張力積累（accumulated tension）與遞送器材時可能發生的彈回（spring-back）現象。
+        <div class="card-tip">💡 Tip: Bovine arch 可考慮使用 Simmons（反折）或 VTK 形狀導管，較直型導管更易鉤掛左 CCA 起始部。</div>
+        <div class="card-source">📌 來源：方修御醫師 2024 / 中華民國心臟學會 CAS 訓練課程 / slide #17</div>
+      </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card" data-card-key="card-5">
+      <div class="card-header">
+        <div class="card-title">5. 替代入路：肥胖患者與橈動脈（腕部）入路</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/09-difficult/2024-fang-hy-seq007.png" alt="肥胖患者穿刺示意：transfemoral approach complications"></div>
+      <div class="card-body">
+        肥胖患者股動脈位置深、股部脂肪層厚，經股動脈入路（transfemoral approach）穿刺困難、鞘管穩定性差、術後壓迫止血風險高，亦難以維持術中無菌區。此類患者應評估橈動脈（腕部）入路或臂動脈入路，以降低入路部位相關併發症。
+        <div class="card-tip">💡 Tip: 術前 Allen test 或超音波確認橈動脈通暢與管徑（≥2 mm），是腕部入路安全施行的前提。</div>
+        <div class="card-source">📌 來源：方修御醫師 2024 / 中華民國心臟學會 CAS 訓練課程 / slide #7</div>
+      </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card" data-card-key="card-6">
+      <div class="card-header">
+        <div class="card-title">6. 橈動脈（腕部）入路案例示範</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/09-difficult/2024-fang-hy-seq008.png" alt="Wrist approach CAS 操作步驟 fluoroscopy 系列影像"></div>
+      <div class="card-body">
+        本案例以腕部橈動脈入路完成 CAS，透過系列透視影像（A–F）展示導管自橈動脈進入升主動脈、跨越主動脈弓至右 CCA 的完整路徑。橈動脈入路使器材軌跡更順著解剖弧度，對右側 CCA（起自無名動脈）尤具優勢，可大幅降低同側手腕至頸動脈的成角難度。
+        <div class="card-tip">💡 Tip: 腕部入路時常規給予 Spasmolytic（如 verapamil + nitroglycerin）預防橈動脈痙攣，並使用親水塗層長鞘（150 cm）以確保導管操控性。</div>
+        <div class="card-source">📌 來源：方修御醫師 2024 / 中華民國心臟學會 CAS 訓練課程 / slide #8</div>
+      </div>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="card" data-card-key="card-7">
+      <div class="card-header">
+        <div class="card-title">7. 困難插管技巧一：Direct Method 與 Double Wire Method</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/09-difficult/2024-fang-hy-seq009.png" alt="Direct Method 操作步驟 fluoroscopy A-F"></div>
+      <div class="card-body">
+        Direct Method：在 Type II / III 弓或迂曲 CCA 起始部，利用硬頭導絲（stiff wire）直接頂住主動脈壁提供反作用力，再推送導引鞘進入 CCA。操作重點在於控制導絲頭端彎曲方向以精準對準 CCA 開口，避免導絲誤入主動脈側壁。Double Wire Method（slide #10）則以第一根導絲佔據 CCA，第二根導絲提供額外軸向支撐，解決單絲支撐不足的問題。
+        <div class="card-tip">💡 Tip: Double Wire Method 的第二根導絲應使用 0.035" 加硬絲（如 Amplatz Extra Stiff），不可用普通軟絲，否則支撐效果有限。</div>
+        <div class="card-source">📌 來源：方修御醫師 2024 / 中華民國心臟學會 CAS 訓練課程 / slide #9</div>
+      </div>
+    </div>
+
+    <!-- Card 8 -->
+    <div class="card" data-card-key="card-8">
+      <div class="card-header">
+        <div class="card-title">8. 困難插管技巧三：Anchoring Technique</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/09-difficult/2024-fang-hy-seq011.png" alt="Anchoring Technique 操作步驟 fluoroscopy A-F"></div>
+      <div class="card-body">
+        Anchoring Technique：將球囊或 guiding catheter 先行送至 CCA 遠端或 ECA 錨定，藉由充氣或嵌頓（engage）固定後，再順軌推送長鞘越過弓部困難彎曲段。此技術將外鞘「鎖」在穩定的血管段，顯著增加後續器材（EPD、stent system）遞送時的系統穩定性，適合 Type III 弓及重度迂曲 CCA 起始部。
+        <div class="card-tip">💡 Tip: Anchoring 時球囊充氣壓力宜低（1–2 atm），避免過度擴張造成 CCA 夾層；若以 ECA 錨定，確認 ECA 無嚴重鈣化或狹窄。</div>
+        <div class="card-source">📌 來源：方修御醫師 2024 / 中華民國心臟學會 CAS 訓練課程 / slide #11</div>
+      </div>
+    </div>
+
+  </div><!-- #cards-container -->
+
+  <div class="quiz-block">
+    <h3>🧠 Quick Check</h3>
+
+    <div class="quiz-question" data-q="1">
+      <div><strong>Q1.</strong> 一位患者 CTA 顯示左 CCA 起始部位於主動脈弓頂下方約 3 個 CCA 直徑，且無名動脈解剖正常。此患者的弓型分類及最恰當的初始策略為何？</div>
+      <div class="quiz-options">
+        <label><input type="radio" name="q1" value="A"> A. Type I 弓，標準 6F 短鞘即可，無需特殊技術。</label>
+        <label><input type="radio" name="q1" value="B"> B. Type II 弓，使用 Simmons 導管探頸後，換加硬絲再推送長鞘。</label>
+        <label><input type="radio" name="q1" value="C" data-correct="true"> C. Type III 弓，應考慮長鞘送至升主動脈或採用 Anchoring Technique，必要時評估非股動脈入路。</label>
+        <label><input type="radio" name="q1" value="D"> D. Type III 弓，直接使用常規 JR 導管即可完成插管，無需更改策略。</label>
+      </div>
+      <div class="quiz-explain">左 CCA 起始部低於弓頂超過 2 個 CCA 直徑，符合 Type III 弓定義。Type III 弓技術失敗率最高，標準股動脈入路需要長鞘深至升主動脈提供足夠支撐，或搭配 Anchoring Technique；若仍困難，橈動脈或臂動脈入路可改變器材成角，是合理替代方案。</div>
+    </div>
+
+    <div class="quiz-question" data-q="2">
+      <div><strong>Q2.</strong> 術中發現左 CCA 起始部為 Bovine arch 變異（左 CCA 直接起自無名動脈），導引鞘已到達無名動脈，但反覆嘗試仍無法使鞘管前端轉向進入左 CCA。以下哪個技術最能解決此問題？</div>
+      <div class="quiz-options">
+        <label><input type="radio" name="q2" value="A"> A. 換用更細的 4F 診斷導管，減少摩擦力。</label>
+        <label><input type="radio" name="q2" value="B" data-correct="true"> B. 改用 Double Wire Method：第一根導絲鎖定左 CCA，第二根加硬絲提供額外軸向支撐，再循軌推送長鞘。</label>
+        <label><input type="radio" name="q2" value="C"> C. 換用右 JL 4.0 導管，其天然弧度適合 Bovine arch 左 CCA。</label>
+        <label><input type="radio" name="q2" value="D"> D. 立即放棄並改為開放手術（CEA）。</label>
+      </div>
+      <div class="quiz-explain">Bovine arch 的左 CCA 起自無名動脈，導管在無名動脈內需轉折才能進入左 CCA，系統支撐力通常不足。Double Wire Method 以兩根導絲分工——一固定路徑、一增加軸向硬度——是此情境下提升鞘管推進成功率最直接的技術選擇。若仍不成功，再考慮 Anchoring Technique 或改橈動脈入路。</div>
+    </div>
+
+    <div class="quiz-question" data-q="3">
+      <div><strong>Q3.</strong> 使用 Anchoring Technique 時，於左 ECA 內充氣球囊以固定導引系統。下列哪項操作原則最重要，以防止嚴重併發症？</div>
+      <div class="quiz-options">
+        <label><input type="radio" name="q3" value="A"> A. 球囊充氣至 10–12 atm 以確保最大固定效果，防止鞘管退縮。</label>
+        <label><input type="radio" name="q3" value="B"> B. 選用直徑遠小於 ECA 管腔的球囊，以確保血流不中斷。</label>
+        <label><input type="radio" name="q3" value="C"> C. Anchoring 期間無需監測患者神經學狀態，因為 EPD 已部署於 ICA。</label>
+        <label><input type="radio" name="q3" value="D" data-correct="true"> D. 球囊充氣壓力宜低（約 1–2 atm），避免過度擴張 ECA 造成夾層；術前確認 ECA 無嚴重鈣化或狹窄。</label>
+      </div>
+      <div class="quiz-explain">Anchoring Technique 的目的是「固定」而非「擴張」，球囊僅需輕度充氣使其嵌頓（engage）於 ECA 即可，過度充氣反而有夾層風險。此外，ECA 若有嚴重鈣化斑塊，球囊充氣可能誘發局部碎屑釋放或血管破裂，因此術前 CTA 應評估 ECA 情況。神經監測應全程維持，因為 ECA-ICA 側支循環也可能受影響。</div>
+    </div>
+
+  </div><!-- .quiz-block -->
+
+  <div class="nav-bar">
+    <a class="nav-btn" href="cas-2026-08-surgical.html">← 上一章 Ch8</a>
+    <a class="nav-btn hub" href="cas-2026-hub.html">🏠 Hub</a>
+    <a class="nav-btn" href="cas-2026-hub.html">🏁 完成 → 回 Hub</a>
+  </div>
+
+  <div class="footer">
+    本教學資源圖片來源為各講師於歷年「頸動脈支架訓練課程」之授課投影片，僅供本課程學員學術教育使用。
+  </div>
+
+</div>
+
+<script src="cas-2026-shared.js"></script>
+<script src="achievements.js"></script>
+<script>
+(function () {
+  if (typeof CAS2026 === 'undefined') {
+    console.error('[CAS2026] cas-2026-shared.js not loaded; chapter interaction disabled.');
+    return;
+  }
+  const chapterId = document.body.dataset.chapter;
+  const cards = document.querySelectorAll('.card');
+  const totalCards = cards.length;
+  const progressText = document.getElementById('progress-text');
+  const progressFill = document.getElementById('progress-fill');
+  const progressPct  = document.getElementById('progress-pct');
+
+  // Register total card count for hub.
+  const stored = CAS2026.loadProgress();
+  stored[chapterId] = stored[chapterId] || { cards:{}, quiz:{}, completed:false };
+  stored[chapterId].totalCards = totalCards;
+  CAS2026.saveProgress(stored);
+
+  function refreshProgress() {
+    const p = CAS2026.chapterProgress(chapterId, totalCards);
+    if (progressText) progressText.textContent = `${p.done} / ${p.total}`;
+    if (progressFill) progressFill.style.width = p.pct + '%';
+    if (progressPct)  progressPct.textContent = p.pct + '%';
+  }
+
+  // Wire each card's checkbox.
+  cards.forEach(card => {
+    const key = card.dataset.cardKey;
+    const cb  = card.querySelector('.card-check');
+    if (!key || !cb) {
+      console.warn('[CAS2026] skipping malformed card', card);
+      return;
+    }
+    cb.checked = CAS2026.isCardChecked(chapterId, key);
+    cb.addEventListener('change', () => {
+      CAS2026.setCardChecked(chapterId, key, cb.checked);
+      refreshProgress();
+    });
+  });
+
+  refreshProgress();
+
+  // Wire quiz radio buttons for instant feedback.
+  document.querySelectorAll('.quiz-question').forEach(q => {
+    const explain = q.querySelector('.quiz-explain');
+    q.querySelectorAll('input[type=radio]').forEach(r => {
+      r.addEventListener('change', () => {
+        q.querySelectorAll('.quiz-options label').forEach(l => l.classList.remove('correct','incorrect'));
+        const selected = q.querySelector('input[type=radio]:checked');
+        const label = selected.closest('label');
+        const isCorrect = selected.dataset.correct === 'true';
+        label.classList.add(isCorrect ? 'correct' : 'incorrect');
+        if (!isCorrect) {
+          // Highlight correct answer too:
+          const correctInput = q.querySelector('input[data-correct="true"]');
+          if (correctInput) correctInput.closest('label').classList.add('correct');
+        }
+        explain.style.display = 'block';
+
+        // Record quiz answer.
+        const p = CAS2026.loadProgress();
+        const qnum = q.dataset.q;
+        p[chapterId] = p[chapterId] || { cards:{}, quiz:{}, completed:false };
+        p[chapterId].quiz[qnum] = { value: selected.value, correct: isCorrect };
+        // Mark completed if >= 2 quiz answers correct.
+        const quizEntries = Object.values(p[chapterId].quiz);
+        const correctCount = quizEntries.filter(e => e.correct).length;
+        if (correctCount >= 2) {
+          p[chapterId].completed = true;
+          if (window.Achievements && typeof Achievements.unlock === 'function') {
+            Achievements.unlock(`cas-2026-${chapterId}-complete`);
+          }
+        }
+        CAS2026.saveProgress(p);
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

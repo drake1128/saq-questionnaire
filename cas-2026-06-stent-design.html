@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch6 Stent Design & TTT — CAS 2026</title>
+<link rel="stylesheet" href="design-system.css">
+<link rel="stylesheet" href="achievements-ui.css">
+<style>
+  /* Inline body rule intentionally overrides design-system.css; keep <style> after <link>. */
+  body { font-family: "Noto Sans TC","Microsoft JhengHei",Arial,sans-serif; background:#f5f7fa; color:#2d3748; line-height:1.6; margin:0; padding:0; }
+  .container { max-width:800px; margin:0 auto; padding:16px; }
+
+  .sticky-header { position:sticky; top:0; background:linear-gradient(135deg,#1a365d,#2b6cb0); color:#fff; padding:12px 16px; z-index:200; box-shadow:0 2px 8px rgba(0,0,0,.15); }
+  .sticky-header .row { display:flex; align-items:center; gap:12px; }
+  .back-btn { color:#fff; text-decoration:none; font-size:14px; }
+  .chapter-title { font-size:1.05rem; font-weight:600; flex:1; }
+  .progress-line { margin-top:8px; font-size:.85rem; opacity:.9; display:flex; align-items:center; gap:8px; }
+  .progress-bar { flex:1; height:6px; background:rgba(255,255,255,.25); border-radius:3px; overflow:hidden; }
+  .progress-bar-fill { height:100%; background:#48bb78; transition:width .3s; width:0%; }
+
+  .speaker-block, .objectives-block { background:#fff; border-radius:10px; padding:16px 20px; margin-top:16px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  .speaker-block h3, .objectives-block h3 { font-size:.95rem; color:#1a365d; margin:0 0 8px 0; }
+  .objectives-block ul { margin:0; padding-left:20px; }
+  .objectives-block li { margin-bottom:4px; }
+
+  .card { background:#fff; border-radius:10px; margin-top:16px; box-shadow:0 1px 4px rgba(0,0,0,.08); overflow:hidden; }
+  .card-header { display:flex; align-items:flex-start; gap:12px; padding:16px 20px; }
+  .card-title { flex:1; font-weight:600; font-size:1rem; color:#1a365d; }
+  .card-check { width:24px; height:24px; accent-color:#38a169; cursor:pointer; min-width:24px; min-height:24px; }
+  .card-img { width:100%; display:block; }
+  .card-img-wrap { background:#f7fafc; }
+  .card-body { padding:12px 20px 16px 20px; font-size:.95rem; color:#4a5568; }
+  .card-tip { margin-top:8px; padding:10px 12px; background:#ebf8ff; border-left:4px solid #3182ce; border-radius:4px; font-size:.88rem; }
+  .card-source { margin-top:8px; font-size:.75rem; color:#718096; }
+
+  .quiz-block { background:#fff; border-radius:10px; padding:20px; margin-top:24px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  .quiz-block h3 { color:#1a365d; margin-bottom:12px; }
+  .quiz-question { margin-bottom:20px; }
+  .quiz-options label { display:block; padding:10px 12px; margin:6px 0; background:#f7fafc; border-radius:6px; cursor:pointer; transition:background .2s; }
+  .quiz-options label:hover { background:#edf2f7; }
+  .quiz-options input { margin-right:8px; }
+  .quiz-options label.correct { background:#c6f6d5; }
+  .quiz-options label.incorrect { background:#fed7d7; }
+  .quiz-explain { margin-top:8px; padding:8px 12px; background:#fffaf0; border-left:4px solid #dd6b20; border-radius:4px; font-size:.88rem; display:none; }
+
+  .nav-bar { display:flex; justify-content:space-between; margin-top:24px; gap:12px; }
+  .nav-btn { flex:1; padding:12px; background:#2b6cb0; color:#fff; text-align:center; border-radius:8px; text-decoration:none; font-weight:600; }
+  .nav-btn.disabled { background:#cbd5e0; pointer-events:none; }
+  .nav-btn.hub { background:#1a365d; }
+
+  .footer { margin-top:24px; padding:16px; font-size:.75rem; color:#718096; text-align:center; }
+</style>
+</head>
+<body data-chapter="cas-06" data-chapter-no="6">
+
+<div class="sticky-header">
+  <div class="row">
+    <a href="cas-2026-hub.html" class="back-btn">← 回 Hub</a>
+    <div class="chapter-title">Ch6 · Stent Design &amp; TTT Carotid Stent</div>
+  </div>
+  <div class="progress-line">
+    📊 <span id="progress-text">0 / 0</span>
+    <div class="progress-bar"><div class="progress-bar-fill" id="progress-fill"></div></div>
+    <span id="progress-pct">0%</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="speaker-block">
+    <h3>📚 講師</h3>
+    <div>蔡翰林醫師 (2022 TTT Carotid Stent / 2024 Stent Design)</div>
+  </div>
+
+  <div class="objectives-block">
+    <h3>🎯 學習目標</h3>
+    <ul>
+      <li>區別 closed-cell 與 open-cell 支架設計的結構差異與代表產品</li>
+      <li>理解 hybrid stent 如何兼顧 deliverability 與 plaque coverage</li>
+      <li>掌握 free cell area 的概念及其對斑塊脫落風險的影響</li>
+      <li>比較各支架的 conformability/flexibility，了解其在彎曲血管的應用</li>
+      <li>認識 Wallstent 尺寸選擇原則與 balloon 充氣壓力標準</li>
+    </ul>
+  </div>
+
+  <div id="cards-container">
+
+    <!-- Card 1 -->
+    <div class="card" data-card-key="card-1">
+      <div class="card-header">
+        <div class="card-title">1. Closed-Cell Stent 設計：Xact &amp; Wallstent</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/06-stent-design/2022-tsai-hl-ttt-seq009.png" alt="Closed cell stents: Xact stent and Wallstent"></div>
+      <div class="card-body">
+        Closed-cell stent 的金屬絲環彼此相連，形成完全封閉的網格結構，代表產品為 Xact stent（Abbott）與 Wallstent（Boston Scientific）。封閉設計使各網格大小均一，free cell area 較小（Wallstent 僅 1.08 mm²），理論上能更有效阻擋斑塊碎片脫落。然而，封閉結構也使支架在彎曲血管中的 conformability 相對較差。
+        <div class="card-tip">💡 Tip: Wallstent 為編織型 (braided) closed-cell 設計，縮短比例 (foreshortening) 顯著，置放時需預留長度；Xact 為切割型 (laser-cut) 設計，foreshortening 較小。</div>
+        <div class="card-source">📌 來源：蔡翰林醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #9</div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card" data-card-key="card-2">
+      <div class="card-header">
+        <div class="card-title">2. Open-Cell Stent 設計：Acculink &amp; Protege</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/06-stent-design/2022-tsai-hl-ttt-seq010.png" alt="Open cell stents: Acculink stent and Protege stent"></div>
+      <div class="card-body">
+        Open-cell stent 的金屬連接點部分開放，環與環之間不完全相連，代表產品為 Acculink（Abbott）與 Protege（Medtronic）。開放設計賦予支架較高的 conformability 與 flexibility，適用於頸動脈分岔角度較大或血管較曲折的情形。缺點是 free cell area 較大（Protege 10.71 mm²、Acculink 11.48 mm²），理論上斑塊穿越網格的風險較高。
+        <div class="card-tip">💡 Tip: Open-cell 支架通過彎曲段時，支架邊緣可能出現不均勻擴張（fish-scaling），此現象在部署後 X 光下可辨識。</div>
+        <div class="card-source">📌 來源：蔡翰林醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #10</div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card" data-card-key="card-3">
+      <div class="card-header">
+        <div class="card-title">3. Hybrid Stent：兼顧 Deliverability 與 Plaque Coverage</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/06-stent-design/2022-tsai-hl-ttt-seq011.png" alt="Hybrid stent design: open cell at ends, closed cell in center"></div>
+      <div class="card-body">
+        Hybrid stent 整合兩種設計：近端與遠端採用 open-cell 設計以增加 deliverability 並順應血管彎曲，中央病灶區則採用 closed-cell 設計，使 plaque 被牢固覆蓋固定。此設計理念即「deliverability of an open cell stent with the security of a closed cell design」，代表了現代頸動脈支架設計的重要進化方向。
+        <div class="card-tip">💡 Tip: Hybrid 設計在中央 closed-cell 區段可見明顯較細密的網格，置放時應確認 closed-cell 區段完整覆蓋狹窄病灶。</div>
+        <div class="card-source">📌 來源：蔡翰林醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #11</div>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card" data-card-key="card-4">
+      <div class="card-header">
+        <div class="card-title">4. Free Cell Area：斑塊保護能力的量化指標</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/06-stent-design/2022-tsai-hl-ttt-seq025.png" alt="Free cell area comparison chart across carotid stent types"></div>
+      <div class="card-body">
+        Free cell area 指支架網格中單一最大開放孔洞的面積（mm²），是衡量斑塊碎片脫落保護能力的重要指標。數值越小，代表網格越細密，越能阻擋斑塊穿越。Wallstent 最小（1.08 mm²），Xact 次之（2.74 mm²），而 open-cell 的 Protege（10.71 mm²）與 Acculink（11.48 mm²）則遠大於 closed-cell 支架。
+        <div class="card-tip">💡 Tip: 部分研究建議當斑塊高度不穩定（ulcerated 或 echolucent）時，優先選擇 free cell area 較小的 closed-cell 或 hybrid 支架以降低 peri-procedural stroke 風險。</div>
+        <div class="card-source">📌 來源：蔡翰林醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #25</div>
+      </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card" data-card-key="card-5">
+      <div class="card-header">
+        <div class="card-title">5. Conformability / Flexibility：Open Cell 優於 Closed Cell</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/06-stent-design/2022-tsai-hl-ttt-seq017.png" alt="Conformability comparison: Wallstent, Expander, Jostent, SMART, Zilver in curved vessel"></div>
+      <div class="card-body">
+        在彎曲血管中，open-cell 支架（如 SMART、Zilver）能更順應血管輪廓，產生較少的 kinking 與 straightening 效應；closed-cell 的 Wallstent 雖 free cell area 最小，但其在彎曲段較容易使血管被拉直（straightening effect），可能影響對側血流。比較圖像可見，conformability 由大至小排列約為：open-cell > hybrid > closed-cell。
+        <div class="card-tip">💡 Tip: Carotid Wallstent 在頸部高位（near skull base）或血管角度 &gt;60° 時，因 straightening effect 明顯，置放難度較高，需謹慎評估。</div>
+        <div class="card-source">📌 來源：蔡翰林醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #17</div>
+      </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card" data-card-key="card-6">
+      <div class="card-header">
+        <div class="card-title">6. Wallstent 尺寸選擇原則</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/06-stent-design/2022-tsai-hl-ttt-seq015.png" alt="Carotid Wallstent sizing table: unconstrained diameter vs vessel diameter and stent length"></div>
+      <div class="card-body">
+        Wallstent 選擇需考量三個關鍵問題：「想要多大的支架直徑？」（unconstrained diameter，通常選 10 mm）、「想要多長的置放長度？」（implanted length，通常為 30 mm）、「要選哪款支架？」（依表查詢，此例對應 10 × 24 mm fully open 規格，實際血管直徑 8–9 mm，置放後有效長度 30 mm）。Wallstent 因其編織結構，fully open 尺寸與置放尺寸之間有明顯差異，選擇時須對照廠商尺寸對照表。
+        <div class="card-tip">💡 Tip: Wallstent 置放後直徑受血管限制，「unconstrained diameter」需比目標血管大約 10–20%，以確保足夠的 radial force；同時其長度亦會因血管限制而延長（reverse foreshortening）。</div>
+        <div class="card-source">📌 來源：蔡翰林醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #15</div>
+      </div>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="card" data-card-key="card-7">
+      <div class="card-header">
+        <div class="card-title">7. 斑塊形態、不穩定性與術後腦中風風險</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/06-stent-design/2022-tsai-hl-ttt-seq048.png" alt="Carotid plaque surface irregularity predicts ischemic stroke (Stroke 2006)"></div>
+      <div class="card-body">
+        頸動脈斑塊表面不規則性（plaque surface irregularity）是預測缺血性腦中風的獨立危險因子（Stroke, 2006）。不規則（ulcerated）斑塊在 CAS 操作過程中更易崩解並造成遠端栓塞，進而引發術後腦中風（如 seq052 臨床案例所示）。支架選擇上，面對高度不穩定斑塊時，closed-cell 或 hybrid 設計搭配 EPD（embolic protection device）的組合可降低 peri-procedural neurological complication 機率。
+        <div class="card-tip">💡 Tip: 術前超音波評估斑塊回音性（echolucent vs echogenic）及表面形態，是決定支架類型與是否強制使用 EPD 的重要依據。</div>
+        <div class="card-source">📌 來源：蔡翰林醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #48</div>
+      </div>
+    </div>
+
+  </div><!-- #cards-container -->
+
+  <div class="quiz-block">
+    <h3>🧠 Quick Check</h3>
+
+    <div class="quiz-question" data-q="1">
+      <div><strong>Q1.</strong> 在評估頸動脈支架的 free cell area 時，下列哪項敘述最正確？</div>
+      <!-- JS applies .correct/.incorrect classes to the <label> element, not the <input>. Walk: input.checked -> .closest('label'). -->
+      <div class="quiz-options">
+        <label><input type="radio" name="q1" value="A"> A. Acculink 的 free cell area 最小，斑塊保護力最強</label>
+        <label><input type="radio" name="q1" value="B"> B. Free cell area 越大，支架網格越細密，能阻擋更多斑塊碎片</label>
+        <label><input type="radio" name="q1" value="C" data-correct="true"> C. Wallstent 的 free cell area 約 1.08 mm²，在常見頸動脈支架中最小</label>
+        <label><input type="radio" name="q1" value="D"> D. Open-cell 與 closed-cell 支架的 free cell area 大致相同</label>
+      </div>
+      <div class="quiz-explain">Wallstent（closed-cell, braided）的 free cell area 僅約 1.08 mm²，是常見頸動脈支架中最小的，理論上對斑塊碎片的攔截能力最強。相反，open-cell 的 Protege（10.71 mm²）與 Acculink（11.48 mm²）free cell area 遠大於 closed-cell 支架。Free cell area 越小（而非越大），代表網格越細密，保護力越好。</div>
+    </div>
+
+    <div class="quiz-question" data-q="2">
+      <div><strong>Q2.</strong> 一名患者頸內動脈走行高度曲折（severe tortuosity），且 CCA 直徑約 8 mm，斑塊表面規則、回音偏強（echogenic）。就支架選擇而言，下列何者最合適？</div>
+      <div class="quiz-options">
+        <label><input type="radio" name="q2" value="A"> A. Wallstent，因其 free cell area 最小，保護力最強</label>
+        <label><input type="radio" name="q2" value="B" data-correct="true"> B. Open-cell 或 hybrid 支架，因其 conformability 較佳，適合曲折血管</label>
+        <label><input type="radio" name="q2" value="C"> C. 任何 closed-cell 支架，因其 radial force 均優於 open-cell</label>
+        <label><input type="radio" name="q2" value="D"> D. 不論血管形態，一律選擇 free cell area 最小的支架</label>
+      </div>
+      <div class="quiz-explain">血管高度曲折時，open-cell 或 hybrid 支架因 conformability 較佳，能順應血管彎曲而不造成明顯的 straightening effect，有利於支架安全到位。此患者斑塊穩定（echogenic、規則表面），對 free cell area 的要求相對不那麼嚴苛，因此 conformability 成為優先考量。Wallstent 在高度曲折血管中的 deliverability 與 conformability 較差，非首選。</div>
+    </div>
+
+    <div class="quiz-question" data-q="3">
+      <div><strong>Q3.</strong> 關於 hybrid stent 的設計理念，下列敘述何者正確？</div>
+      <div class="quiz-options">
+        <label><input type="radio" name="q3" value="A"> A. 支架全段均為 closed-cell 設計，以最大化 plaque coverage</label>
+        <label><input type="radio" name="q3" value="B"> B. 支架中央為 open-cell，兩端為 closed-cell，以利通過曲折血管</label>
+        <label><input type="radio" name="q3" value="C" data-correct="true"> C. 支架兩端為 open-cell（提升 deliverability），中央為 closed-cell（固定斑塊），整合兩種設計優點</label>
+        <label><input type="radio" name="q3" value="D"> D. Hybrid stent 的 free cell area 與純 open-cell 支架相同</label>
+      </div>
+      <div class="quiz-explain">Hybrid stent 的設計原則是「deliverability of an open cell stent with the security of a closed cell design」：近端與遠端採 open-cell 設計，增加支架在彎曲段的 deliverability 與 conformability；中央病灶覆蓋區採 closed-cell 設計，使 free cell area 較小，有效阻止斑塊碎片脫落。因此整體 free cell area 低於純 open-cell 支架。</div>
+    </div>
+
+  </div><!-- .quiz-block -->
+
+  <div class="nav-bar">
+    <a class="nav-btn" href="cas-2026-05-epd.html">← 上一章 Ch5</a>
+    <a class="nav-btn hub" href="cas-2026-hub.html">🏠 Hub</a>
+    <a class="nav-btn" href="cas-2026-07-tsci.html">下一章 Ch7 →</a>
+  </div>
+
+  <div class="footer">
+    本教學資源圖片來源為各講師於歷年「頸動脈支架訓練課程」之授課投影片，僅供本課程學員學術教育使用。
+  </div>
+
+</div>
+
+<script src="cas-2026-shared.js"></script>
+<script src="achievements.js"></script>
+<script>
+(function () {
+  if (typeof CAS2026 === 'undefined') {
+    console.error('[CAS2026] cas-2026-shared.js not loaded; chapter interaction disabled.');
+    return;
+  }
+  const chapterId = document.body.dataset.chapter;
+  const cards = document.querySelectorAll('.card');
+  const totalCards = cards.length;
+  const progressText = document.getElementById('progress-text');
+  const progressFill = document.getElementById('progress-fill');
+  const progressPct  = document.getElementById('progress-pct');
+
+  // Register total card count for hub.
+  const stored = CAS2026.loadProgress();
+  stored[chapterId] = stored[chapterId] || { cards:{}, quiz:{}, completed:false };
+  stored[chapterId].totalCards = totalCards;
+  CAS2026.saveProgress(stored);
+
+  function refreshProgress() {
+    const p = CAS2026.chapterProgress(chapterId, totalCards);
+    if (progressText) progressText.textContent = `${p.done} / ${p.total}`;
+    if (progressFill) progressFill.style.width = p.pct + '%';
+    if (progressPct)  progressPct.textContent = p.pct + '%';
+  }
+
+  // Wire each card's checkbox.
+  cards.forEach(card => {
+    const key = card.dataset.cardKey;
+    const cb  = card.querySelector('.card-check');
+    if (!key || !cb) {
+      console.warn('[CAS2026] skipping malformed card', card);
+      return;
+    }
+    cb.checked = CAS2026.isCardChecked(chapterId, key);
+    cb.addEventListener('change', () => {
+      CAS2026.setCardChecked(chapterId, key, cb.checked);
+      refreshProgress();
+    });
+  });
+
+  refreshProgress();
+
+  // Wire quiz radio buttons for instant feedback.
+  document.querySelectorAll('.quiz-question').forEach(q => {
+    const explain = q.querySelector('.quiz-explain');
+    q.querySelectorAll('input[type=radio]').forEach(r => {
+      r.addEventListener('change', () => {
+        q.querySelectorAll('.quiz-options label').forEach(l => l.classList.remove('correct','incorrect'));
+        const selected = q.querySelector('input[type=radio]:checked');
+        const label = selected.closest('label');
+        const isCorrect = selected.dataset.correct === 'true';
+        label.classList.add(isCorrect ? 'correct' : 'incorrect');
+        if (!isCorrect) {
+          // Highlight correct answer too:
+          const correctInput = q.querySelector('input[data-correct="true"]');
+          if (correctInput) correctInput.closest('label').classList.add('correct');
+        }
+        explain.style.display = 'block';
+
+        // Record quiz answer.
+        const p = CAS2026.loadProgress();
+        const qnum = q.dataset.q;
+        p[chapterId] = p[chapterId] || { cards:{}, quiz:{}, completed:false };
+        p[chapterId].quiz[qnum] = { value: selected.value, correct: isCorrect };
+        // Mark completed if >= 2 quiz answers correct.
+        const quizEntries = Object.values(p[chapterId].quiz);
+        const correctCount = quizEntries.filter(e => e.correct).length;
+        if (correctCount >= 2) {
+          p[chapterId].completed = true;
+          if (window.Achievements && typeof Achievements.unlock === 'function') {
+            Achievements.unlock(`cas-2026-${chapterId}-complete`);
+          }
+        }
+        CAS2026.saveProgress(p);
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

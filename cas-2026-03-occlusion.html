@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch3 Stenosis &amp; Occlusion — CAS 2026</title>
+<link rel="stylesheet" href="design-system.css">
+<link rel="stylesheet" href="achievements-ui.css">
+<style>
+  /* Inline body rule intentionally overrides design-system.css; keep <style> after <link>. */
+  body { font-family: "Noto Sans TC","Microsoft JhengHei",Arial,sans-serif; background:#f5f7fa; color:#2d3748; line-height:1.6; margin:0; padding:0; }
+  .container { max-width:800px; margin:0 auto; padding:16px; }
+
+  .sticky-header { position:sticky; top:0; background:linear-gradient(135deg,#1a365d,#2b6cb0); color:#fff; padding:12px 16px; z-index:200; box-shadow:0 2px 8px rgba(0,0,0,.15); }
+  .sticky-header .row { display:flex; align-items:center; gap:12px; }
+  .back-btn { color:#fff; text-decoration:none; font-size:14px; }
+  .chapter-title { font-size:1.05rem; font-weight:600; flex:1; }
+  .progress-line { margin-top:8px; font-size:.85rem; opacity:.9; display:flex; align-items:center; gap:8px; }
+  .progress-bar { flex:1; height:6px; background:rgba(255,255,255,.25); border-radius:3px; overflow:hidden; }
+  .progress-bar-fill { height:100%; background:#48bb78; transition:width .3s; width:0%; }
+
+  .speaker-block, .objectives-block { background:#fff; border-radius:10px; padding:16px 20px; margin-top:16px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  .speaker-block h3, .objectives-block h3 { font-size:.95rem; color:#1a365d; margin:0 0 8px 0; }
+  .objectives-block ul { margin:0; padding-left:20px; }
+  .objectives-block li { margin-bottom:4px; }
+
+  .card { background:#fff; border-radius:10px; margin-top:16px; box-shadow:0 1px 4px rgba(0,0,0,.08); overflow:hidden; }
+  .card-header { display:flex; align-items:flex-start; gap:12px; padding:16px 20px; }
+  .card-title { flex:1; font-weight:600; font-size:1rem; color:#1a365d; }
+  .card-check { width:24px; height:24px; accent-color:#38a169; cursor:pointer; min-width:24px; min-height:24px; }
+  .card-img { width:100%; display:block; }
+  .card-img-wrap { background:#f7fafc; }
+  .card-body { padding:12px 20px 16px 20px; font-size:.95rem; color:#4a5568; }
+  .card-tip { margin-top:8px; padding:10px 12px; background:#ebf8ff; border-left:4px solid #3182ce; border-radius:4px; font-size:.88rem; }
+  .card-source { margin-top:8px; font-size:.75rem; color:#718096; }
+
+  .quiz-block { background:#fff; border-radius:10px; padding:20px; margin-top:24px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  .quiz-block h3 { color:#1a365d; margin-bottom:12px; }
+  .quiz-question { margin-bottom:20px; }
+  .quiz-options label { display:block; padding:10px 12px; margin:6px 0; background:#f7fafc; border-radius:6px; cursor:pointer; transition:background .2s; }
+  .quiz-options label:hover { background:#edf2f7; }
+  .quiz-options input { margin-right:8px; }
+  .quiz-options label.correct { background:#c6f6d5; }
+  .quiz-options label.incorrect { background:#fed7d7; }
+  .quiz-explain { margin-top:8px; padding:8px 12px; background:#fffaf0; border-left:4px solid #dd6b20; border-radius:4px; font-size:.88rem; display:none; }
+
+  .nav-bar { display:flex; justify-content:space-between; margin-top:24px; gap:12px; }
+  .nav-btn { flex:1; padding:12px; background:#2b6cb0; color:#fff; text-align:center; border-radius:8px; text-decoration:none; font-weight:600; }
+  .nav-btn.disabled { background:#cbd5e0; pointer-events:none; }
+  .nav-btn.hub { background:#1a365d; }
+
+  .footer { margin-top:24px; padding:16px; font-size:.75rem; color:#718096; text-align:center; }
+</style>
+</head>
+<body data-chapter="cas-03" data-chapter-no="3">
+
+<div class="sticky-header">
+  <div class="row">
+    <a href="cas-2026-hub.html" class="back-btn">← 回 Hub</a>
+    <div class="chapter-title">Ch3 · Carotid Stenosis &amp; Occlusion</div>
+  </div>
+  <div class="progress-line">
+    📊 <span id="progress-text">0 / 0</span>
+    <div class="progress-bar"><div class="progress-bar-fill" id="progress-fill"></div></div>
+    <span id="progress-pct">0%</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="speaker-block">
+    <h3>📚 講師</h3>
+    <div>黃國川醫師 (2022)</div>
+  </div>
+
+  <div class="objectives-block">
+    <h3>🎯 學習目標</h3>
+    <ul>
+      <li>複習頸動脈及 Circle of Willis 解剖，了解側支循環路徑</li>
+      <li>認識 border zone（watershed）梗塞的分類與血流動力學意義</li>
+      <li>區辨 near-occlusion 與 complete occlusion 的影像特徵及處理原則</li>
+      <li>了解 carotid endarterectomy（CEA）之手術步驟與品質控制要點</li>
+      <li>掌握 EC-IC bypass 的適應症及技術概念</li>
+    </ul>
+  </div>
+
+  <div id="cards-container">
+
+    <!-- Card 1 -->
+    <div class="card" data-card-key="card-1">
+      <div class="card-header">
+        <div class="card-title">1. 頸動脈解剖與 Circle of Willis</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/03-occlusion/2022-huang-kc-seq003.png" alt="Circle of Willis anatomy diagram"></div>
+      <div class="card-body">
+        頸內動脈（ICA）經 siphon 後分為大腦前動脈（ACA）及大腦中動脈（MCA），並藉前後交通動脈（ACoA、PCoA）形成 Circle of Willis，提供重要側支循環。當一側 ICA 狹窄或閉塞時，對側 ACA→ACoA 及後循環 PCoA 的代償能力決定缺血範圍。Lenticulostriate arteries 為 MCA 之深穿通支，無側支循環，閉塞後易致基底核梗塞。
+        <div class="card-tip">💡 Tip: Circle of Willis 完整度因人而異；術前 MRA 或 CTA 評估側支循環品質，有助預測 CEA 或 CAS 術中夾閉耐受性。</div>
+        <div class="card-source">📌 來源：黃國川醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #3</div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card" data-card-key="card-2">
+      <div class="card-header">
+        <div class="card-title">2. Border Zone（Watershed）梗塞的類型</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/03-occlusion/2022-huang-kc-seq014.png" alt="Border zone infarction MRI patterns"></div>
+      <div class="card-body">
+        Watershed 梗塞發生於兩大供血區交界帶，主要分為：皮質型（Cortical Watershed Infarction, CWI）位於 ACA/MCA 或 MCA/PCA 交界；內部型（Internal Watershed Infarction, IWI）位於白質深部，呈串珠狀（partial IWI）或融合型（confluent IWI）。血流動力學機轉（低灌流）及微栓塞均可導致 border zone 梗塞，嚴重頸動脈狹窄（&gt;70%）或閉塞時兩者常並存。
+        <div class="card-tip">💡 Tip: 串珠狀 IWI 高度提示近端栓塞來源（如高度狹窄 ICA plaque），而融合型 IWI 則更傾向純低灌流；兩者治療策略可能不同。</div>
+        <div class="card-source">📌 來源：黃國川醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #14</div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card" data-card-key="card-3">
+      <div class="card-header">
+        <div class="card-title">3. MRA 評估頸動脈及顱內血管</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/03-occlusion/2022-huang-kc-seq024.png" alt="MRA brain with carotid and intracranial vessels"></div>
+      <div class="card-body">
+        3T MRA（with/without contrast）可清楚顯示頸動脈至顱內血管全段，用於評估狹窄程度、側支循環及 near-occlusion 與 complete occlusion 的鑑別。本例（NTUH 案例）可見雙側頸動脈及 Circle of Willis 走向，有助於規劃介入策略。MRA 較 DSA 無創，但對嚴重鈣化病灶及慢性全閉塞（CTO）常高估狹窄程度，仍需 CTA 或 DSA 輔助確認。
+        <div class="card-tip">💡 Tip: 對懷疑 CTO 的病灶，若 MRA 顯示血管「消失」，應以 CTA 確認是否仍有細線狀殘餘管腔（string sign），以鑑別 near-occlusion。</div>
+        <div class="card-source">📌 來源：黃國川醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #24</div>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card" data-card-key="card-4">
+      <div class="card-header">
+        <div class="card-title">4. Carotid Endarterectomy（CEA）手術步驟</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/03-occlusion/2022-huang-kc-seq011.png" alt="CEA surgical illustration showing plaque removal and arteriotomy closure"></div>
+      <div class="card-body">
+        CEA 為症狀性 ICA 狹窄 ≥50%（NASCET 標準）及無症狀性 ≥60% 的標準手術治療。手術關鍵步驟包括：沿 intimal separation 平面完整剝離 plaque、以 7-0 monofilament suture 固定遠端 intima（避免夾層）、清除 loose debris，以及動脈切開縫合前之充分 de-airing。右側圖示為依序鬆夾（clamp release sequence），以降低空氣或血栓栓塞風險。
+        <div class="card-tip">💡 Tip: 遠端 intima 若未妥善固定（tack suture），術後高流速血流可掀起 intimal flap，導致急性血栓或 stroke；此步驟為 CEA 品質關鍵。</div>
+        <div class="card-source">📌 來源：黃國川醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #11</div>
+      </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card" data-card-key="card-5">
+      <div class="card-header">
+        <div class="card-title">5. EC-IC Bypass — GSV Graft 至 MCA</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/03-occlusion/2022-huang-kc-seq030.png" alt="Intraoperative photo of GSV graft to left MCA M3 segment"></div>
+      <div class="card-body">
+        顱外–顱內（EC-IC）bypass 是針對無法直接血管重建之 ICA/MCA 閉塞患者的選擇性手術，以大隱靜脈（GSV）或橈動脈作為 conduit，將頸外動脈（ECA）血流橋接至 MCA M3 段。本術野照片顯示 GSV graft 吻合至 Left MCA (M3)，用於改善慢性低灌流。EC-IC bypass 的適應症需以 CBF 或 PET 測量確認血流動力學損害（hemodynamic failure）。
+        <div class="card-tip">💡 Tip: EC-IC Bypass Study（1985）未顯示 bypass 優於藥物治療；但後續 JET Study 及 COSS 等研究顯示，對有血流動力學損害的 ICA 閉塞患者，慎選病例仍可能獲益。</div>
+        <div class="card-source">📌 來源：黃國川醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #30</div>
+      </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card" data-card-key="card-6">
+      <div class="card-header">
+        <div class="card-title">6. 臨床案例：IVH 後雙側額葉梗塞（術前評估）</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/03-occlusion/2022-huang-kc-seq038.png" alt="CT perfusion images of 29-year-old female with IVH and bilateral frontal ischemic stroke"></div>
+      <div class="card-body">
+        29 歲女性，腦室內出血（IVH）後 1 週發生雙側額葉缺血性腦中風。CT perfusion 顯示（A）腦部 CT、（B）CBF、（C）CBV、（D）MTT，提示雙側大腦前循環嚴重低灌流，CBV 相對保留但 MTT 延長，符合 hemodynamic failure（penumbra 為主）。IVH 後血管痙攣及潛在動脈閉塞性疾病（如 Moyamoya）均可導致此一罕見缺血型態。
+        <div class="card-tip">💡 Tip: 年輕患者出現雙側 watershed 梗塞應高度懷疑 Moyamoya disease 或雙側 ICA 病變；CT perfusion 的 CBV/MTT mismatch 有助判斷是否有可挽救組織。</div>
+        <div class="card-source">📌 來源：黃國川醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #38</div>
+      </div>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="card" data-card-key="card-7">
+      <div class="card-header">
+        <div class="card-title">7. 臨床案例：EC-IC Bypass 術後 6 個月追蹤</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/03-occlusion/2022-huang-kc-seq039.png" alt="DSA and EC-IC bypass illustration, 6 months post-operation"></div>
+      <div class="card-body">
+        同一患者術後 6 個月 DSA 顯示：（A/B）術前顱內血管分佈稀疏，提示雙側前循環灌流不足；（C/D）EC-IC bypass 術後 bypass 通暢，顱內分支明顯增加。插圖說明 STA-MCA bypass 之解剖路徑：顳淺動脈（STA）吻合至 MCA 皮質支（M3），恢復腦表面灌流。本案例說明針對 hemodynamic failure 患者，EC-IC bypass 可有效改善顱內灌流並預防再發性缺血。
+        <div class="card-tip">💡 Tip: STA-MCA bypass 為低流量 bypass（low-flow），適用於 Moyamoya 及 ICA 慢性閉塞；高流量 bypass（high-flow，如 GSV graft）用於需要更大流量補充的情況，如顱底腫瘤切除後。</div>
+        <div class="card-source">📌 來源：黃國川醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #39</div>
+      </div>
+    </div>
+
+  </div><!-- #cards-container -->
+
+  <div class="quiz-block">
+    <h3>🧠 Quick Check</h3>
+
+    <div class="quiz-question" data-q="1">
+      <div><strong>Q1.</strong> 一位 72 歲男性，左側 ICA 狹窄 75%（NASCET），近期出現右手無力（TIA）。MRI DWI 顯示左側 ACA/MCA 交界帶散在性梗塞灶，形態呈串珠狀。下列何者最能解釋此梗塞之主要機轉？</div>
+      <!-- JS applies .correct/.incorrect classes to the <label> element, not the <input>. Walk: input.checked -> .closest('label'). -->
+      <div class="quiz-options">
+        <label><input type="radio" name="q1" value="A"> A. 心源性栓塞（心房顫動）</label>
+        <label><input type="radio" name="q1" value="B" data-correct="true"> B. 近端 ICA 狹窄病灶之動脈-動脈栓塞（artery-to-artery embolism）</label>
+        <label><input type="radio" name="q1" value="C"> C. 純血流動力學低灌流（hemodynamic failure）</label>
+        <label><input type="radio" name="q1" value="D"> D. 小血管病變（lacunar infarction）</label>
+      </div>
+      <div class="quiz-explain">串珠狀（partial）IWI 或皮質 watershed 梗塞的散在分佈高度提示近端栓塞來源，即來自 ICA 狹窄病灶的 artery-to-artery embolism。融合型 IWI 則較傾向純低灌流機轉。此案例有明確的高度 ICA 狹窄，為最常見的動脈-動脈栓塞來源。正確答案為 B。</div>
+    </div>
+
+    <div class="quiz-question" data-q="2">
+      <div><strong>Q2.</strong> 針對症狀性 ICA 慢性完全閉塞（CTO）且 CT perfusion 顯示 MTT 明顯延長、CBV 相對保留的患者，下列何種治療策略最符合目前臨床實證？</div>
+      <!-- JS applies .correct/.incorrect classes to the <label> element, not the <input>. Walk: input.checked -> .closest('label'). -->
+      <div class="quiz-options">
+        <label><input type="radio" name="q2" value="A"> A. 緊急經皮頸動脈支架置放術（emergent CAS）</label>
+        <label><input type="radio" name="q2" value="B"> B. 直接溶栓治療（systemic thrombolysis）</label>
+        <label><input type="radio" name="q2" value="C" data-correct="true"> C. 強化藥物治療為基礎，評估是否具 hemodynamic failure 後考慮 EC-IC bypass</label>
+        <label><input type="radio" name="q2" value="D"> D. 立即外科 CEA 重建</label>
+      </div>
+      <div class="quiz-explain">對慢性 ICA CTO，直接支架置放或 CEA 風險高且效益不確定。CT perfusion 顯示 CBV 保留（penumbra 存在）但 MTT 延長（低灌流），為 hemodynamic failure 的影像依據。在強化藥物治療（抗血小板、他汀類、血壓管理）的基礎上，若有客觀的血流動力學損害，可評估 EC-IC bypass（STA-MCA 或 GSV graft）。正確答案為 C。</div>
+    </div>
+
+    <div class="quiz-question" data-q="3">
+      <div><strong>Q3.</strong> 執行 CEA 手術時，下列哪一步驟的主要目的是防止術後急性動脈夾層（intimal flap dissection）？</div>
+      <!-- JS applies .correct/.incorrect classes to the <label> element, not the <input>. Walk: input.checked -> .closest('label'). -->
+      <div class="quiz-options">
+        <label><input type="radio" name="q3" value="A"> A. 術中 heparin 給藥</label>
+        <label><input type="radio" name="q3" value="B"> B. 使用 patch angioplasty 關閉動脈切口</label>
+        <label><input type="radio" name="q3" value="C"> C. 動脈縫合前之 de-airing（排氣）</label>
+        <label><input type="radio" name="q3" value="D" data-correct="true"> D. 以 7-0 monofilament 縫線固定遠端 intimal endpoint（tack suture）</label>
+      </div>
+      <div class="quiz-explain">CEA 術中剝離 plaque 後，若遠端 intima 未以 tack suture 固定，恢復血流後高速血流可掀起游離的 intimal flap，造成急性血栓形成或 stroke。此步驟（tack suture at distal endpoint）是預防 intimal dissection 的關鍵。de-airing 是防止空氣栓塞；heparin 預防術中血栓；patch angioplasty 防止再狹窄，但不直接預防夾層。正確答案為 D。</div>
+    </div>
+
+  </div><!-- .quiz-block -->
+
+  <div class="nav-bar">
+    <a class="nav-btn" href="cas-2026-02-ct-mr.html">← 上一章 Ch2</a>
+    <a class="nav-btn hub" href="cas-2026-hub.html">🏠 Hub</a>
+    <a class="nav-btn" href="cas-2026-04-techniques.html">下一章 Ch4 →</a>
+  </div>
+
+  <div class="footer">
+    本教學資源圖片來源為各講師於歷年「頸動脈支架訓練課程」之授課投影片，僅供本課程學員學術教育使用。
+  </div>
+
+</div>
+
+<script src="cas-2026-shared.js"></script>
+<script src="achievements.js"></script>
+<script>
+(function () {
+  if (typeof CAS2026 === 'undefined') {
+    console.error('[CAS2026] cas-2026-shared.js not loaded; chapter interaction disabled.');
+    return;
+  }
+  const chapterId = document.body.dataset.chapter;
+  const cards = document.querySelectorAll('.card');
+  const totalCards = cards.length;
+  const progressText = document.getElementById('progress-text');
+  const progressFill = document.getElementById('progress-fill');
+  const progressPct  = document.getElementById('progress-pct');
+
+  // Register total card count for hub.
+  const stored = CAS2026.loadProgress();
+  stored[chapterId] = stored[chapterId] || { cards:{}, quiz:{}, completed:false };
+  stored[chapterId].totalCards = totalCards;
+  CAS2026.saveProgress(stored);
+
+  function refreshProgress() {
+    const p = CAS2026.chapterProgress(chapterId, totalCards);
+    if (progressText) progressText.textContent = `${p.done} / ${p.total}`;
+    if (progressFill) progressFill.style.width = p.pct + '%';
+    if (progressPct)  progressPct.textContent = p.pct + '%';
+  }
+
+  // Wire each card's checkbox.
+  cards.forEach(card => {
+    const key = card.dataset.cardKey;
+    const cb  = card.querySelector('.card-check');
+    if (!key || !cb) {
+      console.warn('[CAS2026] skipping malformed card', card);
+      return;
+    }
+    cb.checked = CAS2026.isCardChecked(chapterId, key);
+    cb.addEventListener('change', () => {
+      CAS2026.setCardChecked(chapterId, key, cb.checked);
+      refreshProgress();
+    });
+  });
+
+  refreshProgress();
+
+  // Wire quiz radio buttons for instant feedback.
+  document.querySelectorAll('.quiz-question').forEach(q => {
+    const explain = q.querySelector('.quiz-explain');
+    q.querySelectorAll('input[type=radio]').forEach(r => {
+      r.addEventListener('change', () => {
+        q.querySelectorAll('.quiz-options label').forEach(l => l.classList.remove('correct','incorrect'));
+        const selected = q.querySelector('input[type=radio]:checked');
+        const label = selected.closest('label');
+        const isCorrect = selected.dataset.correct === 'true';
+        label.classList.add(isCorrect ? 'correct' : 'incorrect');
+        if (!isCorrect) {
+          // Highlight correct answer too:
+          const correctInput = q.querySelector('input[data-correct="true"]');
+          if (correctInput) correctInput.closest('label').classList.add('correct');
+        }
+        explain.style.display = 'block';
+
+        // Record quiz answer.
+        const p = CAS2026.loadProgress();
+        const qnum = q.dataset.q;
+        p[chapterId] = p[chapterId] || { cards:{}, quiz:{}, completed:false };
+        p[chapterId].quiz[qnum] = { value: selected.value, correct: isCorrect };
+        // Mark completed if >= 2 quiz answers correct.
+        const quizEntries = Object.values(p[chapterId].quiz);
+        const correctCount = quizEntries.filter(e => e.correct).length;
+        if (correctCount >= 2) {
+          p[chapterId].completed = true;
+          if (window.Achievements && typeof Achievements.unlock === 'function') {
+            Achievements.unlock(`cas-2026-${chapterId}-complete`);
+          }
+        }
+        CAS2026.saveProgress(p);
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

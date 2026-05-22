@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch4 General CAS Techniques — CAS 2026</title>
+<link rel="stylesheet" href="design-system.css">
+<link rel="stylesheet" href="achievements-ui.css">
+<style>
+  /* Inline body rule intentionally overrides design-system.css; keep <style> after <link>. */
+  body { font-family: "Noto Sans TC","Microsoft JhengHei",Arial,sans-serif; background:#f5f7fa; color:#2d3748; line-height:1.6; margin:0; padding:0; }
+  .container { max-width:800px; margin:0 auto; padding:16px; }
+
+  .sticky-header { position:sticky; top:0; background:linear-gradient(135deg,#1a365d,#2b6cb0); color:#fff; padding:12px 16px; z-index:200; box-shadow:0 2px 8px rgba(0,0,0,.15); }
+  .sticky-header .row { display:flex; align-items:center; gap:12px; }
+  .back-btn { color:#fff; text-decoration:none; font-size:14px; }
+  .chapter-title { font-size:1.05rem; font-weight:600; flex:1; }
+  .progress-line { margin-top:8px; font-size:.85rem; opacity:.9; display:flex; align-items:center; gap:8px; }
+  .progress-bar { flex:1; height:6px; background:rgba(255,255,255,.25); border-radius:3px; overflow:hidden; }
+  .progress-bar-fill { height:100%; background:#48bb78; transition:width .3s; width:0%; }
+
+  .speaker-block, .objectives-block { background:#fff; border-radius:10px; padding:16px 20px; margin-top:16px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  .speaker-block h3, .objectives-block h3 { font-size:.95rem; color:#1a365d; margin:0 0 8px 0; }
+  .objectives-block ul { margin:0; padding-left:20px; }
+  .objectives-block li { margin-bottom:4px; }
+
+  .card { background:#fff; border-radius:10px; margin-top:16px; box-shadow:0 1px 4px rgba(0,0,0,.08); overflow:hidden; }
+  .card-header { display:flex; align-items:flex-start; gap:12px; padding:16px 20px; }
+  .card-title { flex:1; font-weight:600; font-size:1rem; color:#1a365d; }
+  .card-check { width:24px; height:24px; accent-color:#38a169; cursor:pointer; min-width:24px; min-height:24px; }
+  .card-img { width:100%; display:block; }
+  .card-img-wrap { background:#f7fafc; }
+  .card-body { padding:12px 20px 16px 20px; font-size:.95rem; color:#4a5568; }
+  .card-tip { margin-top:8px; padding:10px 12px; background:#ebf8ff; border-left:4px solid #3182ce; border-radius:4px; font-size:.88rem; }
+  .card-source { margin-top:8px; font-size:.75rem; color:#718096; }
+
+  .quiz-block { background:#fff; border-radius:10px; padding:20px; margin-top:24px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  .quiz-block h3 { color:#1a365d; margin-bottom:12px; }
+  .quiz-question { margin-bottom:20px; }
+  .quiz-options label { display:block; padding:10px 12px; margin:6px 0; background:#f7fafc; border-radius:6px; cursor:pointer; transition:background .2s; }
+  .quiz-options label:hover { background:#edf2f7; }
+  .quiz-options input { margin-right:8px; }
+  .quiz-options label.correct { background:#c6f6d5; }
+  .quiz-options label.incorrect { background:#fed7d7; }
+  .quiz-explain { margin-top:8px; padding:8px 12px; background:#fffaf0; border-left:4px solid #dd6b20; border-radius:4px; font-size:.88rem; display:none; }
+
+  .nav-bar { display:flex; justify-content:space-between; margin-top:24px; gap:12px; }
+  .nav-btn { flex:1; padding:12px; background:#2b6cb0; color:#fff; text-align:center; border-radius:8px; text-decoration:none; font-weight:600; }
+  .nav-btn.disabled { background:#cbd5e0; pointer-events:none; }
+  .nav-btn.hub { background:#1a365d; }
+
+  .footer { margin-top:24px; padding:16px; font-size:.75rem; color:#718096; text-align:center; }
+</style>
+</head>
+<body data-chapter="cas-04" data-chapter-no="4">
+
+<div class="sticky-header">
+  <div class="row">
+    <a href="cas-2026-hub.html" class="back-btn">← 回 Hub</a>
+    <div class="chapter-title">Ch4 · General Interventional Techniques of CAS</div>
+  </div>
+  <div class="progress-line">
+    📊 <span id="progress-text">0 / 0</span>
+    <div class="progress-bar"><div class="progress-bar-fill" id="progress-fill"></div></div>
+    <span id="progress-pct">0%</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="speaker-block">
+    <h3>📚 講師</h3>
+    <div>蘇峻弘醫師 (2022)</div>
+  </div>
+
+  <div class="objectives-block">
+    <h3>🎯 學習目標</h3>
+    <ul>
+      <li>了解 CAS 術前影像評估：CTA/MRA 主動脈弓形態判讀</li>
+      <li>掌握股動脈穿刺與 sheath 置放原則，並識別靜脈 sheath 的必要性</li>
+      <li>依主動脈弓類型選擇適當診斷導管（JR4、Simmons 2）及替代入路（transradial/transbrachial）</li>
+      <li>熟悉 serial stiffening method 及 push-pull technique 推進 guide catheter 至 CCA</li>
+      <li>執行 stent 置放、post-dilatation（6–8 atm）、final angiography 及 neurological examination</li>
+    </ul>
+  </div>
+
+  <div id="cards-container">
+
+    <!-- Card 1 -->
+    <div class="card" data-card-key="card-1">
+      <div class="card-header">
+        <div class="card-title">1. 術前影像評估：CTA / MRA 主動脈弓</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/04-techniques/2022-su-ch-seq003.png" alt="CTA/MRA aortic arch pre-procedure imaging"></div>
+      <div class="card-body">
+        術前 CTA 或 MRA 可清楚顯示主動脈弓形態、頸動脈起始位置及狹窄段解剖。選擇適當入路和導管前，確認 arch type 及有無明顯迂曲（tortuosity）是關鍵步驟。Diagnostic catheter（如 JR4）可在透視下同步確認 CCA 開口位置（slide 4 示 JR4 engagement；slide 5 示 left ICA 及 subclavian 解剖）。
+        <div class="card-tip">💡 Tip: MRA 可在無輻射下評估弓型，但 CTA 對鈣化判斷更準確；兩者互補使用。</div>
+        <div class="card-source">📌 來源：蘇峻弘醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #3–5</div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card" data-card-key="card-2">
+      <div class="card-header">
+        <div class="card-title">2. 血管入路：Trans-femoral Approach 與 Sheath 置放</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/04-techniques/2022-su-ch-seq013.png" alt="Trans-femoral access zones and venous sheath placement"></div>
+      <div class="card-body">
+        CAS 最常採用 trans-femoral approach，因其可容納較大口徑的 catheter/sheath，並方便即時應對血流動力學變化。<strong>動脈 sheath</strong>（通常 6–8F）供導管操作；<strong>靜脈 sheath</strong>則不可省略，用於靜脈注射、給藥及必要時放置暫時性節律器（temporary pacemaker）。術後可繼續留置用於血流動力學監測。
+        <div class="card-tip">💡 Tip: 穿刺點選擇在鼠蹊韌帶下方 2–3 cm（Zone 2–3），避免過高導致腹膜後出血或過低增加 AV fistula 風險。</div>
+        <div class="card-source">📌 來源：蘇峻弘醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #13</div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card" data-card-key="card-3">
+      <div class="card-header">
+        <div class="card-title">3. 基礎血管攝影：主動脈弓攝影與弓型分類</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/04-techniques/2022-su-ch-seq016.png" alt="Aortic arch types I II III classification"></div>
+      <div class="card-body">
+        Arch aortogram（slide 15）可確認大血管起始位置及選擇策略。主動脈弓依 innominate artery 起始點至弓頂的垂直距離分為三型：<strong>Type I</strong>（&lt;1 CCA diameter）、<strong>Type II</strong>（1–2 CCA diameter）、<strong>Type III</strong>（&gt;2 CCA diameter）。Type III 弓導管操控最困難，需考慮替代入路或特殊導管。
+        <div class="card-tip">💡 Tip: Type III 弓合併 bovine arch 時挑戰更大；可事先於 CTA 上量測弓型，縮短術中判斷時間。</div>
+        <div class="card-source">📌 來源：蘇峻弘醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #15–16</div>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card" data-card-key="card-4">
+      <div class="card-header">
+        <div class="card-title">4. 替代入路：Transradial / Transbrachial Approach</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/04-techniques/2022-su-ch-seq018.png" alt="Transradial transbrachial approach looping technique type 3 arch"></div>
+      <div class="card-body">
+        面對 Type III 主動脈弓或股動脈入路困難時，可選擇 transradial 或 transbrachial approach。<strong>Looping technique</strong> 搭配 Simmons 2 導管及親水性 guidewire 可有效克服嚴重迂曲弓型。Bidirectional approach（slide 9）則應用於鎖骨下動脈（subclavian artery）合併 ICA 病灶的複合手術策略。
+        <div class="card-tip">💡 Tip: Transradial approach 出血風險較低、術後免固定，近年在 CAS 應用日增，但需熟悉 Simmons 2 looping 技術。</div>
+        <div class="card-source">📌 來源：蘇峻弘醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #18, #9</div>
+      </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card" data-card-key="card-5">
+      <div class="card-header">
+        <div class="card-title">5. Guide Catheter 推進：Serial Stiffening Method 與 Push-Pull Technique</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/04-techniques/2022-su-ch-seq043.png" alt="Serial stiffening method diagnostic catheter to ECA then guide catheter to CCA"></div>
+      <div class="card-body">
+        <strong>Serial stiffening method</strong> 分兩步：① 5F diagnostic catheter engage CCA 開口後，送親水性 guidewire 至 ECA → diagnostic cath 跟進至 ECA；② 更換 stiffer wire（如 Terumo stiff wire 260 cm 或 Amplatz super-stiff）後，沿 wire 推進 guide catheter（GC）或 long sheath 至 CCA（slides 43–44）。<strong>Push-pull technique</strong>（slide 45）：穩定推 GC 的同時，將 diagnostic catheter 向後撤，藉反作用力協助 GC 越過弓型阻力。
+        <div class="card-tip">💡 Tip: Stiffer wire 進入 ECA 後可提供最大支撐力；避免將 stiff wire 送入 ICA，以防血管損傷。</div>
+        <div class="card-source">📌 來源：蘇峻弘醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #43–45</div>
+      </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card" data-card-key="card-6">
+      <div class="card-header">
+        <div class="card-title">6. Stent 置放與 Post-dilatation</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/04-techniques/2022-su-ch-seq056.png" alt="Stent deployment and post-dilatation at 6-8 atm fluoroscopy"></div>
+      <div class="card-body">
+        Embolic protection device（EPD）到位後先行 pre-dilatation（若需要），再依狹窄長度及血管徑選擇合適 carotid stent（如 Wallstent 9×30 mm）。Stent 展開後進行 <strong>post-dilatation</strong>，壓力建議 <strong>6–8 atm</strong>，避免過度擴張以降低栓塞風險（slides 6–7 為個案示例，slide 10 示 6.0×57 stent deployment）。術後確認殘餘狹窄 &lt;30%。
+        <div class="card-tip">💡 Tip: Post-dilatation 氣球尺寸應比正常血管徑略小（undersizing），6–8 atm 即可，切勿過度充壓以避免斑塊碎裂。</div>
+        <div class="card-source">📌 來源：蘇峻弘醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #6–7, #10, #56</div>
+      </div>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="card" data-card-key="card-7">
+      <div class="card-header">
+        <div class="card-title">7. Final Angiography、神經學評估與傷口處理</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/04-techniques/2022-su-ch-seq058.png" alt="Final angiography and neurological examination after CAS"></div>
+      <div class="card-body">
+        Stent 置放後移除 EPD，執行 <strong>final angiography</strong> 確認殘餘狹窄、distal embolism 及顱內血流（slide 53：restenosis 案例使用 IVUS 輔助評估）。同步進行 <strong>neurological examination（NE）</strong>，詢問患者意識、語言及四肢活動（slide 58）。傷口處理（slide 59）優先使用 closure device（如 ProGlide）；需警覺大血腫、AV fistula、偽動脈瘤、腹膜後出血及壓迫引起之血管迷走反應等併發症。
+        <div class="card-tip">💡 Tip: 術後「三問」：意識清楚嗎？說話清晰嗎？手腳能動嗎？——是術中神經學監測最快速的床邊評估。</div>
+        <div class="card-source">📌 來源：蘇峻弘醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #53, #58–59</div>
+      </div>
+    </div>
+
+  </div><!-- /#cards-container -->
+
+  <div class="quiz-block">
+    <h3>🧠 Quick Check</h3>
+
+    <div class="quiz-question" data-q="1">
+      <div><strong>Q1.</strong> 一位患者因 Type III 主動脈弓導致 JR4 診斷導管無法穩定 engage 左側 CCA。下列哪一項處置最適合？</div>
+      <!-- JS applies .correct/.incorrect classes to the <label> element, not the <input>. Walk: input.checked -> .closest('label'). -->
+      <div class="quiz-options">
+        <label><input type="radio" name="q1" value="A"> A. 改用更大 French size 的 JR4 導管</label>
+        <label><input type="radio" name="q1" value="B"> B. 改採 transradial approach，使用 Simmons 2 導管搭配 looping technique</label>
+        <label><input type="radio" name="q1" value="C" data-correct="true"> C. 同時考慮 Simmons 2 導管或改由 transradial/transbrachial approach，搭配 looping technique</label>
+        <label><input type="radio" name="q1" value="D"> D. 直接升級至 8F guide catheter 以增加支撐力</label>
+      </div>
+      <div class="quiz-explain">Type III 弓（&gt;2 CCA diameter）使 trans-femoral JR4 導管操控困難；首選策略是改換能形成反向彎曲的 Simmons 2（可由股動脈入路 loop 成型），或改採 transradial/transbrachial approach 從上方角度進入，避開嚴重弓型阻力。單純換大 French 或直上 guide catheter 並不能解決 tortuosity 問題。</div>
+    </div>
+
+    <div class="quiz-question" data-q="2">
+      <div><strong>Q2.</strong> CAS 術中進行 serial stiffening method 時，stiff wire 應優先送入何處以獲得最大支撐力？</div>
+      <!-- JS applies .correct/.incorrect classes to the <label> element, not the <input>. Walk: input.checked -> .closest('label'). -->
+      <div class="quiz-options">
+        <label><input type="radio" name="q2" value="A"> A. 送入 ICA 遠端以獲得最直線支撐</label>
+        <label><input type="radio" name="q2" value="B" data-correct="true"> B. 送入 ECA，避免 stiff wire 進入 ICA 造成血管損傷</label>
+        <label><input type="radio" name="q2" value="C"> C. 留在 CCA 近端即可，無需深入分支</label>
+        <label><input type="radio" name="q2" value="D"> D. 送入鎖骨下動脈以獲得更長工作距離</label>
+      </div>
+      <div class="quiz-explain">Serial stiffening method 的關鍵是：diagnostic catheter 先進至 ECA，再沿此 wire exchange 為 stiff wire（如 Terumo stiff 260 cm 或 Amplatz super-stiff）；stiff wire 停留在 ECA 提供最大支撐，同時避免因 wire 硬度造成 ICA 遠端血管穿孔或痙攣。</div>
+    </div>
+
+    <div class="quiz-question" data-q="3">
+      <div><strong>Q3.</strong> CAS 術後 post-dilatation 建議壓力範圍為何？壓力過高的主要風險是什麼？</div>
+      <!-- JS applies .correct/.incorrect classes to the <label> element, not the <input>. Walk: input.checked -> .closest('label'). -->
+      <div class="quiz-options">
+        <label><input type="radio" name="q3" value="A"> A. 2–4 atm；主要風險為 stent 無法充分展開</label>
+        <label><input type="radio" name="q3" value="B"> B. 10–12 atm；主要風險為球囊破裂</label>
+        <label><input type="radio" name="q3" value="C" data-correct="true"> C. 6–8 atm；主要風險為斑塊碎裂導致遠端栓塞</label>
+        <label><input type="radio" name="q3" value="D"> D. 14–16 atm；主要風險為血管夾層</label>
+      </div>
+      <div class="quiz-explain">Post-dilatation 建議採用 6–8 atm 的中等壓力，以確保 stent 貼壁同時避免過度擴張。壓力過高（&gt;10 atm）可能造成鈣化斑塊碎裂，使微小碎片突破 EPD 濾網孔徑，增加遠端腦栓塞風險。氣球尺寸也應選擇略小（undersizing）於正常參考血管徑。</div>
+    </div>
+
+  </div>
+
+  <div class="nav-bar">
+    <a class="nav-btn" href="cas-2026-03-occlusion.html">← 上一章 Ch3</a>
+    <a class="nav-btn hub" href="cas-2026-hub.html">🏠 Hub</a>
+    <a class="nav-btn" href="cas-2026-05-epd.html">下一章 Ch5 →</a>
+  </div>
+
+  <div class="footer">
+    本教學資源圖片來源為各講師於歷年「頸動脈支架訓練課程」之授課投影片，僅供本課程學員學術教育使用。
+  </div>
+
+</div>
+
+<script src="cas-2026-shared.js"></script>
+<script src="achievements.js"></script>
+<script>
+(function () {
+  if (typeof CAS2026 === 'undefined') {
+    console.error('[CAS2026] cas-2026-shared.js not loaded; chapter interaction disabled.');
+    return;
+  }
+  const chapterId = document.body.dataset.chapter;
+  const cards = document.querySelectorAll('.card');
+  const totalCards = cards.length;
+  const progressText = document.getElementById('progress-text');
+  const progressFill = document.getElementById('progress-fill');
+  const progressPct  = document.getElementById('progress-pct');
+
+  // Register total card count for hub.
+  const stored = CAS2026.loadProgress();
+  stored[chapterId] = stored[chapterId] || { cards:{}, quiz:{}, completed:false };
+  stored[chapterId].totalCards = totalCards;
+  CAS2026.saveProgress(stored);
+
+  function refreshProgress() {
+    const p = CAS2026.chapterProgress(chapterId, totalCards);
+    if (progressText) progressText.textContent = `${p.done} / ${p.total}`;
+    if (progressFill) progressFill.style.width = p.pct + '%';
+    if (progressPct)  progressPct.textContent = p.pct + '%';
+  }
+
+  // Wire each card's checkbox.
+  cards.forEach(card => {
+    const key = card.dataset.cardKey;
+    const cb  = card.querySelector('.card-check');
+    if (!key || !cb) {
+      console.warn('[CAS2026] skipping malformed card', card);
+      return;
+    }
+    cb.checked = CAS2026.isCardChecked(chapterId, key);
+    cb.addEventListener('change', () => {
+      CAS2026.setCardChecked(chapterId, key, cb.checked);
+      refreshProgress();
+    });
+  });
+
+  refreshProgress();
+
+  // Wire quiz radio buttons for instant feedback.
+  document.querySelectorAll('.quiz-question').forEach(q => {
+    const explain = q.querySelector('.quiz-explain');
+    q.querySelectorAll('input[type=radio]').forEach(r => {
+      r.addEventListener('change', () => {
+        q.querySelectorAll('.quiz-options label').forEach(l => l.classList.remove('correct','incorrect'));
+        const selected = q.querySelector('input[type=radio]:checked');
+        const label = selected.closest('label');
+        const isCorrect = selected.dataset.correct === 'true';
+        label.classList.add(isCorrect ? 'correct' : 'incorrect');
+        if (!isCorrect) {
+          // Highlight correct answer too:
+          const correctInput = q.querySelector('input[data-correct="true"]');
+          if (correctInput) correctInput.closest('label').classList.add('correct');
+        }
+        explain.style.display = 'block';
+
+        // Record quiz answer.
+        const p = CAS2026.loadProgress();
+        const qnum = q.dataset.q;
+        p[chapterId] = p[chapterId] || { cards:{}, quiz:{}, completed:false };
+        p[chapterId].quiz[qnum] = { value: selected.value, correct: isCorrect };
+        // Mark completed if >= 2 quiz answers correct.
+        const quizEntries = Object.values(p[chapterId].quiz);
+        const correctCount = quizEntries.filter(e => e.correct).length;
+        if (correctCount >= 2) {
+          p[chapterId].completed = true;
+          if (window.Achievements && typeof Achievements.unlock === 'function') {
+            Achievements.unlock(`cas-2026-${chapterId}-complete`);
+          }
+        }
+        CAS2026.saveProgress(p);
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

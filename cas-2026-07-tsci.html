@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch7 Carotid TSCI — CAS 2026</title>
+<link rel="stylesheet" href="design-system.css">
+<link rel="stylesheet" href="achievements-ui.css">
+<style>
+  /* Inline body rule intentionally overrides design-system.css; keep <style> after <link>. */
+  body { font-family: "Noto Sans TC","Microsoft JhengHei",Arial,sans-serif; background:#f5f7fa; color:#2d3748; line-height:1.6; margin:0; padding:0; }
+  .container { max-width:800px; margin:0 auto; padding:16px; }
+
+  .sticky-header { position:sticky; top:0; background:linear-gradient(135deg,#1a365d,#2b6cb0); color:#fff; padding:12px 16px; z-index:200; box-shadow:0 2px 8px rgba(0,0,0,.15); }
+  .sticky-header .row { display:flex; align-items:center; gap:12px; }
+  .back-btn { color:#fff; text-decoration:none; font-size:14px; }
+  .chapter-title { font-size:1.05rem; font-weight:600; flex:1; }
+  .progress-line { margin-top:8px; font-size:.85rem; opacity:.9; display:flex; align-items:center; gap:8px; }
+  .progress-bar { flex:1; height:6px; background:rgba(255,255,255,.25); border-radius:3px; overflow:hidden; }
+  .progress-bar-fill { height:100%; background:#48bb78; transition:width .3s; width:0%; }
+
+  .speaker-block, .objectives-block { background:#fff; border-radius:10px; padding:16px 20px; margin-top:16px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  .speaker-block h3, .objectives-block h3 { font-size:.95rem; color:#1a365d; margin:0 0 8px 0; }
+  .objectives-block ul { margin:0; padding-left:20px; }
+  .objectives-block li { margin-bottom:4px; }
+
+  .card { background:#fff; border-radius:10px; margin-top:16px; box-shadow:0 1px 4px rgba(0,0,0,.08); overflow:hidden; }
+  .card-header { display:flex; align-items:flex-start; gap:12px; padding:16px 20px; }
+  .card-title { flex:1; font-weight:600; font-size:1rem; color:#1a365d; }
+  .card-check { width:24px; height:24px; accent-color:#38a169; cursor:pointer; min-width:24px; min-height:24px; }
+  .card-img { width:100%; display:block; }
+  .card-img-wrap { background:#f7fafc; }
+  .card-body { padding:12px 20px 16px 20px; font-size:.95rem; color:#4a5568; }
+  .card-tip { margin-top:8px; padding:10px 12px; background:#ebf8ff; border-left:4px solid #3182ce; border-radius:4px; font-size:.88rem; }
+  .card-source { margin-top:8px; font-size:.75rem; color:#718096; }
+
+  .quiz-block { background:#fff; border-radius:10px; padding:20px; margin-top:24px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  .quiz-block h3 { color:#1a365d; margin-bottom:12px; }
+  .quiz-question { margin-bottom:20px; }
+  .quiz-options label { display:block; padding:10px 12px; margin:6px 0; background:#f7fafc; border-radius:6px; cursor:pointer; transition:background .2s; }
+  .quiz-options label:hover { background:#edf2f7; }
+  .quiz-options input { margin-right:8px; }
+  .quiz-options label.correct { background:#c6f6d5; }
+  .quiz-options label.incorrect { background:#fed7d7; }
+  .quiz-explain { margin-top:8px; padding:8px 12px; background:#fffaf0; border-left:4px solid #dd6b20; border-radius:4px; font-size:.88rem; display:none; }
+
+  .nav-bar { display:flex; justify-content:space-between; margin-top:24px; gap:12px; }
+  .nav-btn { flex:1; padding:12px; background:#2b6cb0; color:#fff; text-align:center; border-radius:8px; text-decoration:none; font-weight:600; }
+  .nav-btn.disabled { background:#cbd5e0; pointer-events:none; }
+  .nav-btn.hub { background:#1a365d; }
+
+  .footer { margin-top:24px; padding:16px; font-size:.75rem; color:#718096; text-align:center; }
+</style>
+</head>
+<body data-chapter="cas-07" data-chapter-no="7">
+
+<div class="sticky-header">
+  <div class="row">
+    <a href="cas-2026-hub.html" class="back-btn">← 回 Hub</a>
+    <div class="chapter-title">Ch7 · Carotid TSCI</div>
+  </div>
+  <div class="progress-line">
+    📊 <span id="progress-text">0 / 0</span>
+    <div class="progress-bar"><div class="progress-bar-fill" id="progress-fill"></div></div>
+    <span id="progress-pct">0%</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="speaker-block">
+    <h3>📚 講師</h3>
+    <div>柯呈諭醫師 (2022, 2024)</div>
+  </div>
+
+  <div class="objectives-block">
+    <h3>🎯 學習目標</h3>
+    <ul>
+      <li>掌握無症狀與有症狀頸動脈狹窄的治療策略選擇（BMT / CAS / CEA）</li>
+      <li>熟悉 ESC 指引中 CAS 適應症之 Class 與 Level 分級</li>
+      <li>了解高外科風險（high-risk for CEA）病人如何選擇 CAS</li>
+      <li>掌握有症狀病人血運重建的時間窗口與決策流程</li>
+      <li>解讀 CREST 及近期 propensity-score 研究中 CAS vs CEA 的結果比較</li>
+    </ul>
+  </div>
+
+  <div id="cards-container">
+
+    <!-- Card 1 -->
+    <div class="card" data-card-key="card-1">
+      <div class="card-header">
+        <div class="card-title">1. 頸動脈狹窄三大治療策略概覽：BMT / CAS / CEA</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/07-tsci/2022-ko-cy-seq002.png" alt="三大治療策略：BMT、CAS、CEA 圖示"></div>
+      <div class="card-body">
+        頸動脈狹窄的處置可分為三大方向：最佳藥物治療（Best Medical Therapy, BMT）、頸動脈支架置放（Carotid Artery Stenting, CAS）及頸動脈內膜切除術（Carotid Endarterectomy, CEA）。CAS 包含傳統經股動脈途徑及近年興起的 Transcarotid Stenting（TSCI / TCAR），後者透過頸部直接切開進入頸總動脈，搭配 flow reversal 腦保護。選擇哪種策略需綜合評估症狀、狹窄程度、解剖特徵與外科風險。
+        <div class="card-tip">💡 Tip: BMT 是所有策略的基礎；CAS 或 CEA 係在 BMT 之上「加選」的血運重建方式，而非取代藥物治療。</div>
+        <div class="card-source">📌 來源：柯呈諭醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #2 (2022)</div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card" data-card-key="card-2">
+      <div class="card-header">
+        <div class="card-title">2. 無症狀頸動脈狹窄：平均外科風險下的治療建議</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/07-tsci/2022-ko-cy-seq007.png" alt="無症狀頸動脈狹窄 CEA Class IIa B 建議"></div>
+      <div class="card-body">
+        對於「平均外科風險（average surgical risk）」的無症狀 60–99% 狹窄患者，若具備臨床或影像學上提示較高晚期同側腦中風風險的特徵，且術者術後死亡/腦中風率 &lt;3%、預期壽命 &gt;5 年，CEA 可考慮列入治療計畫（Class IIa, Level B）。同一族群中，若 CAS 作為 CEA 的替代方案，亦可在同樣條件下考慮（Class IIb, Level B，見 slide #8）。
+        <div class="card-tip">💡 Tip: 「無症狀」的定義是 6 個月內無同側腦中風或 TIA；此類病人選擇血運重建時，須嚴格確認術者的併發症率門檻 &lt;3%。</div>
+        <div class="card-source">📌 來源：柯呈諭醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #7 (2022)</div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card" data-card-key="card-3">
+      <div class="card-header">
+        <div class="card-title">3. 無症狀狹窄高外科風險病人：CAS 的 Class IIa 地位</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/07-tsci/2022-ko-cy-seq009.png" alt="無症狀高外科風險 CAS Class IIa B 建議"></div>
+      <div class="card-body">
+        被評估為「CEA 高風險（high risk for CEA）」的無症狀 60–99% 狹窄患者，若具備增加晚期同側腦中風風險的影像或臨床特徵，CAS 應考慮（Class IIa, Level B），前提是術者術後死亡/腦中風率 &lt;3%、預期壽命 &gt;5 年。相對於一般無症狀患者（CAS 為 IIb B），此族群 CAS 的推薦等級更高，反映解剖或醫學高風險時 CAS 優先的角色。
+        <div class="card-tip">💡 Tip: High-risk for CEA 常見原因包括：嚴重心肺合併症、對側頸動脈閉塞、放射線相關狹窄（post-radiation）、頸部手術史、高位病灶等。</div>
+        <div class="card-source">📌 來源：柯呈諭醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #9 (2022)</div>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card" data-card-key="card-4">
+      <div class="card-header">
+        <div class="card-title">4. 有症狀頸動脈狹窄：CEA 與 CAS 的建議等級對比</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/07-tsci/2022-ko-cy-seq011.png" alt="有症狀頸動脈狹窄 CEA Class I A 建議"></div>
+      <div class="card-body">
+        有症狀（6 個月內有同側 TIA 或腦中風）的患者中，CEA 在 70–99% 狹窄是 Class I、Level A 的強力建議；50–69% 狹窄則為 Class IIa、Level A，均要求術者術後死亡/腦中風率 &lt;6%。CAS 在有症狀族群中，高外科風險者為 Class IIa B，平均風險者為 IIb B（見 slide #12），整體推薦等級略低於 CEA。
+        <div class="card-tip">💡 Tip: 有症狀病人的 CEA 門檻是死亡/腦中風率 &lt;6%（高於無症狀的 &lt;3%），反映有症狀患者自然病史風險更高、血運重建效益更大。</div>
+        <div class="card-source">📌 來源：柯呈諭醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #11 (2022)</div>
+      </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card" data-card-key="card-5">
+      <div class="card-header">
+        <div class="card-title">5. 有症狀病人血運重建時間窗與決策流程（ESC 指引演進）</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/07-tsci/2022-ko-cy-seq014.png" alt="ESC 頸動脈狹窄決策流程圖 2017"></div>
+      <div class="card-body">
+        對於有症狀 50–99% 狹窄，指引強調應盡速完成血運重建，理想上在症狀發生後 14 天內施行（Class I, Level A）；狹窄 &lt;50% 的患者則不建議血運重建（Class III, Level A）。ESC 2017 決策流程圖清楚呈現：依症狀有無、狹窄度、外科風險，分流至 BMT、CEA + BMT 或 CAS + BMT 的選擇路徑，是臨床實務的核心架構。
+        <div class="card-tip">💡 Tip: 14 天時間窗的概念來自 TIA 後早期腦中風復發率極高（24 h 內約 10%），早期介入可大幅降低再發風險。</div>
+        <div class="card-source">📌 來源：柯呈諭醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #13 + #14 (2022)</div>
+      </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card" data-card-key="card-6">
+      <div class="card-header">
+        <div class="card-title">6. ESC 2024 更新決策流程：MDT 審查與更精細的分層</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/07-tsci/2024-ko-cy-seq012.png" alt="ESC 2024 頸動脈狹窄 Figure 2 決策流程"></div>
+      <div class="card-body">
+        ESC 2024 指引更新了平均風險患者的決策流程（Figure 2），新增「Near occlusion + distal vessel collapse」的獨立分支並建議 BMT，且對有症狀伴「near occlusion」且在 BMT 下仍有復發症狀的患者，CEA/CAS 須在多學科團隊（MDT）會議後才可考慮（Class IIb B）。相比 2017 版，2024 版流程更強調 MDT 審查與個別化評估。
+        <div class="card-tip">💡 Tip: Near occlusion（接近完全閉塞）患者的遠端血管可能塌陷，此時腦中風風險反而較低，過度積極血運重建風險效益比需仔細評估。</div>
+        <div class="card-source">📌 來源：柯呈諭醫師 2022 & 2024 / 中華民國心臟學會 CAS 訓練課程 / slide #14 (2022) + #12 (2024)</div>
+      </div>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="card" data-card-key="card-7">
+      <div class="card-header">
+        <div class="card-title">7. CREST 試驗：CAS vs CEA 長期結果比較</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/07-tsci/2024-ko-cy-seq004.png" alt="CREST 試驗 CAS vs CEA 術後死亡或致殘腦中風比較"></div>
+      <div class="card-body">
+        CREST 試驗（CAS n=1,811 vs CEA n=1,814）顯示，在術後死亡或任何致命／致殘腦中風（primary periprocedural endpoint）兩組相當（61 vs 64 events，p=0.86）；5 年非術後致殘腦中風率也相似（RR=0.98，p=0.91）。術後任何腦中風或死亡（含非致殘性）CAS 略高（155 vs 128，p=0.09），主要源於術後微小腦中風的差異，但長期功能預後與 CEA 相當。
+        <div class="card-tip">💡 Tip: CREST 納入症狀性與無症狀性患者，結果奠定了 CAS 作為 CEA 合理替代選項的循證基礎；但次族群分析中，年齡 &gt;70 歲者 CEA 表現更佳。</div>
+        <div class="card-source">📌 來源：柯呈諭醫師 2024 / 中華民國心臟學會 CAS 訓練課程 / slide #4 + #5 (2024)</div>
+      </div>
+    </div>
+
+    <!-- Card 8 -->
+    <div class="card" data-card-key="card-8">
+      <div class="card-header">
+        <div class="card-title">8. 近期 Propensity-Score 研究：30 天 CEA vs CAS 結果</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/07-tsci/2024-ko-cy-seq017.png" alt="EuroIntervention 2024 Table 3：CEA vs CAS 30天結果"></div>
+      <div class="card-body">
+        EuroIntervention 2024 年發表的 propensity-score 配對分析（總 n=538；CEA 232 vs CAS 224）顯示，30 天腦中風（minor + major）、TIA、死亡率在兩組均無統計顯著差異；住院天數 CAS 組略短（3.2 vs 3.9 天，p=0.005）。此真實世界數據進一步支持：在合適病人中，CAS 與 CEA 的安全性相當，且 CAS 具有住院天數的優勢。
+        <div class="card-tip">💡 Tip: Propensity-score matching 可校正兩組基線差異，使觀察性研究的結果更接近隨機對照試驗的推論效力，但仍無法完全排除未測量的干擾變項。</div>
+        <div class="card-source">📌 來源：柯呈諭醫師 2024 / 中華民國心臟學會 CAS 訓練課程 / slide #16 + #17 (2024)</div>
+      </div>
+    </div>
+
+  </div><!-- #cards-container -->
+
+  <div class="quiz-block">
+    <h3>🧠 Quick Check</h3>
+
+    <div class="quiz-question" data-q="1">
+      <div><strong>Q1.</strong> 根據 ESC 指引，對於「平均外科風險」的無症狀 60–99% 頸動脈狹窄患者，CAS 作為 CEA 替代選項的建議等級為何？</div>
+      <!-- JS applies .correct/.incorrect classes to the <label> element, not the <input>. Walk: input.checked -> .closest('label'). -->
+      <div class="quiz-options">
+        <label><input type="radio" name="q1" value="A"> A. Class I，Level A</label>
+        <label><input type="radio" name="q1" value="B"> B. Class IIa，Level A</label>
+        <label><input type="radio" name="q1" value="C" data-correct="true"> C. Class IIb，Level B</label>
+        <label><input type="radio" name="q1" value="D"> D. Class III，Level B</label>
+      </div>
+      <div class="quiz-explain">對於平均手術風險的無症狀病人，CAS 作為 CEA 的替代方案為 Class IIb、Level B（「may be considered」），條件是術者死亡/腦中風率 &lt;3%、預期壽命 &gt;5 年。若病人被評估為「高外科風險（high risk for CEA）」，則 CAS 的等級升至 Class IIa B。兩者的差別在於「should be considered（IIa）」與「may be considered（IIb）」。</div>
+    </div>
+
+    <div class="quiz-question" data-q="2">
+      <div><strong>Q2.</strong> 有症狀頸動脈狹窄患者，指引建議血運重建（revascularization）應在症狀發生後多少天內完成（Class I，Level A）？</div>
+      <!-- JS applies .correct/.incorrect classes to the <label> element, not the <input>. Walk: input.checked -> .closest('label'). -->
+      <div class="quiz-options">
+        <label><input type="radio" name="q2" value="A"> A. 3 天內</label>
+        <label><input type="radio" name="q2" value="B" data-correct="true"> B. 14 天內</label>
+        <label><input type="radio" name="q2" value="C"> C. 30 天內</label>
+        <label><input type="radio" name="q2" value="D"> D. 90 天內</label>
+      </div>
+      <div class="quiz-explain">ESC 指引（Class I，Level A）建議對有症狀 50–99% 頸動脈狹窄患者，應盡快完成血運重建，理想上在症狀發生後 14 天內施行。TIA 後早期復發腦中風風險極高，早期介入可顯著降低再發風險，14 天是目前循證醫學支持的時間窗口。</div>
+    </div>
+
+    <div class="quiz-question" data-q="3">
+      <div><strong>Q3.</strong> CREST 試驗中，CAS 與 CEA 在「術後死亡或任何致命／致殘腦中風」這項主要終點的比較結果為何？</div>
+      <!-- JS applies .correct/.incorrect classes to the <label> element, not the <input>. Walk: input.checked -> .closest('label'). -->
+      <div class="quiz-options">
+        <label><input type="radio" name="q3" value="A"> A. CAS 顯著劣於 CEA（p&lt;0.05）</label>
+        <label><input type="radio" name="q3" value="B"> B. CEA 顯著劣於 CAS（p&lt;0.05）</label>
+        <label><input type="radio" name="q3" value="C" data-correct="true"> C. 兩組無顯著差異（p=0.86）</label>
+        <label><input type="radio" name="q3" value="D"> D. CAS 組無任何死亡或致殘事件</label>
+      </div>
+      <div class="quiz-explain">CREST 試驗中，CAS（61 件）與 CEA（64 件）在術後死亡或任何致命／致殘腦中風終點上無統計顯著差異（p=0.86）。CAS 的術後任何腦中風或死亡（含非致殘性）略高（155 vs 128，p=0.09），主要源於圍術期微小腦中風，但長期（5 年）功能預後兩組相當。CREST 是支持 CAS 作為 CEA 同等替代選項的重要隨機對照試驗依據。</div>
+    </div>
+
+  </div><!-- .quiz-block -->
+
+  <div class="nav-bar">
+    <a class="nav-btn" href="cas-2026-06-stent-design.html">← 上一章 Ch6</a>
+    <a class="nav-btn hub" href="cas-2026-hub.html">🏠 Hub</a>
+    <a class="nav-btn" href="cas-2026-08-surgical.html">下一章 Ch8 →</a>
+  </div>
+
+  <div class="footer">
+    本教學資源圖片來源為各講師於歷年「頸動脈支架訓練課程」之授課投影片，僅供本課程學員學術教育使用。
+  </div>
+
+</div>
+
+<script src="cas-2026-shared.js"></script>
+<script src="achievements.js"></script>
+<script>
+(function () {
+  if (typeof CAS2026 === 'undefined') {
+    console.error('[CAS2026] cas-2026-shared.js not loaded; chapter interaction disabled.');
+    return;
+  }
+  const chapterId = document.body.dataset.chapter;
+  const cards = document.querySelectorAll('.card');
+  const totalCards = cards.length;
+  const progressText = document.getElementById('progress-text');
+  const progressFill = document.getElementById('progress-fill');
+  const progressPct  = document.getElementById('progress-pct');
+
+  // Register total card count for hub.
+  const stored = CAS2026.loadProgress();
+  stored[chapterId] = stored[chapterId] || { cards:{}, quiz:{}, completed:false };
+  stored[chapterId].totalCards = totalCards;
+  CAS2026.saveProgress(stored);
+
+  function refreshProgress() {
+    const p = CAS2026.chapterProgress(chapterId, totalCards);
+    if (progressText) progressText.textContent = `${p.done} / ${p.total}`;
+    if (progressFill) progressFill.style.width = p.pct + '%';
+    if (progressPct)  progressPct.textContent = p.pct + '%';
+  }
+
+  // Wire each card's checkbox.
+  cards.forEach(card => {
+    const key = card.dataset.cardKey;
+    const cb  = card.querySelector('.card-check');
+    if (!key || !cb) {
+      console.warn('[CAS2026] skipping malformed card', card);
+      return;
+    }
+    cb.checked = CAS2026.isCardChecked(chapterId, key);
+    cb.addEventListener('change', () => {
+      CAS2026.setCardChecked(chapterId, key, cb.checked);
+      refreshProgress();
+    });
+  });
+
+  refreshProgress();
+
+  // Wire quiz radio buttons for instant feedback.
+  document.querySelectorAll('.quiz-question').forEach(q => {
+    const explain = q.querySelector('.quiz-explain');
+    q.querySelectorAll('input[type=radio]').forEach(r => {
+      r.addEventListener('change', () => {
+        q.querySelectorAll('.quiz-options label').forEach(l => l.classList.remove('correct','incorrect'));
+        const selected = q.querySelector('input[type=radio]:checked');
+        const label = selected.closest('label');
+        const isCorrect = selected.dataset.correct === 'true';
+        label.classList.add(isCorrect ? 'correct' : 'incorrect');
+        if (!isCorrect) {
+          // Highlight correct answer too:
+          const correctInput = q.querySelector('input[data-correct="true"]');
+          if (correctInput) correctInput.closest('label').classList.add('correct');
+        }
+        explain.style.display = 'block';
+
+        // Record quiz answer.
+        const p = CAS2026.loadProgress();
+        const qnum = q.dataset.q;
+        p[chapterId] = p[chapterId] || { cards:{}, quiz:{}, completed:false };
+        p[chapterId].quiz[qnum] = { value: selected.value, correct: isCorrect };
+        // Mark completed if >= 2 quiz answers correct.
+        const quizEntries = Object.values(p[chapterId].quiz);
+        const correctCount = quizEntries.filter(e => e.correct).length;
+        if (correctCount >= 2) {
+          p[chapterId].completed = true;
+          if (window.Achievements && typeof Achievements.unlock === 'function') {
+            Achievements.unlock(`cas-2026-${chapterId}-complete`);
+          }
+        }
+        CAS2026.saveProgress(p);
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

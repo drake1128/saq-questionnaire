@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch5 Embolic Protection Device — CAS 2026</title>
+<link rel="stylesheet" href="design-system.css">
+<link rel="stylesheet" href="achievements-ui.css">
+<style>
+  /* Inline body rule intentionally overrides design-system.css; keep <style> after <link>. */
+  body { font-family: "Noto Sans TC","Microsoft JhengHei",Arial,sans-serif; background:#f5f7fa; color:#2d3748; line-height:1.6; margin:0; padding:0; }
+  .container { max-width:800px; margin:0 auto; padding:16px; }
+
+  .sticky-header { position:sticky; top:0; background:linear-gradient(135deg,#1a365d,#2b6cb0); color:#fff; padding:12px 16px; z-index:200; box-shadow:0 2px 8px rgba(0,0,0,.15); }
+  .sticky-header .row { display:flex; align-items:center; gap:12px; }
+  .back-btn { color:#fff; text-decoration:none; font-size:14px; }
+  .chapter-title { font-size:1.05rem; font-weight:600; flex:1; }
+  .progress-line { margin-top:8px; font-size:.85rem; opacity:.9; display:flex; align-items:center; gap:8px; }
+  .progress-bar { flex:1; height:6px; background:rgba(255,255,255,.25); border-radius:3px; overflow:hidden; }
+  .progress-bar-fill { height:100%; background:#48bb78; transition:width .3s; width:0%; }
+
+  .speaker-block, .objectives-block { background:#fff; border-radius:10px; padding:16px 20px; margin-top:16px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  .speaker-block h3, .objectives-block h3 { font-size:.95rem; color:#1a365d; margin:0 0 8px 0; }
+  .objectives-block ul { margin:0; padding-left:20px; }
+  .objectives-block li { margin-bottom:4px; }
+
+  .card { background:#fff; border-radius:10px; margin-top:16px; box-shadow:0 1px 4px rgba(0,0,0,.08); overflow:hidden; }
+  .card-header { display:flex; align-items:flex-start; gap:12px; padding:16px 20px; }
+  .card-title { flex:1; font-weight:600; font-size:1rem; color:#1a365d; }
+  .card-check { width:24px; height:24px; accent-color:#38a169; cursor:pointer; min-width:24px; min-height:24px; }
+  .card-img { width:100%; display:block; }
+  .card-img-wrap { background:#f7fafc; }
+  .card-body { padding:12px 20px 16px 20px; font-size:.95rem; color:#4a5568; }
+  .card-tip { margin-top:8px; padding:10px 12px; background:#ebf8ff; border-left:4px solid #3182ce; border-radius:4px; font-size:.88rem; }
+  .card-source { margin-top:8px; font-size:.75rem; color:#718096; }
+
+  .quiz-block { background:#fff; border-radius:10px; padding:20px; margin-top:24px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  .quiz-block h3 { color:#1a365d; margin-bottom:12px; }
+  .quiz-question { margin-bottom:20px; }
+  .quiz-options label { display:block; padding:10px 12px; margin:6px 0; background:#f7fafc; border-radius:6px; cursor:pointer; transition:background .2s; }
+  .quiz-options label:hover { background:#edf2f7; }
+  .quiz-options input { margin-right:8px; }
+  .quiz-options label.correct { background:#c6f6d5; }
+  .quiz-options label.incorrect { background:#fed7d7; }
+  .quiz-explain { margin-top:8px; padding:8px 12px; background:#fffaf0; border-left:4px solid #dd6b20; border-radius:4px; font-size:.88rem; display:none; }
+
+  .nav-bar { display:flex; justify-content:space-between; margin-top:24px; gap:12px; }
+  .nav-btn { flex:1; padding:12px; background:#2b6cb0; color:#fff; text-align:center; border-radius:8px; text-decoration:none; font-weight:600; }
+  .nav-btn.disabled { background:#cbd5e0; pointer-events:none; }
+  .nav-btn.hub { background:#1a365d; }
+
+  .footer { margin-top:24px; padding:16px; font-size:.75rem; color:#718096; text-align:center; }
+</style>
+</head>
+<body data-chapter="cas-05" data-chapter-no="5">
+
+<div class="sticky-header">
+  <div class="row">
+    <a href="cas-2026-hub.html" class="back-btn">← 回 Hub</a>
+    <div class="chapter-title">Ch5 · Embolic Protection Device (EPD)</div>
+  </div>
+  <div class="progress-line">
+    📊 <span id="progress-text">0 / 0</span>
+    <div class="progress-bar"><div class="progress-bar-fill" id="progress-fill"></div></div>
+    <span id="progress-pct">0%</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="speaker-block">
+    <h3>📚 講師</h3>
+    <div>黃成偉醫師 (2022, 2024)</div>
+  </div>
+
+  <div class="objectives-block">
+    <h3>🎯 學習目標</h3>
+    <ul>
+      <li>了解三大類 EPD（Distal Balloon、Distal Filter、Flow Suspension）的機制與適用情境</li>
+      <li>認識 distal filter 通過病灶時產生微栓塞的風險及孔徑限制</li>
+      <li>掌握近端保護（proximal protection / flow suspension）的操作確認步驟</li>
+      <li>根據病灶特性與解剖條件，選擇適當的 EPD 策略</li>
+    </ul>
+  </div>
+
+  <div id="cards-container">
+
+    <div class="card" data-card-key="card-1">
+      <div class="card-header">
+        <div class="card-title">1. EPD 三大保護類型概覽</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/05-epd/2022-huang-cw-seq013.png" alt="EPD 三大類型：Distal Balloon、Filters、Flow Suspension 示意圖"></div>
+      <div class="card-body">
+        CAS 手術中使用的 EPD 主要分為三類：遠端球囊阻斷（Distal Balloon）、遠端過濾網（Distal Filter）、以及流量暫停／近端保護（Flow Suspension）。三者各有其保護機制，選擇時需依病灶型態、血管解剖及手術者經驗綜合考量。目前臨床最常使用的為 Distal Filter（如 Spider、FilterWire），近端保護系統（如 MoMa、Sentinel）則在高風險病灶中具優勢。
+        <div class="card-tip">💡 Tip: 三類 EPD 的保護原理截然不同——遠端系統在病灶遠端放置，近端系統（Flow Suspension）在介入前即阻斷前向血流，理論上保護更完整，但需確認對側側枝循環足夠。</div>
+        <div class="card-source">📌 來源：黃成偉醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #13</div>
+      </div>
+    </div>
+
+    <div class="card" data-card-key="card-2">
+      <div class="card-header">
+        <div class="card-title">2. Filter 通過病灶時的微栓塞風險</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/05-epd/2022-huang-cw-seq025.png" alt="Filter 導線通過病灶時產生微栓塞的示意圖"></div>
+      <div class="card-body">
+        Distal filter 在尚未展開保護之前，導線及輸送系統必須先通過（cross）狹窄病灶，此過程本身即可擠壓斑塊產生微栓塞（microemboli）。這是 distal filter 相對於近端保護系統的主要缺點：保護傘到位前，腦部已暴露於栓塞風險中。病灶越不穩定（soft plaque、潰瘍性斑塊），此風險越高。
+        <div class="card-tip">💡 Tip: 選用 distal filter 時，應評估病灶的斑塊穩定性；對於高度不穩定或嚴重狹窄（&gt;90%）的病灶，近端保護系統可提供更早期、更完整的腦保護。</div>
+        <div class="card-source">📌 來源：黃成偉醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #25</div>
+      </div>
+    </div>
+
+    <div class="card" data-card-key="card-3">
+      <div class="card-header">
+        <div class="card-title">3. Distal Filter 的孔徑限制</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/05-epd/2022-huang-cw-seq026.png" alt="Filter 只能攔截大於 100 microns 的栓子，小顆粒仍通過"></div>
+      <div class="card-body">
+        Distal filter 的濾孔設計只能攔截直徑 &gt;100 microns 的碎屑，更小的微栓子（如脂質、血小板聚集體）仍可穿過濾網進入腦循環。這代表 filter 的保護並非全面性，臨床上仍可觀察到術後 DWI 新發病灶，即便 filter 內有明顯碎屑被截獲。
+        <div class="card-tip">💡 Tip: 術後觀察 filter 內截獲的碎屑量，可作為斑塊不穩定程度的間接指標；若截獲物明顯，需警惕術後 slow flow 或 no-reflow 現象。</div>
+        <div class="card-source">📌 來源：黃成偉醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #26</div>
+      </div>
+    </div>
+
+    <div class="card" data-card-key="card-4">
+      <div class="card-header">
+        <div class="card-title">4. 近端保護確認：對比劑驗證 Flow Suspension</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/05-epd/2022-huang-cw-seq035.png" alt="以對比劑注射確認 flow suspension 建立完成的螢光透視影像"></div>
+      <div class="card-body">
+        使用近端保護系統（如 MoMa）時，在展開 CCA 與 ECA 球囊阻斷後，須以對比劑注射確認血流已完全停滯（flow suspension confirmed）。螢光透視下對比劑停留不動、不向遠端流動，即代表保護建立成功，此時方可安全進行病灶通過與支架置放。
+        <div class="card-tip">💡 Tip: 若對比劑仍持續向遠端流動，代表阻斷不完全（可能因 ECA 側枝或球囊位置不佳），需重新調整後再確認，切勿在未確認 flow suspension 的情況下進行介入。</div>
+        <div class="card-source">📌 來源：黃成偉醫師 2022 / 中華民國心臟學會 CAS 訓練課程 / slide #35</div>
+      </div>
+    </div>
+
+    <div class="card" data-card-key="card-5">
+      <div class="card-header">
+        <div class="card-title">5. EPD 選擇原則整合與臨床應用</div>
+        <input type="checkbox" class="card-check" aria-label="我懂了">
+      </div>
+      <div class="card-img-wrap"><img class="card-img" src="images-cas-2026/05-epd/2022-huang-cw-seq013.png" alt="EPD 三大類型比較示意圖（複習用）"></div>
+      <div class="card-body">
+        EPD 的選擇應基於：(1) 病灶特性（斑塊穩定性、狹窄程度、潰瘍）；(2) 血管解剖（ICA 迂曲度、landing zone 長度、對側代償）；(3) 手術者經驗。Distal filter 適用於大多數病灶，操作相對熟悉；近端保護（Flow Suspension）適用於高度不穩定病灶、嚴重狹窄（&gt;90%）、或 distal filter 無法展開的情況。無論選擇何種 EPD，均需在撤除前以導管抽吸清除殘餘碎屑，以降低 no-reflow 風險。
+        <div class="card-tip">💡 Tip: 高度狹窄（&gt;90%）病灶中，filter 展開空間不足且 crossing 風險高，此時近端保護系統是優先選項；若近端保護不可行，預擴張後再置 filter 需謹慎評估。</div>
+        <div class="card-source">📌 來源：黃成偉醫師 2022 / 中華民國心臟學會 CAS 訓練課程（概念整合卡）</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="quiz-block">
+    <h3>🧠 Quick Check</h3>
+
+    <div class="quiz-question" data-q="1">
+      <div><strong>Q1.</strong> 關於 distal filter EPD 的主要缺點，下列何者最正確？</div>
+      <!-- JS applies .correct/.incorrect classes to the <label> element, not the <input>. Walk: input.checked -> .closest('label'). -->
+      <div class="quiz-options">
+        <label><input type="radio" name="q1" value="A"> A. 無法攔截任何栓子，保護效果不如球囊</label>
+        <label><input type="radio" name="q1" value="B"> B. 只能用於 ICA 直徑 &lt;3 mm 的血管</label>
+        <label><input type="radio" name="q1" value="C" data-correct="true"> C. 導線通過病灶時（crossing）即可產生微栓塞，且濾孔無法攔截 &lt;100 microns 的小顆粒</label>
+        <label><input type="radio" name="q1" value="D"> D. 展開後會完全阻斷血流，患者無法耐受缺血</label>
+      </div>
+      <div class="quiz-explain">Distal filter 有兩個主要缺點：(1) 在保護建立之前，導線 crossing 病灶時即已產生微栓塞；(2) 濾孔只能截獲 &gt;100 microns 的碎屑，更小的微栓子仍可通過濾網進入腦循環。近端保護系統（Flow Suspension）可克服第一個缺點，因為在任何器械通過病灶之前即已阻斷前向血流。</div>
+    </div>
+
+    <div class="quiz-question" data-q="2">
+      <div><strong>Q2.</strong> 使用近端保護系統（如 MoMa）進行 CAS 時，確認 flow suspension 建立成功的標準方法為何？</div>
+      <div class="quiz-options">
+        <label><input type="radio" name="q2" value="A"> A. 測量 ICA 血壓降至零，即代表阻斷完全</label>
+        <label><input type="radio" name="q2" value="B" data-correct="true"> B. 以對比劑注射後，螢光透視下確認對比劑停滯不向遠端流動</label>
+        <label><input type="radio" name="q2" value="C"> C. 患者出現同側視力模糊，即代表血流停止</label>
+        <label><input type="radio" name="q2" value="D"> D. 完成 ECA 球囊充氣後，不需額外確認即可繼續介入</label>
+      </div>
+      <div class="quiz-explain">確認 flow suspension 的標準方法是對比劑注射測試：在 CCA 與 ECA 球囊均充氣阻斷後，注射少量對比劑，若對比劑停留於 CCA 上段不繼續前進（無前向血流），即確認保護建立成功。若對比劑仍流動，需重新調整球囊位置再確認。</div>
+    </div>
+
+    <div class="quiz-question" data-q="3">
+      <div><strong>Q3.</strong> 對於頸動脈狹窄程度 &gt;90%、斑塊為高度不穩定軟斑（soft plaque）的患者進行 CAS，在 EPD 選擇上最優先考慮下列何者？</div>
+      <div class="quiz-options">
+        <label><input type="radio" name="q3" value="A"> A. 標準 distal filter，因其操作最熟悉</label>
+        <label><input type="radio" name="q3" value="B"> B. 不使用任何 EPD，以縮短手術時間</label>
+        <label><input type="radio" name="q3" value="C"> C. Distal balloon，因其可完全阻斷遠端血流</label>
+        <label><input type="radio" name="q3" value="D" data-correct="true"> D. 近端保護系統（Flow Suspension，如 MoMa），以在任何器械通過病灶前即建立完整腦保護</label>
+      </div>
+      <div class="quiz-explain">嚴重狹窄（&gt;90%）合併高度不穩定軟斑是使用近端保護系統的優先適應症：(1) 狹窄程度高，distal filter 展開空間不足且 crossing 過程中栓塞風險高；(2) 軟斑更易在器械通過時破裂釋放大量碎屑。近端保護系統在任何器械通過病灶前即完成腦保護，是此類高風險病灶的首選 EPD 策略。</div>
+    </div>
+
+  </div>
+
+  <div class="nav-bar">
+    <a class="nav-btn" href="cas-2026-04-techniques.html">← 上一章 Ch4</a>
+    <a class="nav-btn hub" href="cas-2026-hub.html">🏠 Hub</a>
+    <a class="nav-btn" href="cas-2026-06-stent-design.html">下一章 Ch6 →</a>
+  </div>
+
+  <div class="footer">
+    本教學資源圖片來源為各講師於歷年「頸動脈支架訓練課程」之授課投影片，僅供本課程學員學術教育使用。
+  </div>
+
+</div>
+
+<script src="cas-2026-shared.js"></script>
+<script src="achievements.js"></script>
+<script>
+(function () {
+  if (typeof CAS2026 === 'undefined') {
+    console.error('[CAS2026] cas-2026-shared.js not loaded; chapter interaction disabled.');
+    return;
+  }
+  const chapterId = document.body.dataset.chapter;
+  const cards = document.querySelectorAll('.card');
+  const totalCards = cards.length;
+  const progressText = document.getElementById('progress-text');
+  const progressFill = document.getElementById('progress-fill');
+  const progressPct  = document.getElementById('progress-pct');
+
+  // Register total card count for hub.
+  const stored = CAS2026.loadProgress();
+  stored[chapterId] = stored[chapterId] || { cards:{}, quiz:{}, completed:false };
+  stored[chapterId].totalCards = totalCards;
+  CAS2026.saveProgress(stored);
+
+  function refreshProgress() {
+    const p = CAS2026.chapterProgress(chapterId, totalCards);
+    if (progressText) progressText.textContent = `${p.done} / ${p.total}`;
+    if (progressFill) progressFill.style.width = p.pct + '%';
+    if (progressPct)  progressPct.textContent = p.pct + '%';
+  }
+
+  // Wire each card's checkbox.
+  cards.forEach(card => {
+    const key = card.dataset.cardKey;
+    const cb  = card.querySelector('.card-check');
+    if (!key || !cb) {
+      console.warn('[CAS2026] skipping malformed card', card);
+      return;
+    }
+    cb.checked = CAS2026.isCardChecked(chapterId, key);
+    cb.addEventListener('change', () => {
+      CAS2026.setCardChecked(chapterId, key, cb.checked);
+      refreshProgress();
+    });
+  });
+
+  refreshProgress();
+
+  // Wire quiz radio buttons for instant feedback.
+  document.querySelectorAll('.quiz-question').forEach(q => {
+    const explain = q.querySelector('.quiz-explain');
+    q.querySelectorAll('input[type=radio]').forEach(r => {
+      r.addEventListener('change', () => {
+        q.querySelectorAll('.quiz-options label').forEach(l => l.classList.remove('correct','incorrect'));
+        const selected = q.querySelector('input[type=radio]:checked');
+        const label = selected.closest('label');
+        const isCorrect = selected.dataset.correct === 'true';
+        label.classList.add(isCorrect ? 'correct' : 'incorrect');
+        if (!isCorrect) {
+          // Highlight correct answer too:
+          const correctInput = q.querySelector('input[data-correct="true"]');
+          if (correctInput) correctInput.closest('label').classList.add('correct');
+        }
+        explain.style.display = 'block';
+
+        // Record quiz answer.
+        const p = CAS2026.loadProgress();
+        const qnum = q.dataset.q;
+        p[chapterId] = p[chapterId] || { cards:{}, quiz:{}, completed:false };
+        p[chapterId].quiz[qnum] = { value: selected.value, correct: isCorrect };
+        // Mark completed if ≥ 2 quiz answers correct.
+        const quizEntries = Object.values(p[chapterId].quiz);
+        const correctCount = quizEntries.filter(e => e.correct).length;
+        if (correctCount >= 2) {
+          p[chapterId].completed = true;
+          if (window.Achievements && typeof Achievements.unlock === 'function') {
+            Achievements.unlock(`cas-2026-${chapterId}-complete`);
+          }
+        }
+        CAS2026.saveProgress(p);
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
