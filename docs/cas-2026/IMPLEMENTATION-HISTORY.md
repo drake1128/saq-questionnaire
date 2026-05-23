@@ -27,7 +27,7 @@
 | **Hub** | `cas-2026-hub.html` | repo root |
 | **9 章 HTML** | `cas-2026-NN-<slug>.html` | repo root |
 | **共用 JS** | `cas-2026-shared.js` (progress + metadata) | repo root |
-| **圖片** | 91 張精選 PNG (從 527 張抽出) | `images-cas-2026/NN-*/` |
+| **圖片** | 91 張精選 PNG @ 100 DPI ≈ 43 MB (從 527 張抽出) | `images-cas-2026/NN-*/` |
 | **Pipeline 工具** | extract / generate_sidecar / process_selections / run_pipeline | `tools/cas-2026-pipeline/` |
 | **Sidecar 縮圖頁** | 9 個 user-review HTMLs (一次性工具) | `docs/cas-2026/*-slides-overview.html` |
 | **用戶選圖 JSON** | 9 個 (備份) | `tools/cas-2026-pipeline/selections/` |
@@ -161,7 +161,7 @@ localStorage['cas-2026-progress'] = {
 | 換掉某張圖 | 改 `<img src>` 路徑；新圖放到 `images-cas-2026/NN-*/` |
 | 新增一張卡片 | 在 `#cards-container` 內 append `.card`，記得 `data-card-key="card-N"` 唯一 |
 | 改章節順序 / 名稱 | 改 `cas-2026-shared.js` 內 CHAPTERS array + 各 chapter HTML 內 `data-chapter` + nav links |
-| 重新抽圖 (講師更新講義) | 把新檔放到 `Carotid 頸動脈支架訓練課程歷年投影片 2026/`，更新 `tools/cas-2026-pipeline/chapter_sources.json`，刪 `docs/cas-2026/NN-*/` 對應的 staging folder，重跑 `python run_pipeline.py 200` |
+| 重新抽圖 (講師更新講義) | 把新檔放到 `Carotid 頸動脈支架訓練課程歷年投影片 2026/`，更新 `tools/cas-2026-pipeline/chapter_sources.json`，刪 `docs/cas-2026/NN-*/` 對應的 staging folder，重跑 `python run_pipeline.py 100`（**100 DPI 是手機螢幕足夠的解析度** — 不要回到 200，會讓 repo 多 100 MB） |
 | 加新章節 | 1) 新增到 CHAPTERS array；2) 新增到 chapter_sources.json；3) 新增到 CHAPTER_TITLES dict；4) 新增 chapter HTML；5) 更新 Hub 的 chapter grid；6) 加 sitemap.xml entry |
 | 重新部署 | `git push origin main` (GitHub Pages 自動部署) |
 
