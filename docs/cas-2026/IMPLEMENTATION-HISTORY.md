@@ -35,7 +35,24 @@
 | **Spec** | 設計規格 | `docs/superpowers/specs/2026-05-22-cas-2026-training-module-design.md` |
 | **Plan** | 12-task 實作計畫 | `docs/superpowers/plans/2026-05-22-cas-2026-training-module.md` |
 
-**統計**：66 卡片 × 1-3 句解說 + 27 道 MCQ + 91 張投影片圖
+**統計** (含 2026-05-24 文獻整合後)：
+- **80 卡片** (原 66 + 14 從 2021-2026 guidelines/reviews 加入)
+- **27 道 MCQ** (Quiz 未動)
+- **99 張圖片** (91 投影片 + 8 PDF 提取)
+- **11 篇引用 PDFs + 1 篇 XML** 收藏在 references/
+
+**2026-05-24 文獻整合摘要：**
+| Ch | 變動 | 引用 |
+|---|---|---|
+| 1 | +Card 9 (Bos IPH HR 2.42), Card 7+8 IAC 2023 註 | Bos JACC 2021 |
+| 2 | +Card 9 (VW-MRI), Card 10 (ESCR 多參數) | Zhang 2025 MA, ESCR 2023 |
+| 3 | Card 5 重寫 (CMOSS warning), +Card 8 (時間窗+CIRSE+ACST-2) | CMOSS JAMA 2023 |
+| 4 | +Card 8 (TFCAS/TR/TCAR), Card 3 tip | ESVS 2023, Dixit 2026 |
+| 5 | Card 3 重寫, +Card 6 (layered), +Card 7 (TCAR flow reversal) | Giannopoulos 2024 MA |
+| 6 | +Card 8 (dual-layer paradigm), +Card 9 (CGuard vs Roadsaver) | Mazurek 2022 (n=68,422) |
+| 7 | +Card 9 (TCAR/ROADSTER-2), Card 1+objectives 註明範圍 | ESVS Rec 82, Zarrintan VQI |
+| 8 | +Card 9 (ACST-2 K-M), +Card 10 (cost-eff) | Halliday Lancet 2021 |
+| 9 | Card 2 ABSOLUTE contraindication tip, +Card 9 (transradial) | CIRSE 2024, Batista 2024 |
 
 ---
 
