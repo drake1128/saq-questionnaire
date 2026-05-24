@@ -28,6 +28,7 @@
 | **9 章 HTML** | `cas-2026-NN-<slug>.html` | repo root |
 | **共用 JS** | `cas-2026-shared.js` (progress + metadata) | repo root |
 | **圖片** | 91 張精選 PNG @ 100 DPI ≈ 43 MB (從 527 張抽出) | `images-cas-2026/NN-*/` |
+| **文獻引用** | 11 PDFs + 1 XML + 主總表 + 3 chapter findings (2026-05-24 加入) | `docs/cas-2026/references/` |
 | **Pipeline 工具** | extract / generate_sidecar / process_selections / run_pipeline | `tools/cas-2026-pipeline/` |
 | **Sidecar 縮圖頁** | 9 個 user-review HTMLs (一次性工具) | `docs/cas-2026/*-slides-overview.html` |
 | **用戶選圖 JSON** | 9 個 (備份) | `tools/cas-2026-pipeline/selections/` |
@@ -96,6 +97,8 @@ localStorage['cas-2026-progress'] = {
 ## ⚠️ 待 User 處理的 Open Items
 
 ### A. **臨床內容審查** (必要，部署前最重要)
+
+📖 **2026-05-24 加：** `docs/cas-2026/references/REFERENCES-2021-2026.md` 整理了 9 章對應 2021-2026 最新 guideline / review / trial (含 ACST-2, ESVS 2023, CIRSE 2024, ESCR 2023, CMOSS, Mazurek dual-layer stent MA 等)。讀那份「🔴 最重要 8 件事」section 可快速找到 HTML 內容潛在的過時點。
 
 我 draft 的卡片內容根據投影片做了「最佳詮釋」。Subagent 已自報的疑慮：
 
