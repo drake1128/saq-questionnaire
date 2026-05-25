@@ -54,6 +54,22 @@
 | 8 | +Card 9 (ACST-2 K-M), +Card 10 (cost-eff) | Halliday Lancet 2021 |
 | 9 | Card 2 ABSOLUTE contraindication tip, +Card 9 (transradial) | CIRSE 2024, Batista 2024 |
 
+**2026-05-25 收尾工作：**
+
+| 工作 | 變動 | Commit |
+|---|---|---|
+| DOI / PMID 全部超連結化 | 11 DOIs → `doi.org`、21 PMIDs → `pubmed.ncbi.nlm.nih.gov`；全部 `target="_blank" rel="noopener"`；含 Lancet DOI 內嵌括弧的特殊處理 | `6455a41` |
+| PDF 圖片精修 | Ch1 page09 刪除（純文字無 figure）；Ch1 page08 crop 9-77%（去 journal header + caption）；Ch8 ACST-2 page07 crop 4-62%（-68% 檔案大小，只留 4-panel K-M） | `7c764c1` |
+
+**待考慮的 follow-up（5 張 PDF 圖目前 acceptable 但 user 可能想再 crop）：**
+- Ch2 `2023-saba-ESCR-partI-page16.png` — Table 7 整頁，table 內容密
+- Ch2 `2023-saba-ESCR-partII-page06.png` — Table 2 plaque feature
+- Ch7 `2023-zarrintan-VQI-page06.png` — 4 K-M + 2 forest plot
+- Ch8 `2025-akkara-costeff-page06.png` — 2 forest plot
+- Ch9 `2024-batista-transradial-page07.png` — 4 forest plot
+
+「修圖再說」狀態 — 等 user 看完上線版再決定要不要 crop。
+
 ---
 
 ## 🌐 部署資訊
