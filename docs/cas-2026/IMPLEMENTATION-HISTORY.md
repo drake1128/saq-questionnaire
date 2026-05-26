@@ -70,6 +70,33 @@
 
 「修圖再說」狀態 — 等 user 看完上線版再決定要不要 crop。
 
+**2026-05-26 講師徵詢草稿：**
+
+由 user (謝慕揚, drake1128) 出面，向 10 位曾授課老師發出徵詢信。已建立 **10 份 Gmail drafts**：
+
+| # | 老師 | 章節 | TO |
+|---|---|---|---|
+| 1 | 湯頌君 | Ch1 (2022) | ⏳ tbd-tang-sj@placeholder.invalid |
+| 2 | 葉馨喬 | Ch1 (2024) | ⏳ tbd-yeh-hc@placeholder.invalid |
+| 3 | 李崇維 | Ch2 | ✅ rad.chungweilee@gmail.com |
+| 4 | 黃國川 | Ch3 | ⏳ tbd-huang-kc@placeholder.invalid |
+| 5 | 蘇峻弘 | Ch4 | ⏳ tbd-su-ch@placeholder.invalid |
+| 6 | 黃成偉 | Ch5 (2022+2024) | ⏳ tbd-huang-cw@placeholder.invalid |
+| 7 | 蔡翰林 | Ch6 (2022 TTT + 2024 Stent) | ⏳ tbd-tsai-hl@placeholder.invalid |
+| 8 | 柯呈諭 | Ch7 (2022+2024) | ⏳ tbd-ko-cy@placeholder.invalid |
+| 9 | 黃致遠 | Ch8 | ⏳ tbd-huang-cy@placeholder.invalid |
+| 10 | 方修御 | Ch9 | ⏳ tbd-fang-hy@placeholder.invalid |
+
+只有李崇維 email 從 PPTX text extraction 找到；其餘 9 位需要由 user 從 Gmail 草稿夾手動填 TO 後送出。
+
+**每封信內容包含：**
+- 緣起說明（課程時間不夠、討論不充分）
+- 解方介紹（手機可操作互動模組、預習 + 課後測驗）
+- 對應章節 URL + 該章相關最新文獻 highlights
+- 三個請求：審視內容、同意素材使用、邀稿個人沙龍照／獨照
+
+**收到老師肖像照後的工作：** 為網站新增「講師介紹」區塊 / cards（目前 HTML 尚未實作）。等到第一批照片回來再做。
+
 ---
 
 ## 🌐 部署資訊
