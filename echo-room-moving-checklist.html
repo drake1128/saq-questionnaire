@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo Room 搬遷清單｜6F → 2F</title>
+<style>
+  :root {
+    --navy: #1a3a5c;
+    --navy-light: #2c5580;
+    --accent: #c8924a;
+    --warn-bg: #fff8e1;
+    --warn-border: #f5b800;
+    --warn-text: #5d4509;
+    --critical: #b8341a;
+    --critical-bg: #fce8e4;
+    --done: #2d6e3e;
+    --done-bg: #e8f5ec;
+    --ink: #1a1a1a;
+    --muted: #6b6b6b;
+    --line: #d8d8d2;
+    --paper: #fafaf5;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Noto Sans TC", -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 32px 28px 80px;
+  }
+
+  /* ========== Header ========== */
+  header.cover {
+    border-top: 6px solid var(--navy);
+    border-bottom: 1px solid var(--line);
+    padding: 28px 0 22px;
+    margin-bottom: 28px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+    align-items: end;
+  }
+
+  .title-block h1 {
+    font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .title-block .sub {
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .route-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--navy);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 2px;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 1px;
+  }
+
+  .route-badge .arrow {
+    font-size: 18px;
+    color: var(--accent);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 22px;
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .meta strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* ========== Section ========== */
+  section { margin-bottom: 36px; }
+
+  h2 {
+    font-family: "Noto Serif TC", "Songti TC", serif;
+    font-size: 20px;
+    color: var(--navy);
+    border-bottom: 2px solid var(--navy);
+    padding: 0 0 6px;
+    margin: 0 0 16px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  h2 .num {
+    font-family: "Georgia", serif;
+    color: var(--accent);
+    font-size: 22px;
+    font-weight: 700;
+    font-style: italic;
+  }
+
+  h3 {
+    font-size: 15px;
+    color: var(--navy-light);
+    margin: 18px 0 8px;
+    padding-left: 8px;
+    border-left: 3px solid var(--accent);
+    font-weight: 600;
+  }
+
+  /* ========== Callout boxes ========== */
+  .callout {
+    border-left: 4px solid var(--warn-border);
+    background: var(--warn-bg);
+    padding: 14px 18px;
+    margin: 18px 0;
+    font-size: 14px;
+    color: var(--warn-text);
+  }
+
+  .callout strong { color: var(--warn-text); }
+  .callout .label {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 12px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .callout.critical {
+    border-left-color: var(--critical);
+    background: var(--critical-bg);
+    color: var(--critical);
+  }
+  .callout.critical .label { color: var(--critical); }
+  .callout.critical strong { color: var(--critical); }
+
+  /* ========== Checklist items ========== */
+  ul.checklist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  ul.checklist li {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    gap: 12px;
+    align-items: start;
+    padding: 11px 4px 11px 4px;
+    border-bottom: 1px dotted var(--line);
+    transition: opacity 0.2s, background 0.2s;
+    cursor: pointer;
+  }
+
+  ul.checklist li:hover { background: rgba(26,58,92,0.03); }
+
+  ul.checklist li.done {
+    opacity: 0.45;
+    background: var(--done-bg);
+  }
+
+  ul.checklist li.done .item-name {
+    text-decoration: line-through;
+  }
+
+  .cb {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--navy);
+    border-radius: 3px;
+    background: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+
+  li.done .cb {
+    background: var(--done);
+    border-color: var(--done);
+  }
+
+  li.done .cb::after {
+    content: "✓";
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .item-body {
+    min-width: 0;
+  }
+
+  .item-name {
+    font-weight: 500;
+    color: var(--ink);
+    font-size: 15px;
+  }
+
+  .item-name .qty {
+    color: var(--accent);
+    font-weight: 700;
+    margin-left: 6px;
+  }
+
+  .item-note {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+
+  .item-tags {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  .tag.handler { background: #e8edf3; color: var(--navy); }
+  .tag.priority-high { background: var(--critical); color: white; }
+  .tag.priority-med { background: var(--accent); color: white; }
+
+  /* ========== Personnel ========== */
+  table.personnel {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 14px;
+  }
+
+  table.personnel th, table.personnel td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  table.personnel th {
+    background: var(--navy);
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+
+  table.personnel tr:nth-child(even) td { background: rgba(26,58,92,0.025); }
+
+  table.personnel .count {
+    color: var(--accent);
+    font-weight: 700;
+    font-family: Georgia, serif;
+  }
+
+  /* ========== Do-Not-Move ========== */
+  .dont-move {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .dont-move .item {
+    background: white;
+    border: 1px solid var(--line);
+    padding: 8px 14px;
+    font-size: 14px;
+    color: var(--muted);
+    position: relative;
+  }
+  .dont-move .item::before {
+    content: "✗";
+    color: var(--critical);
+    font-weight: 700;
+    margin-right: 6px;
+  }
+
+  /* ========== Confirm pending ========== */
+  .pending {
+    background: #fff;
+    border: 1px dashed var(--accent);
+    padding: 14px 18px;
+    margin: 12px 0;
+    font-size: 14px;
+  }
+  .pending .q {
+    color: var(--accent);
+    font-weight: 700;
+    margin-right: 6px;
+  }
+
+  /* ========== Footer ========== */
+  footer {
+    margin-top: 48px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  footer .sig {
+    color: var(--navy);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .reset-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--navy);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 100;
+  }
+  .reset-btn:hover { background: var(--navy-light); }
+
+  /* ========== Print ========== */
+  @media print {
+    body { background: white; font-size: 12px; }
+    .wrap { max-width: none; padding: 0; }
+    .reset-btn { display: none; }
+    section { break-inside: avoid; margin-bottom: 18px; }
+    h2 { font-size: 16px; }
+    ul.checklist li { break-inside: avoid; padding: 6px 4px; }
+    .callout { padding: 8px 12px; }
+    header.cover { padding: 12px 0; margin-bottom: 16px; }
+    .title-block h1 { font-size: 22px; }
+  }
+
+  /* ========== Mobile ========== */
+  @media (max-width: 600px) {
+    .wrap { padding: 20px 16px 60px; }
+    header.cover { grid-template-columns: 1fr; }
+    .title-block h1 { font-size: 24px; }
+    ul.checklist li {
+      grid-template-columns: 24px 1fr;
+    }
+    .item-tags {
+      grid-column: 2;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      margin-top: 4px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="cover">
+    <div class="title-block">
+      <div class="sub">Cardiovascular Center · Relocation Plan</div>
+      <h1>Echo Room 搬遷清單</h1>
+      <div class="meta">
+        <span><strong>單位｜</strong>心臟血管中心 心臟超音波室</span>
+        <span><strong>負責人｜</strong>謝慕揚 醫師</span>
+        <span><strong>預估時間｜</strong>約 1 小時</span>
+      </div>
+    </div>
+    <div>
+      <div class="route-badge">
+        6F <span class="arrow">→</span> 2F
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ HIGH-RISK CALLOUT ============ -->
+  <div class="callout critical">
+    <span class="label">⚠ 最高優先保護 · Critical Handling</span>
+    搬遷當天最需要被特別保護的三類物品：
+    <strong>TEE 探頭 5 隻</strong>（專人雙手捧持，不上推車、不疊放）、
+    <strong>氧氣鋼瓶</strong>（必須立放固定，閥門鎖緊，不可橫躺）、
+    <strong>看板 5 個</strong>（每片至少 2 人，安排專責人力）。
+  </div>
+
+  <!-- ============ PENDING CONFIRM ============ -->
+  <div class="pending">
+    <span class="q">待確認 ①</span><strong>圍簾</strong>：「不用搬，就是下去」是指 2F 已備、6F 這批不處理嗎？<br>
+    <span class="q">待確認 ②</span><strong>超音波室印表機</strong>由資訊室還是醫工組負責？
+  </div>
+
+  <!-- ============ Section 1: Pre-Move Prep ============ -->
+  <section>
+    <h2><span class="num">01</span>搬遷前 1 日準備 Pre-Move Prep</h2>
+    <ul class="checklist" data-section="prep">
+      <li><span class="cb"></span><div class="item-body"><div class="item-name">各人清空辦公桌抽屜並裝箱</div><div class="item-note">小物（印章、隨身碟、耗材、文件）裝紙箱、寫姓名，抽屜不連桌搬</div></div></li>
+      <li><span class="cb"></span><div class="item-body"><div class="item-name">電腦關機、線材標示後捲收</div><div class="item-note">每臺主機標號，HDMI / 電源線分組</div></div></li>
+      <li><span class="cb"></span><div class="item-body"><div class="item-name">UPS 提前斷電</div><div class="item-note">搬運前 30 分鐘斷電</div></div></li>
+      <li><span class="cb"></span><div class="item-body"><div class="item-name">TEE 探頭 5 隻裝保護盒並清點編號</div><div class="item-note">原廠盒或厚布包覆，個別編號簽收用</div></div></li>
+      <li><span class="cb"></span><div class="item-body"><div class="item-name">氧氣鋼瓶閥門關緊、上防傾倒推車</div></div></li>
+      <li><span class="cb"></span><div class="item-body"><div class="item-name">確認 2F 新房間電梯動線與門寬</div><div class="item-note">床、置物櫃、看板進得去</div></div></li>
+      <li><span class="cb"></span><div class="item-body"><div class="item-name">通知傳送公司派 3 人到場</div></div></li>
+      <li><span class="cb"></span><div class="item-body"><div class="item-name">紙箱 3 個備齊</div></div></li>
+    </ul>
+  </section>
+
+  <!-- ============ Section 2: Items to Move ============ -->
+  <section>
+    <h2><span class="num">02</span>搬運物品清單 Items to Move</h2>
+
+    <!-- A. Large / Heavy -->
+    <h3>A. 大型 / 重物 Large &amp; Heavy</h3>
+    <ul class="checklist">
+      <li><span class="cb"></span>
+        <div class="item-body">
+          <div class="item-name">床 <span class="qty">× 2</span></div>
+        </div>
+        <div class="item-tags"><span class="tag handler">搬家公司</span></div>
+      </li>
+      <li><span class="cb"></span>
+        <div class="item-body">
+          <div class="item-name">置物櫃 <span class="qty">× 2</span></div>
+        </div>
+        <div class="item-tags"><span class="tag handler">搬家公司</span></div>
+      </li>
+      <li><span class="cb"></span>
+        <div class="item-body">
+          <div class="item-name">看板 <span class="qty">× 5</span></div>
+          <div class="item-note">很重，每片至少 2 人，安排專責人力來回</div>
+        </div>
+        <div class="item-tags"><span class="tag priority-high">高優先</span><span class="tag handler">志工 + Cath lab</span></div>
+      </li>
+      <li><span class="cb"></span>
+        <div class="item-body">
+          <div class="item-name">T 的櫃子（TEE 主機）</div>
+          <div class="item-note">敏感醫療設備，醫工組專人推</div>
+        </div>
+        <div class="item-tags"><span class="tag priority-high">高優先</span><span class="tag handler">醫工組</span></div>
+      </li>
+      <li><span class="cb"></span>
+        <div class="item-body">
+          <div class="item-name">鐵製不鏽鋼推車 <span class="qty">× 1</span></div>
+        </div>
+        <div class="item-tags"><span class="tag handler">傳送</span></div>
+      </li>
+    </ul>
+
+    <!-- B. Electronics / Medical -->
+    <h3>B. 電子 / 敏感醫療設備 Electronics &amp; Medical</h3>
+    <ul class="checklist">
+      <li><span class="cb"></span>
+        <div class="item-body">
+          <div class="item-name">桌機電腦 <span class="qty">× 4</span></div>
+        </div>
+        <div class="item-tags"><span class="tag handler">資訊室</span></div>
+      </li>
+      <li><span class="cb"></span>
+        <div class="item-body">
+          <div class="item-name">UPS 不斷電系統 <span class="qty">× 1</span></div>
+          <div class="item-note">搬前 30 分鐘斷電</div>
+        </div>
+        <div class="item-tags"><span class="tag handler">資訊室</span></div>
+      </li>
+      <li><span class="cb"></span>
+        <div class="item-body">
+          <div class="item-name">超音波室印表機 <span class="qty">× 1</span></div>
+          <div class="item-note">負責單位待確認</div>
+        </div>
+        <div class="item-tags"><span class="tag handler">待確認</span></div>
+      </li>
+      <li><span class="cb"></span>
+        <div class="item-body">
+          <div class="item-name">TEE 探頭 <span class="qty">× 5</span></div>
+          <div class="item-note">2 隻 + 3 隻 = 5 隻；最高優先保護，專人雙手捧持，不上推車不疊放</div>
+        </div>
+        <div class="item-tags"><span class="tag priority-high">最高優先</span><span class="tag handler">醫工組 / 專人</span></div>
+      </li>
+      <li><span class="cb"></span>
+        <div class="item-body">
+          <div class="item-name">血壓記錄器 <span class="qty">× 1</span></div>
+        </div>
+        <div class="item-tags"><span class="tag handler">傳送</span></div>
+      </li>
+      <li><span class="cb"></span>
+        <div class="item-body">
+          <div class="item-name">血壓計 <span class="qty">× 1</span></div>
+        </div>
+        <div class="item-tags"><span class="tag handler">傳送</span></div>
+      </li>
+      <li><span class="cb"></span>
+        <div class="item-body">
+          <div class="item-name">氧氣鋼瓶 <span class="qty">× 1</span></div>
+          <div class="item-note">立放固定、推車防傾倒、閥門鎖緊</div>
+        </div>
+        <div class="item-tags"><span class="tag priority-high">高優先</span><span class="tag handler">傳送 / 醫工</span></div>
+      </li>
+      <li><span class="cb"></span>
+        <div class="item-body">
+          <div class="item-name">外面電視 <span class="qty">× 1</span></div>
+        </div>
+        <div class="item-tags"><span class="tag handler">資訊室 / 搬家</span></div>
+      </li>
+    </ul>
+
+    <!-- C. Furniture / Misc -->
+    <h3>C. 桌椅 / 雜項 Furniture &amp; Misc</h3>
+    <ul class="checklist">
+      <li><span class="cb"></span>
+        <div class="item-body">
+          <div class="item-name">椅子 <span class="qty">× 4</span></div>
+        </div>
+        <div class="item-tags"><span class="tag handler">傳送</span></div>
+      </li>
+      <li><span class="cb"></span>
+        <div class="item-body">
+          <div class="item-name">折疊椅 <span class="qty">× 4</span></div>
+        </div>
+        <div class="item-tags"><span class="tag handler">傳送</span></div>
+      </li>
+      <li><span class="cb"></span>
+        <div class="item-body">
+          <div class="item-name">垃圾桶 <span class="qty">× 5</span></div>
+        </div>
+        <div class="item-tags"><span class="tag handler">傳送</span></div>
+      </li>
+      <li><span class="cb"></span>
+        <div class="item-body">
+          <div class="item-name">紙箱 <span class="qty">× 3</span></div>
+          <div class="item-note">裝抽屜內小物</div>
+        </div>
+        <div class="item-tags"><span class="tag handler">傳送</span></div>
+      </li>
+      <li><span class="cb"></span>
+        <div class="item-body">
+          <div class="item-name">各人辦公桌（含預先打包抽屜物）</div>
+        </div>
+        <div class="item-tags"><span class="tag handler">搬家公司</span></div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ============ Section 3: Do Not Move ============ -->
+  <section>
+    <h2><span class="num">03</span>不搬 Do Not Move</h2>
+    <div class="dont-move">
+      <span class="item">延長線</span>
+      <span class="item">叫號機</span>
+      <span class="item">緊急應變包</span>
+      <span class="item">圍簾（待確認）</span>
+    </div>
+  </section>
+
+  <!-- ============ Section 4: Personnel ============ -->
+  <section>
+    <h2><span class="num">04</span>人力配置 Personnel（約 10 人）</h2>
+    <table class="personnel">
+      <thead>
+        <tr>
+          <th>單位 / Role</th>
+          <th>人數</th>
+          <th>主責項目</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>醫工組</td><td class="count">1</td><td>TEE 主機 + 探頭（不兼其他）</td></tr>
+        <tr><td>資訊室</td><td class="count">1</td><td>電腦 × 4、UPS、印表機（待確認）</td></tr>
+        <tr><td>志工（駱先生派）</td><td class="count">3</td><td>看板 × 5、體力性搬運</td></tr>
+        <tr><td>傳送公司</td><td class="count">3</td><td>椅子、紙箱、雜物</td></tr>
+        <tr><td>搬家公司</td><td class="count">未定</td><td>床 × 2、置物櫃 × 2、辦公桌</td></tr>
+        <tr><td>副座</td><td class="count">1</td><td>現場調度（可能來）</td></tr>
+        <tr><td>謝醫師</td><td class="count">1</td><td>清點 + 調度（導管室未 delay 才能到）</td></tr>
+        <tr><td>Cath lab 男生 / 主治</td><td class="count">支援</td><td>導管室結束後支援看板</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <span class="label">人力分派原則</span>
+      <strong>醫工組 1 人專責 TEE 主機 + 探頭，不兼其他</strong>。看板分配給駱先生志工 + Cath lab 男生（人到後接手）。床與置物櫃由搬家公司主力處理。
+    </div>
+  </section>
+
+  <!-- ============ Section 5: Day-of ============ -->
+  <section>
+    <h2><span class="num">05</span>搬運當天流程 Day-of Workflow</h2>
+    <ul class="checklist">
+      <li><span class="cb"></span><div class="item-body"><div class="item-name">6F 出發前：逐項清點打勾</div></div></li>
+      <li><span class="cb"></span><div class="item-body"><div class="item-name">TEE 探頭 5 隻：出發前清點編號</div></div></li>
+      <li><span class="cb"></span><div class="item-body"><div class="item-name">2F 抵達後：再次清點全部物品</div></div></li>
+      <li><span class="cb"></span><div class="item-body"><div class="item-name">TEE 探頭 5 隻：一隻一隻簽收</div><div class="item-note">與醫工組逐一確認、簽名</div></div></li>
+      <li><span class="cb"></span><div class="item-body"><div class="item-name">易碎 / 高價品先放定位，避免後續被壓</div></div></li>
+      <li><span class="cb"></span><div class="item-body"><div class="item-name">資訊室：電腦開機測試</div></div></li>
+      <li><span class="cb"></span><div class="item-body"><div class="item-name">醫工組：接電測試 TEE 主機 + 探頭功能</div></div></li>
+      <li><span class="cb"></span><div class="item-body"><div class="item-name">UPS 通電測試</div></div></li>
+      <li><span class="cb"></span><div class="item-body"><div class="item-name">確認 6F 原房間無遺漏</div></div></li>
+    </ul>
+  </section>
+
+  <footer>
+    <div class="sig">心臟血管中心｜謝慕揚 醫師 MD, PhD, FESC</div>
+    本清單為 Echo Room 6F → 2F 搬遷作業內部參考文件，僅供當日搬運清點與人力調度使用。
+  </footer>
+
+</div>
+
+<button class="reset-btn" onclick="if(confirm('清除所有打勾？')){document.querySelectorAll('ul.checklist li').forEach(li=>li.classList.remove('done'));}">↻ 重設清單</button>
+
+<script>
+  document.querySelectorAll('ul.checklist li').forEach(li => {
+    li.addEventListener('click', () => li.classList.toggle('done'));
+  });
+</script>
+
+</body>
+</html>
