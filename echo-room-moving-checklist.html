@@ -359,11 +359,138 @@
   }
   .reset-btn:hover { background: var(--navy-light); }
 
+  /* ========== Share QR ========== */
+  .share-fab {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    padding: 9px 15px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    z-index: 200;
+  }
+  .share-fab:hover { background: var(--navy-light); }
+
+  .share-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(26,58,92,0.35);
+    display: none;
+    z-index: 300;
+  }
+  .share-overlay.open { display: block; }
+
+  .share-card {
+    position: fixed;
+    top: 64px;
+    right: 20px;
+    width: 288px;
+    max-width: calc(100vw - 40px);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--navy);
+    border-radius: 6px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.22);
+    padding: 20px 20px 18px;
+    z-index: 301;
+    text-align: center;
+    display: none;
+  }
+  .share-card.open { display: block; }
+
+  .share-card h3 {
+    font-family: "Noto Serif TC", "Songti TC", serif;
+    font-size: 16px;
+    color: var(--navy);
+    margin: 0 0 4px;
+    border: none;
+    padding: 0;
+    display: block;
+  }
+  .share-card .share-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .share-card img.qr {
+    width: 180px;
+    height: 180px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: #fff;
+  }
+  .share-url {
+    font-size: 11px;
+    color: var(--muted);
+    word-break: break-all;
+    margin: 12px 0 14px;
+    line-height: 1.4;
+  }
+  .share-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .share-actions button,
+  .share-actions a {
+    flex: 1;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--navy);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+  .share-actions button:hover { background: #eef2f6; }
+  .share-actions .line-btn {
+    background: #06C755;
+    border-color: #06C755;
+    color: #fff;
+  }
+  .share-actions .line-btn:hover { background: #05b34c; }
+  .share-card-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 2px 6px;
+  }
+  .share-card-close:hover { color: var(--critical); }
+
+  @media (max-width: 600px) {
+    .share-card {
+      top: 50%;
+      left: 50%;
+      right: auto;
+      transform: translate(-50%, -50%);
+    }
+  }
+
   /* ========== Print ========== */
   @media print {
     body { background: white; font-size: 12px; }
     .wrap { max-width: none; padding: 0; }
-    .reset-btn { display: none; }
+    .reset-btn, .share-fab, .share-overlay, .share-card { display: none !important; }
     section { break-inside: avoid; margin-bottom: 18px; }
     h2 { font-size: 16px; }
     ul.checklist li { break-inside: avoid; padding: 6px 4px; }
@@ -641,9 +768,76 @@
 
 <button class="reset-btn" onclick="if(confirm('清除所有打勾？')){document.querySelectorAll('ul.checklist li').forEach(li=>li.classList.remove('done'));}">↻ 重設清單</button>
 
+<!-- ============ Share QR ============ -->
+<button class="share-fab" onclick="openShare()" aria-haspopup="dialog" aria-label="分享搬遷清單 QR Code">
+  <span aria-hidden="true">📤</span> 分享
+</button>
+
+<div class="share-overlay" id="shareOverlay" onclick="closeShare()"></div>
+<div class="share-card" id="shareCard" role="dialog" aria-modal="true" aria-label="分享搬遷清單">
+  <button class="share-card-close" onclick="closeShare()" aria-label="關閉">&times;</button>
+  <h3>分享搬遷清單</h3>
+  <div class="share-sub">手機掃描 QR Code 即可開啟</div>
+  <img class="qr" id="shareQr" alt="搬遷清單 QR Code" width="180" height="180">
+  <div class="share-url" id="shareUrl"></div>
+  <div class="share-actions">
+    <button type="button" id="copyBtn" onclick="copyShareLink()">複製連結</button>
+    <a class="line-btn" id="lineShare" target="_blank" rel="noopener noreferrer">LINE 分享</a>
+  </div>
+</div>
+
 <script>
   document.querySelectorAll('ul.checklist li').forEach(li => {
     li.addEventListener('click', () => li.classList.toggle('done'));
+  });
+
+  // ===== Share QR =====
+  // 在 GitHub Pages（http/https）上用實際網址；本機 file:// 預覽時退回正式部署網址
+  var SHARE_URL = (location.protocol === 'http:' || location.protocol === 'https:')
+    ? location.href
+    : 'https://drake1128.github.io/saq-questionnaire/echo-room-moving-checklist.html';
+
+  (function initShare() {
+    document.getElementById('shareQr').src =
+      'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(SHARE_URL);
+    document.getElementById('shareUrl').textContent = SHARE_URL;
+    document.getElementById('lineShare').href =
+      'https://social-plugins.line.me/lineit/share?url=' + encodeURIComponent(SHARE_URL);
+  })();
+
+  function openShare() {
+    document.getElementById('shareOverlay').classList.add('open');
+    document.getElementById('shareCard').classList.add('open');
+  }
+  function closeShare() {
+    document.getElementById('shareOverlay').classList.remove('open');
+    document.getElementById('shareCard').classList.remove('open');
+  }
+  function copyShareLink() {
+    var btn = document.getElementById('copyBtn');
+    var original = btn.textContent;
+    var done = function () {
+      btn.textContent = '已複製 ✓';
+      setTimeout(function () { btn.textContent = original; }, 1500);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(SHARE_URL).then(done).catch(fallbackCopy);
+    } else {
+      fallbackCopy();
+    }
+    function fallbackCopy() {
+      var ta = document.createElement('textarea');
+      ta.value = SHARE_URL;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+  }
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeShare();
   });
 </script>
 
