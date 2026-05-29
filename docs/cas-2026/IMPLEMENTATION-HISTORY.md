@@ -99,6 +99,50 @@
 
 ---
 
+## 🔬 2026-05-29 → 30：Ch1 講師回饋修訂 + 引用查證更正
+
+**觸發：** 葉馨喬醫師（Ch1 2024 講師，shinjoeyeh@gmail.com）回信，同意素材使用、提供肖像照，並針對 Ch1 提出修改建議（含一份新投影片檔附件）。
+
+**新來源檔：** `C:\Users\drake\Downloads\Ultrasound imaging for carotid arteries 2026.ppt`（共 28 張）。用 **PowerPoint COM** 抽出第 10、24 張 → `images-cas-2026/01-ultrasound/2026-yeh-hc-seq010.png`、`2026-yeh-hc-seq024.png`（命名沿用既有 `YYYY-yeh-hc-seqNNN` 慣例）。抽圖前先 dump slide text 比對，確認 P10 = vulnerable plaque morphology、P24 = modified SRU/IAC ICA 速度標準，與信中描述相符。
+
+**依信完成的 4 項修訂：**
+
+| 卡片 | 修改 |
+|---|---|
+| Card 3 B-mode 斑塊形態學 | 投影片改用新檔 P10；說明補上 echolucent/echodense + **GSM ≤25** |
+| Card 6 狹窄血流動力學 | 參考管徑 B 之「**近端**正常段」→「**遠端**正常段」（NASCET 量法） |
+| Card 7 狹窄分級標準 | 投影片改用新檔 P24；PSV 閾值更新為 **<180=<50%、180–230=50–69%、>230=≥70%** |
+| Card 7 + 8 | 移除錯誤的「IAC 2023」引用（見下） |
+
+**🚩 引用查證更正（兩件，均為 hallucinated / 誤植 citation）：**
+
+1. **「IAC 2023 共識文件」不存在。** 葉醫師於信中質疑（查無此文件）。查證後確認真正出處就是她 P24 投影片底下所引的那篇——
+   **Gornik HL, et al. *Optimization of duplex velocity criteria for diagnosis of ICA stenosis: a report of the IAC Vascular Testing Division Carotid Diagnostic Criteria Committee.* Vasc Med 2021;26(5):515–525（PMID 34009060）。**
+   是 IAC 文件沒錯，但年份是 **2021 不是 2023**，且只談**原生動脈**（將 SRU 2003 的 ≥50% PSV 閾值由 ≥125 提高到 ≥180），**完全未涵蓋 post-stent**。Card 7/8 的「IAC 2023」字樣已全部改為正確引用。
+
+2. **Card 8 的 Nederkoorn 2009 引用被誤描述，且數字為兩篇混用。**
+   - Nederkoorn PJ, Brown MM. BMC Neurol 2009;9:36（PMID 19624830）**確實存在，但它是 review + study protocol**（PubMed 標 "Review"），並非導出/驗證閾值的原始研究——僅可作為「stent ↓ compliance → ↑velocity」概念回顧。
+   - 原文「PSV >300 或 ratio >4.75」其實是兩篇單中心小研究混拼：**PSV >300 + EDV >90 + ICA/CCA >4** 出自 **Zhou W, J Vasc Surg 2008;47:74–80（PMID 18178456）**（僅 18 lesion / 11 人）；**ratio ≥4.75（+PSV ≥350）** 出自 **Stanziale SF, J Endovasc Ther 2005;12:346–53（PMID 15943510）**。
+   - 已更正 Card 8 **body、image alt、source line、注意 tip、Quick Check Q2 解說** 共 5 處：改列兩組正確歸屬的閾值、註明「無統一共識、均小型單中心研究」、Nederkoorn 降格為概念回顧。
+
+**文獻 PDF 歸檔**（`docs/cas-2026/references/01-ultrasound/`）：
+- `2021-Gornik-IAC-ICA-velocity-criteria-VascMed.pdf`（Europe PMC OA；publisher owner-encrypt，閱讀正常但無法複製）
+- `2009-Nederkoorn-stented-ICA-velocity-review-BMCNeurol.pdf`（BMC OA）
+- Zhou 2008 / Stanziale 2005 為付費期刊（無 OA PMC），僅留 citation + PMID 連結。
+- 另備一份在 `C:\Users\drake\Downloads\CAS2026-Ch1-references\`。
+
+**對外通訊：** 已建立一份 **Gmail 回信草稿**（thread `19e64b695a76d56c`，未寄出），向葉醫師確認 4 項修訂並誠實說明「IAC 2023」查證結果。⏳ Card 8 的 Nederkoorn/Stanziale/Zhou 更正尚未寫進該草稿。
+
+**Commits：**
+| Commit | 摘要 |
+|---|---|
+| `fa166ca` | Ch1 套用葉醫師 slide/閾值修訂、IAC 2023→Gornik 2021 |
+| `1c6db08` | Ch1 Card 8 post-stent ISR 引用與閾值更正（Stanziale/Zhou） |
+
+**Lesson（給未來）：** 任何「某某 guideline/consensus 說…」的引用都要實際查到 PMID 才寫；本次兩處 citation 都在臨床審查階段被講師/查證抓到（呼應記憶 [[feedback_questionnaire_scoring_qc]]、[[reference_carotid_duplex_iac2021_criteria]]）。投影片標題年份（如 P24 寫「2023」）≠ 原始文獻年份，勿直接當引用年。
+
+---
+
 ## 🌐 部署資訊
 
 **Stage 1 (已完成)**: GitHub Pages
@@ -164,8 +208,8 @@ localStorage['cas-2026-progress'] = {
 
 | 章 | 疑慮 |
 |---|---|
-| Ch1 Card 7 | PSV 閾值 (125/230 cm/s) 引自投影片表格，與 SRU 2003 一致 — 可能要更新到 2021 ESC guideline 或院內標準 |
-| Ch1 Card 8 | 術後 in-stent restenosis 閾值 (>300 cm/s, ratio >4.75) 引自 Nederkoorn 2009 — 確認是否有更新標準 |
+| Ch1 Card 7 | ✅ **已解決 (2026-05-29)** — 改用葉醫師新檔 P24，閾值更新為 IAC/Gornik 2021（≥50% 改 ≥180 cm/s）。見上方 2026-05-29 區塊 |
+| Ch1 Card 8 | ✅ **已解決 (2026-05-30)** — 原 Nederkoorn 2009 引用誤植已更正為 Stanziale 2005 + Zhou 2008，並註明無共識。見上方 2026-05-29 區塊 |
 | Ch3 Card 6,7 | Slide #38/#39 我用 "suspected Moyamoya" 字眼 — 請確認診斷 |
 | Ch3 Card 3 | Slide #24 (NTUH MRA) 我沒看到明確標註 stenosis/occlusion 位置 — 請補充 |
 | Ch4 | seq057 在指示但實際資料夾沒抽出 — 已用 seq058/059 取代 |
