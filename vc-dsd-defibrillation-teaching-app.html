@@ -89,6 +89,20 @@ footer hr{border:none;border-top:1px solid #2d5a87;margin:12px 0;}
 .share-btn svg{width:20px;height:20px;fill:currentColor;}
 .share-close{position:absolute;top:8px;right:8px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);width:32px;height:32px;display:flex;align-items:center;justify-content:center;padding:0;}
 .share-close:hover{color:var(--navy);}
+/* Pad-placement diagrams */
+.dgram-row{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:12px 0;}
+.dgram-fig{flex:1 1 130px;max-width:172px;text-align:center;}
+.dgram{width:100%;height:auto;background:#fbfdff;border:1px solid var(--border);border-radius:12px;}
+.dgram-cap{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.5;}
+.legend{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;font-size:12px;margin:10px 0 4px;}
+.legend span{display:inline-flex;align-items:center;gap:5px;}
+.legend i{width:13px;height:13px;border-radius:3px;display:inline-block;}
+.flag ul{margin:6px 0 0 18px;}
+.flag li{font-size:13.5px;margin-bottom:5px;}
+.refs{font-size:13px;}
+.refs a,.card a{color:var(--navy-light);font-weight:600;text-decoration:underline;}
+.refs li{margin-bottom:8px;}
+footer a{color:var(--gold);text-decoration:underline;}
 </style>
 </head>
 <body>
@@ -123,6 +137,7 @@ function Header(){
 const TABS = [
   {id:'home', label:'重點摘要'},
   {id:'rec', label:'建議'},
+  {id:'pads', label:'貼片圖解'},
   {id:'mech', label:'機制釐清'},
   {id:'trial', label:'DOSE-VF 解讀'},
   {id:'prac', label:'臨床實務'},
@@ -141,6 +156,106 @@ function Home(){
         <li>本教材將 VC 與 DSD 均列為 <span className="tag iib">Class IIb</span>（效用尚未確立）；其中 <b>DSED 的證據強度與一致性 &gt; VC</b>。</li>
         <li>DSED 需<b>毫秒級</b>精準間隔，手動同時啟動兩台去顫器難以達成 → 受設備與 SOP 限制。</li>
       </ol>
+    </div>
+  );
+}
+
+const PAD_AL='#2d5a87';   // 標準 前-側 (Anterior-Lateral)
+const PAD_AP='#e67e22';   // 前-後 (Anterior-Posterior)
+
+function Pad({x,y,color,w=34,h=22}){
+  return <rect x={x} y={y} width={w} height={h} rx="5" fill={color} stroke="#ffffff" strokeWidth="1.5"/>;
+}
+function Heart(){
+  return (
+    <g>
+      <ellipse cx="84" cy="128" rx="19" ry="17" fill="#fbe0dd" stroke="#e74c3c" strokeWidth="1.5"/>
+      <text x="84" y="132" textAnchor="middle" fill="#c0392b" fontSize="10" fontWeight="700">LV</text>
+    </g>
+  );
+}
+function BodyFront({children,back}){
+  return (
+    <svg className="dgram" viewBox="0 0 160 232" role="img">
+      <circle cx="80" cy="24" r="16" fill="#eaf0f5" stroke="#9fb1c0" strokeWidth="1.5"/>
+      <path d="M50,48 C50,42 60,40 80,40 C100,40 110,42 110,48 L124,76 L113,84 L109,198 C109,209 98,213 80,213 C62,213 51,209 51,198 L47,84 L36,76 Z"
+            fill={back?'#eef2f6':'#f4f7fa'} stroke="#9fb1c0" strokeWidth="1.5" strokeLinejoin="round"/>
+      {back && <line x1="80" y1="52" x2="80" y2="196" stroke="#c3d0db" strokeWidth="2" strokeDasharray="4 3"/>}
+      {children}
+    </svg>
+  );
+}
+
+function Pads(){
+  return (
+    <div className="card">
+      <h2>🩹 貼片方式圖解</h2>
+      <div className="legend">
+        <span><i style={{background:PAD_AL}}></i>標準 前-側 (AL)</span>
+        <span><i style={{background:PAD_AP}}></i>前-後 (AP)</span>
+        <span><i style={{background:'#fbe0dd',border:'1.5px solid #e74c3c'}}></i>左心室 (後方結構)</span>
+      </div>
+
+      <h3>① 標準去顫：前-側 (Anterior-Lateral, AL)</h3>
+      <div className="dgram-row">
+        <div className="dgram-fig">
+          <BodyFront>
+            <Heart/>
+            <Pad x={42} y={60} color={PAD_AL}/>
+            <Pad x={86} y={150} color={PAD_AL}/>
+          </BodyFront>
+          <div className="dgram-cap"><b>前面</b>：右上胸 ＋ 左下側（心尖）</div>
+        </div>
+      </div>
+      <p style={{fontSize:'13px'}}>左心室位於<b>後方</b>，正好落在兩片連線之外、電流密度最低 → 這正是 VC 與 DSED 想補強的區域。</p>
+
+      <h3>② 向量改變 VC：前-後 (Anterior-Posterior, AP)</h3>
+      <p style={{fontSize:'13px'}}><b>同一台</b>去顫器，把電擊片改貼成前-後，<b>只放一次電</b>。</p>
+      <div className="dgram-row">
+        <div className="dgram-fig">
+          <BodyFront>
+            <Heart/>
+            <Pad x={62} y={88} color={PAD_AP} w={32} h={20}/>
+          </BodyFront>
+          <div className="dgram-cap"><b>前面</b>：胸骨／心前區</div>
+        </div>
+        <div className="dgram-fig">
+          <BodyFront back>
+            <Pad x={86} y={96} color={PAD_AP} w={32} h={20}/>
+          </BodyFront>
+          <div className="dgram-cap"><b>背面</b>：左肩胛骨下方</div>
+        </div>
+      </div>
+
+      <h3>③ 雙重連續去顫 DSED</h3>
+      <p style={{fontSize:'13px'}}><b>兩台</b>去顫器、<b>兩組</b>電擊片（AL ＋ AP）同時貼在身上，毫秒級<b>接連</b>放電。</p>
+      <div className="dgram-row">
+        <div className="dgram-fig">
+          <BodyFront>
+            <Heart/>
+            <Pad x={42} y={58} color={PAD_AL}/>
+            <Pad x={86} y={152} color={PAD_AL}/>
+            <Pad x={62} y={92} color={PAD_AP} w={32} h={20}/>
+          </BodyFront>
+          <div className="dgram-cap"><b>前面</b>：AL 兩片（藍）＋ AP 前片（橘）</div>
+        </div>
+        <div className="dgram-fig">
+          <BodyFront back>
+            <Pad x={86} y={96} color={PAD_AP} w={32} h={20}/>
+          </BodyFront>
+          <div className="dgram-cap"><b>背面</b>：AP 後片（橘）</div>
+        </div>
+      </div>
+
+      <div className="flag">
+        <span className="label">⚠ DSED 安全要點</span>
+        <ul>
+          <li>兩台去顫器需<b>同廠牌、同型號</b>，否則可能損壞機器</li>
+          <li>電擊片<b>靠近但絕不可互相接觸</b></li>
+          <li>放電<b>接連、不可完全同時</b>（&lt;1 秒，刻意錯開）</li>
+        </ul>
+      </div>
+      <p className="disc" style={{color:'var(--muted)'}}>※ 示意圖為教學簡化，實際貼附位置以各院 SOP 與電擊片說明書為準。</p>
     </div>
   );
 }
@@ -195,7 +310,7 @@ function Trial(){
   return (
     <div className="card">
       <h2>📊 DOSE-VF 試驗解讀</h2>
-      <p><span className="en">Cheskes S, et al. NEJM 2022; NCT04080986.</span> 加拿大 Ontario 六個 EMS、cluster-randomized、open-label、三組 crossover；因 COVID 人力提前中止（收 405 例，原計畫 ~930）。納入 OHCA、≥3 次標準電擊後仍 VF/pVT 者。</p>
+      <p><span className="en">Cheskes S, et al. <a href="https://doi.org/10.1056/NEJMoa2207304" target="_blank" rel="noopener">NEJM 2022</a>; NCT04080986.</span> 加拿大 Ontario 六個 EMS、cluster-randomized、open-label、三組 crossover；因 COVID 人力提前中止（收 405 例，原計畫 ~930）。納入 OHCA、≥3 次標準電擊後仍 VF/pVT 者。</p>
 
       <h3>主要結果（ITT，出院存活）<span className="tag pos">POSITIVE</span></h3>
       <table>
@@ -223,6 +338,13 @@ function Trial(){
 
       <h3>為何只給 Class IIb？</h3>
       <p>儘管 ITT 為正向，下列限制使指引保守：① 提前中止、樣本小（405/930）；② open-label；③ per-protocol/as-treated 效益衰減；④ 次族群機制與安全性尚有爭議；⑤ <b>VC 與 DSD 證據強度不同</b>—DSED 較一致，VC 較弱。</p>
+
+      <h3>📚 參考文獻（可點擊看原文）</h3>
+      <ol className="refs">
+        <li>Cheskes S, et al. <b>Defibrillation Strategies for Refractory Ventricular Fibrillation.</b> <span className="en">N Engl J Med 2022;387(21):1947-1956.</span> <a href="https://doi.org/10.1056/NEJMoa2207304" target="_blank" rel="noopener">doi:10.1056/NEJMoa2207304</a></li>
+        <li>Cheskes S, et al. <b>The impact of alternate defibrillation strategies on shock-refractory and recurrent VF: a secondary analysis of the DOSE VF RCT.</b> <span className="en">Resuscitation 2024;198:110186.</span> <a href="https://doi.org/10.1016/j.resuscitation.2024.110186" target="_blank" rel="noopener">doi:10.1016/j.resuscitation.2024.110186</a></li>
+        <li>Scientific Priorities for DSED in Refractory Cardiac Arrest — Multistakeholder Thinktank. <span className="en">J Am Heart Assoc 2025.</span> <a href="https://doi.org/10.1161/JAHA.125.044130" target="_blank" rel="noopener">doi:10.1161/JAHA.125.044130</a></li>
+      </ol>
     </div>
   );
 }
@@ -351,7 +473,7 @@ function Footer(){
         · 本內容為讀書會共筆整理，未必涵蓋所有相關文獻<br/>
         · 僅供學術與教育用途，不代表任何單位之官方立場<br/>
         · 本內容未涉及任何利益衝突<br/>
-        · 主要參考：ILCOR/AHA 2023 CPR &amp; ECC、Cheskes S et al. NEJM 2022 (DOSE-VF)、Resuscitation 2024 次級分析、JAHA 2025 thinktank。臨床操作以各院 SOP 與最新指引為準。
+        · 主要參考：ILCOR/AHA 2023 CPR &amp; ECC、<a href="https://doi.org/10.1056/NEJMoa2207304" target="_blank" rel="noopener">Cheskes S et al. NEJM 2022 (DOSE-VF)</a>、<a href="https://doi.org/10.1016/j.resuscitation.2024.110186" target="_blank" rel="noopener">Resuscitation 2024 次級分析</a>、<a href="https://doi.org/10.1161/JAHA.125.044130" target="_blank" rel="noopener">JAHA 2025 thinktank</a>。臨床操作以各院 SOP 與最新指引為準。
       </div>
     </footer>
   );
@@ -368,6 +490,7 @@ function App(){
       <main>
         {tab==='home'&&<Home/>}
         {tab==='rec'&&<Rec/>}
+        {tab==='pads'&&<Pads/>}
         {tab==='mech'&&<Mech/>}
         {tab==='trial'&&<Trial/>}
         {tab==='prac'&&<Prac/>}
