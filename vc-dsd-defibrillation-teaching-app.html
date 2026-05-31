@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>向量改變 (VC) 與雙重連續性去顫 (DSD) — 持續性 VF/pVT 處置</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1a3a5c; --navy-light:#2d5a87; --gold:#f9a825; --gold-soft:#fff8e1;
+  --accent:#e74c3c; --success:#27ae60; --warn:#c47f00;
+  --bg:#f4f6f8; --card:#ffffff; --text:#22323f; --muted:#6b7c8a; --border:#e3e9ee;
+  --shadow:0 4px 18px rgba(26,58,92,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Noto Sans TC',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+.app{max-width:760px;margin:0 auto;padding-bottom:env(safe-area-inset-bottom);}
+header{background:linear-gradient(135deg,var(--navy),var(--navy-light));color:#fff;padding:22px 18px 18px;border-bottom:4px solid var(--gold);}
+header .eyebrow{font-size:12px;letter-spacing:2px;color:var(--gold);font-weight:600;}
+header h1{font-size:20px;font-weight:700;margin-top:4px;line-height:1.4;}
+header .sub{font-size:13px;color:#cdd9e4;margin-top:6px;}
+nav{display:flex;overflow-x:auto;background:var(--navy);position:sticky;top:0;z-index:10;scrollbar-width:none;}
+nav::-webkit-scrollbar{display:none;}
+nav button{flex:0 0 auto;background:none;border:none;color:#b9c8d6;font-family:inherit;font-size:14px;font-weight:500;padding:13px 16px;min-height:48px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;}
+nav button.active{color:#fff;border-bottom-color:var(--gold);font-weight:600;}
+main{padding:16px 14px 40px;}
+.card{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:18px;margin-bottom:16px;}
+.card h2{font-size:17px;color:var(--navy);font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.card h3{font-size:15px;color:var(--navy-light);font-weight:600;margin:14px 0 6px;}
+.card p{font-size:14.5px;margin-bottom:8px;}
+.en{color:var(--navy-light);font-style:normal;font-weight:500;}
+.stat{color:var(--accent);font-weight:700;}
+.takehome{background:var(--gold-soft);border:1px solid var(--gold);border-left:5px solid var(--gold);border-radius:12px;padding:16px;margin-bottom:16px;}
+.takehome .label{display:inline-block;background:var(--gold);color:#5a3d00;font-size:12px;font-weight:700;letter-spacing:1px;padding:3px 10px;border-radius:20px;margin-bottom:10px;}
+.takehome ol{margin-left:18px;}
+.takehome li{font-size:14.5px;margin-bottom:9px;}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;margin-right:5px;vertical-align:middle;}
+.tag.iib{background:#fde8c8;color:var(--warn);}
+.tag.pos{background:#d6f0df;color:var(--success);}
+.tag.neu{background:#e6ebf0;color:var(--navy-light);}
+.tag.warn{background:#fbe0dd;color:var(--accent);}
+.rec{display:flex;gap:12px;padding:12px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;background:#fafcfe;}
+.rec .num{flex:0 0 30px;height:30px;background:var(--navy);color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;}
+.flag{background:#fff4f2;border:1px solid #f3c9c2;border-left:5px solid var(--accent);border-radius:12px;padding:16px;margin:14px 0;}
+.flag .label{display:inline-block;background:var(--accent);color:#fff;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:8px;}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0;}
+th,td{border:1px solid var(--border);padding:8px 9px;text-align:left;vertical-align:top;}
+th{background:var(--navy);color:#fff;font-weight:600;font-size:13px;}
+tr:nth-child(even) td{background:#f7fafc;}
+.callout{background:#eef4fa;border-radius:10px;padding:12px 14px;font-size:13.5px;color:var(--navy);margin:10px 0;}
+.quiz-progress{height:6px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:14px;}
+.quiz-progress>div{height:100%;background:var(--gold);transition:width .3s;}
+.qmeta{font-size:12px;color:var(--muted);margin-bottom:6px;}
+.question{font-size:15.5px;font-weight:600;color:var(--navy);margin-bottom:14px;}
+.opt{display:block;width:100%;text-align:left;font-family:inherit;font-size:14.5px;background:#fafcfe;border:1.5px solid var(--border);border-radius:10px;padding:13px 14px;margin-bottom:9px;min-height:48px;cursor:pointer;transition:.15s;}
+.opt:hover{border-color:var(--navy-light);}
+.opt.correct{background:#e7f6ec;border-color:var(--success);font-weight:600;}
+.opt.wrong{background:#fbe7e4;border-color:var(--accent);}
+.opt:disabled{cursor:default;}
+.explain{background:var(--gold-soft);border:1px solid var(--gold);border-radius:10px;padding:13px;font-size:14px;margin-top:6px;}
+.explain .verdict{font-weight:700;margin-bottom:6px;}
+.btn{background:var(--navy);color:#fff;border:none;font-family:inherit;font-size:15px;font-weight:600;padding:12px 20px;border-radius:10px;min-height:48px;cursor:pointer;margin-top:10px;}
+.btn:active{background:var(--navy-light);}
+.score{text-align:center;padding:20px;}
+.score .big{font-size:40px;font-weight:700;color:var(--navy);}
+footer{background:var(--navy);color:#c8d4df;font-size:12px;line-height:1.8;padding:20px 16px 28px;}
+footer .sig{color:#fff;font-weight:600;}
+footer .gold{color:var(--gold);}
+footer hr{border:none;border-top:1px solid #2d5a87;margin:12px 0;}
+.disc{font-size:11px;color:#9fb1c0;}
+/* Share / QR */
+.share-button{position:fixed;top:14px;right:14px;z-index:1000;}
+.share-toggle{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);border:none;color:#fff;cursor:pointer;box-shadow:0 4px 14px rgba(26,58,92,.4);transition:.25s;display:flex;align-items:center;justify-content:center;}
+.share-toggle:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(26,58,92,.5);}
+.share-menu{position:absolute;top:56px;right:0;background:#fff;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);padding:18px;min-width:264px;display:none;animation:fadeInShare .3s ease;}
+.share-menu.active{display:block;}
+@keyframes fadeInShare{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+.share-menu h4{color:var(--navy);margin:0 0 14px;font-size:15px;display:flex;align-items:center;gap:8px;}
+.qr-container{background:#f7fafc;border-radius:12px;padding:14px;text-align:center;margin-bottom:14px;}
+.qr-container img{max-width:150px;height:auto;border-radius:8px;}
+.qr-container p{font-size:11.5px;color:var(--muted);margin:8px 0 0;}
+.share-buttons{display:flex;flex-direction:column;gap:9px;}
+.share-btn{display:flex;align-items:center;gap:12px;padding:11px 15px;border:none;border-radius:10px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:500;transition:.2s;text-decoration:none;color:#fff;}
+.share-btn.line{background:#00B900;}.share-btn.email{background:#EA4335;}.share-btn.copy{background:var(--navy-light);}
+.share-btn:hover{transform:translateX(4px);box-shadow:0 4px 12px rgba(0,0,0,.15);}
+.share-btn svg{width:20px;height:20px;fill:currentColor;}
+.share-close{position:absolute;top:8px;right:8px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);width:32px;height:32px;display:flex;align-items:center;justify-content:center;padding:0;}
+.share-close:hover{color:var(--navy);}
+</style>
+</head>
+<body>
+<!-- Share Button -->
+<div class="share-button">
+  <button class="share-toggle" onclick="toggleShareMenu()" title="分享此頁面"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></button>
+  <div class="share-menu" id="shareMenu">
+    <button class="share-close" onclick="toggleShareMenu()">&times;</button>
+    <h4>📤 分享此頁面</h4>
+    <div class="qr-container"><img id="qrCode" src="" alt="QR Code"><p>掃描 QR Code 開啟頁面</p></div>
+    <div class="share-buttons">
+      <a class="share-btn line" href="#" id="lineShare" target="_blank"><svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>LINE 分享</a>
+      <a class="share-btn email" href="#" id="emailShare"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>Email 分享</a>
+      <button class="share-btn copy" onclick="copyPageUrl()"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>複製連結</button>
+    </div>
+  </div>
+</div>
+<div id="root"></div>
+<script type="text/babel">
+const {useState} = React;
+
+function Header(){
+  return (
+    <header>
+      <div className="eyebrow">ACLS / 重症教學 · 成人高級救命術</div>
+      <h1>持續性 VF/pVT 的去顫策略<br/>向量改變 (VC) 與雙重連續性去顫 (DSD)</h1>
+      <div className="sub">Vector Change · Double Sequential Defibrillation｜2023 ILCOR / AHA + DOSE-VF 實證解讀</div>
+    </header>
+  );
+}
+
+const TABS = [
+  {id:'home', label:'重點摘要'},
+  {id:'rec', label:'建議'},
+  {id:'mech', label:'機制釐清'},
+  {id:'trial', label:'DOSE-VF 解讀'},
+  {id:'prac', label:'臨床實務'},
+  {id:'quiz', label:'小測驗'},
+];
+
+function Home(){
+  return (
+    <div className="takehome">
+      <span className="label">TAKE HOME MESSAGE</span>
+      <ol>
+        <li>連續 <b>≥3 次</b>標準電擊後仍為 VF/pVT 時，建議改用「<b>持續 VF/pVT</b> <span className="en">(persistent VF/pVT)</span>」描述，避免「電擊難治 <span className="en">shock-refractory</span>」標籤造成機制誤判。</li>
+        <li>反覆電擊後心律檢查仍見 VF/pVT 者，約 <span className="stat">80%</span> 其實是電擊成功後「<b>復發 <span className="en">recurrent</span></b>」而非真正電擊失敗 <span className="en">(refractory)</span>。兩者處置不同：復發性宜靠<b>電擊後心律穩定治療</b>補救，而非一味改變去顫技術。</li>
+        <li><b>DOSE-VF (NEJM 2022) 主要 ITT 結果為 <span className="tag pos">POSITIVE</span></b>：出院存活 DSED <span className="stat">30.4%</span> vs 標準 13.3%（<span className="en">RR 2.21, 95% CI 1.33–3.67</span>）；VC 21.7%（<span className="en">RR 1.71, 95% CI 1.01–2.88</span>）。但試驗<b>提前中止</b> (405/930)、open-label，per-protocol / as-treated 分析效益衰減（VC 尤其失去顯著性）。</li>
+        <li>⚠️ <b>文獻查證提醒</b>：教材「DSD 只在 17% 病人有效、83% 無效」的說法需謹慎—此為單側解讀，詳見「DOSE-VF 解讀」分頁。</li>
+        <li>本教材將 VC 與 DSD 均列為 <span className="tag iib">Class IIb</span>（效用尚未確立）；其中 <b>DSED 的證據強度與一致性 &gt; VC</b>。</li>
+        <li>DSED 需<b>毫秒級</b>精準間隔，手動同時啟動兩台去顫器難以達成 → 受設備與 SOP 限制。</li>
+      </ol>
+    </div>
+  );
+}
+
+function Rec(){
+  return (
+    <div className="card">
+      <h2>📋 兩項建議（依本教材，Class IIb）</h2>
+      <div className="rec">
+        <div className="num">1</div>
+        <div><b>改變電擊向量 <span className="en">(Vector Change)</span></b><br/>
+        對成人心臟停止病人，連續 ≥3 次電擊後仍持續 VF / pVT 時，改變電擊向量的效用<b>尚未被確立</b>。 <span className="tag iib">Class IIb</span></div>
+      </div>
+      <div className="rec">
+        <div className="num">2</div>
+        <div><b>雙重連續性去顫術 <span className="en">(Double Sequential Defibrillation)</span></b><br/>
+        對成人心臟停止病人，連續 ≥3 次電擊後仍持續 VF / pVT 時，使用 DSD 的效用<b>尚未被確立</b>。 <span className="tag iib">Class IIb</span></div>
+      </div>
+      <div className="callout">
+        <b>名詞：</b>VC＝將電擊片由前-外側 (anterior-lateral) 改為前-後 (anterior-posterior) 位置，改變電流向量。DSD/DSED＝以兩台去顫器、兩組電擊片近乎同時放電。兩者目的都是讓電流涵蓋更大或不同的心肌區域。
+      </div>
+    </div>
+  );
+}
+
+function Mech(){
+  return (
+    <div className="card">
+      <h2>🔍 機制與名詞釐清</h2>
+      <h3>去顫成功的決定因素</h3>
+      <p>電流自一電擊片流向另一電擊片，成功與否取決於：組織<b>電阻</b>、電擊片<b>位置（向量）</b>、以及同步的<b>高品質 CPR</b>。當這些都妥善優化時，雙相去顫終止 VF/pVT 成功率可 <span className="stat">&gt;75%</span>。</p>
+
+      <h3>「電擊難治」其實常是「復發」</h3>
+      <p>「電擊抗性 <span className="en">(shock-resistant)</span>」「電擊難治 <span className="en">(shock-refractory)</span>」常被用來描述反覆電擊後仍見的 VF/pVT。但證據顯示：約 <span className="stat">80%</span> 的情況，機制<b>不是電擊失敗</b>，而是 VF/pVT 在電擊<b>成功終止後復發</b>，再被隨後的 CPR 所掩蓋；下次暫停檢查時又看到 VF/pVT，被誤判為「電擊失敗」。</p>
+
+      <table>
+        <thead><tr><th>類型</th><th>機制</th><th>處置方向</th></tr></thead>
+        <tbody>
+          <tr><td>真正難治<br/><span className="en">refractory</span></td><td>電擊未能終止，VF/pVT 連續不斷</td><td>改變去顫技術（VC / DSD）可能有幫助</td></tr>
+          <tr><td>復發<br/><span className="en">recurrent</span></td><td>電擊已成功終止，但短時間內自發復發</td><td>偏重<b>電擊後心律穩定</b>（如抗心律不整藥、矯正缺血/電解質），而非單純換技術</td></tr>
+        </tbody>
+      </table>
+
+      <div className="callout">
+        <b>為何改用「持續 VF/pVT」？</b> 因為床邊往往<b>無法即時區分</b>難治 vs 復發。「難治」一詞隱含「電擊失敗」，易誤導治療策略。故指引建議：當機制不確定時，統一以中性描述「持續 VF/pVT」稱呼經 ≥3 次電擊後仍處於 VF/pVT 的病人。
+      </div>
+    </div>
+  );
+}
+
+function Trial(){
+  return (
+    <div className="card">
+      <h2>📊 DOSE-VF 試驗解讀</h2>
+      <p><span className="en">Cheskes S, et al. NEJM 2022; NCT04080986.</span> 加拿大 Ontario 六個 EMS、cluster-randomized、open-label、三組 crossover；因 COVID 人力提前中止（收 405 例，原計畫 ~930）。納入 OHCA、≥3 次標準電擊後仍 VF/pVT 者。</p>
+
+      <h3>主要結果（ITT，出院存活）<span className="tag pos">POSITIVE</span></h3>
+      <table>
+        <thead><tr><th>組別</th><th>出院存活</th><th>vs 標準 (RR, 95% CI)</th></tr></thead>
+        <tbody>
+          <tr><td>標準去顫</td><td>13.3%</td><td>— (ref)</td></tr>
+          <tr><td><b>DSED</b></td><td><span className="stat">30.4%</span></td><td>RR 2.21 (1.33–3.67) ✓</td></tr>
+          <tr><td>VC</td><td>21.7%</td><td>RR 1.71 (1.01–2.88) ✓（勉強顯著）</td></tr>
+        </tbody>
+      </table>
+      <p style={{fontSize:'13px'}}>良好神經學預後 <span className="en">(mRS ≤2)</span>：DSED 顯著（<span className="en">RR ~2.21, CI 1.26–3.88</span>）；<b>VC 未達顯著</b>（<span className="en">RR 1.48, CI 0.81–2.71</span>）。Per-protocol / as-treated 分析中效益普遍衰減，<b>VC 失去存活顯著性</b>（如 <span className="en">RR 1.13, CI 0.72–1.78</span>）。</p>
+
+      <div className="flag">
+        <span className="label">⚠ 文獻查證：教材詮釋需修正</span>
+        <p>教材寫道：「<i>僅在 17% 的 VF 持續不斷病人中觀察到 DSD 有顯著存活益處，83% 復發病人則沒有</i>」。這出自 <span className="en">DOSE-VF 次級分析 (Resuscitation 2024)</span>—345 例中 <b>17% (n=60) shock-refractory</b>、<b>83% (n=285) recurrent</b>。但該分析有兩種並存詮釋，不宜只取其一：</p>
+        <table>
+          <thead><tr><th>觀點</th><th>解讀</th></tr></thead>
+          <tbody>
+            <tr><td><b>原作者 (Cheskes)</b></td><td>DSED <b>不分型別皆優於標準</b>。在 refractory 組顯著（28.6% vs 0%, p=0.041）；recurrent 組雖<b>未達統計顯著</b>，但仍有 <b>&gt;10% 絕對存活改善</b>—屬<b>檢力不足</b>而非無效。結論：DSED 為較佳策略。 <span className="tag pos">作者：偏正向</span></td></tr>
+            <tr><td><b>AHA 2025 thinktank</b></td><td>顯著存活益處「<b>僅見於</b> persistent VF」，因此對 recurrent VF <b>過度使用 DSED 可能益處有限、甚至潛在風險</b>，列為安全性疑慮。 <span className="tag warn">指引：偏保守</span></td></tr>
+          </tbody>
+        </table>
+        <p style={{marginTop:'8px'}}><b>重點：</b>資料<b>並未</b>證明「DSED 在 83% 復發病人無效」—只是該次族群檢力不足、未達顯著。教材的單側措辭容易讓人把「未達顯著」誤讀成「確定無效」。製作 Take Home 前務必標明此爭議。</p>
+      </div>
+
+      <h3>為何只給 Class IIb？</h3>
+      <p>儘管 ITT 為正向，下列限制使指引保守：① 提前中止、樣本小（405/930）；② open-label；③ per-protocol/as-treated 效益衰減；④ 次族群機制與安全性尚有爭議；⑤ <b>VC 與 DSD 證據強度不同</b>—DSED 較一致，VC 較弱。</p>
+    </div>
+  );
+}
+
+function Prac(){
+  return (
+    <div className="card">
+      <h2>🏥 臨床實務注意</h2>
+      <h3>DSED 的時間精準度問題</h3>
+      <p>實驗顯示，成功終止 VF 所需的兩次「雙重」電擊<b>間隔需毫秒級精準度</b>。手動同時啟動兩台去顫器幾乎不可能達成此精度 → 真實場景的「DSED」其實間隔變異很大，這也是 ILCOR 2023 對其效用持保留態度的原因之一。</p>
+      <h3>實務取捨</h3>
+      <ul style={{marginLeft:'18px',fontSize:'14.5px'}}>
+        <li style={{marginBottom:'8px'}}>先<b>確保基本功</b>：高品質 CPR、電擊片貼附與位置、足夠能量、可逆病因 <span className="en">(5H5T)</span>。多數「難治」其實是這些未到位或為復發。</li>
+        <li style={{marginBottom:'8px'}}>單機可行時，<b>VC（改前-後位）</b>操作簡單、風險低，可作為改變向量的第一步。</li>
+        <li style={{marginBottom:'8px'}}>DSD 需兩台機器與訓練、有設備耗損與時間協調問題；應依各單位 SOP 與資源決定是否納入。</li>
+        <li>復發性 VF/pVT：思考<b>電擊後穩定</b>—抗心律不整藥 <span className="en">(amiodarone / lidocaine)</span>、矯正缺血、電解質、考慮 β-blocker / 機械循環支持轉介。</li>
+      </ul>
+      <div className="callout">本頁為救命術教學整理，實際操作以各院 SOP 與最新指引為準。</div>
+    </div>
+  );
+}
+
+const QUESTIONS = [
+  {
+    q:"關於「反覆電擊後仍見 VF/pVT」的機制，下列何者正確？",
+    opts:[
+      "幾乎都是因為電擊能量不足，應立即提高焦耳數",
+      "約 80% 其實是電擊成功終止後的『復發 (recurrent)』，而非電擊失敗",
+      "一律代表 shock-refractory，應立即施行 DSD",
+      "與 CPR 品質無關"
+    ],
+    correct:1,
+    verdict:"正確答案：B",
+    why:"證據顯示約 80% 是電擊成功後復發，被隨後 CPR 掩蓋；下次檢查再見 VF/pVT 易被誤判為電擊失敗。故指引改採中性詞「持續 VF/pVT」。"
+  },
+  {
+    q:"DOSE-VF (NEJM 2022) 的主要 ITT 結果方向為何？",
+    opts:[
+      "Negative：三組存活無差異",
+      "Neutral：僅次要指標有差異",
+      "Positive：DSED 與 VC 出院存活均優於標準去顫",
+      "因提前中止而無任何可解讀結果"
+    ],
+    correct:2,
+    verdict:"正確答案：C",
+    why:"ITT 主要終點為正向：DSED 30.4% (RR 2.21, 95% CI 1.33–3.67)、VC 21.7% (RR 1.71, 95% CI 1.01–2.88) vs 標準 13.3%。惟試驗提前中止、open-label，per-protocol 分析效益衰減（VC 尤甚）。"
+  },
+  {
+    q:"教材稱「DSD 僅在 17% 病人有效、83% 無效」，最恰當的解讀是？",
+    opts:[
+      "完全正確，DSD 對復發性 VF 確定無效",
+      "這是單側解讀；recurrent 組是『未達統計顯著（檢力不足）』，仍有 >10% 絕對存活改善，原作者認為 DSED 不分型別皆較佳",
+      "代表 VC 比 DSD 更有效",
+      "代表應對所有病人都用 DSD"
+    ],
+    correct:1,
+    verdict:"正確答案：B",
+    why:"次級分析 (Resuscitation 2024) 中 recurrent 組未達顯著屬檢力不足，非證明無效。原作者結論 DSED 不分型別皆優；AHA 2025 thinktank 則保守視為安全性疑慮。兩種詮釋並存，不應只取『無效』一側。"
+  },
+  {
+    q:"下列關於 VC 與 DSD 證據強度的敘述，何者較貼近現況？",
+    opts:[
+      "兩者證據完全相同",
+      "VC 證據比 DSD 強且更一致",
+      "DSED 證據強度與一致性 > VC；VC 在 per-protocol 分析常失去存活顯著性",
+      "兩者皆為 Class I 強烈建議"
+    ],
+    correct:2,
+    verdict:"正確答案：C",
+    why:"DSED 在主要與次級分析較一致；VC 神經學預後未達顯著、as-treated 分析失去存活顯著性。本教材兩者均列 Class IIb（效用尚未確立）。"
+  }
+];
+
+function Quiz(){
+  const [i,setI]=useState(0);
+  const [sel,setSel]=useState(null);
+  const [show,setShow]=useState(false);
+  const [score,setScore]=useState(0);
+  const [done,setDone]=useState(false);
+
+  const q=QUESTIONS[i];
+  const answer=(idx)=>{ if(show) return; setSel(idx); setShow(true); if(idx===q.correct) setScore(s=>s+1); };
+  const next=()=>{ if(i<QUESTIONS.length-1){setI(i+1);setSel(null);setShow(false);} else {setDone(true);} };
+  const reset=()=>{ setI(0);setSel(null);setShow(false);setScore(0);setDone(false); };
+
+  if(done){
+    return (
+      <div className="card score">
+        <h2 style={{justifyContent:'center'}}>🎯 測驗完成</h2>
+        <div className="big">{score} / {QUESTIONS.length}</div>
+        <p style={{marginTop:'8px',color:'var(--muted)'}}>{score===QUESTIONS.length?'全對！對試驗方向判讀很到位。':'回顧「DOSE-VF 解讀」分頁，特別注意次族群的詮釋陷阱。'}</p>
+        <button className="btn" onClick={reset}>再測一次</button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="card">
+      <h2>📝 小測驗</h2>
+      <div className="quiz-progress"><div style={{width:`${(i+1)/QUESTIONS.length*100}%`}}/></div>
+      <div className="qmeta">第 {i+1} 題 / 共 {QUESTIONS.length} 題　目前得分 {score}</div>
+      <div className="question">{q.q}</div>
+      {q.opts.map((o,idx)=>(
+        <button key={idx} className={"opt"+(show&&idx===q.correct?" correct":"")+(show&&idx===sel&&idx!==q.correct?" wrong":"")}
+          disabled={show} onClick={()=>answer(idx)}>{String.fromCharCode(65+idx)}. {o}</button>
+      ))}
+      {show&&(
+        <div className="explain">
+          <div className="verdict">{sel===q.correct?'✅ ':'❌ '}{q.verdict}</div>
+          <div>{q.why}</div>
+          <button className="btn" onClick={next}>{i<QUESTIONS.length-1?'下一題':'查看結果'}</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Footer(){
+  return (
+    <footer>
+      <div className="sig">讀書會共筆整理人</div>
+      <div className="sig">謝慕揚 醫師　<span style={{fontWeight:400}}>MD, PhD, FESC</span></div>
+      <div className="gold">重症醫學・結構性心臟病與介入心臟學</div>
+      <hr/>
+      <div className="disc">
+        · 本內容為讀書會共筆整理，未必涵蓋所有相關文獻<br/>
+        · 僅供學術與教育用途，不代表任何單位之官方立場<br/>
+        · 本內容未涉及任何利益衝突<br/>
+        · 主要參考：ILCOR/AHA 2023 CPR &amp; ECC、Cheskes S et al. NEJM 2022 (DOSE-VF)、Resuscitation 2024 次級分析、JAHA 2025 thinktank。臨床操作以各院 SOP 與最新指引為準。
+      </div>
+    </footer>
+  );
+}
+
+function App(){
+  const [tab,setTab]=useState('home');
+  return (
+    <div className="app">
+      <Header/>
+      <nav>{TABS.map(t=>(
+        <button key={t.id} className={tab===t.id?'active':''} onClick={()=>setTab(t.id)}>{t.label}</button>
+      ))}</nav>
+      <main>
+        {tab==='home'&&<Home/>}
+        {tab==='rec'&&<Rec/>}
+        {tab==='mech'&&<Mech/>}
+        {tab==='trial'&&<Trial/>}
+        {tab==='prac'&&<Prac/>}
+        {tab==='quiz'&&<Quiz/>}
+      </main>
+      <Footer/>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+<!-- Share Button JavaScript -->
+<script>
+  function initShareButtons(){
+    const pageUrl = window.location.href;
+    const pageTitle = document.title;
+    const encodedUrl = encodeURIComponent(pageUrl);
+    const qr = document.getElementById('qrCode');
+    if(qr) qr.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodedUrl;
+    const line = document.getElementById('lineShare');
+    if(line) line.href = 'https://social-plugins.line.me/lineit/share?url=' + encodedUrl;
+    const email = document.getElementById('emailShare');
+    if(email){
+      const subject = encodeURIComponent('Share: ' + pageTitle);
+      const body = encodeURIComponent('我想與你分享這個頁面：\n\n' + pageTitle + '\n\n' + pageUrl);
+      email.href = 'mailto:?subject=' + subject + '&body=' + body;
+    }
+  }
+  function toggleShareMenu(){ const m = document.getElementById('shareMenu'); if(m) m.classList.toggle('active'); }
+  function copyPageUrl(){
+    const pageUrl = window.location.href;
+    navigator.clipboard.writeText(pageUrl).then(()=>{ alert('連結已複製！'); }).catch(()=>{
+      const ta = document.createElement('textarea'); ta.value = pageUrl; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); alert('連結已複製！');
+    });
+  }
+  document.addEventListener('click', function(e){ const sb = document.querySelector('.share-button'); const sm = document.getElementById('shareMenu'); if(sb && sm && !sb.contains(e.target) && sm.classList.contains('active')) sm.classList.remove('active'); });
+  document.addEventListener('DOMContentLoaded', initShareButtons);
+</script>
+</body>
+</html>
