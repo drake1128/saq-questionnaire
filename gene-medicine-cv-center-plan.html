@@ -115,6 +115,149 @@
   }
   ul { padding-left: 22px; }
   li { margin: 4px 0; }
+
+  /* ---- Tabs ---- */
+  .tabnav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    background: #12283f;
+    padding: 8px 8px 0;
+    border-bottom: 3px solid #0d1f30;
+  }
+  .tabnav button {
+    flex: 1 1 auto;
+    min-width: 140px;
+    border: none;
+    background: transparent;
+    color: #cbd5e0;
+    font-family: inherit;
+    font-size: 0.95em;
+    font-weight: 600;
+    padding: 12px 14px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  .tabnav button:hover { background: rgba(255,255,255,.08); color: #fff; }
+  .tabnav button.active { background: #f5f5f7; color: #1a3a5c; }
+  .tabnav button .tnum {
+    display: inline-block;
+    font-weight: 700;
+    margin-right: 4px;
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ---- Referral / SDM helpers ---- */
+  .lede {
+    font-size: 1.02em;
+    background: #eef4fb;
+    border-left: 4px solid #2c5282;
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 12px 0 18px;
+  }
+  .refgroup { margin: 14px 0; }
+  .refgroup h4 {
+    color: #991b1b;
+    font-size: 0.98em;
+    margin: 0 0 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed #e5b4b4;
+  }
+  .src {
+    color: #6b7280;
+    font-size: 0.82em;
+    font-style: italic;
+  }
+  .cite-list {
+    font-size: 0.82em;
+    color: #4b5563;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-top: 10px;
+  }
+  .cite-list li { margin: 3px 0; }
+  .cite-list a { color: #2563eb; text-decoration: underline; }
+  .cite-list a:hover { color: #1d4ed8; }
+  .steps {
+    list-style: none;
+    counter-reset: step;
+    padding-left: 0;
+  }
+  .steps li {
+    position: relative;
+    padding: 8px 8px 8px 44px;
+    margin: 8px 0;
+    background: #f0f7ff;
+    border-radius: 8px;
+  }
+  .steps li::before {
+    counter-increment: step;
+    content: counter(step);
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    background: #2c5282;
+    color: #fff;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    font-size: 0.85em;
+    font-weight: 700;
+  }
+  .value-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 10px;
+    margin: 12px 0;
+  }
+  .value-card {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 0.92em;
+  }
+  .value-card b { color: #065f46; }
+  .warn {
+    background: #fff7ed;
+    border-left: 4px solid #ea580c;
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 0.92em;
+  }
+  .faq { margin: 8px 0; }
+  .faq summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: #1a3a5c;
+    padding: 8px 0;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .faq p { margin: 8px 0 14px; font-size: 0.92em; }
+  .fee-note { font-size: 0.82em; color: #6b7280; margin-top: 8px; }
+  .pending { color: #b45309; font-weight: 600; }
+  .audience-tag {
+    display: inline-block;
+    font-size: 0.78em;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+  }
+  .tag-md { background: #dbeafe; color: #1e40af; }
+  .tag-pt { background: #dcfce7; color: #166534; }
 </style>
 </head>
 <body>
@@ -124,7 +267,16 @@
   <div class="subtitle">手稿規劃整理 ｜ Drake Hsieh, MD, PhD, FESC</div>
 </div>
 
+<nav class="tabnav" role="tablist">
+  <button class="active" role="tab" aria-selected="true" data-tab="tab-1"><span class="tnum">①</span>規劃手稿</button>
+  <button role="tab" aria-selected="false" data-tab="tab-2"><span class="tnum">②</span>轉介醫師說明</button>
+  <button role="tab" aria-selected="false" data-tab="tab-3"><span class="tnum">③</span>病人 SDM</button>
+</nav>
+
 <div class="container">
+
+  <!-- ===================== TAB 1：規劃手稿 ===================== -->
+  <div id="tab-1" class="tab-panel active" role="tabpanel">
 
   <!-- Take Home -->
   <div class="section">
@@ -316,6 +468,279 @@ gantt
     </ul>
   </div>
 
+  </div><!-- /tab-1 -->
+
+
+  <!-- ===================== TAB 2：轉介醫師說明 ===================== -->
+  <div id="tab-2" class="tab-panel" role="tabpanel">
+
+    <div class="section">
+      <span class="audience-tag tag-md">給轉介醫師 ｜ For referring physicians</span>
+      <h2>① 一句話定位</h2>
+      <div class="lede">
+        本中心收治<strong>遺傳性心律與心肌疾病</strong>，提供基因評估、家族 cascade 篩檢與聯合照護。
+        轉介後您<strong>保留原主治關係</strong>；我們完成基因評估與報告解釋後回轉，並可與台大總院基因醫學部資料連動。
+      </div>
+      <div class="takehome">
+        <strong>適合轉介的核心族群</strong>：年輕/不明原因猝死或其存活者、家族性心肌病變、遺傳性心律不整 (channelopathy)、
+        遺傳性主動脈病變、家族性高膽固醇血症 (FH)，以及<strong>家族已知致病變異需 cascade 篩檢</strong>者。
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>② 轉介條件（When to refer）</h2>
+      <p style="font-size:.9em;color:#4b5563">以下閾值依現行指引整理，<strong>每條附出處</strong>；符合任一即可轉介評估。</p>
+
+      <div class="refgroup">
+        <h4>A. 遺傳性心律疾病 / Channelopathy</h4>
+        <ul>
+          <li>Long QT：靜息 QTc ≥ 480 ms，或 ≥ 460 ms 合併不明原因暈厥 <span class="src">[1] 2022 ESC VA；[2] 2013 HRS/EHRA/APHRS</span></li>
+          <li>Brugada：自發或藥物誘發 type 1 ECG pattern <span class="src">[1] 2022 ESC VA</span></li>
+          <li>CPVT：運動或腎上腺素誘發雙向/多形性 VT <span class="src">[1] 2022 ESC VA</span></li>
+          <li>不明原因心室顫動 (idiopathic VF)、年輕 aborted SCD 存活者 <span class="src">[2] 2013 HRS/EHRA/APHRS</span></li>
+        </ul>
+      </div>
+
+      <div class="refgroup">
+        <h4>B. 心肌病變 Cardiomyopathy</h4>
+        <ul>
+          <li>HCM：不明原因 LV 壁厚 ≥ 15 mm（有家族史者 ≥ 13 mm） <span class="src">[3] 2024 AHA/ACC HCM guideline</span></li>
+          <li>DCM：早發或家族性，尤其合併傳導疾病/惡性心律不整家族史 <span class="src">[4] 2023 ESC cardiomyopathy guideline</span></li>
+          <li>ARVC：符合 2010 Task Force Criteria 或右室病變合併家族史 <span class="src">[4] 2023 ESC；[5] 2010 TFC</span></li>
+          <li>LVNC、限制型心肌病合併家族史 <span class="src">[4] 2023 ESC cardiomyopathy guideline</span></li>
+        </ul>
+      </div>
+
+      <div class="refgroup">
+        <h4>C. 遺傳性主動脈病變 Aortopathy</h4>
+        <ul>
+          <li>胸主動脈瘤/剝離 &lt; 60 歲，或升主動脈/主動脈根部擴大，或主動脈剝離→建議基因檢測 <span class="src">[6] 2022 ACC/AHA aortic disease guideline</span></li>
+          <li>症候群特徵：Marfan、Loeys-Dietz、血管型 Ehlers-Danlos (vEDS) <span class="src">[6] 2022 ACC/AHA aortic disease guideline</span></li>
+          <li>二葉式主動脈瓣合併主動脈病變、主動脈剝離家族史 <span class="src">[6] 2022 ACC/AHA aortic disease guideline</span></li>
+        </ul>
+      </div>
+
+      <div class="refgroup">
+        <h4>D. 家族性高膽固醇血症 FH</h4>
+        <ul>
+          <li>未治療 LDL-C：成人 ≥ 190 mg/dL、兒童 ≥ 160 mg/dL <span class="src">[7] 2019 ESC/EAS dyslipidaemia；[8] Dutch Lipid Clinic Network</span></li>
+          <li>肌腱黃色瘤、早發冠心病（男 &lt; 55 / 女 &lt; 60）家族史 <span class="src">[8] Dutch Lipid Clinic Network criteria</span></li>
+        </ul>
+      </div>
+
+      <div class="refgroup">
+        <h4>E. 紅旗 / 家族史（跨領域）</h4>
+        <ul>
+          <li>一等親 &lt; 50 歲不明原因猝死</li>
+          <li>家族已知致病性 (pathogenic/likely pathogenic) 變異 → cascade 單點位篩檢</li>
+        </ul>
+      </div>
+
+      <div class="cite-list">
+        <strong>引用來源</strong>
+        <ul style="margin:6px 0 0">
+          <li>[1] 2022 ESC Guidelines for the management of patients with ventricular arrhythmias and the prevention of sudden cardiac death. <em>Eur Heart J</em> 2022;43:3997-4126. doi:<a href="https://doi.org/10.1093/eurheartj/ehac262" target="_blank" rel="noopener">10.1093/eurheartj/ehac262</a></li>
+          <li>[2] Priori SG, et al. HRS/EHRA/APHRS Expert Consensus Statement on inherited primary arrhythmia syndromes. <em>Heart Rhythm</em> 2013;10:1932-63. doi:<a href="https://doi.org/10.1016/j.hrthm.2013.05.014" target="_blank" rel="noopener">10.1016/j.hrthm.2013.05.014</a></li>
+          <li>[3] Ommen SR, et al. 2024 AHA/ACC/AMSSM/HRS/PACES/SCMR Guideline for the Management of Hypertrophic Cardiomyopathy. <em>Circulation</em> 2024;149:e1239-e1311. doi:<a href="https://doi.org/10.1161/CIR.0000000000001250" target="_blank" rel="noopener">10.1161/CIR.0000000000001250</a></li>
+          <li>[4] Arbelo E, et al. 2023 ESC Guidelines for the management of cardiomyopathies. <em>Eur Heart J</em> 2023;44:3503-3626. doi:<a href="https://doi.org/10.1093/eurheartj/ehad194" target="_blank" rel="noopener">10.1093/eurheartj/ehad194</a></li>
+          <li>[5] Marcus FI, et al. Diagnosis of ARVC/D: proposed modification of the Task Force Criteria. <em>Circulation</em> 2010;121:1533-41. doi:<a href="https://doi.org/10.1161/CIRCULATIONAHA.108.840827" target="_blank" rel="noopener">10.1161/CIRCULATIONAHA.108.840827</a></li>
+          <li>[6] Isselbacher EM, et al. 2022 ACC/AHA Guideline for the Diagnosis and Management of Aortic Disease. <em>Circulation</em> 2022;146:e334-e482. doi:<a href="https://doi.org/10.1161/CIR.0000000000001106" target="_blank" rel="noopener">10.1161/CIR.0000000000001106</a></li>
+          <li>[7] Mach F, et al. 2019 ESC/EAS Guidelines for the management of dyslipidaemias. <em>Eur Heart J</em> 2020;41:111-188. doi:<a href="https://doi.org/10.1093/eurheartj/ehz455" target="_blank" rel="noopener">10.1093/eurheartj/ehz455</a></li>
+          <li>[8] Nordestgaard BG, et al. Familial hypercholesterolaemia — EAS Consensus Statement (Dutch Lipid Clinic Network criteria). <em>Eur Heart J</em> 2013;34:3478-90. doi:<a href="https://doi.org/10.1093/eurheartj/eht273" target="_blank" rel="noopener">10.1093/eurheartj/eht273</a></li>
+        </ul>
+        <div class="fee-note">＊閾值為轉介評估之參考門檻，最終收案仍以個別臨床判斷為準。</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>③ 病人轉介後可得到什麼（Deliverables）</h2>
+      <ul>
+        <li><b>表型評估</b>：ECG、心臟超音波、CMR、24h / 長程心電圖、運動測試、藥物誘發測試（視需要）</li>
+        <li><b>遺傳諮詢</b>：檢測前後諮詢、知情同意、VUS（不確定變異）控管流程</li>
+        <li><b>NGS 檢測</b>：WES / WGS 或標的基因分析，委由台大總院基因醫學部執行</li>
+        <li><b>多專科團隊</b>：心臟科 + 基因諮詢師 + 影像 (CMR) + 個管師 + 心理諮詢</li>
+        <li><b>臨床決策</b>：風險分層、ICD/藥物/運動/生育建議</li>
+        <li><b>家族照護</b>：cascade 家族篩檢、長期追蹤、biobank / registry 選項</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>④ 聯合照護模式（Co-management）</h2>
+      <p style="font-size:.9em;color:#4b5563">「誰做什麼」分工 — 轉介醫師保留主治關係，本中心提供基因專科支援。</p>
+      <table>
+        <tr><th>項目</th><th>轉介醫師</th><th>本中心</th><th>台大總院</th></tr>
+        <tr><td>主治關係 / 一般照護</td><td>✔ 保留</td><td>協同</td><td>—</td></tr>
+        <tr><td>基因評估 / 諮詢</td><td>—</td><td>✔</td><td>支援</td></tr>
+        <tr><td>NGS 定序執行</td><td>—</td><td>開單</td><td>✔ 實驗室</td></tr>
+        <tr><td>報告解釋 / VUS 判讀</td><td>共同</td><td>✔</td><td>連動</td></tr>
+        <tr><td>Cascade 家族篩檢</td><td>協助通知</td><td>✔</td><td>—</td></tr>
+        <tr><td>回轉與長期追蹤</td><td>✔ 回轉後</td><td>必要時回診</td><td>—</td></tr>
+      </table>
+      <div class="fee-note">＊與 NTUH 總院高憲立教授團隊資料連動。</div>
+    </div>
+
+    <div class="section">
+      <h2>⑤ 如何轉介 + 費用速覽</h2>
+      <ul class="steps">
+        <li>院內轉診單或院外轉介至「心血管精準醫學遺傳性疾病門診」</li>
+        <li>門診評估、遺傳諮詢與知情同意後開立 NGS 醫令</li>
+        <li>採檢：<b>2 管 3 ml EDTA 採血管</b>，委外送台大總院代檢</li>
+        <li>報告時程：檢體送出後約 <b>8–12 週</b>，報告上傳 portal</li>
+        <li>門診醫師或遺傳諮詢師解釋報告，安排 cascade 與回轉</li>
+      </ul>
+      <p style="font-size:.9em;color:#4b5563;margin-top:10px">費用見下方共用「費用一覽」表（與病人 SDM 分頁金額一致）。</p>
+    </div>
+
+    <!-- 共用費用表 -->
+    <div class="section" id="fee-block">
+      <h2>⑥ 費用一覽</h2>
+      <table>
+        <tr>
+          <th>項目（醫令碼）</th>
+          <th>本院自費價 (NTD)</th>
+          <th>美國對照基準<br><span style="font-weight:400;font-size:.85em">（僅供參考，非本院收費）</span></th>
+          <th>備註</th>
+        </tr>
+        <tr>
+          <td>全外顯子定序 WES (000X0262)</td>
+          <td><b>30,000</b></td>
+          <td>定序約 US$600–1,000+；含分析與諮詢更高 <span class="src">[a]</span></td>
+          <td>單基因遺傳疾病</td>
+        </tr>
+        <tr>
+          <td>全基因體定序 WGS (000X0263)</td>
+          <td><b>55,000</b></td>
+          <td>定序約 US$600 起；臨床版通常更高 <span class="src">[a]</span></td>
+          <td>對 CNV/SV/non-coding 涵蓋較佳</td>
+        </tr>
+        <tr>
+          <td>單基因分析 Level 3 (000X0125)</td>
+          <td><b>8,000</b></td>
+          <td>對應標的基因 panel 自費約 US$250 <span class="src">[b]</span></td>
+          <td>指定點位套組</td>
+        </tr>
+        <tr>
+          <td>單基因分析 Level 4 (000X0126)</td>
+          <td><b>15,000</b></td>
+          <td>對應標的基因 panel 自費約 US$250 <span class="src">[b]</span></td>
+          <td>新生兒篩檢項目</td>
+        </tr>
+        <tr>
+          <td>門診遺傳諮詢費</td>
+          <td><span class="pending">待院方核定</span></td>
+          <td>約 US$100–250 / 次（檢測前/後各一次） <span class="src">[c]</span></td>
+          <td>台灣資料稍後提供</td>
+        </tr>
+        <tr>
+          <td>Cascade 家族變異檢測（單點位）</td>
+          <td><span class="pending">待院方核定</span></td>
+          <td>單點位家族變異追蹤約 US$250 <span class="src">[c][d]</span></td>
+          <td>已知家族致病變異</td>
+        </tr>
+      </table>
+      <div class="cite-list">
+        <strong>美國對照基準來源</strong>（匯率約 US$1 ≈ NT$32，僅供量級參考）
+        <ul style="margin:6px 0 0">
+          <li>[a] 3billion，<a href="https://3billion.io/blog/how-much-does-genetic-testing-uninsured" target="_blank" rel="noopener">"How Much Does Genetic Testing Cost Without Insurance?"</a>（WES 約 US$600–1,000+、WGS 約 US$600 起，僅定序）。</li>
+          <li>[b] Invitae，<a href="https://www.invitae.com/unlock-genetic-testing/cardiomyopathy-arrhythmia" target="_blank" rel="noopener">Unlock Cardiomyopathy & Arrhythmia Program</a>（自費/贊助方案；符合資格者 US$0）。</li>
+          <li>[c] Genome Medical，<a href="https://www.genomemedical.com/genetics-care/cost-of-genetic-counseling-and-testing/" target="_blank" rel="noopener">Cost of Genetic Counseling and Testing</a>（自費遺傳諮詢 US$250 檢測前 + US$250 檢測後；一般行情 US$100–450/次）。</li>
+          <li>[d] GeneDx，<a href="https://providers.genedx.com/tests/detail/self-pay-follow-up-testing-for-familial-variant-1101" target="_blank" rel="noopener">Self-Pay Follow-up Testing for Familial Variant</a>（單點位家族變異追蹤）。</li>
+        </ul>
+        <div class="fee-note">＊美國數字為各實驗室/服務之自費或贊助方案行情，會因保險、地區與方案而異，<strong>非本院收費標準</strong>。台灣端諮詢/cascade 費用以院方公告為準。</div>
+      </div>
+    </div>
+
+  </div><!-- /tab-2 -->
+
+
+  <!-- ===================== TAB 3：病人 SDM ===================== -->
+  <div id="tab-3" class="tab-panel" role="tabpanel">
+
+    <div class="section">
+      <span class="audience-tag tag-pt">給病人與家屬 ｜ 醫病共享決策 (SDM)</span>
+      <h2>① 這個門診是什麼？</h2>
+      <div class="lede">
+        如果您或家人有<strong>不明原因的心臟問題</strong>（例如年輕時心臟驟停、心肌肥厚或擴大、嚴重心律不整、
+        主動脈剝離，或膽固醇異常高），有些原因可能<strong>來自基因、會在家族中遺傳</strong>。
+        這個門診會幫您<strong>找出原因、評估風險、保護家人</strong>，並陪您一起決定要不要做基因檢測。
+      </div>
+      <p style="font-size:.92em;color:#4b5563">
+        「醫病共享決策（SDM）」的意思是：醫師提供清楚的資訊與選項，<strong>由您和醫師一起做最適合您的決定</strong>。
+        做不做檢測都是您的選擇。
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>② 您會得到的服務</h2>
+      <ul class="steps">
+        <li><b>看診評估</b>：醫師了解您的症狀、心電圖、超音波等，並畫出家族病史圖</li>
+        <li><b>遺傳諮詢</b>：諮詢師說明檢測能回答什麼、不能回答什麼</li>
+        <li><b>抽血檢測</b>：抽 2 管血（約 6 毫升），送實驗室做基因定序</li>
+        <li><b>報告解釋</b>：約 8–12 週後，醫師/諮詢師為您解讀結果</li>
+        <li><b>家人篩檢</b>：若找到明確基因，協助安排家人檢查（cascade）</li>
+        <li><b>後續追蹤</b>：依結果安排治療、用藥、運動與生育建議與長期追蹤</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>③ 它的價值 — 為什麼值得做</h2>
+      <div class="value-grid">
+        <div class="value-card"><b>找出原因</b><br>釐清心臟問題是否來自基因，不再「不明原因」。</div>
+        <div class="value-card"><b>預防猝死</b><br>提早分辨高風險者，必要時裝置 ICD 或調整治療。</div>
+        <div class="value-card"><b>保護家人</b><br>找到家族基因後，及早篩檢親人、及早保護。</div>
+        <div class="value-card"><b>用藥與運動</b><br>依基因結果調整藥物與運動建議，避免危險。</div>
+        <div class="value-card"><b>生育規劃</b><br>提供生育與下一代風險的諮詢與選項。</div>
+        <div class="value-card"><b>長期照護</b><br>納入專責團隊追蹤，與您的原主治醫師聯合照護。</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>④ 也要一起考慮的事（誠實說明）</h2>
+      <div class="warn">
+        <ul style="margin:0">
+          <li><b>不一定有明確答案</b>：檢測<strong>不保證</strong>找到致病基因，可能結果是正常或無定論。</li>
+          <li><b>不確定的變異 (VUS)</b>：有時會驗到「意義不明」的基因變化，需要時間與後續追蹤判讀。</li>
+          <li><b>心理與保險</b>：知道帶有風險基因可能造成心理壓力，或影響某些保險投保，建議事先了解。</li>
+          <li><b>需要時間</b>：報告約需 8–12 週；家族篩檢與追蹤是長期過程。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>⑤ 預計費用</h2>
+      <p style="font-size:.92em;color:#4b5563">以下為自費項目；實際選擇哪一項會由醫師依您的情況建議。</p>
+      <table>
+        <tr><th>項目</th><th>本院自費價 (NTD)</th><th>說明</th></tr>
+        <tr><td>全外顯子定序（WES）</td><td><b>30,000</b></td><td>一次檢測大量基因，適合大多數遺傳性心臟病</td></tr>
+        <tr><td>全基因體定序（WGS）</td><td><b>55,000</b></td><td>涵蓋範圍最廣，適合複雜或前者驗不到時</td></tr>
+        <tr><td>單基因分析 Level 3 / Level 4</td><td><b>8,000 / 15,000</b></td><td>針對特定基因的較精簡套組</td></tr>
+        <tr><td>門診遺傳諮詢費</td><td><span class="pending">待院方核定</span></td><td>檢測前後的諮詢說明</td></tr>
+        <tr><td>家人篩檢（單點位）</td><td><span class="pending">待院方核定</span></td><td>家族已找到基因後，家人只需驗該點位</td></tr>
+      </table>
+      <div class="fee-note">
+        ＊上述為本院目前自費醫令價格；遺傳諮詢與家人篩檢費用待院方公告。<br>
+        ＊參考：美國同類檢測自費約定序 US$600 起、遺傳諮詢約 US$100–250/次（匯率約 US$1≈NT$32，僅供量級參考，非本院收費）。<br>
+        ＊部分情況健保可能給付，請於門診詢問。
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>⑥ 常見問題 FAQ</h2>
+      <details class="faq"><summary>要抽幾管血？會痛嗎？</summary>
+        <p>一般抽 2 管、約 6 毫升的血，和一般抽血一樣，不需要禁食。</p></details>
+      <details class="faq"><summary>多久會有報告？</summary>
+        <p>檢體送出後約 8–12 週，會由醫師或遺傳諮詢師當面為您解釋。</p></details>
+      <details class="faq"><summary>家人一定要一起驗嗎？</summary>
+        <p>不一定。但若在您身上找到明確的致病基因，建議家人做「單點位」篩檢，這樣可以及早保護高風險的親人。是否檢查由每位家人自行決定。</p></details>
+      <details class="faq"><summary>如果驗不到原因怎麼辦？</summary>
+        <p>驗不到不代表沒有問題。醫師仍會依您的臨床狀況持續追蹤，未來也可能因技術進步而重新分析。</p></details>
+      <details class="faq"><summary>健保有給付嗎？</summary>
+        <p>多數遺傳性心臟病的基因定序目前為自費；部分情況可能符合健保給付條件，請於門診與醫師確認。</p></details>
+    </div>
+
+  </div><!-- /tab-3 -->
+
+
   <div class="footer">
     讀書會共筆整理人　謝慕揚 醫師 MD, PhD, FESC<br>
     結構性心臟病與介入心臟學 ｜ 心血管精準醫學<br>
@@ -330,6 +755,26 @@ gantt
     flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' },
     gantt: { useMaxWidth: true, fontSize: 12, sectionFontSize: 13, leftPadding: 100 }
   });
+
+  // ---- Tab switching ----
+  (function () {
+    var buttons = document.querySelectorAll('.tabnav button');
+    var panels = document.querySelectorAll('.tab-panel');
+    function activate(id) {
+      buttons.forEach(function (b) {
+        var on = b.dataset.tab === id;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      panels.forEach(function (p) {
+        p.classList.toggle('active', p.id === id);
+      });
+      window.scrollTo({ top: 0 });
+    }
+    buttons.forEach(function (b) {
+      b.addEventListener('click', function () { activate(b.dataset.tab); });
+    });
+  })();
 </script>
 
 </body>
