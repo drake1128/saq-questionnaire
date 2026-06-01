@@ -12,7 +12,7 @@ const CAS2026 = (() => {
     { id: 'cas-04', no: 4, slug: 'techniques',     title: 'General CAS Techniques',       speakers: '蘇峻弘 (2022)' },
     { id: 'cas-05', no: 5, slug: 'epd',            title: 'Embolic Protection Device',    speakers: '黃成偉 (2022, 2024)' },
     { id: 'cas-06', no: 6, slug: 'stent-design',   title: 'Stent Design & TTT',           speakers: '蔡翰林 (2022 TTT / 2024 Stent)' },
-    { id: 'cas-07', no: 7, slug: 'tsci',           title: 'Carotid TSCI',                 speakers: '柯呈諭 (2022, 2024)' },
+    { id: 'cas-07', no: 7, slug: 'tsci',           title: 'CAS Decision & Evidence',      speakers: '柯呈諭 (2022, 2024)' },
     { id: 'cas-08', no: 8, slug: 'surgical',       title: 'Surgical Approaches',          speakers: '黃致遠 (2024)' },
     { id: 'cas-09', no: 9, slug: 'difficult',      title: 'Difficult CAS Tips & Tricks',  speakers: '方修御 (2024)' },
   ];
