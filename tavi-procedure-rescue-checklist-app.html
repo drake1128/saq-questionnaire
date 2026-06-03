@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TAVI 術式醫材與 Rescue Checklist｜導管室共筆</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1a3a5c;
+    --navy-light:#2d567f;
+    --gold:#c9a227;
+    --gold-soft:#e6cf7a;
+    --takehome:#fff8e1;
+    --danger:#b3322a;
+    --danger-soft:#fbe9e7;
+    --ok:#2e7d52;
+    --ok-soft:#e8f5ec;
+    --bg:#f5f3ee;
+    --card:#ffffff;
+    --text:#23303b;
+    --muted:#6b7785;
+    --border:#e3e0d8;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0;background:var(--bg);color:var(--text);
+    font-family:'Noto Sans TC',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    line-height:1.6;font-size:16px;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  #root{max-width:880px;margin:0 auto;padding:0 0 64px;}
+
+  /* Header */
+  .hdr{background:var(--navy);color:#fff;padding:22px 20px 18px;}
+  .hdr .kicker{font-size:12.5px;letter-spacing:1px;color:var(--gold-soft);font-weight:600;text-transform:uppercase;}
+  .hdr h1{margin:6px 0 4px;font-size:21px;font-weight:700;line-height:1.35;}
+  .hdr .sub{font-size:13px;color:#cdd8e3;}
+  .hdr .meta{margin-top:12px;font-size:12.5px;color:#aebccb;border-top:1px solid rgba(255,255,255,.15);padding-top:10px;}
+  .hdr .meta b{color:#fff;font-weight:600;}
+
+  /* Tabs */
+  .tabs{display:flex;gap:0;background:var(--navy-light);position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(0,0,0,.12);}
+  .tab{flex:1;border:none;background:transparent;color:#cdd8e3;font-family:inherit;
+    font-size:14px;font-weight:600;padding:13px 8px;cursor:pointer;min-height:48px;
+    border-bottom:3px solid transparent;transition:.15s;}
+  .tab.active{color:#fff;border-bottom-color:var(--gold);background:rgba(0,0,0,.12);}
+
+  /* Progress */
+  .progress-wrap{padding:14px 20px 4px;}
+  .progress-row{display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:6px;}
+  .progress-row b{color:var(--navy);font-size:14px;}
+  .pbar{height:8px;background:var(--border);border-radius:6px;overflow:hidden;}
+  .pbar > div{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-soft));transition:width .3s;}
+  .reset{border:1px solid var(--border);background:#fff;color:var(--muted);font-family:inherit;
+    font-size:12px;border-radius:6px;padding:4px 10px;cursor:pointer;}
+
+  .wrap{padding:8px 16px 0;}
+
+  /* Take home */
+  .takehome{background:var(--takehome);border:1px solid var(--gold-soft);border-left:5px solid var(--gold);
+    border-radius:10px;padding:14px 16px;margin:12px 0 16px;}
+  .takehome h3{margin:0 0 8px;font-size:14px;color:var(--navy);display:flex;align-items:center;gap:7px;}
+  .takehome ul{margin:0;padding-left:20px;font-size:13.5px;}
+  .takehome li{margin:5px 0;}
+  .takehome b{color:var(--danger);font-weight:600;}
+
+  /* Group card */
+  .group{background:var(--card);border:1px solid var(--border);border-radius:12px;
+    margin:0 0 14px;overflow:hidden;box-shadow:0 2px 10px rgba(26,58,92,.05);}
+  .group-head{background:var(--navy);color:#fff;padding:11px 16px;font-size:15px;font-weight:600;
+    display:flex;align-items:center;gap:9px;}
+  .group-head .gcount{margin-left:auto;font-size:12px;font-weight:500;color:var(--gold-soft);}
+
+  /* Checklist item */
+  .item{display:flex;gap:12px;padding:12px 16px;border-top:1px solid var(--border);cursor:pointer;
+    align-items:flex-start;min-height:48px;transition:background .12s;}
+  .item:first-child{border-top:none;}
+  .item:active{background:#faf8f2;}
+  .item.done{background:#f3f8f4;}
+  .item.done .iname{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--ok);}
+  .cbox{flex:0 0 22px;width:22px;height:22px;border:2px solid var(--gold);border-radius:6px;
+    display:flex;align-items:center;justify-content:center;margin-top:2px;transition:.12s;}
+  .item.done .cbox{background:var(--ok);border-color:var(--ok);}
+  .cbox svg{width:14px;height:14px;color:#fff;}
+  .ibody{flex:1;}
+  .iname{font-size:14.5px;font-weight:600;color:var(--text);}
+  .idetail{font-size:12.5px;color:var(--muted);margin-top:3px;}
+  .tag{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:5px;margin-left:7px;vertical-align:middle;}
+  .tag.core{background:var(--danger-soft);color:var(--danger);}
+  .tag.note{background:#eef2f6;color:var(--navy-light);}
+
+  /* Rescue mapping rows */
+  .rescue-row{display:flex;gap:12px;padding:11px 16px;border-top:1px solid var(--border);align-items:flex-start;}
+  .rescue-row:first-child{border-top:none;}
+  .rnum{flex:0 0 26px;height:26px;width:26px;background:var(--navy);color:#fff;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;margin-top:1px;}
+  .rbody{flex:1;}
+  .rname{font-size:14px;font-weight:600;}
+  .rscn{font-size:12.5px;color:var(--muted);margin-top:2px;}
+  .rscn .arrow{color:var(--gold);font-weight:700;}
+
+  /* verdict bar */
+  .verdict{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 4px;}
+  .vchip{flex:1 1 240px;border-radius:10px;padding:12px 14px;font-size:13px;}
+  .vchip.ok{background:var(--ok-soft);border:1px solid #bfe3cd;}
+  .vchip.gap{background:var(--danger-soft);border:1px solid #f3c9c4;}
+  .vchip b{display:block;margin-bottom:3px;font-size:13.5px;}
+  .vchip.ok b{color:var(--ok);}
+  .vchip.gap b{color:var(--danger);}
+
+  /* enhancement */
+  .enh{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:4px 0;
+    box-shadow:0 2px 10px rgba(26,58,92,.05);}
+  .enh-item{padding:12px 16px;border-top:1px solid var(--border);}
+  .enh-item:first-child{border-top:none;}
+  .enh-head{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;}
+  .pri{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff;flex:0 0 auto;}
+  .pri.high{background:var(--danger);}
+  .pri.mid{background:var(--gold);}
+  .pri.low{background:var(--navy-light);}
+  .enh-why{font-size:12.5px;color:var(--muted);margin-top:5px;}
+
+  .self-note{background:#eef2f6;border-radius:10px;padding:12px 14px;font-size:12.5px;color:var(--navy-light);margin:14px 0 0;}
+
+  /* footer */
+  .ftr{margin:22px 16px 0;padding:14px 16px;border-top:2px solid var(--gold);font-size:11.5px;color:var(--muted);}
+  .ftr .sig{color:var(--navy);font-weight:600;font-size:13px;margin-bottom:6px;}
+  .ftr .sig span{display:block;font-weight:400;font-size:12px;color:var(--muted);}
+  .ftr ul{margin:8px 0 0;padding-left:18px;}
+
+  .toolbar{display:flex;gap:10px;padding:14px 16px 0;}
+  .btn{flex:1;border:none;border-radius:9px;padding:12px;font-family:inherit;font-size:14px;
+    font-weight:600;cursor:pointer;min-height:48px;}
+  .btn.print{background:var(--navy);color:#fff;}
+  .btn.gold{background:var(--gold);color:#3a2e00;}
+
+  @media print{
+    body{background:#fff;font-size:12px;}
+    .tabs,.toolbar,.reset,.progress-wrap{display:none!important;}
+    .group,.enh{box-shadow:none;break-inside:avoid;}
+    .item,.rescue-row,.enh-item{break-inside:avoid;}
+    .print-all{display:block!important;}
+    .hdr{background:#fff!important;color:var(--navy)!important;border-bottom:3px solid var(--navy);}
+    .hdr .kicker{color:var(--gold)!important;}
+    .hdr .sub,.hdr .meta{color:var(--muted)!important;}
+    .group-head{background:#fff!important;color:var(--navy)!important;border-bottom:2px solid var(--navy);}
+    .cbox{border-color:#666;}
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState} = React;
+
+const Check = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+
+/* ---------- (A) 術式醫材資料 ---------- */
+const procedure = [
+  {
+    id:'cath', label:'1. 導管 Catheters',
+    items:[
+      {id:'pig', name:'Pigtail ×2 (5–6 Fr)', detail:'① Aortic root angiography ② 經對側股動脈作 deployment 時的 reference marker pigtail（置於 non-coronary cusp）'},
+      {id:'cross', name:'AL1（或 AL2 / JR4 / MP）', detail:'逆行性 cross stenotic native aortic valve'},
+    ]
+  },
+  {
+    id:'sheath', label:'2. 鞘 Sheaths（序室）',
+    items:[
+      {id:'esheath', name:'大孔徑主鞘 eSheath / Axela', detail:'expandable sheath；20/23/26 mm valve 約 14 Fr，29 mm 約 16 Fr', tag:'core', tagt:'核心'},
+      {id:'contra', name:'對側股動脈鞘 5–6 Fr', detail:'放 marker pigtail；必要時 crossover'},
+      {id:'venous', name:'股靜脈鞘 5–6 Fr', detail:'若採 transvenous temporary pacing'},
+    ]
+  },
+  {
+    id:'wire', label:'3. 導絲 Wires（必備，三大類外補列）',
+    items:[
+      {id:'w035', name:'0.035" straight-tip / angled Glidewire', detail:'Cross stenotic AV'},
+      {id:'stiff', name:'Pre-shaped LV stiff support wire', detail:'Safari2（small / standard / XS curl）/ Confida / Lunderquist / Amplatz Super Stiff — 撐起 delivery system', tag:'core', tagt:'核心'},
+      {id:'exch', name:'Exchange / J wire', detail:'交換、access 使用'},
+    ]
+  },
+  {
+    id:'balloon', label:'4. 氣球 Balloons',
+    items:[
+      {id:'bav', name:'BAV 球囊（Z-MED II / VACS III / Edwards balloon）', detail:'計畫 pre-dilation 用；通常較 annulus 略小（約 1–3 mm），需配合 rapid pacing', tag:'core', tagt:'本案必備'},
+      {id:'deploy', name:'展開球囊', detail:'整合於 Sapien Commander delivery system，不另開耗材', tag:'note', tagt:'內含'},
+      {id:'post', name:'Post-dilation', detail:'通常沿用 delivery balloon，針對殘留 PVL 加 volume'},
+    ]
+  },
+  {
+    id:'other', label:'5. 其他必備 Other essentials',
+    items:[
+      {id:'closure', name:'止血 closure：1× ProGlide + 1× Angio-Seal（8 Fr）', detail:'本院大孔徑 access 採 hybrid 技術：1 個 ProGlide（suture，先做 pre-close）＋ 1 個 8 Fr Angio-Seal（collagen plug 補強）', tag:'core', tagt:'核心'},
+      {id:'tpm', name:'Temporary pacing：TPM lead + 體外節律器', detail:'rapid ventricular pacing；或採 LV-wire pacing（省一條靜脈 access、降低 RV 穿孔風險）', tag:'core', tagt:'核心'},
+      {id:'cross2', name:'Crossover wire / balloon', detail:'大孔徑 access 管理、bail-out'},
+      {id:'snare', name:'Snare', detail:'與 rescue 清單重疊'},
+    ]
+  },
+];
+
+/* ---------- (B) Rescue 清單 ---------- */
+const rescue = [
+  {n:1, name:'Snare 組', scn:'Device / fragment embolization、抓 wire'},
+  {n:2, name:'Pericardiocentesis 套組', scn:'Tamponade（annular rupture、RV / LV wire 穿孔）'},
+  {n:3, name:'Stiff wire', scn:'支撐、重新 cross'},
+  {n:4, name:'Terumo wire', scn:'通過 / 重新導引'},
+  {n:5, name:'Viabahn covered stent', scn:'Iliofemoral perforation / rupture'},
+  {n:6, name:'EBU 3.5 + JR guiding catheter', scn:'Coronary obstruction → chimney stenting 入口'},
+  {n:7, name:'Sion wire ×2', scn:'Coronary obstruction rescue 導引'},
+  {n:8, name:'ACT 機 + Protamine', scn:'抗凝監測 + heparin reversal（出血 / tamponade）'},
+  {n:9, name:'Guideliner', scn:'冠脈 deep engagement / 遞送支撐'},
+  {n:10, name:'3.5 / 4.0 mm DES', scn:'Coronary obstruction → chimney / snorkel stenting'},
+  {n:11, name:'3.5 / 4.0 mm NC BC', scn:'Stent post-dilation'},
+  {n:12, name:'Micro puncture set', scn:'受控再穿刺 / re-access'},
+];
+
+const enhancements = [
+  {pri:'high', prit:'缺口', name:'大口徑 compliant 阻塞球囊（Coda / Reliant 類）',
+   why:'主動脈 / 髂動脈大破裂時，先做近端壓迫止血控制、爭取時間放 covered stent。目前清單最明顯的缺口。'},
+  {pri:'mid', prit:'建議', name:'Balloon-expandable covered stent（BeGraft / iCAST / Bentley）',
+   why:'Viabahn 的互補，髂動脈破裂時定位較精準。同時確認 Viabahn 直徑上限（約 13.5 mm）是否涵蓋預期 iliac size。'},
+  {pri:'mid', prit:'建議', name:'Crossover access 套件 + occlusion balloon',
+   why:'對側進入做 access vessel 近端控制 — large-bore bail-out 的標準動作。'},
+  {pri:'high', prit:'確認', name:'備援 THV（valve-in-valve）',
+   why:'Malposition / embolization / 顯著 PVL 時需立即取得第二顆瓣膜。非車上耗材，但要確認現場可即時供應。'},
+  {pri:'mid', prit:'建議', name:'Microcatheter（Corsair / Caravel / Finecross）',
+   why:'TAVI 後 re-engage 冠脈若不順，microcatheter 對 coronary rescue 很有幫助。'},
+  {pri:'high', prit:'冗餘', name:'Temporary pacing 冗餘',
+   why:'多備一條 pacing wire + 第二台體外節律器。術中 pacing failure 屬災難性事件。'},
+  {pri:'low', prit:'流程', name:'MCS / 外科升級路徑（ECMO / Impella / 心外科 backup）',
+   why:'非車上耗材，但啟動流程與聯絡窗口須在開始前確認到位。'},
+];
+
+const allProcItems = procedure.flatMap(g => g.items.map(i => g.id+'-'+i.id));
+
+function App(){
+  const [tab, setTab] = useState('proc');
+  const [checked, setChecked] = useState({});
+
+  const toggle = (key) => setChecked(p => ({...p, [key]: !p[key]}));
+  const reset = () => setChecked({});
+
+  const procDone = allProcItems.filter(k => checked[k]).length;
+  const rescueDone = rescue.filter(r => checked['r'+r.n]).length;
+
+  const isProc = tab === 'proc';
+  const done = isProc ? procDone : rescueDone;
+  const total = isProc ? allProcItems.length : rescue.length;
+  const pct = total ? Math.round(done/total*100) : 0;
+
+  return (
+    <div>
+      <div className="hdr">
+        <div className="kicker">導管室共筆 · CATH LAB CHECKLIST</div>
+        <h1>TAVI 術式醫材與 Rescue 醫材清單</h1>
+        <div className="sub">Transfemoral · Sapien 3 Ultra (Commander) · 計畫 BAV pre-dilation</div>
+        <div className="meta">
+          <b>讀書會共筆整理人</b>　謝慕揚 醫師 MD, PhD, FESC<br/>
+          結構性心臟病與介入心臟學
+        </div>
+      </div>
+
+      <div className="tabs">
+        <button className={"tab"+(isProc?" active":"")} onClick={()=>setTab('proc')}>術式醫材 (A)</button>
+        <button className={"tab"+(!isProc?" active":"")} onClick={()=>setTab('rescue')}>Rescue 比對 (B)</button>
+      </div>
+
+      <div className="progress-wrap">
+        <div className="progress-row">
+          <span>{isProc?'術式醫材備齊':'Rescue 醫材清點'}　<b>{done}/{total}</b></span>
+          <button className="reset" onClick={reset}>清除勾選</button>
+        </div>
+        <div className="pbar"><div style={{width:pct+'%'}}/></div>
+      </div>
+
+      <div className="wrap">
+        {isProc ? <Procedure checked={checked} toggle={toggle}/> : <Rescue checked={checked} toggle={toggle}/>}
+      </div>
+
+      <div className="toolbar">
+        <button className="btn print" onClick={()=>window.print()}>🖨️ 列印 / 存 PDF</button>
+        <button className="btn gold" onClick={()=>setTab(isProc?'rescue':'proc')}>
+          {isProc?'看 Rescue 比對 →':'← 回術式醫材'}
+        </button>
+      </div>
+
+      <Footer/>
+    </div>
+  );
+}
+
+function Procedure({checked, toggle}){
+  return (
+    <div>
+      <div className="takehome">
+        <h3>📌 Take Home</h3>
+        <ul>
+          <li>三大類之外，<b>LV support stiff wire</b>（Safari2 / Confida）與<b>大孔徑止血裝置</b>（本院採 <b>1× ProGlide ＋ 1× 8 Fr Angio-Seal</b> hybrid）是「沒有不行」的核心。</li>
+          <li>Sapien 的<b>展開氣球整合在 Commander delivery system</b>內，不另開耗材；要另備的是 <b>BAV 球囊</b>。</li>
+          <li>BAV 與展瓣都需 <b>rapid ventricular pacing</b>，pacing 路徑（transvenous TPM vs. LV-wire pacing）須先決定。</li>
+          <li>所有 valve-size 對應的 sheath French 數與 BAV 球囊尺寸，<b>以現行 Edwards IFU + 院內 protocol + proctor 偏好為準</b>，此處數字僅為框架。</li>
+        </ul>
+      </div>
+
+      {procedure.map(g => (
+        <div className="group" key={g.id}>
+          <div className="group-head">
+            {g.label}
+            <span className="gcount">{g.items.filter(i=>checked[g.id+'-'+i.id]).length}/{g.items.length}</span>
+          </div>
+          {g.items.map(i => {
+            const key = g.id+'-'+i.id;
+            return (
+              <div className={"item"+(checked[key]?" done":"")} key={i.id} onClick={()=>toggle(key)}>
+                <div className="cbox">{checked[key] && <Check/>}</div>
+                <div className="ibody">
+                  <div className="iname">{i.name}{i.tag && <span className={"tag "+i.tag}>{i.tagt}</span>}</div>
+                  {i.detail && <div className="idetail">{i.detail}</div>}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ))}
+
+      <div className="self-note">
+        💡 <b>若改用 self-expanding（Medtronic Evolut）：</b>常規取消 BAV（多直接放）、改用 EnVeo R delivery / InLine sheath、stiff wire 多用 Confida。差異不小，需另案準備。
+      </div>
+    </div>
+  );
+}
+
+function Rescue({checked, toggle}){
+  return (
+    <div>
+      <div className="takehome">
+        <h3>📌 Take Home（清單比對結論）</h3>
+        <ul>
+          <li>這份清單<b>整體很到位</b>。</li>
+          <li><b>Coronary obstruction 救援</b>（EBU/JR + Sion ×2 + Guideliner + DES + NC balloon → 完整 chimney/snorkel 套路）與 <b>device embolization</b>（snare）覆蓋良好。</li>
+          <li>主要可補強：<b>大血管破裂的近端控制</b>、<b>pacing 冗餘</b>、<b>MCS / 外科升級路徑</b>。</li>
+        </ul>
+      </div>
+
+      <div className="verdict">
+        <div className="vchip ok"><b>✓ 覆蓋良好</b>冠脈阻塞 chimney 套路、device embolization、tamponade 引流、抗凝逆轉、re-access</div>
+        <div className="vchip gap"><b>⚠ 待補強</b>大血管破裂近端壓迫控制、pacing 冗餘、備援 THV 即時供應、升級流程</div>
+      </div>
+
+      <div className="group">
+        <div className="group-head">
+          原清單 12 項 · 對應併發症
+          <span className="gcount">{rescue.filter(r=>checked['r'+r.n]).length}/{rescue.length}</span>
+        </div>
+        {rescue.map(r => (
+          <div className={"rescue-row"} key={r.n} onClick={()=>toggle('r'+r.n)} style={{cursor:'pointer'}}>
+            <div className="cbox" style={{flex:'0 0 22px'}}>{checked['r'+r.n] && <Check/>}</div>
+            <div className="rnum">{r.n}</div>
+            <div className="rbody">
+              <div className="rname">{r.name}</div>
+              <div className="rscn"><span className="arrow">▶</span> {r.scn}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="group-head" style={{borderRadius:'12px 12px 0 0',marginTop:4}}>建議考慮補強（請確認是否已備或可即時取得）</div>
+      <div className="enh" style={{borderRadius:'0 0 12px 12px'}}>
+        {enhancements.map((e,idx) => (
+          <div className="enh-item" key={idx}>
+            <div className="enh-head">
+              <span className={"pri "+e.pri}>{e.prit}</span>
+              {e.name}
+            </div>
+            <div className="enh-why">{e.why}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Footer(){
+  return (
+    <div className="ftr">
+      <div className="sig">
+        讀書會共筆整理人
+        <span>謝慕揚 醫師　MD, PhD, FESC</span>
+        <span>結構性心臟病與介入心臟學</span>
+      </div>
+      <ul>
+        <li>本內容為讀書會共筆整理，未必涵蓋所有相關文獻。</li>
+        <li>僅供學術與教育用途，不代表任何單位之官方立場。</li>
+        <li>本內容未涉及任何利益衝突。</li>
+        <li>所有醫材規格、French 數、球囊尺寸請以現行 IFU、院內 protocol 與 proctor 指示為準。</li>
+      </ul>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
