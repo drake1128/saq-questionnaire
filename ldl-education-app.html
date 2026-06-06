@@ -951,6 +951,29 @@
         }
         .sams-ref { font-size: 0.78rem; color: var(--gray); margin-top: 6px; text-align: center; }
 
+        .sams-ck-note {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 10px;
+            padding: 13px 16px;
+            margin: 16px 0;
+            font-size: 0.9rem;
+            color: #1e40af;
+            line-height: 1.6;
+        }
+        .sams-goodnews {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-left: 4px solid var(--success);
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin: 16px 0;
+            font-size: 0.92rem;
+            color: #065f46;
+            line-height: 1.65;
+        }
+        .sams-goodnews-title { font-weight: 700; color: #047857; margin-bottom: 8px; }
+        .sams-goodnews strong { color: #047857; }
+
         @media print {
             body * { visibility: hidden; }
             #samsPrintArea, #samsPrintArea * { visibility: visible; }
@@ -1542,6 +1565,23 @@
                     <div class="sams-prelim" id="samsPrelim" style="display:none;"></div>
                 </div>
 
+                <!-- CK 抽血提醒 -->
+                <div class="sams-ck-note">
+                    🩸 <strong>CK（肌酸激酶）是醫師會另外安排的抽血檢查，本評估不包含 CK。</strong>SAMS-CI 只評估症狀的型態與時序；最終是否為 statin 副作用，仍須由醫師結合 CK 等檢查綜合判斷。
+                </div>
+
+                <!-- 好消息：多數人仍可繼續用藥 -->
+                <div class="sams-goodnews">
+                    <div class="sams-goodnews-title">💪 好消息：就算真的是 statin 引起，大多數人最後仍能繼續用藥</div>
+                    <p>研究顯示，真正「完全無法耐受任何 statin」的比例其實只有約 <strong>9%</strong>，約 <strong>90% 的病人最後仍能耐受某一種 statin</strong>。即使確定症狀與 statin 有關，醫師通常可以透過下列方式讓您繼續安全地控制膽固醇：</p>
+                    <ul style="margin:8px 0 0 20px;">
+                        <li>改用<strong>親水性 statin</strong>（如 rosuvastatin、pravastatin）</li>
+                        <li><strong>降低劑量</strong>或<strong>隔日給藥</strong></li>
+                        <li>改用<strong>非 statin 降脂藥</strong>（ezetimibe、bempedoic acid、PCSK9 抑制劑）</li>
+                    </ul>
+                    <p style="margin-top:8px;">所以請<strong>不要自行停藥</strong>，先和醫師討論調整方式。</p>
+                </div>
+
                 <!-- 次要原因清單 -->
                 <div class="sams-secondary">
                     <div class="sams-secondary-title">🔎 別忘了排除其他可能原因</div>
@@ -1569,7 +1609,7 @@
                     本評估為衛教輔助參考，<strong>不取代醫師的專業判斷</strong>；最終診斷與用藥調整請由醫師決定。
                 </div>
                 <div class="sams-ref">
-                    參考：SAMS Clinical Index, Rosenson RS et al. J Clin Lipidol 2017 · 2026 ACC/AHA Dyslipidemia Guideline
+                    參考：SAMS Clinical Index, Rosenson RS et al. Cardiovasc Drugs Ther 2017;31:179-186 · Banach M et al. Eur Heart J 2022 · 2026 ACC/AHA Dyslipidemia Guideline
                 </div>
             </div>
         </section>
@@ -1844,7 +1884,7 @@
 
             if (!s.cAssessed || !s.dAssessed) {
                 prelimEl.style.display = 'block';
-                prelimEl.innerHTML = '🔸 此為<strong>初步評估</strong>：尚未（或未完整）進行停藥／再用藥觀察。是否需要停藥再評估，請由醫師指導，切勿自行停藥。';
+                prelimEl.innerHTML = '🔸 此為<strong>初步評估</strong>：尚未（或未完整）進行停藥／再用藥觀察。在此情況下，<strong>即使分數偏低也不能排除 statin 副作用</strong>（未做停藥/再用藥，總分最高只到 6 分）。是否需要停藥再評估，請由醫師指導，切勿自行停藥。';
             } else {
                 prelimEl.style.display = 'none';
             }
