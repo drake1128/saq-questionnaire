@@ -808,6 +808,30 @@
             }
         }
 
+        /* ===== 個人化數據輸入 ===== */
+        .patient-config {
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+            border: 1px solid #c7d2fe;
+            border-radius: 14px;
+            padding: 16px 18px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+        .pc-title { font-weight: 700; color: #3730a3; font-size: 0.92rem; margin-bottom: 12px; }
+        .pc-fields { display: flex; gap: 12px; flex-wrap: wrap; }
+        .pc-field { flex: 1; min-width: 140px; display: flex; flex-direction: column; gap: 5px; font-size: 0.82rem; color: #4338ca; font-weight: 600; }
+        .pc-input-wrap { display: flex; align-items: center; gap: 6px; background: #fff; border: 1.5px solid #c7d2fe; border-radius: 9px; padding: 8px 12px; }
+        .pc-input-wrap:focus-within { border-color: #6366f1; }
+        .pc-input-wrap input {
+            border: none; outline: none; width: 100%;
+            font-size: 1.1rem; font-weight: 700; color: var(--dark); font-family: inherit;
+            -moz-appearance: textfield;
+        }
+        .pc-input-wrap input::-webkit-outer-spin-button,
+        .pc-input-wrap input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .pc-unit { font-size: 0.8rem; color: var(--gray); font-weight: 600; white-space: nowrap; }
+        .pc-error { margin-top: 10px; color: var(--primary); font-size: 0.85rem; font-weight: 600; background: #fdeceb; border-radius: 8px; padding: 8px 12px; }
+
         /* ===== SAMS-CI 自我評估計算機 ===== */
         .sams-intro {
             background: rgba(192,57,43,0.06);
@@ -1031,10 +1055,30 @@
                 你看我的抽血報告都正常啊！但你說 LDL 要降到 55 以下，只有吃藥一條路嗎？會有副作用嗎？
             </div>
             <div class="context">
-                <strong>📋 情境說明：</strong>民眾的 LDL 是 109 mg/dL，看起來「正常」，但頸動脈超音波發現有斑塊，狹窄程度約 40%。這代表什麼呢？
+                <strong>📋 情境說明：</strong>民眾的 LDL 是 <span class="p-ldl">109</span> mg/dL，看起來「正常」，但頸動脈超音波發現有斑塊，狹窄程度約 <span class="p-stenosis">40</span>%。這代表什麼呢？
             </div>
         </div>
         
+        <!-- 個人化數據設定 -->
+        <div class="patient-config" id="patientConfig">
+            <div class="pc-title">⚙️ 個人化數據（醫師／藥諮櫃台填寫，全頁數字會自動更新）</div>
+            <div class="pc-fields">
+                <label class="pc-field">
+                    <span>目前 LDL</span>
+                    <span class="pc-input-wrap"><input type="number" id="pcLDL" value="109" min="30" max="400" inputmode="numeric"><span class="pc-unit">mg/dL</span></span>
+                </label>
+                <label class="pc-field">
+                    <span>目標 LDL</span>
+                    <span class="pc-input-wrap"><input type="number" id="pcTarget" value="55" min="20" max="200" inputmode="numeric"><span class="pc-unit">mg/dL</span></span>
+                </label>
+                <label class="pc-field">
+                    <span>頸動脈狹窄</span>
+                    <span class="pc-input-wrap"><input type="number" id="pcStenosis" value="40" min="0" max="100" inputmode="numeric"><span class="pc-unit">%</span></span>
+                </label>
+            </div>
+            <div class="pc-error" id="pcError" style="display:none;"></div>
+        </div>
+
         <!-- Section 1: 什麼是 LDL -->
         <section class="section open" id="section1">
             <div class="section-header" onclick="toggleSection('section1')">
@@ -1054,7 +1098,7 @@
                         </div>
                         <div class="arrow">➡️</div>
                         <div class="artery-stage">
-                            <div class="artery-circle plaque-40">40%</div>
+                            <div class="artery-circle plaque-40" id="plaqueCircle"><span class="p-stenosis">40</span>%</div>
                             <div class="artery-label">您目前狀況</div>
                         </div>
                         <div class="arrow">➡️</div>
@@ -1129,7 +1173,7 @@
                 
                 <div class="key-point warning">
                     <div class="key-point-title">🔍 您的情況</div>
-                    <p>您的頸動脈有 40% 狹窄的斑塊，這代表您屬於<strong>「極高風險」</strong>族群。雖然 LDL 109 mg/dL 對一般人可能「還好」，但對您來說<strong>仍然太高</strong>，目標應該是 <strong>&lt; 55 mg/dL</strong>，並且要降低至少 50%。</p>
+                    <p>您的頸動脈有 <span class="p-stenosis">40</span>% 狹窄的斑塊，這代表您屬於<strong>「極高風險」</strong>族群。雖然 LDL <span class="p-ldl">109</span> mg/dL 對一般人可能「還好」，但對您來說<strong>仍然太高</strong>，目標應該是 <strong>&lt; <span class="p-target">55</span> mg/dL</strong>，並且要降低至少 50%。</p>
                 </div>
             </div>
         </section>
@@ -1300,7 +1344,7 @@
                     <ul style="margin-left: 20px; margin-top: 10px;">
                         <li><strong>「越低越好」(Lower is better)</strong>：LDL 降到 30-55 mg/dL 仍然安全且有益</li>
                         <li><strong>LDL 每降低 1 mmol/L（約 39 mg/dL），心血管事件減少約 22%</strong></li>
-                        <li>LDL 較高的人（如您 LDL 109），降低後獲益更明顯</li>
+                        <li>LDL 較高的人（如您 LDL <span class="p-ldl">109</span>），降低後獲益更明顯</li>
                         <li>中風風險可降低 25-27%</li>
                     </ul>
                 </div>
@@ -1315,7 +1359,7 @@
                 <span class="section-toggle">▼</span>
             </div>
             <div class="section-content">
-                <p>要將 LDL 從 109 降到 55 以下，需要降低約 50%。以下是可用的治療選項：</p>
+                <p>要將 LDL 從 <span class="p-ldl">109</span> 降到 <span class="p-target">55</span> 以下，需要降低約 <span class="p-reduction-pct">50</span>%。以下是可用的治療選項：</p>
                 
                 <div class="treatment-grid">
                     <div class="treatment-card">
@@ -1668,10 +1712,10 @@
                 
                 <div class="key-point warning">
                     <div class="key-point-title">📊 您的情況計算</div>
-                    <p><strong>目前 LDL：</strong>109 mg/dL</p>
-                    <p><strong>目標 LDL：</strong>&lt; 55 mg/dL（需降低約 54 mg/dL，即 50%）</p>
-                    <p><strong>單靠生活方式最多降：</strong>約 30 mg/dL</p>
-                    <p><strong>結論：</strong>生活方式改變很重要，但您需要<strong>藥物輔助</strong>才能達標</p>
+                    <p><strong>目前 LDL：</strong><span class="p-ldl">109</span> mg/dL</p>
+                    <p><strong>目標 LDL：</strong>&lt; <span class="p-target">55</span> mg/dL（需降低約 <span class="p-reduction-mg">54</span> mg/dL，即 <span class="p-reduction-pct">50</span>%）</p>
+                    <p><strong>單靠生活方式最多降：</strong>約 <span class="p-lifestyle-mg">30</span> mg/dL</p>
+                    <p><strong>結論：</strong><span id="pConclusion">生活方式改變很重要，但您需要<strong>藥物輔助</strong>才能達標</span></p>
                 </div>
                 
                 <div class="key-point">
@@ -1692,12 +1736,12 @@
             <h3>📌 重點整理</h3>
             <div class="bottom-line-content">
                 <div class="bottom-line-item">
-                    <div class="number">109→55</div>
-                    <div class="label">您的 LDL 需要從 109 降到 55 以下</div>
+                    <div class="number"><span class="p-ldl">109</span>→<span class="p-target">55</span></div>
+                    <div class="label">您的 LDL 需要從 <span class="p-ldl">109</span> 降到 <span class="p-target">55</span> 以下</div>
                 </div>
                 <div class="bottom-line-item">
-                    <div class="number">~50%</div>
-                    <div class="label">需要降低約一半，藥物是必要的</div>
+                    <div class="number">~<span class="p-reduction-pct">50</span>%</div>
+                    <div class="label">需要降低約 <span class="p-reduction-pct">50</span>%，藥物是必要的</div>
                 </div>
                 <div class="bottom-line-item">
                     <div class="number">1%</div>
@@ -1814,6 +1858,57 @@
                 alert('✅ 連結已複製到剪貼簿！');
             });
         }
+
+        // ===== 個人化數據：全頁數字參數化 =====
+        function updatePatientValues() {
+            const ldl = parseInt(document.getElementById('pcLDL').value, 10);
+            const tgt = parseInt(document.getElementById('pcTarget').value, 10);
+            const st  = parseInt(document.getElementById('pcStenosis').value, 10);
+            const errEl = document.getElementById('pcError');
+
+            const errs = [];
+            if (!Number.isFinite(ldl) || ldl < 30 || ldl > 400) errs.push('目前 LDL 請輸入 30–400');
+            if (!Number.isFinite(tgt) || tgt < 20 || tgt > 200) errs.push('目標 LDL 請輸入 20–200');
+            if (Number.isFinite(ldl) && Number.isFinite(tgt) && tgt >= ldl) errs.push('目標 LDL 必須低於目前 LDL');
+            if (!Number.isFinite(st) || st < 0 || st > 100) errs.push('頸動脈狹窄請輸入 0–100%');
+
+            if (errs.length) {
+                errEl.style.display = 'block';
+                errEl.innerHTML = '⚠️ ' + errs.join('；') + '（數字暫不更新）';
+                return;
+            }
+            errEl.style.display = 'none';
+
+            const redMg = ldl - tgt;
+            const redPct = Math.round(redMg / ldl * 100);
+            const lifeMg = Math.round(ldl * 0.30);
+
+            const setAll = (cls, val) => document.querySelectorAll('.' + cls).forEach(function(e) { e.textContent = val; });
+            setAll('p-ldl', ldl);
+            setAll('p-target', tgt);
+            setAll('p-stenosis', st);
+            setAll('p-reduction-mg', redMg);
+            setAll('p-reduction-pct', redPct);
+            setAll('p-lifestyle-mg', lifeMg);
+
+            const plaque = document.getElementById('plaqueCircle');
+            if (plaque) plaque.style.background = 'linear-gradient(to right, #ff9800 ' + st + '%, #4caf50 ' + st + '%)';
+
+            const concl = document.getElementById('pConclusion');
+            if (concl) {
+                concl.innerHTML = (lifeMg < redMg)
+                    ? '生活方式改變很重要，但您需要<strong>藥物輔助</strong>才能達標'
+                    : '您與目標的差距較小，<strong>積極的生活方式或許有機會接近目標</strong>，但仍請與醫師確認是否需要藥物';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            ['pcLDL', 'pcTarget', 'pcStenosis'].forEach(function(id) {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('input', updatePatientValues);
+            });
+            updatePatientValues();
+        });
 
         // ===== SAMS-CI 計算機 =====
         const SAMS_ADVICE = {
