@@ -679,6 +679,11 @@ const Home = ({
     t: '證據基礎',
     n: 'CLASP 系列'
   }, {
+    id: 'refs',
+    ic: '📚',
+    t: '延伸文獻',
+    n: 'Reading list + 連結'
+  }, {
     id: 'quiz',
     ic: '✅',
     t: '自我測驗',
@@ -1036,7 +1041,155 @@ const QuizSec = () => {
 };
 
 /* ---------------- APP ---------------- */
+// === 延伸文獻 References（PASCAL 文獻整理；連結皆 PubMed/PMC/期刊全文） ===
+const REFS = [{
+  cat: '⭐ 核心三篇（先讀這三篇）',
+  items: [{
+    t: 'PASCAL Precision: Device Knobology & Advanced Steering Maneuvers',
+    c: 'Garcia S, et al. Struct Heart. 2024;8(1):100234.',
+    u: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10818146/'
+  }, {
+    t: "The PASCAL Transcatheter Valve Repair System: A User's Guide",
+    c: 'Struct Heart. 2023;7(5):100204.',
+    u: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10512093/'
+  }, {
+    t: 'Intra-procedural imaging for mitral & tricuspid PASCAL',
+    c: 'Eur Heart J Cardiovasc Imaging. 2022;23(3):e94-e110.',
+    u: 'https://academic.oup.com/ehjcimaging/article/23/3/e94/6301168'
+  }]
+}, {
+  cat: '① 怎麼操作 — Step-by-step',
+  items: [{
+    t: "PASCAL User's Guide（完整 workflow）",
+    c: 'Struct Heart. 2023;7(5):100204.',
+    u: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10512093/'
+  }, {
+    t: 'Intra-procedural imaging（影像引導 A–M 各步驟）',
+    c: 'EHJ-CVI. 2022;23(3):e94-e110.',
+    u: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8863082/'
+  }, {
+    t: 'PASCAL: A New Addition…（裝置概念入門）',
+    c: 'Praz F, et al. JACC Cardiovasc Interv. 2019;12(14):1379-81.',
+    u: 'https://pubmed.ncbi.nlm.nih.gov/31255561/'
+  }, {
+    t: 'VersaCross transseptal + PASCAL（穿房中膈技巧）',
+    c: 'Struct Heart. 2023;7(6):100203.',
+    u: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10692349/'
+  }]
+}, {
+  cat: '② 怎麼控制 — Knobology / Steering',
+  items: [{
+    t: 'Device Knobology & Advanced Steering（操舵主要出處）',
+    c: 'Garcia S, et al. Struct Heart. 2024;8(1):100234.',
+    u: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10818146/'
+  }, {
+    t: 'Edwards PASCAL Precision — IFU（原廠操作手冊）',
+    c: 'FDA P220003D / Edwards eIFU.',
+    u: 'https://www.accessdata.fda.gov/cdrh_docs/pdf22/P220003D.pdf'
+  }]
+}, {
+  cat: '③ 怎麼決定「抓取leaflet」— Independent / staged grasping',
+  items: [{
+    t: "User's Guide — leaflet optimization 五步、獨立夾合",
+    c: 'Struct Heart. 2023;7(5):100204.',
+    u: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10512093/'
+  }, {
+    t: '“Mind the Grasp”：預防 single-leaflet device attachment',
+    c: 'JACC Case Rep. 2023;9:101747.',
+    u: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9998716/'
+  }, {
+    t: 'SLDA after PASCAL — systematic review / meta-analysis',
+    c: 'Struct Heart. 2025;9(10):100698.',
+    u: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12454887/'
+  }, {
+    t: 'SLDA after mitral TEER — systematic review / meta-analysis',
+    c: 'JACC Cardiovasc Interv. 2024;17(21).',
+    u: 'https://pubmed.ncbi.nlm.nih.gov/39387786/'
+  }]
+}, {
+  cat: '🔻 三尖瓣 T-TEER（PASCAL / PASCAL Ace）',
+  items: [{
+    t: 'Initial experience: PASCAL Ace for severe TR',
+    c: 'Circ Cardiovasc Interv. 2021;14:e010770.',
+    u: 'https://www.ahajournals.org/doi/10.1161/CIRCINTERVENTIONS.121.010770'
+  }, {
+    t: 'CLASP TR 1-year（PASCAL for TR，新聞摘要）',
+    c: 'tctmd / ACC.',
+    u: 'https://www.tctmd.com/news/tricuspid-repair-pascal-safe-effective-1-year-clasp-tr'
+  }]
+}, {
+  cat: '📊 證據・比較（搭配「證據基礎」單元）',
+  items: [{
+    t: 'CLASP IID RCT — PASCAL vs MitraClip（原發性 MR）',
+    c: 'Lim DS, et al. JACC Cardiovasc Interv. 2022;15(24):2523-36.',
+    u: 'https://pubmed.ncbi.nlm.nih.gov/36121247/'
+  }, {
+    t: 'EXPAND G4（第四代）1-year',
+    c: 'JACC Cardiovasc Interv. 2023.',
+    u: 'https://pubmed.ncbi.nlm.nih.gov/37877913/'
+  }, {
+    t: 'MiCLASP（PASCAL，歐洲）1-year',
+    c: 'JACC Cardiovasc Interv. 2024.',
+    u: 'https://pubmed.ncbi.nlm.nih.gov/38599692/'
+  }, {
+    t: 'MitraClip vs PASCAL（propensity-matched）',
+    c: 'Schneider L, et al. JACC Cardiovasc Interv. 2022.',
+    u: 'https://pubmed.ncbi.nlm.nih.gov/36543450/'
+  }]
+}];
+const Refs = () => /*#__PURE__*/React.createElement("div", {
+  className: "card"
+}, /*#__PURE__*/React.createElement("h2", null, "📚 延伸文獻與教學資源"), /*#__PURE__*/React.createElement("p", null, "聚焦三件事：① 怎麼操作　② 怎麼控制（knobology / steering）　③ 怎麼決定「抓取leaflet」（獨立夾合）。連結皆為 PubMed / PMC / 期刊全文，點擊即可開啟。"), /*#__PURE__*/React.createElement("div", {
+  className: "takehome"
+}, /*#__PURE__*/React.createElement("div", {
+  className: "lbl"
+}, "② 控制重點（出處：Garcia S, Struct Heart 2024）"), /*#__PURE__*/React.createElement("ul", null, /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement("b", null, "Guide sheath flex knob"), "：順時針 → 遠端朝 flush port 彎，做大方向 (A–P) 定位。"), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement("b", null, "Steerable catheter flex"), "：與 guide sheath 獨立、非 keyed，三維自由旋轉做精細 (M-L) 對位。"), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement("b", null, "Implant handle 旋轉"), "：使 paddles 垂直於 coaptation line（3D TEE / MPR 確認）。"), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement("b", null, "Elongation"), "：拉長利於 atrialization、減少 subvalvular 干擾、安全 retrieval。"))), /*#__PURE__*/React.createElement("div", {
+  className: "warn-box"
+}, /*#__PURE__*/React.createElement("div", {
+  className: "h"
+}, "③ 抓取「leaflet」決策（出處：User's Guide）"), "兩支 clasp 可獨立或同時操作 → 分次 (staged) 擷取。Leaflet optimization 五步：capture-ready → 旋 steerable 偏向目標葉 → 略回撤 implant catheter → 抬高目標側 clasp 深咬 → 放下 clasp 關閉。臨床約 54–60% 病例採 independent grasping，多為改善後葉 (posterior leaflet) insertion；目的在避免 single-leaflet device attachment (SLDA) 與插入不足。"), REFS.map(g => /*#__PURE__*/React.createElement("div", {
+  key: g.cat,
+  style: {
+    marginTop: 14
+  }
+}, /*#__PURE__*/React.createElement("h3", {
+  style: {
+    color: 'var(--clasp)',
+    margin: '4px 0 6px'
+  }
+}, g.cat), /*#__PURE__*/React.createElement("ul", {
+  style: {
+    margin: 0,
+    paddingLeft: 18
+  }
+}, g.items.map((r, i) => /*#__PURE__*/React.createElement("li", {
+  key: i,
+  style: {
+    marginBottom: 9,
+    lineHeight: 1.4
+  }
+}, /*#__PURE__*/React.createElement("a", {
+  href: r.u,
+  target: "_blank",
+  rel: "noopener",
+  style: {
+    color: 'var(--paddle)',
+    fontWeight: 600,
+    textDecoration: 'none'
+  }
+}, r.t), /*#__PURE__*/React.createElement("div", {
+  style: {
+    fontSize: '.8em',
+    opacity: .75
+  }
+}, r.c)))))), /*#__PURE__*/React.createElement("div", {
+  className: "ref",
+  style: {
+    marginTop: 14
+  }
+}, "完整索引與已下載 PDF（本機）：journal-reading repo → handouts/04-valvular-disease/pascal-teer-teaching/。註：期刊圖檔涉版權未內嵌，本單元以連結提供；原廠裝置照片見「植入物解剖／手把機關」單元。"));
 const SECTIONS = {
+  refs: Refs,
   implant: Implant,
   positions: Positions,
   compare: Compare,
