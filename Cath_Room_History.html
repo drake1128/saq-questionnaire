@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>台大醫院新竹分院 · 心導管室歷史 Cath Room History</title>
+<meta name="description" content="台大醫院新竹分院心血管中心心導管室 1991–2026 大事紀：從全院首例心導管到竹苗第一例 TAVI，35 年來每一次「第一次」的傳承時間軸。">
+<meta name="theme-color" content="#070d1c">
+
+<!-- 分享 QR Code 服務預連線 -->
+<link rel="preconnect" href="https://api.qrserver.com" crossorigin>
+
+<!-- 字體：Fraunces（年份襯線）+ Noto Serif TC（標題）+ Noto Sans TC（內文／人員） -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..900&family=Noto+Serif+TC:wght@400;500;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap">
+
+<style>
+/* ===========================================
+   主題變數
+   =========================================== */
+:root {
+    --ink:        #070d1c;
+    --ink-2:      #0b1326;
+    --panel:      rgba(255,255,255,0.035);
+    --panel-bd:   rgba(255,255,255,0.09);
+    --text:       #eef3fc;
+    --text-dim:   #94a6c6;
+    --text-faint: #5e6f8d;
+
+    --gold:       #e7b65a;
+    --gold-bright:#f6d488;
+
+    /* 分類色 */
+    --c-coronary: #e2574c;
+    --c-ep:       #9b7be0;
+    --c-struct:   #e7b65a;
+    --c-periph:   #45b5ae;
+    --c-mile:     #f6d488;
+
+    --font-num:  'Fraunces', serif;
+    --font-zh:   'Noto Serif TC', serif;
+    --font-sans: 'Noto Sans TC', sans-serif;
+
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+body {
+    background:
+        radial-gradient(ellipse 90% 50% at 50% -5%, #0f1c38 0%, transparent 55%),
+        linear-gradient(180deg, var(--ink-2), var(--ink) 40%, #05080f);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* 細格紋背景 */
+body::before {
+    content:""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+        linear-gradient(rgba(205,221,255,0.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(205,221,255,0.022) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 75% 70% at 50% 30%, black, transparent 80%);
+}
+
+/* ===========================================
+   頂部進度條
+   =========================================== */
+.progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%; z-index: 200;
+    background: linear-gradient(90deg, var(--c-coronary), var(--gold-bright));
+    box-shadow: 0 0 12px var(--gold); transition: width 0.1s linear;
+}
+
+/* ===========================================
+   Hero 標頭
+   =========================================== */
+.hero {
+    position: relative; z-index: 2;
+    max-width: 1080px; margin: 0 auto;
+    padding: clamp(3.5rem, 9vh, 7rem) clamp(1.4rem, 5vw, 3rem) clamp(2rem, 4vh, 3rem);
+    text-align: center;
+}
+.hero .kicker {
+    font-family: var(--font-sans); font-weight: 500;
+    letter-spacing: 0.34em; font-size: clamp(0.68rem, 1.3vw, 0.9rem);
+    color: var(--gold);
+}
+.hero h1 {
+    font-family: var(--font-zh); font-weight: 700;
+    font-size: clamp(2rem, 6.5vw, 4.4rem); line-height: 1.1; margin: 0.5em 0 0.2em;
+    letter-spacing: 0.02em;
+}
+.hero .en {
+    font-family: var(--font-num); font-weight: 400; font-style: italic;
+    font-size: clamp(1rem, 2.6vw, 1.7rem); color: var(--text-dim); letter-spacing: 0.02em;
+}
+.hero p.sub {
+    max-width: 56ch; margin: 1.4em auto 0; color: var(--text-dim);
+    font-weight: 300; font-size: clamp(0.9rem, 1.7vw, 1.15rem);
+}
+
+/* 統計列 */
+.stats {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: clamp(1.2rem, 5vw, 3.5rem); margin-top: clamp(1.8rem, 4vh, 3rem);
+}
+.stat { text-align: center; }
+.stat .v {
+    font-family: var(--font-num); font-weight: 600;
+    font-size: clamp(2rem, 6vw, 3.6rem); line-height: 1; color: var(--gold-bright);
+    text-shadow: 0 0 30px rgba(246,212,136,0.3);
+}
+.stat .l { font-size: clamp(0.68rem, 1.3vw, 0.85rem); color: var(--text-dim); letter-spacing: 0.12em; margin-top: 0.5em; }
+
+.scroll-cue {
+    margin-top: clamp(2rem,5vh,3.5rem); color: var(--text-faint);
+    font-size: 0.8rem; letter-spacing: 0.2em;
+    animation: bob 2.4s ease-in-out infinite;
+}
+@keyframes bob { 0%,100%{ transform: translateY(0); opacity:.6 } 50%{ transform: translateY(7px); opacity:1 } }
+
+/* ===========================================
+   篩選 chips（黏在頂部）
+   =========================================== */
+.filter-bar {
+    position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(14px);
+    background: linear-gradient(180deg, rgba(7,13,28,0.92), rgba(7,13,28,0.6));
+    border-bottom: 1px solid var(--panel-bd);
+    padding: clamp(0.7rem, 1.6vh, 1rem) 1rem;
+    display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;
+}
+.chip {
+    font-family: var(--font-sans); font-size: clamp(0.72rem, 1.4vw, 0.92rem); font-weight: 500;
+    color: var(--text-dim); background: var(--panel);
+    border: 1px solid var(--panel-bd); border-radius: 999px;
+    padding: 0.45em 1.1em; cursor: pointer; transition: all 0.25s var(--ease);
+    display: inline-flex; align-items: center; gap: 0.5em; white-space: nowrap;
+}
+.chip .dot { width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+.chip:hover { color: var(--text); border-color: rgba(255,255,255,0.25); transform: translateY(-1px); }
+.chip.active { color: #0a1226; background: linear-gradient(120deg, var(--gold-bright), var(--gold)); border-color: transparent; box-shadow: 0 4px 18px rgba(231,182,90,0.3); }
+.chip.active .dot { background: #0a1226; }
+.chip[data-cat="coronary"]{ --cc: var(--c-coronary); }
+.chip[data-cat="ep"]{ --cc: var(--c-ep); }
+.chip[data-cat="struct"]{ --cc: var(--c-struct); }
+.chip[data-cat="periph"]{ --cc: var(--c-periph); }
+.chip[data-cat="milestone"]{ --cc: var(--c-mile); }
+.chip:not([data-cat="all"]):not(.active) .dot { color: var(--cc); background: var(--cc); }
+
+/* ===========================================
+   時間軸
+   =========================================== */
+.timeline {
+    position: relative; z-index: 2;
+    max-width: 1080px; margin: 0 auto;
+    padding: clamp(2rem, 5vh, 4rem) clamp(1rem, 4vw, 2rem) 5rem;
+}
+
+/* 中央脊線（桌機） */
+.spine {
+    position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 2px; background: var(--panel-bd);
+}
+.spine .fill {
+    position: absolute; top: 0; left: 0; width: 100%; height: 0%;
+    background: linear-gradient(180deg, var(--c-coronary), var(--gold) 60%, var(--gold-bright));
+    box-shadow: 0 0 14px rgba(246,212,136,0.5);
+    transition: height 0.15s linear;
+}
+
+/* 年代分隔 */
+.era {
+    position: relative; text-align: center; margin: clamp(2.2rem,5vh,3.6rem) 0 clamp(1.4rem,3vh,2.4rem);
+    z-index: 3;
+}
+.era span {
+    display: inline-block; background: var(--ink-2);
+    border: 1px solid var(--gold); color: var(--gold);
+    font-family: var(--font-zh); font-weight: 600; letter-spacing: 0.12em;
+    font-size: clamp(0.85rem, 2vw, 1.2rem);
+    padding: 0.5em 1.5em; border-radius: 999px;
+    box-shadow: 0 6px 26px rgba(0,0,0,0.5);
+}
+
+/* 單一事件 */
+.item {
+    position: relative; width: 50%; padding: 0 clamp(1.6rem, 3.5vw, 3rem);
+    margin-bottom: clamp(1.4rem, 3vh, 2.4rem);
+    opacity: 0; transform: translateY(34px);
+    transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+.item.show { opacity: 1; transform: translateY(0); }
+.item.left  { left: 0; text-align: right; }
+.item.right { left: 50%; text-align: left; }
+
+/* 節點圓珠 */
+.item .node {
+    position: absolute; top: 1.5rem; width: 16px; height: 16px; border-radius: 50%;
+    background: var(--ink-2); border: 3px solid var(--cc, var(--gold));
+    z-index: 4; transition: all 0.3s var(--ease);
+}
+.item.left  .node { right: calc(clamp(1.6rem,3.5vw,3rem) * -1 - 8px); transform: translateX(50%); }
+.item.right .node { left:  calc(clamp(1.6rem,3.5vw,3rem) * -1 - 8px); transform: translateX(-50%); }
+.item.show .node { box-shadow: 0 0 16px var(--cc, var(--gold)); }
+.item.milestone .node {
+    width: 22px; height: 22px; background: var(--cc);
+    box-shadow: 0 0 22px var(--cc); animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{ box-shadow:0 0 14px var(--cc) } 50%{ box-shadow:0 0 30px var(--cc), 0 0 50px var(--cc) } }
+
+/* 卡片 */
+.card {
+    display: inline-block; text-align: left; width: 100%;
+    background: var(--panel); border: 1px solid var(--panel-bd);
+    border-radius: 16px; padding: clamp(1rem, 2.2vw, 1.5rem) clamp(1.1rem, 2.4vw, 1.6rem);
+    position: relative; overflow: hidden;
+    transition: transform 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+.card::before {
+    content:""; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+    background: var(--cc, var(--gold)); opacity: 0.9;
+}
+.card:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--cc) 55%, transparent);
+    box-shadow: 0 14px 40px rgba(0,0,0,0.45);
+}
+.item.milestone .card {
+    background: linear-gradient(150deg, color-mix(in srgb, var(--cc) 14%, transparent), var(--panel));
+    border-color: color-mix(in srgb, var(--cc) 45%, transparent);
+}
+
+.card .date {
+    font-family: var(--font-num); font-weight: 600;
+    color: var(--cc, var(--gold)); line-height: 1; margin-bottom: 0.5rem;
+    display: flex; align-items: baseline; gap: 0.4rem; flex-wrap: wrap;
+}
+.card .date .yr  { font-size: clamp(1.5rem, 3.4vw, 2.2rem); }
+.card .date .day { font-size: clamp(0.8rem, 1.5vw, 1rem); color: var(--text-dim); font-family: var(--font-sans); font-weight: 500; }
+.card .cat-tag {
+    font-size: clamp(0.6rem, 1.1vw, 0.72rem); font-weight: 500; letter-spacing: 0.08em;
+    color: var(--cc); border: 1px solid color-mix(in srgb, var(--cc) 40%, transparent);
+    padding: 0.2em 0.7em; border-radius: 999px; margin-left: auto;
+}
+.card h3 {
+    font-family: var(--font-zh); font-weight: 600;
+    font-size: clamp(1.05rem, 2.2vw, 1.4rem); line-height: 1.3; color: var(--text);
+    margin-bottom: 0.25rem;
+}
+.card .note { font-size: clamp(0.78rem, 1.5vw, 0.95rem); color: var(--text-dim); font-weight: 300; margin-bottom: 0.7rem; }
+.card .people {
+    font-size: clamp(0.74rem, 1.4vw, 0.88rem); color: var(--text-faint);
+    padding-top: 0.6rem; border-top: 1px dashed var(--panel-bd); line-height: 1.55;
+}
+.card .people b { color: var(--text-dim); font-weight: 500; }
+.card .badge {
+    display: inline-block; margin-top: 0.6rem;
+    font-size: clamp(0.62rem,1.1vw,0.74rem); font-weight: 700; letter-spacing: 0.1em;
+    color: #0a1226; background: linear-gradient(120deg, var(--gold-bright), var(--gold));
+    padding: 0.3em 0.9em; border-radius: 999px;
+}
+
+.item.dim { opacity: 0.12 !important; filter: grayscale(0.6); pointer-events: none; transition: all 0.4s ease; }
+.item.dim.show { transform: translateY(0); }
+
+/* ===========================================
+   手機：改為左側單欄脊線
+   =========================================== */
+@media (max-width: 760px) {
+    .spine { left: 18px; transform: none; }
+    .item { width: 100%; left: 0 !important; text-align: left !important; padding: 0 0 0 48px; }
+    .item.left .node, .item.right .node { left: 11px; right: auto; transform: none; }
+    .card .cat-tag { margin-left: 0; }
+}
+
+/* ===========================================
+   分享區（QR code）
+   =========================================== */
+.share {
+    position: relative; z-index: 2;
+    max-width: 1080px; margin: 0 auto;
+    padding: 0 clamp(1rem, 4vw, 2rem);
+    display: flex; justify-content: center;
+}
+.share-card {
+    display: flex; align-items: center; gap: clamp(1rem, 3vw, 1.8rem);
+    flex-wrap: wrap; justify-content: center; text-align: left;
+    background: var(--panel); border: 1px solid var(--panel-bd);
+    border-radius: 18px; padding: clamp(1.1rem, 2.6vw, 1.6rem) clamp(1.3rem, 3vw, 2rem);
+    box-shadow: 0 14px 40px rgba(0,0,0,0.4);
+}
+.share-card .qr {
+    background: #fff; border-radius: 12px; padding: 8px; line-height: 0;
+    box-shadow: 0 0 0 1px var(--panel-bd), 0 6px 20px rgba(0,0,0,0.4); flex-shrink: 0;
+}
+.share-card .qr img { display: block; width: 132px; height: 132px; border-radius: 4px; }
+.share-card .meta { max-width: 30ch; }
+.share-card .meta .label {
+    font-family: var(--font-sans); font-weight: 500;
+    letter-spacing: 0.28em; font-size: 0.72rem; color: var(--gold);
+}
+.share-card .meta h2 {
+    font-family: var(--font-zh); font-weight: 600;
+    font-size: clamp(1.1rem, 2.4vw, 1.45rem); color: var(--text);
+    margin: 0.4rem 0 0.3rem; line-height: 1.3;
+}
+.share-card .meta p {
+    font-size: clamp(0.78rem, 1.5vw, 0.92rem); color: var(--text-dim);
+    font-weight: 300; line-height: 1.55;
+}
+.share-card .meta a.home {
+    display: inline-flex; align-items: center; gap: 0.4em; margin-top: 0.8rem;
+    font-family: var(--font-sans); font-size: 0.82rem; font-weight: 500;
+    color: var(--gold-bright); text-decoration: none;
+    border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
+    padding: 0.4em 1em; border-radius: 999px; transition: all 0.25s var(--ease);
+}
+.share-card .meta a.home:hover {
+    background: linear-gradient(120deg, var(--gold-bright), var(--gold));
+    color: #0a1226; border-color: transparent;
+}
+
+/* 頁尾 */
+.foot {
+    position: relative; z-index: 2; text-align: center;
+    padding: 2rem 1.5rem 4rem; color: var(--text-faint);
+    font-size: 0.8rem; letter-spacing: 0.08em; line-height: 2;
+}
+.foot b { color: var(--gold); }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition-duration: 0.2s !important; }
+    .item { opacity: 1 !important; transform: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ===================== HERO ===================== -->
+<header class="hero">
+    <div class="kicker">台大醫院新竹分院 · 心血管中心</div>
+    <h1>心導管室的故事</h1>
+    <div class="en">Cath Room History · 1991 – 2026</div>
+    <p class="sub">
+        從 1991 年的第一例心導管，到 2026 年竹苗第一例 TAVI。
+        三十五年來，這個房間裡的每一次「第一次」，都是一群人把不可能變成日常的證明。
+    </p>
+    <div class="stats">
+        <div class="stat"><div class="v">35</div><div class="l">年的傳承</div></div>
+        <div class="stat"><div class="v" id="statTotal">0</div><div class="l">項術式紀錄</div></div>
+        <div class="stat"><div class="v" id="statMile">0</div><div class="l">重大里程碑</div></div>
+        <div class="stat"><div class="v">5</div><div class="l">介入領域</div></div>
+    </div>
+    <div class="scroll-cue">↓ 向下捲動，走過這段歷史</div>
+</header>
+
+<!-- ===================== 篩選列 ===================== -->
+<nav class="filter-bar" id="filterBar">
+    <button class="chip active" data-cat="all">全部</button>
+    <button class="chip" data-cat="coronary"><span class="dot"></span>冠狀動脈</button>
+    <button class="chip" data-cat="ep"><span class="dot"></span>電生理・心律</button>
+    <button class="chip" data-cat="struct"><span class="dot"></span>結構性心臟病</button>
+    <button class="chip" data-cat="periph"><span class="dot"></span>周邊血管・其他</button>
+    <button class="chip" data-cat="milestone"><span class="dot"></span>重大里程碑</button>
+</nav>
+
+<!-- ===================== 時間軸 ===================== -->
+<main class="timeline" id="timeline">
+    <div class="spine"><div class="fill" id="spineFill"></div></div>
+    <!-- 事件由 JS 渲染 -->
+</main>
+
+<!-- ===================== 分享 ===================== -->
+<section class="share">
+    <div class="share-card">
+        <div class="qr">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https%3A%2F%2Fdrake1128.github.io%2Fsaq-questionnaire%2FCath_Room_History.html"
+                 alt="心導管室歷史時間軸頁面 QR Code" width="132" height="132" loading="lazy">
+        </div>
+        <div class="meta">
+            <div class="label">SCAN ・ 分享這段歷史</div>
+            <h2>掃描 QR Code，把這個房間的故事帶著走</h2>
+            <p>用手機掃描即可開啟本頁時間軸，方便在交班、教學或迎新時與同仁共享。</p>
+            <a class="home" href="index.html">↩ 返回教學資源中心首頁</a>
+        </div>
+    </div>
+</section>
+
+<footer class="foot">
+    資料來源：台大醫院新竹分院 心導管室歷史紀錄<br>
+    謹向 <b>1991 年至今</b> 所有參與的醫師、護理師、技術員與全體同仁致敬。
+</footer>
+
+<script>
+/* ===========================================
+   分類設定
+   =========================================== */
+const CATS = {
+    coronary:  { name: '冠狀動脈',     color: 'var(--c-coronary)' },
+    ep:        { name: '電生理・心律', color: 'var(--c-ep)' },
+    struct:    { name: '結構性心臟病', color: 'var(--c-struct)' },
+    periph:    { name: '周邊血管・其他', color: 'var(--c-periph)' },
+    milestone: { name: '重大里程碑',   color: 'var(--c-mile)' },
+};
+
+/* ===========================================
+   歷史資料（依時間排序）
+   y 年 / d 月日 / t 術式 / n 中文說明 / p 參與人員 / c 分類 / m 里程碑
+   =========================================== */
+const DATA = [
+  { y:'1991', d:'12/26', t:'Cath', n:'全院首例心導管檢查 — 一切的起點', p:'彭兆昌、陳清淵；莊秋珠、凌建玲、洪瑞清、林修平、蔡淑惠', c:'coronary', m:1 },
+  { y:'1992', d:'09/29', t:'EP study', n:'心臟電生理學檢查', p:'吳喻哖、林正弘', c:'ep' },
+  { y:'1992', d:'12/01', t:'Pediatric cath', n:'兒科心導管', p:'吳喻哖、林正弘', c:'periph' },
+  { y:'1993', d:'08/03', t:'Coronary PTCA', n:'冠狀動脈氣球擴張術', p:'彭兆昌、陳清淵、溫斯企；莊秋珠、劉秀嬌、淑惠、吳慧君', c:'coronary' },
+  { y:'1994', d:'01/17', t:'PAOD PTA', n:'周邊動脈氣球擴張術', p:'彭兆昌、陳清淵、徐均平；莊秋珠、劉秀嬌、林修平、吳慧君', c:'periph' },
+  { y:'1994', d:'11/01', t:'DCA', n:'定向冠狀動脈斑塊切除術', p:'彭兆昌、陳清淵', c:'coronary' },
+  { y:'1995', d:'11/04', t:'Ablation', n:'心律不整電燒術', p:'溫斯企', c:'ep' },
+  { y:'1997', d:'07/31', t:'PPCI', n:'緊急冠狀動脈介入（急性心肌梗塞）', p:'陳清淵；莊秋珠、劉秀嬌、郭慧菁', c:'coronary' },
+  { y:'1997', d:'11/19', t:'PTA (ESRD)', n:'洗腎血管通路擴張術', p:'王鑑忠；莊秋珠、劉秀嬌、郭慧菁', c:'periph' },
+  { y:'2010', d:'10/07', t:'PPW', n:'永久性心律調節器', p:'謝慕揚', c:'ep' },
+  { y:'2012', d:'02/17', t:'ECMO – ACS CPR', n:'葉克膜輔助下急性冠心症急救', p:'林麟、王植賢', c:'periph' },
+  { y:'2012', d:'03/19', t:'Renal PTA', n:'腎動脈氣球擴張術', p:'卜詩筠、謝慕揚、黃信凱', c:'periph' },
+  { y:'2012', d:'06/29', t:'Vertebral a. stenting', n:'椎動脈支架置放', p:'謝慕揚', c:'periph' },
+  { y:'2012', d:'07/27', t:'IVC filter', n:'下腔靜脈濾網置放', p:'蔡貴嶔、謝慕揚', c:'periph' },
+  { y:'2012', d:'08/24', t:'IVUS', n:'血管內超音波', p:'謝慕揚、林麟', c:'coronary' },
+  { y:'2012', d:'08/24', t:'SMA occlusion', n:'腸繫膜上動脈阻塞介入', p:'蔡貴嶔、謝慕揚', c:'periph' },
+  { y:'2012', d:'09/02', t:'PTMV', n:'經皮二尖瓣狹窄擴張術', p:'謝慕揚、黃瑞仁教授', c:'struct' },
+  { y:'2012', d:'11/13', t:'CRT', n:'心臟再同步治療（改制後）', p:'賴超倫（更早卜詩筠醫師已執行）', c:'ep' },
+  { y:'2012', d:'11/16', t:'ICD', n:'植入式心臟去顫器', p:'謝慕揚', c:'ep' },
+  { y:'2013', d:'03/01', t:'Rota', n:'冠狀動脈旋磨術', p:'林茂欣、林麟、謝慕揚、黃信凱', c:'coronary' },
+  { y:'2013', d:'03/05', t:'CRT-D', n:'再同步治療去顫器', p:'廖敏村', c:'ep' },
+  { y:'2013', d:'05/29', t:'FFR', n:'血流儲備分數量測', p:'林麟', c:'coronary' },
+  { y:'2014', d:'07/29', t:'ICAS', n:'顱內／頸動脈狹窄支架', p:'林茂欣、謝慕揚', c:'periph' },
+  { y:'2014', d:'09/02', t:'Renal Denervation', n:'腎交感神經阻斷（頑固型高血壓）', p:'賴超倫、廖敏村', c:'periph' },
+  { y:'2015', d:'01/15', t:'BVS', n:'全吸收式血管支架', p:'林廷澤、林茂欣', c:'coronary' },
+  { y:'2015', d:'',      t:'AF, 3D ablation', n:'心房顫動三維立體電燒', p:'劉言彬、廖敏村', c:'ep' },
+  { y:'2015', d:'07/08', t:'DEB for AV shunt', n:'藥物塗層球囊（洗腎動靜脈廔管）', p:'吳志成、廖敏村', c:'periph' },
+  { y:'2016', d:'01/31', t:'MCA occlusion', n:'中大腦動脈取栓 — 全院首例腦中風動脈內介入', p:'謝慕揚', c:'periph' },
+  { y:'2016', d:'03/18', t:'Renal Denervation – Simplicity', n:'Simplicity 系統腎神經阻斷', p:'林廷澤', c:'periph' },
+  { y:'2017', d:'03/03', t:'Lead extraction', n:'心律器導線拔除術', p:'劉言彬、廖敏村', c:'ep' },
+  { y:'2018', d:'09/21', t:'LAAO', n:'左心耳封堵術', p:'林廷澤、廖敏村、蔡佳醍', c:'struct' },
+  { y:'2019', d:'01/09', t:'Leadless pacemaker', n:'無導線心律調節器', p:'游治節、廖敏村', c:'ep' },
+  { y:'2019', d:'05/04', t:'Cryoablation', n:'冷凍消融術', p:'林廷澤、廖敏村、劉言彬', c:'ep' },
+  { y:'2019', d:'07/01', t:'His bundle pacing', n:'希氏束起搏', p:'林廷澤', c:'ep' },
+  { y:'2020', d:'04/21', t:'REBOA', n:'主動脈內球囊阻斷（創傷急救）', p:'陳俊凱', c:'periph' },
+  { y:'2020', d:'05/25', t:'AngioJet', n:'機械性血栓抽吸（改制後）', p:'許如瑩', c:'periph' },
+  { y:'2020', d:'05/25', t:'ASD occluder', n:'心房中膈缺損封堵（成人心臟科執行）', p:'黃冠智', c:'struct' },
+  { y:'2020', d:'05/25', t:'PFO occluder', n:'開放性卵圓孔封堵（成人心臟科執行）', p:'黃冠智', c:'struct' },
+  { y:'2020', d:'05/25', t:'LAAO + bilateral carotid filter', n:'雙側頸動脈濾網保護下左心耳封堵', p:'林廷澤、謝慕揚、孟士瑋、吳宗達', c:'struct' },
+  { y:'2020', d:'06/23', t:'Submassive PE – EKOS', n:'次大量肺栓塞超音波輔助溶栓', p:'羅健洺', c:'periph' },
+  { y:'2020', d:'06/23', t:'Massive PE – CDT', n:'大量肺栓塞導管溶栓', p:'謝慕揚', c:'periph' },
+  { y:'2020', d:'06/23', t:'Uterine artery TAE', n:'子宮動脈栓塞', p:'陳俊凱、謝慕揚', c:'periph' },
+  { y:'2020', d:'06/23', t:'EKOS for DVT', n:'深層靜脈血栓超音波溶栓', p:'廖哲偉', c:'periph' },
+  { y:'2020', d:'09/10', t:'LAAO + PFO double closure', n:'左心耳＋卵圓孔同次雙封堵', p:'林廷澤、吳宗達、傅俊閔', c:'struct' },
+  { y:'2021', d:'02/02', t:'LAAO after stroke IA thrombectomy', n:'急性腦中風動脈取栓後左心耳封堵', p:'林廷澤、謝慕揚、黃冠智、蔡坤璋、吳宗達', c:'struct' },
+  { y:'2022', d:'01/07', t:'Symplicity Spyral RDN', n:'Spyral 腎交感神經阻斷', p:'李志國、王宗道、潘恆宇', c:'periph' },
+  { y:'2022', d:'03/31', t:'MitraClip', n:'經導管二尖瓣修補術 — 竹苗首例', p:'黃冠智、謝慕揚、李志國、吳宗達、蔡孝恩', c:'struct', m:1 },
+  { y:'2022', d:'04/07', t:'ASD + PVI（one stage）', n:'心房中膈缺損＋肺靜脈隔離同次完成', p:'廖敏村、傅俊閔', c:'struct' },
+  { y:'2022', d:'05/27', t:'MitraClip for flail leaflet', n:'二尖瓣夾合（連枷瓣葉）', p:'黃冠智、李志國、林明賢、吳宗達、林廷澤', c:'struct' },
+  { y:'2022', d:'07/07', t:'MitraClip · very-high-risk', n:'二尖瓣夾合（極高風險心因性肝硬化）', p:'李志國、謝慕揚、黃冠智、吳宗達、蔡孝恩、林明賢、魏平雅、林廷澤', c:'struct' },
+  { y:'2024', d:'02/02', t:'TAE to GDA bleeding', n:'胃十二指腸動脈出血栓塞成功', p:'謝慕揚、連朕緯、謝明倩、張芯瑜', c:'periph' },
+  { y:'2024', d:'02/06', t:'升格為醫學中心', n:'新竹臺大分院正式升格為醫學中心', p:'全體同仁', c:'milestone', m:1 },
+  { y:'2024', d:'03/22', t:'零輻射心房顫動電燒', n:'零輻射複雜性心房顫動電燒熱燒術', p:'陳俊凱', c:'ep' },
+  { y:'2025', d:'06/05', t:'IVL（第一例 PAOD）', n:'血管內震波碎斑術 — 周邊動脈首例', p:'謝慕揚、郭睿成', c:'periph', m:1 },
+  { y:'2026', d:'05/15', t:'TAVI（竹苗第一例）', n:'經導管主動脈瓣置換術 — 竹苗第一例', p:'謝慕揚、李志國、蔡孝恩、林明賢、郭睿成、林佩珊', c:'struct', m:1 },
+];
+
+/* 年代分隔（依年份起點插入） */
+const ERAS = [
+  { from: 1991, label: '1991 – 1997　草創・奠基' },
+  { from: 2010, label: '2010 – 2019　全面開展' },
+  { from: 2020, label: '2020 – 2026　創新・醫學中心時代' },
+];
+
+/* ===========================================
+   渲染
+   =========================================== */
+const tl = document.getElementById('timeline');
+let visualIndex = 0;        // 用於左右交替
+const yearNum = (y) => parseInt(y, 10) || 9999;
+
+DATA.forEach((e, i) => {
+    // 找出此事件所屬年代（最後一個 from <= 年份的年代），首次出現時插入分隔標籤
+    const yn = yearNum(e.y);
+    let eIdx = -1;
+    for (let k = 0; k < ERAS.length; k++) { if (yn >= ERAS[k].from) eIdx = k; }
+    if (eIdx >= 0 && !ERAS[eIdx].used) {
+        ERAS[eIdx].used = true;
+        const era = document.createElement('div');
+        era.className = 'era';
+        era.innerHTML = `<span>${ERAS[eIdx].label}</span>`;
+        tl.appendChild(era);
+    }
+
+    const cat = CATS[e.c];
+    const side = (visualIndex % 2 === 0) ? 'left' : 'right';
+    visualIndex++;
+
+    const item = document.createElement('article');
+    item.className = `item ${side}${e.m ? ' milestone' : ''}`;
+    item.dataset.cat = e.c;
+    item.style.setProperty('--cc', cat.color);
+
+    const dayHtml = e.d ? `<span class="day">${e.d}</span>` : '';
+    const badge = e.m ? `<div class="badge">★ 里程碑</div>` : '';
+
+    item.innerHTML = `
+        <div class="node"></div>
+        <div class="card">
+            <div class="date">
+                <span class="yr">${e.y}</span>${dayHtml}
+                <span class="cat-tag">${cat.name}</span>
+            </div>
+            <h3>${e.t}</h3>
+            <div class="note">${e.n}</div>
+            <div class="people"><b>參與：</b>${e.p}</div>
+            ${badge}
+        </div>
+    `;
+    tl.appendChild(item);
+});
+
+/* 統計數字 */
+document.getElementById('statTotal').textContent = DATA.length;
+document.getElementById('statMile').textContent = DATA.filter(e => e.m).length;
+
+/* ===========================================
+   進場動畫（IntersectionObserver）
+   =========================================== */
+const items = document.querySelectorAll('.item');
+const io = new IntersectionObserver((entries) => {
+    entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('show'); io.unobserve(en.target); } });
+}, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+items.forEach(it => io.observe(it));
+
+/* ===========================================
+   捲動進度 + 脊線充能
+   =========================================== */
+const bar = document.getElementById('progressBar');
+const spineFill = document.getElementById('spineFill');
+const tlEl = document.getElementById('timeline');
+
+function onScroll() {
+    const st = window.scrollY || document.documentElement.scrollTop;
+    const docH = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docH > 0 ? (st / docH) * 100 : 0;
+    bar.style.width = pct + '%';
+
+    // 脊線：依時間軸區塊在視窗中的進度填充
+    const rect = tlEl.getBoundingClientRect();
+    const total = rect.height;
+    const passed = Math.min(Math.max(window.innerHeight * 0.5 - rect.top, 0), total);
+    spineFill.style.height = (total > 0 ? (passed / total) * 100 : 0) + '%';
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+window.addEventListener('resize', onScroll);
+onScroll();
+
+/* ===========================================
+   分類篩選
+   =========================================== */
+const chips = document.querySelectorAll('.chip');
+chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        const cat = chip.dataset.cat;
+        items.forEach(it => {
+            const match = (cat === 'all') ||
+                          (cat === 'milestone' ? it.classList.contains('milestone') : it.dataset.cat === cat);
+            it.classList.toggle('dim', !match);
+        });
+        setTimeout(onScroll, 50);
+    });
+});
+</script>
+</body>
+</html>
