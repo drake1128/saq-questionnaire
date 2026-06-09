@@ -258,6 +258,69 @@
   }
   .tag-md { background: #dbeafe; color: #1e40af; }
   .tag-pt { background: #dcfce7; color: #166534; }
+  .tag-order { background: #fef3c7; color: #92400e; }
+
+  /* ---- Order quick-reference helpers ---- */
+  .ordercode {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-weight: 700;
+    background: #eef2ff;
+    color: #3730a3;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    white-space: nowrap;
+  }
+  .decision-table td:first-child { font-weight: 600; }
+  .decision-table .scenario { color: #991b1b; }
+  .free-pill {
+    display: inline-block;
+    background: #d1fae5;
+    color: #065f46;
+    font-size: 0.72em;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 999px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .pending-pill {
+    display: inline-block;
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 0.72em;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 999px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .ordercard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+    margin: 12px 0;
+  }
+  .ordercard {
+    border: 1px solid #e5e7eb;
+    border-left: 4px solid #2c5282;
+    border-radius: 8px;
+    padding: 12px 14px;
+    background: #fbfcfe;
+  }
+  .ordercard.pending-card { border-left-color: #d97706; background: #fffbeb; }
+  .ordercard .oc-name { font-weight: 700; color: #1a3a5c; margin: 6px 0 4px; }
+  .ordercard .oc-desc { font-size: 0.86em; color: #4b5563; }
+  .genelist {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 0.84em;
+    line-height: 1.95;
+    color: #374151;
+    word-break: break-word;
+  }
+  .disease-cols { columns: 2; column-gap: 24px; font-size: 0.9em; }
+  .disease-cols li { break-inside: avoid; }
+  @media (max-width: 560px) { .disease-cols { columns: 1; } }
 </style>
 </head>
 <body>
@@ -270,7 +333,8 @@
 <nav class="tabnav" role="tablist">
   <button class="active" role="tab" aria-selected="true" data-tab="tab-1"><span class="tnum">①</span>規劃手稿</button>
   <button role="tab" aria-selected="false" data-tab="tab-2"><span class="tnum">②</span>轉介醫師說明</button>
-  <button role="tab" aria-selected="false" data-tab="tab-3"><span class="tnum">③</span>病人 SDM</button>
+  <button role="tab" aria-selected="false" data-tab="tab-3"><span class="tnum">③</span>診間開單速查</button>
+  <button role="tab" aria-selected="false" data-tab="tab-4"><span class="tnum">④</span>病人 SDM</button>
 </nav>
 
 <div class="container">
@@ -626,6 +690,7 @@ gantt
           <td>已知家族致病變異</td>
         </tr>
       </table>
+      <div class="fee-note" style="margin-bottom:10px">＊各檢測之醫令碼、Level 3 / Level 4 套組涵蓋範圍，以及 Fabry / ATTR-CM 委檢流程，詳見「③ 診間開單速查」分頁。</div>
       <div class="cite-list">
         <strong>美國對照基準來源</strong>（匯率約 US$1 ≈ NT$32，僅供量級參考）
         <ul style="margin:6px 0 0">
@@ -640,8 +705,216 @@ gantt
   </div><!-- /tab-2 -->
 
 
-  <!-- ===================== TAB 3：病人 SDM ===================== -->
+  <!-- ===================== TAB 3：診間開單速查 ===================== -->
   <div id="tab-3" class="tab-panel" role="tabpanel">
+
+    <div class="section">
+      <span class="audience-tag tag-order">給開單醫師 ｜ 診間快速查找</span>
+      <h2>① 一句話 — 我該開哪一張單？</h2>
+      <div class="lede">
+        本頁整理<strong>本院目前可開立之遺傳疾病基因檢測</strong>，協助診間依臨床情境快速決定「該開哪一張醫令單」。
+        心血管遺傳病（SCD / Brugada / VT / ARVC、HCM / DCM / ARVD、FH 等）原則上皆可用
+        <span class="ordercode">WES</span> 或 <span class="ordercode">WGS</span> 檢測；
+        部分疾病在<strong>臨床情境、表型或家族史明確</strong>時，改以套組檢驗價格更實惠。
+      </div>
+      <div class="takehome">
+        <strong>四項現可開立檢測</strong>：WES (000X0262)、WGS (000X0263)、Level 3 (000X0125)、Level 4 (000X0126)。<br>
+        <strong>FH 專屬套組</strong> (000X0245) <span class="pending-pill">申請中</span>尚待 LDTs 核准；過渡期以 WES / WGS 替代。<br>
+        <strong>Fabry、ATTR-CM</strong> 基因檢測現由廠商贊助免自費，流程見下方專區。
+      </div>
+    </div>
+
+    <!-- 決策表：HERO -->
+    <div class="section">
+      <h2>② 依臨床情境查找 — 決策速查表</h2>
+      <p style="font-size:.9em;color:#4b5563">由左欄臨床情境，對應右側<strong>建議檢測與醫令碼</strong>；符合任一即可開立評估。</p>
+      <table class="decision-table">
+        <tr>
+          <th width="30%">臨床情境 / 疾病</th>
+          <th>建議檢測</th>
+          <th width="24%">醫令碼</th>
+          <th width="20%">備註</th>
+        </tr>
+        <tr>
+          <td class="scenario">遺傳性心律不整<br><span style="font-weight:400;font-size:.85em">SCD、Brugada、VT、ARVC、不明原因 VF</span></td>
+          <td>WES（首選）或 WGS</td>
+          <td><span class="ordercode">000X0262</span> WES<br><span class="ordercode">000X0263</span> WGS</td>
+          <td>表型/家族史明確時可考慮套組</td>
+        </tr>
+        <tr>
+          <td class="scenario">遺傳性心肌病變<br><span style="font-weight:400;font-size:.85em">HCM、DCM、ARVD（ARVC）</span></td>
+          <td>WES（首選）或 WGS</td>
+          <td><span class="ordercode">000X0262</span> WES<br><span class="ordercode">000X0263</span> WGS</td>
+          <td>WGS 對 CNV/SV/non-coding 涵蓋較佳</td>
+        </tr>
+        <tr>
+          <td class="scenario">家族性高膽固醇血症 FH<br><span style="font-weight:400;font-size:.85em">ABCG5, ABCG8, APOB, LDLR, LDLRAP1, PCSK9</span></td>
+          <td>目標：FH 小範圍套組<br>過渡期：WES 或 WGS</td>
+          <td><span class="ordercode">000X0245</span> <span class="pending-pill">待核准</span><br><span class="ordercode">000X0262 / 000X0263</span></td>
+          <td>套組待 LDTs 核准（約 0.5–1 年）；期間先以 WES/WGS</td>
+        </tr>
+        <tr>
+          <td class="scenario">Fabry disease（男性）</td>
+          <td>先做 Fabry 篩檢 <span class="free-pill">廠商贊助・免自費</span><br>異常再補基因分析</td>
+          <td><span class="ordercode">000X0177</span> 篩檢<br>→ 異常 → <span class="ordercode">000X0125</span> Level 3</td>
+          <td>委託總院；詳見下方流程</td>
+        </tr>
+        <tr>
+          <td class="scenario">Fabry disease（女性）</td>
+          <td>先做 Lyso-Gb3 等檢測 <span class="free-pill">廠商贊助・免自費</span><br>異常再補基因分析</td>
+          <td><span class="ordercode">000X0179</span> Lyso 檢測<br>→ 異常 → <span class="ordercode">000X0125</span> Level 3</td>
+          <td>委託總院；詳見下方流程</td>
+        </tr>
+        <tr>
+          <td class="scenario">ATTR-CM<br><span style="font-weight:400;font-size:.85em">轉甲狀腺素蛋白類澱粉沉積心肌病變</span></td>
+          <td>PYP scan 疑似 → 心肌切片確認；<br>基因檢測 <span class="free-pill">廠商免費（慧智）</span></td>
+          <td>委總院基因分析：<br><span class="ordercode">000X0125</span> Level 3</td>
+          <td>詳見下方流程</td>
+        </tr>
+        <tr>
+          <td class="scenario">代謝 / 粒線體相關疾病<br><span style="font-weight:400;font-size:.85em">Level 3 套組涵蓋之指定基因</span></td>
+          <td>Level 3 指定點位套組</td>
+          <td><span class="ordercode">000X0125</span> Level 3</td>
+          <td>涵蓋基因見下方清單</td>
+        </tr>
+        <tr>
+          <td class="scenario">新生兒篩檢異常之基因確認<br><span style="font-weight:400;font-size:.85em">公費 / 自費篩檢項目異常</span></td>
+          <td>Level 4 全外顯子套組</td>
+          <td><span class="ordercode">000X0126</span> Level 4</td>
+          <td>涵蓋疾病見下方清單</td>
+        </tr>
+      </table>
+      <div class="warn" style="border-left-color:#2c5282;background:#eef4fb">
+        <strong>套組 vs WES/WGS 怎麼選？</strong>　臨床情境、表型或家族史明確、且標的基因落在既有套組範圍時，
+        <strong>套組更實惠</strong>；表型廣泛、未定或標的不明者，<strong>WES / WGS</strong> 一次涵蓋大量基因較合適。
+      </div>
+    </div>
+
+    <!-- 院內可開立檢測卡片 -->
+    <div class="section">
+      <h2>③ 現可開立之院內檢測項目</h2>
+      <div class="ordercard-grid">
+        <div class="ordercard">
+          <span class="ordercode">000X0262</span>
+          <div class="oc-name">次世代定序全外顯子定序檢測 — WES</div>
+          <div class="oc-desc">單基因遺傳疾病。一次涵蓋大量基因，為大多數遺傳性心臟病之首選。</div>
+        </div>
+        <div class="ordercard">
+          <span class="ordercode">000X0263</span>
+          <div class="oc-name">次世代定序全基因體定序檢測 — WGS</div>
+          <div class="oc-desc">遺傳疾病。涵蓋範圍最廣，對 CNV / SV / non-coding 變異偵測較佳。</div>
+        </div>
+        <div class="ordercard">
+          <span class="ordercode">000X0125</span>
+          <div class="oc-name">全外顯子定序 — 基因分析 Level 3</div>
+          <div class="oc-desc">以套組方式檢測<strong>粒線體 DNA 指定點位基因及其他指定基因</strong>（多為代謝疾病）。亦為 Fabry / ATTR-CM 委總院基因分析所用之醫令。</div>
+        </div>
+        <div class="ordercard">
+          <span class="ordercode">000X0126</span>
+          <div class="oc-name">全外顯子定序 — 基因分析 Level 4</div>
+          <div class="oc-desc">以全外顯子定序檢測<strong>新生兒公費與自費篩檢項目異常</strong>之基因。</div>
+        </div>
+        <div class="ordercard pending-card">
+          <span class="ordercode">000X0245</span> <span class="pending-pill">申請中</span>
+          <div class="oc-name">次世代定序疾病基因突變檢測 — 小範圍項目</div>
+          <div class="oc-desc">含 FH 相關基因（ABCG5, ABCG8, APOB, LDLR, LDLRAP1, PCSK9），醫研部協助申請中；<strong>須待 LDTs 經主管機關核准</strong>才能執行（審查至核准約半年至一年）。過渡期以 WES / WGS 替代。</div>
+        </div>
+      </div>
+      <p style="font-size:.86em;color:#4b5563;margin-top:6px">
+        總院基因醫學部 NGS 檢測資訊：
+        <a href="https://www.ntuh.gov.tw/gene-lab-ngs/Fpage.action?muid=7593&amp;fid=8084" target="_blank" rel="noopener" style="color:#2563eb;text-decoration:underline">台大醫院基因醫學部 NGS 專頁</a>
+      </p>
+    </div>
+
+    <!-- Fabry 流程 -->
+    <div class="section">
+      <h2>④ Fabry disease（法布瑞氏症）檢測流程</h2>
+      <div class="takehome">基因檢驗目前由<strong>武田／賽諾菲</strong>兩家公司贊助，<strong>病人不需自費</strong>。建議先篩檢、異常再補基因分析。</div>
+      <ul class="steps">
+        <li><b>男性病人</b>先開立 <span class="ordercode">000X0177</span> Screening for Fabry disease (&gt;7 years old) (Male)，委託總院檢驗。</li>
+        <li><b>女性病人</b>先開立 <span class="ordercode">000X0179</span> Lyso-Gb3, LysoGL-1 and Lyso-SM test，委託總院檢驗。</li>
+        <li>若上述<b>篩檢結果異常</b>，由開單醫師<b>補開</b> <span class="ordercode">000X0125</span> Genetic analysis – Level 3，委託總院進行基因分析。</li>
+      </ul>
+    </div>
+
+    <!-- ATTR-CM 流程 -->
+    <div class="section">
+      <h2>⑤ ATTR-CM（轉甲狀腺素蛋白類澱粉沉積心肌病變）流程</h2>
+      <ul class="steps">
+        <li><b>Tc-99m PYP scan</b> 高度懷疑 ATTR-CM。</li>
+        <li>依目前藥物申請規範，<b>仍需進一步心肌切片確認</b>。</li>
+        <li>基因檢測目前由<b>廠商免費提供</b>（合作單位：慧智基因）<span class="free-pill">免費</span>。</li>
+        <li>若需<b>委託總院</b>進行基因分析，可開立 <span class="ordercode">000X0125</span> Genetic analysis – Level 3。</li>
+      </ul>
+    </div>
+
+    <!-- Level 3 / Level 4 涵蓋清單 -->
+    <div class="section">
+      <h2>⑥ 套組涵蓋範圍（Level 3 / Level 4）</h2>
+
+      <details class="faq" open>
+        <summary><span class="ordercode">000X0125</span> Level 3 — 粒線體 DNA 指定點位及其他基因</summary>
+        <p class="genelist">
+          ABCD1、ACADVL、CPT1A、CPT2、ETFA、ETFB、ETFDH、GAA、SLC25A20、SLC22A5、IDUA、IDS、SGSH、NAGLU、GALNS、GLB1、ARSB、TPP1、GLA、DDC、BTD、HLCS、MCCC1、MCCC2、AUH、HMGCL、ACAT1、HSD17B10、MMAA、MMAB、MMACHC、MMADHC、MMUT、PCCA、PCCB、CPS1、OTC、ASS1、ASL、ARG1、NAGS、SLC25A15、SLC25A13、PC
+        </p>
+      </details>
+
+      <details class="faq">
+        <summary><span class="ordercode">000X0126</span> Level 4 — 新生兒篩檢異常項目（全外顯子）</summary>
+        <ul class="disease-cols">
+          <li>高胱胺酸尿症</li>
+          <li>半乳糖血症</li>
+          <li>苯酮尿症</li>
+          <li>楓糖漿尿症</li>
+          <li>中鏈醯輔酶 A 去氫酶缺乏症</li>
+          <li>戊二酸血症第一型</li>
+          <li>異戊酸血症</li>
+          <li>甲基丙二酸血症</li>
+          <li>瓜胺酸血症第 I 型</li>
+          <li>瓜胺酸血症第 II 型</li>
+          <li>三羥基三甲基戊二酸尿症</li>
+          <li>全羧化酶合成酶缺乏</li>
+          <li>丙酸血症</li>
+          <li>原發性肉鹼缺乏症</li>
+          <li>肉鹼棕櫚醯基轉移酶缺乏症第 I 型</li>
+          <li>肉鹼棕櫚醯基轉移酶缺乏症第 II 型</li>
+          <li>極長鏈醯輔酶 A 去氫酶缺乏症</li>
+          <li>早發型戊二酸血症第 II 型</li>
+          <li>嚴重複合型免疫缺乏症</li>
+          <li>龐貝氏症</li>
+          <li>典型法布瑞氏症</li>
+          <li>高雪氏症</li>
+          <li>黏多醣症第一型</li>
+          <li>黏多醣症第二型</li>
+          <li>生物素酵素缺乏症</li>
+          <li>腎上腺腦白質失養症</li>
+          <li>脊髓性肌肉萎縮症</li>
+          <li>芳香族 L-胺基酸類脫羧基酵素缺乏症</li>
+          <li>裘馨氏肌肉失養症</li>
+          <li>尼曼匹克氏症 A/B 型</li>
+        </ul>
+      </details>
+    </div>
+
+    <!-- 臨床實務提醒 -->
+    <div class="section">
+      <h2>⑦ 臨床實務提醒</h2>
+      <div class="warn">
+        基因檢測並非唯一途徑。建議依疾病特性，<strong>同步考量既有非基因檢驗流程、酵素檢測、代謝物檢測、影像學或病理檢查</strong>，以符合臨床診斷與治療需求。
+      </div>
+      <ul style="font-size:.92em">
+        <li><b>FH 過渡期</b>：FH 小範圍套組 (000X0245) 待 LDTs 核准前，如有基因診斷需求，可暫以 WES / WGS 替代。</li>
+        <li><b>Fabry</b>：先以生化／酵素篩檢（男 000X0177 / 女 000X0179）分流，異常再補 Level 3 基因分析。</li>
+        <li><b>ATTR-CM</b>：影像（PYP scan）與心肌切片仍為診斷主軸，基因檢測為輔助確認。</li>
+      </ul>
+      <div class="fee-note">＊本頁醫令碼與委檢流程依院內公告為準；廠商贊助方案可能隨合約調整。</div>
+    </div>
+
+  </div><!-- /tab-3 -->
+
+
+  <!-- ===================== TAB 4：病人 SDM ===================== -->
+  <div id="tab-4" class="tab-panel" role="tabpanel">
 
     <div class="section">
       <span class="audience-tag tag-pt">給病人與家屬 ｜ 醫病共享決策 (SDM)</span>
@@ -724,7 +997,7 @@ gantt
         <p>目前遺傳性心臟病的基因定序均為自費，健保尚未給付。詳細費用與適合您的檢測項目，可於門診與醫師討論。</p></details>
     </div>
 
-  </div><!-- /tab-3 -->
+  </div><!-- /tab-4 -->
 
 
   <div class="footer">
