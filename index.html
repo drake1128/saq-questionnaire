@@ -4293,6 +4293,14 @@
             document.getElementById('totalApps').textContent = visibleCards.length;
         }
 
+        // Auto-fill each category's count badge from its actual card count
+        function updateCategoryCounts() {
+            document.querySelectorAll('.category').forEach(cat => {
+                const badge = cat.querySelector('.category-count');
+                if (badge) badge.textContent = cat.querySelectorAll('.app-card').length;
+            });
+        }
+
         // Scroll to top
         function scrollToTop() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -4838,6 +4846,7 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            updateCategoryCounts();
             updateStats();
             initRelatedButtons();
             initBookmarkButtons();
