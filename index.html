@@ -2751,6 +2751,7 @@
             <li class="sidebar-nav-item"><a href="#sec-learning" onclick="navClick(event)"><span class="nav-icon">📚</span><span class="nav-label">學習資源與考試</span></a></li>
             <li class="sidebar-nav-item"><a href="#sec-genetics" onclick="navClick(event)"><span class="nav-icon">🧬</span><span class="nav-label">心肌病變基因醫學</span></a></li>
             <li class="sidebar-nav-item"><a href="#sec-admin" onclick="navClick(event)"><span class="nav-icon">📁</span><span class="nav-label">行政與新人訓練</span></a></li>
+            <li class="sidebar-nav-item"><a href="#sec-teacher" onclick="navClick(event)"><span class="nav-icon">🎓</span><span class="nav-label">臨床教師</span></a></li>
         </ul>
     </nav>
 
@@ -2801,13 +2802,10 @@
         </div>
         
         <!-- Quick Filters: Zone -->
-        <nav class="quick-filters" role="navigation" aria-label="專區篩選" id="main-content">
+        <nav class="quick-filters" role="navigation" aria-label="對象篩選" id="main-content">
             <button class="quick-btn active" onclick="filterByCategory('all')" aria-pressed="true">📚 全部</button>
-            <button class="quick-btn" onclick="filterByCategory('patient')" aria-pressed="false">👥 病患衛教專區</button>
-            <button class="quick-btn" onclick="filterByCategory('staff')" aria-pressed="false">👨‍⚕️ 同仁訓練專區</button>
-            <button class="quick-btn" onclick="filterByCategory('guideline')" aria-pressed="false">📋 治療指引專區</button>
-            <button class="quick-btn" onclick="filterByCategory('genetics')" aria-pressed="false">🧬 心肌病變基因醫學</button>
-            <button class="quick-btn" onclick="filterByCategory('teacher')" aria-pressed="false">🎓 臨床教師專區</button>
+            <button class="quick-btn" onclick="filterByCategory('staff')" aria-pressed="false">👨‍⚕️ 醫護同仁</button>
+            <button class="quick-btn" onclick="filterByCategory('patient')" aria-pressed="false">👥 病人家屬</button>
             <button class="quick-btn favorites-btn" onclick="filterByFavorites()" aria-pressed="false" id="favoritesFilterBtn">⭐ 我的收藏 <span class="fav-count" id="favCount">0</span></button>
         </nav>
 
@@ -4210,33 +4208,21 @@
                 categories.forEach(cat => cat.classList.remove('hidden'));
                 cards.forEach(card => card.classList.remove('hidden'));
             } else {
-                // For 'genetics' zone, match data-category
-                categories.forEach(category => {
-                    if (category.dataset.category === type) {
-                        category.classList.remove('hidden');
-                    } else {
-                        // Also show categories that have matching cards
-                        category.classList.add('hidden');
-                    }
-                });
-
                 cards.forEach(card => {
-                    if (card.dataset.tags.includes(type)) {
-                        card.classList.remove('hidden');
-                        // Show parent category
+                    const isPatient = card.dataset.tags.includes('patient');
+                    // 病人家屬 = 有 patient 標籤；醫護同仁 = 其餘所有卡（含基因/教師/治療指引）
+                    const show = (type === 'patient') ? isPatient : !isPatient;
+                    card.classList.toggle('hidden', !show);
+                    if (show) {
                         const parentCat = card.closest('.category');
                         if (parentCat) parentCat.classList.remove('hidden');
-                    } else {
-                        card.classList.add('hidden');
                     }
                 });
 
-                // Re-check: hide categories where ALL cards are hidden
+                // 隱藏全部卡都被藏起的區塊
                 categories.forEach(category => {
                     const visibleCards = category.querySelectorAll('.app-card:not(.hidden)');
-                    if (visibleCards.length === 0) {
-                        category.classList.add('hidden');
-                    }
+                    category.classList.toggle('hidden', visibleCards.length === 0);
                 });
             }
 
