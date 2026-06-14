@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ECMO 體循師訓練 · 100 題自我測驗</title>
+<style>
+  :root{
+    --red:#b71c1c; --red-d:#7f0000; --red-l:#ffcdd2; --bg:#f4f5f7;
+    --green:#1b7f3b; --green-bg:#e6f4ea; --wrong:#c62828; --wrong-bg:#fdecea;
+    --ink:#1f2430; --muted:#5b6472; --card:#ffffff; --line:#e3e6ea;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0;}
+  body{
+    font-family:-apple-system,"PingFang TC","Microsoft JhengHei","Noto Sans TC",Roboto,sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.6; font-size:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:680px; margin:0 auto; padding:0 14px 96px;}
+
+  /* sticky header */
+  header{
+    position:sticky; top:0; z-index:20;
+    background:var(--red); color:#fff;
+    padding:10px 14px calc(10px + env(safe-area-inset-top,0));
+    box-shadow:0 2px 10px rgba(0,0,0,.18);
+  }
+  header .title{font-size:15px; font-weight:700; letter-spacing:.5px; display:flex; justify-content:space-between; align-items:center;}
+  header .sub{font-size:12px; opacity:.92; margin-top:2px;}
+  .bar{height:7px; background:rgba(255,255,255,.28); border-radius:6px; margin-top:8px; overflow:hidden;}
+  .bar > i{display:block; height:100%; width:0; background:#ffd54f; border-radius:6px; transition:width .25s;}
+  .statline{display:flex; justify-content:space-between; font-size:12px; margin-top:6px; opacity:.95;}
+  .statline b{font-weight:800; color:#fff;}
+
+  /* card */
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; margin-top:16px; padding:16px 15px; box-shadow:0 1px 3px rgba(20,30,50,.05);}
+  .chiptag{display:inline-block; font-size:11.5px; font-weight:700; color:var(--red-d); background:var(--red-l); padding:3px 9px; border-radius:999px; margin-bottom:10px;}
+  .qnum{color:var(--muted); font-weight:700; font-size:13px; margin-right:6px;}
+  .qtext{font-size:17px; font-weight:600; margin:2px 0 14px; line-height:1.55;}
+
+  .opt{
+    display:block; width:100%; text-align:left; cursor:pointer;
+    background:#fff; border:1.5px solid var(--line); border-radius:11px;
+    padding:13px 14px; margin:9px 0; font-size:15.5px; color:var(--ink);
+    transition:border-color .12s, background .12s; line-height:1.5;
+  }
+  .opt:active{transform:scale(.997);}
+  .opt .key{display:inline-block; min-width:22px; font-weight:800; color:var(--red); margin-right:6px;}
+  .opt.correct{border-color:var(--green); background:var(--green-bg);}
+  .opt.correct .key{color:var(--green);}
+  .opt.wrong{border-color:var(--wrong); background:var(--wrong-bg);}
+  .opt.wrong .key{color:var(--wrong);}
+  .opt.disabled{cursor:default;}
+  .opt.dim{opacity:.62;}
+
+  .verdict{font-weight:800; font-size:15px; margin:14px 0 6px; display:none;}
+  .verdict.ok{color:var(--green);} .verdict.no{color:var(--wrong);}
+  .exp{display:none; background:#fbfbfc; border:1px solid var(--line); border-left:4px solid var(--red); border-radius:0 10px 10px 0; padding:12px 14px; font-size:14.5px; color:#33404f;}
+  .exp b{color:var(--red-d);}
+
+  .nav{display:flex; gap:10px; margin-top:16px;}
+  .btn{flex:1; border:none; border-radius:12px; padding:14px; font-size:16px; font-weight:800; cursor:pointer; font-family:inherit;}
+  .btn.primary{background:var(--red); color:#fff; box-shadow:0 2px 8px rgba(183,28,28,.28);}
+  .btn.primary:disabled{background:#d9b3b3; box-shadow:none; cursor:default;}
+  .btn.ghost{background:#fff; color:var(--red); border:1.5px solid var(--red-l);}
+
+  /* result */
+  #result{display:none; text-align:center; margin-top:22px;}
+  .scorebig{font-size:64px; font-weight:900; color:var(--red); line-height:1.05;}
+  .scorebig small{font-size:24px; color:var(--muted); font-weight:700;}
+  .pct{font-size:20px; font-weight:800; margin-top:4px;}
+  .tier{display:inline-block; margin-top:10px; padding:6px 16px; border-radius:999px; font-weight:800; font-size:15px;}
+  .breakdown{text-align:left; margin-top:20px;}
+  .breakdown h3{font-size:14px; color:var(--muted); margin:0 0 8px; font-weight:800;}
+  .brow{display:flex; justify-content:space-between; align-items:center; font-size:13.5px; padding:7px 0; border-bottom:1px solid var(--line);}
+  .brow .nm{color:var(--ink);}
+  .brow .sc{font-weight:800;}
+  .brow .sc.full{color:var(--green);}
+  .mini{height:6px; background:var(--line); border-radius:6px; width:90px; overflow:hidden; margin-left:8px;}
+  .mini > i{display:block; height:100%; background:var(--red);}
+
+  footer{text-align:center; color:var(--muted); font-size:11.5px; margin-top:26px; line-height:1.7;}
+  .hint{font-size:12.5px; color:var(--muted); text-align:center; margin-top:10px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="title"><span>🩸 ECMO 體循師自我測驗</span><span id="hScore">0 分</span></div>
+  <div class="sub">ELSO Red Book 5e · 新竹臺大 ECMO 讀書會教材 · 共 100 題</div>
+  <div class="bar"><i id="progbar"></i></div>
+  <div class="statline"><span id="progText">第 1 / 100 題</span><span><b id="okCnt">0</b> 對 · <b id="noCnt">0</b> 錯</span></div>
+</header>
+
+<div class="wrap">
+  <div id="quiz">
+    <div class="card" id="qcard"></div>
+    <div class="nav">
+      <button class="btn ghost" id="restartBtn" style="flex:0 0 auto; padding-left:18px; padding-right:18px;">重來</button>
+      <button class="btn primary" id="nextBtn" disabled>請先作答</button>
+    </div>
+    <div class="hint">點選答案後立即顯示對錯與詳解；作答後按「下一題」。</div>
+  </div>
+
+  <div id="result">
+    <div class="scorebig" id="rScore">0<small>/100</small></div>
+    <div class="pct" id="rPct"></div>
+    <div><span class="tier" id="rTier"></span></div>
+    <div class="breakdown">
+      <h3>各章節答對率</h3>
+      <div id="rBreak"></div>
+    </div>
+    <div class="nav" style="margin-top:24px;">
+      <button class="btn primary" id="againBtn">再測一次（重新洗題）</button>
+    </div>
+    <div class="hint">每次重測都會重新打亂題目與選項順序，適合反覆練習。</div>
+  </div>
+
+  <footer>
+    依《Extracorporeal Life Support: The ELSO Red Book, 5th ed.》及新竹臺大 ECMO 16 週讀書會教材整理。<br>
+    僅供體循師 / ECMO team 院內教育訓練用途，臨床決策請以最新指引與主治醫師判斷為準。
+  </footer>
+</div>
+
+<script>
+/* ---------- 100 題題庫（a = 正確選項索引） ---------- */
+const BANK = [
+/* === Ch.1 迴路與抗凝 === */
+{c:"Ch1 迴路與抗凝",q:"關於離心泵(centrifugal)與滾輪泵(roller)的比較，下列何者正確？",o:["離心泵預充量(priming volume)較大","離心泵空氣栓塞風險較高","離心泵有逆流(retrograde flow)風險，需主動監測","離心泵管路磨損較嚴重"],a:2,e:"離心泵為非阻塞性泵，逆流風險高、需監測；其預充量較小、空氣栓塞風險較低、無管路磨損。當代成人 ECMO 多採離心泵。"},
+{c:"Ch1 迴路與抗凝",q:"ECMO 病人血漿游離血紅素(pfHb)達到多少時，應積極調查溶血原因？",o:[">10 mg/dL",">50 mg/dL",">100 mg/dL",">250 mg/dL"],a:1,e:"正常 pfHb <10 mg/dL；>50 mg/dL 即為明確溶血、需調查（pump head 血栓、負壓過大、oxygenator clot 等）。"},
+{c:"Ch1 迴路與抗凝",q:"泵入口負壓達到多少時，會開始發生空化(cavitation)、溶解氣體析出形成微氣泡？",o:["負壓 > −100 mmHg","負壓 > −150 mmHg","負壓 > −250 mmHg","負壓 > −400 mmHg"],a:2,e:"負壓 >−250 mmHg 時開始空化；chattering(顫振)常見於低血容量、管路扭折或咳嗽。入口負壓建議維持在 −200 mmHg 以內。"},
+{c:"Ch1 迴路與抗凝",q:"看到迴路 chattering(顫振)時，第一個應該想到的原因是？",o:["立刻把泵轉速調更高","病人血容量不足","抗凝不足","氧合器衰竭"],a:1,e:"Chattering 先想「病人血容量不夠」，處置是降轉速／補液；低血容量時把泵速調更高只會加重空化。"},
+{c:"Ch1 迴路與抗凝",q:"Anti-factor Xa 的 ECMO 抗凝治療範圍為何？",o:["0.1–0.2 IU/mL","0.3–0.7 IU/mL","0.8–1.2 IU/mL","1.5–2.5 IU/mL"],a:1,e:"Anti-Xa 0.3–0.7 IU/mL 是抗凝主軸；它不受血小板影響（ACT 則受血小板、fibrinogen 影響），但 CRP 升高可能誤判。"},
+{c:"Ch1 迴路與抗凝",q:"高度懷疑 HIT(肝素誘發血小板低下)時，正確的抗凝處置是？",o:["增加 heparin 劑量","改用 warfarin","停用所有 heparin，改 bivalirudin 或 argatroban","改用低分子量肝素(LMWH)"],a:2,e:"懷疑 HIT 應停用所有 heparin（含 flush、coating），改直接凝血酶抑制劑(DTI)：bivalirudin(首選)或 argatroban，並以 aPTT 監測。"},
+{c:"Ch1 迴路與抗凝",q:"ECMO 啟動時的目標 SvO₂(混合靜脈血氧飽和度)為何？",o:["50–55%","65–70%","80–85%",">90%"],a:1,e:"目標 SvO₂ 65–70%；<60% 提示灌注不足。SvO₂ 是評估 ECMO 是否提供足夠氧供的核心指標。"},
+{c:"Ch1 迴路與抗凝",q:"七大併發症口訣「溶空血泵電逆氣」，下列何者『不』屬於這七大併發症？",o:["溶血","空氣栓塞","感染","逆行血流"],a:2,e:"七大併發症＝溶血、空化、血栓、泵故障、電力故障、逆行血流、空氣栓塞。感染雖重要，但不在此機械性併發症口訣中。"},
+/* === Ch.2 輸血管理 === */
+{c:"Ch2 輸血管理",q:"當代 ELSO restrictive 策略下，成人 ECMO 的 PRBC 輸血閾值大約是？",o:["Hb 7–8 g/dL","Hb 9–10 g/dL","Hb 10–12 g/dL","Hct > 40%"],a:0,e:"當代趨勢由 liberal 轉 restrictive：PRBC 閾值 Hb 7–8 g/dL（VV 可更低）。記「7-8-50-100-150」五個基本數字。"},
+{c:"Ch2 輸血管理",q:"在「7-8-50-100-150」中，無出血時的血小板(Platelet)輸注閾值為何？",o:["> 20,000 /µL","> 50,000 /µL","> 80,000 /µL","> 100,000 /µL"],a:1,e:"Restrictive 血小板閾值 >50,000/µL；活動性出血時提高到 80,000–100,000。但須考慮 ECMO 造成的血小板功能缺陷。"},
+{c:"Ch2 輸血管理",q:"為何部分中心 VA-ECMO 的 Hb 目標(8–9 g/dL)比 VV-ECMO(7–8)略高？",o:["VA 病人較容易溶血","VA 須兼顧心輸出量與全身氧供(DO₂)","VA 病人凝血功能較差","VA 迴路容量較大"],a:1,e:"VV 在原生肺改善時只要 SvO₂>65% 可耐受 Hb 7；VA 須兼顧心輸出量與 DO₂/VO₂，故部分中心採 8–9 g/dL。應以 SvO₂/乳酸取代單一 Hb。"},
+{c:"Ch2 輸血管理",q:"輸血後 6 小時內出現急性低血氧、雙側肺浸潤、且非容量過載，最可能是？",o:["TACO(輸血相關循環過載)","TRALI(輸血相關急性肺損傷)","檸檬酸中毒","高血鉀"],a:1,e:"TRALI 由 anti-HLA/HNA 抗體引起，6 小時內 ARDS 樣表現。處置支持性，避免使用多胎產婦血漿；須與 TACO(CVP↑、利尿有效)鑑別。"},
+{c:"Ch2 輸血管理",q:"關於新生兒 ECMO 的特殊輸血考量，下列何者正確？",o:["使用儲存 >14 天的血以節省資源","priming 容量小，不需 blood prime","使用 <7 天新鮮、CMV-negative、leukoreduced、irradiated PRBC","Hb 目標比成人低"],a:2,e:"新生兒 priming 容量近自身血量→必須 blood prime；用 <7 天新鮮血（避免高鉀、2,3-DPG 不足），且 CMV-negative、leukoreduced、irradiated；Hb 目標較高(Hct >35–40%)。"},
+{c:"Ch2 輸血管理",q:"下列何者『不是』ECMO 血液保護(blood conservation)策略？",o:["降低抽血量、使用 micro-tubes","routine 預防性輸注 FFP 與血小板","goal-directed 抗凝(Anti-Xa/TEG)","restrictive 輸血閾值"],a:1,e:"血液保護強調避免 routine 預防性 FFP/血小板輸注；輸血量是死亡率的劑量依賴性獨立預測因子。"},
+/* === Ch.3 併發症與血液生物相容性 === */
+{c:"Ch3 併發症/凝血",q:"ECMO 病人 aPTT/ACT 都在範圍內、血小板正常，卻仍有黏膜或腸胃道出血，最該懷疑？",o:["維生素 K 缺乏","後天性 von Willebrand 症候群(aVWS)","DIC","血友病"],a:1,e:"幾乎所有 ECMO 病人 24 小時內喪失高分子量 vWF multimer→aVWS，即使血小板與 ACT 正常仍出血。"},
+{c:"Ch3 併發症/凝血",q:"後天性 von Willebrand 症候群(aVWS)的唯一根治方法是？",o:["輸血小板","給 DDAVP","移除/脫離 ECMO(weaning)","提高抗凝"],a:2,e:"aVWS 唯一根治是移除 ECMO；急性出血可考慮 vWF concentrate，DDAVP 效果有限。診斷用 vWF:RCo/Ag 比值 <0.7。"},
+{c:"Ch3 併發症/凝血",q:"aVWS 的形成機轉是？",o:["肝臟合成 vWF 不足","高剪切力使 vWF 暴露 A2 domain 後被 ADAMTS13 切割","抗 vWF 抗體生成","脾臟過度破壞 vWF"],a:1,e:"高 shear stress 使 vWF 暴露 A2 domain → ADAMTS13 切割 → 喪失高分子量 multimer，導致止血缺陷。"},
+{c:"Ch3 併發症/凝血",q:"ECMO 病人血小板下降很常見，但『真正 HIT』的發生率約為？",o:["0.36–8%","20–30%","40–50%","> 60%"],a:0,e:"ECMO 血小板下降多由稀釋、消耗、敗血症造成；真正 HIT 僅 0.36–8%，須用 4T score 評估後送 anti-PF4 ELISA。"},
+{c:"Ch3 併發症/凝血",q:"Hemolysis 監測中，氧合器『跨膜壓差(ΔP)持續上升』最直接提示？",o:["病人脫水","oxygenator 血栓","抗凝過度","感染"],a:1,e:"跨膜壓差持續上升＝oxygenator 內血栓；搭配 pfHb>50、LDH↑、haptoglobin↓ 判讀，必要時更換氧合器/泵頭。"},
+{c:"Ch3 併發症/凝血",q:"ECMO 引發的全身發炎反應(ECMO SIRS)，其細胞激素高峰約出現在上機後？",o:["1–2 小時","6–12 小時","24–48 小時","7 天後"],a:2,e:"Contact 與 complement 活化使 IL-6/IL-8/TNF-α 在上機後 24–48 小時達高峰，臨床類似敗血症；須與真正感染鑑別。"},
+/* === Ch.4 VV-ECMO 適應症 === */
+{c:"Ch4 VV適應症",q:"成人呼吸衰竭使用 ECMO 時，下列哪一項『不是』可接受的角色？",o:["Bridge to recovery","Bridge to lung transplantation","Destination therapy(終身支持)","爭取診斷與治療時間"],a:2,e:"成人呼吸 ECMO 只能是 bridge to recovery 或 bridge to lung transplant，不是 destination therapy；futility 是 ELSO 明列的禁忌。"},
+{c:"Ch4 VV適應症",q:"下列何者符合 EOLIA 試驗的 VV-ECMO 啟動條件？",o:["P/F < 300","P/F < 50 持續 3 小時","Murray score 1.0","pH > 7.40"],a:1,e:"EOLIA 任一條：P/F<50×3h、或 P/F<80×6h、或 pH<7.25×6h(RR35、Pplat<32)。EOLIA 三條是最具操作性的啟動 threshold。"},
+{c:"Ch4 VV適應症",q:"CESAR 試驗中作為 ECMO 啟動門檻的 Murray Lung Injury Score 切點為？",o:["> 1.0","> 2.0","> 3.0","> 4.0"],a:2,e:"Murray score(四項取平均)>2.5 為嚴重，>3.0 是 CESAR 的 ECMO trigger；院內會診講『Murray 3.2』即能對齊。"},
+{c:"Ch4 VV適應症",q:"VV-ECMO 的隱性紅線——機械通氣(MV)超過幾天，benefit 會大幅下降？",o:["3 天","5 天","7 天","14 天"],a:2,e:"CESAR、EOLIA 都把 MV >7 天當 exclusion。要上 ECMO 的決定不能拖過第 7 天。"},
+{c:"Ch4 VV適應症",q:"RESP score 在 VV-ECMO 的主要用途是？",o:["決定 cannula 尺寸","啟動前風險量化、預測出院存活、輔助家屬溝通","調整 sweep gas","判斷拔管時機"],a:1,e:"RESP(12 變項、分 5 風險層、出院存活 92%–18%)是啟動前的風險量化工具，建議成為院內常規；給家屬具體數字勝過主觀描述。"},
+{c:"Ch4 VV適應症",q:"對於『refractory septic shock 但心臟功能保留』的病人上 VV-ECMO，本章引用的死亡率約為？",o:["20%","40%","78%","< 10%"],a:2,e:"Park 2015 顯示這類病人死亡率約 78%；VV 無法解決氧供需失衡的本質，優先 source control + 升壓劑 + steroid。"},
+{c:"Ch4 VV適應症",q:"EOLIA(2018, NEJM)的 60 天死亡率主要結果為何？",o:["35% vs 46%，達統計顯著","35% vs 46%，未達顯著(p=0.09)但 28% control crossover","兩組完全相同","ECMO 組死亡率較高"],a:1,e:"EOLIA 60 天死亡 35% vs 46%(RR 0.76, p=0.09)，未達顯著但對照組 28% crossover；Bayesian 再分析支持 benefit，已成 de facto threshold。"},
+/* === Ch.5 VV Cannulation === */
+{c:"Ch5 VV管路",q:"VV-ECMO 三種配置中，因 recirculation 過高而『不建議作為首選』的是？",o:["Femoral-Jugular","Femoral-Femoral","Bicaval Dual-Lumen","Central"],a:1,e:"Femoral-Femoral 兩 cannula 距離近、recirculation 最高，已非首選；當代成人多用 femoral-jugular，活動需求強考慮 dual-lumen。"},
+{c:"Ch5 VV管路",q:"VV-ECMO 發生 recirculation 時，最典型的偵測線索是？",o:["post-oxygenator SaO₂ 偏低","pre-oxygenator SaO₂ 異常偏高，但病人 SaO₂ 仍低","泵出口壓力下降","跨膜壓差升高"],a:1,e:"Recirculation＝氧合血未經全身循環就被 drainage 抽回：pre-oxy SaO₂ 偏高(>80%)、post-oxy 正常但病人 SaO₂ 仍低。"},
+{c:"Ch5 VV管路",q:"VV-ECMO 病人 SaO₂ 上不來時，下列哪個是『錯誤』的本能反應？",o:["拉開 drainage 與 return cannula 的距離","直接把 ECMO flow 打更高","必要時降低 flow","調整 dual-lumen cannula 位置"],a:1,e:"把 flow 打更高會放大 recirculation。正確順序：先拉開 cannula 距離 → 必要時降 flow → 調整位置 → 必要時換配置。"},
+{c:"Ch5 VV管路",q:"VV-ECMO 的最大流量主要由哪一條 cannula 決定？成人建議尺寸為何？",o:["return cannula；17–21 Fr","drainage cannula；23–25 Fr","return cannula；27–31 Fr","兩條一樣大即可"],a:1,e:"流量由 drainage(引流)cannula 決定，成人建議 23–25 Fr，tip 在 IVC-RA junction 或 RA；return 17–21 Fr 即可，目標 60 mL/kg/min。"},
+{c:"Ch5 VV管路",q:"Bicaval dual-lumen(雙腔)cannula 的 return port 必須朝向哪裡，且需如何確認？",o:["朝向 SVC，靠 CXR 確認","朝向三尖瓣(TV)，需 TEE/fluoro 確認","朝向 IVC，靠觸診確認","方向不重要"],a:1,e:"Dual-lumen return port 必須朝向三尖瓣以降低 recirculation；偏轉 >30° 顯著增加 recirculation，故需 TEE/fluoro 即時定位。"},
+{c:"Ch5 VV管路",q:"VV-ECMO 成人的目標血流量約為？",o:["20 mL/kg/min","60 mL/kg/min","100–150 mL/kg/min","250 mL/kg/min"],a:1,e:"成人目標約 60 mL/kg/min(≈4–6 L/min)以維持 SvO₂ ≥65–70%；新生兒則為 100–150 mL/kg/min。"},
+/* === Ch.6 共病 === */
+{c:"Ch6 共病管理",q:"ECMO 病人的急性腎損傷(AKI)發生率與需要 CRRT 的比例約為？",o:["AKI 10–20%、CRRT 5%","AKI 60–70%、CRRT 40–50%","AKI 90%、CRRT 80%","AKI 30%、CRRT 25%"],a:1,e:"ECMO 病人 AKI 約 60–70%，需 CRRT 40–50%；需 CRRT 者死亡率顯著上升(60–80% vs 30–40%)。"},
+{c:"Ch6 共病管理",q:"CRRT 以 in-line 方式接在 ECMO 迴路時，為避免空氣進入氧合器，正確接法是？",o:["access 接 pre-pump、return 接 post-oxygenator","access 接 post-pump、return 接 pre-oxygenator","兩端都接在 oxygenator 之後","隨意接皆可"],a:1,e:"In-line CRRT：access 接 post-pump(正壓側)、return 接 pre-oxygenator，可避免空氣被打進 oxygenator。"},
+{c:"Ch6 共病管理",q:"關於肥胖與 VV-ECMO，下列何者最符合現有證據(Reid 2024)？",o:["BMI≥40 是絕對禁忌","BMI≥30 死亡率反而較低，存在 obesity paradox","肥胖病人死亡率約為非肥胖的 3 倍","肥胖不影響 cannulation"],a:1,e:"Reid 2024：BMI≥30 的 VV-ECMO 死亡率反而較低(11% vs 37%)；BMI≥40 不再是絕對禁忌，但要為更高併發症(穿刺、CRRT、DVT、傷口)做準備。"},
+{c:"Ch6 共病管理",q:"免疫不全/惡性腫瘤病人 ECMO 死亡率，HSCT 與 oncology 何者較高？",o:["Oncology 較高","兩者相同","HSCT 較高(約 84% vs 66%)","都低於 30%"],a:2,e:"HSCT 病人死亡率約 84% vs oncology 66%(約 4 倍 risk，尤其 allogeneic)；reversibility 是關鍵，可逆原因(如 PCP)預後較好。"},
+{c:"Ch6 共病管理",q:"ELSO Registry(7,168 人)顯示，上機後 24 小時內 PaCO₂ 下降超過 20 mmHg 會增加？",o:["溶血","神經併發症(OR 1.63，ICH/stroke/腦死)","腎衰竭","感染"],a:1,e:"PaCO₂ 24 小時內驟降 >20 mmHg → 神經併發症 OR 1.63。Sweep gas 從 2–3 L/min 起，目標 ΔPaCO₂ ≤5–10 mmHg/hr。"},
+{c:"Ch6 共病管理",q:"ECMO 上機初期 PaCO₂ 100 mmHg，sweep gas 與降 CO₂ 的正確原則是？",o:["立刻把 sweep 開到最大，盡快把 PaCO₂ 降到 40","從 2–3 L/min 起，緩慢下降、ΔPaCO₂ ≤5–10 mmHg/hr","直接停止通氣","PaCO₂ 高不需處理"],a:1,e:"Sweep gas 是 ECMO 的『分鐘通氣量』；快速降 CO₂ 會造成腦血管收縮、增加 ICH 風險，必須緩降。"},
+/* === Ch.7 VV 日常管理 === */
+{c:"Ch7 VV日常管理",q:"VV-ECMO 的 rest ventilation(肺休息)default FiO₂ 設定為？",o:["100%","60–80%","30%(接受 PaO₂≥45)","21%"],a:2,e:"Rest ventilation：lung-protective Vt≤6、Pplat≤30、higher PEEP(10)、FiO₂ 30%(接受 PaO₂≥45)、RR 10–12；FiO₂<60% 避免氧毒性與吸收性肺塌陷。"},
+{c:"Ch7 VV日常管理",q:"關於 early tracheostomy(早期氣切)的時機，下列何者正確？",o:["所有病人上機當天即做","預期 ECLS ≥5 天即可施行經皮氣切","ECLS ≥30 天才考慮","ECMO 上禁止氣切"],a:1,e:"預期 ECLS ≥5 天即施行 percutaneous tracheostomy(支氣管鏡引導)；圍術期及術後 6 小時停 heparin，再低劑量重啟。"},
+{c:"Ch7 VV日常管理",q:"VV-ECMO 病人的鎮靜目標 RASS 為何？發生 delirium 時的第一線藥物是？",o:["RASS −4 to −5；rivastigmine","RASS −1 to 0；haloperidol","RASS 0 to +2；benzodiazepine","RASS −3；propofol"],a:1,e:"鎮靜目標 RASS −1 to 0；delirium 第一線是 haloperidol。Rivastigmine 經 RCT 證實增加 ICU delirium 死亡率，為禁用。"},
+{c:"Ch7 VV日常管理",q:"ECMO 病人因 SIRS 使體溫與 CRP 不可靠，鑑別『真實感染 vs SIRS』建議合併哪兩個指標？",o:["白血球與血小板","CRP 與 PCT(procalcitonin)","乳酸與 D-dimer","體溫與心跳"],a:1,e:"以 CRP>98 mg/L 合併 PCT>1.89 ng/mL 判讀(VA-ECLS data)；單看體溫或 CRP 在 ECMO SIRS 下不可靠。"},
+{c:"Ch7 VV日常管理",q:"VV-ECMO 病人發生心房顫動(AF)時，為何要以較低門檻考慮電擊整流？",o:["AF 會造成溶血","AF 增加 recirculation 風險","AF 使氧合器衰竭","AF 造成 limb ischemia"],a:1,e:"AF 失去心房收縮會增加 recirculation 風險→低門檻 DC cardioversion(暫時降低 ECLS flow 後執行)。"},
+{c:"Ch7 VV日常管理",q:"ECMO 上發生大量氣道出血(airway hemorrhage)時，下列哪一項是正確的止血策略之一？",o:["立即拔除氣管內管","clamp ETT、完全依賴 ECLS 氣體交換(須 deep sedation + paralysis)","停止 ECMO","提高 FiO₂ 到 100%"],a:1,e:"三策略：①clamp ETT 完全依賴 ECLS；②CPAP 止血(CVP+5，不超過 20)；③dual-lumen ETT 隔離出血側。持續出血 → CT angiography ± IR/手術。"},
+/* === Ch.8 VV Weaning === */
+{c:"Ch8 VV脫機",q:"VV-ECMO 的氧合與 CO₂ 清除分別由什麼決定？",o:["氧合由 sweep gas、CO₂ 由 blood flow","氧合由 blood flow、CO₂ 由 sweep gas","兩者都由 blood flow","兩者都由 sweep gas"],a:1,e:"VV 解耦合：氧合由 blood flow 決定、CO₂ 清除由 sweep gas flow 決定(<500 mL 即可帶走 CO₂，以維持 pH 為目標)。"},
+{c:"Ch8 VV脫機",q:"VV-ECMO 脫機的第一步驟是？",o:["先降 blood flow 到 1 L/min","逐步降 sweep gas 至零並監測 ABG","直接拔管","關閉氧合器氣體"],a:1,e:"脫機先逐步降 sweep gas 至零(評估 CO₂ 清除/換氣恢復)，再觀察數小時至數天；氣流歸零僅評估換氣，不一定代表氧合恢復。"},
+{c:"Ch8 VV脫機",q:"VV-ECMO 脫機時，是否一定要同時降低 blood flow？",o:["一定要降到 1 L/min","不一定；降 blood flow 可能增加血栓風險","必須降到零","與血栓無關"],a:1,e:"VV 在無氣流時僅將靜脈血原樣送回，降 blood flow 非絕對必要，且可能增加血栓風險。"},
+{c:"Ch8 VV脫機",q:"下列何者『不是』VV-ECMO 的 liberation(拔管)criteria 之一？",o:["肺保護下 P/F > 100","pH > 7.3","aPTT 正常","ECMO flow 必須先降到 0.5 L/min"],a:3,e:"5 條 liberation criteria：P/F>100、pH>7.3、感染與器官衰竭控制、無氣流下穩定、aPTT 正常。flow 降到 0.5 並非條件。"},
+{c:"Ch8 VV脫機",q:"VV-ECMO 拔管後病人突然血流動力惡化，首先要想到？",o:["敗血症","肺栓塞(PE)","低血糖","氣胸"],a:1,e:"拔管後靜脈超音波追蹤；突然血流動力惡化 → 考慮 PE。經皮拔管以局部壓迫 20–60 分 + purse-string suture。"},
+{c:"Ch8 VV脫機",q:"成人呼吸 ECLS 約有多少比例可成功脫機？CESAR 顯示多數死因為何？",o:["約 1/3；多死於持續呼吸衰竭","約 2/3；多死於肺外器官衰竭","幾乎全部；死於感染","不到 10%；死於出血"],a:1,e:"約 2/3 可成功脫機；CESAR 顯示僅 9% 死於持續呼吸衰竭，多數死於肺外器官衰竭。支持時間長本身不能預測無效。"},
+/* === Ch.9 VA-ECMO 適應症 === */
+{c:"Ch9 VA適應症",q:"VA-ECMO 上機前最該先想清楚的核心問題是？",o:["要插幾號 cannula","『What's the exit?』(recovery/decision/LVAD/transplant)","要不要給抗生素","用哪台機器"],a:1,e:"VA-ECMO 不解決根本病因、只是買時間；上機前必問 exit strategy，否則就是『bridge to nowhere』。"},
+{c:"Ch9 VA適應症",q:"依 SCAI 心因性休克分級，在哪一階段上 VA-ECMO 預後最好？",o:["A(at risk)","B(beginning)","C→D 惡化期","等到 E 才上"],a:2,e:"時機口訣：在 C→D 惡化期上機預後最好，不要等到 SCAI E(cardiac arrest)。乳酸>5、需≥3 種升壓/強心、初期 end-organ dysfunction → 立即 alert。"},
+{c:"Ch9 VA適應症",q:"SCAI 分級的 E 期(Extremis)對應的 ECMO 角色是？",o:["不需 ECMO","密切觀察","ECPR 適應症(cardiac arrest/需 CPR)","只需 IABP"],a:2,e:"SCAI E＝cardiac arrest 或需 CPR → ECPR 適應症。D 期則為 upgrade ECMO 的強指徵。"},
+{c:"Ch9 VA適應症",q:"周邊 femoro-femoral VA-ECMO 的兩大特有警訊是？",o:["溶血與感染","下肢缺血(需 DPC)與 Harlequin 症候群","低血糖與癲癇","氣胸與血胸"],a:1,e:"Femoro-femoral 兩大警訊：①limb ischemia(15–30%)需同時放 distal perfusion catheter；②Harlequin(North-South)需右橈動脈監測 SpO₂/ABG。"},
+{c:"Ch9 VA適應症",q:"監測 Harlequin(North-South)syndrome 的核心血管是？",o:["左橈動脈","右橈動脈","左股動脈","任一條動脈皆可"],a:1,e:"右橈動脈 ABG/SaO₂ 最快反映 innominate → carotid + 冠脈拿到的血氧；差異出現代表上半身灌注未氧合血。"},
+{c:"Ch9 VA適應症",q:"周邊 VA-ECMO 的 retrograde flow 會造成什麼問題？最有效的 active LV unloading 是？",o:["LV afterload↑、LV distention/肺水腫；Impella","RV 衰竭；IABP","溶血；輸血","低血壓；升壓劑"],a:0,e:"Retrograde aortic flow 使 LV afterload↑→LV 噴不出、肺水腫、LV thrombus。最有效的 active unloading 是 Impella(ECpella)。"},
+{c:"Ch9 VA適應症",q:"VA-ECMO 約幾天仍無 recovery sign(LV 無改善、仍需高 inotrope)就應啟動 LVAD/transplant 評估？",o:["2–3 天","10–14 天","30 天","60 天"],a:1,e:"10–14 天仍無 recovery sign → 立即啟動 LVAD/transplant evaluation；拖越久結果越差，『bridge to nowhere』是 VA-ECMO 最痛的情境。"},
+/* === Ch.10 ECPR === */
+{c:"Ch10 成人ECPR",q:"Ideal ECPR patient 的『initial rhythm』條件是？",o:["asystole","PEA","shockable rhythm(VF/pVT)","任何心律皆可"],a:2,e:"理想 ECPR 病人為初始可電擊心律(VF/pVT)；PEA/asystole 預後遠差。其他條件：目擊性、立即旁觀者 CPR、ACLS 10–15 分無持續 ROSC、年齡<75、無嚴重共病。"},
+{c:"Ch10 成人ECPR",q:"ECPR 動脈 cannula 的規格與 DPC(遠端灌流導管)原則，下列何者正確？",o:["一律用 21 Fr，不需 DPC","15–17 Fr；≥17 Fr 必須加 DPC","用越大越好以求流量","DPC 一律不需要"],a:1,e:"動脈 15–17 Fr：<17 Fr 較不需 DPC、≥17 Fr 必須 DPC。越小的動脈 cannula 越能保住肢體；先用 15 Fr，不夠才 17 Fr + DPC。"},
+{c:"Ch10 成人ECPR",q:"ECPR 建立 flow 後，sweep gas 的氧濃度(FiO₂)起始原則是？",o:["立刻 100%","50–60% 起始，逐漸增加","21%","與此無關"],a:1,e:"避免 hyperoxia 加重腦再灌流損傷：sweep O₂ 從 50–60% 起始、逐漸增加，而非馬上 100%；並避免 PaCO₂ 急降 >10 mmHg/hr。"},
+{c:"Ch10 成人ECPR",q:"ARREST(2020, Yannopoulos)單中心試驗的存活結果為何？",o:["43% vs 7%(ECPR 顯著較佳)","20% vs 16%(無差異)","兩組皆 50%","ECPR 較差"],a:0,e:"ARREST(n=30, VF OHCA, 單中心 high-volume)survival 43% vs 7%(p=0.0006)，因效益顯著提前終止。"},
+{c:"Ch10 成人ECPR",q:"INCEPTION(2023, 多中心)的 30 天存活結果說明了什麼？",o:["ECPR 大勝","ECPR 與傳統 CPR 無差異(20% vs 16%)，反映真實世界結果保守","ECPR 顯著較差","與 volume 無關"],a:1,e:"INCEPTION(多中心 NL)30 天 survival 無差異(20% vs 16%)。三大 RCT 結論不一致主因是中心 volume 與 protocol 嚴謹度——high-volume center 才能複製 ARREST。"},
+{c:"Ch10 成人ECPR",q:"ECPR 的 target flow 大約是？",o:["1–2 L/min","3–5 L/min(或 ~3 L/min/m²)","8–10 L/min","與體重無關固定 4 L"],a:1,e:"ECPR target flow 約 3–5 L/min(或 ~3 L/min/m²)；MAP 目標 ≥65(懷疑腦缺氧 70–80)，勿追求超高 MAP。"},
+{c:"Ch10 成人ECPR",q:"ECPR 後的目標體溫管理(TTM)與預後判定時機，下列何者正確？",o:["維持 38–39°C × 48h","32–36°C × 24h，避免 rebound hyperthermia；72h 內不做最終 prognostication","立即降到 28°C","不需 TTM"],a:1,e:"TTM 32–36°C × 24h，ECMO 熱交換器是最精準工具，須避免 rebound hyperthermia；神經預後 72 小時內不做最終判定。"},
+/* === Ch.11 VA Cannulation / DPC / ECpella === */
+{c:"Ch11 VA管路/DPC",q:"關於 femoral VA-ECMO 的遠端灌流導管(DPC)，正確觀念是？",o:["只有特定病人才需要(selective)","是 standard，不是 selective；≥17 Fr 一律加裝","只在已發生缺血才放","與 cannula 尺寸無關"],a:1,e:"Femoral VA + DPC 是 standard 不是 selective；ELSO 2021/紅皮書建議動脈 ≥17 Fr 一律 routine 加 DPC，並以 NIRS + Doppler q4h 監測。"},
+{c:"Ch11 VA管路/DPC",q:"Lamb 2017 顯示，採行 routine DPC protocol 後肢體缺血率如何變化？",o:["從 21.5% 降到 5.4%","完全沒有改變","反而上升","從 50% 降到 40%"],a:0,e:"Lamb 2017(J Vasc Surg)：routine DPC protocol 使 limb ischemia 由 21.5% 降到 5.4%。Bisdas 2011：femoral ECMO vascular complication 18.6%、截肢 4.7%。"},
+{c:"Ch11 VA管路/DPC",q:"下列何者是 LV distension(左室膨脹)的典型徵象？",o:["脈壓(pulse pressure)< 10 mmHg、AV 持續關閉、LV smoke","脈壓 > 60 mmHg","SvO₂ 升高","跨膜壓差下降"],a:0,e:"LV distension 5 徵象：脈壓<10 mmHg(PP=0＝完全沒噴)、AV 持續關閉、LV smoke/自發顯影、PCWP↑、肺水腫/粉紅色分泌物。"},
+{c:"Ch11 VA管路/DPC",q:"LV unloading 階梯中最有效的 active 機械裝置，以及其證據(Pappalardo 2017)為何？",o:["IABP；無 mortality benefit","Impella(ECpella)；mortality 47% vs 80%","利尿劑；無證據","Atrial septostomy；首選"],a:1,e:"Impella(ECpella)是最有效的 active LV unloading；Pappalardo 2017 propensity match：ECpella 死亡率 47% vs VA alone 80%，但溶血/出血/limb ischemia 上升。"},
+{c:"Ch11 VA管路/DPC",q:"ECLS-SHOCK(2023)針對 AMI 心因性休克的 30 天死亡率結果為何？",o:["VA-ECMO 顯著降低死亡率","VA-ECMO 與藥物治療『無差異』(47.8 vs 49.0)","VA-ECMO 使死亡率加倍","只看併發症不看死亡率"],a:1,e:"ECLS-SHOCK(n=420)30 天死亡率無差異(47.8 vs 49.0)、併發症上升。與 ECMO-CS 共同說明 routine VA-ECMO 對 AMI-CS 無 mortality benefit——selection > device。"},
+{c:"Ch11 VA管路/DPC",q:"DanGer Shock(2024, STEMI 心因性休克使用 Impella CP)的結果為何？",o:["180 天死亡率下降(45.8% vs 58.5%, HR 0.74)","無任何差異","死亡率上升","只適用 OHCA"],a:0,e:"DanGer Shock(n=355)Impella CP 使 180 天死亡率下降(45.8 vs 58.5, HR 0.74, p=0.04)，但併發症上升，適用 selected patient。"},
+{c:"Ch11 VA管路/DPC",q:"相較 femoral VA，axillary(腋動脈)VA-ECMO 的主要優點是？",o:["建立速度最快","antegrade(順行)主動脈血流→較少 Harlequin、可下床、無下肢缺血","完全不需抗凝","cannula 最小"],a:1,e:"Axillary VA 為 antegrade flow，較少 Harlequin、可 ambulation、無下肢缺血，適合 bridge to transplant/LVAD 與長期(>7–10 天)；缺點是需手術、上肢過灌流。"},
+/* === Ch.12 VA 日常管理 === */
+{c:"Ch12 VA日常管理",q:"VA-ECMO 的『lung-rest』呼吸器設定，下列何者正確？",o:["Vt 3–4、PEEP 15、FiO₂ 80%","Vt 4–6 mL/kg、PEEP 8–10、FiO₂ 30–40%","Vt 8–10、PEEP 5、FiO₂ 100%","關閉呼吸器"],a:1,e:"VA 已完成大部分氧合與 CO₂ 移除，肺只需『待著』：Vt 4–6、PEEP 8–10、FiO₂ 30–40%(除非 Harlequin → 提高至 60–100%)。"},
+{c:"Ch12 VA日常管理",q:"ELSO 2021 對 bivalirudin 在 ECMO 抗凝的定位有何重大改變？",o:["完全禁用","僅限新生兒","由『HIT only』升為 reasonable primary alternative","取代所有抗凝監測"],a:2,e:"ELSO 2021 將 bivalirudin 升為 UFH 之外的 reasonable primary alternative；其無 bolus、infusion 0.025–0.05 mg/kg/h，許多大中心已改為 primary。"},
+{c:"Ch12 VA日常管理",q:"VA-ECMO 的容量管理三階段中，最常被遺忘的是？",o:["Resuscitation","De-resuscitation(48–72h 起 gentle negative)","Maintenance","Priming"],a:1,e:"三階段：Resuscitation(0–48h)→De-resuscitation(48–72h 起，gentle negative 500–1500 mL/d，furosemide drip ± CRRT)→Maintenance；de-resus 最常被忽略。"},
+{c:"Ch12 VA日常管理",q:"VA-ECMO 的 daily echo 固定 5 項『不』包含下列何者？",o:["LV size + smoke","AV opening","Cannula tip 位置","頸動脈內膜厚度(IMT)"],a:3,e:"Daily echo 5 項：①LV size+smoke ②AV opening ③RV function(TAPSE/RV-FAC)④cannula tip ⑤pericardial effusion。頸動脈 IMT 不在其中。"},
+{c:"Ch12 VA日常管理",q:"Aissaoui weaning predictors 建議在 ECMO flow 降到多少時觀察評估？",o:["3–4 L/min","≤1.5 L/min","0.5 L/min","不需降 flow"],a:1,e:"Aissaoui 在 ECMO flow 降至 ≤1.5 L/min 時評估：PP≥35、AV opening、LVOT VTI≥12、TAPSE≥15、無 severe MR/AR；且應從 Day 1 就逐日記錄。"},
+{c:"Ch12 VA日常管理",q:"VA-ECMO 的感染預防『less is more』原則，下列何者正確？",o:["每日 routine 預防性抗生素","每日 routine blood culture","不用 routine 預防性抗生素、不 routine daily blood culture，發燒時才 systematic workup","完全不監測感染"],a:2,e:"不用 routine prophylactic 抗生素(cannulation 給 single-dose cefazolin 即可)、不 routine daily blood culture；發燒/WBC↑/乳酸↑ 才做 systematic workup。ECMO 改變 PK/PD，需 TDM。"},
+/* === Ch.13 VA Weaning === */
+{c:"Ch13 VA脫機",q:"關於 VA-ECMO 脫機的核心觀念，下列何者最正確？",o:["脫機是一個瞬間事件(event)","脫機是一個需要 protocol/checklist/多專科的 procedure","只要 flow 降到零就完成","脫機不需 echo"],a:1,e:"『Weaning 是 procedure 不是 event』：5 前提 → 三段 trial → Aissaoui 5 項 → MCS 移除順序 → 拔管 → 24h 監測，跟 cannulation 一樣慎重。"},
+{c:"Ch13 VA脫機",q:"Cusanno 2022 顯示 VA-ECMO『脫機失敗』的 30 天死亡率約為？",o:["約 10%","約 30%","約 60%","與不脫機相同"],a:2,e:"脫機失敗 30 天死亡率 ≈60%，遠高於繼續 support。因此沒滿足 5 項前提，連 trial 都不要做。"},
+{c:"Ch13 VA脫機",q:"三段式 weaning trial 中，做 full Aissaoui 5 項評估的最低 flow 階段是？",o:["4 L/min","2.5 L/min","1.5 L/min","必須降到 0"],a:2,e:"三段式：Step1 2–2.5 L/min → Step2 1.5 L/min(做 full 5-item Aissaoui echo)→ Step3 1 L/min×30 min(或 clamp test)。任一 fail → 回 baseline，48h 後再試。"},
+{c:"Ch13 VA脫機",q:"Aissaoui 5 項脫機指標的口訣『35 / opening / 12 / 15 / no severe MR-AR』，其中『12』與『15』分別代表？",o:["LVEF 12% / 心率 15","LVOT VTI ≥12 cm / TAPSE ≥15 mm","CVP 12 / PCWP 15","Hb 12 / pH 1.5"],a:1,e:"Aissaoui 5：脈壓 PP≥35 mmHg、AV 每 cycle 開、LVOT VTI≥12 cm、TAPSE≥15 mm、無 severe MR/AR。"},
+{c:"Ch13 VA脫機",q:"低 flow(≤2 L/min)weaning trial 期間的抗凝陷阱與對策是？",o:["可以完全停抗凝","flow 低時血栓風險↑，trial 期間 ACT 至少維持 200–220","抗凝目標應降低","與抗凝無關"],a:1,e:"Flow ≤2 L/min 時 circuit/oxygenator 血栓風險顯著上升，trial 期間 ACT 至少 200–220；trial 結束若不拔管，盡快 ramp flow 回 ≥3 L/min。"},
+{c:"Ch13 VA脫機",q:"ECpella(VA-ECMO + Impella)病人移除多種 MCS 的正確順序是？",o:["ECMO → IABP → Impella","Impella → IABP → ECMO","IABP → ECMO → Impella","同時移除"],a:1,e:"順序 Impella → IABP → ECMO，每個 device 移除後觀察 12–24h 再動下一個；例外是 Impella 嚴重溶血/limb ischemia 時須先拔。"},
+{c:"Ch13 VA脫機",q:"專為 ≥14 Fr 大口徑動脈 cannula 設計、可床邊經皮拔管的封合裝置是？",o:["Perclose ProGlide","MANTA","AngioSeal","單純壓迫"],a:1,e:"MANTA(14F/18F，含 polylactic acid anchor + collagen plug)專為 ≥14 Fr 設計，US 導引，Ng 2023 meta 成功率約 93%；拔管全程 US 導引並備 covered stent + 血管外科 standby。"},
+/* === Ch.14 特殊族群與 Bridge === */
+{c:"Ch14 特殊族群/Bridge",q:"UNOS 2018 政策變革對 VA-ECMO bridge to heart transplant 的影響是？",o:["VA-ECMO 自動列 status 1、限期 7 天；等待時間與移植率大幅改善","VA-ECMO 降為最低優先","ECMO 不再能作為 bridge","政策無變化"],a:0,e:"UNOS 2018：VA-ECMO 自動 status 1、限期 7 天；wait time 中位數 38d→4–7d、移植率 28%→70%(30 天移植後死亡略升 4.7%→7.6%)。長期 bridge 首選 axillary VA。"},
+{c:"Ch14 特殊族群/Bridge",q:"孕產婦 ECMO 的兩大特殊性是？",o:["抗凝目標下調(ACT 160–180)、持續胎兒監測","完全不抗凝、不需監測","只能用 VV","禁止使用 ECMO"],a:0,e:"孕產婦 ECMO：因產後出血風險，抗凝目標下調(ACT 160–180 vs 一般 180–220)；持續胎兒 monitoring，若胎兒 distress 或抗凝衝突 → 緊急分娩。母體存活約 75–80%。"},
+{c:"Ch14 特殊族群/Bridge",q:"COVID-ECMO 由 Wave 1(死亡率~38%)到 Wave 2–3(~52%)的最重要教訓是？",o:["device 越新越好","Selection > device(收案放寬→結果變差)","ECMO 對 COVID 完全無效","抗凝不重要"],a:1,e:"Wave 2–3 放寬收案(高齡、MOF)使死亡率由 ~38% 升至 ~52%——selection 比 device 重要：年輕、單純 ARDS、MV<7天、已 prone trial 才上。"},
+{c:"Ch14 特殊族群/Bridge",q:"評估病人能否 bridge to LVAD 時，最關鍵的『門票』是？",o:["LV 射出分率","RV function(TAPSE≥13、RV/LV<0.75、mean PAP<45、PVR<4WU)","年齡","BMI"],a:1,e:"LVAD 後 RV 須單獨負責肺血流(ECMO 退場)，RV 已 failure 者 LVAD 後 RV failure 風險高——RV function 是 LVAD 的門票。"},
+{c:"Ch14 特殊族群/Bridge",q:"ECMO 神經監測中，NIRS(近紅外光譜)的警示閾值為何？",o:["絕對值 <40% 或下降 >20%；雙側不對稱 >10% 提示單側 stroke","只看絕對值 >80%","完全不需設閾值",">60% 即異常"],a:0,e:"NIRS 雙側額部監測：絕對值<40% 或下降>20% 警示；雙側不對稱>10% 提示單側 stroke。Daily neuro exam + sedation pause 是最便宜也最重要的監測。"},
+{c:"Ch14 特殊族群/Bridge",q:"Post-cardiotomy ECLS(Chiarini 2024)中，神經併發症最高與最低的 cannulation site 分別是？",o:["Femoral 最高、Aortic 最低","Aortic(central)最高(~22%)、Femoral 最低(~11%)","三者相同","Axillary 最高"],a:1,e:"Chiarini 2024：神經併發症 aortic(central)~22% 最高、subclavian ~14%、femoral ~11% 最低。實務建議 post-cardiotomy 能用 femoral 就先用 femoral。"},
+/* === Ch.15 Program / Ethics / Outcomes === */
+{c:"Ch15 Program/Ethics",q:"Barbaro 2015(volume-outcome)顯示中心年案例量 ≥30 cases/yr 的死亡 OR(對比 <6/yr)為？",o:["OR 0.86","OR 0.69","OR 0.61","無差異"],a:2,e:"Barbaro 2015(n=56,222)：≥30 cases/yr OR 0.61(高量中心，ELSO CoE 門檻)；6–14 為 0.86、15–29 為 0.69。Volume 是 single best predictor。"},
+{c:"Ch15 Program/Ethics",q:"ELSO Center of Excellence Award 的成人 Volume 最低門檻為？",o:["≥10 cases/yr","≥30 cases/yr 且連續 ≥5 年","≥100 cases/yr","無門檻"],a:1,e:"CoE 四大類：①Volume(成人 ≥30 cases/yr 且 ≥5 年)②Outcomes ③Process(11 領域 written protocol)④Commitment(100% registry、M&M、teaching)。"},
+{c:"Ch15 Program/Ethics",q:"ECMO 的 5-Pillar multidisciplinary team『不』包含下列何者？",o:["CT 外科","心臟內科","體外循環師(perfusionist)","放射診斷科"],a:3,e:"5-Pillar：①CT 外科 ②心臟內科 ③ICU intensivist ④perfusionist ⑤護理。放射診斷科屬支援角色，非五大支柱之一。"},
+{c:"Ch15 Program/Ethics",q:"關於 ECMO 中心年案例量 <15 的建議是？",o:["盡量多搶 case 以累積經驗","選擇性轉介到高量中心反而對病人更好","關閉 ICU","不影響預後"],a:1,e:"年案例<15 → 選擇性轉介到高量中心對病人更好；15–29 是 sweet spot(NTUH Hsinchu 合理目標)。不要為了『我們也做得到』而搶 case。"},
+{c:"Ch15 Program/Ethics",q:"Wilcox 2020 等研究指出 ECMO 存活者 1 年後的長期後遺症，下列何者正確？",o:["幾乎全部完全康復","約 40% PTSD/憂鬱、30% 認知障礙、50% 未恢復工作能力","只有身體後遺症，無心理影響","後遺症可忽略"],a:1,e:"ARDS-ECMO 1 年後 ~40% PTSD/depression、30% 認知障礙、50% 未復工——『存活 ≠ 康復』。Long-term follow-up clinic(3/6/12 月)是 program 的良心。"},
+{c:"Ch15 Program/Ethics",q:"關於 ECMO 的 Ethics committee，正確觀念是？",o:["只有治療失敗才需要","是過程必經、program 而非 individual 的責任(Abrams 2019:70% 中心缺正式流程)","由單一主治決定即可","與 bridge to nowhere 無關"],a:1,e:"Ethics 機制是過程必經、是 program 的責任；Abrams 2019:70% ECMO 中心缺乏正式 ethics consultation 流程，導致 burnout 與道德傷害集中在主治與護理。"},
+/* === 跨章整合 === */
+{c:"整合題",q:"VA-ECMO 出現 Harlequin/North-South syndrome 的『根治性』處理是？",o:["提高 ECMO flow","換成 axillary VA(antegrade 直接灌冠脈與頭頸)","降低 PEEP","停用抗凝"],a:1,e:"Harlequin 處理階梯：①提升 ventilator support ②VAV configuration ③換 axillary VA(antegrade 從升主動脈直接灌冠脈與頭頸→根治)。監測核心是右橈動脈 ABG。"},
+{c:"整合題",q:"『Lung-rest 不是 lung-protective』這句話的核心意涵是？",o:["VA 上肺要更用力工作","VA 已替肺完成大部分氧合與 CO₂ 移除，肺只需『待著』(Vt 4–6/PEEP 8–10/FiO₂ 30–40)","VV 與 VA 設定相同","肺休息就是關掉呼吸器"],a:1,e:"VA 已分擔大部分氣體交換，肺只需 rest；Harlequin 一出現要立刻反向提高 ventilator support，因為此時 native LV 又開始噴血到上半身與冠脈。"},
+{c:"整合題",q:"完結篇『The procedure is the easy part; the program is the hard part』要傳達的訊息是？",o:["手術技術最難","個人技術易學，建立 self-correcting program(volume、團隊、SOP、ethics)才是真正挑戰","ECMO 不需團隊","程式設計很難"],a:1,e:"兩位技術相同的醫師，在 30 例/年 vs 100 例/年的醫院，病人結局可差一倍以上(Barbaro 2015)——勝負在『中心』層級，volume matters。"}
+];
+
+/* ---------- 邏輯 ---------- */
+let order=[], idx=0, score=0, okCnt=0, noCnt=0, answered=false, perCh={};
+const $=id=>document.getElementById(id);
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function start(){
+  order=shuffle([...Array(BANK.length).keys()]);
+  idx=0; score=0; okCnt=0; noCnt=0; perCh={};
+  $('result').style.display='none'; $('quiz').style.display='block';
+  updHeader(); render();
+}
+function updHeader(){
+  $('hScore').textContent=score+' 分';
+  $('okCnt').textContent=okCnt; $('noCnt').textContent=noCnt;
+  $('progbar').style.width=((idx)/BANK.length*100)+'%';
+  $('progText').textContent='第 '+(idx+1)+' / '+BANK.length+' 題';
+}
+function render(){
+  answered=false;
+  const q=BANK[order[idx]];
+  // 洗選項
+  const opts=q.o.map((t,i)=>({t,correct:i===q.a}));
+  shuffle(opts);
+  const letters=['A','B','C','D','E','F'];
+  let html='<span class="chiptag">'+q.c+'</span>';
+  html+='<div class="qtext"><span class="qnum">Q'+(idx+1)+'.</span>'+q.q+'</div>';
+  html+='<div id="opts">';
+  opts.forEach((op,i)=>{
+    html+='<button class="opt" data-correct="'+(op.correct?1:0)+'" onclick="pick(this)"><span class="key">'+letters[i]+'</span>'+op.t+'</button>';
+  });
+  html+='</div>';
+  html+='<div class="verdict" id="verdict"></div>';
+  html+='<div class="exp" id="exp"><b>詳解：</b>'+q.e+'</div>';
+  $('qcard').innerHTML=html;
+  const nb=$('nextBtn');
+  nb.disabled=true; nb.textContent='請先作答';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function pick(btn){
+  if(answered) return;
+  answered=true;
+  const q=BANK[order[idx]];
+  const correct=btn.dataset.correct==='1';
+  const all=document.querySelectorAll('#opts .opt');
+  all.forEach(b=>{
+    b.classList.add('disabled');
+    b.setAttribute('onclick','');
+    if(b.dataset.correct==='1') b.classList.add('correct');
+    else b.classList.add('dim');
+  });
+  if(!correct){ btn.classList.remove('dim'); btn.classList.add('wrong'); }
+  // 計分
+  perCh[q.c]=perCh[q.c]||{ok:0,tot:0};
+  perCh[q.c].tot++;
+  const v=$('verdict');
+  if(correct){ score++; okCnt++; perCh[q.c].ok++; v.className='verdict ok'; v.textContent='✓ 答對了！'; }
+  else { noCnt++; v.className='verdict no'; v.textContent='✗ 答錯了——正確答案已用綠色標示'; }
+  v.style.display='block';
+  $('exp').style.display='block';
+  updHeader();
+  const nb=$('nextBtn');
+  nb.disabled=false;
+  nb.textContent=(idx===BANK.length-1)?'看成績 →':'下一題 →';
+}
+function next(){
+  if(!answered) return;
+  if(idx===BANK.length-1){ finish(); return; }
+  idx++; updHeader(); render();
+}
+function finish(){
+  $('quiz').style.display='none';
+  $('result').style.display='block';
+  $('progbar').style.width='100%';
+  const pct=Math.round(score/BANK.length*100);
+  $('rScore').innerHTML=score+'<small>/100</small>';
+  $('rPct').textContent='答對率 '+pct+'%（'+okCnt+' 對 / '+noCnt+' 錯）';
+  let tier,color,bg;
+  if(pct>=90){tier='🏆 卓越 Expert';color='#1b7f3b';bg='#e6f4ea';}
+  else if(pct>=80){tier='✅ 通過 Competent';color='#1b7f3b';bg='#e6f4ea';}
+  else if(pct>=70){tier='🟡 及格 Pass';color='#a06a00';bg='#fff6e0';}
+  else if(pct>=60){tier='🟠 待加強 Borderline';color='#b05a00';bg='#fff1e0';}
+  else {tier='🔴 需重讀 Needs review';color='#c62828';bg='#fdecea';}
+  const t=$('rTier'); t.textContent=tier; t.style.color=color; t.style.background=bg;
+  // 章節分解
+  const chOrder=["Ch1 迴路與抗凝","Ch2 輸血管理","Ch3 併發症/凝血","Ch4 VV適應症","Ch5 VV管路","Ch6 共病管理","Ch7 VV日常管理","Ch8 VV脫機","Ch9 VA適應症","Ch10 成人ECPR","Ch11 VA管路/DPC","Ch12 VA日常管理","Ch13 VA脫機","Ch14 特殊族群/Bridge","Ch15 Program/Ethics","整合題"];
+  let bh='';
+  chOrder.forEach(c=>{
+    if(!perCh[c])return;
+    const d=perCh[c]; const p=Math.round(d.ok/d.tot*100);
+    bh+='<div class="brow"><span class="nm">'+c+'</span><span style="display:flex;align-items:center;"><span class="sc '+(d.ok===d.tot?'full':'')+'">'+d.ok+'/'+d.tot+'</span><span class="mini"><i style="width:'+p+'%"></i></span></span></div>';
+  });
+  $('rBreak').innerHTML=bh;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+$('nextBtn').addEventListener('click',next);
+$('restartBtn').addEventListener('click',()=>{ if(confirm('確定要重新開始測驗嗎？目前進度會清除。')) start(); });
+$('againBtn').addEventListener('click',start);
+start();
+</script>
+</body>
+</html>
