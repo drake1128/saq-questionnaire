@@ -82,11 +82,28 @@
 
   footer{text-align:center; color:var(--muted); font-size:11.5px; margin-top:26px; line-height:1.7;}
   .hint{font-size:12.5px; color:var(--muted); text-align:center; margin-top:10px;}
+
+  /* share QR */
+  .title-right{display:flex;align-items:center;gap:8px;}
+  .share-btn{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.55);border-radius:999px;font:inherit;font-size:12px;font-weight:700;padding:4px 11px;cursor:pointer;line-height:1;white-space:nowrap;}
+  .share-btn:active{transform:scale(.97);}
+  #shareModal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:rgba(20,10,10,.55);padding:20px;}
+  #shareModal.open{display:flex;}
+  .share-card{background:#fff;border-radius:18px;max-width:330px;width:100%;padding:22px 20px;text-align:center;box-shadow:0 14px 40px rgba(0,0,0,.3);}
+  .share-card h3{margin:0 0 4px;color:var(--red-d);font-size:18px;}
+  .share-card p{margin:0 0 14px;color:var(--muted);font-size:13px;}
+  .qrbox{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;display:inline-block;}
+  .qrbox svg{display:block;width:200px;height:200px;}
+  .share-url{margin:14px 0 0;font-size:12px;color:var(--muted);word-break:break-all;background:var(--bg);border-radius:8px;padding:8px 10px;}
+  .share-actions{display:flex;gap:9px;margin-top:14px;}
+  .share-actions button{flex:1;border:none;border-radius:11px;padding:11px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;}
+  .s-copy{background:var(--red);color:#fff;}
+  .s-close{background:#fff;color:var(--red);border:1.5px solid var(--red-l);}
 </style>
 </head>
 <body>
 <header>
-  <div class="title"><span>🩸 ECMO 體循師自我測驗</span><span id="hScore">0 分</span></div>
+  <div class="title"><span>🩸 ECMO 體循師自我測驗</span><span class="title-right"><button type="button" class="share-btn" aria-label="分享測驗 QR Code" onclick="openShare()">⤴ 分享</button><span id="hScore">0 分</span></span></div>
   <div class="sub">ELSO Red Book 5e · 新竹臺大 ECMO 讀書會教材 · 共 100 題</div>
   <div class="bar"><i id="progbar"></i></div>
   <div class="statline"><span id="progText">第 1 / 100 題</span><span><b id="okCnt">0</b> 對 · <b id="noCnt">0</b> 錯</span></div>
@@ -341,6 +358,24 @@ $('nextBtn').addEventListener('click',next);
 $('restartBtn').addEventListener('click',()=>{ if(confirm('確定要重新開始測驗嗎？目前進度會清除。')) start(); });
 $('againBtn').addEventListener('click',start);
 start();
+</script>
+<div id="shareModal" onclick="if(event.target===this)closeShare()">
+  <div class="share-card">
+    <h3>分享這份測驗</h3>
+    <p>用手機相機掃描 QR Code，或複製連結傳給同仁</p>
+    <div class="qrbox"><svg xmlns="http://www.w3.org/2000/svg" width="410" height="410" class="segno"><g transform="scale(10)"><path fill="#fff" d="M0 0h41v41h-41z"/><path class="qrline" stroke="#7f0000" d="M2 2.5h7m1 0h1m5 0h2m1 0h4m1 0h1m2 0h2m3 0h7m-37 1h1m5 0h1m3 0h2m4 0h1m1 0h1m2 0h2m1 0h2m2 0h1m1 0h1m5 0h1m-37 1h1m1 0h3m1 0h1m1 0h1m3 0h1m1 0h4m1 0h1m1 0h2m1 0h4m2 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m8 0h8m2 0h1m2 0h1m1 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m2 0h1m1 0h1m3 0h1m1 0h2m3 0h1m1 0h1m3 0h1m1 0h1m1 0h3m1 0h1m-37 1h1m5 0h1m1 0h1m3 0h3m5 0h1m1 0h1m3 0h1m1 0h1m1 0h1m5 0h1m-37 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-28 1h2m1 0h1m9 0h2m-24 1h1m1 0h1m3 0h2m3 0h2m3 0h5m2 0h1m3 0h2m2 0h1m2 0h1m1 0h1m-37 1h1m3 0h2m1 0h4m2 0h2m1 0h1m2 0h3m1 0h3m1 0h2m1 0h2m1 0h1m1 0h2m-33 1h1m1 0h1m2 0h1m2 0h3m1 0h2m1 0h1m1 0h3m1 0h3m2 0h1m1 0h1m1 0h1m1 0h1m-37 1h1m3 0h2m1 0h4m1 0h1m2 0h2m1 0h1m1 0h1m1 0h2m3 0h1m3 0h2m-31 1h1m1 0h1m1 0h1m1 0h1m2 0h2m1 0h1m1 0h1m6 0h2m1 0h2m2 0h2m1 0h1m2 0h1m-34 1h2m2 0h1m2 0h3m2 0h6m2 0h2m2 0h1m1 0h3m1 0h1m2 0h1m-33 1h1m1 0h2m1 0h8m2 0h1m1 0h1m1 0h1m3 0h1m2 0h1m2 0h2m1 0h1m-36 1h4m3 0h4m3 0h3m2 0h1m1 0h1m1 0h1m4 0h1m1 0h3m2 0h1m-36 1h2m3 0h6m1 0h2m2 0h1m2 0h1m2 0h1m2 0h2m2 0h2m3 0h2m-37 1h4m1 0h1m2 0h1m1 0h1m2 0h2m4 0h3m1 0h3m1 0h2m1 0h1m2 0h4m-37 1h1m3 0h1m1 0h1m6 0h1m1 0h1m2 0h3m2 0h1m3 0h1m1 0h2m1 0h1m3 0h1m-37 1h2m1 0h2m2 0h3m1 0h1m1 0h2m3 0h1m1 0h1m1 0h1m1 0h1m3 0h1m1 0h4m-34 1h1m1 0h2m1 0h4m1 0h3m1 0h3m2 0h2m1 0h2m6 0h2m1 0h1m1 0h1m-35 1h1m2 0h2m1 0h1m2 0h1m1 0h1m2 0h2m1 0h2m1 0h1m1 0h3m1 0h1m2 0h1m4 0h2m-37 1h1m2 0h4m7 0h6m3 0h3m1 0h1m1 0h2m2 0h2m1 0h1m-36 1h2m5 0h2m1 0h1m2 0h3m1 0h1m7 0h1m1 0h6m1 0h1m-36 1h1m1 0h2m2 0h1m2 0h1m2 0h2m2 0h4m4 0h1m2 0h2m1 0h2m3 0h1m-33 1h1m6 0h1m5 0h1m1 0h7m2 0h1m2 0h2m1 0h1m2 0h1m-37 1h8m3 0h1m1 0h1m2 0h2m1 0h2m2 0h1m3 0h1m1 0h2m1 0h1m1 0h1m1 0h1m-35 1h1m2 0h1m3 0h8m5 0h2m2 0h4m3 0h1m-34 1h3m2 0h3m1 0h1m4 0h1m1 0h1m6 0h2m3 0h5m-25 1h2m1 0h1m1 0h5m1 0h2m1 0h3m3 0h1m3 0h1m3 0h1m-37 1h7m1 0h2m1 0h2m2 0h1m3 0h1m1 0h1m1 0h4m1 0h1m1 0h1m1 0h1m3 0h1m-37 1h1m5 0h1m2 0h1m2 0h6m6 0h1m1 0h3m3 0h1m2 0h1m-36 1h1m1 0h3m1 0h1m2 0h4m1 0h1m2 0h1m1 0h2m1 0h2m3 0h6m2 0h2m-37 1h1m1 0h3m1 0h1m2 0h1m1 0h1m1 0h1m3 0h1m1 0h2m2 0h7m2 0h1m1 0h1m-35 1h1m1 0h3m1 0h1m1 0h1m3 0h4m1 0h4m1 0h2m1 0h3m1 0h1m1 0h4m1 0h1m-37 1h1m5 0h1m2 0h1m1 0h1m2 0h1m3 0h3m1 0h2m2 0h1m1 0h3m1 0h2m-34 1h7m1 0h1m1 0h3m1 0h3m3 0h1m2 0h1m4 0h1m1 0h2m1 0h1m2 0h1"/></g></svg></div>
+    <div class="share-url" id="shareUrl">https://drake1128.github.io/saq-questionnaire/exam-ecmo-self-assessment.html</div>
+    <div class="share-actions">
+      <button class="s-copy" type="button" onclick="copyLink(this)">複製連結</button>
+      <button class="s-close" type="button" onclick="closeShare()">關閉</button>
+    </div>
+  </div>
+</div>
+<script>
+function openShare(){document.getElementById('shareModal').classList.add('open');}
+function closeShare(){document.getElementById('shareModal').classList.remove('open');}
+function copyLink(btn){var u=document.getElementById('shareUrl').textContent.trim();if(navigator.clipboard){navigator.clipboard.writeText(u).then(function(){var t=btn.textContent;btn.textContent='已複製 ✓';setTimeout(function(){btn.textContent=t;},1500);});}}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeShare();});
 </script>
 </body>
 </html>
