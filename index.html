@@ -44,7 +44,6 @@
     </script>
 
     <!-- Performance: Preconnect to external domains -->
-    <link rel="preconnect" href="https://api.qrserver.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
@@ -2753,6 +2752,7 @@
         <button class="sidebar-nav-close" onclick="closeSidebar()" aria-label="關閉導覽">×</button>
         <div class="sidebar-nav-title">章節目錄</div>
         <ul class="sidebar-nav-list">
+            <li class="sidebar-nav-item"><a href="#sec-rotation" onclick="navClick(event)"><span class="nav-icon">📅</span><span class="nav-label">教學輪訓課表</span></a></li>
             <li class="sidebar-nav-item"><a href="#sec-cath" onclick="navClick(event)"><span class="nav-icon">🏥</span><span class="nav-label">導管室教學</span></a></li>
             <li class="sidebar-nav-item"><a href="#sec-icu" onclick="navClick(event)"><span class="nav-icon">⚡</span><span class="nav-label">加護病房 ICU/CCU</span></a></li>
             <li class="sidebar-nav-item"><a href="#sec-ward" onclick="navClick(event)"><span class="nav-icon">🛏️</span><span class="nav-label">病房照護</span></a></li>
@@ -2811,7 +2811,19 @@
                 <div class="featured-arrow">→</div>
             </a>
         </div>
-        
+
+        <!-- Featured: Teaching Rotation Curriculum -->
+        <div class="featured-banner">
+            <a href="#sec-rotation" class="featured-link" style="background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%); box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);">
+                <div class="featured-icon">📅</div>
+                <div class="featured-content">
+                    <div class="featured-title">臨床教學輪訓課表 Rotation Curriculum</div>
+                    <div class="featured-desc">Clerk／Intern／PGY／住院醫師／總醫師 分階段 · 兩週與三週版每日學習模組</div>
+                </div>
+                <div class="featured-arrow">↓</div>
+            </a>
+        </div>
+
         <!-- Quick Filters: Zone -->
         <nav class="quick-filters" role="navigation" aria-label="對象篩選" id="main-content">
             <button class="quick-btn active" onclick="filterByCategory('all')" aria-pressed="true">📚 全部</button>
@@ -2850,6 +2862,156 @@
                 </div>
             </div>
         </div>
+
+        <!-- ===== Teaching Rotation Curriculum (embedded) ===== -->
+        <style>
+        .trc-wrap{margin:10px 0 6px;}
+        .trc-head h2{font-size:1.35rem;margin:0 0 4px;color:var(--primary-dark);display:flex;align-items:center;gap:10px;}
+        body.dark-mode .trc-head h2{color:var(--text-dark-primary);}
+        .trc-head .trc-sub{color:var(--text-light);font-size:.9rem;margin:0;}
+        body.dark-mode .trc-head .trc-sub{color:var(--text-dark-secondary);}
+        .trc-controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:14px 0 8px;}
+        .trc-seg{display:inline-flex;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:4px;box-shadow:var(--card-shadow);}
+        body.dark-mode .trc-seg{background:var(--bg-dark-secondary);border-color:var(--border-dark);}
+        .trc-seg button{border:0;background:transparent;color:var(--text-light);font-weight:700;font-size:.9rem;padding:8px 16px;border-radius:9px;cursor:pointer;transition:.15s;font-family:inherit;}
+        .trc-seg button.active{background:var(--primary);color:#fff;}
+        .trc-hint{color:var(--text-light);font-size:.82rem;}
+        body.dark-mode .trc-hint{color:var(--text-dark-secondary);}
+        .trc-chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;}
+        .trc-chip{border:1.5px solid #e5e7eb;background:#fff;border-radius:999px;padding:6px 14px;font-size:.84rem;font-weight:700;cursor:pointer;color:var(--text-light);transition:.15s;display:flex;gap:6px;align-items:center;font-family:inherit;}
+        body.dark-mode .trc-chip{background:var(--bg-dark-secondary);border-color:var(--border-dark);color:var(--text-dark-secondary);}
+        .trc-chip .trc-dot{width:10px;height:10px;border-radius:50%;}
+        .trc-chip.on{color:#fff;border-color:transparent;}
+        .trc-chip[data-stage="all"].on{background:var(--primary);}
+        .trc-chip[data-stage="clerk"].on{background:#0d9488;}
+        .trc-chip[data-stage="intern"].on{background:#2563eb;}
+        .trc-chip[data-stage="pgy"].on{background:#7c3aed;}
+        .trc-chip[data-stage="res"].on{background:#db2777;}
+        .trc-chip[data-stage="cr"].on{background:#ea580c;}
+        .trc-onboard{background:#fff;border:1px dashed #e5e7eb;border-left:5px solid var(--primary);border-radius:12px;padding:12px 16px;margin:12px 0;box-shadow:var(--card-shadow);}
+        body.dark-mode .trc-onboard{background:var(--bg-dark-secondary);border-color:var(--border-dark);border-left-color:var(--primary-light);}
+        .trc-onboard h3{margin:0 0 8px;font-size:.98rem;color:var(--text-dark);}
+        body.dark-mode .trc-onboard h3{color:var(--text-dark-primary);}
+        .trc-onboard .trc-links{display:flex;flex-wrap:wrap;gap:8px;}
+        .trc-onboard a{font-size:.83rem;text-decoration:none;color:var(--primary);background:rgba(0,119,182,.08);padding:5px 11px;border-radius:8px;font-weight:600;}
+        .trc-onboard a:hover{background:rgba(0,119,182,.16);}
+        body.dark-mode .trc-onboard a{color:var(--primary-light);background:rgba(0,180,216,.12);}
+        .trc-tablecard{background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:var(--card-shadow);overflow:auto;margin-top:8px;}
+        body.dark-mode .trc-tablecard{background:var(--bg-dark-secondary);border-color:var(--border-dark);}
+        .trc-table{border-collapse:separate;border-spacing:0;width:100%;min-width:1040px;}
+        .trc-table thead th{position:sticky;top:0;z-index:5;background:#fff;font-size:.82rem;padding:12px 10px;text-align:left;border-bottom:2px solid #e5e7eb;white-space:nowrap;color:var(--text-dark);}
+        body.dark-mode .trc-table thead th{background:var(--bg-dark-secondary);border-bottom-color:var(--border-dark);color:var(--text-dark-primary);}
+        .trc-table th.trc-stage{border-bottom:3px solid currentColor;}
+        .trc-table th.s-clerk{color:#0d9488;} .trc-table th.s-intern{color:#2563eb;} .trc-table th.s-pgy{color:#7c3aed;} .trc-table th.s-res{color:#db2777;} .trc-table th.s-cr{color:#ea580c;}
+        .trc-table th .trc-en{display:block;font-size:.7rem;color:var(--text-light);font-weight:600;}
+        .trc-table th.trc-daycol,.trc-table td.trc-daycol{position:sticky;left:0;z-index:4;background:#fff;min-width:116px;border-right:1px solid #e5e7eb;}
+        body.dark-mode .trc-table th.trc-daycol,body.dark-mode .trc-table td.trc-daycol{background:var(--bg-dark-secondary);border-right-color:var(--border-dark);}
+        .trc-table tbody td{padding:10px;vertical-align:top;border-bottom:1px solid #e5e7eb;font-size:.82rem;}
+        body.dark-mode .trc-table tbody td{border-bottom-color:var(--border-dark);}
+        .trc-table .trc-weekrow td{background:linear-gradient(90deg,rgba(0,119,182,.10),transparent);font-weight:800;font-size:.9rem;color:var(--primary-dark);padding:8px 12px;}
+        body.dark-mode .trc-table .trc-weekrow td{color:var(--primary-light);background:linear-gradient(90deg,rgba(0,180,216,.12),transparent);}
+        .trc-daytag{font-weight:800;font-size:.92rem;color:var(--text-dark);}
+        body.dark-mode .trc-daytag{color:var(--text-dark-primary);}
+        .trc-dow{color:var(--text-light);font-size:.78rem;}
+        .trc-domain{display:inline-block;margin-top:5px;font-size:.72rem;font-weight:700;color:#fff;padding:2px 8px;border-radius:6px;}
+        .trc-d-ward{background:#16a34a;}.trc-d-cath{background:#dc2626;}.trc-d-img{background:#4f46e5;}.trc-d-med{background:#d97706;}.trc-d-icu{background:#475569;}
+        .trc-table td.trc-cell a{display:block;text-decoration:none;color:var(--text-dark);font-weight:700;line-height:1.35;}
+        body.dark-mode .trc-table td.trc-cell a{color:var(--text-dark-primary);}
+        .trc-table td.trc-cell a:hover{text-decoration:underline;color:var(--primary);}
+        .trc-table td.trc-cell .trc-note{display:block;color:var(--text-light);font-weight:400;font-size:.75rem;margin-top:2px;}
+        body.dark-mode .trc-table td.trc-cell .trc-note{color:var(--text-dark-secondary);}
+        .trc-table td.trc-cell{border-left:3px solid transparent;}
+        .trc-table td.c-clerk{border-left-color:rgba(13,148,136,.5);}
+        .trc-table td.c-intern{border-left-color:rgba(37,99,235,.5);}
+        .trc-table td.c-pgy{border-left-color:rgba(124,58,237,.5);}
+        .trc-table td.c-res{border-left-color:rgba(219,39,119,.5);}
+        .trc-table td.c-cr{border-left-color:rgba(234,88,12,.5);}
+        .trc-dim{opacity:.22;filter:grayscale(.5);}
+        .trc-howto{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 16px;margin-top:14px;box-shadow:var(--card-shadow);}
+        body.dark-mode .trc-howto{background:var(--bg-dark-secondary);border-color:var(--border-dark);}
+        .trc-howto h3{margin:0 0 6px;font-size:.98rem;color:var(--text-dark);}
+        body.dark-mode .trc-howto h3{color:var(--text-dark-primary);}
+        .trc-howto ul{margin:4px 0 0;padding-left:20px;font-size:.83rem;color:var(--text-light);}
+        body.dark-mode .trc-howto ul{color:var(--text-dark-secondary);}
+        .trc-howto li{margin:3px 0;}
+        .trc-legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px;}
+        .trc-legend .trc-box{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:10px 12px;box-shadow:var(--card-shadow);}
+        body.dark-mode .trc-legend .trc-box{background:var(--bg-dark-secondary);border-color:var(--border-dark);}
+        .trc-legend h4{margin:0 0 4px;font-size:.85rem;display:flex;align-items:center;gap:7px;color:var(--text-dark);}
+        body.dark-mode .trc-legend h4{color:var(--text-dark-primary);}
+        .trc-legend .trc-dot{width:11px;height:11px;border-radius:50%;}
+        .trc-legend p{margin:0;font-size:.76rem;color:var(--text-light);}
+        body.dark-mode .trc-legend p{color:var(--text-dark-secondary);}
+        @media (max-width:600px){.trc-head h2{font-size:1.15rem;}}
+        </style>
+
+        <section id="sec-rotation" class="trc-wrap" aria-labelledby="trc-title">
+            <div class="trc-head">
+                <h2 id="trc-title"><span aria-hidden="true">📅</span> 臨床教學輪訓課表</h2>
+                <p class="trc-sub">Clerk · Intern · PGY · 住院醫師 · 總醫師 —— 每天來醫院都有一個適合自己階段的新模組可以學。週一至週五，每週涵蓋 病房／導管／影像／藥物／重症。</p>
+            </div>
+
+            <div class="trc-controls">
+                <div class="trc-seg" id="trcWeekSeg">
+                    <button type="button" data-weeks="2" class="active">兩週版（10 天）</button>
+                    <button type="button" data-weeks="3">三週版（15 天）</button>
+                </div>
+                <span class="trc-hint">點下方階段標籤可只看自己那一欄。</span>
+            </div>
+
+            <div class="trc-chips" id="trcChips">
+                <div class="trc-chip on" data-stage="all"><span class="trc-dot" style="background:#0077B6"></span>全部顯示</div>
+                <div class="trc-chip" data-stage="clerk"><span class="trc-dot" style="background:#0d9488"></span>Clerk 見習</div>
+                <div class="trc-chip" data-stage="intern"><span class="trc-dot" style="background:#2563eb"></span>Intern 實習</div>
+                <div class="trc-chip" data-stage="pgy"><span class="trc-dot" style="background:#7c3aed"></span>PGY</div>
+                <div class="trc-chip" data-stage="res"><span class="trc-dot" style="background:#db2777"></span>住院醫師 R</div>
+                <div class="trc-chip" data-stage="cr"><span class="trc-dot" style="background:#ea580c"></span>總醫師 CR</div>
+            </div>
+
+            <div class="trc-onboard">
+                <h3>📌 Day 0 · 共同起點（所有新進學員第一天）</h3>
+                <div class="trc-links">
+                    <a href="orientation-hub.html">新人訓練中心 Orientation Hub</a>
+                    <a href="cv-new-staff-orientation.html">心血管中心新人導引</a>
+                    <a href="clinical-shadowing-guide.html">臨床隨行教學指引</a>
+                    <a href="cardiology-ward-orientation-2025.html">心臟科病房 Orientation 2025</a>
+                    <a href="ccu-orientation-manual.html">CCU 訓練手冊</a>
+                </div>
+            </div>
+
+            <div class="trc-tablecard">
+                <table class="trc-table">
+                    <thead>
+                        <tr>
+                            <th class="trc-daycol">日次 / 領域</th>
+                            <th class="trc-stage s-clerk" data-stage="clerk">Clerk<span class="trc-en">見習醫學生</span></th>
+                            <th class="trc-stage s-intern" data-stage="intern">Intern<span class="trc-en">實習醫學生</span></th>
+                            <th class="trc-stage s-pgy" data-stage="pgy">PGY<span class="trc-en">畢業後一般醫學</span></th>
+                            <th class="trc-stage s-res" data-stage="res">住院醫師 R<span class="trc-en">Cardiology Resident</span></th>
+                            <th class="trc-stage s-cr" data-stage="cr">總醫師 CR<span class="trc-en">Chief Resident</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="trcBody"></tbody>
+                </table>
+            </div>
+
+            <div class="trc-howto">
+                <h3>這張課表怎麼用？</h3>
+                <ul>
+                    <li><b>往下讀自己的那一欄</b>：同一學員每天都會遇到一個沒看過的新模組，不重複。</li>
+                    <li><b>橫向看同一天</b>：全隊聚焦同一臨床領域，但深度不同 —— 資淺者「認識／操作」，資深者「精通／帶教」。</li>
+                    <li><b>兩週版＝前 10 天；三週版＝15 天。</b>週末不排課，留作消化、值班與自我測驗。</li>
+                </ul>
+            </div>
+
+            <div class="trc-legend">
+                <div class="trc-box"><h4><span class="trc-dot" style="background:#16a34a"></span>病房（週一）</h4><p>心衰、房顫、周邊血管、肺高壓、心肌病。</p></div>
+                <div class="trc-box"><h4><span class="trc-dot" style="background:#dc2626"></span>導管室（週二）</h4><p>止血通路、CIN、併發症、結構性介入。</p></div>
+                <div class="trc-box"><h4><span class="trc-dot" style="background:#4f46e5"></span>影像（週三）</h4><p>心臟超音波、POCUS、胸腔超音波。</p></div>
+                <div class="trc-box"><h4><span class="trc-dot" style="background:#d97706"></span>藥物（週四）</h4><p>抗凝、GDMT、血脂、溶栓、計算。</p></div>
+                <div class="trc-box"><h4><span class="trc-dot" style="background:#475569"></span>重症/評核（週五）</h4><p>急救、休克、電風暴、ECMO、測驗。</p></div>
+            </div>
+        </section>
 
         <!-- Main Content Area -->
         <main role="main" aria-label="教學資源列表">
@@ -3758,7 +3920,7 @@
             <button class="share-modal-close" onclick="closeShareModal()" aria-label="關閉分享視窗">&times;</button>
             <h3 id="share-modal-title"><span aria-hidden="true">📤</span> 分享本網站</h3>
             <div class="qr-container">
-                <img id="qrcode" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://drake1128.github.io/saq-questionnaire" alt="心血管照護教學資源中心網站 QR Code" width="180" height="180" loading="lazy">
+                <img id="qrcode" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUgAAAFIAQAAAAAab1qeAAABhElEQVR42u2aQZLDMAgEp/L/P2uTkgQjnQw+bsupOLE4dQEDyBpPl7DEEksssbwtNdf4XfMTT9b9uz56uv6zpRL/D6T/le/As8RzeueEaDhtB54NntNFF1PB8yVP6Uye8HyXPxe5LUrkzy5P0/frQt8bPLN6yigf9yY8n/O0cnNLvKyCwj8b/qm8L5mPGzw78Z45c0X8firivRrvR4ivvnPuUi+16qVMnjNj7h/xBJ61et64bt+MIhSe1fozEcaXcoP8WeYZA5HDKzPs4VnUd+/gtwSFm8KzyDOzpg7HpP7s9kcjOvhhgR+uCs+iHh1j0E1XRhSexXrJHDQ7o8yw8Kzp+4hG09jaKBSeJf+M7lI2Y44CH57lftOG9OfRJvV857xDu293uPsvPMv1/DH6XGEuP1WCZ0GPYgAS8hMdE/H+5nzTIn1YBoBnWd9zjny9xYS+v3ifQdFpmrqTP7v+ObJButp3eLbzp8Yxs2Me0tX3a4hsSRWenfqTt46xxBJLLB9b/gGHBF8of6eDxQAAAABJRU5ErkJggg==" alt="心血管照護教學資源中心網站 QR Code" width="180" height="180">
                 <p class="qr-hint">掃描 QR Code 分享網站</p>
             </div>
             <div class="share-options">
@@ -4994,6 +5156,152 @@ ${message}
     </script>
 
     <!-- Achievement System Scripts -->
+    <!-- ===== Teaching Rotation Curriculum logic (embedded, namespaced) ===== -->
+    <script>
+    (function(){
+      var DOW=["週一","週二","週三","週四","週五"];
+      var DOMAINS=[
+        {label:"病房 Ward",cls:"trc-d-ward"},
+        {label:"導管室 Cath",cls:"trc-d-cath"},
+        {label:"影像 Imaging",cls:"trc-d-img"},
+        {label:"藥物 Medication",cls:"trc-d-med"},
+        {label:"重症/評核 ICU",cls:"trc-d-icu"}
+      ];
+      var TRACKS={
+        clerk:[
+          {t:"認識心臟衰竭（衛教手冊）",h:"heart-failure-handbook/index.html",n:"從病人角度認識心衰、練習家屬衛教"},
+          {t:"導管室歷史與文化",h:"Cath_Room_History.html",n:"進導管室觀摩前，先認識團隊與沿革"},
+          {t:"心臟超音波基礎",h:"echo-basics.html",n:"探頭、切面、基本判讀入門"},
+          {t:"LDL 膽固醇衛教",h:"ldl-education-app.html",n:"動脈硬化與 statin 的基礎概念"},
+          {t:"CPR 急救訓練",h:"cpr-training-app.html",n:"基礎生命支持與電擊概念"},
+          {t:"高血壓衛教",h:"hypertension-education-app.html",n:"血壓分級、生活型態、居家量測"},
+          {t:"認識 TAVI（家屬說明）",h:"tavi-family-explanation.html",n:"學習向家屬解釋主動脈瓣狹窄與 TAVI"},
+          {t:"超音波：主動脈瓣",h:"echo-aortic-valve.html",n:"主動脈瓣狹窄／逆流的基本影像"},
+          {t:"心血管疫苗接種",h:"cv-vaccination-guide.html",n:"流感／肺炎／帶狀疱疹等預防概念"},
+          {t:"STEMI 與 ECG 入門",h:"stemi-er-protocol.html",n:"認識急性心肌梗塞與 ECG 早期判讀"},
+          {t:"川崎症診斷查核",h:"kawasaki-disease-checklist.html",n:"兒童冠狀動脈瘤的辨識"},
+          {t:"CTO 心導管衛教",h:"cto-pci-patient-education.html",n:"慢性全阻塞與心導管的病人說明"},
+          {t:"超音波：二尖瓣",h:"echo-mitral-valve.html",n:"二尖瓣狹窄／逆流的基本影像"},
+          {t:"Seattle 心絞痛問卷",h:"seattle-saq.html",n:"用問卷評估胸痛與生活品質"},
+          {t:"臨床隨行教學反思",h:"clinical-shadowing-guide.html",n:"觀摩後的結構化反思與回饋"}
+        ],
+        intern:[
+          {t:"心衰竭病房管理",h:"heart-failure-ward-app.html",n:"利尿劑與容積評估的病房實作"},
+          {t:"傷口照護與止血",h:"cath-wound-care-app.html",n:"拔鞘、壓迫止血、血腫處理"},
+          {t:"超音波：右心評估",h:"echo-right-heart.html",n:"右心功能與肺循環的初判"},
+          {t:"Warfarin 劑量計算",h:"warfarin-dosing-app.html",n:"INR 監測與劑量調整邏輯"},
+          {t:"ABI 血管評核",h:"exam-vascular-abi.html",n:"周邊血管 ABI 量測與判讀練習"},
+          {t:"心房顫動照護",h:"af-ward-teaching-app.html",n:"房顫病房處置與抗凝起步"},
+          {t:"導管室交班流程",h:"cath-handoff-teaching-app.html",n:"術前準備、SBAR 交班、術後照護"},
+          {t:"胸腔超音波",h:"thoracic-ultrasound-teaching.html",n:"肺部超音波與肋膜判讀"},
+          {t:"Troponin 教學",h:"troponin-lecture.html",n:"心肌標記的解讀與時序"},
+          {t:"心因性休克教學",h:"cardiogenic-shock-teaching.html",n:"休克辨識與初步處置（入門）"},
+          {t:"周邊動脈疾病照護",h:"paod-care-app.html",n:"跛行、ABI、Rutherford 分級"},
+          {t:"CHIP 高風險心導管說明",h:"chip-pci-family-explanation.html",n:"複雜高風險介入的家屬說明"},
+          {t:"超音波：血流動力學",h:"echo-hemodynamics.html",n:"以超音波估壓力與心輸出"},
+          {t:"心血管計算工具",h:"cv-calculations-app.html",n:"常用臨床計算的實作"},
+          {t:"護理紀錄書寫指引",h:"nursing-record-guide.html",n:"病程與交班紀錄的規範"}
+        ],
+        pgy:[
+          {t:"ACS／HF 藥物學習",h:"acs-hf-medication-learning.html",n:"GDMT 四大支柱與起始／滴定"},
+          {t:"顯影劑腎病預防",h:"cin-prevention-app.html",n:"Mehran 風險與水化 protocol"},
+          {t:"超音波：缺血性心臟病",h:"echo-ischemic.html",n:"區域室壁運動異常判讀"},
+          {t:"抗凝血臨床工作手冊",h:"anticoagulation-clinical-handbook.html",n:"DOAC／warfarin 完整臨床決策"},
+          {t:"ACLS 急救藥物評核",h:"exam-acls-ccu-2025.html",n:"急救藥物與呼吸道處置評核"},
+          {t:"肺動脈高壓診斷",h:"ph-diagnostic-checklist.html",n:"RHC／echo 分類與診斷流程"},
+          {t:"PCI 併發症案例教學",h:"pci-complications-case-teaching.html",n:"以案例學併發症的判斷"},
+          {t:"重症 POCUS",h:"icu-pocus.html",n:"IVC／肺／心的床邊整合評估"},
+          {t:"術前藥物評估",h:"cardiac-surgery-medication-app.html",n:"SGLT2i／抗凝等停藥時機"},
+          {t:"血流動力學與休克",h:"hemodynamic-shock-teaching-app.html",n:"壓力波形與休克分型"},
+          {t:"Fabry Disease 篩檢",h:"fabry-disease-checklist.html",n:"LVH 鑑別與罕病篩檢"},
+          {t:"PTMC 二尖瓣球囊",h:"ptmc-teaching-app.html",n:"風濕性二尖瓣狹窄的介入入門"},
+          {t:"超音波：心肌病變",h:"echo-cardiomyopathy.html",n:"HCM／DCM／侵潤性的影像鑑別"},
+          {t:"血栓溶解藥物計算",h:"thrombolytic-calculator-app.html",n:"ALI／PE 溶栓的劑量與適應症"},
+          {t:"ECMO 自我測驗",h:"exam-ecmo-self-assessment.html",n:"100 題自我評核"}
+        ],
+        res:[
+          {t:"iLVD 血管重建決策",h:"ilvd-revascularization-app.html",n:"STICH／REVIVED 缺血性心衰決策"},
+          {t:"ProGlide 血管縫合器",h:"ProGlide_Checklist.html",n:"大孔徑止血器操作"},
+          {t:"VA-ECMO Echo 查核",h:"va-ecmo-echo-checklist.html",n:"ECMO 下的心臟超音波監測"},
+          {t:"LAAO 神經內科決策",h:"laao-neurology-decision-aid.html",n:"抗凝禁忌下的中風預防決策"},
+          {t:"星狀神經節阻斷／電風暴",h:"sgb-electrical-storm-teaching.html",n:"難治性 VT／VF 的進階處置"},
+          {t:"HOCM 阻塞性肥厚心肌病",h:"hocm-education-app.html",n:"流出道阻塞的評估與處置"},
+          {t:"SAPIEN 3 Ultra 操作",h:"sapien-ultra-commander-operation-guide.html",n:"TAVI 輸送系統術中操作"},
+          {t:"超音波：人工瓣膜／心內膜炎",h:"echo-prosthetics-endocarditis.html",n:"贅生物與人工瓣評估"},
+          {t:"失智病人心導管決策",h:"dementia-pci-decision-tool.html",n:"高齡／失智的 SDM 與安寧考量"},
+          {t:"VC／DSD 去顫策略",h:"vc-dsd-defibrillation-teaching-app.html",n:"向量改變與雙重連續去顫"},
+          {t:"心內膜心肌切片 EMB",h:"emb-teaching-app.html",n:"心肌病／心肌炎的組織診斷"},
+          {t:"頸動脈支架",h:"carotid-stenting-app.html",n:"CAS 適應症與技術要點"},
+          {t:"超音波：主動脈／心包",h:"echo-aorta-pericardium.html",n:"主動脈病變與心包填塞"},
+          {t:"LAAO TEE 評估",h:"laao-tee-evaluation-app.html",n:"Watchman／Amulet 的 TEE 量測"},
+          {t:"PCI 緊急併發症處置",h:"pci-complications-emergency.html",n:"No-reflow／穿孔的即時處置"}
+        ],
+        cr:[
+          {t:"基因／精準醫學規劃",h:"gene-medicine-cv-center-plan.html",n:"遺傳性心臟病門診與制度建置"},
+          {t:"TAVI Rescue 醫材清單",h:"tavi-procedure-rescue-checklist-app.html",n:"併發症 bail-out 整備與帶教"},
+          {t:"TSOC 心臟超音波整合",h:"tsoc-echo-learning-2025.html",n:"進階整合判讀與教學"},
+          {t:"PASCAL TEER 課程預習",h:"pascal-teer-prestudy-app.html",n:"二尖瓣修復術式精通"},
+          {t:"ECMO 評核（帶教）",h:"exam-ecmo-self-assessment.html",n:"帶學弟妹做 ECMO 評核"},
+          {t:"心血管閱讀書庫",h:"cardiovascular-reading-library.html",n:"帶讀關鍵文獻與期刊"},
+          {t:"TEER TEE 查核",h:"teer-tee-checklist-app.html",n:"MitraClip／PASCAL 的 TEE 導引"},
+          {t:"超音波：腫塊／先天性",h:"echo-masses-chd.html",n:"心臟腫瘤與成人先天性心臟病"},
+          {t:"TEER vs 外科決策輔助",h:"teer-decision-aid.html",n:"二尖瓣修補的醫病共享決策"},
+          {t:"血流動力學休克（帶教）",h:"hemodynamic-shock-teaching-app.html",n:"帶學員讀波形與分型"},
+          {t:"LaTeX 教材製作庫",h:"latex-teaching-library.html",n:"製作教學講義與題庫"},
+          {t:"PCI 緊急併發症（帶教）",h:"pci-complications-emergency.html",n:"帶住院醫師演練急救流程"},
+          {t:"AS 超音波評核",h:"exam-echo-as.html",n:"主動脈瓣狹窄影像評核／命題"},
+          {t:"CTO PCI 的人文與決斷",h:"Stoic_Philosophy_CTO_PCI_Lecture.html",n:"從 Stoic 哲學談困難決策與韌性"},
+          {t:"實習生訓練中心（命題／評核）",h:"exam.html",n:"帶領學弟妹評核與命題"}
+        ]
+      };
+      var ORDER=["clerk","intern","pgy","res","cr"];
+      var CCLS={clerk:"c-clerk",intern:"c-intern",pgy:"c-pgy",res:"c-res",cr:"c-cr"};
+      var weeks=2, curStage="all";
+      var body=document.getElementById("trcBody");
+      if(!body) return;
+      function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+      function render(){
+        body.innerHTML="";
+        for(var w=0; w<weeks; w++){
+          var wr=document.createElement("tr"); wr.className="trc-weekrow";
+          wr.innerHTML='<td colspan="6">第 '+(w+1)+' 週</td>'; body.appendChild(wr);
+          for(var d=0; d<5; d++){
+            var idx=w*5+d, dom=DOMAINS[d];
+            var tr=document.createElement("tr");
+            var html='<td class="trc-daycol"><span class="trc-daytag">Day '+(idx+1)+'</span> <span class="trc-dow">'+DOW[d]+'</span><br><span class="trc-domain '+dom.cls+'">'+dom.label+'</span></td>';
+            for(var i=0;i<ORDER.length;i++){
+              var s=ORDER[i], m=TRACKS[s][idx];
+              html+='<td class="trc-cell '+CCLS[s]+'" data-stage="'+s+'"><a href="'+m.h+'">'+esc(m.t)+'</a><span class="trc-note">'+esc(m.n)+'</span></td>';
+            }
+            tr.innerHTML=html; body.appendChild(tr);
+          }
+        }
+        applyFilter();
+      }
+      function applyFilter(){
+        var cells=document.querySelectorAll('#sec-rotation td.trc-cell, #sec-rotation th.trc-stage');
+        for(var i=0;i<cells.length;i++){
+          var td=cells[i];
+          if(curStage==="all"){ td.classList.remove("trc-dim"); }
+          else { td.classList.toggle("trc-dim", td.getAttribute("data-stage")!==curStage); }
+        }
+      }
+      document.getElementById("trcWeekSeg").addEventListener("click", function(e){
+        var b=e.target.closest("button"); if(!b) return;
+        var btns=this.querySelectorAll("button");
+        for(var i=0;i<btns.length;i++) btns[i].classList.remove("active");
+        b.classList.add("active"); weeks=+b.getAttribute("data-weeks"); render();
+      });
+      document.getElementById("trcChips").addEventListener("click", function(e){
+        var c=e.target.closest(".trc-chip"); if(!c) return;
+        curStage=c.getAttribute("data-stage");
+        var chips=this.querySelectorAll(".trc-chip");
+        for(var i=0;i<chips.length;i++) chips[i].classList.remove("on");
+        c.classList.add("on"); applyFilter();
+      });
+      render();
+    })();
+    </script>
     <script src="achievements-config.js"></script>
     <script src="achievements.js"></script>
 </body>
