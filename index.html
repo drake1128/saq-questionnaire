@@ -2844,6 +2844,25 @@
             <button class="quick-btn btn-sm" onclick="filterByDisease('cardiomyopathy')" aria-pressed="false" data-disease-filter="true">🧬 心肌病變</button>
         </nav>
 
+        <!-- Quick Filters: Profession / 職類專區 -->
+        <style>
+        .prof-filters{margin-top:-4px;padding-top:0;align-items:center;}
+        .prof-filters .prof-label{font-size:.8rem;font-weight:800;color:var(--text-light);margin-right:2px;white-space:nowrap;}
+        body.dark-mode .prof-filters .prof-label{color:var(--text-dark-secondary);}
+        .prof-filters .quick-btn[data-prof-filter].active{color:#fff;border-color:transparent;}
+        .prof-filters .quick-btn[data-prof-filter="doctor"].active{background:#2563eb;}
+        .prof-filters .quick-btn[data-prof-filter="nurse"].active{background:#0d9488;}
+        .prof-filters .quick-btn[data-prof-filter="cathtech"].active{background:#7c3aed;}
+        .prof-filters .quick-btn[data-prof-filter="all"].active{background:var(--primary);}
+        </style>
+        <nav class="quick-filters prof-filters" role="navigation" aria-label="職類專區篩選" style="margin-top: -4px; padding-top: 0;">
+            <span class="prof-label">🎯 職類專區</span>
+            <button class="quick-btn btn-sm active" onclick="filterByProfession('all')" aria-pressed="true" data-prof-filter="all">👥 全部職類</button>
+            <button class="quick-btn btn-sm" onclick="filterByProfession('doctor')" aria-pressed="false" data-prof-filter="doctor">👨‍⚕️ 醫師 · 住院醫師</button>
+            <button class="quick-btn btn-sm" onclick="filterByProfession('nurse')" aria-pressed="false" data-prof-filter="nurse">👩‍⚕️ 護理 · 放射（病房／科部）</button>
+            <button class="quick-btn btn-sm" onclick="filterByProfession('cathtech')" aria-pressed="false" data-prof-filter="cathtech">🩺 導管室技術員（放射＋護理）</button>
+        </nav>
+
         <!-- Stats -->
         <div class="stats-bar" aria-live="polite">
             <div class="stat-item">
@@ -3023,7 +3042,7 @@
                 <span class="category-count">7</span>
             </div>
             <div class="app-grid">
-                <a href="ProGlide_Checklist.html" class="app-card cath" data-tags="staff cath proglide vascular closure suture hemostasis femoral perclose abbott">
+                <a href="ProGlide_Checklist.html" class="app-card cath" data-tags="staff cath proglide vascular closure suture hemostasis femoral perclose abbott" data-prof="doctor cathtech">
                     <div class="app-icon">🪡</div>
                     <div class="app-title">ProGlide 血管縫合器操作查核表</div>
                     <div class="app-desc">Abbott ProGlide Vascular Closure 操作步驟、藍白線 Suture Management、圖文對照教學</div>
@@ -3034,7 +3053,7 @@
                     </div>
                 </a>
 
-                <a href="cath-wound-care-app.html" class="app-card cath" data-tags="staff cath wound hemostasis bleeding hematoma sheath compression radial femoral access 拔鞘 壓迫止血">
+                <a href="cath-wound-care-app.html" class="app-card cath" data-tags="staff cath wound hemostasis bleeding hematoma sheath compression radial femoral access 拔鞘 壓迫止血" data-prof="doctor nurse cathtech">
                     <div class="app-icon">🩹</div>
                     <div class="app-title">傷口照護與止血教學</div>
                     <div class="app-desc">導管穿刺傷口照護、止血器材使用、併發症處理</div>
@@ -3044,7 +3063,7 @@
                     </div>
                 </a>
                 
-                <a href="cath-handoff-teaching-app.html" class="app-card cath" data-tags="staff cath handoff nursing preop postop periprocedural sbar 術前 術後 交班 護理">
+                <a href="cath-handoff-teaching-app.html" class="app-card cath" data-tags="staff cath handoff nursing preop postop periprocedural sbar 術前 術後 交班 護理" data-prof="doctor nurse cathtech">
                     <div class="app-icon">📋</div>
                     <div class="app-title">導管室護理教學</div>
                     <div class="app-desc">術前準備、交班流程、術後照護整合教學</div>
@@ -3054,7 +3073,7 @@
                     </div>
                 </a>
                 
-                <a href="cin-prevention-app.html" class="app-card cath" data-tags="staff cath cin contrast nephropathy kidney renal hydration mehran">
+                <a href="cin-prevention-app.html" class="app-card cath" data-tags="staff cath cin contrast nephropathy kidney renal hydration mehran" data-prof="doctor nurse cathtech">
                     <div class="app-icon">💧</div>
                     <div class="app-title">顯影劑腎病預防指引</div>
                     <div class="app-desc">Mehran Risk Score、CIN風險計算、Hydration Protocol、Progress Note 範本</div>
@@ -3065,7 +3084,7 @@
                     </div>
                 </a>
                 
-                <a href="pci-complications-emergency.html" class="app-card cath" data-tags="staff guideline cath pci complication emergency no-reflow perforation tamponade covered stent coil adenosine verapamil nitroprusside pericardiocentesis ellis" data-disease="coronary">
+                <a href="pci-complications-emergency.html" class="app-card cath" data-tags="staff guideline cath pci complication emergency no-reflow perforation tamponade covered stent coil adenosine verapamil nitroprusside pericardiocentesis ellis" data-disease="coronary" data-prof="doctor cathtech">
                     <div class="app-icon">🚨</div>
                     <div class="app-title">PCI 緊急併發症處置</div>
                     <div class="app-desc">No-Reflow 與 Coronary Perforation 緊急處置流程、Ellis 分類、藥物劑量、查核表與測驗</div>
@@ -3076,7 +3095,7 @@
                     </div>
                 </a>
 
-                <a href="sapien-ultra-commander-operation-guide.html" class="app-card cath" data-tags="staff cath tavi tavr sapien ultra commander delivery system edwards balloon expandable flex wheel fine adjustment balloon lock alignment marker triple deployment 經導管 主動脈瓣 操作 旋鈕" data-disease="structural">
+                <a href="sapien-ultra-commander-operation-guide.html" class="app-card cath" data-tags="staff cath tavi tavr sapien ultra commander delivery system edwards balloon expandable flex wheel fine adjustment balloon lock alignment marker triple deployment 經導管 主動脈瓣 操作 旋鈕" data-disease="structural" data-prof="doctor cathtech">
                     <div class="app-icon">🎚️</div>
                     <div class="app-title">SAPIEN 3 Ultra Commander Delivery System 操作指引</div>
                     <div class="app-desc">Edwards TAVI 術中操作教學：Flex Wheel、Fine Adjustment Wheel、Balloon Lock、Markers、Alignment 三層次與 Deployment 心智走訪</div>
@@ -3087,7 +3106,7 @@
                     </div>
                 </a>
 
-                <a href="tavi-procedure-rescue-checklist-app.html" class="app-card cath" data-tags="staff cath tavi tavr rescue checklist consumable device 醫材 清單 查檢表 止血 closure vascular proglide prostyle manta angioseal angio-seal lv support stiff wire safari confida bav balloon pacing tpm snare covered stent viabahn perforation rupture tamponade bailout bail-out 大孔徑 經導管 主動脈瓣 併發症" data-disease="structural">
+                <a href="tavi-procedure-rescue-checklist-app.html" class="app-card cath" data-tags="staff cath tavi tavr rescue checklist consumable device 醫材 清單 查檢表 止血 closure vascular proglide prostyle manta angioseal angio-seal lv support stiff wire safari confida bav balloon pacing tpm snare covered stent viabahn perforation rupture tamponade bailout bail-out 大孔徑 經導管 主動脈瓣 併發症" data-disease="structural" data-prof="doctor cathtech">
                     <div class="app-icon">🧰</div>
                     <div class="app-title">TAVI 術式醫材與 Rescue 清單</div>
                     <div class="app-desc">TAVI 必備醫材分類 × Rescue bail-out 醫材清單：止血 closure、LV support stiff wire、BAV 球囊、pacing、併發症急救整備</div>
@@ -3098,7 +3117,7 @@
                     </div>
                 </a>
 
-                <a href="Cath_Room_History.html" class="app-card cath" data-tags="staff cath history timeline milestone 心導管室 歷史 沿革 大事紀 第一例 傳承 里程碑 cath room history 1991 2026 新竹分院">
+                <a href="Cath_Room_History.html" class="app-card cath" data-tags="staff cath history timeline milestone 心導管室 歷史 沿革 大事紀 第一例 傳承 里程碑 cath room history 1991 2026 新竹分院" data-prof="doctor nurse cathtech">
                     <div class="app-icon">🏛️</div>
                     <div class="app-title">心導管室歷史 Cath Room History</div>
                     <div class="app-desc">心血管中心心導管室 1991–2026 大事紀：從院內第一例到歷年每一個「第一次」的傳承故事</div>
@@ -3119,7 +3138,7 @@
                 <span class="category-count">7</span>
             </div>
             <div class="app-grid">
-                <a href="va-ecmo-echo-checklist.html" class="app-card icu" data-tags="staff ward icu ccu ecmo va-ecmo echo checklist ultrasound weaning mcs impella iabp thrombosis tamponade lvot vti">
+                <a href="va-ecmo-echo-checklist.html" class="app-card icu" data-tags="staff ward icu ccu ecmo va-ecmo echo checklist ultrasound weaning mcs impella iabp thrombosis tamponade lvot vti" data-prof="doctor nurse">
                     <div class="app-icon">🫀</div>
                     <div class="app-title">VA-ECMO Echo Checklist</div>
                     <div class="app-desc">九點心臟超音波檢查清單：Cannula 位置、Weaning 標準、併發症處理｜ICM 2024</div>
@@ -3130,7 +3149,7 @@
                     </div>
                 </a>
 
-                <a href="icu-pocus.html" class="app-card icu" data-tags="staff ward icu pocus ultrasound ivc fluid critical care lung cardiac 肺部 心臟 體液">
+                <a href="icu-pocus.html" class="app-card icu" data-tags="staff ward icu pocus ultrasound ivc fluid critical care lung cardiac 肺部 心臟 體液" data-prof="doctor nurse">
                     <div class="app-icon">🔬</div>
                     <div class="app-title">ICU POCUS 臨床查核表</div>
                     <div class="app-desc">加護病房床邊超音波查核：心臟、肺部、肝腎膀胱、IVC 評估、體液狀態判讀</div>
@@ -3141,7 +3160,7 @@
                     </div>
                 </a>
 
-                <a href="cardiogenic-shock-teaching.html" class="app-card icu" data-tags="staff guideline ward icu ccu shock cardiogenic scai mcs impella iabp ecmo vasopressor inotrope ami stemi" data-disease="coronary">
+                <a href="cardiogenic-shock-teaching.html" class="app-card icu" data-tags="staff guideline ward icu ccu shock cardiogenic scai mcs impella iabp ecmo vasopressor inotrope ami stemi" data-disease="coronary" data-prof="doctor nurse">
                     <div class="app-icon">⚡</div>
                     <div class="app-title">心因性休克教學</div>
                     <div class="app-desc">SCAI分期、藥物治療、MCS機械循環支持、IABP/Impella/ECMO 證據與建議｜NEJM 2026</div>
@@ -3152,7 +3171,7 @@
                     </div>
                 </a>
 
-                <a href="sgb-electrical-storm-teaching.html" class="app-card icu" data-tags="staff guideline ward icu ccu sgb stellate ganglion block electrical storm vt vf ventricular tachycardia fibrillation refractory ultrasound nerve block" data-disease="arrhythmia">
+                <a href="sgb-electrical-storm-teaching.html" class="app-card icu" data-tags="staff guideline ward icu ccu sgb stellate ganglion block electrical storm vt vf ventricular tachycardia fibrillation refractory ultrasound nerve block" data-disease="arrhythmia" data-prof="doctor nurse">
                     <div class="app-icon">🧠</div>
                     <div class="app-title">SGB 星狀神經節阻斷術</div>
                     <div class="app-desc">難治性 VT/VF 電風暴急救：超音波導引操作、藥物劑量、LAST 預防、學習資源｜EHJ 2024</div>
@@ -3163,7 +3182,7 @@
                     </div>
                 </a>
 
-                <a href="vc-dsd-defibrillation-teaching-app.html" class="app-card icu" data-tags="staff guideline ward icu ccu acls defibrillation vector change vc double sequential dsd dsed persistent refractory recurrent vf pvt ventricular fibrillation dose-vf cheskes ilcor aha cpr resuscitation 去顫 向量改變 雙重連續性去顫 持續性 心室顫動 急救" data-disease="arrhythmia">
+                <a href="vc-dsd-defibrillation-teaching-app.html" class="app-card icu" data-tags="staff guideline ward icu ccu acls defibrillation vector change vc double sequential dsd dsed persistent refractory recurrent vf pvt ventricular fibrillation dose-vf cheskes ilcor aha cpr resuscitation 去顫 向量改變 雙重連續性去顫 持續性 心室顫動 急救" data-disease="arrhythmia" data-prof="doctor nurse">
                     <div class="app-icon">⚡</div>
                     <div class="app-title">VC / DSD 去顫策略教學</div>
                     <div class="app-desc">持續性 VF/pVT：向量改變、雙重連續性去顫、難治 vs 復發釐清、DOSE-VF 試驗解讀與小測驗｜ILCOR/AHA 2023</div>
@@ -3174,7 +3193,7 @@
                     </div>
                 </a>
 
-                <a href="emb-teaching-app.html" class="app-card icu" data-tags="staff guideline genetics ward icu emb biopsy myocarditis amyloidosis fabry cardiomyopathy" data-disease="cardiomyopathy">
+                <a href="emb-teaching-app.html" class="app-card icu" data-tags="staff guideline genetics ward icu emb biopsy myocarditis amyloidosis fabry cardiomyopathy" data-disease="cardiomyopathy" data-prof="doctor cathtech">
                     <div class="app-icon">🫀</div>
                     <div class="app-title">心內膜心肌切片 EMB 教學</div>
                     <div class="app-desc">LV/RV-EMB 術前查檢、器材準備、操作步驟、安全警示、病理開單指引</div>
@@ -3185,7 +3204,7 @@
                     </div>
                 </a>
 
-                <a href="ilvd-revascularization-app.html" class="app-card icu" data-tags="staff guideline ward icu ccu ilvd revascularization cabg pci heart failure lvef stich revived mcs impella gdmt hfrEF ischemic cardiomyopathy" data-disease="coronary">
+                <a href="ilvd-revascularization-app.html" class="app-card icu" data-tags="staff guideline ward icu ccu ilvd revascularization cabg pci heart failure lvef stich revived mcs impella gdmt hfrEF ischemic cardiomyopathy" data-disease="coronary" data-prof="doctor">
                     <div class="app-icon">🔄</div>
                     <div class="app-title">iLVD 血管重建教學</div>
                     <div class="app-desc">缺血性左心室功能不全：STICH/REVIVED 試驗、GDMT、MCS、高風險 PCI 規劃｜JACC 2025</div>
@@ -3206,7 +3225,7 @@
                 <span class="category-count">6</span>
             </div>
             <div class="app-grid">
-                <a href="heart-failure-ward-app.html" class="app-card ward" data-tags="staff guideline ward hf heart failure chf hfref hfpef diuretic furosemide gdmt dose-trial 心臟衰竭 心衰 利尿劑" data-disease="coronary cardiomyopathy">
+                <a href="heart-failure-ward-app.html" class="app-card ward" data-tags="staff guideline ward hf heart failure chf hfref hfpef diuretic furosemide gdmt dose-trial 心臟衰竭 心衰 利尿劑" data-disease="coronary cardiomyopathy" data-prof="doctor nurse">
                     <div class="app-icon">💔</div>
                     <div class="app-title">心衰竭病房管理</div>
                     <div class="app-desc">DOSE Trial 利尿劑使用、體液評估與監測</div>
@@ -3216,7 +3235,7 @@
                     </div>
                 </a>
 
-                <a href="af-ward-teaching-app.html" class="app-card ward" data-tags="staff guideline ward afib anticoagulation atrial fibrillation doac noac warfarin chads-vasc has-bled stroke 房顫 抗凝血 中風" data-disease="arrhythmia">
+                <a href="af-ward-teaching-app.html" class="app-card ward" data-tags="staff guideline ward afib anticoagulation atrial fibrillation doac noac warfarin chads-vasc has-bled stroke 房顫 抗凝血 中風" data-disease="arrhythmia" data-prof="doctor nurse">
                     <div class="app-icon">💓</div>
                     <div class="app-title">心房顫動照護</div>
                     <div class="app-desc">CHA₂DS₂-VASc、抗凝血劑選擇與監測</div>
@@ -3226,7 +3245,7 @@
                     </div>
                 </a>
 
-                <a href="paod-care-app.html" class="app-card ward" data-tags="staff guideline ward paod peripheral vascular pad claudication abi cli rutherford 下肢 跛行 周邊血管" data-disease="peripheral">
+                <a href="paod-care-app.html" class="app-card ward" data-tags="staff guideline ward paod peripheral vascular pad claudication abi cli rutherford 下肢 跛行 周邊血管" data-disease="peripheral" data-prof="doctor nurse">
                     <div class="app-icon">🦵</div>
                     <div class="app-title">周邊動脈疾病照護</div>
                     <div class="app-desc">PAOD 評估、治療與照護流程</div>
@@ -3236,7 +3255,7 @@
                     </div>
                 </a>
 
-                <a href="cv-vaccination-guide.html" class="app-card ward" data-tags="staff patient ward vaccination vaccine flu pneumonia covid rsv shingles">
+                <a href="cv-vaccination-guide.html" class="app-card ward" data-tags="staff patient ward vaccination vaccine flu pneumonia covid rsv shingles" data-prof="doctor nurse">
                     <div class="app-icon">💉</div>
                     <div class="app-title">心血管病患疫苗接種指引</div>
                     <div class="app-desc">五大疫苗建議：流感、肺炎鏈球菌、新冠、RSV、帶狀疱疹｜醫護/病人雙版本</div>
@@ -3247,7 +3266,7 @@
                     </div>
                 </a>
 
-                <a href="ph-diagnostic-checklist.html" class="app-card ward" data-tags="staff guideline ward icu ph pulmonary hypertension pah rhc echo diagnosis" data-disease="pe structural">
+                <a href="ph-diagnostic-checklist.html" class="app-card ward" data-tags="staff guideline ward icu ph pulmonary hypertension pah rhc echo diagnosis" data-disease="pe structural" data-prof="doctor">
                     <div class="app-icon">🫁</div>
                     <div class="app-title">肺動脈高壓診斷查核表</div>
                     <div class="app-desc">PH 六階段診斷流程、2022 ESC/ERS 標準、WHO 分類、RHC 血行動力學分型</div>
@@ -3258,7 +3277,7 @@
                     </div>
                 </a>
 
-                <a href="fabry-disease-checklist.html" class="app-card ward" data-tags="staff guideline genetics ward icu fabry lvh hcm cardiomyopathy screening diagnosis ert" data-disease="cardiomyopathy">
+                <a href="fabry-disease-checklist.html" class="app-card ward" data-tags="staff guideline genetics ward icu fabry lvh hcm cardiomyopathy screening diagnosis ert" data-disease="cardiomyopathy" data-prof="doctor nurse">
                     <div class="app-icon">🧬</div>
                     <div class="app-title">Fabry Disease 診斷查檢表</div>
                     <div class="app-desc">門診篩檢評分、檢驗判讀、心臟分期、ERT 治療指引｜2024 TSOC 共識</div>
@@ -3279,7 +3298,7 @@
                 <span class="category-count">6</span>
             </div>
             <div class="app-grid">
-                <a href="ptmc-teaching-app.html" class="app-card intervention" data-tags="staff guideline intervention ptmc mitral stenosis balloon valvuloplasty inoue rheumatic structural" data-disease="structural">
+                <a href="ptmc-teaching-app.html" class="app-card intervention" data-tags="staff guideline intervention ptmc mitral stenosis balloon valvuloplasty inoue rheumatic structural" data-disease="structural" data-prof="doctor cathtech">
                     <div class="app-icon">🎈</div>
                     <div class="app-title">PTMC 二尖瓣球囊成形術</div>
                     <div class="app-desc">經皮穿刺二尖瓣球囊成形術教學：Hung Formula、Wilkins Score、Inoue Balloon 技術</div>
@@ -3290,7 +3309,7 @@
                     </div>
                 </a>
                 
-                <a href="carotid-stenting-app.html" class="app-card intervention" data-tags="staff guideline intervention carotid stenting stroke cas nascet ecst cea endarterectomy 頸動脈" data-disease="carotid">
+                <a href="carotid-stenting-app.html" class="app-card intervention" data-tags="staff guideline intervention carotid stenting stroke cas nascet ecst cea endarterectomy 頸動脈" data-disease="carotid" data-prof="doctor cathtech">
                     <div class="app-icon">🧠</div>
                     <div class="app-title">頸動脈支架教學</div>
                     <div class="app-desc">NASCET/ECST測量、病房評估、導管室查檢表、家屬衛教</div>
@@ -3301,7 +3320,7 @@
                     </div>
                 </a>
 
-                <a href="laao-tee-evaluation-app.html" class="app-card intervention" data-tags="staff guideline intervention laao tee watchman amulet left atrial appendage occlusion 左心耳 封堵 中風預防 心房顫動" data-disease="structural arrhythmia">
+                <a href="laao-tee-evaluation-app.html" class="app-card intervention" data-tags="staff guideline intervention laao tee watchman amulet left atrial appendage occlusion 左心耳 封堵 中風預防 心房顫動" data-disease="structural arrhythmia" data-prof="doctor cathtech">
                     <div class="app-icon">🫀</div>
                     <div class="app-title">LAAO 左心耳封堵術</div>
                     <div class="app-desc">TEE 評估、Watchman 裝置、術後追蹤</div>
@@ -3311,7 +3330,7 @@
                     </div>
                 </a>
                 
-                <a href="teer-tee-checklist-app.html" class="app-card intervention" data-tags="staff guideline intervention teer mitraclip mitral regurgitation pascal 二尖瓣 逆流 修復" data-disease="structural">
+                <a href="teer-tee-checklist-app.html" class="app-card intervention" data-tags="staff guideline intervention teer mitraclip mitral regurgitation pascal 二尖瓣 逆流 修復" data-disease="structural" data-prof="doctor cathtech">
                     <div class="app-icon">🔧</div>
                     <div class="app-title">TEER 二尖瓣修復術</div>
                     <div class="app-desc">MitraClip 手術、TEE 引導、適應症評估</div>
@@ -3321,7 +3340,7 @@
                     </div>
                 </a>
 
-                <a href="pascal-teer-prestudy-app.html" class="app-card intervention" data-tags="staff guideline intervention teer pascal mitraclip mitral regurgitation prestudy course device catheter steering navigation valve crossing clasp implant positioning retrieval release withdrawal edwards 二尖瓣 逆流 修復 修補 課程 預習 機關 操作 旋鈕 過瓣 植入物 夾葉 回收 釋放 撤系統" data-disease="structural">
+                <a href="pascal-teer-prestudy-app.html" class="app-card intervention" data-tags="staff guideline intervention teer pascal mitraclip mitral regurgitation prestudy course device catheter steering navigation valve crossing clasp implant positioning retrieval release withdrawal edwards 二尖瓣 逆流 修復 修補 課程 預習 機關 操作 旋鈕 過瓣 植入物 夾葉 回收 釋放 撤系統" data-disease="structural" data-prof="doctor cathtech">
                     <div class="app-icon">🎛️</div>
                     <div class="app-title">PASCAL TEER 課程預習</div>
                     <div class="app-desc">PASCAL 經導管二尖瓣修補裝置操作預習：導管轉向、過瓣、植入物微調定位、夾葉開合、回收與釋放撤系統、與 MitraClip 的裝置差異</div>
@@ -3343,7 +3362,7 @@
                 <span class="category-count">5</span>
             </div>
             <div class="app-grid">
-                <a href="anticoagulation-clinical-handbook.html" class="app-card medication" data-tags="staff guideline medication anticoagulation anticoagulant noac doac novel oral anticoagulant 抗凝血 抗凝血劑 手冊 工作手冊 dabigatran pradaxa rivaroxaban xarelto apixaban eliquis edoxaban lixiana warfarin cofarin heparin enoxaparin clexane dalteparin fragmin factor xa thrombin inhibitor af atrial fibrillation 心房顫動 房顫 vte dvt pe venous thromboembolism 深部靜脈血栓 肺栓塞 has-bled cha2ds2-vasc 健保給付 肝腎功能 child-pugh 劑量調整 reversal idarucizumab praxbind beriplex feiba pcc 解毒劑 反轉劑 腦出血 intracranial hemorrhage bridging perioperative 圍術期 術前停藥 急性中風 stroke paxlovid molnupiravir covid 交互作用 drug interaction ehra 新竹分院" data-disease="arrhythmia pe peripheral">
+                <a href="anticoagulation-clinical-handbook.html" class="app-card medication" data-tags="staff guideline medication anticoagulation anticoagulant noac doac novel oral anticoagulant 抗凝血 抗凝血劑 手冊 工作手冊 dabigatran pradaxa rivaroxaban xarelto apixaban eliquis edoxaban lixiana warfarin cofarin heparin enoxaparin clexane dalteparin fragmin factor xa thrombin inhibitor af atrial fibrillation 心房顫動 房顫 vte dvt pe venous thromboembolism 深部靜脈血栓 肺栓塞 has-bled cha2ds2-vasc 健保給付 肝腎功能 child-pugh 劑量調整 reversal idarucizumab praxbind beriplex feiba pcc 解毒劑 反轉劑 腦出血 intracranial hemorrhage bridging perioperative 圍術期 術前停藥 急性中風 stroke paxlovid molnupiravir covid 交互作用 drug interaction ehra 新竹分院" data-disease="arrhythmia pe peripheral" data-prof="doctor nurse">
                     <div class="app-icon">🩸</div>
                     <div class="app-title">抗凝血用藥臨床工作手冊</div>
                     <div class="app-desc">新竹臺大分院第三版（2022.10）數位重製：NOACs 適應症/健保給付、肝腎調整、藥物比較、療程轉換、效果評估、腦出血處置、解毒劑、交互作用、圍術期、急性中風、AF+CAD、Paxlovid 交互作用</div>
@@ -3355,7 +3374,7 @@
                     </div>
                 </a>
 
-                <a href="warfarin-dosing-app.html" class="app-card medication" data-tags="staff medication warfarin anticoagulation inr coag dosing algorithm pharmacogenetic clinical">
+                <a href="warfarin-dosing-app.html" class="app-card medication" data-tags="staff medication warfarin anticoagulation inr coag dosing algorithm pharmacogenetic clinical" data-prof="doctor nurse">
                     <div class="app-icon">💊</div>
                     <div class="app-title">Warfarin 劑量計算教學</div>
                     <div class="app-desc">COAG Trial 臨床演算法、起始劑量/調整劑量計算器、劑量對照表、自我測驗</div>
@@ -3367,7 +3386,7 @@
                     </div>
                 </a>
                 
-                <a href="thrombolytic-calculator-app.html" class="app-card medication" data-tags="staff guideline medication thrombolytic urokinase alteplase tpa rtpa ali acute limb ischemia pe pulmonary embolism cdt fibrinolysis" data-disease="pe peripheral">
+                <a href="thrombolytic-calculator-app.html" class="app-card medication" data-tags="staff guideline medication thrombolytic urokinase alteplase tpa rtpa ali acute limb ischemia pe pulmonary embolism cdt fibrinolysis" data-disease="pe peripheral" data-prof="doctor">
                     <div class="app-icon">🩸</div>
                     <div class="app-title">血栓溶解藥物計算</div>
                     <div class="app-desc">Urokinase (ALI) · Alteplase (PE) 劑量計算、泡藥指引、驗算區、安全查核</div>
@@ -3379,7 +3398,7 @@
                     </div>
                 </a>
                 
-                <a href="cardiac-surgery-medication-app.html" class="app-card medication" data-tags="staff medication surgery preop sglt2i acei arb hold stop anticoagulant warfarin doac 停藥 術前 抗凝">
+                <a href="cardiac-surgery-medication-app.html" class="app-card medication" data-tags="staff medication surgery preop sglt2i acei arb hold stop anticoagulant warfarin doac 停藥 術前 抗凝" data-prof="doctor nurse">
                     <div class="app-icon">🫀</div>
                     <div class="app-title">心臟手術術前藥物評估</div>
                     <div class="app-desc">術前停藥時間、繼續/暫停/必停藥物分類、SGLT2i警示</div>
@@ -3390,7 +3409,7 @@
                     </div>
                 </a>
                 
-                <a href="acs-hf-medication-learning.html" class="app-card medication" data-tags="staff guideline medication acs hf gdmt beta-blocker acei arb arni sglt2i statin dapt nstemi stemi 急性冠心症 心衰竭 用藥" data-disease="coronary">
+                <a href="acs-hf-medication-learning.html" class="app-card medication" data-tags="staff guideline medication acs hf gdmt beta-blocker acei arb arni sglt2i statin dapt nstemi stemi 急性冠心症 心衰竭 用藥" data-disease="coronary" data-prof="doctor nurse">
                     <div class="app-icon">💉</div>
                     <div class="app-title">ACS/HF 藥物學習</div>
                     <div class="app-desc">急性冠心症與心衰竭藥物治療指引</div>
@@ -3412,7 +3431,7 @@
             </div>
             <div class="app-grid">
                 <h3 class="subcat-title">❤️ 冠狀動脈</h3>
-                <a href="kawasaki-disease-checklist.html" class="app-card patient" data-tags="patient staff education kawasaki disease coronary aneurysm checklist teaching family 川崎症 冠狀動脈瘤 草莓舌 兒童 衛教 查核表" data-disease="coronary">
+                <a href="kawasaki-disease-checklist.html" class="app-card patient" data-tags="patient staff education kawasaki disease coronary aneurysm checklist teaching family 川崎症 冠狀動脈瘤 草莓舌 兒童 衛教 查核表" data-disease="coronary" data-prof="doctor nurse">
                     <div class="app-icon">🍓</div>
                     <div class="app-title">川崎症診斷查核與教學</div>
                     <div class="app-desc">川崎症診斷查核表、臨床教學、2024 AHA 最新指引、冠狀動脈瘤分級，含家屬衛教專區</div>
@@ -3423,7 +3442,7 @@
                         <span class="tag">川崎症</span>
                     </div>
                 </a>
-                <a href="cto-pci-patient-education.html" class="app-card patient" data-tags="patient education cto pci chronic total occlusion coronary intervention stent informed consent 慢性全阻塞 心導管" data-disease="coronary">
+                <a href="cto-pci-patient-education.html" class="app-card patient" data-tags="patient education cto pci chronic total occlusion coronary intervention stent informed consent 慢性全阻塞 心導管" data-disease="coronary" data-prof="doctor nurse">
                     <div class="app-icon">🫀</div>
                     <div class="app-title">CTO 心導管治療衛教</div>
                     <div class="app-desc">冠狀動脈慢性全阻塞 (CTO) 心導管手術病人衛教：手術方式、效益、風險、替代治療與術後恢復</div>
@@ -3433,7 +3452,7 @@
                         <span class="tag">CTO PCI</span>
                     </div>
                 </a>
-                <a href="seattle-saq.html" class="app-card patient" data-tags="patient questionnaire angina saq chest pain 心絞痛 胸痛 生活品質" data-disease="coronary">
+                <a href="seattle-saq.html" class="app-card patient" data-tags="patient questionnaire angina saq chest pain 心絞痛 胸痛 生活品質" data-disease="coronary" data-prof="doctor nurse">
                     <div class="app-icon">📝</div>
                     <div class="app-title">Seattle 心絞痛問卷</div>
                     <div class="app-desc">Seattle Angina Questionnaire 心絞痛評估</div>
@@ -3442,7 +3461,7 @@
                         <span class="tag">問卷評估</span>
                     </div>
                 </a>
-                <a href="ldl-education-app.html" class="app-card patient" data-tags="patient education ldl cholesterol statin atherosclerosis" data-disease="coronary">
+                <a href="ldl-education-app.html" class="app-card patient" data-tags="patient education ldl cholesterol statin atherosclerosis" data-disease="coronary" data-prof="doctor nurse">
                     <div class="app-icon">🫀</div>
                     <div class="app-title">LDL 膽固醇衛教指南</div>
                     <div class="app-desc">動脈硬化患者為何 LDL 要降到 55 以下？FOURIER/ODYSSEY 研究、藥物選擇與副作用解答</div>
@@ -3452,7 +3471,7 @@
                         <span class="tag">膽固醇</span>
                     </div>
                 </a>
-                <a href="impella-family-explanation.html" class="app-card patient" data-tags="patient family education impella mcs mechanical circulatory support cardiogenic shock iabp ecmo ventricular assist device protected pci 心室輔助器 心因性休克 家屬說明" data-disease="coronary hf">
+                <a href="impella-family-explanation.html" class="app-card patient" data-tags="patient family education impella mcs mechanical circulatory support cardiogenic shock iabp ecmo ventricular assist device protected pci 心室輔助器 心因性休克 家屬說明" data-disease="coronary hf" data-prof="doctor nurse">
                     <div class="app-icon">🫀</div>
                     <div class="app-title">Impella 經皮心室輔助器 — 家屬說明</div>
                     <div class="app-desc">Impella 手術說明：與 IABP / ECMO 比較、適應症、置入流程、風險與照護須知</div>
@@ -3462,7 +3481,7 @@
                         <span class="tag">Impella</span>
                     </div>
                 </a>
-                <a href="chip-pci-family-explanation.html" class="app-card patient" data-tags="patient family education chip pci complex high risk left main calcification triple vessel ivl ivus oct dual stent 高風險 心導管 左主冠脈 鈣化 三條血管 家屬說明" data-disease="coronary">
+                <a href="chip-pci-family-explanation.html" class="app-card patient" data-tags="patient family education chip pci complex high risk left main calcification triple vessel ivl ivus oct dual stent 高風險 心導管 左主冠脈 鈣化 三條血管 家屬說明" data-disease="coronary" data-prof="doctor nurse">
                     <div class="app-icon">⚠️</div>
                     <div class="app-title">高風險心導管介入治療（CHIP）— 家屬說明</div>
                     <div class="app-desc">CHIP PCI 說明：左主冠脈、嚴重鈣化、多條血管病變、風險比較、治療流程與費用預估</div>
@@ -3472,7 +3491,7 @@
                         <span class="tag">CHIP</span>
                     </div>
                 </a>
-                <a href="pci-cabg-decision-aid/index.html" class="app-card patient" data-tags="patient family education shared decision making sdm pci cabg stent bypass coronary revascularization triple vessel left main multivessel precombat decision aid tufte 醫病共享決策 支架 繞道 開刀 冠狀動脈 三條血管 左主幹 血流重建 心導管 外科 家屬說明" data-disease="coronary">
+                <a href="pci-cabg-decision-aid/index.html" class="app-card patient" data-tags="patient family education shared decision making sdm pci cabg stent bypass coronary revascularization triple vessel left main multivessel precombat decision aid tufte 醫病共享決策 支架 繞道 開刀 冠狀動脈 三條血管 左主幹 血流重建 心導管 外科 家屬說明" data-disease="coronary" data-prof="doctor nurse">
                     <div class="app-icon">⚖️</div>
                     <div class="app-title">支架還是繞道？醫病共享決策</div>
                     <div class="app-desc">三條血管／左主幹狹窄：心導管支架（PCI）與外科繞道（CABG）逐項比較、價值釐清與決策（互動式，含可下載 Tufte PDF）</div>
@@ -3483,7 +3502,7 @@
                         <span class="tag">支架／繞道</span>
                     </div>
                 </a>
-                <a href="dementia-pci-decision-tool.html" class="app-card patient" data-tags="patient staff guideline family education dementia alzheimer cognitive impairment pci acs stemi nstemi fast scale decision aid shared decision making palliative 失智症 認知障礙 心導管 決策 家屬說明 安寧" data-disease="coronary">
+                <a href="dementia-pci-decision-tool.html" class="app-card patient" data-tags="patient staff guideline family education dementia alzheimer cognitive impairment pci acs stemi nstemi fast scale decision aid shared decision making palliative 失智症 認知障礙 心導管 決策 家屬說明 安寧" data-disease="coronary" data-prof="doctor nurse">
                     <div class="app-icon">🧠</div>
                     <div class="app-title">失智症病人心導管決策輔助工具</div>
                     <div class="app-desc">FAST Scale 評估、ACS 類型、綜合決策建議、家屬溝通查核表 — Nijskens 2023</div>
@@ -3495,7 +3514,7 @@
                     </div>
                 </a>
                 <h3 class="subcat-title">🏗️ 結構性瓣膜</h3>
-                <a href="tavi-family-explanation.html" class="app-card patient" data-tags="patient family education tavi tavr transcatheter aortic valve implantation replacement aortic stenosis savr euroscore 主動脈瓣 狹窄 經導管 家屬說明" data-disease="structural">
+                <a href="tavi-family-explanation.html" class="app-card patient" data-tags="patient family education tavi tavr transcatheter aortic valve implantation replacement aortic stenosis savr euroscore 主動脈瓣 狹窄 經導管 家屬說明" data-disease="structural" data-prof="doctor nurse">
                     <div class="app-icon">🫀</div>
                     <div class="app-title">TAVI 經導管主動脈瓣植入術 — 家屬說明</div>
                     <div class="app-desc">重度主動脈瓣狹窄說明、SAVR vs TAVI 比較、EuroSCORE 風險評估、健保與自費方案</div>
@@ -3505,7 +3524,7 @@
                         <span class="tag">TAVI</span>
                     </div>
                 </a>
-                <a href="teer-decision-aid.html" class="app-card patient" data-tags="patient staff guideline family education teer mitraclip pascal mitral valve repair surgery dmr fmr primary secondary mr regurgitation coapt mitra-fr reshape-hf2 repair-mr clasp iid heart team shared decision making bilingual proportionate disproportionate carpentier 二尖瓣 逆流 修補 退化性 功能性 共享決策 中英對照 家屬說明 心臟外科" data-disease="structural hf">
+                <a href="teer-decision-aid.html" class="app-card patient" data-tags="patient staff guideline family education teer mitraclip pascal mitral valve repair surgery dmr fmr primary secondary mr regurgitation coapt mitra-fr reshape-hf2 repair-mr clasp iid heart team shared decision making bilingual proportionate disproportionate carpentier 二尖瓣 逆流 修補 退化性 功能性 共享決策 中英對照 家屬說明 心臟外科" data-disease="structural hf" data-prof="doctor nurse">
                     <div class="app-icon">❤️</div>
                     <div class="app-title">TEER vs 外科二尖瓣修補決策輔助工具</div>
                     <div class="app-desc">DMR + FMR 分軌、COAPT vs MITRA-FR vs RESHAPE-HF2、proportionate framework、STS 估算器、Heart team 決策、中英對照、自我測驗</div>
@@ -3517,7 +3536,7 @@
                         <span class="tag">TEER</span>
                     </div>
                 </a>
-                <a href="teer-family-explanation.html" class="app-card patient" data-tags="patient family education teer mitraclip pascal mitral regurgitation nhi insurance self-pay cost 100萬 二尖瓣 逆流 修補 健保 自費 100萬 病人說明 家屬說明 informed consent" data-disease="structural hf">
+                <a href="teer-family-explanation.html" class="app-card patient" data-tags="patient family education teer mitraclip pascal mitral regurgitation nhi insurance self-pay cost 100萬 二尖瓣 逆流 修補 健保 自費 100萬 病人說明 家屬說明 informed consent" data-disease="structural hf" data-prof="doctor nurse">
                     <div class="app-icon">❤️</div>
                     <div class="app-title">TEER 經導管二尖瓣修補 — 家屬說明</div>
                     <div class="app-desc">MitraClip / PASCAL 手術說明、健保給付條件、自費約 100 萬元拆解、為什麼裝置佔最大宗、FAQ</div>
@@ -3529,7 +3548,7 @@
                     </div>
                 </a>
                 <h3 class="subcat-title">⚡ 心律不整</h3>
-                <a href="ablation-family-explanation.html" class="app-card patient" data-tags="patient family education ablation rfca cryoablation pfa pulsed field arrhythmia atrial fibrillation af pvi pulmonary vein isolation 電燒 心律不整 導管消融 冷凍消融 脈衝電場 家屬說明" data-disease="arrhythmia">
+                <a href="ablation-family-explanation.html" class="app-card patient" data-tags="patient family education ablation rfca cryoablation pfa pulsed field arrhythmia atrial fibrillation af pvi pulmonary vein isolation 電燒 心律不整 導管消融 冷凍消融 脈衝電場 家屬說明" data-disease="arrhythmia" data-prof="doctor nurse">
                     <div class="app-icon">⚡</div>
                     <div class="app-title">心律不整導管電燒治療 — 家屬說明</div>
                     <div class="app-desc">RFCA / Cryoablation / PFA 三種電燒方式比較：機轉、風險、適應症與臨床決策參考</div>
@@ -3539,7 +3558,7 @@
                         <span class="tag">電燒</span>
                     </div>
                 </a>
-                <a href="laao-neurology-decision-aid.html" class="app-card patient" data-tags="patient staff guideline family education laao left atrial appendage occlusion watchman amulet champion-af closure-af esrd dialysis stroke prevention af atrial fibrillation neurologist heart-brain team shared decision making bilingual 左心耳封堵術 神經內科 中風預防 心房顫動 洗腎 共享決策 中英對照 家屬說明" data-disease="arrhythmia stroke">
+                <a href="laao-neurology-decision-aid.html" class="app-card patient" data-tags="patient staff guideline family education laao left atrial appendage occlusion watchman amulet champion-af closure-af esrd dialysis stroke prevention af atrial fibrillation neurologist heart-brain team shared decision making bilingual 左心耳封堵術 神經內科 中風預防 心房顫動 洗腎 共享決策 中英對照 家屬說明" data-disease="arrhythmia stroke" data-prof="doctor nurse">
                     <div class="app-icon">🧠</div>
                     <div class="app-title">LAAO 神經內科決策輔助工具</div>
                     <div class="app-desc">CHA₂DS₂-VASc / HAS-BLED 計算、CHAMPION-AF vs CLOSURE-AF 平衡證據、洗腎族群、中英對照、自我測驗</div>
@@ -3552,7 +3571,7 @@
                     </div>
                 </a>
                 <h3 class="subcat-title">🦵 週邊血管</h3>
-                <a href="AngioJet-family-explanation.html" class="app-card patient" data-tags="patient family education angiojet thrombectomy rheolytic thrombus dvt peripheral vascular 血栓清除 家屬說明" data-disease="peripheral">
+                <a href="AngioJet-family-explanation.html" class="app-card patient" data-tags="patient family education angiojet thrombectomy rheolytic thrombus dvt peripheral vascular 血栓清除 家屬說明" data-disease="peripheral" data-prof="doctor nurse">
                     <div class="app-icon">🌊</div>
                     <div class="app-title">AngioJet 血栓清除術 — 家屬說明</div>
                     <div class="app-desc">Rheolytic Thrombectomy 手術說明：原理、適用情況、手術流程、風險與術後照護</div>
@@ -3562,7 +3581,7 @@
                         <span class="tag">血栓清除</span>
                     </div>
                 </a>
-                <a href="IVL-family-explanation.html" class="app-card patient" data-tags="patient family education ivl intravascular lithotripsy shockwave calcification popliteal cli critical limb ischemia 衝擊波 鈣化 家屬說明" data-disease="peripheral">
+                <a href="IVL-family-explanation.html" class="app-card patient" data-tags="patient family education ivl intravascular lithotripsy shockwave calcification popliteal cli critical limb ischemia 衝擊波 鈣化 家屬說明" data-disease="peripheral" data-prof="doctor nurse">
                     <div class="app-icon">💥</div>
                     <div class="app-title">IVL 衝擊波球囊導管治療 — 家屬說明</div>
                     <div class="app-desc">Intravascular Lithotripsy 手術說明：嚴重鈣化狹窄處理、IVL 原理、手術流程與風險</div>
@@ -3573,7 +3592,7 @@
                     </div>
                 </a>
                 <h3 class="subcat-title">🩺 血壓 · 影像 · 心臟功能</h3>
-                <a href="COBRA-BPS_bp-home-control.html" class="app-card patient" data-tags="patient education hypertension blood pressure home monitoring 722 guideline esh esc aha 高血壓 居家血壓">
+                <a href="COBRA-BPS_bp-home-control.html" class="app-card patient" data-tags="patient education hypertension blood pressure home monitoring 722 guideline esh esc aha 高血壓 居家血壓" data-prof="doctor nurse">
                     <div class="app-icon">🏠</div>
                     <div class="app-title">居家血壓管理衛教指引</div>
                     <div class="app-desc">2023-2025 最新指引：血壓目標 &lt;130/80、正確量測方法、加減藥流程、常用藥物</div>
@@ -3583,7 +3602,7 @@
                         <span class="tag">高血壓</span>
                     </div>
                 </a>
-                <a href="hypertension-education-app.html" class="app-card patient" data-tags="patient education hypertension blood pressure bp hbpm 722 s-abcde 高血壓 血壓 居家">
+                <a href="hypertension-education-app.html" class="app-card patient" data-tags="patient education hypertension blood pressure bp hbpm 722 s-abcde 高血壓 血壓 居家" data-prof="doctor nurse">
                     <div class="app-icon">🩺</div>
                     <div class="app-title">高血壓衛教指南</div>
                     <div class="app-desc">722 血壓測量、S-ABCDE 生活調整與藥物須知</div>
@@ -3592,7 +3611,7 @@
                         <span class="tag">高血壓</span>
                     </div>
                 </a>
-                <a href="heart-failure-handbook/index.html" class="app-card patient" data-tags="patient education handbook booklet manual hf heart failure chf cardiac rehab rehabilitation diet low sodium salt fluid smoking cessation medication gdmt vaccine influenza flu pneumococcal nyha self-monitoring borg tufte 心臟衰竭 心衰竭 整合性 衛教 手冊 病友 家屬 心臟復健 飲食 水分控制 低鈉 限鹽 戒菸 藥物 疫苗 流感 肺炎鏈球菌 自我監測 紀錄表 喘腫累" data-disease="cardiomyopathy coronary">
+                <a href="heart-failure-handbook/index.html" class="app-card patient" data-tags="patient education handbook booklet manual hf heart failure chf cardiac rehab rehabilitation diet low sodium salt fluid smoking cessation medication gdmt vaccine influenza flu pneumococcal nyha self-monitoring borg tufte 心臟衰竭 心衰竭 整合性 衛教 手冊 病友 家屬 心臟復健 飲食 水分控制 低鈉 限鹽 戒菸 藥物 疫苗 流感 肺炎鏈球菌 自我監測 紀錄表 喘腫累" data-disease="cardiomyopathy coronary" data-prof="doctor nurse">
                     <div class="app-icon">📖</div>
                     <div class="app-title">心臟衰竭整合性衛教手冊</div>
                     <div class="app-desc">六大主題完整衛教：認識心衰竭、心臟復健、飲食與水分控制、戒菸、藥物治療、疫苗，附可列印自我監測紀錄表</div>
@@ -3603,7 +3622,7 @@
                         <span class="tag">手冊</span>
                     </div>
                 </a>
-                <a href="kccq.html" class="app-card patient" data-tags="patient questionnaire hf heart failure kccq quality of life 生活品質 心臟衰竭" data-disease="cardiomyopathy">
+                <a href="kccq.html" class="app-card patient" data-tags="patient questionnaire hf heart failure kccq quality of life 生活品質 心臟衰竭" data-disease="cardiomyopathy" data-prof="doctor nurse">
                     <div class="app-icon">❤️‍🩹</div>
                     <div class="app-title">KCCQ 心衰竭問卷</div>
                     <div class="app-desc">堪薩斯城心肌病問卷，評估心衰竭病人生活品質</div>
@@ -3613,7 +3632,7 @@
                         <span class="tag">問卷評估</span>
                     </div>
                 </a>
-                <a href="echo-education-app.html" class="app-card patient" data-tags="patient education echo tee transesophageal pediatric sedation ultrasound">
+                <a href="echo-education-app.html" class="app-card patient" data-tags="patient education echo tee transesophageal pediatric sedation ultrasound" data-prof="doctor nurse">
                     <div class="app-icon">💓</div>
                     <div class="app-title">心臟超音波衛教中心</div>
                     <div class="app-desc">TEE 經食道超音波檢查衛教與醫護查核表、兒童心臟超音波鎮靜藥物說明與查核表</div>
@@ -3636,7 +3655,7 @@
             </div>
             <div class="app-grid">
                 <h3 class="subcat-title">🎓 教學與講座</h3>
-                <a href="pci-complications-case-teaching.html" class="app-card learning" data-tags="staff learning pci complication case stent thrombosis bleeding stroke cpr ecmo" data-disease="coronary">
+                <a href="pci-complications-case-teaching.html" class="app-card learning" data-tags="staff learning pci complication case stent thrombosis bleeding stroke cpr ecmo" data-disease="coronary" data-prof="doctor cathtech">
                     <div class="app-icon">🫀</div>
                     <div class="app-title">PCI 併發症案例教學</div>
                     <div class="app-desc">6大臨床案例：支架血栓、後腹腔出血、VT/VF、CIN、中風、肢體缺血</div>
@@ -3646,7 +3665,7 @@
                         <span class="tag">案例教學</span>
                     </div>
                 </a>
-                <a href="stemi-er-protocol.html" class="app-card learning" data-tags="staff guideline learning stemi ami acute myocardial infarction ecg electrocardiogram er emergency d2b pci dapt heparin lbbb rbbb sgarbossa coronary 心肌梗塞 心電圖 急診" data-disease="coronary">
+                <a href="stemi-er-protocol.html" class="app-card learning" data-tags="staff guideline learning stemi ami acute myocardial infarction ecg electrocardiogram er emergency d2b pci dapt heparin lbbb rbbb sgarbossa coronary 心肌梗塞 心電圖 急診" data-disease="coronary" data-prof="doctor nurse">
                     <div class="app-icon">🚨</div>
                     <div class="app-title">STEMI 急診處置與 ECG 早期判讀</div>
                     <div class="app-desc">急診 SOP 流程（D2B ≤90min）、ECG 快速判讀、冠脈定位、LBBB/RBBB 陷阱、藥物速查、10 道臨床考題｜含 22 張 ECG 圖</div>
@@ -3656,7 +3675,7 @@
                         <span class="tag" style="background: #DC2626; color: white;">STEMI</span>
                     </div>
                 </a>
-                <a href="troponin-lecture.html" class="app-card learning" data-tags="staff learning troponin hs-troponin biomarker acs mi ischemia 心肌旋轉蛋白 心肌標記" data-disease="coronary">
+                <a href="troponin-lecture.html" class="app-card learning" data-tags="staff learning troponin hs-troponin biomarker acs mi ischemia 心肌旋轉蛋白 心肌標記" data-disease="coronary" data-prof="doctor nurse">
                     <div class="app-icon">🧪</div>
                     <div class="app-title">Troponin 教學講座</div>
                     <div class="app-desc">心肌旋轉蛋白判讀與臨床應用</div>
@@ -3665,7 +3684,7 @@
                         <span class="tag">講座</span>
                     </div>
                 </a>
-                <a href="thoracic-ultrasound-teaching.html" class="app-card learning" data-tags="staff learning ultrasound echo shock dyspnea ccu icu lus tte">
+                <a href="thoracic-ultrasound-teaching.html" class="app-card learning" data-tags="staff learning ultrasound echo shock dyspnea ccu icu lus tte" data-prof="doctor nurse">
                     <div class="app-icon">🩺</div>
                     <div class="app-title">胸腔超音波教學</div>
                     <div class="app-desc">整合 TTE + LUS 評估休克與呼吸困難，五種休克類型與呼吸衰竭鑑別</div>
@@ -3675,7 +3694,7 @@
                         <span class="tag">CCU/ICU</span>
                     </div>
                 </a>
-                <a href="hemodynamic-shock-teaching-app.html" class="app-card learning" data-tags="staff learning hemodynamic shock ccu icu clearsight swan-ganz distributive cardiogenic hypovolemic obstructive 血流動力學 休克 監測">
+                <a href="hemodynamic-shock-teaching-app.html" class="app-card learning" data-tags="staff learning hemodynamic shock ccu icu clearsight swan-ganz distributive cardiogenic hypovolemic obstructive 血流動力學 休克 監測" data-prof="doctor nurse">
                     <div class="app-icon">🩸</div>
                     <div class="app-title">血流動力學與休克教學</div>
                     <div class="app-desc">CCU 血流動力學監測、四大休克分類、ClearSight 應用</div>
@@ -3685,7 +3704,7 @@
                         <span class="tag">CCU</span>
                     </div>
                 </a>
-                <a href="tsoc-echo-learning-2025.html" class="app-card learning" data-tags="staff learning echo echocardiography ultrasound tte guideline 心臟超音波 超音波 學會 指引 basics aortic mitral tricuspid right-heart pericardium cardiomyopathy ischemic prosthetic endocarditis masses chd hemodynamics 主動脈瓣 二尖瓣 三尖瓣 右心 心包 人工瓣膜 腫瘤">
+                <a href="tsoc-echo-learning-2025.html" class="app-card learning" data-tags="staff learning echo echocardiography ultrasound tte guideline 心臟超音波 超音波 學會 指引 basics aortic mitral tricuspid right-heart pericardium cardiomyopathy ischemic prosthetic endocarditis masses chd hemodynamics 主動脈瓣 二尖瓣 三尖瓣 右心 心包 人工瓣膜 腫瘤" data-prof="doctor nurse">
                     <div class="app-icon">📊</div>
                     <div class="app-title">TSOC 心臟超音波學習</div>
                     <div class="app-desc">2025 台灣心臟學會心臟超音波指引學習</div>
@@ -3695,7 +3714,7 @@
                     </div>
                 </a>
                 <h3 class="subcat-title">📝 測驗與評核</h3>
-                <a href="exam.html" class="app-card learning" data-tags="staff learning trainee exam quiz echo vascular abi as">
+                <a href="exam.html" class="app-card learning" data-tags="staff learning trainee exam quiz echo vascular abi as" data-prof="doctor">
                     <div class="app-icon">🎓</div>
                     <div class="app-title">實習生訓練中心</div>
                     <div class="app-desc">AS 超音波評估、ABI 血管超音波教學與線上測驗</div>
@@ -3705,7 +3724,7 @@
                         <span class="tag">實習生</span>
                     </div>
                 </a>
-                <a href="exam-acls-ccu-2025.html" class="app-card icu" data-tags="staff icu ccu acls emergency drugs airway ventilation epinephrine dopamine norepinephrine amiodarone lidocaine atropine adenosine intubation bvm lma 急救藥物 呼吸道處置 教育訓練 評核">
+                <a href="exam-acls-ccu-2025.html" class="app-card icu" data-tags="staff icu ccu acls emergency drugs airway ventilation epinephrine dopamine norepinephrine amiodarone lidocaine atropine adenosine intubation bvm lma 急救藥物 呼吸道處置 教育訓練 評核" data-prof="doctor nurse">
                     <div class="app-icon">🛑</div>
                     <div class="app-title">CCU 教育訓練評核 — ACLS 急救藥物與呼吸道處置</div>
                     <div class="app-desc">50 題情境式測驗：急救藥物劑量與注意事項、呼吸道管理、氧氣治療、RSI 藥物｜2026.02.27</div>
@@ -3715,7 +3734,7 @@
                         <span class="tag new">新增</span>
                     </div>
                 </a>
-                <a href="exam-ecmo-self-assessment.html" class="app-card icu" data-tags="staff icu ccu ecmo perfusionist 體循師 葉克膜 體外循環 extracorporeal membrane oxygenation va vv ecpr cannula anticoagulation weaning eolia cesar resp score complications hit exam quiz self assessment 自我測驗 考試 評核 教育訓練 100題">
+                <a href="exam-ecmo-self-assessment.html" class="app-card icu" data-tags="staff icu ccu ecmo perfusionist 體循師 葉克膜 體外循環 extracorporeal membrane oxygenation va vv ecpr cannula anticoagulation weaning eolia cesar resp score complications hit exam quiz self assessment 自我測驗 考試 評核 教育訓練 100題" data-prof="doctor nurse">
                     <div class="app-icon">🫁</div>
                     <div class="app-title">ECMO 自我測驗 — 100 題</div>
                     <div class="app-desc">ECMO 體循師訓練 100 題自我測驗：VA／VV 適應症、管路、抗凝、併發症、脫機、ECPR、Program 與倫理｜即時計分、各章統計、附解析</div>
@@ -3725,7 +3744,7 @@
                         <span class="tag new">新增</span>
                     </div>
                 </a>
-                <a href="cpr-training-app.html" class="app-card learning" data-tags="staff learning cpr bls acls ccu icu emergency cardiac arrest resuscitation 急救 心肺復甦">
+                <a href="cpr-training-app.html" class="app-card learning" data-tags="staff learning cpr bls acls ccu icu emergency cardiac arrest resuscitation 急救 心肺復甦" data-prof="doctor nurse cathtech">
                     <div class="app-icon">🫀</div>
                     <div class="app-title">CPR 急救訓練與評核</div>
                     <div class="app-desc">CPR 急救訓練系統：BLS/ACLS 流程、藥物劑量、情境演練與線上評核</div>
@@ -3736,7 +3755,7 @@
                     </div>
                 </a>
                 <h3 class="subcat-title">🧮 計算工具</h3>
-                <a href="cv-calculations-app.html" class="app-card learning" data-tags="staff learning calculation hemodynamic cardiac output svr pvr valve area gorlin hakki bsa bmi qp qs shunt 計算工具">
+                <a href="cv-calculations-app.html" class="app-card learning" data-tags="staff learning calculation hemodynamic cardiac output svr pvr valve area gorlin hakki bsa bmi qp qs shunt 計算工具" data-prof="doctor">
                     <div class="app-icon">🧮</div>
                     <div class="app-title">心血管計算練習</div>
                     <div class="app-desc">心血管血行動力學計算工具：Cardiac Output、SVR/PVR、瓣膜面積、Shunt 計算</div>
@@ -3757,7 +3776,7 @@
                 <span class="category-count">5</span>
             </div>
             <div class="app-grid">
-                <a href="hocm-education-app.html" class="app-card icu" data-tags="staff guideline genetics patient hocm hcm hypertrophic cardiomyopathy mavacamten aficamten camzyos myosin inhibitor lvoto sam obstruction 肥厚型心肌病變 阻塞性" data-disease="cardiomyopathy structural">
+                <a href="hocm-education-app.html" class="app-card icu" data-tags="staff guideline genetics patient hocm hcm hypertrophic cardiomyopathy mavacamten aficamten camzyos myosin inhibitor lvoto sam obstruction 肥厚型心肌病變 阻塞性" data-disease="cardiomyopathy structural" data-prof="doctor nurse">
                     <div class="app-icon">🫀</div>
                     <div class="app-title">HOCM 阻塞性肥厚型心肌病變教學</div>
                     <div class="app-desc">病例討論、HCM 治療指引（2024 AHA/2023 ESC）、Mavacamten/Aficamten 臨床試驗、基因檢測、最新 PubMed 文獻</div>
@@ -3768,7 +3787,7 @@
                     </div>
                 </a>
 
-                <a href="echo-cardiomyopathy.html" class="app-card learning" data-tags="staff guideline genetics echo cardiomyopathy dcm hcm rcm dilated hypertrophic restrictive 心肌病變 超音波" data-disease="cardiomyopathy">
+                <a href="echo-cardiomyopathy.html" class="app-card learning" data-tags="staff guideline genetics echo cardiomyopathy dcm hcm rcm dilated hypertrophic restrictive 心肌病變 超音波" data-disease="cardiomyopathy" data-prof="doctor nurse">
                     <div class="app-icon">💓</div>
                     <div class="app-title">心肌病變超音波教學</div>
                     <div class="app-desc">DCM 擴張型、HCM 肥厚型、RCM 限制型心肌病變 — 超音波診斷與分類</div>
@@ -3779,7 +3798,7 @@
                     </div>
                 </a>
 
-                <a href="fabry-disease-checklist.html" class="app-card ward" data-tags="staff guideline genetics ward icu fabry lvh hcm cardiomyopathy screening diagnosis ert 法布瑞氏症" data-disease="cardiomyopathy">
+                <a href="fabry-disease-checklist.html" class="app-card ward" data-tags="staff guideline genetics ward icu fabry lvh hcm cardiomyopathy screening diagnosis ert 法布瑞氏症" data-disease="cardiomyopathy" data-prof="doctor nurse">
                     <div class="app-icon">🧬</div>
                     <div class="app-title">Fabry Disease 診斷查檢表</div>
                     <div class="app-desc">門診篩檢評分、檢驗判讀、心臟分期、ERT 治療指引｜2024 TSOC 共識</div>
@@ -3790,7 +3809,7 @@
                     </div>
                 </a>
 
-                <a href="emb-teaching-app.html" class="app-card icu" data-tags="staff guideline genetics ward icu emb biopsy myocarditis amyloidosis fabry cardiomyopathy 心肌切片" data-disease="cardiomyopathy">
+                <a href="emb-teaching-app.html" class="app-card icu" data-tags="staff guideline genetics ward icu emb biopsy myocarditis amyloidosis fabry cardiomyopathy 心肌切片" data-disease="cardiomyopathy" data-prof="doctor cathtech">
                     <div class="app-icon">🫀</div>
                     <div class="app-title">心內膜心肌切片 EMB 教學</div>
                     <div class="app-desc">LV/RV-EMB 術前查檢、器材準備、操作步驟、安全警示、病理開單指引</div>
@@ -3801,7 +3820,7 @@
                     </div>
                 </a>
 
-                <a href="gene-medicine-cv-center-plan.html" class="app-card learning" data-tags="staff genetics learning precision inherited cardiology center plan roadmap snq cohort biobank cascade screening vus brugada arvc hcm dcm arvd scd sudden cardiac death channelopathy cardiomyopathy gantt 精準醫學 遺傳性 心律 心肌病變 中心 規劃 甘特圖 國家品質標章 基因諮詢" data-disease="cardiomyopathy arrhythmia">
+                <a href="gene-medicine-cv-center-plan.html" class="app-card learning" data-tags="staff genetics learning precision inherited cardiology center plan roadmap snq cohort biobank cascade screening vus brugada arvc hcm dcm arvd scd sudden cardiac death channelopathy cardiomyopathy gantt 精準醫學 遺傳性 心律 心肌病變 中心 規劃 甘特圖 國家品質標章 基因諮詢" data-disease="cardiomyopathy arrhythmia" data-prof="doctor">
                     <div class="app-icon">🧭</div>
                     <div class="app-title">心血管精準醫學遺傳性疾病中心 — 規劃手稿</div>
                     <div class="app-desc">六大支柱（Clinical Pathway／專責門診／招生／研究／團隊會議／SNQ）、三年甘特圖、KPI 設計（cascade、positive rate、VUS 控管）｜中心建置藍圖</div>
@@ -3823,7 +3842,7 @@
                 <span class="category-count">5</span>
             </div>
             <div class="app-grid">
-                <a href="echo-room-moving-checklist.html" class="app-card learning" data-tags="staff admin checklist relocation moving echo room tee 搬遷 搬家 心臟超音波室 6F 2F 清點 人力">
+                <a href="echo-room-moving-checklist.html" class="app-card learning" data-tags="staff admin checklist relocation moving echo room tee 搬遷 搬家 心臟超音波室 6F 2F 清點 人力" data-prof="nurse cathtech">
                     <div class="app-icon">📦</div>
                     <div class="app-title">Echo Room 搬遷清單 6F → 2F</div>
                     <div class="app-desc">心臟超音波室搬遷作業：搬前準備、物品清單、人力配置、當天流程，手機可逐項打勾清點（TEE 探頭、氧氣鋼瓶最高優先保護）</div>
@@ -3834,7 +3853,7 @@
                     </div>
                 </a>
 
-                <a href="cv_center_checklist.html" class="app-card learning" data-tags="staff admin checklist accreditation 評鑑 查核 心血管中心 jci 標準作業">
+                <a href="cv_center_checklist.html" class="app-card learning" data-tags="staff admin checklist accreditation 評鑑 查核 心血管中心 jci 標準作業" data-prof="doctor nurse cathtech">
                     <div class="app-icon">✅</div>
                     <div class="app-title">心血管中心評鑑查核表</div>
                     <div class="app-desc">心血管中心標準作業查檢表與流程確認</div>
@@ -3844,7 +3863,7 @@
                     </div>
                 </a>
 
-                <a href="orientation-hub.html" class="app-card learning" data-tags="staff admin ccu icu ward orientation resident np nurse training manual handbook 新進人員 護理師 住院醫師 到職訓練 工作指引 手冊 心臟內科 新人">
+                <a href="orientation-hub.html" class="app-card learning" data-tags="staff admin ccu icu ward orientation resident np nurse training manual handbook 新進人員 護理師 住院醫師 到職訓練 工作指引 手冊 心臟內科 新人" data-prof="doctor nurse cathtech">
                     <div class="app-icon">🏥</div>
                     <div class="app-title">新人訓練中心 Orientation Hub</div>
                     <div class="app-desc">整合 CCU 工作手冊（住院醫師必讀）、病房工作指引、新進同仁學習模組，依角色快速選擇</div>
@@ -3855,7 +3874,7 @@
                     </div>
                 </a>
 
-                <a href="nursing-record-guide.html" class="app-card ward" data-tags="staff admin ward nursing record writing guide template 2A 護理紀錄 書寫指引 新進同仁 模板 copy paste">
+                <a href="nursing-record-guide.html" class="app-card ward" data-tags="staff admin ward nursing record writing guide template 2A 護理紀錄 書寫指引 新進同仁 模板 copy paste" data-prof="nurse cathtech">
                     <div class="app-icon">📝</div>
                     <div class="app-title">護理紀錄書寫指引</div>
                     <div class="app-desc">2A 病房新進同仁必讀：FOCUS-DAR 書寫原則、Copy-Paste 模板庫、快速產生器、優良範例對照</div>
@@ -3866,7 +3885,7 @@
                     </div>
                 </a>
 
-                <a href="mbti-personality-test.html" class="app-card learning" data-tags="staff team mbti personality test communication meeting cooperation 人格測驗 團隊合作 溝通 開會">
+                <a href="mbti-personality-test.html" class="app-card learning" data-tags="staff team mbti personality test communication meeting cooperation 人格測驗 團隊合作 溝通 開會" data-prof="doctor nurse cathtech">
                     <div class="app-icon">🧩</div>
                     <div class="app-title">MBTI 職場人格測驗</div>
                     <div class="app-desc">28 題情境式測驗，了解自己的溝通風格與職場個性，學習與不同人格同事的相處與合作模式</div>
@@ -3887,7 +3906,7 @@
                 <span class="category-count">1</span>
             </div>
             <div class="app-grid">
-                <a href="clinical-shadowing-guide.html" class="app-card teacher" data-tags="staff teacher clinical shadowing teaching bedside preceptor clerk intern 臨床教師 隨行教學 見習 實習 指導醫師 教學策略">
+                <a href="clinical-shadowing-guide.html" class="app-card teacher" data-tags="staff teacher clinical shadowing teaching bedside preceptor clerk intern 臨床教師 隨行教學 見習 實習 指導醫師 教學策略" data-prof="doctor">
                     <div class="app-icon">🩺</div>
                     <div class="app-title">臨床隨行教學指引</div>
                     <div class="app-desc">Clinical Shadowing 完整指引：教學策略（One-Minute Preceptor、蘇格拉底提問法）、每日流程、SBI 回饋架構、Checklist</div>
@@ -4441,6 +4460,54 @@
                     const cardDisease = card.dataset.disease || '';
                     // 無 data-disease 或標為 general 的跨領域卡，於任何疾病篩選下保持顯示
                     if (cardDisease === '' || cardDisease.includes('general') || cardDisease.includes(disease)) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+
+                // Hide empty categories
+                categories.forEach(category => {
+                    const visibleCards = category.querySelectorAll('.app-card:not(.hidden)');
+                    if (visibleCards.length === 0) {
+                        category.classList.add('hidden');
+                    } else {
+                        category.classList.remove('hidden');
+                    }
+                });
+            }
+
+            updateStats();
+        }
+
+        // Filter by profession / 職類專區 (doctor / nurse / cathtech)
+        function filterByProfession(prof) {
+            const buttons = document.querySelectorAll('[data-prof-filter]');
+            const cards = document.querySelectorAll('.app-card');
+            const categories = document.querySelectorAll('.category');
+
+            // Update profession filter button states
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-pressed', 'false');
+            });
+            if (event && event.target) {
+                const btn = event.target.closest('[data-prof-filter]') || event.target;
+                btn.classList.add('active');
+                btn.setAttribute('aria-pressed', 'true');
+            }
+
+            // Clear search
+            document.getElementById('searchInput').value = '';
+
+            if (prof === 'all') {
+                cards.forEach(card => card.classList.remove('hidden'));
+                categories.forEach(cat => cat.classList.remove('hidden'));
+            } else {
+                cards.forEach(card => {
+                    const cardProf = card.dataset.prof || '';
+                    // 未標職類的卡（跨角色）於任何職類篩選下保持顯示
+                    if (cardProf === '' || cardProf.split(' ').includes(prof)) {
                         card.classList.remove('hidden');
                     } else {
                         card.classList.add('hidden');
