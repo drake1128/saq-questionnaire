@@ -2752,7 +2752,7 @@
         <button class="sidebar-nav-close" onclick="closeSidebar()" aria-label="關閉導覽">×</button>
         <div class="sidebar-nav-title">章節目錄</div>
         <ul class="sidebar-nav-list">
-            <li class="sidebar-nav-item"><a href="#sec-rotation" onclick="navClick(event)"><span class="nav-icon">📅</span><span class="nav-label">教學輪訓課表</span></a></li>
+            <li class="sidebar-nav-item"><a href="#sec-rotation" onclick="navClick(event); if(window.trcExpand)trcExpand();"><span class="nav-icon">📅</span><span class="nav-label">教學輪訓課表</span></a></li>
             <li class="sidebar-nav-item"><a href="#sec-cath" onclick="navClick(event)"><span class="nav-icon">🏥</span><span class="nav-label">導管室教學</span></a></li>
             <li class="sidebar-nav-item"><a href="#sec-icu" onclick="navClick(event)"><span class="nav-icon">⚡</span><span class="nav-label">加護病房 ICU/CCU</span></a></li>
             <li class="sidebar-nav-item"><a href="#sec-ward" onclick="navClick(event)"><span class="nav-icon">🛏️</span><span class="nav-label">病房照護</span></a></li>
@@ -2814,7 +2814,7 @@
 
         <!-- Featured: Teaching Rotation Curriculum -->
         <div class="featured-banner">
-            <a href="#sec-rotation" class="featured-link" style="background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%); box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);">
+            <a href="#sec-rotation" class="featured-link" onclick="if(window.trcExpand)trcExpand();" style="background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%); box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);">
                 <div class="featured-icon">📅</div>
                 <div class="featured-content">
                     <div class="featured-title">臨床教學輪訓課表 Rotation Curriculum</div>
@@ -2889,6 +2889,17 @@
         body.dark-mode .trc-head h2{color:var(--text-dark-primary);}
         .trc-head .trc-sub{color:var(--text-light);font-size:.9rem;margin:0;}
         body.dark-mode .trc-head .trc-sub{color:var(--text-dark-secondary);}
+        .trc-head{display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:14px 18px;box-shadow:var(--card-shadow);user-select:none;transition:border-color .15s;}
+        body.dark-mode .trc-head{background:var(--bg-dark-secondary);border-color:var(--border-dark);}
+        .trc-head:hover{border-color:var(--primary);}
+        .trc-head:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+        .trc-head-text{min-width:0;}
+        .trc-chevron-wrap{display:flex;align-items:center;gap:8px;color:var(--primary);font-weight:800;font-size:.85rem;white-space:nowrap;}
+        body.dark-mode .trc-chevron-wrap{color:var(--primary-light);}
+        .trc-chevron{font-size:1.15rem;line-height:1;transition:transform .25s ease;}
+        #sec-rotation.trc-collapsed .trc-chevron{transform:rotate(-90deg);}
+        .trc-panel{margin-top:10px;}
+        #sec-rotation.trc-collapsed .trc-panel{display:none;}
         .trc-controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:14px 0 8px;}
         .trc-seg{display:inline-flex;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:4px;box-shadow:var(--card-shadow);}
         body.dark-mode .trc-seg{background:var(--bg-dark-secondary);border-color:var(--border-dark);}
@@ -2964,11 +2975,16 @@
         @media (max-width:600px){.trc-head h2{font-size:1.15rem;}}
         </style>
 
-        <section id="sec-rotation" class="trc-wrap" aria-labelledby="trc-title">
-            <div class="trc-head">
-                <h2 id="trc-title"><span aria-hidden="true">📅</span> 臨床教學輪訓課表</h2>
-                <p class="trc-sub">Clerk · Intern · PGY · 住院醫師 · 總醫師 —— 每天來醫院都有一個適合自己階段的新模組可以學。週一至週五，每週涵蓋 病房／導管／影像／藥物／重症。</p>
+        <section id="sec-rotation" class="trc-wrap trc-collapsed" aria-labelledby="trc-title">
+            <div class="trc-head" id="trcToggle" role="button" tabindex="0" aria-expanded="false" aria-controls="trcPanel">
+                <div class="trc-head-text">
+                    <h2 id="trc-title"><span aria-hidden="true">📅</span> 臨床教學輪訓課表</h2>
+                    <p class="trc-sub">Clerk · Intern · PGY · 住院醫師 · 總醫師 —— 每天來醫院都有一個適合自己階段的新模組可以學。週一至週五，每週涵蓋 病房／導管／影像／藥物／重症。</p>
+                </div>
+                <span class="trc-chevron-wrap"><span class="trc-toggle-label" id="trcToggleLabel">展開</span><span class="trc-chevron" aria-hidden="true">▾</span></span>
             </div>
+
+            <div id="trcPanel" class="trc-panel">
 
             <div class="trc-controls">
                 <div class="trc-seg" id="trcWeekSeg">
@@ -3030,6 +3046,7 @@
                 <div class="trc-box"><h4><span class="trc-dot" style="background:#d97706"></span>藥物（週四）</h4><p>抗凝、GDMT、血脂、溶栓、計算。</p></div>
                 <div class="trc-box"><h4><span class="trc-dot" style="background:#475569"></span>重症/評核（週五）</h4><p>急救、休克、電風暴、ECMO、測驗。</p></div>
             </div>
+            </div><!-- /#trcPanel -->
         </section>
 
         <!-- Main Content Area -->
@@ -5367,6 +5384,27 @@ ${message}
         c.classList.add("on"); applyFilter();
       });
       render();
+    })();
+    </script>
+    <!-- 臨床教學輪訓課表：折疊控制 -->
+    <script>
+    (function(){
+      var section=document.getElementById('sec-rotation');
+      var toggle=document.getElementById('trcToggle');
+      var label=document.getElementById('trcToggleLabel');
+      if(!section||!toggle) return;
+      function setCollapsed(c){
+        section.classList.toggle('trc-collapsed', c);
+        toggle.setAttribute('aria-expanded', String(!c));
+        if(label) label.textContent = c ? '展開' : '收合';
+        try{ localStorage.setItem('trcCollapsed', c?'1':'0'); }catch(e){}
+      }
+      var saved=null;
+      try{ saved=localStorage.getItem('trcCollapsed'); }catch(e){}
+      setCollapsed(saved===null ? true : saved==='1'); // 預設收合
+      toggle.addEventListener('click', function(){ setCollapsed(!section.classList.contains('trc-collapsed')); });
+      toggle.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); setCollapsed(!section.classList.contains('trc-collapsed')); } });
+      window.trcExpand=function(){ setCollapsed(false); };
     })();
     </script>
     <script src="achievements-config.js"></script>
