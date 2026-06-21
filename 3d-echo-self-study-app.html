@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>3D Echo 自學手冊 | ESC Imaging Week 4</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#1e3a5f; --primary-light:#2d5a87; --gold:#c9a227; --gold-light:#e0c25a;
+  --accent:#c0392b; --success:#27ae60; --warning:#f39c12;
+  --bg:#faf8f5; --bg-card:#ffffff; --text:#2c3e50; --muted:#7f8c8d; --border:#ecf0f1;
+  --shadow:0 4px 20px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;padding-bottom:env(safe-area-inset-bottom)}
+.app{max-width:860px;margin:0 auto}
+header{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;padding:28px 22px 22px;position:relative;overflow:hidden}
+header::after{content:"";position:absolute;right:-30px;top:-30px;width:160px;height:160px;border:3px solid var(--gold);border-radius:50%;opacity:.18}
+.eyebrow{font-size:12px;letter-spacing:2px;color:var(--gold-light);font-weight:600;text-transform:uppercase}
+header h1{font-size:24px;font-weight:700;margin:6px 0 4px}
+header .sub{font-size:14px;opacity:.9}
+.progress-top{margin-top:16px;background:rgba(255,255,255,.18);border-radius:20px;height:8px;overflow:hidden}
+.progress-top > div{height:100%;background:var(--gold);transition:width .4s}
+.progress-label{font-size:12px;margin-top:6px;opacity:.85}
+.wrap{padding:18px 16px}
+.takehome{background:var(--bg-card);border-left:5px solid var(--gold);border-radius:12px;padding:18px;box-shadow:var(--shadow);margin-bottom:18px}
+.takehome h2{font-size:16px;color:var(--primary);display:flex;align-items:center;gap:8px}
+.takehome ul{margin:12px 0 0;padding-left:4px;list-style:none}
+.takehome li{position:relative;padding:6px 0 6px 24px;font-size:14.5px}
+.takehome li::before{content:"";position:absolute;left:4px;top:13px;width:8px;height:8px;background:var(--gold);border-radius:50%}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:4px 0 10px;margin-bottom:6px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;min-height:44px;padding:9px 14px;border:none;border-radius:22px;background:var(--bg-card);color:var(--muted);font-family:inherit;font-size:13.5px;font-weight:600;box-shadow:var(--shadow);cursor:pointer;white-space:nowrap;transition:.2s}
+.tab.active{background:var(--primary);color:#fff}
+.tab .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--success);margin-left:6px;vertical-align:middle}
+.module{animation:fade .35s}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.mod-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+.mod-num{flex:0 0 auto;width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px}
+.mod-head h2{font-size:18px;color:var(--primary)}
+.mod-head .obj{font-size:13px;color:var(--muted);margin-top:2px}
+.card{background:var(--bg-card);border-radius:14px;padding:16px 16px 14px;box-shadow:var(--shadow);margin-bottom:14px}
+.card h3{font-size:15px;color:var(--primary);margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.card h3 .bar{width:4px;height:16px;background:var(--gold);border-radius:2px}
+.kv{font-size:14px;margin:7px 0}
+.kv b{color:var(--primary)}
+.tag{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 9px;border-radius:10px;margin:2px 4px 2px 0}
+.tag.full{background:#e8f0f8;color:var(--primary-light)}
+.tag.single{background:#fdf3e0;color:#b9870b}
+.tag.warn{background:#fdeaea;color:var(--accent)}
+.note{font-size:13px;background:#fff8e8;border:1px solid #f3e2b8;border-radius:10px;padding:10px 12px;margin-top:8px;color:#7a5c10}
+.note b{color:#9a6f00}
+.vid{display:flex;gap:12px;align-items:center;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:12px;padding:11px;margin-top:10px;transition:.2s}
+.vid:active{transform:scale(.99)}
+.vid .play{flex:0 0 auto;width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#e05a4b);display:flex;align-items:center;justify-content:center}
+.vid .play svg{width:20px;height:20px;fill:#fff;margin-left:2px}
+.vid .meta{flex:1;min-width:0}
+.vid .meta .vt{font-size:14px;font-weight:600;color:var(--primary);line-height:1.4}
+.vid .meta .vd{font-size:12px;color:var(--muted);margin-top:2px}
+.vid .meta .src{font-size:11px;color:var(--gold);font-weight:600;margin-top:3px}
+.watch{flex:0 0 auto;width:30px;height:30px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.watch.done{background:var(--success);border-color:var(--success)}
+.watch svg{width:16px;height:16px;fill:#fff}
+.res{text-decoration:none;color:inherit;display:block;border:1px solid var(--border);border-radius:12px;padding:12px;margin-top:10px;transition:.2s}
+.res:active{background:var(--bg)}
+.res .rt{font-size:14px;font-weight:600;color:var(--primary)}
+.res .rd{font-size:12.5px;color:var(--muted);margin-top:3px}
+.res .rl{font-size:11.5px;color:var(--gold);font-weight:600;margin-top:4px;word-break:break-all}
+.free{display:inline-block;font-size:10.5px;background:var(--success);color:#fff;padding:1px 7px;border-radius:8px;margin-left:6px;vertical-align:middle}
+.quiz q{display:block}
+.q-prog{height:6px;background:var(--border);border-radius:6px;overflow:hidden;margin-bottom:14px}
+.q-prog > div{height:100%;background:var(--gold);transition:width .3s}
+.q-num{font-size:12px;color:var(--muted);font-weight:600}
+.q-text{font-size:15.5px;font-weight:600;color:var(--primary);margin:6px 0 14px}
+.opt{display:block;width:100%;text-align:left;font-family:inherit;font-size:14px;background:var(--bg-card);border:2px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:9px;min-height:48px;cursor:pointer;transition:.18s;color:var(--text)}
+.opt:active{transform:scale(.99)}
+.opt.correct{border-color:var(--success);background:#eafaf0}
+.opt.wrong{border-color:var(--accent);background:#fdeaea}
+.exp{background:#f4f8fc;border-radius:12px;padding:13px;margin-top:6px;font-size:13.5px}
+.exp .r{font-weight:700;margin-bottom:5px}
+.exp .r.ok{color:var(--success)} .exp .r.no{color:var(--accent)}
+.btn{width:100%;min-height:48px;border:none;border-radius:12px;background:var(--primary);color:#fff;font-family:inherit;font-size:15px;font-weight:600;margin-top:12px;cursor:pointer}
+.btn.gold{background:var(--gold)}
+.score{text-align:center;padding:10px}
+.score .big{font-size:44px;font-weight:700;color:var(--gold)}
+footer{font-size:11.5px;color:var(--muted);padding:20px 18px 34px;border-top:1px solid var(--border);margin-top:8px}
+footer .sig{color:var(--primary);font-weight:600;margin-bottom:6px}
+footer p{margin:2px 0}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect} = React;
+
+const store = {
+  get(k,d){ try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d} },
+  set(k,v){ try{localStorage.setItem(k,JSON.stringify(v))}catch(e){} }
+};
+
+const Play = ()=>(<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>);
+const Check = ()=>(<svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>);
+
+const MODULES = [
+ {
+  id:"m1", num:"1", title:"基礎物理與擷取模式", obj:"認識 matrix array 探頭與五種擷取模式的取捨",
+  cards:[
+   {h:"探頭與成像原理 (Matrix Array)", body:[
+     {t:"fully-sampled matrix array（xMATRIX）", d:"約 3000+ 壓電晶體，波束可在 X（lateral）、Y（elevation）、Z（depth）三軸操控，形成金字塔狀容積。探頭手柄內建 microbeamformer 處理龐大訊號。"},
+     {t:"與 2D 的差異", d:"2D 是單一切面，需在腦中重建立體結構；3D 直接取得容積，可任意旋轉、裁切，建立 echo–surgeon–interventionist 之間的「共同語言」。"}
+   ]},
+   {h:"五種擷取模式 (Acquisition Modes)", modes:[
+     {n:"Live 3D（Narrow angle）", tag:["single","即時"], d:"單心跳即時窄金字塔；視野小，無法涵蓋整顆心臟。"},
+     {n:"3D Zoom", tag:["single","聚焦"], d:"在目標結構上放一個放大框（如 MV en face）；可單心跳或多心跳。"},
+     {n:"Full Volume（Multi-beat）", tag:["full","ECG-gated"], d:"以 ECG gating 將 2–7 個 subvolume 在連續心跳拼接成寬金字塔；空間+時間解析度最佳。"},
+     {n:"3D Color", tag:["full","彩流"], d:"容積內的 color Doppler；多為多心跳、volume rate 較低。"},
+     {n:"Live xPlane（Biplane）", tag:["single","雙平面"], d:"同時顯示兩個 2D 平面（非真正 3D），是 matrix 探頭的常用導引工具。"}
+   ]},
+   {h:"核心取捨 (The Trade-off)", body:[
+     {t:"三角關係", d:"Temporal resolution（volume rate）↔ Spatial resolution ↔ Field of view 三者無法同時最大化。"},
+     {t:"single-beat vs multi-beat", d:"single-beat 避免拼接假影、適合 AF/不規則心律；multi-beat 解析度較佳但呼吸/心律不整易產生 stitching artifact。"}
+   ],
+   warn:"心房顫動或無法閉氣的病人，優先用 single-beat（Live 3D / 3D Zoom 單心跳），避免拼接假影誤判結構。"}
+  ],
+  vids:[
+   {id:"vKfx5WoD068", t:"How to Perform a Full Volume Acquisition on a Philips EPIQ", d:"Philips 官方逐步教學：full-volume multi-beat 擷取的按鍵與旋鈕。", src:"Philips Healthcare"},
+   {id:"QW_84AG0jxw", t:"How to acquire a 3D Zoom image on a Philips EPIQ", d:"3D Zoom 模式聚焦目標結構（如瓣膜）的操作示範。", src:"YouTube Tutorial"}
+  ]
+ },
+ {
+  id:"m2", num:"2", title:"影像操作與顯示", obj:"裁切、MPR、en face view 與 rendering 的判讀紀律",
+  cards:[
+   {h:"裁切與多平面重組 (Cropping & MPR)", body:[
+     {t:"Cropping 裁切", d:"移除遮擋的組織平面，把目標結構露出來；旋轉容積找到最佳視角。"},
+     {t:"MPR（Multiplanar Reconstruction）", d:"把容積切成三個正交平面（兩個 long-axis + 一個 short-axis）加上 3D render。對齊平面即可取得真正 on-axis 的測量（annulus、MVA、LV），消除 foreshortening 與斜切誤差。"}
+   ]},
+   {h:"En face View（外科視角）", body:[
+     {t:"定位慣例", d:"從左心房側俯視 MV（surgeon's view），慣例上 aortic valve 置於 12 點鐘、LAA 約 9 點鐘方向。"},
+     {t:"臨床價值", d:"可直接定位 prolapse/flail 落在哪個 scallop（A1–A3 / P1–P3），與術者溝通時不需轉換座標。"}
+   ]},
+   {h:"渲染模式 (Rendering)", body:[
+     {t:"基本", d:"surface / volume rendering 呈現立體外觀。"},
+     {t:"進階擬真", d:"transillumination（TrueVue + 可移動光源）、transparency（GlassVue）、depth-dependent color，提升深度感與結構辨識。"}
+   ],
+   warn:"顯示方向要有紀律：同一中心固定 en face 的擺位慣例，才能在導引時讓術者快速理解你描述的位置。"}
+  ],
+  vids:[
+   {id:"ryUlFaEntA0", t:"Practical 3D Echo Tips & Tricks（Philips & GE）", d:"旋鈕、gain、cropping 與影像最佳化的實務操作。", src:"YouTube Tutorial"},
+   {id:"qffr528JuJA", t:"Dr Jason Kaplan: 3D Echo Assessment of MV Disease", d:"以 MV 為例示範 3D 操作、MPR 與判讀邏輯（內含顯示與裁切觀念）。", src:"Macquarie Univ. Hospital"}
+  ]
+ },
+ {
+  id:"m3", num:"3", title:"腔室與瓣膜定量", obj:"掌握 3D 在 LV/RV、MVA、MR 定量的優勢與陷阱",
+  cards:[
+   {h:"腔室容積 (Chambers)", body:[
+     {t:"LV volumes & EF", d:"3D 不需幾何假設、避免 foreshortening，比 2D Simpson's 更準確、再現性更高，且與 CMR 較接近；亦可量 LV mass、LA volume。"},
+     {t:"RV", d:"RV 為非幾何腔室，2D 公式受限；3D 可直接算 RVEF，是少數真正受益的腔室。"}
+   ]},
+   {h:"二尖瓣定量 (MV Quantification)", body:[
+     {t:"MVQ / MVN 軟體", d:"量 annulus area/perimeter（saddle shape）、AHCWR、tenting height/volume、leaflet area、prolapse mapping——術前規劃必備。"},
+     {t:"MVA planimetry（MS）", d:"3D MPR 可把平面精準對齊 leaflet tips，比 2D planimetry 更準、更接近 Gorlin（rheumatic MS）。"}
+   ]},
+   {h:"二尖瓣逆流定量 (MR)", body:[
+     {t:"3D VCA / AROA", d:"以 MPR 取得逆流口截面積，對偏心、多孔、非圓形 orifice（functional MR）優於 2D PISA EROA。"}
+   ],
+   warn:"陷阱：偏心 jet 若 cropping 不垂直於逆流口，3D VCA 會高估；late-systolic MR 在最大逆流時相測量也可能高估嚴重度。"}
+  ],
+  vids:[
+   {id:"qffr528JuJA", t:"3D Echo Assessment of Mitral Valve Disease", d:"MV 幾何、annulus 與逆流定量的系統性講解。", src:"Macquarie Univ. Hospital"}
+  ],
+  reads:[
+   {t:"Clinical Utility of 3D Echo in MV Disease: Tips and Tricks", d:"MVQ/MVN 取像 checklist、MVA planimetry 步驟。J Clin Med 2023.", u:"https://pmc.ncbi.nlm.nih.gov/articles/PMC10094963/"}
+  ]
+ },
+ {
+  id:"m4", num:"4", title:"結構性介入導引", obj:"TEER / LAAO / TAVI 的 3D TEE 即時導引（你的主戰場）",
+  cards:[
+   {h:"TEER（MitraClip / PASCAL）", steps:[
+     {s:"術前", d:"確認 mechanism、leaflet length/coaptation、calcium，量 baseline MVA（避免 clip 後 MS）。"},
+     {s:"Transseptal puncture", d:"3D MPR 確認穿刺點偏 posterior + superior；量 tenting height（MV 多需 ~3.5–4.5 cm，偏 lateral/posterior 病灶需更高）。"},
+     {s:"Steering", d:"en face 3D 把 clip 帶到目標 scallop 上方。"},
+     {s:"Orientation", d:"en face 下 clip arms 必須垂直於 coaptation line。"},
+     {s:"Grasping", d:"切到 MPR 雙平面（commissural + LVOT long-axis）同時確認兩葉都被夾住。"},
+     {s:"Result", d:"殘餘 MR（3D VCA）、mean gradient，排除 SLDA（single leaflet device attachment）。"}
+   ]},
+   {h:"其他結構性介入", body:[
+     {t:"LAAO", d:"ostium / landing zone 量測、排除 thrombus、en face 與 MPR 定位 device。"},
+     {t:"TAVI", d:"annulus 與 LVOT calcium 評估、BASILICA leaflet laceration 導引；術後評 paravalvular leak。"},
+     {t:"Tricuspid / Valve-in-Valve", d:"TV 在 2D 難對位，live MPR 提供同步多平面空間定位。"}
+   ]}
+  ],
+  vids:[],
+  reads:[
+   {t:"Step-by-Step 3D TEE Guide for MitraClip TEER", d:"逐步 3D TEE 導引各程序步驟的實務 tips（Wunderlich 等）。", u:"https://pubmed.ncbi.nlm.nih.gov/30611459/"},
+   {t:"Advances in Procedural Echo Imaging in M-TEER", d:"Frontiers 2022 回顧：2D/3D TEE、xPlane、transillumination 在 TEER 的角色。", u:"https://www.frontiersin.org/journals/cardiovascular-medicine/articles/10.3389/fcvm.2022.864341/full"}
+  ]
+ }
+];
+
+const RESOURCES = [
+ {t:"Toronto Virtual TEE — 3D TEE Acquisition & MPR Module", free:true, d:"互動式 3D TEE 教學（含 EPIQ 取像、cropping、MPR 量測），可切換中文介面。自學首選。", u:"http://pie.med.utoronto.ca/TEE/index.htm"},
+ {t:"EAE/ASE Recommendations for 3D Echo（Lang RM, 2012）", free:true, d:"3D echo 取像與顯示的奠基性共識文件，建立術語與標準視角。", u:"https://pubmed.ncbi.nlm.nih.gov/22275509/"},
+ {t:"Thinking 3D — 3D Echocardiography（英國教學頁）", free:true, d:"matrix 探頭、模式與臨床應用的圖文整理，適合快速複習。", u:"https://www.thinking3d.ac.uk/Echocardiography/"},
+ {t:"Role of 3D TEE for Transcatheter MV Repair（Mini Review）", free:true, d:"3D TEE 在 TMVr 病人篩選與導引的角色與未來方向。", u:"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8849207/"}
+];
+
+const QUIZ = [
+ {q:"哪一種擷取模式能提供最寬視野與最佳空間/時間解析度，但在心律不整時最容易產生 stitching artifact？",
+  o:["Live 3D（narrow angle）","3D Zoom（單心跳）","Full Volume（multi-beat）","Live xPlane"], c:2,
+  e:"Full Volume 以 ECG gating 拼接多個 subvolume，解析度最佳，但呼吸與不規則心律會造成拼接假影。"},
+ {q:"心房顫動病人要做 3D TEE，下列何者最能避免拼接假影？",
+  o:["multi-beat full volume","single-beat 擷取（Live 3D / 單心跳 3D Zoom）","拉長 gating 至 7 個心跳","關閉 ECG"], c:1,
+  e:"single-beat 在單一心跳內完成，不需拼接，最適合 AF 或無法閉氣者。"},
+ {q:"MV en face（surgeon's view）的標準擺位慣例中，aortic valve 應位於？",
+  o:["6 點鐘","3 點鐘","9 點鐘","12 點鐘"], c:3,
+  e:"慣例上 aortic valve 置於 12 點鐘、LAA 約 9 點鐘，方便定位 A1–A3 / P1–P3 並與術者溝通。"},
+ {q:"對偏心、非圓形的 functional MR 逆流口，下列何者定量較佳？",
+  o:["2D PISA EROA","M-mode","3D VCA / AROA（MPR）","連續波 Doppler 形狀"], c:2,
+  e:"3D 直接量逆流口截面積，對非圓形、多孔或偏心 orifice 優於假設圓形對稱的 2D PISA。"},
+ {q:"TEER grasping 階段，最能確認「兩葉都被夾住」的判讀是？",
+  o:["單張 en face 3D render","MPR 雙平面（commissural + LVOT long-axis）同步確認","僅看 color Doppler","fluoroscopy 正位"], c:1,
+  e:"MPR 同步顯示兩個正交長軸，能同時看到 anterior 與 posterior leaflet 是否被夾入。"},
+ {q:"En face view 下，clip arms 相對於 coaptation line 應如何擺放？",
+  o:["平行","垂直","45 度","不需考量"], c:1,
+  e:"clip arms 需垂直於 coaptation line，使夾合方向與要修復的接合線正交。"}
+];
+
+function Quiz(){
+ const [i,setI]=useState(0);const [sel,setSel]=useState(null);const [show,setShow]=useState(false);const [sc,setSc]=useState(0);const [done,setDone]=useState(false);
+ const q=QUIZ[i];
+ const ans=(k)=>{if(show)return;setSel(k);setShow(true);if(k===q.c)setSc(s=>s+1);};
+ const next=()=>{if(i<QUIZ.length-1){setI(i+1);setSel(null);setShow(false);}else{setDone(true);}};
+ const reset=()=>{setI(0);setSel(null);setShow(false);setSc(0);setDone(false);};
+ if(done){const pct=Math.round(sc/QUIZ.length*100);
+  return(<div className="card quiz"><div className="score"><div className="big">{sc}/{QUIZ.length}</div>
+   <p style={{color:'var(--muted)',marginTop:4}}>{pct>=83?'觀念扎實，可進臨床實作 🎯':pct>=50?'方向正確，建議複習取捨與導引段落':'建議重看 Module 1 與 4'}</p></div>
+   <button className="btn gold" onClick={reset}>再測一次</button></div>);
+ }
+ return(<div className="card quiz">
+  <div className="q-prog"><div style={{width:`${(i+1)/QUIZ.length*100}%`}}/></div>
+  <span className="q-num">第 {i+1} / {QUIZ.length} 題</span>
+  <p className="q-text">{q.q}</p>
+  {q.o.map((o,k)=>(<button key={k} className={"opt"+(show&&k===q.c?" correct":show&&k===sel&&k!==q.c?" wrong":"")} onClick={()=>ans(k)} disabled={show}>{o}</button>))}
+  {show&&(<div className="exp"><div className={"r "+(sel===q.c?"ok":"no")}>{sel===q.c?"✅ 正確":"❌ 再想想"}</div>{q.e}
+   <button className="btn" onClick={next}>{i<QUIZ.length-1?"下一題":"看結果"}</button></div>)}
+ </div>);
+}
+
+function App(){
+ const [tab,setTab]=useState("m1");
+ const [watched,setWatched]=useState(()=>store.get("echo3d-watched",{}));
+ useEffect(()=>store.set("echo3d-watched",watched),[watched]);
+ const toggle=(id)=>setWatched(w=>({...w,[id]:!w[id]}));
+ const allVids=MODULES.flatMap(m=>m.vids.map(v=>v.id));
+ const uniq=[...new Set(allVids)];
+ const doneN=uniq.filter(id=>watched[id]).length;
+ const pct=Math.round(doneN/uniq.length*100);
+ const modDone=(m)=>m.vids.length>0 && m.vids.every(v=>watched[v.id]);
+
+ const TABS=[...MODULES.map(m=>({id:m.id,label:`${m.num} ${m.title}`,done:modDone(m)})),
+   {id:"res",label:"資源庫"},{id:"quiz",label:"自我測驗"}];
+
+ return(<div className="app">
+  <header>
+   <div className="eyebrow">ESC Imaging · Week 4</div>
+   <h1>3D Echo 自學手冊</h1>
+   <div className="sub">三維心臟超音波 · 從擷取到結構性介入導引</div>
+   <div className="progress-top"><div style={{width:`${pct}%`}}/></div>
+   <div className="progress-label">影片進度 {doneN}/{uniq.length}（{pct}%）</div>
+  </header>
+
+  <div className="wrap">
+   <div className="takehome">
+    <h2>🎯 Take Home（先抓重點）</h2>
+    <ul>
+     <li>3D 的核心是 <b>取捨</b>：volume rate × 解析度 × 視野不可兼得；AF 用 single-beat，要解析度用 multi-beat full volume。</li>
+     <li><b>MPR</b> 是定量的靈魂——對齊正交平面才有真正 on-axis 的 annulus、MVA、LV，避免斜切與 foreshortening。</li>
+     <li><b>En face surgeon's view</b>（AV 在 12 點）讓 scallop 定位與術者溝通變直覺。</li>
+     <li>定量上 3D 對 <b>RVEF、MVA planimetry、偏心 MR 的 VCA/AROA</b> 最有加分；但偏心 jet 裁切不當會高估。</li>
+     <li>結構性介入：TEER 的 transseptal tenting height、clip 垂直 coaptation line、grasping 用 MPR 雙平面，是 3D TEE 最關鍵的三個瞬間。</li>
+    </ul>
+   </div>
+
+   <div className="tabs">
+    {TABS.map(t=>(<button key={t.id} className={"tab"+(tab===t.id?" active":"")} onClick={()=>setTab(t.id)}>{t.label}{t.done&&<span className="dot"/>}</button>))}
+   </div>
+
+   {MODULES.filter(m=>m.id===tab).map(m=>(
+    <div key={m.id} className="module">
+     <div className="mod-head"><div className="mod-num">{m.num}</div><div><h2>{m.title}</h2><div className="obj">{m.obj}</div></div></div>
+     {m.cards.map((c,ci)=>(
+      <div key={ci} className="card">
+       <h3><span className="bar"/>{c.h}</h3>
+       {c.body&&c.body.map((b,bi)=>(<div key={bi} className="kv"><b>{b.t}：</b>{b.d}</div>))}
+       {c.modes&&c.modes.map((md,mi)=>(<div key={mi} className="kv" style={{borderBottom:mi<c.modes.length-1?'1px dashed var(--border)':'none',paddingBottom:7}}>
+         <b>{md.n}</b><br/>{md.tag.map((tg,ti)=>(<span key={ti} className={"tag "+(tg==='full'?'full':['即時','彩流','雙平面','聚焦','ECG-gated'].includes(tg)?'single':'single')}>{tg}</span>))}<br/>{md.d}</div>))}
+       {c.steps&&c.steps.map((st,si)=>(<div key={si} className="kv"><b>{si+1}. {st.s}：</b>{st.d}</div>))}
+       {c.warn&&(<div className="note"><b>⚠ 臨床提醒：</b>{c.warn}</div>)}
+      </div>
+     ))}
+     {m.vids.length>0&&(<div className="card">
+       <h3><span className="bar"/>影片教材（點卡片開啟 · 點圈圈標記已看）</h3>
+       {m.vids.map((v,vi)=>(<div key={vi} style={{display:'flex',alignItems:'center',gap:8}}>
+         <a className="vid" href={`https://www.youtube.com/watch?v=${v.id}`} target="_blank" rel="noopener" style={{flex:1}}>
+           <div className="play"><Play/></div>
+           <div className="meta"><div className="vt">{v.t}</div><div className="vd">{v.d}</div><div className="src">▶ {v.src}</div></div>
+         </a>
+         <div className={"watch"+(watched[v.id]?" done":"")} onClick={()=>toggle(v.id)}>{watched[v.id]&&<Check/>}</div>
+       </div>))}
+     </div>)}
+     {m.reads&&(<div className="card"><h3><span className="bar"/>延伸閱讀</h3>
+       {m.reads.map((r,ri)=>(<a key={ri} className="res" href={r.u} target="_blank" rel="noopener"><div className="rt">{r.t}</div><div className="rd">{r.d}</div><div className="rl">{r.u}</div></a>))}
+     </div>)}
+    </div>
+   ))}
+
+   {tab==="res"&&(<div className="module">
+    <div className="mod-head"><div className="mod-num">📚</div><div><h2>資源庫</h2><div className="obj">免費互動教材、共識文件與回顧</div></div></div>
+    <div className="card">
+     {RESOURCES.map((r,i)=>(<a key={i} className="res" href={r.u} target="_blank" rel="noopener">
+       <div className="rt">{r.t}{r.free&&<span className="free">免費</span>}</div>
+       <div className="rd">{r.d}</div><div className="rl">{r.u}</div></a>))}
+    </div>
+    <div className="note" style={{marginTop:0}}><b>建議自學順序：</b>先用 Toronto Virtual TEE 互動模組熟悉取像與 MPR（可切中文），再依本手冊 Module 1→4 看影片，最後讀 TEER step-by-step guide 對照你的臨床流程。</div>
+   </div>)}
+
+   {tab==="quiz"&&(<div className="module">
+    <div className="mod-head"><div className="mod-num">✓</div><div><h2>自我測驗</h2><div className="obj">6 題即時回饋，驗收核心觀念</div></div></div>
+    <Quiz/>
+   </div>)}
+  </div>
+
+  <footer>
+   <div className="sig">讀書會共筆整理人　謝慕揚 醫師 MD, PhD, FESC</div>
+   <div className="sig" style={{fontWeight:400,color:'var(--muted)'}}>結構性心臟病與介入心臟學 · 心臟影像</div>
+   <p>· 本內容為讀書會共筆整理，未必涵蓋所有相關文獻</p>
+   <p>· 僅供學術與教育用途，不代表任何單位之官方立場</p>
+   <p>· 本內容未涉及任何利益衝突</p>
+   <p style={{marginTop:8}}>· 影片與文獻連結為第三方資源，內容以原始來源為準；不同機型/版本之操作介面可能略有差異。</p>
+  </footer>
+ </div>);
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
