@@ -254,6 +254,57 @@ td:first-child { text-align: left; font-weight: 500; color: var(--primary); }
 }
 .info-box strong { display: block; margin-bottom: 4px; }
 
+/* ---- PSVT 衛教區 ---- */
+.psvt-callout {
+  background: linear-gradient(135deg, #eef4fb, #f6fbff);
+  border: 1px solid #cfe0f2;
+  border-left: 5px solid var(--primary);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text);
+  margin-bottom: 18px;
+}
+.psvt-callout b { color: var(--primary); }
+.psvt-lead { font-size: 13px; line-height: 1.8; color: var(--text); margin: 6px 0 4px; }
+.psvt-lead .hl { color: var(--rfca); font-weight: 700; }
+.svg-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin: 10px 0 4px;
+}
+@media (max-width: 640px) { .svg-grid { grid-template-columns: 1fr; } }
+.svg-fig {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 12px 8px;
+  box-shadow: var(--shadow);
+}
+.svg-fig svg { width: 100%; height: auto; display: block; }
+.svg-fig .fig-title { font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+.svg-fig .fig-cap { font-size: 11.5px; color: var(--muted); line-height: 1.6; margin-top: 6px; }
+.keycard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 14px 0 4px;
+}
+@media (max-width: 640px) { .keycard-grid { grid-template-columns: repeat(2, 1fr); } }
+.keycard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--pfa);
+  border-radius: 12px;
+  padding: 12px 8px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.keycard .kc-num { font-size: 18px; font-weight: 800; color: var(--pfa); }
+.keycard .kc-lbl { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+
 footer {
   text-align: center;
   font-size: 11px;
@@ -324,9 +375,146 @@ footer {
 
 <div class="tabs">
   <div class="tab active" onclick="showTab('overview')">總覽</div>
+  <div class="tab" onclick="showTab('psvt')">認識 PSVT 電燒</div>
   <div class="tab" onclick="showTab('risks')">風險比較</div>
   <div class="tab" onclick="showTab('mechanism')">機轉特性</div>
   <div class="tab" onclick="showTab('special')">特殊併發症</div>
+</div>
+
+<!-- TAB: PSVT 衛教 -->
+<div id="tab-psvt" class="content hidden">
+
+  <div class="psvt-callout">
+    <b>PSVT（陣發性上心室頻脈）的電燒和心房顫動不一樣。</b>
+    PSVT 多半是心臟裡多了一條「電流短路」，讓心跳<b>突然</b>飆快、又<b>突然</b>停止。
+    電燒是把這條多餘的路點狀燒斷 — <b>一次治療成功率大於 95%、風險低，多數可以根治</b>，
+    通常不需要像心房顫動那樣長期吃藥控制。
+  </div>
+
+  <div class="section-title">什麼是 PSVT？</div>
+  <p class="psvt-lead">
+    正常心跳由右心房上方的「<b>竇房結</b>」發號施令，經「<b>房室結</b>」傳到心室，規律跳動。
+    PSVT 病人的心臟多了一條額外的電流通路，形成一個<span class="hl">會繞圈的迴路</span>；
+    電流一旦卡進去繞圈，心跳就會瞬間衝到每分鐘 150–220 下，常見<b>心悸、胸悶、頭暈</b>，
+    但通常不是心臟結構壞掉，年輕、心臟正常的人也會發生。
+  </p>
+
+  <div class="section-title">為什麼會突然心跳飆快？（兩種常見機轉）</div>
+  <div class="svg-grid">
+
+    <!-- FIG 1: AVNRT -->
+    <div class="svg-fig">
+      <div class="fig-title">① AVNRT — 房室結內雙路徑</div>
+      <svg viewBox="0 0 360 290" role="img" aria-labelledby="fig1t fig1d">
+        <title id="fig1t">房室結迴旋性頻脈 AVNRT 示意圖</title>
+        <desc id="fig1d">房室結內有快、慢兩條路徑，電流在其中繞圈造成心跳過快。</desc>
+        <defs>
+          <marker id="ah1" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#e74c3c"/>
+          </marker>
+        </defs>
+        <!-- chambers -->
+        <rect x="95" y="34" width="170" height="78" rx="26" fill="#eef2f7" stroke="#c7d2de"/>
+        <rect x="80" y="150" width="200" height="96" rx="32" fill="#eef2f7" stroke="#c7d2de"/>
+        <rect x="96" y="120" width="168" height="22" rx="8" fill="#fff" stroke="#dbe3ec"/>
+        <text x="180" y="60" text-anchor="middle" font-size="13" fill="#5a6b7d">心　房</text>
+        <text x="180" y="205" text-anchor="middle" font-size="13" fill="#5a6b7d">心　室</text>
+        <!-- SA node -->
+        <circle cx="235" cy="52" r="7" fill="#f5b301"/>
+        <text x="248" y="49" font-size="10.5" fill="#7d6608">竇房結</text>
+        <!-- AV node with dual pathway loop -->
+        <circle cx="180" cy="131" r="10" fill="#f5b301"/>
+        <text x="196" y="128" font-size="10.5" fill="#7d6608">房室結</text>
+        <!-- slow/fast pathways as two arcs forming a small loop -->
+        <path d="M170 124 A18 16 0 0 0 170 138" fill="none" stroke="#2980b9" stroke-width="3"/>
+        <path d="M190 124 A18 16 0 0 1 190 138" fill="none" stroke="#e74c3c" stroke-width="3"/>
+        <text x="128" y="133" font-size="9.5" fill="#2980b9">慢路徑</text>
+        <text x="210" y="150" font-size="9.5" fill="#e74c3c">快路徑</text>
+        <!-- circular re-entry arrow -->
+        <path d="M165 118 A26 24 0 1 1 164 145" fill="none" stroke="#e74c3c" stroke-width="2.6" marker-end="url(#ah1)"/>
+        <!-- His conduction down -->
+        <line x1="180" y1="141" x2="180" y2="175" stroke="#9aa7b4" stroke-width="2.4"/>
+        <line x1="180" y1="175" x2="140" y2="212" stroke="#9aa7b4" stroke-width="2.4"/>
+        <line x1="180" y1="175" x2="220" y2="212" stroke="#9aa7b4" stroke-width="2.4"/>
+      </svg>
+      <div class="fig-cap">房室結內天生有「快、慢」兩條路徑，電流在其中<b>繞小圈</b>，心跳就突然變快。最常見的 PSVT。</div>
+    </div>
+
+    <!-- FIG 2: AVRT / WPW -->
+    <div class="svg-fig">
+      <div class="fig-title">② AVRT／WPW — 多一條旁路</div>
+      <svg viewBox="0 0 360 290" role="img" aria-labelledby="fig2t fig2d">
+        <title id="fig2t">房室迴旋性頻脈 AVRT 示意圖</title>
+        <desc id="fig2d">心房與心室間多了一條旁路，電流沿正常路徑下行、由旁路上行，繞成大迴路。</desc>
+        <defs>
+          <marker id="ah2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#e74c3c"/>
+          </marker>
+        </defs>
+        <rect x="95" y="34" width="170" height="78" rx="26" fill="#eef2f7" stroke="#c7d2de"/>
+        <rect x="80" y="150" width="200" height="96" rx="32" fill="#eef2f7" stroke="#c7d2de"/>
+        <rect x="96" y="120" width="168" height="22" rx="8" fill="#fff" stroke="#dbe3ec"/>
+        <text x="175" y="60" text-anchor="middle" font-size="13" fill="#5a6b7d">心　房</text>
+        <text x="175" y="205" text-anchor="middle" font-size="13" fill="#5a6b7d">心　室</text>
+        <circle cx="235" cy="52" r="7" fill="#f5b301"/>
+        <text x="248" y="49" font-size="10.5" fill="#7d6608">竇房結</text>
+        <circle cx="150" cy="131" r="9" fill="#f5b301"/>
+        <text x="96" y="118" font-size="10.5" fill="#7d6608">房室結</text>
+        <!-- normal His path (down) -->
+        <line x1="150" y1="140" x2="150" y2="205" stroke="#9aa7b4" stroke-width="2.4"/>
+        <!-- accessory pathway (right side, crossing groove) -->
+        <rect x="243" y="118" width="12" height="26" rx="4" fill="#e74c3c"/>
+        <text x="236" y="112" font-size="10" fill="#c0392b" text-anchor="middle">旁路</text>
+        <!-- big re-entry loop: down via AV node, across ventricle, up via accessory, across atria -->
+        <path d="M150 150 L150 196 L249 196 L249 138" fill="none" stroke="#e74c3c" stroke-width="2.6"/>
+        <path d="M249 138 L249 96 L150 96 L150 140" fill="none" stroke="#e74c3c" stroke-width="2.6" marker-end="url(#ah2)"/>
+      </svg>
+      <div class="fig-cap">心房與心室之間<b>天生多一條「旁路」</b>；電流從正常路徑下去、再沿旁路上來，繞成<b>大圈</b>（WPW 即屬此類）。</div>
+    </div>
+  </div>
+
+  <div class="section-title">電燒如何根治？</div>
+  <div class="svg-fig" style="max-width:420px;margin:0 auto;">
+    <div class="fig-title">③ 導管電燒 — 燒斷多餘的路徑</div>
+    <svg viewBox="0 0 360 300" role="img" aria-labelledby="fig3t fig3d">
+      <title id="fig3t">導管電燒治療 PSVT 示意圖</title>
+      <desc id="fig3d">導管由血管進入心臟，在多餘路徑處點狀燒灼，切斷迴路，心跳恢復正常。</desc>
+      <rect x="95" y="34" width="170" height="78" rx="26" fill="#eef2f7" stroke="#c7d2de"/>
+      <rect x="80" y="150" width="200" height="96" rx="32" fill="#eef2f7" stroke="#c7d2de"/>
+      <rect x="96" y="120" width="168" height="22" rx="8" fill="#fff" stroke="#dbe3ec"/>
+      <text x="175" y="60" text-anchor="middle" font-size="13" fill="#5a6b7d">心　房</text>
+      <text x="175" y="205" text-anchor="middle" font-size="13" fill="#5a6b7d">心　室</text>
+      <circle cx="150" cy="131" r="9" fill="#f5b301"/>
+      <!-- catheter entering from below via vein -->
+      <path d="M232 300 L236 250 L245 150" fill="none" stroke="#34495e" stroke-width="4" stroke-linecap="round"/>
+      <text x="250" y="285" font-size="10.5" fill="#5a6b7d">導管</text>
+      <!-- ablation burst at accessory-pathway site -->
+      <g transform="translate(249,140)">
+        <circle r="15" fill="#e74c3c" opacity="0.18"/>
+        <path d="M0 -13 L3.5 -3.5 L13 -3.5 L5 3 L8 13 L0 6 L-8 13 L-5 3 L-13 -3.5 L-3.5 -3.5 Z" fill="#e74c3c"/>
+      </g>
+      <!-- broken loop marks (dashed, greyed) with X -->
+      <path d="M150 150 L150 196 L249 196 L249 150" fill="none" stroke="#c3ccd6" stroke-width="2.4" stroke-dasharray="5 5"/>
+      <text x="249" y="150" font-size="20" fill="#e74c3c" text-anchor="middle" dy="6" font-weight="700">✕</text>
+      <!-- restored normal beat -->
+      <circle cx="235" cy="52" r="7" fill="#27ae60"/>
+      <text x="248" y="49" font-size="10.5" fill="#1e8449">恢復正常</text>
+    </svg>
+    <div class="fig-cap">導管經<b>血管（大腿或頸部）</b>進入心臟，在多餘路徑處<b>點狀燒灼</b>，切斷迴路；電流無法再繞圈，心跳恢復正常。局部麻醉、多數當天或隔天即可返家。</div>
+  </div>
+
+  <div class="section-title">PSVT 電燒重點</div>
+  <div class="keycard-grid">
+    <div class="keycard"><div class="kc-num">&gt;95%</div><div class="kc-lbl">單次成功率</div></div>
+    <div class="keycard"><div class="kc-num">低</div><div class="kc-lbl">併發症風險</div></div>
+    <div class="keycard"><div class="kc-num">局部</div><div class="kc-lbl">麻醉方式</div></div>
+    <div class="keycard"><div class="kc-num">多可根治</div><div class="kc-lbl">通常免長期吃藥</div></div>
+  </div>
+  <div class="info-box" style="margin-top:14px">
+    <strong>ℹ️ 給病人與家屬</strong>
+    以上為一般衛教說明。實際適應症、成功率與風險會依個人心律不整型態與心臟狀況而不同，請以醫療團隊當面說明為準。
+  </div>
+
 </div>
 
 <!-- TAB 1: Overview -->
