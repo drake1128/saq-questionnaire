@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>心悸還是心絞痛？門診自我分辨問卷</title>
+<meta name="description" content="門診可當場填寫的簡短問卷，幫助病人分辨自身症狀比較偏向『心悸（感覺到心臟在跳）』或『心絞痛（心肌缺氧的悶壓痛）』，含紅旗安全提醒。台大醫院新竹分院心血管中心衛教。">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Microsoft JhengHei", "微軟正黑體", "PingFang TC", "Noto Sans TC", Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+    line-height: 1.65;
+    color: #1a1a1a;
+  }
+
+  .container {
+    max-width: 920px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 12px 44px rgba(0,0,0,0.22);
+    overflow: hidden;
+  }
+
+  /* ---------- Header ---------- */
+  .header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    padding: 32px 30px 26px;
+    text-align: center;
+  }
+  .header .kicker {
+    letter-spacing: .35em;
+    font-size: 14px;
+    opacity: .9;
+    margin-bottom: 8px;
+    padding-left: .35em;
+  }
+  .header h1 { font-size: 27px; margin-bottom: 10px; line-height: 1.35; }
+  .header p { font-size: 15px; opacity: .92; max-width: 640px; margin: 0 auto; }
+
+  .content { padding: 26px 30px 34px; }
+
+  /* ---------- Intro / disclaimer ---------- */
+  .intro {
+    background: #eef1ff;
+    border-left: 5px solid #667eea;
+    padding: 16px 18px;
+    border-radius: 8px;
+    margin-bottom: 22px;
+    font-size: 15px;
+  }
+  .intro b { color: #4b3f9e; }
+
+  .disclaimer {
+    background: #fff8e6;
+    border: 1px solid #f0d98a;
+    border-left: 5px solid #e0a800;
+    padding: 13px 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    font-size: 13.5px;
+    color: #7a5b00;
+  }
+
+  /* ---------- Patient info ---------- */
+  .patient-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    background: #f8f9fb;
+    padding: 18px;
+    border-radius: 10px;
+    margin-bottom: 26px;
+  }
+  .patient-info .fg { display: flex; flex-direction: column; }
+  .patient-info label { font-weight: 600; font-size: 13px; color: #555; margin-bottom: 5px; }
+  .patient-info input {
+    padding: 9px 10px; border: 2px solid #e2e4ee; border-radius: 6px; font-size: 14px;
+    font-family: inherit;
+  }
+  .patient-info input:focus { outline: none; border-color: #667eea; }
+
+  /* ---------- Sections ---------- */
+  .section {
+    background: #f8f9fb;
+    border: 1px solid #ececf4;
+    border-left: 5px solid #667eea;
+    border-radius: 10px;
+    padding: 22px 22px 8px;
+    margin-bottom: 22px;
+  }
+  .section.redflag { border-left-color: #d9342b; background: #fff5f4; border-color: #f3c9c5; }
+  .section-title {
+    display: flex; align-items: center; gap: 11px;
+    font-size: 19px; color: #4b3f9e; font-weight: 800; margin-bottom: 6px;
+  }
+  .section.redflag .section-title { color: #b21f16; }
+  .section-num {
+    background: #667eea; color: #fff; min-width: 32px; height: 32px;
+    border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700;
+  }
+  .section.redflag .section-num { background: #d9342b; }
+  .section-hint { font-size: 13.5px; color: #777; margin: 0 0 16px 43px; }
+
+  .q { margin-bottom: 18px; }
+  .q-text { font-weight: 700; color: #2a2a2a; margin-bottom: 11px; font-size: 15.5px; }
+  .q-text .en { font-weight: 500; color: #999; font-size: 13px; }
+
+  .opts { display: flex; flex-direction: column; gap: 9px; }
+  .opt {
+    display: flex; align-items: flex-start; gap: 11px;
+    padding: 12px 14px; background: #fff; border: 2px solid #e6e8f0;
+    border-radius: 9px; cursor: pointer; transition: all .18s; font-size: 15px;
+  }
+  .opt:hover { background: #f0f4ff; border-color: #a9b6f2; }
+  .opt input { margin-top: 3px; width: 19px; height: 19px; cursor: pointer; accent-color: #667eea; flex-shrink: 0; }
+  .opt.checked { background: #eef1ff; border-color: #667eea; }
+  .section.redflag .opt.checked { background: #ffe9e7; border-color: #d9342b; }
+  .section.redflag .opt input { accent-color: #d9342b; }
+  .opt span { flex: 1; }
+  .opt .lean { font-size: 11.5px; color: #9a9a9a; }
+
+  /* GAD scale */
+  .scale-row {
+    display: grid; grid-template-columns: 1fr repeat(4, 58px); gap: 6px;
+    align-items: center; padding: 11px 8px; background: #fff; border: 1px solid #e6e8f0;
+    border-radius: 9px; margin-bottom: 9px;
+  }
+  .scale-row.head { background: transparent; border: none; padding: 2px 8px; }
+  .scale-row.head span { font-size: 11.5px; color: #888; text-align: center; line-height: 1.25; }
+  .scale-row .lbl { font-size: 15px; font-weight: 600; }
+  .scale-cell { text-align: center; }
+  .scale-cell input { width: 20px; height: 20px; cursor: pointer; accent-color: #667eea; }
+
+  /* ---------- Buttons ---------- */
+  .btns { display: flex; gap: 14px; justify-content: center; margin: 30px 0 8px; flex-wrap: wrap; }
+  .btn {
+    padding: 14px 38px; border: none; border-radius: 9px; font-size: 16px; font-weight: 700;
+    cursor: pointer; font-family: inherit; transition: transform .1s, box-shadow .2s;
+  }
+  .btn-primary { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; box-shadow: 0 6px 16px rgba(102,126,234,.4); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 9px 22px rgba(102,126,234,.5); }
+  .btn-ghost { background: #eef0f6; color: #555; }
+  .btn-ghost:hover { background: #e2e5ee; }
+
+  /* ---------- Result ---------- */
+  .result { margin-top: 8px; scroll-margin-top: 16px; }
+  .result.hidden { display: none; }
+
+  .banner {
+    border-radius: 12px; padding: 22px 24px; margin-bottom: 18px; color: #fff;
+  }
+  .banner h2 { font-size: 22px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+  .banner p { font-size: 15.5px; opacity: .97; }
+  .banner ul { margin: 10px 0 0 20px; font-size: 15px; }
+  .banner li { margin-bottom: 5px; }
+
+  .banner.urgent   { background: linear-gradient(135deg, #d9342b, #a51b13); box-shadow: 0 8px 22px rgba(217,52,43,.4); }
+  .banner.angina   { background: linear-gradient(135deg, #e8863b, #cf5b1e); box-shadow: 0 8px 22px rgba(207,91,30,.35); }
+  .banner.palp     { background: linear-gradient(135deg, #2f9e78, #1f7d5e); box-shadow: 0 8px 22px rgba(31,125,94,.35); }
+
+  .note-card {
+    background: #eef4ff; border: 1px solid #cfe0ff; border-left: 5px solid #4a7ef0;
+    border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; font-size: 15px;
+  }
+  .note-card.anxiety { background: #f3eefd; border-color: #ddc9f7; border-left-color: #8a52d6; }
+  .note-card h3 { font-size: 16px; margin-bottom: 6px; color: #333; }
+
+  .breakdown {
+    background: #f8f9fb; border: 1px solid #ececf4; border-radius: 10px;
+    padding: 16px 18px; margin-bottom: 16px; font-size: 14px;
+  }
+  .breakdown h3 { font-size: 15px; color: #4b3f9e; margin-bottom: 10px; }
+  .breakdown .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .breakdown .bar-lbl { width: 130px; font-weight: 600; font-size: 13.5px; }
+  .breakdown .bar-track { flex: 1; background: #e6e8f0; border-radius: 20px; height: 16px; overflow: hidden; }
+  .breakdown .bar-fill { height: 100%; border-radius: 20px; transition: width .6s; }
+  .breakdown .bar-fill.palp { background: #2f9e78; }
+  .breakdown .bar-fill.angina { background: #e8863b; }
+  .breakdown .bar-val { width: 40px; text-align: right; font-size: 13px; color: #666; }
+
+  /* ---------- Comparison table ---------- */
+  .compare { margin: 30px 0 10px; }
+  .compare h2 { font-size: 20px; color: #4b3f9e; margin-bottom: 6px; text-align: center; }
+  .compare .sub { text-align: center; color: #888; font-size: 14px; margin-bottom: 16px; }
+  .compare-table { overflow-x: auto; }
+  table.cmp { width: 100%; border-collapse: collapse; min-width: 560px; }
+  table.cmp th, table.cmp td { padding: 12px 14px; border: 1px solid #e2e4ee; font-size: 14.5px; vertical-align: top; }
+  table.cmp thead th { color: #fff; font-size: 15px; text-align: center; }
+  table.cmp thead th.axis { background: #555; width: 20%; }
+  table.cmp thead th.palp { background: #2f9e78; }
+  table.cmp thead th.angina { background: #cf5b1e; }
+  table.cmp td.axis { background: #f4f5f8; font-weight: 700; color: #444; }
+  table.cmp tbody tr:nth-child(even) td:not(.axis) { background: #fafbfd; }
+
+  /* ---------- When to seek help ---------- */
+  .seek {
+    background: #fff5f4; border: 1px solid #f3c9c5; border-radius: 12px;
+    padding: 20px 22px; margin: 24px 0 8px;
+  }
+  .seek h2 { font-size: 18px; color: #b21f16; margin-bottom: 12px; display: flex; align-items: center; gap: 9px; }
+  .seek ul { margin-left: 20px; }
+  .seek li { margin-bottom: 7px; font-size: 15px; }
+
+  /* ---------- Footer ---------- */
+  .foot {
+    border-top: 2px solid #eee; margin-top: 28px; padding-top: 16px;
+    display: flex; justify-content: space-between; align-items: flex-end;
+    font-size: 13px; color: #888; flex-wrap: wrap; gap: 10px;
+  }
+  .foot .rt { text-align: right; font-weight: 600; color: #666; }
+
+  /* ---------- Share button ---------- */
+  .share-button { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+  .share-toggle { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); border: none; color: #fff; font-size: 1.4rem; cursor: pointer; box-shadow: 0 4px 15px rgba(102,126,234,0.45); transition: transform .3s; display: flex; align-items: center; justify-content: center; }
+  .share-toggle:hover { transform: scale(1.1); }
+  .share-menu { position: absolute; top: 60px; right: 0; background: #fff; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 20px; min-width: 260px; display: none; }
+  .share-menu.active { display: block; }
+  .share-menu h4 { color: #1e293b; margin: 0 0 14px; font-size: 1rem; }
+  .qr-container { background: #f8fafc; border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 15px; }
+  .qr-container img { max-width: 150px; border-radius: 8px; }
+  .qr-container p { font-size: .75rem; color: #64748b; margin: 8px 0 0; }
+  .share-list { display: flex; flex-direction: column; gap: 10px; }
+  .share-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: none; border-radius: 10px; cursor: pointer; font-size: .95rem; font-weight: 600; transition: transform .2s; text-decoration: none; color: #fff; font-family: inherit; }
+  .share-link.line { background: #00B900; } .share-link.email { background: #EA4335; } .share-link.copy { background: #667eea; }
+  .share-link:hover { transform: translateX(5px); }
+  .share-close { position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; width: 32px; height: 32px; }
+
+  /* ---------- Print ---------- */
+  @media print {
+    body { background: #fff; padding: 0; }
+    .share-button { display: none !important; }
+    .container { box-shadow: none; border-radius: 0; max-width: 100%; }
+    .header { background: #4b3f9e !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .btns, .intro { display: none !important; }
+    .banner, .breakdown .bar-fill, table.cmp thead th, .section-num { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .section, .seek, .note-card, .breakdown { break-inside: avoid; }
+  }
+
+  @media (max-width: 560px) {
+    .header h1 { font-size: 22px; }
+    .content { padding: 20px 16px 26px; }
+    .section { padding: 18px 15px 6px; }
+    .section-hint { margin-left: 0; }
+    .scale-row { grid-template-columns: 1fr repeat(4, 40px); }
+  }
+</style>
+</head>
+<body>
+<div class="share-button">
+  <button class="share-toggle" onclick="toggleShareMenu()" title="分享 Share" aria-label="分享">🔗</button>
+  <div class="share-menu" id="shareMenu">
+    <button class="share-close" onclick="toggleShareMenu()" aria-label="關閉">&times;</button>
+    <h4>分享這份問卷</h4>
+    <div class="qr-container">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://drake1128.github.io/saq-questionnaire/palpitation-vs-angina-questionnaire.html" alt="QR Code" width="150" height="150" loading="lazy">
+      <p>掃描 QR Code 開啟</p>
+    </div>
+    <div class="share-list">
+      <a class="share-link line" href="https://social-plugins.line.me/lineit/share?url=https://drake1128.github.io/saq-questionnaire/palpitation-vs-angina-questionnaire.html" target="_blank" rel="noopener">LINE 分享</a>
+      <a class="share-link email" href="mailto:?subject=%E5%BF%83%E6%82%B8%E9%82%84%E6%98%AF%E5%BF%83%E7%B5%9E%E7%97%9B%EF%BC%9F%E9%96%80%E8%A8%BA%E8%87%AA%E6%88%91%E5%88%86%E8%BE%A8%E5%95%8F%E5%8D%B7&body=https://drake1128.github.io/saq-questionnaire/palpitation-vs-angina-questionnaire.html">Email 分享</a>
+      <button class="share-link copy" onclick="navigator.clipboard.writeText('https://drake1128.github.io/saq-questionnaire/palpitation-vs-angina-questionnaire.html').then(()=>{this.textContent='已複製連結！';})">複製連結</button>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="header">
+    <div class="kicker">心 血 管 中 心 · 病 人 衛 教</div>
+    <h1>心悸還是心絞痛？<br>門診自我分辨問卷</h1>
+    <p>「感覺到心臟在跳」的心悸，和「心臟悶壓痛」的心絞痛，是兩件不一樣的事。<br>請依你最近的實際感覺勾選，幫助你和醫師一起釐清。</p>
+  </div>
+
+  <div class="content">
+    <div class="intro">
+      <b>為什麼要填這份問卷？</b> 門診常遇到病人把「心悸」誤以為是「心絞痛」而非常擔心。
+      研究顯示，因心悸就醫的人當中，約 <b>4 成</b>與心臟節律有關、約 <b>3 成</b>其實與焦慮／情緒有關，
+      整體短期預後大多良好。這份問卷幫你初步分辨方向，但<b>最後仍由醫師綜合判斷</b>。
+    </div>
+
+    <div class="patient-info">
+      <div class="fg"><label>姓名（選填）</label><input type="text" id="p-name" placeholder="王小明"></div>
+      <div class="fg"><label>病歷號（選填）</label><input type="text" id="p-id" placeholder="—"></div>
+      <div class="fg"><label>填寫日期</label><input type="date" id="p-date"></div>
+    </div>
+
+    <!-- ============ A. 感覺像什麼 ============ -->
+    <div class="section" data-sec="A">
+      <div class="section-title"><span class="section-num">A</span>你的不適「感覺」像什麼？</div>
+      <p class="section-hint">每題請選一個最接近的答案。</p>
+
+      <div class="q" data-q="a1">
+        <div class="q-text">A1. 那種不舒服的「性質」比較像？</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="a1" value="palp"><span>心跳很快／很用力／漏一拍／亂跳／撲通撲通，<b>感覺得到心臟在跳</b></span></label>
+          <label class="opt"><input type="radio" name="a1" value="angina"><span>悶悶的／緊緊的／壓迫感／像大石頭壓著／喘不過氣的緊</span></label>
+          <label class="opt"><input type="radio" name="a1" value="unsure"><span>說不太上來／兩者都有一點</span></label>
+        </div>
+      </div>
+
+      <div class="q" data-q="a2">
+        <div class="q-text">A2. 不舒服的「位置」比較像？</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="a2" value="palp"><span>感覺「心臟在胸口跳動」，有時<b>喉嚨或脖子</b>也感覺到跳</span></label>
+          <label class="opt"><input type="radio" name="a2" value="angina"><span>胸口正中央一整片悶壓，可能<b>延伸到左肩、手臂、下巴或背部</b></span></label>
+          <label class="opt"><input type="radio" name="a2" value="unsure"><span>不確定／位置不固定</span></label>
+        </div>
+      </div>
+
+      <div class="q" data-q="a3">
+        <div class="q-text">A3. 它「怎麼開始、怎麼結束」？</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="a3" value="palp"><span><b>突然</b>開始、<b>突然</b>停止，像開關一樣</span></label>
+          <label class="opt"><input type="radio" name="a3" value="angina"><span>在<b>用力活動時漸漸加重</b>，停下來休息幾分鐘會緩解</span></label>
+          <label class="opt"><input type="radio" name="a3" value="anxiety"><span>常在<b>緊張、擔心、壓力大</b>的時候慢慢出現</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ B. 心絞痛三特徵 ============ -->
+    <div class="section" data-sec="B">
+      <div class="section-title"><span class="section-num">B</span>心絞痛的三個典型特徵 <span class="en" style="font-weight:500;color:#999;font-size:13px;">Typical angina</span></div>
+      <p class="section-hint">這三題是醫學上判斷「典型心絞痛」的標準問題，請據實回答「是」或「否」。</p>
+
+      <div class="q" data-q="b1">
+        <div class="q-text">B1. 不適位置在<b>胸口正中央／胸骨後方</b>，是悶、壓、緊的感覺（不是尖銳刺痛，也不是「心跳」的感覺）？</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="b1" value="yes"><span>是</span></label>
+          <label class="opt"><input type="radio" name="b1" value="no"><span>否</span></label>
+        </div>
+      </div>
+
+      <div class="q" data-q="b2">
+        <div class="q-text">B2. 這種不適會被<b>用力活動</b>（爬樓梯、快走、搬重物）<b>或情緒激動</b>誘發出來？</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="b2" value="yes"><span>是</span></label>
+          <label class="opt"><input type="radio" name="b2" value="no"><span>否</span></label>
+        </div>
+      </div>
+
+      <div class="q" data-q="b3">
+        <div class="q-text">B3. 停下來<b>休息 3～5 分鐘</b>，或含<b>舌下硝化甘油（耐絞寧）</b>之後，不適會緩解？</div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="b3" value="yes"><span>是</span></label>
+          <label class="opt"><input type="radio" name="b3" value="no"><span>否／沒用過</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ C. 誘發情境 ============ -->
+    <div class="section" data-sec="C">
+      <div class="section-title"><span class="section-num">C</span>常見的誘發情境</div>
+      <p class="section-hint">符合的請打勾（可複選）。</p>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" name="c" value="rest"><span>症狀常在<b>休息、放空、躺著、夜深人靜</b>的時候出現</span></label>
+        <label class="opt"><input type="checkbox" name="c" value="stim"><span>跟<b>咖啡、濃茶、能量飲料、睡眠不足、感冒藥</b>有關</span></label>
+        <label class="opt"><input type="checkbox" name="c" value="panic"><span>發作時會合併<b>喘不過氣、手腳發麻、快要昏倒、極度害怕</b>的恐慌感覺</span></label>
+      </div>
+    </div>
+
+    <!-- ============ D. GAD-2 ============ -->
+    <div class="section" data-sec="D">
+      <div class="section-title"><span class="section-num">D</span>最近的情緒狀態 <span class="en" style="font-weight:500;color:#999;font-size:13px;">GAD-2</span></div>
+      <p class="section-hint">過去兩週，以下狀況困擾你的頻率？</p>
+      <div class="scale-row head">
+        <span></span><span>完全沒有<br>0</span><span>幾天<br>1</span><span>一半以上天數<br>2</span><span>幾乎每天<br>3</span>
+      </div>
+      <div class="scale-row">
+        <span class="lbl">D1. 感覺緊張、焦慮或煩躁</span>
+        <span class="scale-cell"><input type="radio" name="d1" value="0"></span>
+        <span class="scale-cell"><input type="radio" name="d1" value="1"></span>
+        <span class="scale-cell"><input type="radio" name="d1" value="2"></span>
+        <span class="scale-cell"><input type="radio" name="d1" value="3"></span>
+      </div>
+      <div class="scale-row">
+        <span class="lbl">D2. 無法停止或控制擔憂</span>
+        <span class="scale-cell"><input type="radio" name="d2" value="0"></span>
+        <span class="scale-cell"><input type="radio" name="d2" value="1"></span>
+        <span class="scale-cell"><input type="radio" name="d2" value="2"></span>
+        <span class="scale-cell"><input type="radio" name="d2" value="3"></span>
+      </div>
+    </div>
+
+    <!-- ============ E. 紅旗 ============ -->
+    <div class="section redflag" data-sec="E">
+      <div class="section-title"><span class="section-num">!</span>🚩 危險警訊（紅旗症狀）</div>
+      <p class="section-hint">以下任何一項符合，請務必勾選並主動告訴醫師——這些情況不論前面結果如何，都可能需要進一步心臟檢查。</p>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" name="rf" value="exertional"><span>胸悶／胸痛<b>在用力時</b>發作、休息才緩解，而且<b>最近越來越容易發作</b></span></label>
+        <label class="opt"><input type="checkbox" name="rf" value="assoc"><span>心悸或胸悶時，合併<b>胸痛、冒冷汗、噁心、喘不過氣、快昏倒</b>，或曾經<b>昏倒</b></span></label>
+        <label class="opt"><input type="checkbox" name="rf" value="sustained"><span>心跳<b>持續不停超過 30 分鐘</b>，非常快而且規律，無法自行停下來</span></label>
+        <label class="opt"><input type="checkbox" name="rf" value="exsyncope"><span><b>運動當中或運動後立刻昏倒</b></span></label>
+        <label class="opt"><input type="checkbox" name="rf" value="history"><span>本身有<b>心臟病、心衰竭、心肌梗塞</b>病史，或<b>家族有人年輕猝死</b></span></label>
+      </div>
+    </div>
+
+    <div class="btns">
+      <button class="btn btn-primary" id="btn-calc">查看結果</button>
+      <button class="btn btn-ghost" id="btn-print">列印 / 存 PDF</button>
+      <button class="btn btn-ghost" id="btn-reset">重新填寫</button>
+    </div>
+
+    <div class="result hidden" id="result"></div>
+
+    <!-- ============ 對照表 ============ -->
+    <div class="compare">
+      <h2>心悸 ↔ 心絞痛 快速對照</h2>
+      <div class="sub">兩者是不同的問題，處理方向也不同</div>
+      <div class="compare-table">
+        <table class="cmp">
+          <thead>
+            <tr>
+              <th class="axis">比較</th>
+              <th class="palp">心悸 Palpitation</th>
+              <th class="angina">心絞痛 Angina</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="axis">感覺</td><td>感覺到心臟在跳：快、用力、漏拍、亂跳</td><td>悶、壓、緊、沉重，像被石頭壓住</td></tr>
+            <tr><td class="axis">位置</td><td>胸口跳動感，有時喉嚨、脖子也感覺到</td><td>胸口正中央，常延伸到左肩、手臂、下巴、背</td></tr>
+            <tr><td class="axis">誘發</td><td>休息、夜間、緊張、咖啡因、睡眠不足</td><td>用力活動、爬坡、情緒激動時發作</td></tr>
+            <tr><td class="axis">緩解</td><td>常突然自己停止，像開關</td><td>休息 3～5 分鐘或含硝化甘油後緩解</td></tr>
+            <tr><td class="axis">常見背景</td><td>心律不整、自律神經、焦慮／恐慌</td><td>冠狀動脈狹窄、心肌缺氧</td></tr>
+            <tr><td class="axis">初步檢查</td><td>心電圖、24 小時 Holter、事件記錄器、抽血</td><td>心電圖、運動心電圖、心臟影像、必要時心導管</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ============ 何時就醫 ============ -->
+    <div class="seek">
+      <h2>🚨 出現以下情況，請立即就醫</h2>
+      <ul>
+        <li>胸痛持續超過 <b>15～20 分鐘</b>不緩解，或合併冒冷汗、噁心、呼吸困難。</li>
+        <li>心悸時<b>意識不清、眼前發黑、昏倒</b>，或運動中／後立刻昏倒。</li>
+        <li>心跳<b>又快又亂或持續飛快</b>，且伴隨胸痛或喘不過氣。</li>
+        <li>本來偶發的胸悶，<b>近期變得更頻繁、更容易被輕微活動誘發</b>。</li>
+      </ul>
+    </div>
+
+    <div class="foot">
+      <div>
+        本問卷為<b>醫病溝通輔助工具，不能取代醫師的診斷與檢查</b>。<br>
+        依據：Weber &amp; Kapoor, Am J Med 1996；典型心絞痛三特徵 (Diamond-Forrester)；GAD-2 (Kroenke 2007)。
+      </div>
+      <div class="rt">台大醫院新竹分院<br>心血管中心</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleShareMenu() { document.getElementById('shareMenu').classList.toggle('active'); }
+</script>
+<script>
+(function () {
+  "use strict";
+
+  // 預設今天日期
+  var dateEl = document.getElementById("p-date");
+  try { dateEl.value = new Date().toISOString().slice(0, 10); } catch (e) {}
+
+  // 勾選視覺回饋
+  document.querySelectorAll(".opt input").forEach(function (input) {
+    input.addEventListener("change", function () {
+      var opt = input.closest(".opt");
+      if (input.type === "radio") {
+        var group = input.closest(".opts") || input.closest(".section");
+        group.querySelectorAll('.opt input[name="' + input.name + '"]').forEach(function (r) {
+          r.closest(".opt").classList.remove("checked");
+        });
+      }
+      if (input.checked) opt.classList.add("checked");
+      else opt.classList.remove("checked");
+    });
+  });
+
+  function val(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function checkedValues(name) {
+    return Array.prototype.map.call(
+      document.querySelectorAll('input[name="' + name + '"]:checked'),
+      function (el) { return el.value; }
+    );
+  }
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+
+  document.getElementById("btn-calc").addEventListener("click", function () {
+    // ---- 收集 ----
+    var a1 = val("a1"), a2 = val("a2"), a3 = val("a3");
+    var b = [val("b1"), val("b2"), val("b3")];
+    var c = checkedValues("c");
+    var d1 = val("d1"), d2 = val("d2");
+    var rf = checkedValues("rf");
+
+    // 至少要有基本作答
+    var answeredCore = a1 && a2 && a3 && b[0] && b[1] && b[2];
+    if (!answeredCore) {
+      alert("請先完成 A 區（3 題）與 B 區（3 題）再查看結果。");
+      return;
+    }
+
+    // ---- 計分 ----
+    // B 區典型心絞痛題數（0–3）
+    var anginaTypical = b.filter(function (x) { return x === "yes"; }).length;
+
+    // 心絞痛傾向：B 區典型題（每題權重 2）＋ A 區偏心絞痛選項
+    var anginaScore = anginaTypical * 2;
+    if (a1 === "angina") anginaScore += 2;
+    if (a2 === "angina") anginaScore += 2;
+    if (a3 === "angina") anginaScore += 2;
+
+    // 心悸傾向：A 區偏心悸 ＋ C 區情境（休息、刺激物）
+    var palpScore = 0;
+    if (a1 === "palp") palpScore += 2;
+    if (a2 === "palp") palpScore += 2;
+    if (a3 === "palp") palpScore += 2;
+    if (c.indexOf("rest") > -1) palpScore += 1;
+    if (c.indexOf("stim") > -1) palpScore += 1;
+
+    // 焦慮方向
+    var gad = (parseInt(d1 || "0", 10)) + (parseInt(d2 || "0", 10));
+    var anxietyFlag = gad >= 3 || a3 === "anxiety" || c.indexOf("panic") > -1;
+
+    // 心絞痛特徵是否明顯（安全導向：寧可提醒）
+    var anginaFeature = anginaTypical >= 2 || (a1 === "angina" && a2 === "angina");
+
+    var hasRedFlag = rf.length > 0;
+
+    // ---- 產生結果 HTML ----
+    var html = "";
+
+    // 1) 紅旗永遠置頂且不可被覆蓋
+    if (hasRedFlag) {
+      html += '<div class="banner urgent"><h2>🚩 請務必告訴醫師</h2>' +
+        '<p>你勾選了下列<strong>危險警訊</strong>。不論下面的分辨結果如何，這些情況都可能需要<strong>進一步心臟檢查或儘速就醫</strong>，請主動讓醫師知道：</p><ul>';
+      var rfText = {
+        exertional: "用力時發作、且近期越來越頻繁的胸悶／胸痛",
+        assoc: "心悸／胸悶合併胸痛、冷汗、喘、快昏倒或曾昏倒",
+        sustained: "持續超過 30 分鐘、又快又規律無法自停的心跳",
+        exsyncope: "運動中或運動後立刻昏倒",
+        history: "心臟病／心衰竭／心肌梗塞病史，或家族年輕猝死"
+      };
+      rf.forEach(function (k) { html += "<li>" + esc(rfText[k]) + "</li>"; });
+      html += "</ul></div>";
+    }
+
+    // 2) 主要傾向
+    if (anginaFeature) {
+      html += '<div class="banner angina"><h2>⚠️ 你的描述包含「心絞痛」特徵</h2>' +
+        '<p>你的症狀符合 <strong>' + anginaTypical + '／3</strong> 項典型心絞痛特徵' +
+        (a1 === "angina" || a2 === "angina" ? '，且感覺／位置也偏向悶壓型' : '') +
+        '。這<strong>不代表一定是心臟病</strong>，但建議接受<strong>進一步心臟評估</strong>（心電圖、運動心電圖或心臟影像），請與醫師討論。</p></div>';
+    } else {
+      html += '<div class="banner palp"><h2>💚 你的描述比較偏向「心悸」</h2>' +
+        '<p>你的感覺比較像是「<strong>感覺到心臟在跳</strong>」，而不是典型的心絞痛（心肌缺氧的悶壓痛）。' +
+        '因心悸就醫的人，短期預後大多良好；下一步通常是安排<strong>心電圖，必要時 24 小時 Holter 或事件記錄器</strong>來記錄發作，' +
+        '並抽血排除貧血或甲狀腺問題。請與醫師確認後續安排。</p></div>';
+    }
+
+    // 3) 焦慮方向提示
+    if (anxietyFlag) {
+      html += '<div class="note-card anxiety"><h3>🧠 情緒／焦慮方向提示</h3>' +
+        '<p>你的作答顯示症狀可能和<strong>緊張、焦慮或恐慌</strong>有關' +
+        (gad >= 3 ? '（情緒量表 ' + gad + '／6，達提示標準）' : '') +
+        '。這在心悸病人中相當常見，<strong>並不代表你的不舒服是「想像出來的」</strong>——身體確實會有感覺。' +
+        '若近期常感到焦慮擔憂，可以主動和醫師聊聊，必要時進一步評估與協助。</p></div>';
+    }
+
+    // 4) 透明化分數（供醫病對話）
+    var maxBar = Math.max(anginaScore, palpScore, 10);
+    html += '<div class="breakdown"><h3>作答傾向（供你和醫師參考）</h3>' +
+      '<div class="bar-row"><div class="bar-lbl">偏向心悸</div>' +
+      '<div class="bar-track"><div class="bar-fill palp" style="width:' + Math.round(palpScore / maxBar * 100) + '%"></div></div>' +
+      '<div class="bar-val">' + palpScore + '</div></div>' +
+      '<div class="bar-row"><div class="bar-lbl">偏向心絞痛</div>' +
+      '<div class="bar-track"><div class="bar-fill angina" style="width:' + Math.round(anginaScore / maxBar * 100) + '%"></div></div>' +
+      '<div class="bar-val">' + anginaScore + '</div></div>' +
+      '<p style="margin-top:10px;font-size:13px;color:#888;">典型心絞痛特徵 ' + anginaTypical + '／3　·　情緒量表 GAD-2 ' + gad + '／6' +
+      '　·　此為溝通輔助，非診斷。</p></div>';
+
+    var box = document.getElementById("result");
+    box.innerHTML = html;
+    box.classList.remove("hidden");
+    box.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  document.getElementById("btn-print").addEventListener("click", function () { window.print(); });
+
+  document.getElementById("btn-reset").addEventListener("click", function () {
+    document.querySelectorAll(".opt input").forEach(function (i) {
+      i.checked = false; i.closest(".opt").classList.remove("checked");
+    });
+    document.querySelectorAll(".scale-cell input").forEach(function (i) { i.checked = false; });
+    var box = document.getElementById("result");
+    box.classList.add("hidden"); box.innerHTML = "";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+})();
+</script>
+</body>
+</html>
