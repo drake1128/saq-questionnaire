@@ -282,7 +282,7 @@
 - `troponin-lecture.html` (19 icons)
 - `hemodynamic-shock-teaching-app.html` (16 icons)
 - `heart-failure-ward-app.html` (12 icons)
-- `cath-wound-care-app.html` (16 icons)
+- `cath-wound-care-app.html` (16 icons)（2026-07-05 已併入 `cath-handoff-teaching-app.html`，原檔已刪除）
 - `cath-handoff-teaching-app.html` (12 icons)
 - `carotid-stenting-app.html` (16 icons)
 - `cardiogenic-shock-teaching.html` (6 icons)

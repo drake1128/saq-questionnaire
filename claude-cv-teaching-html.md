@@ -1184,7 +1184,7 @@ Update the `<span class="category-count">` element in the corresponding section 
 ```
 
 ### Examples
-- `cath-wound-care-app.html`
+- `cath-handoff-teaching-app.html`
 - `warfarin-dosing-calculator.html`
 - `af-ward-teaching-app.html`
 - `tee-interpretation-guide.html`

@@ -423,7 +423,7 @@ Link: `https://link.springer.com/article/10.1007/s00134-024-07659-2`
 `[topic]-[type]-app.html`
 
 Examples:
-- `cath-wound-care-app.html`
+- `cath-handoff-teaching-app.html`
 - `warfarin-dosing-calculator.html`
 - `tee-interpretation-guide.html`
 

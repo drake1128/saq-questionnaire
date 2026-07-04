@@ -19,7 +19,6 @@ const ACHIEVEMENT_CONFIG = {
     // Category mapping for pages
     pageCategories: {
         // Cath Lab
-        "cath-wound-care-app.html": "cath",
         "cath-handoff-teaching-app.html": "cath",
         "cin-prevention-app.html": "cath",
         "pci-complications-emergency.html": "cath",
