@@ -20,6 +20,7 @@ const ACHIEVEMENT_CONFIG = {
     pageCategories: {
         // Cath Lab
         "cath-handoff-teaching-app.html": "cath",
+        "cath-nursing-exam-100.html": "cath",
         "cin-prevention-app.html": "cath",
         "pci-complications-emergency.html": "cath",
         // Ward & ICU

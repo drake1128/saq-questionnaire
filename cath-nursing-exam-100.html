@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>心導管室護理監測與病人評估｜100 題測驗</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root{
+    --primary:#1e3a5f; --primary-light:#2d5a87; --accent:#e74c3c;
+    --success:#27ae60; --warn:#f39c12; --info:#3498db;
+    --bg:#f4f6f9; --card:#ffffff; --text:#2c3e50; --muted:#7f8c8d;
+    --shadow:0 4px 20px rgba(0,0,0,.08);
+  }
+  body{ font-family:'Noto Sans TC',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.65; -webkit-font-smoothing:antialiased; }
+  .wrap{ max-width:760px; margin:0 auto; min-height:100vh; padding-bottom:48px; }
+  header{ background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);
+    color:#fff; padding:30px 22px 26px; border-radius:0 0 26px 26px; text-align:center; }
+  header h1{ font-size:21px; font-weight:700; margin-bottom:6px; }
+  header .sub{ font-size:13px; opacity:.85; }
+  .content{ padding:20px 16px 0; }
+
+  /* progress */
+  .progress-info{ display:flex; justify-content:space-between; align-items:center; font-size:13px; margin-bottom:8px; color:var(--muted); }
+  .progress-info b{ color:var(--primary); }
+  .bar{ height:8px; background:#e5e9f0; border-radius:5px; overflow:hidden; margin-bottom:20px; }
+  .bar > div{ height:100%; width:0; background:linear-gradient(90deg,#667eea,#764ba2); transition:width .3s ease; }
+
+  .cat-chip{ display:inline-block; font-size:12px; font-weight:600; color:#fff; background:var(--info);
+    padding:3px 12px; border-radius:20px; margin-bottom:12px; }
+
+  .qcard{ background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:22px 20px; margin-bottom:16px; }
+  .qtext{ font-size:17px; font-weight:600; line-height:1.7; }
+  .qtext .num{ color:var(--info); margin-right:6px; }
+
+  .opts{ margin-top:16px; display:flex; flex-direction:column; gap:10px; }
+  .opt{ display:flex; align-items:flex-start; gap:12px; width:100%; text-align:left;
+    background:#fff; border:2px solid #e5e9f0; border-radius:12px; padding:14px 16px;
+    font-size:15px; color:var(--text); cursor:pointer; transition:all .15s ease; font-family:inherit; }
+  .opt:hover:not(:disabled){ border-color:#a9b4c8; background:#fafbff; }
+  .opt:disabled{ cursor:default; }
+  .opt .mark{ flex-shrink:0; width:28px; height:28px; border-radius:50%; background:#eef1f6; color:#6b7280;
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; }
+  .opt.correct{ border-color:var(--success); background:#e9f9ef; }
+  .opt.correct .mark{ background:var(--success); color:#fff; }
+  .opt.wrong{ border-color:var(--accent); background:#fdecea; }
+  .opt.wrong .mark{ background:var(--accent); color:#fff; }
+
+  .explain{ margin-top:16px; border-radius:12px; padding:16px 18px; font-size:14px; line-height:1.7;
+    border-left:4px solid var(--info); background:#eef6fc; animation:fade .3s ease; }
+  .explain.ok{ border-left-color:var(--success); background:#e9f9ef; }
+  .explain.no{ border-left-color:var(--warn); background:#fef7e6; }
+  .explain .verdict{ font-weight:700; margin-bottom:6px; }
+  .explain .src{ margin-top:8px; font-size:12.5px; color:var(--muted); }
+  @keyframes fade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .nav{ display:flex; justify-content:flex-end; }
+  .btn{ font-family:inherit; border:none; cursor:pointer; border-radius:12px; font-weight:600;
+    font-size:16px; padding:14px 26px; color:#fff; background:linear-gradient(135deg,#667eea,#764ba2);
+    display:inline-flex; align-items:center; gap:8px; transition:transform .15s ease, opacity .15s; }
+  .btn:hover{ transform:translateY(-1px); }
+  .btn.secondary{ background:#eef1f6; color:var(--primary); }
+
+  /* results */
+  .result-card{ background:var(--card); border-radius:20px; box-shadow:var(--shadow); overflow:hidden; margin-bottom:18px; }
+  .score-hero{ padding:34px 20px; text-align:center; color:#fff; }
+  .score-hero .emoji{ font-size:54px; margin-bottom:8px; }
+  .score-hero .big{ font-size:46px; font-weight:800; line-height:1; }
+  .score-hero .pct{ font-size:17px; margin-top:10px; opacity:.95; }
+  .score-hero .grade{ display:inline-block; margin-top:12px; padding:5px 16px; border-radius:20px;
+    background:rgba(255,255,255,.2); font-size:14px; font-weight:600; }
+  .breakdown{ padding:18px 20px; }
+  .breakdown h3{ font-size:15px; margin-bottom:12px; color:var(--primary); }
+  .brow{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .brow .lbl{ flex:0 0 120px; font-size:13px; }
+  .brow .track{ flex:1; height:16px; background:#eef1f6; border-radius:8px; overflow:hidden; }
+  .brow .track > div{ height:100%; border-radius:8px; }
+  .brow .val{ flex:0 0 52px; text-align:right; font-size:13px; font-weight:600; color:var(--muted); }
+  .meta-line{ text-align:center; font-size:12px; color:var(--muted); margin:6px 0 18px; }
+  .actions{ display:flex; gap:12px; }
+  .actions .btn{ flex:1; justify-content:center; }
+  .tip{ background:#fff8e6; border:1px solid #f6d992; border-radius:12px; padding:12px 16px;
+    font-size:13px; color:#8a6d1a; margin-bottom:16px; }
+
+  @media print{
+    body{ background:#fff; }
+    .no-print{ display:none !important; }
+    .result-card{ box-shadow:none; border:1px solid #ddd; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>心導管室護理監測與病人評估</h1>
+    <div class="sub">100 題自我測驗 ｜ 逐題詳解 ｜ 依實證文獻出題</div>
+  </header>
+  <div class="content" id="app"></div>
+</div>
+
+<script>
+/* ---------- 題庫（選項為原始順序，c = 正確選項的原始索引）---------- */
+const CATS = {
+  pre:  { name:'術前評估與準備', color:'#3b82f6' },
+  sed:  { name:'鎮靜與監測',     color:'#059669' },
+  intra:{ name:'術中監測',       color:'#0891b2' },
+  fem:  { name:'股動脈止血與術後', color:'#f59e0b' },
+  rad:  { name:'橈動脈照護',     color:'#8b5cf6' },
+  comp: { name:'血管併發症辨識', color:'#ef4444' },
+  cin:  { name:'CIN 預防與出院', color:'#16a085' }
+};
+
+const QUESTIONS = [
+/* 一、術前評估與準備 Q1-15 */
+{cat:'pre',q:'病人自述先前注射顯影劑後曾全身蕁麻疹。擇期心導管前的標準預防用藥為？',
+ o:['術前單次 hydrocortisone 100 mg IV 即可','Prednisone 50 mg 口服於術前 13、7、1 小時各一次，加術前 1 小時 diphenhydramine 50 mg','術前 1 小時口服抗組織胺即可','有過敏史即絕對禁忌，不可施行'],c:1,
+ e:'Greenberger 預防方案為國際標準；單次類固醇於術前 1 小時給予效果不足（需至少 4–6 小時起效）。',s:'SCAI 2021（PMID 33909349）'},
+{cat:'pre',q:'2024 年 SCOFF 隨機試驗比較導管室處置前「禁食 vs 不禁食」，主要結論為？',
+ o:['不禁食組吸入性肺炎顯著增加','不禁食達非劣性，且病人滿意度較高','不禁食組低血糖較多','兩組皆須延後手術'],c:1,
+ e:'SCOFF 顯示不禁食在複合安全終點達非劣性，未增加嘔吐或吸入事件，滿意度改善。',s:'SCOFF trial（PMID 39217604）'},
+{cat:'pre',q:'綜合 TONIC、CALORI、CORO-NF 等隨機試驗與統合分析，目前對擇期心導管術前禁食的最合理敘述為？',
+ o:['仍須午夜後完全禁食','允許進食不增加不良事件，傳統嚴格禁食缺乏實證支持','只有糖尿病病人需要禁食','禁食可降低顯影劑腎病變'],c:1,
+ e:'多項 RCT 與統合分析一致顯示不禁食未增加嘔吐、吸入或低血壓，且改善舒適度與滿意度。',s:'TONIC/CALORI/統合分析（PMID 38811102、39807233、40401623）'},
+{cat:'pre',q:'若單位採「術前 2 小時可清流質」政策，下列何者不屬於清流質？',
+ o:['白開水','無渣果汁','加奶茶飲','運動飲料'],c:2,
+ e:'含奶飲品排空時間近似固體，不屬清流質；清流質為透光無渣液體。',s:'麻醉禁食指引；SCAI 2021（PMID 33909349）'},
+{cat:'pre',q:'術前評估發現 eGFR 28 mL/min/1.73m²，最重要的護理行動為？',
+ o:['照常準備，無需特別處理','提醒團隊此為 CA-AKI 高風險，確認水化計畫與顯影劑減量策略','自行給予 NAC','建議取消手術'],c:1,
+ e:'eGFR <30 為顯影劑急性腎損傷最強危險因子，須主動確認預防措施（等張輸液、最小顯影劑量）。',s:'AHA 2021（PMID 34187171）；Silver（PMID 26316642）'},
+{cat:'pre',q:'服用 metformin 的病人接受顯影劑檢查，停藥的主要理由為？',
+ o:['增加顯影劑過敏','若發生腎損傷，metformin 蓄積可導致乳酸中毒','造成術中低血糖','干擾抗血小板藥效'],c:1,
+ e:'Metformin 本身不傷腎，但腎功能惡化時排除受阻致乳酸中毒；腎功能不佳者（院內常規 eGFR <45、國際建議 <30）於檢查時停用，48 小時確認腎功能後再恢復。',s:'AHA 2021（PMID 34187171）'},
+{cat:'pre',q:'擇期 PCI 術前，關於抗血小板藥物的正確處置為？',
+ o:['Aspirin 與 P2Y12 抑制劑皆停用 5 天','繼續使用，不可自行停藥','只停 aspirin','改為肝素橋接'],c:1,
+ e:'抗血小板藥是 PCI 圍術期血栓保護核心，常規繼續使用；「抗血小板不要停」是交班口訣。',s:'SCAI 2021（PMID 33909349）'},
+{cat:'pre',q:'服用 warfarin 病人預計經股動脈行冠狀動脈攝影，一般接受的 INR 目標為？',
+ o:['INR <1.5–1.8','INR <2.5','INR <3.0','無需檢驗 INR'],c:0,
+ e:'經股動脈者一般停 warfarin 至 INR <1.5–1.8 以降低穿刺出血；經橈動脈之診斷性檢查多可不停藥。',s:'SCAI 2021（PMID 33909349）；Shroff 2020（PMID 31880380）'},
+{cat:'pre',q:'術前穿刺部位皮膚準備，下列何者正確？',
+ o:['常規以剃刀剃毛','不需常規除毛；必要時使用電剪（clipper）','術前一晚剃毛最佳','除毛可降低感染率，應例行執行'],c:1,
+ e:'剃刀微創傷反增感染風險；有礙操作時以電剪處理即可。',s:'SCAI 2021（PMID 33909349）'},
+{cat:'pre',q:'執行 time-out 時，下列何者不是必要核對項目？',
+ o:['病人身分與術式','過敏史','穿刺部位','病人教育程度'],c:3,
+ e:'Time-out 核對身分、術式、部位、過敏、抗凝狀態與設備備妥；教育程度屬衛教評估非安全核對。',s:'SCAI 2021（PMID 33909349）'},
+{cat:'pre',q:'術前建立靜脈通路的建議為？',
+ o:['22G 即可，置於術側手背','20G 以上，避開預計穿刺側手腕','一律中心靜脈導管','不需常規建立'],c:1,
+ e:'需足夠口徑以備緊急給藥輸液；避開術側橈動脈區以免干擾。',s:'院內常規；SCAI 2021（PMID 33909349）'},
+{cat:'pre',q:'經橈動脈路徑術前，護理師應完成的基準（baseline）評估為？',
+ o:['只量血壓','雙側橈動脈搏動、Barbeau/Allen 測試結果、雙手膚色溫度','足背動脈即可','心尖脈'],c:1,
+ e:'基準記錄是術後比對缺血變化的依據；Barbeau 測試評估掌弓側枝循環。',s:'Shroff 2020（PMID 31880380）'},
+{cat:'pre',q:'高齡病人術前衰弱（frailty）評估的臨床意義為？',
+ o:['僅影響住院天數統計','預測出血、譫妄與照護需求，協助團隊調整鎮靜與觀察強度','決定是否給氧','與導管室照護無關'],c:1,
+ e:'衰弱與導管室不良事件相關，是 heart team 決策與護理計畫的重要輸入。',s:'Bricknell 2022（PMID 35450810）'},
+{cat:'pre',q:'育齡女性病人術前，關於輻射安全的必要步驟為？',
+ o:['無需詢問','確認末次月經／必要時驗孕，並記錄','直接拒絕檢查','穿鉛衣即可免驗孕'],c:1,
+ e:'透視輻射對胎兒有風險，術前排除懷孕為標準流程；緊急救命程序則個別權衡。',s:'SCAI 2021（PMID 33909349）'},
+{cat:'pre',q:'術前衛教對病人焦慮的實證效果為？',
+ o:['無影響','結構化衛教可降低焦慮並提升配合度','只有藥物能降低焦慮','衛教反而增加焦慮'],c:1,
+ e:'介紹流程、預期感受（熱潮紅、心悸）與術後配合事項可顯著降低焦慮。',s:'Rolley 2009（PMID 19538559）'},
+
+/* 二、鎮靜與監測 Q16-30 */
+{cat:'sed',q:'中度鎮靜（moderate sedation）的定義特徵為？',
+ o:['對疼痛刺激才有反應','對口頭指令（±輕觸）有目的性反應，氣道與自主呼吸無需介入','完全無意識','需要面罩通氣'],c:1,
+ e:'中度鎮靜保留有目的反應與足夠自主通氣；若僅對疼痛刺激有反應已屬深度鎮靜。',s:'Conway 2014（PMID 24329964）'},
+{cat:'sed',q:'「鎮靜是連續光譜」的臨床意義為？',
+ o:['劑量固定即可維持深度不變','病人可能隨時滑入比預期更深的鎮靜，監測者須具備救援下一層深度的能力','中度鎮靜不會變成深度鎮靜','只有麻醉科能給鎮靜'],c:1,
+ e:'執行中度鎮靜的團隊必須能辨識並救援深度鎮靜（氣道支持、reversal）。',s:'Conway 2014（PMID 24329964）'},
+{cat:'sed',q:'成人中度鎮靜 midazolam 的合理起始與滴定方式為？',
+ o:['一次 10 mg IV','0.5–2 mg IV 緩慢給予，觀察 2–3 分鐘後再滴定；老年人減量','5 mg IM','持續輸注起始'],c:1,
+ e:'小劑量滴定是避免呼吸抑制的關鍵；老年、肝腎功能差者起始 0.5–1 mg。',s:'Conway 2016 Cochrane（PMID 27198122）'},
+{cat:'sed',q:'Midazolam 過度鎮靜的反轉劑與起始劑量為？',
+ o:['Naloxone 0.4 mg','Flumazenil 0.2 mg IV，必要時重複','Atropine 0.5 mg','Protamine 50 mg'],c:1,
+ e:'Flumazenil 反轉 BZD；naloxone 反轉鴉片類。注意 flumazenil 半衰期短於 midazolam，須防再鎮靜。',s:'Conway 2014（PMID 24329964）'},
+{cat:'sed',q:'中度鎮靜期間的最低監測標準為？',
+ o:['每 30 分鐘一次生命徵象','連續 ECG 與 SpO2，血壓至少每 5 分鐘，並記錄鎮靜深度','只需 SpO2','術後才需要監測'],c:1,
+ e:'連續心肺監測加規律血壓與鎮靜評分是護理執行鎮靜的公認標準。',s:'Conway 2014（PMID 24329964）；SCAI 2021'},
+{cat:'sed',q:'與 SpO2 相比，capnography（EtCO2）監測鎮靜病人的優勢為？',
+ o:['較便宜','可更早偵測低通氣與呼吸暫停，尤其在給氧狀態下','能測血壓','無優勢'],c:1,
+ e:'給氧會延遲 SpO2 下降，EtCO2 波形消失／上升可提早數分鐘警示呼吸抑制。',s:'Capnography 統合分析（PMID 29304910）'},
+{cat:'sed',q:'鎮靜病人使用鼻導管 O2 4 L/min，SpO2 98%，此時最需要警覺的是？',
+ o:['已無呼吸抑制風險','高 FiO2 可掩蓋低通氣，SpO2 正常不代表通氣足夠，須觀察呼吸型態／EtCO2','應調高氧氣','SpO2 過高需停氧'],c:1,
+ e:'氧合與通氣是兩件事；補氧下 CO2 蓄積可在 SpO2 正常時發生。',s:'Capnography 統合分析（PMID 29304910）'},
+{cat:'sed',q:'導管室常用 Ramsay 鎮靜量表，中度鎮靜的理想目標為？',
+ o:['Ramsay 1（焦躁）','Ramsay 2–3（合作、對指令有反應）','Ramsay 5（對刺激反應遲鈍）','Ramsay 6（無反應）'],c:1,
+ e:'Ramsay 2–3 保留合作與指令反應，適合需要病人配合（憋氣、報告症狀）的導管室情境。',s:'Conway 2014 鎮靜量表回顧（PMID 24856336）'},
+{cat:'sed',q:'護理師執行程序鎮靜的公認前提，下列何者錯誤？',
+ o:['具備 ACLS 與氣道支持技能','熟悉鎮靜藥物與反轉劑','監測鎮靜的護理師可同時兼任刷手／記錄等其他工作','有立即可得的急救設備與醫師支援'],c:2,
+ e:'負責監測鎮靜者不應同時承擔會分散注意力的職務，此為 Delphi 共識核心條款。',s:'Conway 2014（PMID 24329964）'},
+{cat:'sed',q:'80 歲病人接受鎮靜，正確的做法為？',
+ o:['與年輕人相同劑量','劑量約減半、滴定間隔拉長，警覺低血壓與延遲清醒','不可使用任何鎮靜','改用雙倍鴉片類'],c:1,
+ e:'老年人分布容積與清除率改變，對 BZD／鴉片類敏感；起始劑量減少並延長觀察。',s:'Conway 2016 Cochrane（PMID 27198122）'},
+{cat:'sed',q:'鎮靜後轉出／出院的客觀評估工具與門檻，常用的是？',
+ o:['Aldrete score ≥9','GCS 15 即可','病人自述清醒','無需評估'],c:0,
+ e:'Aldrete（活動、呼吸、循環、意識、SpO2）≥9 為恢復期轉出常用標準。',s:'Conway 2014（PMID 24329964）'},
+{cat:'sed',q:'關於鎮靜合併 fentanyl，正確敘述為？',
+ o:['無呼吸抑制風險','與 midazolam 併用時呼吸抑制風險協同增加，應減量滴定','起效需 30 分鐘','反轉劑為 flumazenil'],c:1,
+ e:'BZD＋鴉片類是鎮靜相關呼吸事件最常見組合；fentanyl 起效 2–3 分鐘，反轉劑為 naloxone。',s:'Whitehead 2020（PMID 31601511）'},
+{cat:'sed',q:'鎮靜前風險評估應包含 ASA 分級與下列何者？',
+ o:['星座','困難氣道徵象（張口度、Mallampati、頸活動度）、OSA、藥物過敏','只需體重','血型'],c:1,
+ e:'氣道評估決定救援難度；OSA、肥胖、高 ASA 級是深鎮靜併發症的預測因子。',s:'Conway 2014（PMID 24329964）'},
+{cat:'sed',q:'病人鎮靜中呼吸變淺、SpO2 88%，正確的處置順序為？',
+ o:['立即給 flumazenil，再看氣道','刺激喚醒→抬下顎／開放氣道→提高氧流量→無效再給反轉劑並通知醫師','只調高氧氣繼續手術','立即插管'],c:1,
+ e:'先以非藥物手段恢復通氣，多數即改善；反轉劑用於刺激與氣道處置無效時。',s:'Conway 2014（PMID 24329964）'},
+{cat:'sed',q:'下列何者是鎮靜中滑入深度鎮靜／呼吸事件的高風險族群組合？',
+ o:['年輕健康男性','阻塞性睡眠呼吸中止、病態肥胖、高齡、慢性鴉片使用','高血壓控制良好者','檢查前有進食者'],c:1,
+ e:'OSA 與肥胖影響氣道，高齡與慢性用藥改變藥效動力學，皆需降階劑量與強化監測。',s:'Whitehead 2020（PMID 31601511）'},
+
+/* 三、術中監測 Q31-45 */
+{cat:'intra',q:'單導程監測要辨識寬 QRS 心律不整（區分 VT vs SVT with aberrancy），建議選？',
+ o:['Lead II','V1（或 MCL1）','Lead III','aVF'],c:1,
+ e:'V1 對 QRS 型態鑑別資訊最多；Lead II 適合 P 波觀察。',s:'Sandau 2017 AHA ECG 監測標準（PMID 28974521）'},
+{cat:'intra',q:'下列何者是連續 ST 段監測的明確適應症？',
+ o:['穩定病人的常規腹部超音波','ACS／PCI 術後急性期，偵測再缺血與急性支架血栓','已出院病人','慢性心房顫動而無缺血疑慮'],c:1,
+ e:'PCI 後 ST 監測可早期發現無症狀再缺血；電極位置固定與基準校正是護理重點。',s:'Sandau 2017（PMID 28974521）'},
+{cat:'intra',q:'降低監測器警報疲乏（alarm fatigue）的實證作法為？',
+ o:['關閉所有警報','個別化警報界限、每日檢視、更換電極前做好皮膚準備','調低音量到聽不見','全院統一最敏感設定'],c:1,
+ e:'大量偽警報多源自電極接觸不良與未個別化的界限；AHA 建議系統性警報管理。',s:'Sandau 2017（PMID 28974521）'},
+{cat:'intra',q:'右冠狀動脈攝影／介入時，護理師應特別預期的心律變化為？',
+ o:['心室頻脈為常態','竇性心搏過緩與房室傳導阻滯（RCA 供應竇房／房室結），備妥 atropine','心房撲動','無特殊風險'],c:1,
+ e:'RCA 顯影或缺血常誘發緩脈與 AV block；atropine 0.5–1 mg 與體外節律備用是標準預備。',s:'SCAI 2021（PMID 33909349）'},
+{cat:'intra',q:'顯影劑注入冠狀動脈後出現短暫 T 波改變數秒內恢復，正確判讀為？',
+ o:['急性支架血栓','顯影劑相關的短暫複極變化，恢復即無需處置，但持續 ST 上升須立即通報','高血鉀','電極脫落'],c:1,
+ e:'顯影劑短暫影響複極屬常見；關鍵在區分「持續性」ST 變化（缺血／夾層／血栓）。',s:'Sandau 2017（PMID 28974521）'},
+{cat:'intra',q:'術中血壓驟降，護理師的快速鑑別框架應包含？',
+ o:['只考慮鎮靜過深','出血（穿刺處／腹膜後）、迷走反應、心包填塞、藥物、心因性——同時看心率與波形','一律先給 atropine','等醫師發現'],c:1,
+ e:'低血壓＋心搏過緩想迷走；低血壓＋心搏過速想出血；壓力波形變小＋等化想填塞。',s:'White 2019（PMID 30470643）'},
+{cat:'intra',q:'鼠蹊穿刺時病人臉色蒼白、噁心、HR 42、BP 78/50，處置為？',
+ o:['立即 CPR','暫停刺激、快速輸液、atropine 0.5–1 mg IV，抬高下肢','給 β-blocker','增加鎮靜'],c:1,
+ e:'典型血管迷走反應；疼痛控制不足是誘因，處理後多迅速恢復。',s:'SCAI 2021（PMID 33909349）'},
+{cat:'intra',q:'下列何組血行動力學數值屬於正常範圍？',
+ o:['RA 平均 15 mmHg','RA 2–6、PA 25/10、PCWP 6–12 mmHg','PCWP 25 mmHg','PA 60/30 mmHg'],c:1,
+ e:'熟記正常值才能即時發現填塞（RA 升高＋等化）、左心衰（PCWP 升高）、肺高壓（PA 升高）。',s:'Fox 2023 PA 導管照護（PMID 37524367）'},
+{cat:'intra',q:'導管進入左主幹時壓力波形出現 damping／ventricularization，意義為？',
+ o:['正常現象，繼續注射顯影劑','導管阻塞冠脈開口或開口病變，貿然注射可能導致夾層／缺血——立即口頭提醒術者','傳感器故障','病人緊張'],c:1,
+ e:'壓力衰減是 LM 開口病變或深插的警訊；監測護理師的即時警示是安全網之一。',s:'SCAI 2021（PMID 33909349）'},
+{cat:'intra',q:'術中心包填塞的典型表現為？',
+ o:['血壓上升、心率下降','進行性低血壓、心搏過速、右房壓上升、透視下心影搏動減弱','高燒','血氧改善'],c:1,
+ e:'導絲／導管穿孔後填塞可在數分鐘內惡化；備 echo、pericardiocentesis 套組並輸液維持前負荷。',s:'SCAI 2021（PMID 33909349）'},
+{cat:'intra',q:'PCI 使用 unfractionated heparin（未併用 GPI）時，術中 ACT 目標為？',
+ o:['150–180 秒','250–300 秒','>400 秒','不需監測'],c:1,
+ e:'ACT 250–300s（HemoTec）為 PCI 常用目標；併用 GP IIb/IIIa 抑制劑時降至 200–250s。',s:'SCAI 2021（PMID 33909349）'},
+{cat:'intra',q:'PCI 的 heparin 常規起始劑量為？',
+ o:['10 U/kg','70–100 U/kg IV bolus，依 ACT 追加','300 U/kg','固定 1000 U'],c:1,
+ e:'70–100 U/kg 為未併用 GPI 時標準；記錄給藥時間供拔鞘時機參考。',s:'SCAI 2021（PMID 33909349）'},
+{cat:'intra',q:'White 等對導管室護理師「辨識與回應臨床惡化」的研究發現，最關鍵的護理行為是？',
+ o:['只執行醫囑即可','主動持續掃描監測資訊（situation awareness），及早口頭提出關注並升級溝通','等待警報響起','記錄完整即可'],c:1,
+ e:'導管室惡化常在數秒–數分鐘內發生；護理師的主動監測與 graded assertiveness 是安全核心。',s:'White 2019（PMID 30470643）'},
+{cat:'intra',q:'PCI 後 TIMI flow 變差（no-reflow），護理師應備妥的冠脈內用藥常包含？',
+ o:['口服 aspirin','Adenosine、verapamil／nicardipine、nitroprusside（IC 給藥）','顯影劑加量','Atropine 冠脈內注射'],c:1,
+ e:'No-reflow 為微循環障礙，血管擴張劑冠脈內給藥為主力；同時監測血壓（多會下降）。',s:'SCAI 2024 STEMI 共識（PMID 39649824）'},
+{cat:'intra',q:'關於導管室輻射防護，正確敘述為？',
+ o:['距離加倍，劑量減半','時間、距離（平方反比）、屏蔽三原則；皮膚劑量 >5 Gy 須安排追蹤','鉛衣可完全阻絕散射','護理師不需配戴劑量計'],c:1,
+ e:'距離的平方反比效應最具成本效益；高劑量個案須記錄並追蹤皮膚傷害。',s:'SCAI 2021（PMID 33909349）；AHA 2021'},
+
+/* 四、股動脈止血與術後照護 Q46-65 */
+{cat:'fem',q:'使用 heparin 後擇期拔除股動脈鞘管，一般接受的 ACT 閾值為？',
+ o:['ACT <150–180 秒','ACT <300 秒','ACT <400 秒','任何時間皆可'],c:0,
+ e:'ACT 降至 150–180s 以下（院內常規 <150–200）拔鞘可兼顧血栓與出血風險。',s:'SCAI 2021（PMID 33909349）'},
+{cat:'fem',q:'股動脈拔鞘徒手加壓的正確位置為？',
+ o:['皮膚穿刺孔正上方','皮膚穿刺孔「近端（頭側）上方 1–2 公分」的動脈穿刺點，以 2–3 指加壓','穿刺孔遠端','大腿內側'],c:1,
+ e:'動脈進針點在皮膚孔近端上方；壓錯位置是血腫最常見原因——與院內血腫案例教學一致。',s:'Turi（PMID 18418305）'},
+{cat:'fem',q:'6 Fr 診斷導管後徒手加壓時間的常用經驗法則為？',
+ o:['3 分鐘','每 Fr 約 3 分鐘（6 Fr 約 15–20 分鐘），逐步減壓並確認遠端脈搏','60 分鐘全程最大壓力','5 分鐘即可'],c:1,
+ e:'初始 100% 阻斷數分鐘後轉為可觸及遠端脈搏的壓力；全程阻斷過久增加血栓與迷走風險。',s:'Turi（PMID 18418305）'},
+{cat:'fem',q:'Busca 2023 網絡統合分析對經股診斷性導管後臥床時間的結論為？',
+ o:['需臥床 24 小時','縮短臥床（約 2–3 小時）不增加出血／血腫，且減少背痛與排尿困難','臥床越久越安全','不需任何臥床'],c:1,
+ e:'延長臥床沒有保護效果，反增不適；此為修訂術後常規的關鍵實證。',s:'Busca 2023（PMID 36256701）'},
+{cat:'fem',q:'Mohammady 統合分析比較經股診斷後「早期 vs 延遲下床」，結果顯示？',
+ o:['早期下床血腫顯著增加','早期下床（約 2–4 小時）血腫與出血無顯著差異','兩組皆大量出血','延遲下床減少死亡率'],c:1,
+ e:'與 Busca 結論一致；配合壓迫確實與觀察，早期活動安全。',s:'Mohammady 2014（PMID 23332719）'},
+{cat:'fem',q:'關於股動脈術後砂包加壓，正確觀念為？',
+ o:['砂包可取代正確的徒手／機械加壓止血','砂包僅輔助，止血靠正確定點加壓與確實壓迫時間；院內常規備 2 kg 砂包','砂包越重越好','砂包需壓 24 小時'],c:1,
+ e:'砂包無法對深部動脈施加有效定點壓力，僅為輔助；止血成敗取決於加壓位置與時間。',s:'Turi（PMID 18418305）；院內常規'},
+{cat:'fem',q:'使用血管閉合裝置（VCD，如 Angio-Seal／ProGlide）相較徒手加壓，主要臨床效益為？',
+ o:['降低死亡率','縮短止血與臥床時間、可較早下床，病人舒適度提升','完全消除血管併發症','不需監測穿刺處'],c:1,
+ e:'VCD 主要優勢是縮短制動與提早活動；併發症率與徒手加壓大致相當，仍須觀察。',s:'Rao & Stone（PMID 27558003）；加速下床（PMID 29421959）'},
+{cat:'fem',q:'使用 Angio-Seal 後護理評估的重點為？',
+ o:['完全不用觀察','仍須定時評估穿刺處出血／血腫與遠端脈搏，警覺裝置失敗或感染','只看生命徵象','立即恢復抗凝即可'],c:1,
+ e:'VCD 可能失敗（出血、栓塞、感染）；常規穿刺處與肢體評估不可省。',s:'Rao & Stone（PMID 27558003）'},
+{cat:'fem',q:'新竹分院對 TAVI 等大孔徑股動脈止血採用的 hybrid 策略為？',
+ o:['ProGlide ×2','1× ProGlide ＋ 1× 8 Fr Angio-Seal','單獨 MANTA','純徒手加壓'],c:1,
+ e:'此為院內既定大孔徑止血常規（考同仁對本單位流程的熟悉度）。',s:'院內常規（大孔徑止血）'},
+{cat:'fem',q:'股動脈術後第一小時穿刺處與生命徵象的評估頻率常規為？',
+ o:['每 4 小時','前 1 小時每 15 分鐘，之後漸拉長（如 30 分、1 小時）','每班一次','病人喊才看'],c:1,
+ e:'多數出血發生在早期；密集起始評估再漸減是標準術後監測。',s:'AHA 2021（PMID 34187171）'},
+{cat:'fem',q:'股動脈術後肢體循環評估應包含哪些項目？',
+ o:['只摸足背脈搏','5P：Pain、Pulse、Pallor、Paresthesia、Paralysis，並與術前基準與對側比較','只看膚色','只問病人感覺'],c:1,
+ e:'5P 為肢體缺血系統性評估；與基準與對側對照才能發現變化。',s:'De Jong（PMID 9248376）'},
+{cat:'fem',q:'股動脈術後衛教病人的臥位／活動限制為？',
+ o:['可自由彎曲髖部','患肢伸直、避免髖關節屈曲，平躺或床頭 ≤30°，避免用力增加腹壓','立即下床走動','側臥壓迫患肢'],c:1,
+ e:'髖屈與腹壓上升易誘發再出血；擺位衛教是護理重點。',s:'Mert Boğa 2019 擺位 RCT（PMID 30367542）'},
+{cat:'fem',q:'經股術後病人主訴背痛，實證上安全有效的護理措施為？',
+ o:['一律臥床不動','在維持穿刺處安全前提下協助小幅翻身／床頭調整與背部按摩，可減痛且不增併發症','立即給鴉片類','忽略即可'],c:1,
+ e:'適度姿勢改變與按摩可減背痛而不增出血；延長絕對制動反增不適。',s:'Mert Boğa 2019（PMID 30367542）；Fereidouni 2019（PMID 30954199）'},
+{cat:'fem',q:'Al-Momani 前瞻研究指出，冠脈介入後早期鼠蹊併發症的可調節危險因子包含？',
+ o:['病人身高','較大鞘管口徑、抗凝／抗血小板強度、加壓與制動品質','血型','年齡（不可調節）'],c:1,
+ e:'可調節因子（鞘管、抗凝、加壓技術）是護理與流程介入的著力點。',s:'Al-Momani 2019（PMID 31297032）'},
+{cat:'fem',q:'股動脈穿刺處持續滲血且血腫擴大，第一步護理處置為？',
+ o:['先去通知醫師再回來','立即在穿刺點近端上方確實加壓，同時呼叫協助／通知醫師並監測生命徵象','更換敷料觀察','抬高床頭'],c:1,
+ e:'出血當下「先確實加壓止血」是即刻行動，通報與監測同步進行。',s:'De Jong（PMID 9248376）'},
+{cat:'fem',q:'發現穿刺處血腫，利於交班追蹤的護理紀錄方式為？',
+ o:['僅文字描述「有血腫」','以筆描邊標記範圍並註明時間，每班比對是否擴大','拍照即可不標記','隔天再看'],c:1,
+ e:'描邊＋標時間是客觀追蹤擴大與否的方法，與院內血腫案例教學一致。',s:'De Jong（PMID 9248376）；院內血腫案例教學'},
+{cat:'fem',q:'股動脈穿刺點「過高」最令人擔心的併發症為？',
+ o:['表淺血腫','腹膜後出血（可無外顯腫塊，表現為低血壓、腰背痛、Hb 下降）','靜脈炎','皮膚水泡'],c:1,
+ e:'高位穿刺（腹股溝韌帶上方）出血流入腹膜後，外觀不明顯，是最易延誤的隱匿出血。',s:'AHA 2021（PMID 34187171）'},
+{cat:'fem',q:'懷疑腹膜後出血時，正確的護理／團隊反應為？',
+ o:['繼續觀察到下一班','立即通知醫師、抽血追 Hb、備血、準備影像（CT）／必要時介入止血，穩定輸液','給利尿劑','讓病人下床走動看看'],c:1,
+ e:'腹膜後出血可致命，須快速升級處置與輸血準備。',s:'AHA 2021（PMID 34187171）'},
+{cat:'fem',q:'股動脈術後出現搏動性腫塊併收縮期雜音（bruit），最可能為？',
+ o:['單純血腫','假性動脈瘤','蜂窩性組織炎','淋巴水腫'],c:1,
+ e:'搏動性腫塊＋雜音／震顫是假性動脈瘤典型徵象，須超音波確認，避免盲目按壓。',s:'De Jong（PMID 9248376）'},
+{cat:'fem',q:'股動脈術後聽到「連續性」雜音並可觸及震顫，最可能為？',
+ o:['假性動脈瘤','動靜脈瘻管（AV fistula）','正常','心雜音傳導'],c:1,
+ e:'連續性（收縮＋舒張）雜音提示動靜脈分流；假性動脈瘤多為收縮期雜音。',s:'De Jong（PMID 9248376）'},
+
+/* 五、橈動脈照護 Q66-80 */
+{cat:'rad',q:'相較股動脈，經橈動脈路徑的主要臨床優勢為？',
+ o:['顯影劑用量較少','穿刺處出血／大血管併發症較少、可早期活動、病人舒適度與滿意度較高','輻射劑量一定較低','手術時間一定較短'],c:1,
+ e:'橈動脈途徑降低出血與血管併發症，並改善病人體驗與早期下床。',s:'Shroff 2020 SCAI 經橈共識（PMID 31880380）'},
+{cat:'rad',q:'「patent hemostasis（通暢止血）」的定義與目的為？',
+ o:['完全阻斷橈動脈以徹底止血','在止血同時維持橈動脈前向血流，以降低橈動脈阻塞（RAO）','儘量壓緊越久越好','只適用於股動脈'],c:1,
+ e:'維持前向血流的通暢止血是預防 RAO 最重要的可控措施。',s:'Bernat 2019 RAO 預防國際共識（PMID 31753298）'},
+{cat:'rad',q:'下列何者不是降低橈動脈阻塞的實證策略？',
+ o:['足量術中抗凝（如 heparin ≥50 U/kg）','patent hemostasis 與縮短壓迫時間','儘量長時間高壓完全阻斷止血','較小口徑鞘管、鞘管親水塗層'],c:2,
+ e:'長時間完全阻斷會促進血栓形成，增加 RAO；其餘皆為公認預防措施。',s:'Bernat 2019（PMID 31753298）；Tsigkas 2023（PMID 37504539）'},
+{cat:'rad',q:'經橈動脈路徑務必給予足量抗凝的主要理由為？',
+ o:['預防顯影劑腎病變','橈動脈細易血栓，足量 heparin 顯著降低 RAO','降低血壓','減少疼痛'],c:1,
+ e:'即使是診斷性經橈也建議抗凝以防 RAO；這是與股動脈的重要差異。',s:'Shroff 2020（PMID 31880380）'},
+{cat:'rad',q:'TR Band 等橈動脈壓迫帶的照護原則為？',
+ o:['一次壓到完全無血流放置數小時','採「最低有效壓力」，定時（如每 15–30 分）漸進放氣，維持通暢止血','壓越緊越安全','不需觀察手部'],c:1,
+ e:'漸進放氣配合觀察出血與手部灌流，是達成 patent hemostasis 的操作方式。',s:'Bernat 2019（PMID 31753298）'},
+{cat:'rad',q:'評估橈動脈是否阻塞，除觸診脈搏外更可靠的床邊方法為？',
+ o:['只問病人痛不痛','反向 Barbeau／血氧體積描記或都卜勒確認前向血流','量血壓','看膚色即可'],c:1,
+ e:'橈動脈阻塞時遠端仍可經尺動脈側枝而有脈搏，需血流訊號確認前向血流。',s:'Sandoval 2019 經橈併發症（PMID 31672030）'},
+{cat:'rad',q:'橈動脈痙攣的處置與預防，下列何者正確？',
+ o:['用力快速推進導管','給予解痙雞尾酒（如硝酸甘油±鈣離子阻斷劑）、充分鎮靜／止痛、避免多次穿刺','立即改股動脈','加壓手腕'],c:1,
+ e:'痙攣與疼痛、焦慮、反覆操作相關；解痙藥與鎮靜可降低發生與轉股率。',s:'Curtis 2023 橈動脈痙攣（PMID 36653743）'},
+{cat:'rad',q:'橈動脈術後病人主訴手部麻木、蒼白、劇痛，護理師應？',
+ o:['視為正常術後反應','立即檢查壓迫帶是否過緊並適度放鬆、評估灌流、通報醫師','加壓止痛','抬高即可不通報'],c:1,
+ e:'可能為壓迫過緊致缺血或筋膜腔症候群前兆，須立即減壓與評估。',s:'Roy 2022 橈動脈併發症（PMID 34952824）'},
+{cat:'rad',q:'橈動脈壓迫帶造成前臂張力性水泡，反映的問題與處置為？',
+ o:['正常，不需理會','加壓過緊／過久；改低張力固定、保護水泡勿弄破、覆無菌敷料並記錄','立即抽吸水泡','加更緊固定'],c:1,
+ e:'水泡是壓力過度的訊號，提醒「足夠但不過度」；與院內併發症教材一致。',s:'院內併發症教材；Roy 2022（PMID 34952824）'},
+{cat:'rad',q:'遠端橈動脈（鼻煙壺區）路徑的宣稱優點為？',
+ o:['完全無併發症','可能進一步降低前臂 RAO 並方便止血','一定較快','不需抗凝'],c:1,
+ e:'dTRA 可保留前臂橈動脈通暢、方便病人手部擺位；仍須抗凝與通暢止血原則。',s:'Tsigkas 2023（PMID 37504539）'},
+{cat:'rad',q:'術前 Barbeau 測試出現 D 型（壓迫橈動脈後血氧波形消失且不恢復）代表？',
+ o:['掌弓側枝良好，可安心穿刺','尺側側枝循環不足，橈動脈路徑需審慎評估','橈動脈已阻塞','測試失敗'],c:1,
+ e:'Barbeau D 型代表側枝不足，若發生 RAO 手部缺血風險高，需與術者討論。',s:'Shroff 2020（PMID 31880380）'},
+{cat:'rad',q:'Rashid 統合分析顯示，透過預防措施可將橈動脈阻塞率控制在何種量級？',
+ o:['常規 >30%','藉足量抗凝與通暢止血可降至個位數百分比（約 <5–7%）','無法預防','一律 0%'],c:1,
+ e:'RAO 是最常見的經橈併發症，但多可預防且常無症狀；量級認知有助風險溝通。',s:'Rashid 2016（PMID 26811162）'},
+{cat:'rad',q:'橈動脈術後前臂快速腫脹、變硬、劇痛，最需警覺？',
+ o:['單純瘀青','前臂血腫／筋膜腔症候群，須立即評估並通報，避免延誤致神經血管損傷','正常腫脹','過敏'],c:1,
+ e:'前臂為封閉腔室，血腫可致筋膜腔症候群，屬需緊急處理的併發症。',s:'Sandoval 2019（PMID 31672030）；院內血腫案例'},
+{cat:'rad',q:'橈動脈路徑相較股動脈在活動上的護理差異為？',
+ o:['需臥床更久','可早期坐起／下床，主要限制在術側手腕活動與提重物','完全不需限制','需患肢制動 24 小時'],c:1,
+ e:'經橈的活動自由度高，衛教重點在手腕保護與觀察手部灌流。',s:'Shroff 2020（PMID 31880380）'},
+{cat:'rad',q:'維持橈動脈通暢（避免 RAO）對病人未來的臨床意義為？',
+ o:['無意義','保留未來再次經橈導管、動脈監測或作為橈動脈導管、繞道橋管的可用血管','只影響美觀','只為統計'],c:1,
+ e:'橈動脈是重要的未來通路與橋管來源，通暢保留具長期價值。',s:'Bernat 2019（PMID 31753298）'},
+
+/* 六、血管併發症辨識 Q81-90 */
+{cat:'comp',q:'穿刺處血腫直徑約 8 cm，依常用分級與處置對應為？',
+ o:['極小，不需理會','屬大範圍血腫，須加強加壓、標記追蹤、監測 Hb 與生命徵象並通報','立即手術','給利尿劑'],c:1,
+ e:'血腫大小分級（如 <3、3–6、6–10、>10 cm）對應觀察強度；大血腫須升級處置。',s:'院內血腫分級教材；De Jong（PMID 9248376）'},
+{cat:'comp',q:'下列併發症中，外觀最不明顯但可致命的是？',
+ o:['表淺瘀青','腹膜後血腫','小血腫','穿刺處紅腫'],c:1,
+ e:'腹膜後出血無外顯腫塊，靠低血壓、腰背痛、Hb 下降辨識，最易延誤。',s:'AHA 2021（PMID 34187171）'},
+{cat:'comp',q:'確認為股動脈假性動脈瘤，護理注意事項為？',
+ o:['用力按壓使其消失','避免不當按壓、超音波確認，小者可觀察或超音波引導加壓／凝血酶注射，大者需手術','熱敷','立即拔除敷料'],c:1,
+ e:'處置依大小而定；護理避免盲目按壓並協助影像評估。',s:'De Jong（PMID 9248376）'},
+{cat:'comp',q:'穿刺處出現紅、腫、熱、痛與滲液，護理處置為？',
+ o:['視為正常','評估感染徵象、留取檢體、通報並依醫囑處置，加強無菌照護','自行給抗生素','加壓包紮觀察一週'],c:1,
+ e:'穿刺處感染雖不常見，但 VCD 使用者風險略增，須及早辨識處理。',s:'Rao & Stone（PMID 27558003）'},
+{cat:'comp',q:'術後患肢冰冷、蒼白、無脈、劇痛，最可能為？',
+ o:['迷走反應','急性肢體缺血（栓塞或血栓），屬急症須立即通報','焦慮','正常'],c:1,
+ e:'5P 全陽性提示急性動脈阻塞，時間就是肢體，須緊急處理。',s:'De Jong（PMID 9248376）'},
+{cat:'comp',q:'下列何者是導管術後出血的高危因子組合？',
+ o:['年輕、腎功能正常、經橈','高齡、女性、腎功能不全、大孔徑、強效抗凝／抗血小板','男性、經橈、診斷性','體重過重單一因子'],c:1,
+ e:'多因子疊加顯著提高出血風險，是加強監測與選擇路徑的依據。',s:'AHA 2021（PMID 34187171）；Al-Momani（PMID 31297032）'},
+{cat:'comp',q:'床邊鑑別單純血腫與假性動脈瘤，最關鍵的理學發現為？',
+ o:['大小','是否有搏動性與收縮期雜音／震顫（假性動脈瘤有）','顏色','溫度'],c:1,
+ e:'搏動＋雜音／震顫指向假性動脈瘤；單純血腫無搏動性血流特徵。',s:'De Jong（PMID 9248376）'},
+{cat:'comp',q:'關於血管併發症通報，正確原則為？',
+ o:['等交班再說','出現低血壓、範圍快速擴大、遠端缺血或劇痛等警訊時立即通報，不等下一次評估','只記錄不通報','由病人自行呼叫'],c:1,
+ e:'惡化訊號須即時升級溝通，延誤是可預防傷害的主因。',s:'White 2019（PMID 30470643）'},
+{cat:'comp',q:'預防加壓造成張力性水泡的原則為？',
+ o:['壓越緊越好','壓力「足以止血即可」，避免膠布過緊、注意皮膚完整性與敷料邊緣','使用最強固定','不需觀察皮膚'],c:1,
+ e:'足夠但不過度的壓力是關鍵；水泡是過度壓迫的警訊。',s:'院內併發症教材；Roy 2022（PMID 34952824）'},
+{cat:'comp',q:'術後病人心搏過速、血壓下降但穿刺處外觀無異常，最合理的檢驗與判斷為？',
+ o:['只需再量一次血壓','追蹤 Hb/Hct 並警覺隱匿性（腹膜後）出血，通報醫師','給止痛藥觀察','認定為焦慮'],c:1,
+ e:'外觀正常＋血行動力學惡化須高度懷疑內出血，Hb 追蹤與影像是關鍵。',s:'AHA 2021（PMID 34187171）'},
+
+/* 七、CIN 預防與出院評估 Q91-100 */
+{cat:'cin',q:'顯影劑相關急性腎損傷（CA-AKI）常用定義為？',
+ o:['顯影後 1 小時內 Cr 上升','顯影後 48–72 小時 SCr 上升 ≥0.3 mg/dL 或 ≥1.5 倍基準','尿量增加','eGFR 上升'],c:1,
+ e:'以 48–72 小時內 SCr 變化定義；護理須安排適當時間點回抽腎功能。',s:'Silver 2015（PMID 26316642）'},
+{cat:'cin',q:'目前最有實證支持的 CA-AKI 預防措施為？',
+ o:['口服 NAC','靜脈等張晶體液水化（如 0.9% NaCl）與最小化顯影劑用量','預防性血液透析','利尿劑強迫利尿'],c:1,
+ e:'等張輸液水化＋減量顯影劑是核心；NAC 與碳酸氫鈉證據不一致，強迫利尿有害。',s:'AHA 2021（PMID 34187171）；POSEIDON（PMID 24856027）'},
+{cat:'cin',q:'Moroni 網絡統合分析對 PCI 前後水化策略的結論方向為？',
+ o:['完全不需水化','相較固定速率，依左心室舒張末壓／體液狀態「量身訂做」的水化可能更有效','越大量越好','只需口服補水'],c:1,
+ e:'個別化水化（如 LVEDP 或生物阻抗導引）優於一體適用；但須防心衰病人過量。',s:'Moroni 2021（PMID 34169747）'},
+{cat:'cin',q:'使用 Mehran 等風險評分辨識 CA-AKI 高風險的臨床價值為？',
+ o:['無用','事前分層以強化水化、減量顯影劑並加強術後腎功能追蹤','決定鎮靜劑量','預測出血'],c:1,
+ e:'風險分層讓預防資源用在最需要的病人身上。',s:'Silver 2015（PMID 26316642）'},
+{cat:'cin',q:'CA-AKI 高風險病人圍術期用藥調整，合理者為？',
+ o:['加開 NSAID 止痛','暫停腎毒性藥物（NSAID、部分利尿劑），檢視 metformin','增加 aminoglycoside','不需調整'],c:1,
+ e:'暫停可避免的腎毒性藥物是簡單有效的預防；NSAID 應避免。',s:'AHA 2021（PMID 34187171）'},
+{cat:'cin',q:'CA-AKI 高風險病人術後的護理監測重點為？',
+ o:['不需記錄尿量','監測尿量與體液平衡、依計畫回抽 SCr、觀察容積過載徵象','限水到底','只量血壓'],c:1,
+ e:'兼顧足量水化與避免心衰過載，並在正確時間追腎功能。',s:'AHA 2021（PMID 34187171）'},
+{cat:'cin',q:'依 SCAI／ACC 共識，擇期 PCI 後同日出院（SDD）的合理條件為？',
+ o:['所有病人皆可','選擇性、無併發症、穩定、止血確實且有妥善返家與回診安排者','僅急性心肌梗塞病人','不論結果一律留觀 24 小時'],c:1,
+ e:'SDD 適用經篩選的低風險穩定病人；多數併發症發生於 <6 小時或 >24 小時。',s:'ACC 2021 SDD 決策路徑；Sugiharto 2023（PMID 37304338）'},
+{cat:'cin',q:'穿刺處相關的出院衛教應包含？',
+ o:['可立即劇烈運動','穿刺處照護、警示徵象（出血、腫脹、劇痛、發燒）、避免提重／泡澡、回診與雙抗用藥遵從','停用所有藥物','不需任何限制'],c:1,
+ e:'DAPT 遵從與警示徵象辨識是出院衛教核心，攸關支架血栓與併發症早期就醫。',s:'Rolley 2009（PMID 19538559）；ACC 2021 SDD'},
+{cat:'cin',q:'支架置放後強調 DAPT 不可自行中斷的主因為？',
+ o:['避免顯影劑腎病變','過早停藥顯著增加支架血栓／急性心肌梗塞風險','預防感染','控制血壓'],c:1,
+ e:'支架內皮化前中斷雙抗是支架血栓的重要可預防原因，衛教須強調。',s:'SCAI 2021（PMID 33909349）'},
+{cat:'cin',q:'下列何者是應衛教病人「立即返院或就醫」的穿刺處警示？',
+ o:['輕微瘀青逐漸變黃','穿刺處持續出血、快速腫大的搏動性腫塊、患肢冰冷麻木或發燒','穿刺處輕微緊繃感','第 2 天輕微痠痛'],c:1,
+ e:'活動性出血、假性動脈瘤、肢體缺血與感染徵象屬需緊急就醫的紅旗；一般瘀青消退屬正常。',s:'De Jong（PMID 9248376）；ACC 2021 SDD'}
+];
+
+/* ---------- 洗牌：每題選項打亂，記錄正確選項文字 ---------- */
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+const deck = QUESTIONS.map(item=>{
+  const correctText = item.o[item.c];
+  const opts = shuffle(item.o.slice());
+  return { cat:item.cat, q:item.q, opts, correctText, correctIdx:opts.indexOf(correctText), e:item.e, s:item.s };
+});
+
+/* ---------- 狀態 ---------- */
+const state = { idx:0, score:0, answered:false, picked:null, results:[] };
+const app = document.getElementById('app');
+const LETTERS = ['A','B','C','D'];
+const TOTAL = deck.length;
+
+function render(){
+  if(state.idx >= TOTAL){ renderResult(); return; }
+  const item = deck[state.idx];
+  const cat = CATS[item.cat];
+  const pct = Math.round(state.idx / TOTAL * 100);
+
+  let html = '';
+  html += `<div class="progress-info"><span>作答進度 <b>${state.idx}/${TOTAL}</b></span><span>目前得分 <b>${state.score}</b></span></div>`;
+  html += `<div class="bar"><div style="width:${pct}%"></div></div>`;
+  html += `<div class="qcard">`;
+  html += `<span class="cat-chip" style="background:${cat.color}">${cat.name}</span>`;
+  html += `<div class="qtext"><span class="num">Q${state.idx+1}.</span>${item.q}</div>`;
+  html += `<div class="opts">`;
+  item.opts.forEach((opt,i)=>{
+    let cls='opt';
+    if(state.answered){
+      if(i===item.correctIdx) cls+=' correct';
+      else if(i===state.picked) cls+=' wrong';
+    }
+    const dis = state.answered ? 'disabled' : '';
+    html += `<button class="${cls}" ${dis} onclick="pick(${i})"><span class="mark">${LETTERS[i]}</span><span>${opt}</span></button>`;
+  });
+  html += `</div>`;
+
+  if(state.answered){
+    const ok = state.picked===item.correctIdx;
+    html += `<div class="explain ${ok?'ok':'no'}">`;
+    html += `<div class="verdict">${ok?'✓ 答對了':'✗ 答錯了，正解為 '+LETTERS[item.correctIdx]}</div>`;
+    html += `<div>${item.e}</div>`;
+    html += `<div class="src">📖 出處：${item.s}</div>`;
+    html += `</div>`;
+    html += `<div class="nav"><button class="btn" onclick="next()">${state.idx < TOTAL-1 ? '下一題 →' : '看總成績 →'}</button></div>`;
+  }
+  html += `</div>`;
+  app.innerHTML = html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function pick(i){
+  if(state.answered) return;
+  state.answered = true;
+  state.picked = i;
+  const item = deck[state.idx];
+  const ok = i===item.correctIdx;
+  if(ok) state.score++;
+  state.results.push({ cat:item.cat, ok });
+  render();
+}
+
+function next(){
+  state.idx++;
+  state.answered=false;
+  state.picked=null;
+  render();
+}
+
+function renderResult(){
+  const pct = Math.round(state.score / TOTAL * 100);
+  let grade, emoji, grad;
+  if(pct>=90){ grade='優異'; emoji='🏆'; grad='linear-gradient(135deg,#f6a821,#e8890c)'; }
+  else if(pct>=80){ grade='及格 · 良好'; emoji='🎉'; grad='linear-gradient(135deg,#10b981,#059669)'; }
+  else if(pct>=60){ grade='待加強'; emoji='👍'; grad='linear-gradient(135deg,#3498db,#2d7dd2)'; }
+  else { grade='需複習'; emoji='📚'; grad='linear-gradient(135deg,#e74c3c,#c0392b)'; }
+
+  // 分區統計
+  const perCat = {};
+  Object.keys(CATS).forEach(k=> perCat[k]={ok:0,total:0});
+  state.results.forEach(r=>{ perCat[r.cat].total++; if(r.ok) perCat[r.cat].ok++; });
+
+  const now = new Date();
+  const stamp = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  let html = '';
+  html += `<div class="result-card">`;
+  html += `<div class="score-hero" style="background:${grad}">`;
+  html += `<div class="emoji">${emoji}</div>`;
+  html += `<div class="big">${state.score} / ${TOTAL}</div>`;
+  html += `<div class="pct">正確率 ${pct}%</div>`;
+  html += `<div class="grade">${grade}</div>`;
+  html += `</div>`;
+  html += `<div class="breakdown"><h3>分區成績</h3>`;
+  Object.keys(CATS).forEach(k=>{
+    const c=CATS[k], d=perCat[k];
+    const p = d.total? Math.round(d.ok/d.total*100):0;
+    html += `<div class="brow"><div class="lbl">${c.name}</div>`;
+    html += `<div class="track"><div style="width:${p}%;background:${c.color}"></div></div>`;
+    html += `<div class="val">${d.ok}/${d.total}</div></div>`;
+  });
+  html += `</div></div>`;
+  html += `<div class="meta-line">測驗完成時間：${stamp}　｜　心導管室護理監測與病人評估 100 題</div>`;
+  html += `<div class="tip no-print">📸 請截圖此頁保存成績，或點「列印／存 PDF」。</div>`;
+  html += `<div class="actions no-print">`;
+  html += `<button class="btn secondary" onclick="window.print()">🖨️ 列印／存 PDF</button>`;
+  html += `<button class="btn" onclick="restart()">🔄 重新測驗</button>`;
+  html += `</div>`;
+  app.innerHTML = html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function restart(){
+  // 重新洗牌
+  deck.forEach(item=>{
+    shuffle(item.opts);
+    item.correctIdx = item.opts.indexOf(item.correctText);
+  });
+  state.idx=0; state.score=0; state.answered=false; state.picked=null; state.results=[];
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
