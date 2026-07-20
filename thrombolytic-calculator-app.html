@@ -756,8 +756,171 @@
             </div>
         );
 
+        // ==================== UROKINASE + HEPARIN (方法 B) ====================
+        const UrokinaseComboView = () => {
+            const [copied, setCopied] = useState(false);
+
+            const copyOrder = () => {
+                const order = `【方法 B：Urokinase + Heparin】
+Urokinase 24 amps (24×60,000 = 1,440,000 IU) in N/S 250ml（濃度 5,760 IU/ml）
+經動脈導管 pump rate: 10 ml/hr (= 57,600 IU/hr)，約 25hr 換一袋
+周邊靜脈 Heparin: 從周邊 run，滴定至平常 aPTT/PTT target
+Fibrinogen < 150 mg/dL → Urokinase 減半 (10 → 5 ml/hr)`;
+                navigator.clipboard.writeText(order);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            };
+
+            return (
+                <div className="fade-in">
+                    <div className="alert-stripe">
+                        ⚠️ 此為「Urokinase ＋ 周邊 Heparin」併用做法，與「單用 Urokinase 高劑量」是<strong>兩套不同流程</strong> — 配方與流速皆不同，請勿混用
+                    </div>
+
+                    <div className="card">
+                        <h2 className="card-title warning">💉 方法 B：Urokinase ＋ Heparin（周邊 Heparin 併用）</h2>
+
+                        <div className="info-box info">
+                            <div className="info-title">📋 一句話重點</div>
+                            <p>Urokinase 走<strong>動脈導管</strong>（固定配方、非依體重），同時<strong>周邊靜脈</strong>另給 Heparin 維持平常 aPTT target。</p>
+                        </div>
+
+                        <div className="prep-card">
+                            <div className="prep-title">🧪 Urokinase 配方（經動脈導管）</div>
+                            <div className="prep-step">
+                                <div className="prep-number">1</div>
+                                <div className="prep-content">
+                                    <strong>Urokinase 24 amps</strong>（24 × 60,000 IU ＝ <span className="prep-highlight">1,440,000 IU（1.44 MIU）</span>）
+                                </div>
+                            </div>
+                            <div className="prep-step">
+                                <div className="prep-number">2</div>
+                                <div className="prep-content">
+                                    溶於 <span className="prep-highlight">Normal Saline 250 ml</span>（濃度 5,760 IU/ml）
+                                </div>
+                            </div>
+                            <div className="prep-step">
+                                <div className="prep-number">3</div>
+                                <div className="prep-content">
+                                    經動脈導管設定 pump rate <span className="prep-highlight">10 ml/hr</span>（＝ 57,600 IU/hr）
+                                    <div style={{fontSize: '0.85rem', color: 'var(--text-gray)', marginTop: '4px'}}>
+                                        250 ml ÷ 10 ml/hr ≈ 25 小時，約每日換一袋
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="summary-grid">
+                            <div className="summary-item">
+                                <div className="summary-label">泡藥總量</div>
+                                <div className="summary-value">1.44</div>
+                                <div style={{fontSize: '0.75rem', color: 'var(--text-gray)'}}>MIU / 250ml</div>
+                            </div>
+                            <div className="summary-item highlight">
+                                <div className="summary-label">Pump Rate</div>
+                                <div className="summary-value">10</div>
+                                <div style={{fontSize: '0.75rem'}}>ml/hr</div>
+                            </div>
+                            <div className="summary-item">
+                                <div className="summary-label">每小時給藥</div>
+                                <div className="summary-value">57,600</div>
+                                <div style={{fontSize: '0.75rem', color: 'var(--text-gray)'}}>IU/hr</div>
+                            </div>
+                        </div>
+
+                        <div className="info-box success">
+                            <div className="info-title">🩸 Heparin（周邊靜脈）</div>
+                            <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                                <li>從<strong>周邊靜脈</strong> run（與導管內 Urokinase 分開給）</li>
+                                <li>維持與平常<strong>相同的 aPTT / PTT target</strong></li>
+                            </ul>
+                        </div>
+
+                        <div className="info-box warning">
+                            <div className="info-title">⚠️ Fibrinogen 監測與減半</div>
+                            <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                                <li><strong>Fibrinogen &lt; 150 mg/dL</strong>：Urokinase 速率<strong>減半</strong>（10 → 5 ml/hr）</li>
+                                <li style={{color: 'var(--text-gray)'}}>（一般原則）Fibrinogen &lt; 100 mg/dL 或明顯出血：考慮暫停溶栓、輸 FFP / cryoprecipitate</li>
+                            </ul>
+                        </div>
+
+                        <div className="result-box warning">
+                            <div className="result-label">方法 B 醫囑摘要</div>
+                            <div className="result-value" style={{fontSize: '1.5rem'}}>
+                                UK 24 amps in N/S 250ml ＠ 10 ml/hr
+                            </div>
+                            <div className="result-note" style={{marginTop: '8px'}}>
+                                ＋ 周邊 Heparin（aPTT target）　|　Fibrinogen &lt; 150 → 5 ml/hr
+                            </div>
+                        </div>
+
+                        <div style={{marginTop: '16px', textAlign: 'center'}}>
+                            <button className={`copy-btn ${copied ? 'copied' : ''}`} onClick={copyOrder}>
+                                {copied ? '✓ 已複製' : '📋 複製醫囑'}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="card">
+                        <h2 className="card-title">🔍 兩種做法對照（務必分清楚）</h2>
+                        <table className="protocol-table">
+                            <thead>
+                                <tr>
+                                    <th>項目</th>
+                                    <th>方法 A：單用 UK（高劑量）</th>
+                                    <th>方法 B：UK ＋ Heparin</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>溶栓藥配方</td>
+                                    <td>依<strong>體重</strong>算安瓿數 in N/S <strong>500 ml</strong></td>
+                                    <td><strong>24 amps（1.44 MIU）</strong> in N/S <strong>250 ml</strong>（固定）</td>
+                                </tr>
+                                <tr>
+                                    <td>Pump rate</td>
+                                    <td><strong>21 ml/hr</strong>（固定）</td>
+                                    <td><strong>10 ml/hr</strong>（Fib&lt;150 減半至 5）</td>
+                                </tr>
+                                <tr>
+                                    <td>Urokinase 途徑</td>
+                                    <td>動脈導管</td>
+                                    <td>動脈導管</td>
+                                </tr>
+                                <tr className="highlight">
+                                    <td>併用 Heparin</td>
+                                    <td><strong>否</strong>（單用）</td>
+                                    <td><strong>是</strong>（周邊靜脈，aPTT target）</td>
+                                </tr>
+                                <tr>
+                                    <td>劑量特性</td>
+                                    <td>高劑量、依體重</td>
+                                    <td>固定配方</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div className="info-box danger">
+                            <div className="info-title">🚫 最常見的誤解，請避免</div>
+                            <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                                <li>本頁原本的<strong>高劑量是「單用」Urokinase，不併 Heparin</strong>。</li>
+                                <li>只有<strong>方法 B</strong> 才併用周邊 Heparin，且 UK 配方（250ml）與流速（10 ml/hr）都與方法 A 不同。</li>
+                                <li>切勿把方法 A 的高劑量 UK 再加上 Heparin，也勿把兩套的流速／泡法互相套用。</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div className="info-box info">
+                        <div className="info-title">ℹ️ 給藥途徑說明</div>
+                        <p style={{marginTop: '6px'}}>影像來源僅明確標示 Heparin「從周邊 run」；Urokinase 途徑依 ALI 導管溶栓慣例列為<strong>經動脈導管</strong>。實際請以術者當次 setup 為準。</p>
+                    </div>
+                </div>
+            );
+        };
+
         // ==================== UROKINASE TAB ====================
         const UrokinaseTab = () => {
+            const [method, setMethod] = useState('single');
             const [innerTab, setInnerTab] = useState('calculator');
             const [bodyWeight, setBodyWeight] = useState(60);
             const [selectedProtocol, setSelectedProtocol] = useState(2);
@@ -822,8 +985,47 @@ Daily total: ${(totalDailyIU/1000000).toFixed(2)} MIU`;
 
             return (
                 <div className="fade-in">
+                    <div className="card" style={{paddingBottom: '10px'}}>
+                        <h2 className="card-title">🦵 Urokinase for Acute Limb Ischemia</h2>
+                        <label className="form-label">選擇做法 Method</label>
+                        <div className="form-row" style={{marginTop: '6px'}}>
+                            <div
+                                onClick={() => setMethod('single')}
+                                style={{
+                                    padding: '14px',
+                                    border: `2px solid ${method === 'single' ? 'var(--accent)' : 'var(--border)'}`,
+                                    borderRadius: '10px',
+                                    cursor: 'pointer',
+                                    background: method === 'single' ? 'var(--bg-cream)' : 'white'
+                                }}
+                            >
+                                <div style={{fontWeight: '600', marginBottom: '4px'}}>方法 A：單用 Urokinase</div>
+                                <div style={{fontSize: '0.85rem', color: 'var(--text-gray)'}}>
+                                    高劑量、依體重、<strong>不併 Heparin</strong>（本頁原本做法）
+                                </div>
+                            </div>
+                            <div
+                                onClick={() => setMethod('combo')}
+                                style={{
+                                    padding: '14px',
+                                    border: `2px solid ${method === 'combo' ? 'var(--accent)' : 'var(--border)'}`,
+                                    borderRadius: '10px',
+                                    cursor: 'pointer',
+                                    background: method === 'combo' ? 'var(--bg-cream)' : 'white'
+                                }}
+                            >
+                                <div style={{fontWeight: '600', marginBottom: '4px'}}>方法 B：Urokinase ＋ Heparin</div>
+                                <div style={{fontSize: '0.85rem', color: 'var(--text-gray)'}}>
+                                    UK 固定配方 ＋ <strong>周邊 Heparin</strong>（aPTT target）
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {method === 'combo' ? <UrokinaseComboView /> : (
+                    <>
                     <div className="inner-tabs">
-                        <button 
+                        <button
                             className={`inner-tab ${innerTab === 'calculator' ? 'active' : ''}`}
                             onClick={() => setInnerTab('calculator')}
                         >
@@ -846,8 +1048,8 @@ Daily total: ${(totalDailyIU/1000000).toFixed(2)} MIU`;
                     {innerTab === 'calculator' && (
                         <>
                             <div className="card">
-                                <h2 className="card-title">🦵 Urokinase for Acute Limb Ischemia</h2>
-                                
+                                <h2 className="card-title">🦵 方法 A：單用 Urokinase（高劑量，經導管）</h2>
+
                                 <div className="form-group">
                                     <label className="form-label">
                                         體重 Body Weight <span className="form-hint">(kg)</span>
@@ -1111,6 +1313,8 @@ Daily total: ${(totalDailyIU/1000000).toFixed(2)} MIU`;
                                 </p>
                             </div>
                         </div>
+                    )}
+                    </>
                     )}
                 </div>
             );
