@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>心導管室團隊評估表單｜T-TPQ／T-TAQ（院內情境化版）</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#1e3a5f; --primary-light:#2d5a87; --accent:#e74c3c;
+  --success:#27ae60; --warning:#f39c12;
+  --bg-cream:#faf8f5; --bg-card:#ffffff;
+  --text-dark:#2c3e50; --text-muted:#7f8c8d; --border:#ecf0f1;
+  --shadow:0 4px 20px rgba(0,0,0,.08);
+}
+html.dark-theme{
+  --bg-cream:#1a1a2e; --bg-card:#16213e; --text-dark:#eaeaea;
+  --text-muted:#a0a0a0; --border:#2d3748; --shadow:0 4px 20px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg-cream);color:var(--text-dark);
+  font-family:'Noto Sans TC',-apple-system,'Segoe UI',sans-serif;line-height:1.7}
+.app{max-width:900px;margin:0 auto;padding:0 14px env(safe-area-inset-bottom)}
+header.hd{background:var(--primary);color:#fff;padding:18px 16px;border-radius:0 0 10px 10px;margin:0 -14px 14px}
+header.hd .kicker{font-size:12px;letter-spacing:1.5px;opacity:.85}
+header.hd h1{font-size:19px;margin:6px 0 4px;font-weight:600}
+header.hd .sub{font-size:12.5px;opacity:.8}
+.themebtn{position:absolute;top:14px;right:16px;background:rgba(255,255,255,.15);
+  color:#fff;border:0;border-radius:6px;padding:7px 10px;font-size:12px;cursor:pointer}
+.wrap{position:relative}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;
+  padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card h2{font-size:16px;margin:0 0 4px;color:var(--primary-light)}
+.card h2 .en{font-size:12px;color:var(--text-muted);font-weight:400;margin-left:6px}
+.note{font-size:12.5px;color:var(--text-muted);margin:0 0 12px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px}
+.tab{flex:0 0 auto;min-height:44px;padding:9px 14px;border-radius:8px;border:1px solid var(--border);
+  background:var(--bg-card);color:var(--text-muted);font-size:13.5px;cursor:pointer;font-family:inherit}
+.tab.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.tab .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--success);margin-left:6px}
+.bar{height:6px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.bar>div{height:100%;background:var(--success);transition:width .3s}
+.fld{margin-bottom:12px}
+.fld label{display:block;font-size:13px;font-weight:500;margin-bottom:5px}
+input,select,textarea{width:100%;font-size:16px;font-family:inherit;padding:10px;
+  border:1px solid var(--border);border-radius:7px;background:var(--bg-card);color:var(--text-dark)}
+textarea{min-height:88px;resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:520px){.grid2{grid-template-columns:1fr}}
+.item{padding:12px 0;border-bottom:1px dashed var(--border)}
+.item:last-child{border-bottom:0}
+.item .q{font-size:14px;margin-bottom:9px;display:flex;gap:8px}
+.item .q .n{color:var(--primary-light);font-weight:600;flex:0 0 auto}
+.likert{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.lk{min-height:48px;border:1px solid var(--border);border-radius:7px;background:var(--bg-card);
+  color:var(--text-muted);font-size:11.5px;font-family:inherit;cursor:pointer;padding:4px 2px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:.15s}
+.lk b{font-size:14px}
+.lk.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.lk.na.on{background:var(--text-muted);border-color:var(--text-muted)}
+.dimhead{background:var(--primary);color:#fff;padding:8px 12px;border-radius:6px;
+  font-size:14px;font-weight:600;margin:18px 0 2px}
+.dimhead:first-of-type{margin-top:4px}
+.dimhead .en{font-weight:400;font-size:11.5px;opacity:.8;margin-left:6px}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.btn{min-height:48px;padding:11px 18px;border-radius:8px;border:0;background:var(--primary);
+  color:#fff;font-size:14px;font-family:inherit;cursor:pointer;font-weight:500}
+.btn.alt{background:var(--bg-card);color:var(--primary-light);border:1px solid var(--primary-light)}
+.btn.warn{background:var(--bg-card);color:var(--accent);border:1px solid var(--accent)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+a.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+.qrbox{text-align:center;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px}
+.qrbox img{width:210px;height:210px;max-width:82%;border-radius:8px;background:#fff;padding:8px}
+.qrbox p{font-size:12.5px;color:var(--text-muted);margin:10px 0 0}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+th,td{border:1px solid var(--border);padding:8px;text-align:left}
+th{background:var(--primary);color:#fff;font-weight:500}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11.5px;color:#fff}
+.warnbox{border-left:4px solid var(--warning);background:rgba(243,156,18,.08);
+  padding:11px 13px;border-radius:0 7px 7px 0;font-size:13px;margin-bottom:12px}
+.foot{font-size:11.5px;color:var(--text-muted);border-top:1px solid var(--border);
+  padding:14px 2px 28px;line-height:1.75}
+.foot b{color:var(--text-dark)}
+@media print{
+  .tabs,.themebtn,.btnrow,.bar{display:none!important}
+  body{background:#fff}.card{box-shadow:none;page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useMemo} = React;
+const PAGE_URL = "https://drake1128.github.io/saq-questionnaire/cathlab-ttpq-ttaq-app.html";
+const QR_DATA = "data:image/png;base64,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";
+
+/* ============ 量表題庫（TeamSTEPPS 五構面，心導管室情境化改寫） ============ */
+const DIMS = [
+  {k:'structure', zh:'團隊結構', en:'Team Structure'},
+  {k:'leadership',zh:'領導',     en:'Leadership'},
+  {k:'monitoring',zh:'情境監測', en:'Situation Monitoring'},
+  {k:'support',   zh:'相互支援', en:'Mutual Support'},
+  {k:'commun',    zh:'溝通',     en:'Communication'},
+];
+
+const TPQ = {
+ structure:[
+  '導管室團隊成員清楚自己在檢查／治療中的角色與職責（術者、助手、刷手、流動、放射師、技術員）。',
+  '導管室的人力配置足以應付常規排程與臨時的 emergent case（如 primary PCI）。',
+  '跨班或跨團隊交班時，病人資訊能完整傳遞。',
+  '病人與家屬被視為團隊的一部分，適當納入處置說明與決策討論。',
+  '團隊成員了解彼此當下的工作負荷。',
+  '當班表或人力臨時異動時，團隊能有效重新分工。',
+  '導管室與相關單位（CCU、急診、麻醉、開刀房）之間的協作順暢。'],
+ leadership:[
+  'Case 開始前，術者會進行 brief（說明計畫、預期困難、所需器材與備援方案）。',
+  '遇到併發症或術中計畫改變時，leader 會即時向全體說明狀況。',
+  'Case 結束後（特別是困難或非預期 case）會進行 debrief 檢討。',
+  'Leader 願意接受團隊成員提出的不同意見。',
+  'Leader 會確認團隊成員確實理解所交付的指令。',
+  'Leader 會依情況調整計畫，並讓全體成員知悉。',
+  '資深人員以身作則展現良好的團隊行為。'],
+ monitoring:[
+  '團隊成員會主動注意彼此的操作是否有疏漏（cross-monitoring）。',
+  '團隊共同監測病人生命徵象、ACT、對比劑用量與輻射劑量。',
+  '當有成員出現疲勞或壓力過大時，其他人能察覺。',
+  '團隊成員清楚目前 case 的進度與下一步。',
+  '團隊會注意器械台無菌狀態與導管室環境安全。',
+  '團隊成員能察覺容易導致錯誤的情境（如同姓名病人、規格相近的器材）。',
+  '團隊成員彼此提供資訊以維持共同的情境認知（shared mental model）。'],
+ support:[
+  '當某位成員工作量過重時，其他成員會主動協助。',
+  '團隊成員給予回饋時能就事論事，不針對個人。',
+  '團隊成員能接受同仁的糾正而不覺得被冒犯。',
+  '察覺病人安全疑慮時，成員會明確表達關切（如使用 CUS）。',
+  '若第一次表達關切未獲回應，成員會再次提出（Two-Challenge Rule）。',
+  '團隊成員會主動協助新進人員與輪訓學員。',
+  '團隊能以建設性方式處理成員之間的衝突。'],
+ commun:[
+  '團隊成員以結構化方式（如 SBAR）傳遞病人資訊。',
+  '口頭醫囑或器材要求會被複誦確認（check-back）。',
+  '關鍵資訊（heparin／ACT、給藥、器材尺寸）會清楚說出讓全體聽到（call-out）。',
+  '團隊成員能及時取得執行工作所需的資訊。',
+  '資訊傳遞時能避免使用含糊不清的用語。',
+  '交班（hand-off）遵循一致的流程與格式。',
+  '團隊成員能自在地提出疑問或要求澄清。'],
+};
+
+const TAQ = {
+ structure:[
+  '明確的角色分工能減少導管室的錯誤。',
+  '團隊成員應了解彼此的職責範圍。',
+  '病人與家屬應被視為醫療團隊的一部分。',
+  '團隊結構的完整性對病人安全有重要影響。',
+  '跨職類共訓（醫師、護理、放射師、技術員一起）對導管室運作有幫助。',
+  '團隊組成改變時，重新確認分工是必要的。'],
+ leadership:[
+  '即使是常規 case，術前 brief 仍值得花時間進行。',
+  'Leader 應主動邀請成員表達意見，而非等待對方開口。',
+  'Debrief 是改善團隊表現的重要工具。',
+  '領導者本身也需要被提醒與糾正。',
+  '團隊 leader 應為團隊的溝通品質負責。',
+  '資淺成員在特定情境下也可以擔任領導角色。'],
+ monitoring:[
+  '觀察同仁的操作是專業行為，而非不信任的表現。',
+  '主動掌握團隊整體狀況有助於及早發現問題。',
+  '察覺同仁疲勞並主動介入是必要的。',
+  '維持共同情境認知需要刻意的溝通，不會自然發生。',
+  '交叉檢查（cross-monitoring）能有效減少錯誤。',
+  '情境監測應涵蓋輻射與對比劑等職業與病人安全面向。'],
+ support:[
+  '主動協助同仁不應被視為干涉對方的工作。',
+  '提出病安疑慮是每位成員的責任，不分職級。',
+  '接受回饋是專業成長的一部分。',
+  '即使可能被誤解，仍應為病人安全發聲。',
+  '衝突若處理得當，可以改善團隊運作。',
+  '支援同仁能提升整體團隊效能，而非拖慢流程。'],
+ commun:[
+  '結構化溝通（SBAR）能減少資訊遺漏。',
+  '複誦確認（check-back）值得花費額外的時間。',
+  '溝通失誤是導管室不良事件的重要來源。',
+  '每位成員都有責任確保訊息被正確接收。',
+  '標準化的交班流程能提升病人安全。',
+  '緊急狀況下更需要刻意維持結構化溝通。'],
+};
+
+const SCALE = [
+  {v:1,zh:'非常不同意'},{v:2,zh:'不同意'},{v:3,zh:'普通'},
+  {v:4,zh:'同意'},{v:5,zh:'非常同意'}
+];
+
+const ROLES = ['心臟內科主治醫師','心臟內科住院醫師／fellow','專科護理師 (NP)',
+  '導管室護理師','放射師','醫事技術員','其他'];
+const YEARS = ['< 1 年','1–3 年','3–5 年','5–10 年','> 10 年'];
+const FREQ  = ['每週 ≥ 4 天','每週 2–3 天','每週 ≤ 1 天','僅支援／不定期'];
+const PHASE = ['前測 (baseline，訓練前)','後測 (post，訓練後)','追蹤 (follow-up，6–12 個月)'];
+
+const OPENQ = [
+  '在心導管室的團隊溝通中，你認為目前最需要優先改善的一件事是什麼？',
+  '請描述一次「因為團隊溝通良好而避免了問題」或「因為溝通不良而差點出事」的實際情境（請勿寫入可辨識病人身分之資訊）。',
+  '哪些制度或流程上的障礙，讓 SBAR／check-back／CUS 等工具在導管室不容易被實際使用？',
+];
+
+/* ================================ 元件 ================================ */
+const Likert = ({val,onPick,idBase}) => (
+  <div className="likert">
+    {SCALE.map(s=>(
+      <button key={s.v} className={'lk'+(val===s.v?' on':'')}
+        onClick={()=>onPick(val===s.v?null:s.v)}
+        aria-pressed={val===s.v} aria-label={idBase+' '+s.zh}>
+        <b>{s.v}</b><span>{s.zh}</span>
+      </button>
+    ))}
+  </div>
+);
+
+const Scale = ({prefix,bank,ans,setAns,title,en,intro}) => (
+  <div className="card">
+    <h2>{title}<span className="en">{en}</span></h2>
+    <p className="note">{intro}</p>
+    {DIMS.map(d=>(
+      <div key={d.k}>
+        <div className="dimhead">{d.zh}<span className="en">{d.en}</span></div>
+        {bank[d.k].map((q,i)=>{
+          const id = prefix+'_'+d.k+'_'+(i+1);
+          return (
+            <div className="item" key={id}>
+              <div className="q"><span className="n">{i+1}.</span><span>{q}</span></div>
+              <Likert idBase={id} val={ans[id]??null}
+                onPick={v=>setAns(a=>({...a,[id]:v}))}/>
+            </div>
+          );
+        })}
+      </div>
+    ))}
+  </div>
+);
+
+/* 雷達圖 */
+const Radar = ({tpq,taq}) => {
+  const R=78, cx=110, cy=105;
+  const pt=(i,r)=>{const a=-Math.PI/2+i*2*Math.PI/5;
+    return [cx+r*Math.cos(a), cy+r*Math.sin(a)];};
+  const poly=(vals,)=>vals.map((v,i)=>{
+    const r = v==null?0:R*(v-1)/4; const[x,y]=pt(i,r); return x.toFixed(1)+','+y.toFixed(1);
+  }).join(' ');
+  return (
+    <svg viewBox="0 0 220 215" style={{width:'100%',maxWidth:340,display:'block',margin:'0 auto'}}>
+      {[.25,.5,.75,1].map(f=>(
+        <polygon key={f} points={DIMS.map((_,i)=>{const[x,y]=pt(i,R*f);return x.toFixed(1)+','+y.toFixed(1);}).join(' ')}
+          fill="none" stroke="var(--border)" strokeWidth="1"/>
+      ))}
+      {DIMS.map((d,i)=>{const[x,y]=pt(i,R);
+        return <line key={d.k} x1={cx} y1={cy} x2={x} y2={y} stroke="var(--border)"/>;})}
+      <polygon points={poly(DIMS.map(d=>tpq[d.k]))} fill="rgba(30,58,95,.28)" stroke="#1e3a5f" strokeWidth="2"/>
+      <polygon points={poly(DIMS.map(d=>taq[d.k]))} fill="rgba(231,76,60,.18)" stroke="#e74c3c" strokeWidth="2" strokeDasharray="4 3"/>
+      {DIMS.map((d,i)=>{const[x,y]=pt(i,R+18);
+        return <text key={d.k} x={x} y={y} textAnchor="middle" dominantBaseline="middle"
+          fontSize="10.5" fill="var(--text-muted)">{d.zh}</text>;})}
+      <text x="8" y="207" fontSize="10" fill="#1e3a5f">■ T-TPQ 知覺</text>
+      <text x="82" y="207" fontSize="10" fill="#e74c3c">▨ T-TAQ 態度</text>
+      <text x="160" y="207" fontSize="9.5" fill="var(--text-muted)">刻度 1–5</text>
+    </svg>
+  );
+};
+
+/* ================================ 主程式 ================================ */
+const App = () => {
+  const [tab,setTab]   = useState('info');
+  const [dark,setDark] = useState(false);
+  const [info,setInfo] = useState({});
+  const [ans,setAns]   = useState({});
+  const [open,setOpen] = useState({});
+
+  useEffect(()=>{try{
+    const s=localStorage.getItem('cathlab-tstepps-v1');
+    if(s){const d=JSON.parse(s); setInfo(d.info||{}); setAns(d.ans||{}); setOpen(d.open||{});}
+  }catch(e){}},[]);
+  useEffect(()=>{try{
+    localStorage.setItem('cathlab-tstepps-v1',JSON.stringify({info,ans,open}));
+  }catch(e){}},[info,ans,open]);
+  useEffect(()=>{document.documentElement.classList.toggle('dark-theme',dark);},[dark]);
+
+  const total = 35+30;
+  const done  = Object.values(ans).filter(v=>v!=null).length;
+
+  const dimScore = (prefix,bank) => {
+    const out={};
+    DIMS.forEach(d=>{
+      const vals = bank[d.k].map((_,i)=>ans[prefix+'_'+d.k+'_'+(i+1)]).filter(v=>v!=null);
+      out[d.k] = vals.length? vals.reduce((a,b)=>a+b,0)/vals.length : null;
+    });
+    return out;
+  };
+  const tpqS = useMemo(()=>dimScore('TPQ',TPQ),[ans]);
+  const taqS = useMemo(()=>dimScore('TAQ',TAQ),[ans]);
+  const agree = (prefix,bank,k)=>{
+    const vals = bank[k].map((_,i)=>ans[prefix+'_'+k+'_'+(i+1)]).filter(v=>v!=null);
+    if(!vals.length) return null;
+    return 100*vals.filter(v=>v>=4).length/vals.length;
+  };
+  const mean = o => {const v=Object.values(o).filter(x=>x!=null);
+    return v.length? v.reduce((a,b)=>a+b,0)/v.length : null;};
+  const f2 = v => v==null?'—':v.toFixed(2);
+  const f0 = v => v==null?'—':v.toFixed(0)+'%';
+
+  const flagColor = (tp,ta)=>{
+    if(tp==null||ta==null) return null;
+    if(tp>=4 && ta>=4) return {c:'var(--success)',t:'維持'};
+    if(tp<3.5 && ta>=4) return {c:'var(--warning)',t:'能力／流程落差'};
+    if(ta<3.5) return {c:'var(--accent)',t:'態度落差'};
+    return {c:'var(--primary-light)',t:'觀察'};
+  };
+
+  const rows = () => {
+    const r=[];
+    Object.entries(info).forEach(([k,v])=>r.push(['基本資料',k,'',v]));
+    ['TPQ','TAQ'].forEach(p=>{const bank=p==='TPQ'?TPQ:TAQ;
+      DIMS.forEach(d=>bank[d.k].forEach((q,i)=>{
+        const id=p+'_'+d.k+'_'+(i+1);
+        r.push([p,d.zh,q.replace(/[",\n]/g,' '),ans[id]??'']);
+      }));});
+    OPENQ.forEach((q,i)=>r.push(['開放題','Q'+(i+1),q.replace(/[",\n]/g,' '),(open['o'+i]||'').replace(/[",\n]/g,' ')]));
+    DIMS.forEach(d=>{
+      r.push(['分數','TPQ_'+d.en,'構面平均',f2(tpqS[d.k])]);
+      r.push(['分數','TAQ_'+d.en,'構面平均',f2(taqS[d.k])]);
+    });
+    r.push(['分數','TPQ_TOTAL','整體平均',f2(mean(tpqS))]);
+    r.push(['分數','TAQ_TOTAL','整體平均',f2(mean(taqS))]);
+    return r;
+  };
+
+  const dl = (name,text,type) => {
+    const b=new Blob(['\uFEFF'+text],{type:type}); const u=URL.createObjectURL(b);
+    const a=document.createElement('a'); a.href=u; a.download=name; a.click();
+    setTimeout(()=>URL.revokeObjectURL(u),1500);
+  };
+  const expCSV = () => {
+    const head='區塊,題項代碼／構面,題目,作答\n';
+    const body=rows().map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+    dl('TTPQ_TTAQ_'+(info.code||'anon')+'_'+new Date().toISOString().slice(0,10)+'.csv',
+       head+body,'text/csv;charset=utf-8');
+  };
+  const expJSON = () => dl('TTPQ_TTAQ_'+(info.code||'anon')+'.json',
+    JSON.stringify({info,answers:ans,open,scores:{tpq:tpqS,taq:taqS}},null,2),'application/json');
+
+  const TABS=[{k:'info',n:'基本資料'},{k:'tpq',n:'T-TPQ 知覺'},
+    {k:'taq',n:'T-TAQ 態度'},{k:'open',n:'開放題'},{k:'res',n:'結果'},{k:'share',n:'分享'}];
+
+  return (
+  <div className="app">
+    <div className="wrap">
+      <header className="hd">
+        <div className="kicker">TEAMSTEPPS · 心導管室團隊評估</div>
+        <h1>T-TPQ 團隊知覺／T-TAQ 團隊態度量表</h1>
+        <div className="sub">Cath Lab Adapted Version · Kirkpatrick Level 2 評估工具</div>
+        <button className="themebtn" onClick={()=>setDark(d=>!d)}>{dark?'☀ 亮色':'🌙 暗色'}</button>
+      </header>
+    </div>
+
+    <div className="tabs">
+      {TABS.map(t=>(
+        <button key={t.k} className={'tab'+(tab===t.k?' on':'')} onClick={()=>{setTab(t.k);window.scrollTo(0,0);}}>
+          {t.n}{t.k==='tpq'&&Object.keys(ans).filter(k=>k.startsWith('TPQ')&&ans[k]).length===35&&<span className="dot"/>}
+          {t.k==='taq'&&Object.keys(ans).filter(k=>k.startsWith('TAQ')&&ans[k]).length===30&&<span className="dot"/>}
+        </button>
+      ))}
+    </div>
+    <div className="bar"><div style={{width:(100*done/total)+'%'}}/></div>
+
+    {tab==='info' && (
+      <div className="card">
+        <h2>基本資料<span className="en">Demographics</span></h2>
+        <p className="note">本問卷採匿名填答。請自訂一組僅自己知道的代碼（例如生日末四碼＋姓名縮寫），
+        以便前後測配對比較；不會用於辨識個人身分。</p>
+        <div className="warnbox">
+          填答說明：以下題目請就<b>「你在心導管室實際的觀察與看法」</b>作答，
+          沒有標準答案。T-TPQ 問的是「現況如何」，T-TAQ 問的是「你認為應該如何」，兩者請分開判斷。
+        </div>
+        <div className="fld"><label>配對代碼 Pairing code</label>
+          <input value={info.code||''} onChange={e=>setInfo({...info,code:e.target.value})}
+            placeholder="例：1128MY"/></div>
+        <div className="grid2">
+          <div className="fld"><label>評估時間點</label>
+            <select value={info.phase||''} onChange={e=>setInfo({...info,phase:e.target.value})}>
+              <option value="">請選擇</option>{PHASE.map(p=><option key={p}>{p}</option>)}</select></div>
+          <div className="fld"><label>填答日期</label>
+            <input type="date" value={info.date||''} onChange={e=>setInfo({...info,date:e.target.value})}/></div>
+          <div className="fld"><label>職類 Role（分層分析用）</label>
+            <select value={info.role||''} onChange={e=>setInfo({...info,role:e.target.value})}>
+              <option value="">請選擇</option>{ROLES.map(r=><option key={r}>{r}</option>)}</select></div>
+          <div className="fld"><label>導管室相關年資</label>
+            <select value={info.years||''} onChange={e=>setInfo({...info,years:e.target.value})}>
+              <option value="">請選擇</option>{YEARS.map(y=><option key={y}>{y}</option>)}</select></div>
+          <div className="fld"><label>進入導管室頻率</label>
+            <select value={info.freq||''} onChange={e=>setInfo({...info,freq:e.target.value})}>
+              <option value="">請選擇</option>{FREQ.map(f=><option key={f}>{f}</option>)}</select></div>
+          <div className="fld"><label>是否曾接受 TeamSTEPPS 訓練</label>
+            <select value={info.trained||''} onChange={e=>setInfo({...info,trained:e.target.value})}>
+              <option value="">請選擇</option><option>未曾接受</option>
+              <option>曾接受（1 次）</option><option>曾接受（≥ 2 次）</option>
+              <option>擔任院內 coach／champion</option></select></div>
+        </div>
+        <div className="fld"><label>是否參與 on-call primary PCI 團隊</label>
+          <select value={info.oncall||''} onChange={e=>setInfo({...info,oncall:e.target.value})}>
+            <option value="">請選擇</option><option>是</option><option>否</option></select></div>
+        <div className="btnrow"><button className="btn" onClick={()=>{setTab('tpq');window.scrollTo(0,0);}}>開始填答 T-TPQ →</button></div>
+      </div>
+    )}
+
+    {tab==='tpq' && (<>
+      <Scale prefix="TPQ" bank={TPQ} ans={ans} setAns={setAns}
+        title="T-TPQ 團隊知覺量表" en="Teamwork Perceptions Questionnaire · 35 題"
+        intro="以下描述請就「我所在的心導管室團隊目前實際的運作情形」評分。"/>
+      <div className="btnrow"><button className="btn" onClick={()=>{setTab('taq');window.scrollTo(0,0);}}>下一部分：T-TAQ →</button></div>
+    </>)}
+
+    {tab==='taq' && (<>
+      <Scale prefix="TAQ" bank={TAQ} ans={ans} setAns={setAns}
+        title="T-TAQ 團隊態度量表" en="Teamwork Attitudes Questionnaire · 30 題"
+        intro="以下描述請就「你個人對團隊合作的看法與認同程度」評分，與單位現況無關。"/>
+      <div className="btnrow"><button className="btn" onClick={()=>{setTab('open');window.scrollTo(0,0);}}>下一部分：開放題 →</button></div>
+    </>)}
+
+    {tab==='open' && (
+      <div className="card">
+        <h2>開放式問題<span className="en">Open-ended</span></h2>
+        <p className="note">選填。這部分往往比量表分數更能指出下一步該補哪裡。</p>
+        {OPENQ.map((q,i)=>(
+          <div className="fld" key={i}>
+            <label>{i+1}. {q}</label>
+            <textarea value={open['o'+i]||''} onChange={e=>setOpen({...open,['o'+i]:e.target.value})}/>
+          </div>
+        ))}
+        <div className="btnrow"><button className="btn" onClick={()=>{setTab('res');window.scrollTo(0,0);}}>查看結果 →</button></div>
+      </div>
+    )}
+
+    {tab==='res' && (
+      <div className="card">
+        <h2>個人結果摘要<span className="en">Summary</span></h2>
+        <p className="note">已完成 {done} / {total} 題。分數為各構面題目之算術平均（1–5），
+        「同意率」為勾選 4 或 5 的比例。個人分數僅供自我參照，單位層級的判讀應以群體平均與職類分層為準。</p>
+        <Radar tpq={tpqS} taq={taqS}/>
+        <table>
+          <thead><tr><th>構面</th><th>T-TPQ 知覺</th><th>同意率</th><th>T-TAQ 態度</th><th>同意率</th><th>初步判讀</th></tr></thead>
+          <tbody>
+          {DIMS.map(d=>{const fl=flagColor(tpqS[d.k],taqS[d.k]);return(
+            <tr key={d.k}>
+              <td>{d.zh}<br/><span style={{fontSize:11,color:'var(--text-muted)'}}>{d.en}</span></td>
+              <td className="num">{f2(tpqS[d.k])}</td>
+              <td className="num">{f0(agree('TPQ',TPQ,d.k))}</td>
+              <td className="num">{f2(taqS[d.k])}</td>
+              <td className="num">{f0(agree('TAQ',TAQ,d.k))}</td>
+              <td>{fl? <span className="pill" style={{background:fl.c}}>{fl.t}</span> : '—'}</td>
+            </tr>);})}
+          <tr><td><b>整體平均</b></td><td className="num"><b>{f2(mean(tpqS))}</b></td><td className="num">—</td>
+            <td className="num"><b>{f2(mean(taqS))}</b></td><td className="num">—</td><td>—</td></tr>
+          </tbody>
+        </table>
+        <div className="warnbox" style={{marginTop:14}}>
+          <b>判讀邏輯（對應永續決策樹）：</b><br/>
+          · <b>T-TAQ 低</b>（不認同）→ 屬態度／文化問題，需從領導示範與制度誘因著手，補訓練效果有限。<br/>
+          · <b>T-TAQ 高但 T-TPQ 低</b>（認同但做不到）→ 屬能力與流程障礙，需補演練、in-situ 模擬與流程再設計。<br/>
+          · <b>兩者皆高但行為稽核（L3）不佳</b>→ 屬教學轉移問題，且提示自陳量表可能受社會期許影響，
+          務必與客觀行為觀察並用。
+        </div>
+        <div className="btnrow">
+          <button className="btn" onClick={expCSV}>匯出 CSV</button>
+          <button className="btn alt" onClick={expJSON}>匯出 JSON</button>
+          <button className="btn alt" onClick={()=>window.print()}>列印／存 PDF</button>
+          <button className="btn warn" onClick={()=>{if(confirm('確定清除本機所有填答內容？'))
+            {setAns({});setOpen({});setInfo({});}}}>清除重填</button>
+        </div>
+      </div>
+    )}
+
+    {tab==='share' && (
+      <div className="card">
+        <h2>分享此表單<span className="en">Share</span></h2>
+        <p className="note">下方 QR Code 已<b>離線內嵌</b>於本頁，不需連網服務；掃描即可在手機開啟本表單，供團隊於訓練前後測填答。</p>
+        <div className="qrbox">
+          <img src={QR_DATA} alt="本表單 QR Code" width="210" height="210"/>
+          <p>掃描開啟：T-TPQ／T-TAQ 心導管室團隊評估</p>
+        </div>
+        <div className="fld"><label>頁面連結 Page URL</label>
+          <input readOnly value={PAGE_URL} onFocus={e=>e.target.select()}/></div>
+        <div className="btnrow">
+          <button className="btn" onClick={e=>{if(navigator.clipboard)navigator.clipboard.writeText(PAGE_URL);const b=e.currentTarget,o=b.textContent;b.textContent='✓ 已複製';setTimeout(()=>{b.textContent=o;},1500);}}>複製連結</button>
+          <a className="btn alt" href={'mailto:?subject='+encodeURIComponent('分享：心導管室團隊評估表單 T-TPQ／T-TAQ')+'&body='+encodeURIComponent('我想和您分享這個心導管室團隊 TeamSTEPPS 評估表單：\n\n'+PAGE_URL)}>Email 分享</a>
+          <a className="btn alt" href={'https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(PAGE_URL)} target="_blank" rel="noopener noreferrer">LINE 分享</a>
+        </div>
+      </div>
+    )}
+
+    <div className="foot">
+      <b>版本說明｜請務必保留</b><br/>
+      本表單為依 AHRQ TeamSTEPPS 之 T-TPQ (Teamwork Perceptions Questionnaire) 與
+      T-TAQ (Teamwork Attitudes Questionnaire) 五大構面架構，改寫為<b>心導管室情境的院內版本
+      (in-house context-adapted version)</b>。題幹經在地化改寫，非原始驗證版之逐題翻譯；
+      Keebler 等人 (BMJ Qual Saf 2014;23:718-26, PMID 24652512) 所報告之建構效度與
+      Cronbach α=0.978 係針對<b>原始英文版</b>，不可直接外推至本改寫版。
+      若用於發表或正式評鑑，建議另行取得原始量表授權版本，或先進行在地信效度檢驗。<br/>
+      本版所有題目均為<b>正向敘述、無反向計分題</b>，計分時請勿套用原版之反向題規則。<br/><br/>
+      本量表為自陳式 (self-report) 工具，易受社會期許影響且職類間常有系統性差異，
+      應與 Kirkpatrick L3 之客觀行為觀察（交班稽核、in-situ 模擬評分）並用。<br/><br/>
+      <b>讀書會共筆整理人</b><br/>
+      謝慕揚 醫師 MD, PhD, FESC<br/>
+      結構性心臟病與介入心臟學<br/><br/>
+      · 本內容為讀書會共筆整理，未必涵蓋所有相關文獻<br/>
+      · 僅供學術與教育用途，不代表任何單位之官方立場<br/>
+      · 本內容未涉及任何利益衝突
+    </div>
+  </div>);
+};
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
