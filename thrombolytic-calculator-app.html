@@ -131,6 +131,10 @@
             background: var(--danger);
         }
 
+        .nav-tab.angiojet.active {
+            background: var(--info);
+        }
+
         /* Card */
         .card {
             background: white;
@@ -740,6 +744,12 @@
                     onClick={() => setActiveTab('alteplase')}
                 >
                     🫁 Alteplase (PE)
+                </button>
+                <button
+                    className={`nav-tab angiojet ${activeTab === 'angiojet' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('angiojet')}
+                >
+                    🩸 AngioJet (PowerPulse)
                 </button>
                 <button
                     className={`nav-tab ${activeTab === 'safety' ? 'active' : ''}`}
@@ -1981,6 +1991,165 @@ Total rate: ${cdtTotalPerHour} mg/hr × ${cdtDuration}hr = ${cdtTotalDose} mg
             </div>
         );
 
+        // ==================== ANGIOJET POWER PULSE TAB ====================
+        const AngioJetTab = () => {
+            const [bodyWeight, setBodyWeight] = useState(60);
+            const [fraction, setFraction] = useState(0.5);   // 1/3 或 1/2 of total
+            const [dilution, setDilution] = useState(250);   // 250 或 500 ml
+            const [copied, setCopied] = useState(false);
+
+            const validWeight = bodyWeight > 0;
+            const totalDose = bodyWeight * 0.6;
+            const sprayLow  = totalDose / 3;
+            const sprayHigh = totalDose / 2;
+            const sprayDose = totalDose * fraction;
+            const remaining = totalDose - sprayDose;
+            const conc = dilution > 0 ? sprayDose / dilution : 0;
+            const r1 = (v) => (Math.round(v * 10) / 10);
+
+            const copyOrder = () => {
+                const order = `【AngioJet Power Pulse — tPA (Alteplase) 噴藥】
+病人體重 ${bodyWeight} kg
+Total tPA = ${bodyWeight} × 0.6 = ${r1(totalDose)} mg
+Power Pulse 噴藥（${fraction === 0.5 ? '1/2' : '1/3'} of total）= ${r1(sprayDose)} mg，泡於 N/S ${dilution} ml（濃度 ${conc.toFixed(3)} mg/ml）
+剩餘 tPA ${r1(remaining)} mg → ICU 經 Fountain 導管持續灌注
+※ 若首波機械除栓已部分再通，酌減噴藥量以避免 tPA 變成 systemic`;
+                navigator.clipboard.writeText(order);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            };
+
+            return (
+                <div className="fade-in">
+                    <div className="card">
+                        <h2 className="card-title" style={{color: 'var(--info)'}}>🩸 AngioJet Power Pulse — tPA 噴藥劑量</h2>
+
+                        <div className="alert-stripe">
+                            ⚠️ 本頁為<strong>院內經驗做法</strong>（pharmacomechanical thrombectomy；tPA 以 Power Pulse Spray 為 off-label 使用），非仿單固定劑量；實際給藥由術者依血栓量與再通情形判斷。
+                        </div>
+
+                        <div className="info-box info">
+                            <div className="info-title">📋 一句話重點</div>
+                            <p><strong>Total tPA = 體重 × 0.6 mg</strong>；取其中 <strong>1/3～1/2</strong> 泡 <strong>250–500 ml</strong> 做 Power Pulse 噴藥，剩餘 tPA 於 ICU 經 <strong>Fountain</strong> 導管持續灌注。</p>
+                        </div>
+
+                        <div className="form-group">
+                            <label className="form-label">體重 (kg)</label>
+                            <input type="number" className="form-input" value={bodyWeight}
+                                onChange={(e) => setBodyWeight(Number(e.target.value))}
+                                style={{maxWidth: '200px'}} />
+                        </div>
+
+                        {!validWeight ? (
+                            <div className="result-box danger">
+                                <div className="result-label">⚠️ 輸入無效</div>
+                                <div className="result-value" style={{fontSize: '1.3rem'}}>請輸入大於 0 的體重</div>
+                                <div className="result-note">體重須為正數才能計算 tPA 總量（體重 × 0.6）。</div>
+                            </div>
+                        ) : (
+                        <>
+                            {(bodyWeight < 20 || bodyWeight > 200) && (
+                                <div className="info-box warning">
+                                    <div className="info-title">⚠️ 體重超出常見範圍</div>
+                                    <p>{bodyWeight} kg 超出一般成人範圍（20–200 kg），請再次確認；小兒／極端體重不適用本表。</p>
+                                </div>
+                            )}
+
+                            <div className="form-group">
+                                <label className="form-label">Power Pulse 噴藥比例（占 total）</label>
+                                <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
+                                    <button onClick={() => setFraction(1/3)} style={{flex: 1, minWidth: '120px', padding: '12px', borderRadius: '10px', cursor: 'pointer', border: `2px solid ${Math.abs(fraction - 1/3) < 0.01 ? 'var(--info)' : 'var(--border)'}`, background: Math.abs(fraction - 1/3) < 0.01 ? '#ebf8ff' : 'white', fontWeight: 500}}>1/3（較保守）</button>
+                                    <button onClick={() => setFraction(0.5)} style={{flex: 1, minWidth: '120px', padding: '12px', borderRadius: '10px', cursor: 'pointer', border: `2px solid ${fraction === 0.5 ? 'var(--info)' : 'var(--border)'}`, background: fraction === 0.5 ? '#ebf8ff' : 'white', fontWeight: 500}}>1/2（上限）</button>
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label className="form-label">噴藥稀釋體積 (N/S)</label>
+                                <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
+                                    <button onClick={() => setDilution(250)} style={{flex: 1, minWidth: '120px', padding: '12px', borderRadius: '10px', cursor: 'pointer', border: `2px solid ${dilution === 250 ? 'var(--info)' : 'var(--border)'}`, background: dilution === 250 ? '#ebf8ff' : 'white', fontWeight: 500}}>250 ml</button>
+                                    <button onClick={() => setDilution(500)} style={{flex: 1, minWidth: '120px', padding: '12px', borderRadius: '10px', cursor: 'pointer', border: `2px solid ${dilution === 500 ? 'var(--info)' : 'var(--border)'}`, background: dilution === 500 ? '#ebf8ff' : 'white', fontWeight: 500}}>500 ml</button>
+                                </div>
+                            </div>
+
+                            <div className="info-box info">
+                                <div className="info-title">🧮 計算推導</div>
+                                <p style={{fontFamily: 'monospace', fontSize: '0.95rem', lineHeight: 1.9}}>
+                                    Total tPA = {bodyWeight} × 0.6 = <strong>{r1(totalDose)} mg</strong><br/>
+                                    噴藥範圍 = {r1(totalDose)} × (1/3 ~ 1/2) = <strong>{r1(sprayLow)} ~ {r1(sprayHigh)} mg</strong><br/>
+                                    選用（{fraction === 0.5 ? '1/2' : '1/3'}）= <strong>{r1(sprayDose)} mg</strong> ÷ {dilution} ml = <strong>{conc.toFixed(3)} mg/ml</strong>
+                                </p>
+                            </div>
+
+                            <div className="summary-grid">
+                                <div className="summary-item">
+                                    <div className="summary-label">Total tPA</div>
+                                    <div className="summary-value">{r1(totalDose)}</div>
+                                    <div style={{fontSize: '0.75rem', color: 'var(--text-gray)'}}>mg（體重×0.6）</div>
+                                </div>
+                                <div className="summary-item highlight">
+                                    <div className="summary-label">Power Pulse 噴藥</div>
+                                    <div className="summary-value">{r1(sprayDose)}</div>
+                                    <div style={{fontSize: '0.75rem'}}>mg in {dilution}ml</div>
+                                </div>
+                                <div className="summary-item">
+                                    <div className="summary-label">剩餘（ICU Fountain）</div>
+                                    <div className="summary-value">{r1(remaining)}</div>
+                                    <div style={{fontSize: '0.75rem', color: 'var(--text-gray)'}}>mg 持續灌注</div>
+                                </div>
+                            </div>
+
+                            <div className="result-box">
+                                <div className="result-label">噴藥醫囑摘要</div>
+                                <div className="result-value" style={{fontSize: '1.4rem'}}>
+                                    tPA {r1(sprayDose)} mg in N/S {dilution} ml（Power Pulse）
+                                </div>
+                                <div className="result-note" style={{marginTop: '8px'}}>
+                                    Total {r1(totalDose)} mg ｜ 剩餘 {r1(remaining)} mg → ICU Fountain 持續灌注
+                                </div>
+                            </div>
+
+                            <div style={{marginTop: '16px', textAlign: 'center'}}>
+                                <button className={`copy-btn ${copied ? 'copied' : ''}`} onClick={copyOrder}>
+                                    {copied ? '✓ 已複製' : '📋 複製醫囑'}
+                                </button>
+                            </div>
+                        </>
+                        )}
+                    </div>
+
+                    <div className="card">
+                        <h2 className="card-title">🧪 實務範例與安全提醒</h2>
+
+                        <div className="info-box success">
+                            <div className="info-title">📎 院內實例（48 kg）</div>
+                            <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                                <li>Total tPA = 48 × 0.6 = <strong>28.8 mg</strong></li>
+                                <li>噴藥範圍（1/3~1/2）= <strong>9.6 ~ 14.4 mg</strong>；保守取 ½ ≈ 15 mg</li>
+                                <li>因<strong>首波機械除栓已部分再通</strong>，為避免 tPA 變成 systemic，實際只噴 <strong>6 mg</strong></li>
+                            </ul>
+                        </div>
+
+                        <div className="info-box warning">
+                            <div className="info-title">⚠️ 噴藥量下修時機</div>
+                            <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                                <li>首波 rheolytic thrombectomy 後<strong>已有部分血流</strong> → 酌減噴藥量，避免全身溶栓效應</li>
+                                <li>出血風險高（近期手術／外傷、高齡）→ 取範圍下緣或更低</li>
+                                <li>噴藥後監測 <strong>fibrinogen</strong> 與出血徵象；systemic lysis 風險比照全身溶栓</li>
+                            </ul>
+                        </div>
+
+                        <div className="info-box info">
+                            <div className="info-title">💡 名詞</div>
+                            <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                                <li><strong>Power Pulse Spray</strong>：AngioJet 停止抽吸、僅將 tPA 噴灌入血栓，浸泡數分鐘後再抽吸</li>
+                                <li><strong>Fountain</strong>：多側孔灌注導管，供 ICU 內延續性導管溶栓（CDT）使用剩餘 tPA</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         // ==================== MAIN APP ====================
         const App = () => {
             const [activeTab, setActiveTab] = useState('urokinase');
@@ -1989,6 +2158,7 @@ Total rate: ${cdtTotalPerHour} mg/hr × ${cdtDuration}hr = ${cdtTotalDose} mg
                 switch(activeTab) {
                     case 'urokinase': return <UrokinaseTab />;
                     case 'alteplase': return <AlteplaseTab />;
+                    case 'angiojet': return <AngioJetTab />;
                     case 'safety': return <SafetyTab />;
                     case 'reference': return <ReferenceTab />;
                     default: return <UrokinaseTab />;
