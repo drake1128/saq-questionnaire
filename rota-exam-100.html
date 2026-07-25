@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rotablation 100｜冠狀動脈旋磨術操作與 Troubleshooting 100 題測驗</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root{
+    --primary:#b45309; --primary-light:#ea8a1e; --accent:#e74c3c;
+    --success:#27ae60; --warn:#f39c12; --info:#c2410c;
+    --bg:#faf6f1; --card:#ffffff; --text:#3a2e22; --muted:#8a7f72;
+    --shadow:0 4px 20px rgba(0,0,0,.08);
+  }
+  body{ font-family:'Noto Sans TC',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.65; -webkit-font-smoothing:antialiased; }
+  .wrap{ max-width:760px; margin:0 auto; min-height:100vh; padding-bottom:48px; }
+  header{ background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);
+    color:#fff; padding:30px 22px 26px; border-radius:0 0 26px 26px; text-align:center; }
+  header h1{ font-size:22px; font-weight:800; margin-bottom:6px; letter-spacing:.5px; }
+  header .sub{ font-size:13px; opacity:.88; }
+  .content{ padding:20px 16px 0; }
+
+  .progress-info{ display:flex; justify-content:space-between; align-items:center; font-size:13px; margin-bottom:8px; color:var(--muted); }
+  .progress-info b{ color:var(--primary); }
+  .bar{ height:8px; background:#efe6da; border-radius:5px; overflow:hidden; margin-bottom:20px; }
+  .bar > div{ height:100%; width:0; background:linear-gradient(90deg,#ea8a1e,#b45309); transition:width .3s ease; }
+
+  .cat-chip{ display:inline-block; font-size:12px; font-weight:600; color:#fff; background:var(--info);
+    padding:3px 12px; border-radius:20px; margin-bottom:12px; }
+
+  .qcard{ background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:22px 20px; margin-bottom:16px; }
+  .qtext{ font-size:17px; font-weight:600; line-height:1.7; }
+  .qtext .num{ color:var(--info); margin-right:6px; }
+
+  .opts{ margin-top:16px; display:flex; flex-direction:column; gap:10px; }
+  .opt{ display:flex; align-items:flex-start; gap:12px; width:100%; text-align:left;
+    background:#fff; border:2px solid #efe6da; border-radius:12px; padding:14px 16px;
+    font-size:15px; color:var(--text); cursor:pointer; transition:all .15s ease; font-family:inherit; }
+  .opt:hover:not(:disabled){ border-color:#d8c4a8; background:#fffaf3; }
+  .opt:disabled{ cursor:default; }
+  .opt .mark{ flex-shrink:0; width:28px; height:28px; border-radius:50%; background:#f3ece1; color:#6b7280;
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; }
+  .opt.correct{ border-color:var(--success); background:#e9f9ef; }
+  .opt.correct .mark{ background:var(--success); color:#fff; }
+  .opt.wrong{ border-color:var(--accent); background:#fdecea; }
+  .opt.wrong .mark{ background:var(--accent); color:#fff; }
+
+  .explain{ margin-top:16px; border-radius:12px; padding:16px 18px; font-size:14px; line-height:1.7;
+    border-left:4px solid var(--info); background:#fdf1e7; animation:fade .3s ease; }
+  .explain.ok{ border-left-color:var(--success); background:#e9f9ef; }
+  .explain.no{ border-left-color:var(--warn); background:#fef7e6; }
+  .explain .verdict{ font-weight:700; margin-bottom:6px; }
+  .explain .src{ margin-top:8px; font-size:12.5px; color:var(--muted); }
+  @keyframes fade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .nav{ display:flex; justify-content:flex-end; }
+  .btn{ font-family:inherit; border:none; cursor:pointer; border-radius:12px; font-weight:600;
+    font-size:16px; padding:14px 26px; color:#fff; background:linear-gradient(135deg,#ea8a1e,#b45309);
+    display:inline-flex; align-items:center; gap:8px; transition:transform .15s ease, opacity .15s; }
+  .btn:hover{ transform:translateY(-1px); }
+  .btn.secondary{ background:#f3ece1; color:var(--primary); }
+
+  .result-card{ background:var(--card); border-radius:20px; box-shadow:var(--shadow); overflow:hidden; margin-bottom:18px; }
+  .score-hero{ padding:34px 20px; text-align:center; color:#fff; }
+  .score-hero .emoji{ font-size:54px; margin-bottom:8px; }
+  .score-hero .big{ font-size:46px; font-weight:800; line-height:1; }
+  .score-hero .pct{ font-size:17px; margin-top:10px; opacity:.95; }
+  .score-hero .grade{ display:inline-block; margin-top:12px; padding:5px 16px; border-radius:20px;
+    background:rgba(255,255,255,.2); font-size:14px; font-weight:600; }
+  .breakdown{ padding:18px 20px; }
+  .breakdown h3{ font-size:15px; margin-bottom:12px; color:var(--primary); }
+  .brow{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .brow .lbl{ flex:0 0 140px; font-size:13px; }
+  .brow .track{ flex:1; height:16px; background:#f3ece1; border-radius:8px; overflow:hidden; }
+  .brow .track > div{ height:100%; border-radius:8px; }
+  .brow .val{ flex:0 0 52px; text-align:right; font-size:13px; font-weight:600; color:var(--muted); }
+  .meta-line{ text-align:center; font-size:12px; color:var(--muted); margin:6px 0 18px; }
+  .actions{ display:flex; gap:12px; }
+  .actions .btn{ flex:1; justify-content:center; }
+  .tip{ background:#fff8e6; border:1px solid #f6d992; border-radius:12px; padding:12px 16px;
+    font-size:13px; color:#8a6d1a; margin-bottom:16px; }
+  .disclaimer{ background:#fdf1e7; border:1px solid #f0d4b3; border-radius:12px; padding:12px 16px;
+    font-size:12.5px; color:#8a5a1a; margin-bottom:18px; line-height:1.7; }
+
+  @media print{
+    body{ background:#fff; }
+    .no-print{ display:none !important; }
+    .share-button{ display:none !important; }
+    .result-card{ box-shadow:none; border:1px solid #ddd; }
+  }
+
+  /* ---------- Share Button ---------- */
+  .share-button { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+  .share-toggle { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #b45309 0%, #ea8a1e 100%); border: none; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(180, 83, 9, 0.4); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+  .share-toggle:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(180, 83, 9, 0.5); }
+  .share-menu { position: absolute; top: 60px; right: 0; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 20px; min-width: 280px; display: none; animation: fadeInShare 0.3s ease; }
+  .share-menu.active { display: block; }
+  @keyframes fadeInShare { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  .share-menu h4 { color: #1e293b; margin: 0 0 15px 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+  .qr-container { background: #f8fafc; border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 15px; }
+  .qr-container img { max-width: 150px; height: auto; border-radius: 8px; }
+  .qr-container p { font-size: 0.75rem; color: #64748b; margin: 8px 0 0 0; }
+  .share-buttons { display: flex; flex-direction: column; gap: 10px; }
+  .share-btn { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: none; border-radius: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 500; transition: all 0.2s ease; text-decoration: none; color: white; }
+  .share-btn.line { background: #00B900; } .share-btn.email { background: #EA4335; } .share-btn.copy { background: #b45309; }
+  .share-btn:hover { transform: translateX(5px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .share-btn svg { width: 20px; height: 20px; fill: currentColor; }
+  .share-close { position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0; }
+  .share-close:hover { color: #1e293b; }
+</style>
+</head>
+<body>
+<!-- Share Button -->
+<div class="share-button">
+  <button class="share-toggle" onclick="toggleShareMenu()" title="分享此頁面"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></button>
+  <div class="share-menu" id="shareMenu">
+    <button class="share-close" onclick="toggleShareMenu()">&times;</button>
+    <h4>分享此頁面</h4>
+    <div class="qr-container"><img id="qrCode" src="" alt="QR Code"><p>掃描 QR Code 開啟頁面</p></div>
+    <div class="share-buttons">
+      <a class="share-btn line" href="#" id="lineShare" target="_blank"><svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>LINE 分享</a>
+      <a class="share-btn email" href="#" id="emailShare"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>Email 分享</a>
+      <button class="share-btn copy" onclick="copyPageUrl()"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>複製連結</button>
+    </div>
+  </div>
+</div>
+<div class="wrap">
+  <header>
+    <h1>Rotablation 100</h1>
+    <div class="sub">冠狀動脈旋磨術 · 系統設定 × 磨蝕技術 × 適應症 × Troubleshooting ｜ 逐題詳解</div>
+  </header>
+  <div class="content" id="app"></div>
+</div>
+
+<script>
+/* ---------- 題庫（選項為原始順序，c = 正確選項的原始索引）----------
+   平台以 Boston Scientific Rotablator／ROTAPRO 為主，通用原則為輔。
+   臨床操作以術者判斷、器材說明書與院內規範為準。 */
+const CATS = {
+  setup:    { name:'系統設定與備置',   color:'#b45309' },
+  wire:     { name:'導絲與導管系統',   color:'#0891b2' },
+  speed:    { name:'轉速與磨蝕技術',   color:'#dc2626' },
+  flush:    { name:'沖洗與藥物',       color:'#059669' },
+  indication:{ name:'適應症與禁忌',    color:'#7c3aed' },
+  tsflow:   { name:'慢血流／無再流 TS', color:'#ea580c' },
+  tsburr:   { name:'磨頭卡住／嵌頓 TS', color:'#be123c' },
+  tsrhythm: { name:'心搏過緩／傳導 TS', color:'#ca8a04' },
+  tsother:  { name:'穿孔／剝離等 TS',   color:'#4b5563' }
+};
+
+const QUESTIONS = [
+/* ===== 一、系統設定與備置 setup (10) ===== */
+{cat:'setup',q:'冠狀動脈旋磨（rotational atherectomy）系統的核心組成為？',
+ o:['僅一顆磨頭','控制台（console）＋推進器（advancer）＋鑽石磨頭（burr）＋專用導絲（RotaWire）＋加壓沖洗系統，代表為 Boston Scientific Rotablator／ROTAPRO','與一般 PCI 球囊相同','只需導引導管'],c:1,
+ e:'旋磨系統由 console、advancer（含渦輪與沖洗接口）、鑲鑽石磨頭、RotaWire 專用導絲與加壓沖洗（含藥 cocktail）構成；ROTAPRO 為整合式新平台。',s:'歐洲旋磨專家共識（Barbato 2015, PMID 25599680）'},
+{cat:'setup',q:'旋磨磨頭（burr）尺寸與「burr-to-artery ratio」的合理設定為？',
+ o:['ratio 越接近 1.0 越好','burr 尺寸約 1.25–2.5 mm，建議 burr-to-artery ratio 約 0.5–0.6','一律使用最大 burr','ratio 應 >0.9'],c:1,
+ e:'現代旋磨採「鈣化修飾」理念，burr:artery 約 0.5–0.6 即足以改變鈣化順應性；過大 ratio 增加 slow-flow、穿孔與嵌頓風險。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'setup',q:'起始磨頭（initial burr）選擇的一般原則為？',
+ o:['直接用最大可用 burr','偏保守，先選較小 burr（ratio ≤0.6），必要時再逐步升級','依病人體重選','與病灶無關'],c:1,
+ e:'先以較小 burr 保守起步、視需要逐步升級，可降低併發症；一次用過大 burr 於緊鈣化病灶易 slow-flow 與嵌頓。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'setup',q:'旋磨必須使用專用 RotaWire，臨床上如何置放？',
+ o:['一般 PCI 導絲即可直接旋磨','先以工作導絲過病灶，再經 microcatheter 交換成 RotaWire','徒手推入 RotaWire','不需導絲'],c:1,
+ e:'RotaWire 操控性不如工作導絲，通常先以一般導絲過病灶、送 microcatheter 至遠端後再交換為 RotaWire，降低導絲相關風險。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'setup',q:'旋磨前對 console／advancer 的準備與測試，正確的是？',
+ o:['不需測試直接使用','連接沖洗、設定目標轉速並在體外／近端空轉測試，確認轉速達標且無異常','只需檢查電源','把轉速設到最高'],c:1,
+ e:'術前須連接沖洗、設定平台轉速並測試空轉（platform speed），確認轉速穩定、沖洗流通與 Dynaglide 功能正常後再進入病灶。',s:'廠商操作手冊；歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'setup',q:'旋磨的加壓沖洗系統，備置重點為？',
+ o:['用一般點滴重力滴注','以加壓袋確保持續高流量沖洗，內含 heparin 生理食鹽水與血管擴張劑 cocktail','只在磨蝕後沖','沖清水即可'],c:1,
+ e:'沖洗須加壓維持全程高流量（散熱、潤滑、減少痙攣與微粒），液體為含 heparin 與血管擴張劑（NTG／verapamil／nicorandil 等）的 cocktail。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'setup',q:'對右冠狀動脈（RCA）或優勢左迴旋（dominant LCX）病灶旋磨，備置上應特別考量？',
+ o:['不需任何額外準備','預置臨時心律調節器（temporary pacemaker），因這些血管旋磨易致心搏過緩／房室阻滯','改用更大 burr','關閉沖洗'],c:1,
+ e:'RCA／優勢 LCX 旋磨常誘發短暫心搏過緩或房室傳導阻滯，宜預置臨時節律器並備 atropine／aminophylline。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'setup',q:'ROTAPRO 相較舊型 Rotablator 系統的主要改良為？',
+ o:['磨頭改為球囊','整合式設計、簡化操作（單一控制、免腳踏板等），使啟動與 Dynaglide 切換更便捷','取消沖洗需求','可不用導絲'],c:1,
+ e:'ROTAPRO 將控制整合、簡化操作流程（如免腳踏、單鍵切換），但磨蝕原理、沖洗與 troubleshooting 原則不變。',s:'廠商操作手冊'},
+{cat:'setup',q:'旋磨屬高風險操作，術前團隊準備最重要的是？',
+ o:['只要術者一人即可','事先 time-out 與分工（監測血行動力學、備 pacing、備急救與擴血管藥），因併發症進展快','不需討論','把病人麻醉即可'],c:1,
+ e:'旋磨併發症（slow-flow、bradycardia、穿孔）進展快，需事先分工、備妥 pacing、擴血管與升壓藥、心包穿刺器械，team 溝通到位。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'setup',q:'選擇導引導管（guide catheter）時，對旋磨的要求為？',
+ o:['越小越好','需足夠內徑容納所選 burr 且提供良好支撐（backup），burr 外徑必須小於導管內徑','任意尺寸皆可','不需支撐'],c:1,
+ e:'burr 必須能通過導管內徑（大 burr 需較大 Fr 導管），且良好同軸支撐利於推進；支撐不足會影響磨蝕與增加風險。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+
+/* ===== 二、導絲與導管系統 wire (10) ===== */
+{cat:'wire',q:'RotaWire 有 Floppy 與 Extra Support 兩型，選擇的考量為？',
+ o:['兩者完全相同','Floppy 較柔軟、Extra Support 支撐較強可拉直血管但增加 wire bias，依血管彎曲度選擇','一律用 Extra Support','一律用 Floppy'],c:1,
+ e:'Extra Support 提供較強支撐、可拉直血管利於推進，但在彎曲處增加 wire bias（磨到外側壁）風險；Floppy 較安全但支撐弱。需權衡。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'wire',q:'「wire bias（導絲偏位）」在旋磨的臨床意義為？',
+ o:['無臨床意義','導絲偏靠血管一側時，burr 會偏磨該側（尤其彎曲／成角處），增加磨到非病灶側正常壁與穿孔風險','只影響影像','可提高效率'],c:1,
+ e:'burr 沿導絲行走，彎曲處導絲貼外側則 burr 偏磨外側正常壁，是成角病灶穿孔的重要機轉；選 wire 與 burr 尺寸時須考量。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'wire',q:'旋磨時磨頭（burr）與 RotaWire 遠端不透光彈簧尖（spring tip）的關係，正確的是？',
+ o:['burr 可自由越過 spring tip','burr 絕不可磨到／越過遠端 radiopaque spring 段，否則可能損傷或切斷導絲','spring tip 可被磨掉','無關緊要'],c:1,
+ e:'burr 越過導絲遠端彈簧段會磨損甚至切斷導絲，造成 wire fracture／異物殘留；磨蝕須保持 burr 位於彈簧近端安全區。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'wire',q:'磨蝕過程中對 RotaWire 的操作，正確的是？',
+ o:['以 WireClip torquer 夾住導絲一起旋轉','磨蝕時導絲需保持自由（不可用 torquer 夾住旋轉），僅在需要時固定；避免導絲被連帶轉動','用力扭轉導絲','把導絲抽出一半'],c:1,
+ e:'旋磨時導絲須保持自由；若被 torquer 夾住會隨渦輪轉動造成 wire whip／損傷。導絲張力與位置由術者掌控但不隨磨頭旋轉。',s:'廠商操作手冊'},
+{cat:'wire',q:'RotaWire 出現打折（kink）對磨蝕的影響為？',
+ o:['沒有影響','會使 burr 前進不順、轉速不穩甚至卡頓，並增加導絲斷裂風險，應避免與矯正','讓磨蝕更快','提高支撐'],c:1,
+ e:'導絲打折增加摩擦、干擾 burr 平順前進與轉速，並提高導絲疲勞斷裂風險；操作應避免打折、發現時處理。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'wire',q:'將工作導絲交換為 RotaWire 的標準做法為？',
+ o:['直接徒手抽換','以 microcatheter（或 OTW 球囊）送至病灶遠端，再撤出工作導絲、置入 RotaWire','用磨頭推入','不需交換'],c:1,
+ e:'經 microcatheter 交換可保持通路、避免 RotaWire 直接嘗試通過困難病灶造成損傷；交換後確認 RotaWire 遠端位置良好。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'wire',q:'導引導管「深插（deep intubation）」在旋磨中的角色與風險為？',
+ o:['絕對禁止','可增加支撐力協助推進或處理嵌頓，但有造成近端血管夾層的風險，須謹慎','無任何風險','可取代導絲'],c:1,
+ e:'深插導管可增加 backup、亦是磨頭嵌頓時嘗試拉出的手段之一，但過度深插會造成近端夾層，需小心操作。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'wire',q:'關於 burr 與導管內徑的相容性，正確的是？',
+ o:['burr 可大於導管內徑','所選 burr 外徑必須小於導引導管內徑才能通過（例如較大 burr 需 7–8 Fr 導管）','與導管無關','導管越小越好'],c:1,
+ e:'burr 需能在導管內通過，大 burr 對應較大 Fr 導管（如 1.75 mm 需 7 Fr、2.15 mm 以上需 8 Fr 等，依廠商規格）。',s:'廠商規格表'},
+{cat:'wire',q:'維持 RotaWire 適當張力（tension）的目的為？',
+ o:['沒有目的','避免導絲鬆弛 prolapse 或過度張力，兩者皆影響 burr 走行與磨蝕安全','讓導絲斷裂','增加 wire bias 以加速'],c:1,
+ e:'導絲鬆弛會 prolapse／走位、過度張力增加 bias 與斷裂；維持適當張力使 burr 沿預期路徑平順磨蝕。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'wire',q:'磨蝕前確認 RotaWire 遠端位置的重點為？',
+ o:['放在病灶內即可','遠端置於較直、安全的遠端血管，避免彈簧尖頂在小分支或彎折處造成穿孔','越遠越好不需看','放在導管內'],c:1,
+ e:'RotaWire 遠端彈簧尖應安置於相對直、安全的遠端節段，避免頂在小分支、彎折或末梢造成穿孔；並確保 burr 行走路徑安全。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+
+/* ===== 三、轉速與磨蝕技術 speed (16) ===== */
+{cat:'speed',q:'現代旋磨建議的磨蝕轉速範圍為？',
+ o:['約 50,000 rpm','約 135,000–180,000 rpm，且現代傾向採較低轉速（約 140,000–150,000 rpm）','約 300,000 rpm','越高越好'],c:1,
+ e:'建議轉速約 135,000–180,000 rpm；近年傾向較低轉速（140,000–150,000）以減少產熱、微粒與 slow-flow。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'speed',q:'過高轉速（如 >180,000 rpm）的主要缺點為？',
+ o:['磨蝕太慢','增加產熱、微粒（platelet activation）與 slow-flow／no-reflow 風險','降低併發症','使 burr 更耐用'],c:1,
+ e:'過高轉速產生更多熱與微粒、活化血小板，提高 slow-flow／no-reflow 風險；故偏好較低有效轉速。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'speed',q:'磨蝕時「轉速下降（deceleration）」的安全上限與意義為？',
+ o:['下降越多越好','轉速驟降 >5,000 rpm 代表 burr 負荷過大，應停止前進、退回讓轉速恢復','下降 >50,000 才需注意','轉速下降無意義'],c:1,
+ e:'明顯減速（>5,000 rpm）表示 burr 咬合負荷過高，持續會增加產熱、微粒與嵌頓；應立即減壓、退回恢復轉速再前進。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'speed',q:'旋磨的「pecking（啄食）」技術指的是？',
+ o:['持續用力推 burr 到底','以輕柔短距的前進－後退動作漸進磨蝕，讓 burr 順利咬合、避免持續高負荷','一次快速鑽穿','把 burr 停在病灶不動'],c:1,
+ e:'Pecking 為短距前後移動、輕觸漸進磨蝕，維持轉速、散熱與導絲灌流，避免持續高負荷造成 decel、產熱與嵌頓。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'speed',q:'單次磨蝕 run 的建議時間為？',
+ o:['越長越好（>2 分鐘）','短 run（約 15–30 秒），並於 run 間讓血流灌流恢復','固定 5 分鐘','無限制'],c:1,
+ e:'短 run（15–30 秒）配合 run 間 reperfusion，可降低產熱、微粒累積與 slow-flow；長時間連續磨蝕風險高。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'speed',q:'磨蝕 run 之間為何要「暫停讓血流恢復」？',
+ o:['讓術者休息','使微循環灌流恢復、清除微粒與代謝物，降低 no-reflow 與缺血','沒有必要','為了更換病人'],c:1,
+ e:'Run 間 reperfusion 讓遠端微循環清除微粒、恢復灌流與氧供，減少累積性缺血與 slow-flow，是預防的重要一環。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'speed',q:'關於推進 burr 的力道，正確的是？',
+ o:['卡住就用力頂','絕不可強推（no forcing）；burr 應能自由平順前進，遇阻力應 pecking 或退回，而非施力硬推','越用力越有效','用力頂可避免嵌頓'],c:1,
+ e:'強推 burr 會造成 decel、產熱、穿孔與嵌頓；「不強推」是旋磨鐵律，遇阻應以 pecking／退回處理。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'speed',q:'Dynaglide 模式的用途與轉速為？',
+ o:['最高速磨蝕','低速模式（約 60,000–90,000 rpm），用於送入／退出或更換 burr，非用於磨蝕','用於沖洗','用於 pacing'],c:1,
+ e:'Dynaglide 是低速滑行模式（約 60,000–90,000 rpm），便於在不磨蝕下移動 burr（送入、退出、換 burr）；退出時常用以避免磨到近端。',s:'廠商操作手冊'},
+{cat:'speed',q:'磨頭接觸病灶前，正確的啟動時序為？',
+ o:['先頂到病灶再啟動','先在病灶「近端正常段」達到設定平台轉速，再緩慢接觸病灶開始磨蝕','邊推邊隨意加速','啟動後立刻全速頂入'],c:1,
+ e:'應先在近端正常血管建立穩定平台轉速，再輕觸病灶漸進磨蝕；於病灶內才啟動易造成猛然咬合、decel 與嵌頓。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'speed',q:'磨蝕中監看「轉速表（tachometer）與聲音」的目的為？',
+ o:['純為好玩','即時偵測 deceleration 與負荷變化，作為調整前進／退回的依據','取代影像','控制沖洗'],c:1,
+ e:'轉速表與磨蝕音反映 burr 負荷；出現減速或音調改變即代表負荷過大，應退回恢復，避免併發症。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'speed',q:'磨蝕遇到明顯 decel 時的正確處置為？',
+ o:['加大推力頂過去','立即減壓、退回 burr 讓轉速恢復到平台速度，再以 pecking 漸進','提高轉速強行通過','拔出整套系統'],c:1,
+ e:'遇 decel 應退回、恢復轉速，再輕柔 pecking；持續高負荷會產熱、產微粒並增加嵌頓與穿孔。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'speed',q:'完成磨蝕後退出 burr 的建議做法為？',
+ o:['高速磨蝕著退出','以 Dynaglide 低速或緩慢退出，避免退出時磨到近端血管','快速抽出','留在原處'],c:1,
+ e:'退出時以 Dynaglide／低速緩慢後撤，避免退行磨蝕（磨到近端正常段）並降低導絲位移風險。',s:'廠商操作手冊'},
+{cat:'speed',q:'若一個 burr 磨蝕後仍無法讓器械通過，升級策略為？',
+ o:['直接跳到最大 burr','逐步（stepwise）升級 burr 尺寸，每次小幅增加並維持技術原則','放棄旋磨','用力硬推原 burr'],c:1,
+ e:'需更大磨蝕時採逐步升級（如 1.5→1.75 mm），每步遵守 pecking／短 run／不強推，較一次跳大 burr 安全。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'speed',q:'旋磨成功「磨蝕終點」的合理判斷為？',
+ o:['磨到血管破','burr 可平順通過病灶、無明顯 decel，且後續器械（球囊／支架）可通過與擴張','磨到 ratio 1.0','磨滿 5 分鐘'],c:1,
+ e:'終點是 burr 順暢通過、無 decel，達到足以讓球囊擴張／支架輸送與擴張的鈣化修飾；並非追求最大管徑或減積。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'speed',q:'為降低 slow-flow，磨蝕技術上應避免的「高危組合」為？',
+ o:['小 burr＋短 run＋低速','大 burr＋長 run＋高轉速＋沖洗不足','良好 cocktail 沖洗','run 間充分灌流'],c:1,
+ e:'大 burr、長 run、高轉速與沖洗不足會大量產熱與微粒，是 slow-flow／no-reflow 高危組合；反之為預防要點。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'speed',q:'磨蝕過程對「產熱（thermal injury）」的控制方式為？',
+ o:['提高轉速','以持續沖洗散熱、短 run、避免持續高負荷（decel）與強推來減少熱傷害','關閉沖洗','延長 run'],c:1,
+ e:'熱傷害與微粒、血小板活化相關；控制之道為持續沖洗、短 run、避免 decel 與強推、採較低有效轉速。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+
+/* ===== 四、沖洗與藥物 flush (8) ===== */
+{cat:'flush',q:'旋磨全程持續沖洗的主要目的為？',
+ o:['僅為沖走顯影劑','散熱、潤滑減少摩擦、維持 burr 滑行，並藉藥物減少痙攣與微粒相關併發症','增加血壓','稀釋血液'],c:1,
+ e:'持續沖洗兼具散熱、潤滑（維持 slip）與經 cocktail 藥物預防痙攣／slow-flow 的作用，是安全磨蝕的關鍵。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'flush',q:'旋磨沖洗液（cocktail）常見成分為？',
+ o:['純清水','heparin 化生理食鹽水，加入血管擴張劑（如 NTG、verapamil、nicorandil），部分加入 adrenaline','高濃度顯影劑','抗生素'],c:1,
+ e:'典型 cocktail 為 heparin 生理食鹽水＋血管擴張劑（NTG／verapamil／nicorandil），有時依情況加 adrenaline；成分依院內與病人狀況調整。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'flush',q:'潤滑劑（如 RotaGlide／類似脂質乳劑）加入沖洗的作用為？',
+ o:['增加摩擦','降低 burr 與導絲間摩擦與產熱，使磨蝕更順暢','作為顯影','無作用'],c:1,
+ e:'潤滑劑減少 burr／導絲摩擦與熱，改善滑行；使用時仍需注意個別禁忌（如對成分過敏、蛋類過敏對某些乳劑）。',s:'廠商操作手冊'},
+{cat:'flush',q:'磨蝕中若沖洗中斷或加壓袋排空，後果為？',
+ o:['沒有影響','摩擦與產熱上升、潤滑喪失，增加 slow-flow、熱傷害與 burr 卡頓風險，須立即恢復沖洗','磨蝕更快','導絲更穩'],c:1,
+ e:'沖洗中斷使散熱與潤滑喪失，摩擦、產熱與微粒增加，提高 slow-flow 與嵌頓風險；應維持加壓、隨時確認流量。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'flush',q:'在 cocktail 中加入 verapamil／nicorandil 的主要目的為？',
+ o:['增加心跳','擴張微血管、預防磨蝕相關痙攣與 slow-flow','止痛','抗凝'],c:1,
+ e:'verapamil、nicorandil 等擴張（微）血管、預防痙攣與 slow-flow；但 verapamil 於嚴重低血壓、傳導阻滯或重度 LV 功能不全者須謹慎。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'flush',q:'何種情況會考慮在 cocktail 中加入 adrenaline？',
+ o:['所有病人常規','對易發生心搏過緩／低血壓的情境（如 RCA 旋磨）以維持心率與血壓，但需權衡心律風險','為了降血壓','為了止血'],c:1,
+ e:'部分中心於易致 bradycardia／低血壓的病灶（如 RCA）在 cocktail 加 adrenaline 維持血行動力學；須注意誘發心律不整，非常規必需。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'flush',q:'關於沖洗流量，正確做法為？',
+ o:['低流量即可','全程維持足夠且穩定的加壓流量，確保散熱、潤滑與藥物遞送','僅磨蝕前沖一次','間歇沖洗'],c:1,
+ e:'須全程穩定加壓沖洗以持續散熱、潤滑與遞送擴血管藥；流量不足是產熱與 slow-flow 的可預防原因。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'flush',q:'使用含 verapamil 的 cocktail 時，應特別注意哪類病人？',
+ o:['所有病人皆安全','嚴重低血壓、明顯傳導阻滯或重度左心室功能不全者，鈣離子阻斷劑可能加重低血壓／傳導問題','年輕病人','高血壓病人'],c:1,
+ e:'verapamil 具負性肌力與傳導抑制，於低血壓、AV 阻滯、重度 LV 功能不全者可能惡化血行動力學；此類病人可改用 nicorandil／NTG 或調整劑量。',s:'藥理原則；歐洲旋磨專家共識（PMID 25599680）'},
+
+/* ===== 五、適應症與禁忌 indication (11) ===== */
+{cat:'indication',q:'旋磨的核心適應症為？',
+ o:['所有 PCI 常規使用','嚴重鈣化、球囊無法擴張（non-dilatable）或器械無法通過（uncrossable）的病灶，做鈣化修飾以利支架輸送與擴張','血栓病灶','退化靜脈橋'],c:1,
+ e:'旋磨用於嚴重鈣化、球囊無法擴張或器械無法通過的病灶，藉改變鈣化順應性利於後續球囊／支架；非每例常規。',s:'歐洲旋磨專家共識（PMID 25599680）；ACC/AHA/SCAI 2021（PMID 34882435）'},
+{cat:'indication',q:'現代旋磨的理念（相較 1990 年代）為？',
+ o:['以最大化減積（debulking）為目標','以「鈣化修飾（plaque modification）」促進器械通過與支架擴張為目標，非單純減積','完全取代支架','取代抗血小板'],c:1,
+ e:'現代旋磨是「鈣化修飾」的輔助工具（facilitate stent），非以最大減積為目的；ROTAXUS 等顯示過度減積並未改善長期預後。',s:'ROTAXUS（PMID 23557859）；歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'indication',q:'旋磨前以 IVUS／OCT 影像評估鈣化的價值為？',
+ o:['沒有價值','辨識表淺、環形、厚鈣化（球囊擴張不全高風險），協助決定是否旋磨及策略','僅為美觀','會延誤手術'],c:1,
+ e:'影像可辨識表淺環形厚鈣化（如 OCT 鈣化評分高），這類病灶球囊擴張常失敗，是旋磨／鈣化修飾的合理指徵。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'indication',q:'下列何者為旋磨的「禁忌」？',
+ o:['嚴重鈣化','病灶內可見血栓','無法擴張的病灶','需支架輸送'],c:1,
+ e:'可見血栓為旋磨禁忌（旋磨會造成遠端栓塞、no-reflow）；應先處理血栓再評估。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'indication',q:'對退化性隱靜脈橋（SVG）病灶施行旋磨，正確認知為？',
+ o:['首選旋磨','屬禁忌／不建議，易造成大量遠端栓塞與 no-reflow','與原生血管相同','最安全'],c:1,
+ e:'SVG 內為易碎粥狀物質，旋磨易致大量遠端栓塞與 no-reflow，一般列為禁忌／不建議。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'indication',q:'對「已存在夾層（dissection）」的病灶施行旋磨，正確認知為？',
+ o:['最佳適應症','屬相對禁忌，旋磨可能擴大夾層、造成穿孔或導絲進入假腔','沒有風險','可修復夾層'],c:1,
+ e:'已有夾層的病灶旋磨風險高（擴大夾層、穿孔、假腔磨蝕），屬相對禁忌；應先確認導絲於真腔並審慎評估。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'indication',q:'重度左心室功能不全（severe LV dysfunction）病人施行旋磨的考量為？',
+ o:['完全無影響','屬相對禁忌／高風險，對 slow-flow 與短暫缺血耐受差，需機械循環支持與嚴密監測','應提高轉速','不需支持'],c:1,
+ e:'重度 LV 功能不全者對磨蝕引起的短暫缺血、slow-flow 與 bradycardia 耐受差，屬高風險；必要時考慮機械循環支持（如 IABP／Impella）與嚴密監測。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'indication',q:'對「單一存活血管（single remaining patent vessel）」施行旋磨，正確認知為？',
+ o:['最安全','屬高風險／相對禁忌，一旦該血管 slow-flow 或閉塞可致血行動力學崩潰','沒有差別','必用最大 burr'],c:1,
+ e:'單一存活血管旋磨一旦發生 slow-flow／閉塞會嚴重影響血行動力學，屬高風險；需備機械支持與周全計畫。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'indication',q:'旋磨的先決條件之一是？',
+ o:['不需導絲','RotaWire 必須能通過病灶到達遠端；完全無法以導絲通過者無法旋磨','病灶必須有血栓','血管越小越好'],c:1,
+ e:'旋磨沿 RotaWire 進行，導絲無法通過的病灶無法旋磨；uncrossable 但導絲可過者才適用。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'indication',q:'對嚴重成角（severe angulation）鈣化病灶旋磨的風險為？',
+ o:['無風險','wire bias 明顯，burr 易偏磨外側壁造成夾層／穿孔，風險升高','磨蝕更容易','轉速可更高'],c:1,
+ e:'成角處導絲貼外側、wire bias 大，burr 偏磨外側正常壁易致夾層與穿孔；成角病灶旋磨風險高，需審慎或改用其他策略。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'indication',q:'對「支架內再狹窄（ISR）」以旋磨處理，一般認知為？',
+ o:['首選旋磨','一般不建議，磨頭磨到既有支架金屬有導絲／磨頭受損與栓塞風險','最安全有效','可磨掉支架'],c:1,
+ e:'旋磨於 ISR 一般不建議（磨到支架金屬風險、栓塞）；除非特定 under-expanded 支架情境由有經驗術者謹慎處理。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+
+/* ===== 六、慢血流／無再流 troubleshooting tsflow (13) ===== */
+{cat:'tsflow',q:'旋磨相關 slow-flow／no-reflow 的主要機轉為？',
+ o:['僅導絲問題','磨蝕微粒栓塞遠端微循環、加上微血管痙攣與產熱／血小板活化','顯影劑過量','導管太大'],c:1,
+ e:'磨蝕產生的微粒栓塞遠端微循環、合併微血管痙攣與熱／血小板活化，導致 slow-flow／no-reflow；大 burr、長 run、高速會加重。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsflow',q:'預防旋磨 slow-flow 的技術原則，下列組合正確為？',
+ o:['大 burr、長 run、高速','小 burr、短 run（15–30 秒）、較低轉速、良好 cocktail 沖洗、run 間充分灌流','關閉沖洗','一次磨到底'],c:1,
+ e:'預防要點：小 burr、短 run、較低有效轉速、含擴血管藥的持續沖洗、run 間 reperfusion；這些共同降低微粒與痙攣。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsflow',q:'發生 slow-flow／no-reflow 時的「第一步」為？',
+ o:['繼續磨蝕通過','立即停止磨蝕，並給予冠脈內血管擴張劑','拔出所有器械','提高轉速'],c:1,
+ e:'首先停止磨蝕（勿再產生微粒），並冠脈內給擴血管藥；同時維持血壓與監測心律。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsflow',q:'處置旋磨 no-reflow 常用的冠脈內藥物為？',
+ o:['腎上腺素單獨','nicorandil、adenosine、verapamil、nitroprusside 等（微）血管擴張劑','抗生素','利尿劑'],c:1,
+ e:'冠脈內 nicorandil、adenosine、verapamil 或 nitroprusside 可擴張微血管改善 no-reflow；選擇依血行動力學（低血壓時謹慎用 verapamil）。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsflow',q:'no-reflow 合併低血壓時，處置的優先原則為？',
+ o:['只給擴血管藥','同時維持血壓（升壓／機械支持）、冠脈內擴血管、停止磨蝕，打破低灌流惡性循環','僅升壓不擴血管','繼續磨蝕'],c:1,
+ e:'低血壓會惡化微循環灌流形成惡性循環；需同時升壓（或機械支持）＋冠脈內擴血管＋停磨，兼顧灌流壓與微血管阻力。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsflow',q:'如何「早期辨識」旋磨中的 slow-flow？',
+ o:['只能事後知道','注意 TIMI flow 下降、胸痛、ST 段變化、低血壓與心搏過緩等徵象','等病人昏迷','看沖洗顏色'],c:1,
+ e:'磨蝕中出現顯影劑排空變慢（TIMI↓）、胸痛、ST 變化、血壓下降或心搏過緩，提示 slow-flow，應即停磨處置。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsflow',q:'發生 slow-flow 後，關於「是否繼續磨蝕」的正確態度為？',
+ o:['立即以更大 burr 繼續','先停止磨蝕、處置並待血流恢復穩定後再評估，勿在 slow-flow 下繼續磨','無所謂','加速磨完'],c:1,
+ e:'在 slow-flow 未恢復時繼續磨蝕會再增微粒、惡化缺血；應先恢復血流與血行動力學，再決定後續策略。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsflow',q:'預先在 cocktail 加入擴血管藥（verapamil／nicorandil）的目的為？',
+ o:['純為潤滑','預防性擴張微血管、降低 slow-flow 發生率','增加磨蝕效率','止血'],c:1,
+ e:'預先於沖洗 cocktail 加擴血管藥可降低 slow-flow 發生率，是預防策略之一（配合技術原則）。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsflow',q:'關於遠端保護裝置（distal protection）於旋磨的角色，正確的是？',
+ o:['常規必用','在原生冠脈旋磨一般不常規使用，且可能干擾操作；預防仍以技術與藥物為主','可取代沖洗','能完全避免 no-reflow'],c:1,
+ e:'遠端保護於原生冠脈旋磨並非常規（微粒極細、裝置有其限制與干擾）；預防 slow-flow 主要靠 burr／run／速度控制與 cocktail。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsflow',q:'RCA 旋磨發生 slow-flow 時，常同時需要處理的問題為？',
+ o:['只有胸痛','常伴心搏過緩／房室阻滯，需備臨時節律器與 atropine／aminophylline','血糖過高','發燒'],c:1,
+ e:'RCA／優勢血管 slow-flow 常合併 bradycardia／AV block；處置需同時擴血管、維持心率（pacing／atropine／aminophylline）。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsflow',q:'nitroprusside 用於旋磨 no-reflow 的特性為？',
+ o:['會收縮血管','為強效冠脈內微血管擴張劑，可改善 no-reflow，但須注意低血壓','增加心跳','無效'],c:1,
+ e:'冠脈內 nitroprusside 是有效的微血管擴張劑改善 no-reflow，但具降血壓作用，低血壓病人使用需監測與支持。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsflow',q:'降低旋磨 slow-flow 的「run 設計」原則為？',
+ o:['少數幾個很長的 run','多個短 run（15–30 秒）並在其間讓灌流恢復，而非少數長 run','連續不間斷','越長越有效'],c:1,
+ e:'以多個短 run＋run 間 reperfusion 取代少數長 run，可分散微粒負荷、維持灌流，明顯降低 slow-flow。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsflow',q:'旋磨 slow-flow 恢復後的後續處置為？',
+ o:['立即用最大 burr 加速完成','待血流與血行動力學穩定後，以更保守策略（較小 burr／更短 run）完成或改用替代方式','不再處理病灶','拔管結束'],c:1,
+ e:'恢復後若仍需磨蝕，應更保守（小 burr、短 run、加強 cocktail），或評估以 IVL 等替代，避免再次 slow-flow。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+
+/* ===== 七、磨頭卡住／嵌頓 troubleshooting tsburr (10) ===== */
+{cat:'tsburr',q:'旋磨「磨頭嵌頓（burr entrapment，Kokeshi 現象）」指的是？',
+ o:['磨頭掉落','磨頭卡在鈣化病灶內、無法前進也無法後退','磨頭斷裂','導絲斷裂'],c:1,
+ e:'Burr entrapment 是磨頭鑽入緊鈣化病灶後卡住（形似日本 Kokeshi 木偶），前後皆動彈不得，是嚴重併發症。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsburr',q:'預防磨頭嵌頓的技術要點為？',
+ o:['用力頂穿','不強推、採 pecking、遇 decel 即退、逐步升 burr、避免一次用過大 burr 於緊病灶','提高轉速硬鑽','關閉 Dynaglide'],c:1,
+ e:'嵌頓多因強推、大 burr、於 decel 下持續前進；預防靠 pecking、不強推、decel 即退、逐步升 burr。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsburr',q:'發現磨頭嵌頓時的「第一步」為？',
+ o:['持續高速用力回拉','停止並避免暴力拉扯；先嘗試低速（Dynaglide）與輕柔牽引','立刻外科','加大轉速前進'],c:1,
+ e:'先停止暴力操作（避免導絲斷裂／血管撕裂），嘗試 Dynaglide 低速轉動配合輕柔牽引，讓磨頭鬆脫。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsburr',q:'磨頭嵌頓時，增加「拉出支撐力」的常用手法為？',
+ o:['拔掉導引導管','將導引導管深插（deep intubation）以增加支撐並嘗試拉出磨頭','放棄導絲','注入空氣'],c:1,
+ e:'深插導管可增加同軸支撐與牽引力協助拉出嵌頓磨頭；但須注意深插造成近端夾層的風險。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsburr',q:'磨頭嵌頓的進階處置（低速與深插無效時）包含？',
+ o:['只能等待','平行導絲＋小球囊於磨頭旁擴張鬆動、子母導管、抓捕器（snare），必要時外科取出','直接拔斷','提高轉速'],c:1,
+ e:'進階手法包括旁邊平行導絲送小球囊擴張鬆動磨頭、子母導管增加支撐、snare 抓捕；上述皆失敗時需外科取出。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsburr',q:'磨頭嵌頓時「持續高速強拉」的風險為？',
+ o:['沒有風險','可能造成導絲斷裂、血管撕裂／穿孔或磨頭損壞，應避免','一定能拉出','增加成功率'],c:1,
+ e:'暴力高速強拉可致導絲斷裂、血管撕裂／穿孔；應改用低速、輕柔與支撐手法，而非蠻力。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsburr',q:'區分「磨頭無法前進」與「磨頭無法後退」的意義為？',
+ o:['沒有差別','兩者處置略異：無法前進多為病灶過緊（可退回換策略），無法後退（嵌頓）需鬆脫手法','都直接外科','都繼續磨'],c:1,
+ e:'無法前進通常可退回、調整策略（小 burr／IVL）；無法後退即典型嵌頓，需低速、牽引、深插、平行球囊等鬆脫手法。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsburr',q:'選擇 burr 尺寸以「預防嵌頓」的原則為？',
+ o:['越大越好','避免對很緊的病灶一次使用過大 burr；先小 burr 建立通道再逐步升級','用最大 burr 一次通過','與嵌頓無關'],c:1,
+ e:'過大 burr 於極緊病灶易卡住；先以小 burr（如 1.25／1.5 mm）建立通道、逐步升級可降低嵌頓風險。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsburr',q:'磨頭卡住合併「導絲已受損」時的處置考量為？',
+ o:['忽略導絲','須同時評估導絲完整性（避免斷裂殘留），鬆脫過程中維持導絲控制，必要時整體移除','用力抽導絲','剪斷導絲'],c:1,
+ e:'嵌頓合併導絲受損時，暴力操作易致導絲斷裂殘留；鬆脫時須維持導絲控制、評估完整性，必要時將系統整體謹慎移除。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsburr',q:'關於磨頭嵌頓，最重要的整體原則為？',
+ o:['先蠻力再說','「預防勝於處置」：嚴守不強推、pecking、decel 即退、逐步升 burr，遠比事後鬆脫容易','嵌頓不可能發生','只靠外科'],c:1,
+ e:'嵌頓一旦發生處置困難、風險高；嚴守磨蝕技術原則預防，是最有效的策略。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+
+/* ===== 八、心搏過緩／傳導 troubleshooting tsrhythm (8) ===== */
+{cat:'tsrhythm',q:'旋磨（尤其 RCA／優勢 LCX）易致短暫心搏過緩／房室阻滯的機轉為？',
+ o:['純屬巧合','磨蝕微粒與短暫缺血、加上類腺苷（adenosine-like）效應影響房室結傳導','導絲刺激','沖洗太多'],c:1,
+ e:'磨蝕微粒栓塞、短暫缺血與類腺苷效應共同抑制竇房結／房室結傳導，於 RCA／優勢血管尤明顯，常為一過性。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsrhythm',q:'預防旋磨相關嚴重心搏過緩的標準備置為？',
+ o:['不需準備','對 RCA／優勢血管預置臨時心律調節器，並備 atropine／aminophylline','只給氧氣','提高轉速'],c:1,
+ e:'RCA／優勢血管旋磨宜預置臨時節律器並備藥（atropine、aminophylline）；磨蝕前確認 pacing 捕捉良好。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsrhythm',q:'哪一種磨蝕技術可「減少」心搏過緩發生？',
+ o:['延長單次 run','使用短 run（減少單次缺血時間）與 run 間灌流恢復','提高轉速','關閉沖洗'],c:1,
+ e:'短 run 縮短單次缺血與微粒暴露時間，run 間 reperfusion 讓傳導恢復，可減少心搏過緩的程度與時間。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsrhythm',q:'aminophylline（theophylline 類）在旋磨心搏過緩的角色為？',
+ o:['加重心搏過緩','拮抗腺苷受體，可預防／處置類腺苷性心搏過緩','僅止痛','降血壓'],c:1,
+ e:'aminophylline 為腺苷拮抗劑，可用於預防或處置旋磨相關的類腺苷性心搏過緩，減少對臨時節律器的依賴。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsrhythm',q:'磨蝕中突發完全房室阻滯（complete heart block）的即時處置為？',
+ o:['繼續磨蝕','立即停止磨蝕、啟動臨時節律器起搏，並給予 atropine／aminophylline、維持血壓','拔管結束','提高轉速'],c:1,
+ e:'即刻停磨、以預置臨時節律器起搏維持心率，輔以 atropine／aminophylline 與血壓支持；多為一過性，穩定後再評估。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsrhythm',q:'LAD（左前降支）旋磨相對 RCA 的心律特性為？',
+ o:['更易心搏過緩','較少引起顯著心搏過緩，但仍可能因 slow-flow／缺血導致心律與血行動力學變化','完全不會有問題','必發生房室阻滯'],c:1,
+ e:'LAD 旋磨較少誘發嚴重 bradycardia，但 slow-flow／缺血仍可致心律與血壓變化；不可因此忽略監測與備援。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsrhythm',q:'磨蝕前對臨時節律器應完成的確認為？',
+ o:['接上即可','測試並確認 pacing 能穩定「捕捉（capture）」，設定合適輸出與頻率','設到最低輸出','不需測試'],c:1,
+ e:'磨蝕前須做 capture test，確認節律器能穩定起搏（避免磨蝕中才發現無法捕捉），並設定適當備援頻率與輸出。',s:'一般操作原則'},
+{cat:'tsrhythm',q:'旋磨相關心搏過緩多數的臨床病程為？',
+ o:['永久性','多為一過性（transient），停磨與支持後常可恢復，但仍須完整備援以防惡化','必致心臟停止','與旋磨無關'],c:1,
+ e:'多數旋磨相關 bradycardia／AV block 為一過性，停磨、pacing 與藥物後恢復；仍須完整備援因少數會惡化。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+
+/* ===== 九、穿孔／剝離等 troubleshooting tsother (14) ===== */
+{cat:'tsother',q:'旋磨造成冠狀動脈穿孔的高危因子為？',
+ o:['小 burr、直血管','明顯 wire bias、成角病灶、過大 burr／ratio 與強推','充分沖洗','短 run'],c:1,
+ e:'穿孔高危因子包括彎曲成角處的 wire bias、過大 burr／高 ratio 與強推；避免這些是預防要點。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsother',q:'旋磨導致冠脈穿孔（如 Ellis III 型）的緊急處置為？',
+ o:['繼續磨蝕','立即以球囊近端封堵止血，準備覆膜支架（covered stent）、逆轉抗凝，並評估心包填塞需否引流','僅觀察','加大 burr'],c:1,
+ e:'穿孔處置：球囊封堵止血→覆膜支架封閉，逆轉抗凝，密切監測並於填塞時行心包穿刺引流；嚴重者需外科。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsother',q:'RotaWire「斷裂（wire fracture）」最常見的原因為？',
+ o:['沖洗太多','burr 磨到導絲遠端不透光彈簧段，或導絲承受過度張力／打折疲勞','轉速太低','使用 Dynaglide'],c:1,
+ e:'磨到遠端彈簧段或導絲過度張力／打折疲勞是 RotaWire 斷裂主因；避免 burr 越過彈簧、維持適當張力可預防。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsother',q:'旋磨過程避免磨到 RotaWire 遠端彈簧尖的原因為？',
+ o:['純為美觀','磨到彈簧會損傷／切斷導絲，造成斷裂與異物殘留、失去通路','無影響','可加速磨蝕'],c:1,
+ e:'遠端彈簧段被磨會使導絲損傷、斷裂與殘留，且失去導絲通路；磨蝕須保持 burr 在彈簧近端安全區內。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsother',q:'旋磨相關夾層（dissection）的處置原則為？',
+ o:['一律不處理','依嚴重度與是否 flow-limiting 決定，顯著者以支架覆蓋，並確認導絲於真腔','立即外科','提高轉速磨掉'],c:1,
+ e:'旋磨後夾層依大小、深度、flow-limiting 決定；顯著者支架覆蓋、確認真腔，並排除穿孔與血腫蔓延。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsother',q:'旋磨後若支架仍「擴張不全」，合理的補救為？',
+ o:['放棄','評估以更大 burr 進一步鈣化修飾，或改用血管內碎石（IVL）／高壓 NC 球囊等補充','再放一層支架硬撐','忽略'],c:1,
+ e:'旋磨後擴張仍不全時，可進一步旋磨（大 burr）或以 IVL、高壓 NC 球囊等互補，達成足夠支架擴張。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsother',q:'旋磨併發心包填塞（cardiac tamponade）的辨識為？',
+ o:['血壓升高','低血壓、心搏過速、頸靜脈怒張、脈壓變窄與心影／超音波顯示心包積液，血行動力學惡化','無症狀','僅胸痛'],c:1,
+ e:'填塞表現為低血壓、心搏過速、奇脈、頸靜脈怒張，透視／超音波見心包積液與心影搏動減弱；需緊急穿刺引流與封閉穿孔。',s:'一般臨床原則'},
+{cat:'tsother',q:'旋磨產生的「微粒／空氣栓塞」與 slow-flow 的關係為？',
+ o:['無關','磨蝕微粒是 slow-flow 主因之一；系統排氣不良亦可能致空氣栓塞，兩者皆需預防','只有空氣重要','只有微粒無害'],c:1,
+ e:'磨蝕微粒栓塞是 slow-flow 核心機轉；沖洗系統排氣不良亦可致空氣栓塞。技術控制與系統排氣是預防重點。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsother',q:'導管深插（deep intubation）於 troubleshooting 中的雙面性為？',
+ o:['只有好處','可增加支撐（助推進／拉出嵌頓磨頭），但過度深插會造成近端血管夾層','只有壞處','與夾層無關'],c:1,
+ e:'深插增加 backup 支撐（利於推進與拉出嵌頓），但同時是近端醫源性夾層的原因；使用需輕柔、適度。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsother',q:'旋磨後以 IVUS／OCT 影像複查的目的為？',
+ o:['純為紀錄','確認鈣化修飾效果、有無夾層／穿孔徵象，並指引支架 sizing 與擴張最佳化','取代造影','增加輻射而已'],c:1,
+ e:'術後影像確認鈣化是否修飾足夠、有無併發症，並協助支架 sizing 與擴張最佳化，是旋磨流程重要一環。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsother',q:'當 burr 無法通過病灶（uncrossable）且旋磨受挫時的替代策略為？',
+ o:['只能放棄','評估血管內碎石（IVL）、軌道式斑塊旋切（orbital atherectomy）、雷射或改變支撐等替代／互補方式','用最大 burr 硬鑽','直接支架硬擴'],c:1,
+ e:'旋磨受挫時可考慮 IVL、orbital atherectomy、準分子雷射或加強支撐（子母導管、球囊錨定）等替代／互補策略。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsother',q:'旋磨相關血管痙攣（spasm）的處置為？',
+ o:['提高轉速','冠脈內給予硝酸甘油等血管擴張劑，並確認非夾層／血腫所致','繼續磨蝕','拔管'],c:1,
+ e:'磨蝕可誘發痙攣，冠脈內 NTG 等擴血管處置；同時需與夾層、血腫、slow-flow 鑑別，避免誤判。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsother',q:'旋磨後心肌酵素（如 CK-MB／troponin）上升的意義為？',
+ o:['一定是操作失敗','可反映微梗塞／microembolization，與磨蝕微粒相關；技術控制可降低，須與臨床事件綜合判斷','與旋磨無關','代表痊癒'],c:1,
+ e:'旋磨後酵素上升常反映微栓塞相關的微小心肌損傷；良好技術（小 burr／短 run／cocktail）可降低，判讀需結合症狀與心電圖。',s:'歐洲旋磨專家共識（PMID 25599680）'},
+{cat:'tsother',q:'旋磨整體安全的核心心法，最貼切的是？',
+ o:['追求最大減積與最大 burr','「鈣化修飾」為目標，嚴守小 burr／短 run／低速／不強推／良好沖洗與完整備援，預防重於處置','轉速越高越安全','不需影像與備援'],c:1,
+ e:'旋磨安全的核心是把它當「鈣化修飾」輔助工具，嚴守技術原則（小 burr、短 run、較低速、pecking、不強推、持續沖洗）並完整備援，預防各種併發症。',s:'歐洲旋磨專家共識（PMID 25599680）'}
+];
+
+/* ---------- 洗牌：每題選項打亂，記錄正確選項文字 ---------- */
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+const deck = QUESTIONS.map(item=>{
+  const correctText = item.o[item.c];
+  const opts = shuffle(item.o.slice());
+  return { cat:item.cat, q:item.q, opts, correctText, correctIdx:opts.indexOf(correctText), e:item.e, s:item.s };
+});
+
+/* ---------- 狀態 ---------- */
+const state = { idx:0, score:0, answered:false, picked:null, results:[] };
+const app = document.getElementById('app');
+const LETTERS = ['A','B','C','D'];
+const TOTAL = deck.length;
+
+function render(){
+  if(state.idx >= TOTAL){ renderResult(); return; }
+  const item = deck[state.idx];
+  const cat = CATS[item.cat];
+  const pct = Math.round(state.idx / TOTAL * 100);
+
+  let html = '';
+  if(state.idx === 0){
+    html += `<div class="disclaimer">🔧 本測驗共 100 題，著重「技術面與 Troubleshooting」：系統設定、導絲、轉速與磨蝕技術、沖洗藥物、適應症禁忌，以及慢血流／磨頭嵌頓／心搏過緩／穿孔等併發症處置。平台以 Boston Scientific Rotablator／ROTAPRO 為主。<b>臨床操作請以術者判斷、器材說明書與院內規範為準。</b></div>`;
+  }
+  html += `<div class="progress-info"><span>作答進度 <b>${state.idx}/${TOTAL}</b></span><span>目前得分 <b>${state.score}</b></span></div>`;
+  html += `<div class="bar"><div style="width:${pct}%"></div></div>`;
+  html += `<div class="qcard">`;
+  html += `<span class="cat-chip" style="background:${cat.color}">${cat.name}</span>`;
+  html += `<div class="qtext"><span class="num">Q${state.idx+1}.</span>${item.q}</div>`;
+  html += `<div class="opts">`;
+  item.opts.forEach((opt,i)=>{
+    let cls='opt';
+    if(state.answered){
+      if(i===item.correctIdx) cls+=' correct';
+      else if(i===state.picked) cls+=' wrong';
+    }
+    const dis = state.answered ? 'disabled' : '';
+    html += `<button class="${cls}" ${dis} onclick="pick(${i})"><span class="mark">${LETTERS[i]}</span><span>${opt}</span></button>`;
+  });
+  html += `</div>`;
+
+  if(state.answered){
+    const ok = state.picked===item.correctIdx;
+    html += `<div class="explain ${ok?'ok':'no'}">`;
+    html += `<div class="verdict">${ok?'✓ 答對了':'✗ 答錯了，正解為 '+LETTERS[item.correctIdx]}</div>`;
+    html += `<div>${item.e}</div>`;
+    html += `<div class="src">📖 出處：${item.s}</div>`;
+    html += `</div>`;
+    html += `<div class="nav"><button class="btn" onclick="next()">${state.idx < TOTAL-1 ? '下一題 →' : '看總成績 →'}</button></div>`;
+  }
+  html += `</div>`;
+  app.innerHTML = html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function pick(i){
+  if(state.answered) return;
+  state.answered = true;
+  state.picked = i;
+  const item = deck[state.idx];
+  const ok = i===item.correctIdx;
+  if(ok) state.score++;
+  state.results.push({ cat:item.cat, ok });
+  render();
+}
+
+function next(){
+  state.idx++;
+  state.answered=false;
+  state.picked=null;
+  render();
+}
+
+function renderResult(){
+  const pct = Math.round(state.score / TOTAL * 100);
+  let grade, emoji, grad;
+  if(pct>=90){ grade='優異'; emoji='🏆'; grad='linear-gradient(135deg,#f6a821,#e8890c)'; }
+  else if(pct>=80){ grade='及格 · 良好'; emoji='🎉'; grad='linear-gradient(135deg,#10b981,#059669)'; }
+  else if(pct>=60){ grade='待加強'; emoji='👍'; grad='linear-gradient(135deg,#ea8a1e,#b45309)'; }
+  else { grade='需複習'; emoji='📚'; grad='linear-gradient(135deg,#e74c3c,#c0392b)'; }
+
+  const perCat = {};
+  Object.keys(CATS).forEach(k=> perCat[k]={ok:0,total:0});
+  state.results.forEach(r=>{ perCat[r.cat].total++; if(r.ok) perCat[r.cat].ok++; });
+
+  const now = new Date();
+  const stamp = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  let html = '';
+  html += `<div class="result-card">`;
+  html += `<div class="score-hero" style="background:${grad}">`;
+  html += `<div class="emoji">${emoji}</div>`;
+  html += `<div class="big">${state.score} / ${TOTAL}</div>`;
+  html += `<div class="pct">正確率 ${pct}%</div>`;
+  html += `<div class="grade">${grade}</div>`;
+  html += `</div>`;
+  html += `<div class="breakdown"><h3>分區成績</h3>`;
+  Object.keys(CATS).forEach(k=>{
+    const c=CATS[k], d=perCat[k];
+    const p = d.total? Math.round(d.ok/d.total*100):0;
+    html += `<div class="brow"><div class="lbl">${c.name}</div>`;
+    html += `<div class="track"><div style="width:${p}%;background:${c.color}"></div></div>`;
+    html += `<div class="val">${d.ok}/${d.total}</div></div>`;
+  });
+  html += `</div></div>`;
+  html += `<div class="meta-line">測驗完成時間：${stamp}　｜　Rotablation 100 · 冠狀動脈旋磨術操作與 Troubleshooting</div>`;
+  html += `<div class="tip no-print">📸 請截圖此頁保存成績，或點「列印／存 PDF」。</div>`;
+  html += `<div class="actions no-print">`;
+  html += `<button class="btn secondary" onclick="window.print()">🖨️ 列印／存 PDF</button>`;
+  html += `<button class="btn" onclick="restart()">🔄 重新測驗</button>`;
+  html += `</div>`;
+  app.innerHTML = html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function restart(){
+  deck.forEach(item=>{
+    shuffle(item.opts);
+    item.correctIdx = item.opts.indexOf(item.correctText);
+  });
+  state.idx=0; state.score=0; state.answered=false; state.picked=null; state.results=[];
+  render();
+}
+
+render();
+</script>
+
+<script>
+  const PAGE_URL = "https://drake1128.github.io/saq-questionnaire/rota-exam-100.html";
+  const QR_DATA = "data:image/png;base64,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";
+  function initShareButtons() {
+    const pageUrl = PAGE_URL; const pageTitle = document.title; const encodedUrl = encodeURIComponent(pageUrl);
+    const qrCodeImg = document.getElementById('qrCode'); if (qrCodeImg && QR_DATA) qrCodeImg.src = QR_DATA;
+    const lineShare = document.getElementById('lineShare'); if (lineShare) lineShare.href = `https://social-plugins.line.me/lineit/share?url=${encodedUrl}`;
+    const emailShare = document.getElementById('emailShare'); if (emailShare) { const emailSubject = encodeURIComponent(`分享：${pageTitle}`); const emailBody = encodeURIComponent(`我想和您分享這個頁面：\n\n${pageTitle}\n\n${pageUrl}`); emailShare.href = `mailto:?subject=${emailSubject}&body=${emailBody}`; } }
+  function toggleShareMenu() { const menu = document.getElementById('shareMenu'); if (menu) menu.classList.toggle('active'); }
+  function copyPageUrl() { const pageUrl = PAGE_URL; navigator.clipboard.writeText(pageUrl).then(() => { alert('連結已複製到剪貼簿！'); }).catch(() => { const textArea = document.createElement('textarea'); textArea.value = pageUrl; document.body.appendChild(textArea); textArea.select(); document.execCommand('copy'); document.body.removeChild(textArea); alert('連結已複製到剪貼簿！'); }); }
+  initShareButtons();
+</script>
+</body>
+</html>

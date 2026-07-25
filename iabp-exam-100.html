@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IABP 100｜主動脈內氣球幫浦操作與 Troubleshooting 100 題測驗</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root{
+    --primary:#9f1239; --primary-light:#be123c; --accent:#e74c3c;
+    --success:#27ae60; --warn:#f39c12; --info:#be123c;
+    --bg:#faf5f6; --card:#ffffff; --text:#3a2530; --muted:#8a7680;
+    --shadow:0 4px 20px rgba(0,0,0,.08);
+  }
+  body{ font-family:'Noto Sans TC',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.65; -webkit-font-smoothing:antialiased; }
+  .wrap{ max-width:760px; margin:0 auto; min-height:100vh; padding-bottom:48px; }
+  header{ background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);
+    color:#fff; padding:30px 22px 26px; border-radius:0 0 26px 26px; text-align:center; }
+  header h1{ font-size:22px; font-weight:800; margin-bottom:6px; letter-spacing:.5px; }
+  header .sub{ font-size:13px; opacity:.88; }
+  .content{ padding:20px 16px 0; }
+
+  .progress-info{ display:flex; justify-content:space-between; align-items:center; font-size:13px; margin-bottom:8px; color:var(--muted); }
+  .progress-info b{ color:var(--primary); }
+  .bar{ height:8px; background:#f0e0e5; border-radius:5px; overflow:hidden; margin-bottom:20px; }
+  .bar > div{ height:100%; width:0; background:linear-gradient(90deg,#be123c,#9f1239); transition:width .3s ease; }
+
+  .cat-chip{ display:inline-block; font-size:12px; font-weight:600; color:#fff; background:var(--info);
+    padding:3px 12px; border-radius:20px; margin-bottom:12px; }
+
+  .qcard{ background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:22px 20px; margin-bottom:16px; }
+  .qtext{ font-size:17px; font-weight:600; line-height:1.7; }
+  .qtext .num{ color:var(--info); margin-right:6px; }
+
+  .opts{ margin-top:16px; display:flex; flex-direction:column; gap:10px; }
+  .opt{ display:flex; align-items:flex-start; gap:12px; width:100%; text-align:left;
+    background:#fff; border:2px solid #f0e0e5; border-radius:12px; padding:14px 16px;
+    font-size:15px; color:var(--text); cursor:pointer; transition:all .15s ease; font-family:inherit; }
+  .opt:hover:not(:disabled){ border-color:#e0aebc; background:#fff8fa; }
+  .opt:disabled{ cursor:default; }
+  .opt .mark{ flex-shrink:0; width:28px; height:28px; border-radius:50%; background:#f5e8ec; color:#6b7280;
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; }
+  .opt.correct{ border-color:var(--success); background:#e9f9ef; }
+  .opt.correct .mark{ background:var(--success); color:#fff; }
+  .opt.wrong{ border-color:var(--accent); background:#fdecea; }
+  .opt.wrong .mark{ background:var(--accent); color:#fff; }
+
+  .explain{ margin-top:16px; border-radius:12px; padding:16px 18px; font-size:14px; line-height:1.7;
+    border-left:4px solid var(--info); background:#fdeef2; animation:fade .3s ease; }
+  .explain.ok{ border-left-color:var(--success); background:#e9f9ef; }
+  .explain.no{ border-left-color:var(--warn); background:#fef7e6; }
+  .explain .verdict{ font-weight:700; margin-bottom:6px; }
+  .explain .src{ margin-top:8px; font-size:12.5px; color:var(--muted); }
+  @keyframes fade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .nav{ display:flex; justify-content:flex-end; }
+  .btn{ font-family:inherit; border:none; cursor:pointer; border-radius:12px; font-weight:600;
+    font-size:16px; padding:14px 26px; color:#fff; background:linear-gradient(135deg,#be123c,#9f1239);
+    display:inline-flex; align-items:center; gap:8px; transition:transform .15s ease, opacity .15s; }
+  .btn:hover{ transform:translateY(-1px); }
+  .btn.secondary{ background:#f5e8ec; color:var(--primary); }
+
+  .result-card{ background:var(--card); border-radius:20px; box-shadow:var(--shadow); overflow:hidden; margin-bottom:18px; }
+  .score-hero{ padding:34px 20px; text-align:center; color:#fff; }
+  .score-hero .emoji{ font-size:54px; margin-bottom:8px; }
+  .score-hero .big{ font-size:46px; font-weight:800; line-height:1; }
+  .score-hero .pct{ font-size:17px; margin-top:10px; opacity:.95; }
+  .score-hero .grade{ display:inline-block; margin-top:12px; padding:5px 16px; border-radius:20px;
+    background:rgba(255,255,255,.2); font-size:14px; font-weight:600; }
+  .breakdown{ padding:18px 20px; }
+  .breakdown h3{ font-size:15px; margin-bottom:12px; color:var(--primary); }
+  .brow{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .brow .lbl{ flex:0 0 140px; font-size:13px; }
+  .brow .track{ flex:1; height:16px; background:#f5e8ec; border-radius:8px; overflow:hidden; }
+  .brow .track > div{ height:100%; border-radius:8px; }
+  .brow .val{ flex:0 0 52px; text-align:right; font-size:13px; font-weight:600; color:var(--muted); }
+  .meta-line{ text-align:center; font-size:12px; color:var(--muted); margin:6px 0 18px; }
+  .actions{ display:flex; gap:12px; }
+  .actions .btn{ flex:1; justify-content:center; }
+  .tip{ background:#fff8e6; border:1px solid #f6d992; border-radius:12px; padding:12px 16px;
+    font-size:13px; color:#8a6d1a; margin-bottom:16px; }
+  .disclaimer{ background:#fdeef2; border:1px solid #f0c9d5; border-radius:12px; padding:12px 16px;
+    font-size:12.5px; color:#8a1f3c; margin-bottom:18px; line-height:1.7; }
+
+  @media print{
+    body{ background:#fff; }
+    .no-print{ display:none !important; }
+    .share-button{ display:none !important; }
+    .result-card{ box-shadow:none; border:1px solid #ddd; }
+  }
+
+  /* ---------- Share Button ---------- */
+  .share-button { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+  .share-toggle { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #9f1239 0%, #e11d48 100%); border: none; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(159, 18, 57, 0.4); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+  .share-toggle:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(159, 18, 57, 0.5); }
+  .share-menu { position: absolute; top: 60px; right: 0; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 20px; min-width: 280px; display: none; animation: fadeInShare 0.3s ease; }
+  .share-menu.active { display: block; }
+  @keyframes fadeInShare { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  .share-menu h4 { color: #1e293b; margin: 0 0 15px 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+  .qr-container { background: #f8fafc; border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 15px; }
+  .qr-container img { max-width: 150px; height: auto; border-radius: 8px; }
+  .qr-container p { font-size: 0.75rem; color: #64748b; margin: 8px 0 0 0; }
+  .share-buttons { display: flex; flex-direction: column; gap: 10px; }
+  .share-btn { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: none; border-radius: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 500; transition: all 0.2s ease; text-decoration: none; color: white; }
+  .share-btn.line { background: #00B900; } .share-btn.email { background: #EA4335; } .share-btn.copy { background: #9f1239; }
+  .share-btn:hover { transform: translateX(5px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .share-btn svg { width: 20px; height: 20px; fill: currentColor; }
+  .share-close { position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0; }
+  .share-close:hover { color: #1e293b; }
+</style>
+</head>
+<body>
+<!-- Share Button -->
+<div class="share-button">
+  <button class="share-toggle" onclick="toggleShareMenu()" title="分享此頁面"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></button>
+  <div class="share-menu" id="shareMenu">
+    <button class="share-close" onclick="toggleShareMenu()">&times;</button>
+    <h4>分享此頁面</h4>
+    <div class="qr-container"><img id="qrCode" src="" alt="QR Code"><p>掃描 QR Code 開啟頁面</p></div>
+    <div class="share-buttons">
+      <a class="share-btn line" href="#" id="lineShare" target="_blank"><svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>LINE 分享</a>
+      <a class="share-btn email" href="#" id="emailShare"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>Email 分享</a>
+      <button class="share-btn copy" onclick="copyPageUrl()"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>複製連結</button>
+    </div>
+  </div>
+</div>
+<div class="wrap">
+  <header>
+    <h1>IABP 100</h1>
+    <div class="sub">主動脈內氣球幫浦 · 置入定位 × 反搏原理 × 時相判讀 × Troubleshooting ｜ 逐題詳解</div>
+  </header>
+  <div class="content" id="app"></div>
+</div>
+
+<script>
+/* ---------- 題庫（選項為原始順序，c = 正確選項的原始索引）----------
+   IABP＝intra-aortic balloon pump 主動脈內氣球幫浦。臨床操作以醫囑、機型說明書與院內規範為準。 */
+const CATS = {
+  setup:     { name:'置入與定位',       color:'#9f1239' },
+  mechanism: { name:'反搏原理與生理',   color:'#be123c' },
+  timing:    { name:'時相設定',         color:'#0891b2' },
+  timingerr: { name:'時相誤差判讀',     color:'#dc2626' },
+  trigger:   { name:'觸發模式',         color:'#7c3aed' },
+  indication:{ name:'適應症與禁忌',     color:'#059669' },
+  tsballoon: { name:'氣球破裂／漏氣 TS', color:'#b45309' },
+  tsaugment: { name:'擴增不良／觸發 TS', color:'#ca8a04' },
+  tsvascular:{ name:'肢體缺血／併發症 TS', color:'#4b5563' }
+};
+
+const QUESTIONS = [
+/* ===== 一、置入與定位 setup (11) ===== */
+{cat:'setup',q:'IABP 導管最常見的置入路徑為？',
+ o:['橈動脈','經股動脈（percutaneous，可帶鞘或 sheathless）','鎖骨下靜脈','肱動脈'],c:1,
+ e:'IABP 最常經股動脈置入（帶鞘或 sheathless），氣球導管沿主動脈上行至胸主動脈；特殊情況可考慮其他路徑。',s:'IABP 操作原則（Krishna 2009, PMID 19454524）'},
+{cat:'setup',q:'IABP 氣球的「正確位置」為？',
+ o:['氣球尖端進入主動脈弓分支','氣球尖端位於左鎖骨下動脈起源遠端約 2–3 cm（胸片約氣管隆突 carina 高度），下端在腎動脈開口上方','氣球橫跨腎動脈','氣球在腹主動脈'],c:1,
+ e:'理想位置：氣球尖端在左鎖骨下動脈遠端 2–3 cm（CXR 約 carina 水平），氣球體位於降主動脈、下端在腎動脈上方，兼顧安全與反搏效果。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'setup',q:'IABP 氣球位置「太高」的主要風險為？',
+ o:['阻塞腎動脈','阻塞左鎖骨下動脈致左臂缺血、或影響腦部血流','無風險','增加反搏效果'],c:1,
+ e:'位置太高會使氣球或尖端阻塞左鎖骨下動脈（左臂缺血、無脈）甚至影響腦血流；置入後須以影像確認位置。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'setup',q:'IABP 氣球位置「太低」的主要風險為？',
+ o:['左臂缺血','阻塞腎動脈或腸繫膜動脈（腎功能惡化、腸缺血），且舒張期增壓效果變差','腦缺血','augmentation 過強'],c:1,
+ e:'位置太低會阻塞腎／腸繫膜動脈（少尿、腸缺血），且氣球離主動脈瓣較遠使 augmentation 效率下降。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'setup',q:'IABP 氣球尺寸（容積）主要依什麼選擇？',
+ o:['體重','病人身高（如 <152 cm 用 25–30 cc、152–163 cm 34 cc、163–183 cm 40 cc、>183 cm 50 cc）','血壓','年齡'],c:1,
+ e:'氣球容積依身高選擇（各廠商略異）；過大有主動脈損傷／阻塞分支風險，過小則反搏效果不足。',s:'廠商規格；IABP 操作原則（PMID 19454524）'},
+{cat:'setup',q:'IABP 充氣後氣球直徑與主動脈的關係，安全原則為？',
+ o:['應等於主動脈直徑','充氣氣球直徑不應超過主動脈約 80–90%，避免內皮損傷與完全阻塞','越大越好','越小越好，越安全'],c:1,
+ e:'氣球直徑約佔主動脈 80–90% 較適當；完全填塞會損傷內皮、阻斷血流。尺寸依身高並參考主動脈大小。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'setup',q:'IABP 置入後確認位置最常用的方式為？',
+ o:['理學檢查即可','胸部 X 光（確認尖端約在 carina／左主支氣管水平、於腎動脈上方）','血糖檢測','心電圖'],c:1,
+ e:'置入後以 CXR 確認氣球尖端位置（約 carina 水平、左鎖骨下遠端），並排除過高／過低；透視下置放亦可即時定位。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'setup',q:'IABP 氣球使用「氦氣（helium）」充放的原因為？',
+ o:['價格最便宜','密度低、充放氣快（適合高心率的快速時相），且萬一破裂入血的栓塞風險相對較低','較不易漏','可增加氧合'],c:1,
+ e:'helium 密度低、黏滯低使充放氣迅速（配合心動週期），且溶解特性使破裂入血的氣體栓塞風險相對較低。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'setup',q:'IABP console 運作所需的主要輸入訊號為？',
+ o:['只需血氧','心電圖（ECG）與動脈壓波形（作為觸發與時相判讀依據），加上氦氣供應','僅體溫','僅中心靜脈壓'],c:1,
+ e:'console 需 ECG 與動脈壓波形以觸發並判讀時相，並連接氦氣瓶與自動充填（autofill）系統；訊號品質直接影響反搏。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'setup',q:'IABP 病人的抗凝考量為？',
+ o:['一律不抗凝','多依院內規範給予抗凝（如 heparin）以降低血栓，並與出血風險權衡；低頻反搏或停機時血栓風險上升','必用雙抗','抗凝與 IABP 無關'],c:1,
+ e:'IABP 常搭配抗凝（依中心，如 heparin）以降血栓風險，同時權衡出血；長時間停機（standby）血栓風險升高，應避免無抗凝下久置不動。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'setup',q:'IABP 置入完成後，護理端初始設定與確認的重點為？',
+ o:['只看血壓','確認觸發源與訊號品質、augmentation 比例（如 1:1）、氣球位置（CXR）、遠端肢體循環基準，並設定警報','關閉警報','把 augmentation 關掉'],c:1,
+ e:'初始須確認觸發與訊號、比例（1:1）、位置、肢體循環基準與警報設定；建立基準利於後續 troubleshooting。',s:'IABP 操作原則（PMID 19454524）'},
+
+/* ===== 二、反搏原理與生理 mechanism (10) ===== */
+{cat:'mechanism',q:'IABP 反搏（counterpulsation）的基本動作為？',
+ o:['收縮期充氣、舒張期放氣','舒張期充氣、收縮期開始前放氣','全程充氣','全程放氣'],c:1,
+ e:'IABP 於舒張期充氣（增壓灌流冠脈）、收縮期前迅速放氣（降低後負荷）；此即與心動週期「反向」的 counterpulsation。',s:'IABP 操作原則（Krishna 2009, PMID 19454524）'},
+{cat:'mechanism',q:'IABP 於舒張期充氣的主要生理效果為？',
+ o:['降低血壓','提高舒張期主動脈壓（diastolic augmentation），增加冠狀動脈灌流','關閉主動脈瓣','增加後負荷'],c:1,
+ e:'舒張期充氣把血往主動脈根部與遠端推，提升舒張期主動脈壓；冠脈主要在舒張期灌流，故可增加冠脈血流與心肌供氧。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'mechanism',q:'IABP 於收縮期前放氣的主要生理效果為？',
+ o:['增加後負荷','在主動脈瓣開啟前抽真空，降低主動脈舒張末壓（後負荷），減少心肌氧耗並增加每搏輸出','阻礙射血','提高冠脈阻力'],c:1,
+ e:'收縮前放氣使主動脈舒張末壓下降（後負荷↓），心室射血阻力減少→心肌氧耗↓、每搏量與心輸出↑。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'mechanism',q:'IABP 對心肌「氧供／氧需」的整體效果為？',
+ o:['供↓需↑','氧供增加（舒張期冠脈灌流↑）且氧需減少（後負荷↓），改善供需平衡','供需皆增','無影響'],c:1,
+ e:'IABP 同時增加氧供（冠脈灌流）與降低氧需（後負荷、氧耗），改善缺血心肌的供需平衡，是其核心血行動力學效益。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'mechanism',q:'動脈壓波形上「diastolic augmentation」指的是？',
+ o:['收縮壓峰','氣球舒張期充氣在 dicrotic notch 之後形成的舒張期增壓波峰','放氣造成的低點','中心靜脈波'],c:1,
+ e:'diastolic augmentation 是氣球舒張期充氣在 dicrotic notch 後產生的增壓波峰，理想時應等於或高於未輔助的收縮壓峰。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'mechanism',q:'反搏正確時，「輔助後主動脈舒張末壓（assisted end-diastolic pressure）」相較未輔助應為？',
+ o:['較高','較低（反映氣球放氣有效降低後負荷）','相等','不可測量'],c:1,
+ e:'正確放氣使 assisted end-diastolic pressure 低於 unassisted end-diastolic pressure，代表後負荷下降；若未降低要懷疑放氣過晚。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'mechanism',q:'反搏正確時，「輔助後收縮壓（assisted systole）」相較未輔助收縮壓通常為？',
+ o:['較高','較低（後負荷下降使下一次收縮壓降低）','完全相同','無法比較'],c:1,
+ e:'因後負荷降低，輔助後的收縮壓通常略低於未輔助收縮壓；這是反搏有效的間接指標之一（於 1:2 模式比較）。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'mechanism',q:'IABP 對心輸出量的影響為？',
+ o:['降低','藉降低後負荷提升每搏量與心輸出（約增加 0.5–1 L/min 級距），並改善冠脈灌流','無影響','取代心臟'],c:1,
+ e:'IABP 藉後負荷下降適度提升每搏量與心輸出（幅度有限，約 0.5–1 L/min），並非完全取代心臟功能。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'mechanism',q:'IABP 與 Impella／VA-ECMO 在支持原理上的根本差異為？',
+ o:['完全相同','IABP 是「反搏輔助」，需心臟本身仍有一定輸出與規律；Impella／ECMO 則主動泵血、支持力更強','IABP 支持力最強','IABP 不需心律'],c:1,
+ e:'IABP 靠 counterpulsation 增益，仰賴心臟仍有輸出與可觸發的節律；Impella／ECMO 為主動機械泵血，適用更嚴重休克。三者支持等級不同。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'mechanism',q:'冠狀動脈灌流「主要發生在心動週期哪一時相」，使 IABP 舒張期充氣特別有效？',
+ o:['收縮期','舒張期（左冠脈在舒張期灌流最多，故舒張期增壓可增加冠脈血流）','等容收縮期','全程均等'],c:1,
+ e:'左冠脈灌流主要在舒張期（收縮期心肌壓迫血管），故 IABP 舒張期增壓能有效提升冠脈灌流，改善心肌缺血。',s:'IABP 操作原則（PMID 19454524）'},
+
+/* ===== 三、時相設定 timing (11) ===== */
+{cat:'timing',q:'IABP 氣球「充氣」的正確時機為？',
+ o:['收縮期一開始','在主動脈瓣關閉點，即動脈壓波形的 dicrotic notch（重搏切跡）','R 波頂點','收縮末'],c:1,
+ e:'充氣應對準 dicrotic notch（主動脈瓣關閉、舒張期開始），使增壓落在舒張期；提早或延後都會降低效益或增加後負荷。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timing',q:'IABP 氣球「放氣」的正確時機為？',
+ o:['舒張中期','在下一次收縮（主動脈瓣開啟）之前，即舒張末期','收縮高峰','與充氣同時'],c:1,
+ e:'放氣應在收縮期開始前（舒張末），使主動脈舒張末壓降到最低以減後負荷；太早或太晚都影響效益。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timing',q:'調整 IABP 時相時，為何常先切到 1:2（每兩跳輔助一次）？',
+ o:['省氦氣','可同時看到「未輔助」與「輔助」的心跳波形並排比較，便於評估充放氣時機是否正確','讓病人休息','降低血栓'],c:1,
+ e:'1:2 模式下未輔助與輔助心跳交替出現，便於比較 augmentation、assisted 收縮壓與 assisted 舒張末壓，是判讀時相的標準做法。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timing',q:'augmentation ratio（輔助比例）1:1、1:2、1:3 的意義為？',
+ o:['氣球大小','每 1、2、3 個心跳分別輔助一次；1:1 為每跳皆輔助，比例降低常用於漸進脫離（weaning）','充氣壓力','心率設定'],c:1,
+ e:'1:1 每跳輔助（最大支持）；1:2、1:3 每 2、3 跳輔助一次，逐步降比例是常見 weaning 方式（亦可降 augmentation 容積）。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timing',q:'正確時相下，理想的 diastolic augmentation 波峰應為？',
+ o:['遠低於收縮壓','等於或高於未輔助的收縮壓峰，且位於 dicrotic notch 之後','出現在收縮期','看不到'],c:1,
+ e:'理想 augmentation 波峰在 dicrotic notch 之後、且等於或高於未輔助收縮壓，代表舒張期增壓充分。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timing',q:'現代 IABP console 的時相控制多採？',
+ o:['僅能手動','多具自動即時演算（real-time）依 ECG／壓力自動調整充放氣，亦保留手動微調','完全人工計時','固定不可調'],c:1,
+ e:'現代機型多以即時演算自動追蹤時相（尤其心律變化時），但操作者仍應理解原理並能手動判讀／微調。',s:'廠商操作手冊'},
+{cat:'timing',q:'當病人心率或節律明顯改變時，對 IABP 時相的處置為？',
+ o:['不用理會','重新檢視並確認充放氣時相仍正確（自動模式會調整，仍應人工核對波形）','關機','固定原設定'],c:1,
+ e:'心率／節律改變會影響時相，需重新檢視波形（augmentation、assisted 收縮壓／舒張末壓）；自動模式雖會追蹤，仍應人工確認。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timing',q:'IABP 脫離（weaning）常用的兩種方式為？',
+ o:['直接關機拔除','逐步降低輔助比例（1:1→1:2→1:3）或逐步降低 augmentation 容積，同時監測血行動力學','只增加抗凝','提高比例到 2:1'],c:1,
+ e:'weaning 以降比例（1:1→1:2→1:3）或降 augmentation 容積漸進進行，觀察病人是否耐受；不建議長時間極低頻反搏以免血栓。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timing',q:'在動脈壓波形上辨識 dicrotic notch 的意義為？',
+ o:['代表放氣點','代表主動脈瓣關閉、舒張期開始，是充氣的對位參考點','是收縮壓峰','是觸發 R 波'],c:1,
+ e:'dicrotic notch 是主動脈瓣關閉的標記、舒張期起點，充氣應對準此點；正確對位是時相判讀的核心。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timing',q:'IABP 放氣時機設定的目標為？',
+ o:['使 augmentation 最大','使 assisted 舒張末壓最低而不延入收縮期（不阻礙射血）','延到收縮期以增壓','與充氣同時'],c:1,
+ e:'放氣目標是讓主動脈舒張末壓降到最低（後負荷最小），但必須在收縮開始前完成，避免延遲放氣阻礙射血。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timing',q:'關於 augmentation 容積（inflation volume）調整，正確認知為？',
+ o:['固定不可調','可調整充氣容積；weaning 時可漸降容積，但過低會使反搏效益與辨識度下降','越低越好','與身高無關'],c:1,
+ e:'充氣容積可調（常設接近氣球額定容積以獲最大效益）；weaning 可漸降容積，但過低反搏效果差。容積上限受氣球尺寸限制。',s:'IABP 操作原則（PMID 19454524）'},
+
+/* ===== 四、時相誤差判讀 timingerr (13) ===== */
+{cat:'timingerr',q:'「過早充氣（early inflation）」——在 dicrotic notch 之前充氣的血行動力學後果為？',
+ o:['降低後負荷','使主動脈瓣過早關閉、可能增加後負荷與左心室舒張末容積，增加心肌氧耗','增加每搏量','無影響'],c:1,
+ e:'過早充氣在主動脈瓣仍開啟時對抗射血，導致主動脈瓣過早關閉、每搏量下降、LVEDV 與氧耗上升，是有害的時相誤差。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timingerr',q:'「過早充氣」在動脈壓波形上的典型特徵為？',
+ o:['augmentation 出現在 dicrotic notch 之後','augmentation 波侵入 dicrotic notch「之前」的收縮期，與收縮波融合','波形完全消失','僅舒張末壓下降'],c:1,
+ e:'過早充氣使增壓波出現在 dicrotic notch 之前、與收縮期波形融合（notch 被掩蓋），提示充氣時機需延後至 notch。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timingerr',q:'「過晚充氣（late inflation）」——在 dicrotic notch 之後才充氣的後果為？',
+ o:['augmentation 過強','舒張期增壓不足、冠脈灌流獲益減少（反搏效益打折）','增加後負荷','阻礙射血'],c:1,
+ e:'過晚充氣使增壓波起點落在 notch 之後、augmentation 峰值偏低且變窄，舒張期灌流獲益減少；應提前充氣至 notch。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timingerr',q:'「過晚充氣」在波形上的典型特徵為？',
+ o:['充氣波在 notch 之前','dicrotic notch 之後才出現 augmentation，且波峰較低、與 notch 間出現明顯分離','assisted 舒張末壓升高','收縮期消失'],c:1,
+ e:'過晚充氣可見 notch 後才起增壓、波峰低且 notch 與 augmentation 之間分離；提示充氣點需提前。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timingerr',q:'「過早放氣（early deflation）」的後果為？',
+ o:['最有害、阻礙射血','後負荷降低效果不佳、舒張期增壓過早喪失，甚至可能出現冠脈血流逆流，反搏次佳','增加冠脈灌流','無任何影響'],c:1,
+ e:'過早放氣使舒張增壓過早消失（後負荷下降不足），且主動脈壓驟降可能引起冠脈血流逆流；反搏效益打折。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timingerr',q:'「過早放氣」在波形上的典型特徵為？',
+ o:['assisted 收縮壓明顯下降','augmentation 後主動脈壓急遽下墜呈「U 型」再回升，且 assisted 收縮壓未見降低','notch 消失','無變化'],c:1,
+ e:'過早放氣可見增壓後壓力陡降（U 型切跡）再被下一次收縮抬升，且後負荷降低效果不足（assisted 收縮壓未降）。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timingerr',q:'「過晚放氣（late deflation）」——放氣延入收縮期的後果為？',
+ o:['最理想','阻礙左心室射血、增加後負荷與心肌氧耗，是四種時相誤差中「最有害」的','降低後負荷','增加冠脈灌流'],c:1,
+ e:'過晚放氣使氣球在心室射血時仍充氣，直接對抗射血、增加後負荷與氧耗（等同 afterload 上升），是最有害的時相誤差。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timingerr',q:'「過晚放氣」在波形上的典型特徵為？',
+ o:['assisted 舒張末壓下降','assisted 主動脈舒張末壓未下降（甚至升高）、輔助後收縮上升延遲、波形變寬','U 型切跡','notch 前增壓'],c:1,
+ e:'過晚放氣使 assisted 舒張末壓未降反等或高、下一次收縮起始延遲、augmentation 波變寬；是最需即刻矯正的錯誤。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timingerr',q:'四種時相誤差中，被認為「最有害」的是？',
+ o:['過早充氣','過晚放氣（late deflation，直接增加後負荷、阻礙射血）','過早放氣','過晚充氣'],c:1,
+ e:'過晚放氣讓氣球在收縮期仍充氣、對抗射血並增加後負荷與氧耗，對已衰竭心臟最不利，故最有害，須立即矯正。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timingerr',q:'若觀察到「assisted 舒張末壓不降反而偏高」，最可能的時相錯誤為？',
+ o:['過早充氣','過晚放氣（late deflation）','過晚充氣','觸發喪失'],c:1,
+ e:'assisted 舒張末壓未下降甚至升高，是放氣過晚（氣球仍充氣進入收縮期）的指標，應提前放氣時機。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timingerr',q:'若觀察到「diastolic augmentation 明顯不足、波峰偏低且起點在 notch 之後」，最可能的錯誤為？',
+ o:['過晚充氣（late inflation）','過晚放氣','過早充氣','氣球破裂'],c:0,
+ e:'augmentation 起點落在 notch 之後、波峰低，是充氣過晚的特徵；提前充氣至 dicrotic notch 可改善。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timingerr',q:'「過早充氣」對主動脈瓣的機械影響為？',
+ o:['使瓣膜開更久','促使主動脈瓣過早關閉、可能阻礙心室完成射血、增加 LVEDV','無影響','使瓣膜閉鎖不全'],c:1,
+ e:'過早充氣在射血尚未完成時抬高主動脈壓，促主動脈瓣提早關閉、每搏量下降、LVEDV 上升，增加氧耗。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'timingerr',q:'判讀時相誤差時，為何要用 1:2（或 1:3）模式比較？',
+ o:['純為省氣','需以「未輔助心跳」為對照，才能判斷輔助後收縮壓、舒張末壓與 augmentation 是否符合正確反搏','1:1 更準','與比較無關'],c:1,
+ e:'時相判讀依賴未輔助 vs 輔助心跳的對照（assisted 收縮壓應降、assisted 舒張末壓應降、augmentation 應足）；故用 1:2／1:3 觀察。',s:'IABP 操作原則（PMID 19454524）'},
+
+/* ===== 五、觸發模式 trigger (8) ===== */
+{cat:'trigger',q:'IABP 常用的觸發（trigger）來源包含？',
+ o:['僅體溫','心電圖（ECG，R 波）、動脈壓波形、節律器訊號（pacer），以及 internal（內部固定頻率）','僅血氧','僅中心靜脈壓'],c:1,
+ e:'觸發源包括 ECG（最常用，以 R 波定位心動週期）、動脈壓、pacer 與 internal（無自身心律時用固定頻率）。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'trigger',q:'以 ECG 作為觸發源的原理為？',
+ o:['偵測 T 波充氣','以 R 波作為心室收縮的時間參考，據此推算充放氣時相','偵測 P 波放氣','與心律無關'],c:1,
+ e:'ECG 觸發以 R 波標記收縮起點，系統據此設定舒張期充氣與收縮前放氣；故 ECG 導極品質與清晰 R 波很重要。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'trigger',q:'何時會改用「動脈壓（pressure）觸發」？',
+ o:['永遠不用','當 ECG 訊號不佳／干擾（如電燒、導極不良）時，以動脈壓上升沿觸發，前提是有足夠脈壓','血壓正常時','病人清醒時'],c:1,
+ e:'ECG 受干擾或不可靠時可改用壓力觸發（依收縮上升沿）；但需有足夠脈壓（過低或心律極不規則時受限）。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'trigger',q:'心房顫動（AFib，心律不規則）病人的 IABP 觸發策略為？',
+ o:['關閉 IABP','使用具 AFib／不規則心律演算的模式（如以 R 波偵測放氣、逐跳調整），或壓力觸發','固定 1:1 不調','用 internal 模式'],c:1,
+ e:'AFib 時 R-R 不規則，宜用具不規則心律演算（逐跳、on-R-wave 放氣）的模式；現代 console 多有 AFib 模式以維持有效反搏。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'trigger',q:'「internal trigger（內部觸發）」的用途為？',
+ o:['正常心律時常規使用','當病人無有效心律／心跳停止（如 CPR、體外循環無搏動）時，以固定頻率提供反搏以防氣球靜止血栓','增加 augmentation','取代抗凝'],c:1,
+ e:'internal 模式以固定頻率充放，用於無自身節律（asystole、心臟停搏、CPB）時維持氣球活動、避免長時間靜止形成血栓。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'trigger',q:'節律器依賴（paced）病人使用 IABP 時的注意事項為？',
+ o:['無需注意','pacer spike 可能干擾 ECG 觸發，需選擇適當觸發模式（pacer 觸發或壓力觸發）確保正確計時','一律關 IABP','必用 internal'],c:1,
+ e:'起搏 spike 可能被誤判影響觸發，需選擇適合的觸發模式（如 pacer 觸發或壓力觸發）確保時相正確。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'trigger',q:'觸發訊號品質（如 ECG 導極鬆脫、雜訊）不佳時的直接影響為？',
+ o:['沒有影響','可能觸發喪失或誤觸發，導致 augmentation 消失或時相錯亂，須先排查訊號','使 augmentation 增強','改善反搏'],c:1,
+ e:'觸發訊號差會造成 trigger loss 或誤觸發（如 T 波誤判），反搏中斷或時相錯亂；troubleshooting 首要檢查導極與訊號。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'trigger',q:'心搏過速（tachycardia）對 IABP 反搏的挑戰為？',
+ o:['沒有影響','心動週期變短使充放氣時間受限，augmentation 效率下降；可考慮降比例（如 1:2）或倚賴即時演算','使反搏更有效','需提高比例到 2:1'],c:1,
+ e:'高心率使每個週期充放氣時間縮短，反搏效率下降；可用即時演算、必要時降比例（1:2）並控制心律以維持有效反搏。',s:'IABP 操作原則（PMID 19454524）'},
+
+/* ===== 六、適應症與禁忌 indication (11) ===== */
+{cat:'indication',q:'IABP 傳統上的適應症之一為？',
+ o:['敗血症','心因性休克（cardiogenic shock）、頑固性缺血、急性機械併發症與高風險 PCI 支持等','單純高血壓','慢性穩定心絞痛例行'],c:1,
+ e:'IABP 傳統用於心因性休克、頑固性心肌缺血、急性機械併發症（急性 MR／VSR）橋接與高風險 PCI／脫離體外循環支持。',s:'ESC/ACC 指引；IABP 操作原則（PMID 19454524）'},
+{cat:'indication',q:'IABP-SHOCK II 試驗對「急性心肌梗塞併心因性休克常規使用 IABP」的結論為？',
+ o:['顯著降低死亡率','未能降低 30 天（及後續）死亡率，據此指引將常規使用降級','增加死亡率一倍','大幅改善','增加出血無他益'],c:1,
+ e:'IABP-SHOCK II 顯示 AMI 併休克常規 IABP 未降低 30 天死亡率（長期追蹤亦然），使指引不再常規推薦（歐洲列 Class III）。',s:'IABP-SHOCK II（Thiele 2012, PMID 22920912）'},
+{cat:'indication',q:'IABP 對「急性機械性併發症（如急性重度 MR、心室中隔破裂 VSR）」的角色為？',
+ o:['禁忌','可作為術前穩定血行動力學的「橋接」支持，降低後負荷、改善灌流以爭取修補時機','無任何幫助','取代手術'],c:1,
+ e:'急性 MR／VSR 造成血行動力學不穩時，IABP 藉降後負荷、改善前向輸出，作為外科修補前的橋接支持，是仍受支持的情境。',s:'ESC/ACC 指引；IABP 操作原則（PMID 19454524）'},
+{cat:'indication',q:'下列何者為 IABP 的「明確禁忌」？',
+ o:['心因性休克','顯著主動脈瓣逆流（aortic regurgitation）','急性心肌梗塞','高風險 PCI'],c:1,
+ e:'顯著 AR 時，舒張期充氣增壓會加重逆流、惡化左心室容積負荷，故為禁忌；反搏對 AR 有害。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'indication',q:'為何「主動脈剝離（aortic dissection）」是 IABP 禁忌？',
+ o:['會降血壓','導絲／氣球可能進入假腔或惡化剝離、造成破裂，屬禁忌','增加冠脈灌流','沒有影響'],c:1,
+ e:'主動脈剝離時置入與充放氣可能延伸剝離、進入假腔或導致破裂，屬絕對禁忌；主動脈瘤亦為（相對）禁忌。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'indication',q:'「顯著主動脈瓣逆流」為 IABP 禁忌的機轉為？',
+ o:['降低冠脈灌流','舒張期氣球充氣增壓會增加逆流量、加重左心室容積負荷與肺水腫','使瓣膜狹窄','與 AR 無關'],c:1,
+ e:'舒張期是 AR 逆流發生的時相；此時充氣增壓反而驅動更多血逆流入左心室，加重容積負荷，故 AR 禁用 IABP。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'indication',q:'嚴重周邊動脈疾病（PAD）對 IABP 的意義為？',
+ o:['最佳適應症','屬相對禁忌／高風險，股動脈置入易致下肢缺血或無法置入，需評估替代路徑或裝置','無影響','使反搏更佳'],c:1,
+ e:'嚴重 PAD 增加下肢缺血與置入困難風險，屬相對禁忌；必要時評估其他路徑（如經鎖骨下）或改用其他支持裝置。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'indication',q:'IABP 用於「高風險 PCI」支持的考量為？',
+ o:['一律常規','對特定高風險解剖／血行動力學不穩者可提供圍術期支持，但需個別化評估（並非所有高風險 PCI 皆需）','取代 Impella 於所有情況','僅用於穩定病人'],c:1,
+ e:'IABP 可於選定的高風險 PCI 提供支持，但證據與支持力有限；是否使用及選 IABP vs Impella 需個別化評估。',s:'ESC/ACC 指引；IABP 操作原則（PMID 19454524）'},
+{cat:'indication',q:'關於「AMI 併心因性休克」現行指引對 IABP 的立場（受 IABP-SHOCK II 影響）為？',
+ o:['強烈常規推薦','不建議「常規」使用；保留於特定情境（如機械併發症）或個別判斷','列為唯一首選','完全禁用於所有休克'],c:1,
+ e:'受 IABP-SHOCK II 影響，指引不再常規推薦 AMI 休克使用 IABP；但機械併發症、特定血行動力學情境仍可個別考量。',s:'IABP-SHOCK II（PMID 22920912）；ESC/ACC 指引'},
+{cat:'indication',q:'「脫離體外循環困難（failure to wean from CPB）」時 IABP 的角色為？',
+ o:['禁忌','可作為術中／術後支持，降低後負荷、改善心輸出以協助脫離體外循環','無幫助','僅用於門診'],c:1,
+ e:'心臟術後低心輸出、難脫離 CPB 時，IABP 是常用的第一線機械支持，藉反搏改善血行動力學協助脫離。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'indication',q:'IABP 用於「頑固性心肌缺血（refractory ischemia）」的原理為？',
+ o:['降低冠脈灌流','同時增加冠脈灌流（舒張期增壓）與降低氧需（後負荷↓），可穩定缺血至確定性治療','增加氧需','僅止痛'],c:1,
+ e:'IABP 改善氧供需平衡，可作為頑固性缺血在等待血運重建前的橋接支持，穩定病情。',s:'IABP 操作原則（PMID 19454524）'},
+
+/* ===== 七、氣球破裂／漏氣 troubleshooting tsballoon (12) ===== */
+{cat:'tsballoon',q:'IABP 氣球「破裂（rupture）」最關鍵、必須立即警覺的徵象為？',
+ o:['血壓上升','氣球導管／氦氣管路內出現「血液」','augmentation 增強','心跳變慢'],c:1,
+ e:'氣體管路內出現血液是氣球破裂的關鍵警訊（血液經破孔滲入）；一旦見血須立即處置，這是最重要的辨識點。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsballoon',q:'發現氣球破裂（管路見血）時的「立即處置」為？',
+ o:['提高 augmentation','立即停止幫浦、夾住導管，並儘速安排移除氣球（避免血液凝固使氣球黏著卡住）','繼續反搏觀察','沖洗管路後續用'],c:1,
+ e:'見血即停泵、夾管並儘快移除；延遲會使滲入血液凝固、氣球與血栓黏著（entrapment），導致無法拔除而需外科。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsballoon',q:'氣球破裂後「延遲移除」的主要風險為？',
+ o:['沒有風險','滲入的血液凝固使氣球黏著／血栓固著，造成移除困難（entrapment），可能需外科取出','augmentation 過強','感染降低'],c:1,
+ e:'破裂後血液進入氣球內凝固，使氣球無法完全排空並與血栓黏著，形成 entrapment；故須「儘速」移除，避免延誤。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsballoon',q:'IABP「漏氣警報（gas leak alarm）／頻繁自動充填（autofill）」常見原因為？',
+ o:['只可能是機器壞','氣球微漏或破裂、管路連接鬆脫、或氦氣瓶壓力不足','病人發燒','血壓過高'],c:1,
+ e:'漏氣警報與異常頻繁 autofill 提示氣球漏／破、管路鬆脫或氦氣供應不足；需系統性排查（含檢查管路是否見血）。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsballoon',q:'IABP 氣球破裂／穿孔較常見的機轉為？',
+ o:['氦氣太純','鈣化或粗糙的主動脈壁反覆摩擦磨損氣球膜，或置入時銳利鈣化刺破','血壓太低','抗凝過度'],c:1,
+ e:'主動脈壁鈣化、粗糙面反覆摩擦或銳利鈣化刺穿是氣球破裂常見機轉；嚴重鈣化主動脈是危險因子。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsballoon',q:'關於氦氣（helium）在氣球破裂時的安全性，正確認知為？',
+ o:['破裂必致大量致命氣栓','helium 溶解度／密度特性使氣體栓塞風險相對較低，但仍須立即停泵移除，不可掉以輕心','helium 完全無害可忽略','應改用空氣'],c:1,
+ e:'helium 的物理特性使破裂時氣栓風險相對較低，這是選用它的原因之一；但破裂仍屬急症，須立即停泵、夾管、移除。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsballoon',q:'見到管路血液後，關於「是否繼續 pumping」的正確做法為？',
+ o:['可繼續觀察','絕不可繼續反搏；持續充放會把更多氣體經破口送入血流並加速血栓黏著','降低比例即可繼續','加壓沖洗後續用'],c:1,
+ e:'破裂後繼續 pumping 會增加氣栓與加速血栓黏著、移除更困難；應立即停止並移除。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsballoon',q:'氦氣瓶壓力不足／耗盡的警報處置為？',
+ o:['忽略','更換／補充氦氣瓶並確認管路連接完好，排除同時存在的漏氣／破裂','關掉警報繼續用','拔除氣球'],c:1,
+ e:'氦氣不足會影響充填與 augmentation；需更換氣瓶、確認連接，並同時排除氣球漏／破（兩者警報可能相似）。',s:'廠商操作手冊'},
+{cat:'tsballoon',q:'若破裂氣球移除困難（已黏著／entrapment），正確處置為？',
+ o:['用力硬拔','停止暴力牽引，會診血管外科／心臟外科以手術取出，避免血管撕裂','持續反搏','注入更多氦氣'],c:1,
+ e:'entrapment 的氣球暴力拔除會撕裂血管；應停止牽引、外科會診手術取出。這也是強調「破裂即儘速移除」以預防黏著的原因。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsballoon',q:'氣球「未完全展開（incomplete unwrapping）」或位置不良導致的問題為？',
+ o:['augmentation 過強','充氣不完全使 augmentation 不足，需確認氣球已展開、位置正確（必要時透視／CXR）','無影響','使氣球破裂'],c:1,
+ e:'新置入氣球若未完全展開或位置不良會使 augmentation 差；處置為確認展開與位置（影像），必要時重新定位。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsballoon',q:'預防氣球破裂／磨損的一般作法為？',
+ o:['提高充氣容積超過額定','正確選擇氣球尺寸（勿過大）、確認位置、避免置於嚴重鈣化段並依規範抗凝與監測','關閉警報','延長使用時間至最長'],c:1,
+ e:'正確尺寸（勿過大過度充填）、良好位置、避開嚴重鈣化段與適當監測，可降低磨損破裂風險；並隨時留意管路是否見血。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsballoon',q:'IABP 反搏突然「augmentation 消失」且管路無血時，第一步排查為？',
+ o:['直接拔管','檢查觸發訊號（ECG／壓力）、管路連接與氦氣供應、氣球位置，再判斷是否漏氣／破裂','立即外科','提高比例'],c:1,
+ e:'augmentation 突失先排查觸發與訊號、管路連接、氦氣、位置；若管路見血則按破裂處置。系統性排查避免誤判。',s:'IABP 操作原則（PMID 19454524）'},
+
+/* ===== 八、擴增不良／觸發 troubleshooting tsaugment (9) ===== */
+{cat:'tsaugment',q:'IABP「augmentation（舒張期增壓）不足」的常見原因，下列何者較完整？',
+ o:['只可能是氣球破裂','時相誤差、觸發不良、氣球位置太低／尺寸太小、氣球未展開、低血容／低血壓、心搏過速等','只有低血壓','只有心律問題'],c:1,
+ e:'augmentation 不足原因多元：時相／觸發問題、位置或尺寸、氣球未展開、前負荷不足（低血容）、心搏過速等；需逐項排查。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsaugment',q:'IABP「觸發喪失（trigger loss）」的處置流程為？',
+ o:['直接拔管','檢查並改善觸發訊號（ECG 導極、增益；或改用動脈壓觸發），必要時切換觸發模式','關機重開一次就好','提高比例'],c:1,
+ e:'trigger loss 首先排查 ECG 導極／訊號或動脈壓波形，調整增益或切換觸發源（ECG↔壓力），恢復穩定觸發。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsaugment',q:'IABP 病人動脈壓波形變「鈍／阻尼（damping）」時，對觸發與判讀的影響與處置為？',
+ o:['沒有影響','壓力觸發與時相判讀失準；需檢查測壓管路（打折、氣泡、血栓）、沖洗或重新校零','augmentation 增強','應提高比例'],c:1,
+ e:'動脈壓阻尼會影響壓力觸發與波形判讀；處置為排查管路打折／氣泡／血栓、沖洗、重新校零，恢復正常波形。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsaugment',q:'心搏過速或心律不整造成 augmentation 下降時的處置為？',
+ o:['提高比例到 2:1','控制心律、改用即時演算或不規則心律模式，必要時降比例（1:2）以確保每次反搏有效','關閉觸發','忽略'],c:1,
+ e:'快速／不規則心律使充放氣時間受限；處置為控制心律、用即時演算／AFib 模式，必要時降比例維持有效反搏。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsaugment',q:'低血容／低血壓造成 augmentation 偏低時的處置方向為？',
+ o:['只調機器','適當補充容量／升壓改善前負荷與灌流壓，因反搏效益也受循環容積影響','拔除 IABP','提高氣球容積超過額定'],c:1,
+ e:'反搏效益受循環容積與血壓影響；低血容時 augmentation 也會偏低，需在整體血行動力學下補液／升壓，而非只調機器。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsaugment',q:'氣球「位置太低」造成 augmentation 不足時的處置為？',
+ o:['提高比例','以影像確認位置並在無菌下適當回撤／調整至正確高度（尖端約 carina／腎動脈上方）','增加容積','忽略'],c:1,
+ e:'位置太低（離主動脈瓣遠、可能近腎動脈）使反搏效率差；需影像確認並在適當條件下調整位置，恢復理想高度。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsaugment',q:'ECG 觸發時「T 波或雜訊誤觸發」造成時相錯亂的處置為？',
+ o:['無法處理','調整 ECG 導極位置／增益、選擇 R 波清晰的導程，或改用壓力觸發，避免誤觸發','提高比例','拔管'],c:1,
+ e:'高 T 波或雜訊被誤判為 R 波會使時相錯亂；處置為換導程／調增益取得清晰 R 波，或改壓力觸發。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsaugment',q:'處理 IABP 警報的一般原則為？',
+ o:['先重開機器','先確認病人狀態與訊號（ECG、動脈壓、管路是否見血、肢體循環），再處理機器參數','先忽略警報','直接拔除'],c:1,
+ e:'警報處理應「先病人、後機器」：確認病人血行動力學與訊號、排除破裂／缺血等危急情況，再調整參數；避免只按掉警報。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsaugment',q:'關於 IABP 長時間「standby（停止反搏）」的風險與原則為？',
+ o:['可無限期停','氣球長時間靜止不動會增加血栓風險，應避免久置不動；需反搏或維持抗凝，計畫盡快恢復或移除','停機更安全','與血栓無關'],c:1,
+ e:'氣球長時間靜止（standby）易在其表面形成血栓；應避免久置不動，維持至少低頻反搏或適當抗凝，並計畫盡速恢復或移除。',s:'IABP 操作原則（PMID 19454524）'},
+
+/* ===== 九、肢體缺血／併發症 troubleshooting tsvascular (15) ===== */
+{cat:'tsvascular',q:'IABP「最常見的血管併發症」為？',
+ o:['腦中風','置入側下肢缺血（limb ischemia）','肺栓塞','氣胸'],c:1,
+ e:'下肢缺血是 IABP 最常見血管併發症（股動脈被導管佔據／血栓／栓塞）；需定時評估遠端脈搏、膚色、溫度與感覺。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsvascular',q:'發現 IABP 置入側「下肢缺血」的處置為？',
+ o:['觀察即可','評估嚴重度，考慮移除／改置對側或改用其他支持，並會診血管外科','提高 augmentation','增加抗凝到出血'],c:1,
+ e:'肢體缺血依嚴重度處置：可能需移除或改置對側、血管外科介入（取栓、繞道）；持續嚴重缺血須及時處理避免肢體壞死。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsvascular',q:'IABP 相關「血小板低下（thrombocytopenia）」的主要機轉為？',
+ o:['骨髓抑制','氣球機械性破壞血小板（與反搏機械作用相關），需監測血小板','過敏','感染'],c:1,
+ e:'IABP 反搏對血小板的機械性破壞可致血小板下降；需定期監測 CBC，並與 HIT 等其他原因鑑別。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsvascular',q:'IABP 可能造成「溶血（hemolysis）」的機轉為？',
+ o:['與紅血球無關','反搏對紅血球的機械性破壞，長時間或高強度使用時較明顯，需監測','僅心理作用','缺氧'],c:1,
+ e:'反搏的機械作用可破壞紅血球致溶血（可見游離血紅素、貧血）；需監測血色素與溶血指標。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsvascular',q:'IABP 導管「移位（migration）」的後果與監測為？',
+ o:['無影響','上移可阻塞左鎖骨下（左臂缺血）、下移可阻塞腎動脈（少尿），需以波形變化與 CXR 追蹤位置','使 augmentation 恆定','僅影響美觀'],c:1,
+ e:'導管移位改變氣球相對分支的位置：上移致左臂／腦、下移致腎／腸缺血並改變 augmentation；以 CXR 與臨床監測追蹤。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsvascular',q:'IABP 病人出現「少尿／腎功能惡化」時，除全身因素外應想到的裝置原因為？',
+ o:['augmentation 太強','氣球位置太低阻塞腎動脈開口，需以影像確認並調整位置','抗凝不足','觸發模式'],c:1,
+ e:'氣球下移阻塞腎動脈會致腎灌流下降、少尿；IABP 病人出現腎功能變化應排查氣球位置（CXR）並調整。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsvascular',q:'IABP 病人出現「左上肢缺血／左橈動脈脈搏減弱」時，應想到的裝置原因為？',
+ o:['氣球太小','氣球位置太高阻塞左鎖骨下動脈，需影像確認並下調位置','抗凝過度','觸發喪失'],c:1,
+ e:'氣球尖端過高會阻塞左鎖骨下動脈致左臂缺血、左橈脈弱；需影像確認並調整位置至左鎖骨下遠端 2–3 cm。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsvascular',q:'IABP 相關「醫源性主動脈剝離」的辨識為？',
+ o:['血壓上升、無症狀','劇烈背／胸痛、血行動力學惡化、置入阻力異常或影像顯示假腔；屬緊急併發症','augmentation 增強','僅輕微不適'],c:1,
+ e:'置入過程血管損傷可致主動脈剝離，表現為劇痛、血壓變化、影像見假腔；屬緊急情況，需立即評估與處置。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsvascular',q:'IABP 穿刺部位的「感染」預防與監測為？',
+ o:['不需注意','維持無菌照護、觀察局部紅腫熱痛與發燒，導管留置時間越長風險越高','抗生素預防即可長期留置','與留置時間無關'],c:1,
+ e:'穿刺部位感染風險隨留置時間上升；需無菌照護、監測局部與全身感染徵象，並儘早評估移除。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsvascular',q:'IABP 穿刺相關「出血／腹膜後血腫」的辨識為？',
+ o:['血壓升高','穿刺處出血或血腫、不明原因血壓下降與血色素下降（腹膜後出血可不外顯），需警覺','augmentation 消失','僅局部瘀青無妨'],c:1,
+ e:'股動脈穿刺可致局部或腹膜後出血；後者可不外顯，表現為低血壓與血色素下降。需監測並影像評估、必要時處置。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsvascular',q:'IABP 病人「患肢照護」的護理重點為？',
+ o:['鼓勵大幅彎曲髖部','置入側下肢保持適度伸直（避免髖部過度彎曲致導管打折），定時評估循環與預防 DVT','完全不動且不評估','抬高患肢至最高'],c:1,
+ e:'置入側下肢應避免髖關節過度彎曲（防導管打折／移位），定時評估遠端循環與感覺、預防壓瘡與 DVT。',s:'IABP 護理原則'},
+{cat:'tsvascular',q:'IABP 病人「腸繫膜缺血（mesenteric ischemia）」的可能原因為？',
+ o:['augmentation 太強','氣球位置太低阻塞腸繫膜動脈或血栓栓塞，表現為腹痛、乳酸上升','觸發模式錯誤','抗凝過度'],c:1,
+ e:'氣球下移阻塞腸繫膜動脈或栓塞可致腸缺血（腹痛、乳酸↑、代謝性酸中毒）；需排查位置並緊急評估。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsvascular',q:'IABP 抗凝管理的核心考量為？',
+ o:['一律不抗凝','在降低血栓（肢體缺血、氣球血栓）與避免出血之間取得平衡，依院內規範與病人狀況調整','抗凝越強越好','抗凝與併發症無關'],c:1,
+ e:'抗凝需在血栓（肢體、氣球）與出血風險間權衡，依中心規範（如 heparin、監測 aPTT/ACT）與病人狀況（出血風險）調整。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsvascular',q:'IABP「移除後」的止血與監測重點為？',
+ o:['不需監測','充分壓迫止血、監測遠端循環與穿刺處（血腫、假性動脈瘤、出血），並留意肢體缺血','立即讓病人下床走動','無需壓迫'],c:1,
+ e:'移除後需壓迫止血、監測穿刺處（血腫／假性動脈瘤）與遠端肢體循環；假性動脈瘤與遲發出血是常見拔除後併發症。',s:'IABP 操作原則（PMID 19454524）'},
+{cat:'tsvascular',q:'IABP 病人「整體監測」應涵蓋的重點，最完整的是？',
+ o:['只看血壓','反搏波形／augmentation、觸發訊號、氣球位置、置入側肢體循環、CBC（血小板／血色素）、抗凝與穿刺部位','只看心電圖','只看尿量'],c:1,
+ e:'IABP 完整監測包含：反搏波形與 augmentation 是否有效、觸發、位置（CXR）、肢體循環、CBC（血小板／溶血）、抗凝與穿刺部位；系統化監測利於早期發現併發症。',s:'IABP 操作原則（PMID 19454524）'}
+];
+
+/* ---------- 洗牌：每題選項打亂，記錄正確選項文字 ---------- */
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+const deck = QUESTIONS.map(item=>{
+  const correctText = item.o[item.c];
+  const opts = shuffle(item.o.slice());
+  return { cat:item.cat, q:item.q, opts, correctText, correctIdx:opts.indexOf(correctText), e:item.e, s:item.s };
+});
+
+/* ---------- 狀態 ---------- */
+const state = { idx:0, score:0, answered:false, picked:null, results:[] };
+const app = document.getElementById('app');
+const LETTERS = ['A','B','C','D'];
+const TOTAL = deck.length;
+
+function render(){
+  if(state.idx >= TOTAL){ renderResult(); return; }
+  const item = deck[state.idx];
+  const cat = CATS[item.cat];
+  const pct = Math.round(state.idx / TOTAL * 100);
+
+  let html = '';
+  if(state.idx === 0){
+    html += `<div class="disclaimer">🎈 本測驗共 100 題，著重「技術面與 Troubleshooting」：置入與定位、反搏原理與生理、時相設定、<b>時相誤差判讀（過早／過晚 充氣／放氣）</b>、觸發模式、適應症禁忌，以及氣球破裂／擴增不良／肢體缺血等併發症處置。<b>臨床操作請以醫囑、機型說明書與院內規範為準。</b></div>`;
+  }
+  html += `<div class="progress-info"><span>作答進度 <b>${state.idx}/${TOTAL}</b></span><span>目前得分 <b>${state.score}</b></span></div>`;
+  html += `<div class="bar"><div style="width:${pct}%"></div></div>`;
+  html += `<div class="qcard">`;
+  html += `<span class="cat-chip" style="background:${cat.color}">${cat.name}</span>`;
+  html += `<div class="qtext"><span class="num">Q${state.idx+1}.</span>${item.q}</div>`;
+  html += `<div class="opts">`;
+  item.opts.forEach((opt,i)=>{
+    let cls='opt';
+    if(state.answered){
+      if(i===item.correctIdx) cls+=' correct';
+      else if(i===state.picked) cls+=' wrong';
+    }
+    const dis = state.answered ? 'disabled' : '';
+    html += `<button class="${cls}" ${dis} onclick="pick(${i})"><span class="mark">${LETTERS[i]}</span><span>${opt}</span></button>`;
+  });
+  html += `</div>`;
+
+  if(state.answered){
+    const ok = state.picked===item.correctIdx;
+    html += `<div class="explain ${ok?'ok':'no'}">`;
+    html += `<div class="verdict">${ok?'✓ 答對了':'✗ 答錯了，正解為 '+LETTERS[item.correctIdx]}</div>`;
+    html += `<div>${item.e}</div>`;
+    html += `<div class="src">📖 出處：${item.s}</div>`;
+    html += `</div>`;
+    html += `<div class="nav"><button class="btn" onclick="next()">${state.idx < TOTAL-1 ? '下一題 →' : '看總成績 →'}</button></div>`;
+  }
+  html += `</div>`;
+  app.innerHTML = html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function pick(i){
+  if(state.answered) return;
+  state.answered = true;
+  state.picked = i;
+  const item = deck[state.idx];
+  const ok = i===item.correctIdx;
+  if(ok) state.score++;
+  state.results.push({ cat:item.cat, ok });
+  render();
+}
+
+function next(){
+  state.idx++;
+  state.answered=false;
+  state.picked=null;
+  render();
+}
+
+function renderResult(){
+  const pct = Math.round(state.score / TOTAL * 100);
+  let grade, emoji, grad;
+  if(pct>=90){ grade='優異'; emoji='🏆'; grad='linear-gradient(135deg,#f6a821,#e8890c)'; }
+  else if(pct>=80){ grade='及格 · 良好'; emoji='🎉'; grad='linear-gradient(135deg,#10b981,#059669)'; }
+  else if(pct>=60){ grade='待加強'; emoji='👍'; grad='linear-gradient(135deg,#be123c,#9f1239)'; }
+  else { grade='需複習'; emoji='📚'; grad='linear-gradient(135deg,#e74c3c,#c0392b)'; }
+
+  const perCat = {};
+  Object.keys(CATS).forEach(k=> perCat[k]={ok:0,total:0});
+  state.results.forEach(r=>{ perCat[r.cat].total++; if(r.ok) perCat[r.cat].ok++; });
+
+  const now = new Date();
+  const stamp = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  let html = '';
+  html += `<div class="result-card">`;
+  html += `<div class="score-hero" style="background:${grad}">`;
+  html += `<div class="emoji">${emoji}</div>`;
+  html += `<div class="big">${state.score} / ${TOTAL}</div>`;
+  html += `<div class="pct">正確率 ${pct}%</div>`;
+  html += `<div class="grade">${grade}</div>`;
+  html += `</div>`;
+  html += `<div class="breakdown"><h3>分區成績</h3>`;
+  Object.keys(CATS).forEach(k=>{
+    const c=CATS[k], d=perCat[k];
+    const p = d.total? Math.round(d.ok/d.total*100):0;
+    html += `<div class="brow"><div class="lbl">${c.name}</div>`;
+    html += `<div class="track"><div style="width:${p}%;background:${c.color}"></div></div>`;
+    html += `<div class="val">${d.ok}/${d.total}</div></div>`;
+  });
+  html += `</div></div>`;
+  html += `<div class="meta-line">測驗完成時間：${stamp}　｜　IABP 100 · 主動脈內氣球幫浦操作與 Troubleshooting</div>`;
+  html += `<div class="tip no-print">📸 請截圖此頁保存成績，或點「列印／存 PDF」。</div>`;
+  html += `<div class="actions no-print">`;
+  html += `<button class="btn secondary" onclick="window.print()">🖨️ 列印／存 PDF</button>`;
+  html += `<button class="btn" onclick="restart()">🔄 重新測驗</button>`;
+  html += `</div>`;
+  app.innerHTML = html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function restart(){
+  deck.forEach(item=>{
+    shuffle(item.opts);
+    item.correctIdx = item.opts.indexOf(item.correctText);
+  });
+  state.idx=0; state.score=0; state.answered=false; state.picked=null; state.results=[];
+  render();
+}
+
+render();
+</script>
+
+<script>
+  const PAGE_URL = "https://drake1128.github.io/saq-questionnaire/iabp-exam-100.html";
+  const QR_DATA = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAAAB5fY51AAAAAklEQVR4AewaftIAAApoSURBVO3BUQ7kWHIEwYhE3f/Krv4VBL7BkktVZY+blT8iSQtMJGmJiSQtMZGkJSaStMREkpaYSNISE0la4pN/0DZ/IyB3tc0JkLva5gTIE21zFxD9b21zAuQtbfM3AnJlIklLTCRpiYkkLTGRpCUmkrTERJKWmEjSEp88BOQXtc1bgJy0zV1AnmibEyC/qG1OgFxpm28BctI2J0DeAuQXtc1dE0laYiJJS0wkaYmJJC0xkaQlJpK0xESSlvjkZW3zFiBvaZsrQE6A3NU2TwDZCMhJ21wBctI2J0D+bdrmLUDeMpGkJSaStMREkpaYSNISE0laYiJJS3yi/1jbnAD5lrY5AXJX25wAuattToBcaZsn2uYuIE+0zRUg+t8mkrTERJKWmEjSEhNJWmIiSUtMJGmJiSQt8Yn+Y0DeAuSkbU6A3NU2T7TNW9rmCpCTtrkLyEnbnADRf89EkpaYSNISE0laYiJJS0wkaYmJJC0xkaQlPnkZkH+btjkB8i1tcwXISducALmrbd4C5KRt7gJy0jZ3AXkLkI0mkrTERJKWmEjSEhNJWmIiSUtMJGmJTx5qG/33tM0JkJO2OQFypW1OgJy0zRUgTwC50jYnQN7SNidATtrmLW3zt5lI0hITSVpiIklLTCRpiYkkLTGRpCUmkrTEJ/8AiP4dgJy0zVuAnLTNXW3zFiAnbXMC5C4g/zYTSVpiIklLTCRpiYkkLTGRpCUmkrTERJKW+OQftM0JkJO2+UVAToBcaZsn2uautnlL25wA+UVA3tI2J0CeaJsrQE7a5hcBectEkpaYSNISE0laYiJJS0wkaYmJJC1R/siXtM0TQO5qmxMgG7XNXUCeaJsrQE7a5gTIlbY5AXLSNncB+VVtcwXIW9rmBMhdE0laYiJJS0wkaYmJJC0xkaQlJpK0xESSlih/5KBtngDyDW3zbwTkpG3uAnJX25wAOWmbK0B+Vdv8IiBvaZsngFyZSNISE0laYiJJS0wkaYmJJC0xkaQlJpK0xCcva5u7gJy0zRUgT7TNXUDuapsTICdtcxeQb2mbu9rmBMhJ21wB8iYgd7XNXW3zBJArQE7a5q6JJC0xkaQlJpK0xESSlphI0hITSVrik4eAnLTNN7TNE0C+AcgTQE7a5q62OQHyFiBX2uYtbXMC5Im2eQuQK23zRNt8w0SSlphI0hITSVpiIklLTCRpiYkkLTGRpCU+eahtToDc1TYnQO5qm5O2uQLkpG1OgFxpmyeAnAC50jYnQH4RkJO2OQFypW2eAHJX25wAOWmbK0A2mkjSEhNJWmIiSUtMJGmJiSQtMZGkJSaStET5Iw+0zV1Anmibu4CctM0VICdtcxeQJ9rmLiBPtM0VICdtcwLkStucALmrbfR/AbnSNk8AuTKRpCUmkrTERJKWmEjSEhNJWmIiSUtMJGmJT14G5ErbnAA5AaL/DJArbXMC5ATINwB5C5An2uYEyJW2+RYgdwF5y0SSlphI0hITSVpiIklLTCRpiYkkLVH+yANtcxeQk7Y5AXKlbZ4AcqVtToCctM23AHlL2/wiICdt8zcCcqVtToCctM0VICdtcwLkykSSlphI0hITSVpiIklLTCRpiYkkLTGRpCXKH3mgbe4C8i1tcwLkrrb5FiAnbXMXkH+btjkB8pa2OQHyLW1zF5C7JpK0xESSlphI0hITSVpiIklLTCRpiYkkLfHJy4B8Q9u8pW2eAHKlbZ5omxMgd7XNXUBO2uYEyJW2+Za2eQuQk7Y5AfKL2uYEyJWJJC0xkaQlJpK0xESSlphI0hITSVqi/JEXtc1dQN7SNidArrTNCZC3tM0JkLva5gTIt7TNW4C8pW3uAvI3apsTIFcmkrTERJKWmEjSEhNJWmIiSUtMJGmJiSQtUf7IQds8AeSutnkLkLva5gTISdtcAfJE25wAuattToD8orY5AXKlbZ4ActI2bwFypW3eAuQtE0laYiJJS0wkaYmJJC0xkaQlJpK0xESSlvjkHwB5om2uADkB8i1tc1fbnAC50jYnQN7SNm9pmxMgJ21zBci3AHkCyDcAOWmbEyBX2uYEyF0TSVpiIklLTCRpiYkkLTGRpCUmkrTEJw+1zQmQK21zAuSutnkCyJW2OQFyF5A3tc0VICdtcxeQk7Z5C5CTtrkC5Im2uQvIE23zi9rmBMiViSQtMZGkJSaStMREkpaYSNISE0laYiJJS3zysra5q23uAnLSNidtcwXIE23zLUCutM0TbXMFyAmQk7a50jYnQP5GbfMWIL9oIklLTCRpiYkkLTGRpCUmkrTERJKWmEjSEp+8DMg3tM0JkJO2udI2TwDZCMgvAnLSNne1zZuAXGmbX9U2V4C8ZSJJS0wkaYmJJC0xkaQlJpK0xESSlih/5KBtToCctM1bgHxD25wA+VVtcwXIE21zBchJ25wAudI2J0BO2uYKkJO2OQHyLW1zBchJ29wF5C0TSVpiIklLTCRpiYkkLTGRpCUmkrTERJKW+ORlQK60zRNt8w1ATtrmBMiVtjkBctI2d7XNCZATIFfa5gTIL2qbJ9rmLiAnbXMC5ErbnAC5q22eAHJlIklLTCRpiYkkLTGRpCUmkrTERJKWmEjSEuWPHLTNCZBvaZsrQE7a5i1A7mqbbwHyRNv8IiBvaZtfBeQXtc0JkCsTSVpiIklLTCRpiYkkLTGRpCUmkrTERJKW+ORlbXMFyEnb3NU2J0Duapsn2uYuIE+0zV1tcwLkSts8AeRK25y0zbcAOWmbt7TNNwB5y0SSlphI0hITSVpiIklLTCRpiYkkLVH+iP6PtrkC5C1t8wSQu9rmBMhJ27wFyJW2eQLIW9rmLiBvaZsngHzDRJKWmEjSEhNJWmIiSUtMJGmJiSQtMZGkJT75B23zNwJyAuQtbfOWtvlFQE7a5i1ATtrmCpCTtjkBctI2d7XNCZC7gJy0zVuAXJlI0hITSVpiIklLTCRpiYkkLTGRpCUmkrTEJw8B+UVt80Tb3AXkLiAnbfMEkCtt8wSQu4DcBeQJIHcB+RYgb2mbEyBX2uYtE0laYiJJS0wkaYmJJC0xkaQlJpK0xCcva5u3APkGICdt8xYgbwHyRNtcAXLSNm8BctI2v6htvgXISdtcAXLSNndNJGmJiSQtMZGkJSaStMREkpaYSNISE0la4hP9lLY5AfJE27wFyF1ATtrmCpCTtjkBcqVtToA80TZvAXKlbU7a5gTIN0wkaYmJJC0xkaQlJpK0xESSlphI0hITSVriE/2/A3JX25wAOQHylra5AuSkbU6A3AXkLiBPtM1dQN4C5C1t85aJJC0xkaQlJpK0xESSlphI0hITSVrik5cB2QjIXUDuapsTIG9pmxMgJ0DuAnLSNncBeUvbfEvbnAC50jYnQO4CctI2d00kaYmJJC0xkaQlJpK0xESSlphI0hITSVrik4fa5m/UNr+obZ4AcgXISducAHkLkCttc9I2J0CutM0TQO5qm29pm180kaQlJpK0xESSlphI0hITSVpiIklLTCRpifJHJGmBiSQtMZGkJSaStMREkpaYSNISE0la4n8AarjjX7dok+oAAAAASUVORK5CYII=";
+  function initShareButtons() {
+    const pageUrl = PAGE_URL; const pageTitle = document.title; const encodedUrl = encodeURIComponent(pageUrl);
+    const qrCodeImg = document.getElementById('qrCode'); if (qrCodeImg && QR_DATA) qrCodeImg.src = QR_DATA;
+    const lineShare = document.getElementById('lineShare'); if (lineShare) lineShare.href = `https://social-plugins.line.me/lineit/share?url=${encodedUrl}`;
+    const emailShare = document.getElementById('emailShare'); if (emailShare) { const emailSubject = encodeURIComponent(`分享：${pageTitle}`); const emailBody = encodeURIComponent(`我想和您分享這個頁面：\n\n${pageTitle}\n\n${pageUrl}`); emailShare.href = `mailto:?subject=${emailSubject}&body=${emailBody}`; } }
+  function toggleShareMenu() { const menu = document.getElementById('shareMenu'); if (menu) menu.classList.toggle('active'); }
+  function copyPageUrl() { const pageUrl = PAGE_URL; navigator.clipboard.writeText(pageUrl).then(() => { alert('連結已複製到剪貼簿！'); }).catch(() => { const textArea = document.createElement('textarea'); textArea.value = pageUrl; document.body.appendChild(textArea); textArea.select(); document.execCommand('copy'); document.body.removeChild(textArea); alert('連結已複製到剪貼簿！'); }); }
+  initShareButtons();
+</script>
+</body>
+</html>
