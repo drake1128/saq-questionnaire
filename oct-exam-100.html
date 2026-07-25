@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OCT 100｜光學同調斷層掃描操作與判讀 100 題測驗</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root{
+    --primary:#3730a3; --primary-light:#5b52c9; --accent:#e74c3c;
+    --success:#27ae60; --warn:#f39c12; --info:#6d28d9;
+    --bg:#f5f5fb; --card:#ffffff; --text:#26233b; --muted:#7f8c8d;
+    --shadow:0 4px 20px rgba(0,0,0,.08);
+  }
+  body{ font-family:'Noto Sans TC',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.65; -webkit-font-smoothing:antialiased; }
+  .wrap{ max-width:760px; margin:0 auto; min-height:100vh; padding-bottom:48px; }
+  header{ background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);
+    color:#fff; padding:30px 22px 26px; border-radius:0 0 26px 26px; text-align:center; }
+  header h1{ font-size:22px; font-weight:800; margin-bottom:6px; letter-spacing:.5px; }
+  header .sub{ font-size:13px; opacity:.88; }
+  .content{ padding:20px 16px 0; }
+
+  .progress-info{ display:flex; justify-content:space-between; align-items:center; font-size:13px; margin-bottom:8px; color:var(--muted); }
+  .progress-info b{ color:var(--primary); }
+  .bar{ height:8px; background:#e6e5f2; border-radius:5px; overflow:hidden; margin-bottom:20px; }
+  .bar > div{ height:100%; width:0; background:linear-gradient(90deg,#6d28d9,#3730a3); transition:width .3s ease; }
+
+  .cat-chip{ display:inline-block; font-size:12px; font-weight:600; color:#fff; background:var(--info);
+    padding:3px 12px; border-radius:20px; margin-bottom:12px; }
+
+  .qcard{ background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:22px 20px; margin-bottom:16px; }
+  .qtext{ font-size:17px; font-weight:600; line-height:1.7; }
+  .qtext .num{ color:var(--info); margin-right:6px; }
+
+  .opts{ margin-top:16px; display:flex; flex-direction:column; gap:10px; }
+  .opt{ display:flex; align-items:flex-start; gap:12px; width:100%; text-align:left;
+    background:#fff; border:2px solid #e6e5f2; border-radius:12px; padding:14px 16px;
+    font-size:15px; color:var(--text); cursor:pointer; transition:all .15s ease; font-family:inherit; }
+  .opt:hover:not(:disabled){ border-color:#b0abd6; background:#faf9ff; }
+  .opt:disabled{ cursor:default; }
+  .opt .mark{ flex-shrink:0; width:28px; height:28px; border-radius:50%; background:#efeef7; color:#6b7280;
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; }
+  .opt.correct{ border-color:var(--success); background:#e9f9ef; }
+  .opt.correct .mark{ background:var(--success); color:#fff; }
+  .opt.wrong{ border-color:var(--accent); background:#fdecea; }
+  .opt.wrong .mark{ background:var(--accent); color:#fff; }
+
+  .explain{ margin-top:16px; border-radius:12px; padding:16px 18px; font-size:14px; line-height:1.7;
+    border-left:4px solid var(--info); background:#f2eefc; animation:fade .3s ease; }
+  .explain.ok{ border-left-color:var(--success); background:#e9f9ef; }
+  .explain.no{ border-left-color:var(--warn); background:#fef7e6; }
+  .explain .verdict{ font-weight:700; margin-bottom:6px; }
+  .explain .src{ margin-top:8px; font-size:12.5px; color:var(--muted); }
+  @keyframes fade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .nav{ display:flex; justify-content:flex-end; }
+  .btn{ font-family:inherit; border:none; cursor:pointer; border-radius:12px; font-weight:600;
+    font-size:16px; padding:14px 26px; color:#fff; background:linear-gradient(135deg,#6d28d9,#3730a3);
+    display:inline-flex; align-items:center; gap:8px; transition:transform .15s ease, opacity .15s; }
+  .btn:hover{ transform:translateY(-1px); }
+  .btn.secondary{ background:#efeef7; color:var(--primary); }
+
+  .result-card{ background:var(--card); border-radius:20px; box-shadow:var(--shadow); overflow:hidden; margin-bottom:18px; }
+  .score-hero{ padding:34px 20px; text-align:center; color:#fff; }
+  .score-hero .emoji{ font-size:54px; margin-bottom:8px; }
+  .score-hero .big{ font-size:46px; font-weight:800; line-height:1; }
+  .score-hero .pct{ font-size:17px; margin-top:10px; opacity:.95; }
+  .score-hero .grade{ display:inline-block; margin-top:12px; padding:5px 16px; border-radius:20px;
+    background:rgba(255,255,255,.2); font-size:14px; font-weight:600; }
+  .breakdown{ padding:18px 20px; }
+  .breakdown h3{ font-size:15px; margin-bottom:12px; color:var(--primary); }
+  .brow{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .brow .lbl{ flex:0 0 130px; font-size:13px; }
+  .brow .track{ flex:1; height:16px; background:#efeef7; border-radius:8px; overflow:hidden; }
+  .brow .track > div{ height:100%; border-radius:8px; }
+  .brow .val{ flex:0 0 52px; text-align:right; font-size:13px; font-weight:600; color:var(--muted); }
+  .meta-line{ text-align:center; font-size:12px; color:var(--muted); margin:6px 0 18px; }
+  .actions{ display:flex; gap:12px; }
+  .actions .btn{ flex:1; justify-content:center; }
+  .tip{ background:#fff8e6; border:1px solid #f6d992; border-radius:12px; padding:12px 16px;
+    font-size:13px; color:#8a6d1a; margin-bottom:16px; }
+  .disclaimer{ background:#f2eefc; border:1px solid #d6cdf3; border-radius:12px; padding:12px 16px;
+    font-size:12.5px; color:#4a3c8c; margin-bottom:18px; line-height:1.7; }
+
+  @media print{
+    body{ background:#fff; }
+    .no-print{ display:none !important; }
+    .share-button{ display:none !important; }
+    .result-card{ box-shadow:none; border:1px solid #ddd; }
+  }
+
+  /* ---------- Share Button ---------- */
+  .share-button { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+  .share-toggle { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 100%); border: none; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(109, 40, 217, 0.4); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+  .share-toggle:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(109, 40, 217, 0.5); }
+  .share-menu { position: absolute; top: 60px; right: 0; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 20px; min-width: 280px; display: none; animation: fadeInShare 0.3s ease; }
+  .share-menu.active { display: block; }
+  @keyframes fadeInShare { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  .share-menu h4 { color: #1e293b; margin: 0 0 15px 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+  .qr-container { background: #f8fafc; border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 15px; }
+  .qr-container img { max-width: 150px; height: auto; border-radius: 8px; }
+  .qr-container p { font-size: 0.75rem; color: #64748b; margin: 8px 0 0 0; }
+  .share-buttons { display: flex; flex-direction: column; gap: 10px; }
+  .share-btn { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: none; border-radius: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 500; transition: all 0.2s ease; text-decoration: none; color: white; }
+  .share-btn.line { background: #00B900; } .share-btn.email { background: #EA4335; } .share-btn.copy { background: #6d28d9; }
+  .share-btn:hover { transform: translateX(5px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .share-btn svg { width: 20px; height: 20px; fill: currentColor; }
+  .share-close { position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0; }
+  .share-close:hover { color: #1e293b; }
+</style>
+</head>
+<body>
+<!-- Share Button -->
+<div class="share-button">
+  <button class="share-toggle" onclick="toggleShareMenu()" title="分享此頁面"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></button>
+  <div class="share-menu" id="shareMenu">
+    <button class="share-close" onclick="toggleShareMenu()">&times;</button>
+    <h4>分享此頁面</h4>
+    <div class="qr-container"><img id="qrCode" src="" alt="QR Code"><p>掃描 QR Code 開啟頁面</p></div>
+    <div class="share-buttons">
+      <a class="share-btn line" href="#" id="lineShare" target="_blank"><svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>LINE 分享</a>
+      <a class="share-btn email" href="#" id="emailShare"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>Email 分享</a>
+      <button class="share-btn copy" onclick="copyPageUrl()"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>複製連結</button>
+    </div>
+  </div>
+</div>
+<div class="wrap">
+  <header>
+    <h1>OCT 100</h1>
+    <div class="sub">光學同調斷層 · 操作設定 × 健保適應症 × 功能 × 鑑別診斷與處置 ｜ 逐題詳解</div>
+  </header>
+  <div class="content" id="app"></div>
+</div>
+
+<script>
+/* ---------- 題庫（選項為原始順序，c = 正確選項的原始索引）----------
+   平台差異處以 Abbott（Abbott/St. Jude OPTIS + Dragonfly）、Terumo（Terumo OFDI + FastView）並陳。
+   健保題以現行給付規範精神出題，實際以健保署規範與醫院最新公告為準。 */
+const CATS = {
+  setup:{ name:'機器端設定原則', color:'#4f46e5' },
+  pull: { name:'回拉與清血注射', color:'#7c3aed' },
+  depth:{ name:'校正與顯示設定', color:'#9333ea' },
+  mark: { name:'Bookmark／frame 標記', color:'#db2777' },
+  trace:{ name:'自動描邊／量測', color:'#0d9488' },
+  nhi:  { name:'健保給付適應症', color:'#d97706' },
+  guide:{ name:'臨床指引適應症', color:'#ca8a04' },
+  func: { name:'OCT 功能與限制', color:'#0891b2' },
+  ddx:  { name:'鑑別診斷與處置', color:'#dc2626' }
+};
+
+const QUESTIONS = [
+/* ===== 一、機器端設定原則 setup (Q1-9) ===== */
+{cat:'setup',q:'OCT（光學同調斷層）成像的根本前提，也是與 IVUS 最大的不同在於？',
+ o:['需要施打鎮靜劑','使用近紅外光干涉成像，紅血球會強烈散射光線，故成像時必須先「清除血液」','需要高頻超音波','完全不需導絲'],c:1,
+ e:'OCT 以近紅外光干涉成像，血球會散射光造成訊號衰減，因此成像時必須以顯影劑（或右旋糖酐）暫時排空血液；IVUS 用超音波則不需清血。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'setup',q:'臨床冠狀動脈 OCT／OFDI 導管的代表與共通特性為？',
+ o:['Abbott Dragonfly（OPTIS）與 Terumo FastView（OFDI），皆為 monorail 光纖、旋轉並快速回拉成像','都是固定不旋轉的探頭','與 IVUS 完全相同的機械探頭','不需通過導絲'],c:0,
+ e:'兩大平台為 Abbott OPTIS 系統搭 Dragonfly 導管、Terumo OFDI 系統搭 FastView 導管；皆為快速交換（monorail）光纖，旋轉並自動快速回拉。',s:'廠商操作手冊；EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'setup',q:'OCT 成像時清除血液的標準做法為？',
+ o:['以生理食鹽水緩慢滴注','經導引導管注射顯影劑（或低分子右旋糖酐／dextran）短暫排空血液，於清血瞬間擷取回拉','抽出病人血液','以空氣填充血管'],c:1,
+ e:'透過導引導管注入顯影劑（或 dextran）在數秒內把血液推開形成透明介質，OCT 於此清血窗口內完成快速回拉成像。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'setup',q:'關於 OCT 的解析度與穿透深度，正確的是？',
+ o:['解析度低、穿透深','軸向解析度約 10–20 µm（遠優於 IVUS），但組織穿透僅約 1–2 mm（淺於 IVUS）','兩者皆與 IVUS 相同','無解析度概念'],c:1,
+ e:'OCT 軸向解析度約 10–20 µm，可辨薄纖維帽、支架小樑等細結構；但穿透僅約 1–2 mm，深部結構與大血管全層常無法顯示。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'setup',q:'為確保 OCT 能有效清血並取得可判讀影像，下列何者是重要前提？',
+ o:['導引導管與冠脈口同軸嵌合良好，注射時對比劑才能有效沖入目標血管','病人須全身麻醉','關閉心電圖','使用最低對比劑濃度'],c:0,
+ e:'導引導管需與冠脈口良好同軸嵌合（co-axial），注射對比劑才能有效充填目標血管清血；嵌合不良會清血不足、影像不可判讀。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'setup',q:'OCT 影像中出現「殘留血液偽影」時，典型表現與處置為？',
+ o:['影像更清晰，不需處理','管腔內殘血造成漩渦狀訊號與衰減、遮蔽血管壁，需改善清血（注射、嵌合）後重新回拉','代表血栓，直接抽吸','調高 gain 即可解決'],c:1,
+ e:'清血不足時腔內殘血呈漩渦狀訊號並衰減、遮蔽管壁，該段不可判讀。應改善導管嵌合與注射參數後重拉，而非硬判讀。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'setup',q:'OCT 量測前的「Z-offset（校正線）」設定，其意義為？',
+ o:['調整回拉速度','校正影像中導管鞘對應的參考位置，未正確設定會使面積／直徑量測產生系統性誤差','設定顯影劑濃度','控制心跳'],c:1,
+ e:'Z-offset（校準）將成像系統的參考位置對齊導管鞘；若未正確校正，所有距離與面積量測都會偏差。量測前務必確認。',s:'EAPCI 影像共識 2018（PMID 29649459）；廠商手冊'},
+{cat:'setup',q:'OCT 相較 IVUS，其成像速度（frame rate）特性為？',
+ o:['較低，約每秒數張','極高（約每秒上百張，如 100–180 fps），以配合快速回拉在短暫清血窗口內完成','與回拉速度無關','固定 30 fps'],c:1,
+ e:'OCT frame rate 很高（約 100–180 fps），配合快速回拉可在數秒清血窗口內取得整段高密度影像。',s:'廠商操作手冊；EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'setup',q:'關於 OCT 導管的準備，正確敘述為？',
+ o:['需像機械式 IVUS 一樣手動排氣旋轉','須完成光纖連接與系統校正（含清血介質準備），確認影像校準正常後才開始回拉','完全不需任何準備','需先注射鎮靜劑'],c:1,
+ e:'OCT 需正確連接光纖、完成系統校正（含 Z-offset），並備妥清血用對比劑；確認校準與影像品質後再進行清血同步回拉。',s:'廠商操作手冊'},
+
+/* ===== 二、回拉與清血注射 pull (Q10-18) ===== */
+{cat:'pull',q:'OCT 自動回拉的速度特性，相較 IVUS 為？',
+ o:['較慢（0.5 mm/s）','較快（常見約 18 mm/s，高速模式可達 36 mm/s 等級），以在短暫清血窗口內完成整段成像','兩者相同','OCT 不做回拉'],c:1,
+ e:'OCT 回拉遠快於 IVUS（0.5 mm/s）：常見約 18 mm/s、高速模式更快，因為必須在對比劑清血的短暫窗口（數秒）內完成整段成像。',s:'廠商操作手冊；EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'pull',q:'OCT 回拉與對比劑注射的時序關係為？',
+ o:['先回拉再注射','注射對比劑清血、確認血液排空後（可由系統偵測）觸發回拉，兩者需同步','兩者無關','注射與回拉不可同時'],c:1,
+ e:'須先注射對比劑清血，於血液排空的瞬間觸發（或自動偵測）回拉，使整段在透明介質下成像。時序不對會拍到血影。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'pull',q:'OCT 一次自動回拉的典型涵蓋長度與時間為？',
+ o:['數十公分、耗時數分鐘','約 54–75 mm 的節段於數秒內完成，取得數百張橫切影像','僅單一 frame','1 mm 需 2 秒'],c:1,
+ e:'OCT 回拉常涵蓋約 54–75 mm，於數秒內完成並取得數百張高密度橫切影像，適合一次評估整段病灶與參考段。',s:'廠商操作手冊'},
+{cat:'pull',q:'OCT 回拉之所以必須「快速」，主要原因為？',
+ o:['為了省電','因為清血（對比劑充填）只能維持短暫窗口，需在血液再度充盈前完成整段成像','為了減少輻射','為了增加穿透'],c:1,
+ e:'對比劑清血只能維持數秒，血液很快再充盈；故回拉必須夠快，在此窗口內把整段拍完，否則遠端會被血影遮蔽。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'pull',q:'OCT 對節段「長度量測」的依據為？',
+ o:['靠目測','系統依已知回拉速度與 frame 間距自動換算，故可準確測病灶／支架長度','無法測長度','需另做造影'],c:1,
+ e:'回拉速度與 frame 間距已知，系統可準確計算兩點間長度，用於選支架長度與定位（同 IVUS 自動回拉之原理）。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'pull',q:'OCT 的 survey（掃描）模式與高解析模式的取捨為？',
+ o:['沒有差別','高解析模式 frame 密度較高、細節較佳；survey 模式涵蓋較長／較快，依需求選擇','高解析模式涵蓋較長','survey 模式解析度較高'],c:1,
+ e:'高解析（high-density）模式每毫米 frame 較多、細節佳但取樣段較短；survey 模式較快、涵蓋較長。依評估目的選擇。',s:'廠商操作手冊'},
+{cat:'pull',q:'OCT 清血注射的對比劑參數，下列敘述較合理的是？',
+ o:['一律注射 50 mL','依血管給予足量、穩定的注射（如左冠約 3–4 mL/s、右冠約 3 mL/s），並控制總量以顧及腎功能','越少越好，1 mL 即可','與血管大小無關'],c:1,
+ e:'需足量穩定注射以有效清血（左冠流量常略高於右冠），同時控制總對比劑量、顧及腎功能；可用手推或高壓注射器。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'pull',q:'OCT 回拉的起始位置原則為？',
+ o:['放在病灶正中央','導管送至病灶「遠端」正常參考段之後，回拉涵蓋病灶與近端參考段','放在導引導管內','越近端越好'],c:1,
+ e:'與 IVUS 原則相同：須涵蓋遠端參考段→病灶→近端參考段，才能完整評估病灶長度與兩端 landing zone。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'pull',q:'OCT 回拉後發現遠端影像被血影遮蔽、不可判讀，最可能原因與處置為？',
+ o:['解析度不足，改用 IVUS','清血不足（注射太慢／量不足／導管嵌合不佳），應改善注射與嵌合後重新回拉','病人問題，中止檢查','正常現象，可忽略'],c:1,
+ e:'遠端血影多因清血不足：注射流量／總量不夠、導管嵌合不良或回拉太慢。改善後重拉即可，勿硬判讀血影段。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+
+/* ===== 三、校正與顯示設定 depth (Q19-27) ===== */
+{cat:'depth',q:'OCT 影像的成像視野（FOV／成像直徑）設定，須注意的限制為？',
+ o:['視野無限大','視野有限（如約 10 mm 直徑），血管過大時周邊訊號不足、影像品質下降','越小越好','與血管大小無關'],c:1,
+ e:'OCT 成像視野與穿透有限，血管過大（如左主幹、開口）時周邊與深部訊號不足；需認知此限制，必要時改用或併用 IVUS。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'depth',q:'OCT 的 Z-offset（校正線）若未正確設定，後果為？',
+ o:['不影響量測','面積與直徑量測會出現系統性偏差','只影響顏色','只影響回拉速度'],c:1,
+ e:'Z-offset 校正影像的參考基準；設定錯誤會讓所有距離／面積量測等比例偏差，是 OCT 量測前必須確認的步驟。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'depth',q:'對 OCT 而言，決定「影像是否可判讀」最關鍵的因素通常是？',
+ o:['gain 高低','血液清除品質（clearing）——清血不足則管壁被血影遮蔽','導管顏色','病人年齡'],c:1,
+ e:'OCT 影像可判讀性主要取決於清血品質；清血好則管壁與結構清晰，清血差則被血影遮蔽。這與 IVUS 主要靠 gain/depth 不同。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'depth',q:'OCT 影像的 gain／對比調整目的為？',
+ o:['增加穿透深度','調到管腔邊界、支架小樑與組織層次清晰，避免過亮雜訊或過暗漏結構','消除清血需求','加快回拉'],c:1,
+ e:'適當 gain／對比使管腔輪廓、支架小樑與斑塊結構清晰；過亮增加雜訊、過暗漏細節。但 gain 無法補償清血不足。',s:'廠商操作手冊'},
+{cat:'depth',q:'哪一種血管情境「OCT 的穿透與清血較受限」？',
+ o:['小血管遠端','較大血管（如左主幹開口、直徑 >約 3.5–3.75 mm 或 aorto-ostial 病灶）','中段 LAD','支架內'],c:1,
+ e:'大血管與開口病灶因難以有效清血、且超出 OCT 穿透，影像常不完整；此類情境 IVUS 較適合。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'depth',q:'OCT 影像方向（orientation）在判讀上的正確做法為？',
+ o:['方向不重要','可旋轉影像對應造影視角，並以側枝等解剖標記定位','必須固定 12 點鐘','旋轉會改變面積量測值'],c:1,
+ e:'OCT 橫切影像可調方向以對齊造影；側枝是重要定位標記，用於 co-registration。旋轉不改變面積量測值。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'depth',q:'OCT 系統的「自動 lumen 偵測」在清血不佳時會有什麼問題？',
+ o:['更準確','殘留血影會被誤判為管腔邊界，導致 lumen 描邊與 MLA 錯誤，需人工確認','不受影響','自動關閉'],c:1,
+ e:'自動 lumen 偵測仰賴清晰的血液－管壁對比；殘血會讓演算法誤判邊界。清血不佳段的自動量測須人工核對或重拉。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'depth',q:'因 OCT 穿透較淺，下列哪項評估常受限？',
+ o:['管腔面積','較深部的外彈力膜（EEM）／斑塊後緣，在厚斑塊或大血管常無法完整顯示','支架小樑','纖維帽'],c:1,
+ e:'OCT 穿透約 1–2 mm，厚斑塊或大血管的 EEM／斑塊後緣常超出範圍而無法顯示，故 OCT 對以 EEM 為基準的血管 sizing 較受限。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'depth',q:'OCT 量測前的必要確認，下列組合最正確？',
+ o:['只看 gain','確認 Z-offset 校正正確、清血品質足夠、FOV 適當，量測才可靠','只確認病人姓名','不需任何確認'],c:1,
+ e:'量測前須確認校正（Z-offset）、清血品質與視野；任一不當都會造成量測誤差或不可判讀。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+
+/* ===== 四、Bookmark／frame 標記 mark (Q28-36) ===== */
+{cat:'mark',q:'OCT 系統中標記（bookmark／frame）的主要用途為？',
+ o:['調整 gain','在回拉序列上標記關鍵 frame（如 MLA、參考段、支架邊緣、鈣化最重處）供回顧與量測','控制注射','消除血影'],c:1,
+ e:'標記讓操作者於回拉序列中定位關鍵 frame（MLA、參考段、支架邊緣、鈣化重處、TCFA），便於後續量測與決策。',s:'廠商操作手冊；EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'mark',q:'OCT 自動偵測最小管腔面積（MLA）frame 後，正確的態度為？',
+ o:['完全信任不需確認','仍須人工確認該 frame 及其描邊是否正確（避開清血不佳、側枝、支架干擾）','自動值一定錯','忽略自動偵測'],c:1,
+ e:'自動 MLA 偵測方便，但在清血不佳、側枝、支架處可能誤判；應人工核對 frame 位置與 lumen 描邊。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'mark',q:'OCT 與造影的「共定位（angiographic co-registration, ACR）」功能，其臨床價值為？',
+ o:['無價值','將 OCT 上的 frame／標記對應到造影影像的相同位置，指引在正確處精準 landing、避免 geographic miss','只為美觀','取代造影'],c:1,
+ e:'ACR 把 OCT frame 對應回造影位置，讓術者在造影上精準定位支架邊緣與病灶，降低 geographic miss。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'mark',q:'利用標記近端與遠端參考 frame 的實用目的為？',
+ o:['增加亮度','量測參考段管腔尺寸與其間長度，協助選擇支架直徑與長度','加快回拉','校正 Z-offset'],c:1,
+ e:'於遠端與近端參考段標記，可讀取參考管腔尺寸並計算其間長度，直接協助選支架直徑與長度。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'mark',q:'在鈣化病灶，標記「鈣化最重的 frame」之主要目的為？',
+ o:['測血流','評估鈣化的弧度、厚度與長度以計算鈣化評分，判斷是否需鈣化修飾','控制心跳','增加對比'],c:1,
+ e:'OCT 可量鈣化厚度、弧度、長度；標記最重處計算 calcium score，預測擴張不全風險並決定是否先行修飾。',s:'Fujino 等 OCT 鈣化評分（PMID 30012537）'},
+{cat:'mark',q:'標記疑似 TCFA／富脂斑塊位置的臨床意義為？',
+ o:['無意義','記錄易損斑塊位置供決策（如涵蓋範圍、遠端栓塞風險評估）','僅供存檔','決定鎮靜深度'],c:1,
+ e:'OCT 可辨薄纖維帽粥狀瘤（TCFA）與富脂斑塊；標記其位置有助評估遠端栓塞風險與支架覆蓋範圍決策。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'mark',q:'關於 OCT 標記的時機，正確的是？',
+ o:['只能回拉當下標記','可於回拉當下或錄製完成後回放時標記與量測','只能術後隔日','標記後不可修改'],c:1,
+ e:'因 OCT 回拉極快，臨床上多於錄製完成後回放，逐 frame 檢視並標記關鍵位置再量測。',s:'廠商操作手冊'},
+{cat:'mark',q:'支架置放後於支架近、遠端邊緣標記的評估目的為？',
+ o:['測血壓','定位並檢視邊緣是否有 edge dissection、殘留斑塊或 geographic miss','控制鎮靜','量血糖'],c:1,
+ e:'支架邊緣是 edge dissection 與 geographic miss 好發處；OCT 高解析對微小邊緣剝離敏感，標記便於針對性判讀。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'mark',q:'OCT 標記（bookmark）相較於單純截圖的優勢為？',
+ o:['沒有差別','保留該 frame 在整段回拉的相對位置，可與其他標記換算距離、回放定位，並可串接造影共定位','檔案較小','提高解析度'],c:1,
+ e:'標記保留 frame 在回拉序列中的位置，能計算節段長度、回放定位並結合 ACR；孤立截圖則失去這些空間資訊。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+
+/* ===== 五、自動描邊／量測 trace (Q37-45) ===== */
+{cat:'trace',q:'OCT 的自動 lumen（管腔）偵測功能主要做什麼？',
+ o:['自動注射對比','自動描繪管腔輪廓、產生 lumen profile 並偵測 MLA，加速量測','自動控制心跳','自動選支架'],c:1,
+ e:'OCT 系統可自動描出管腔輪廓、繪製整段 lumen profile 並標出 MLA；清血良好時準確度高，仍須人工確認。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'trace',q:'OCT 自動描邊後仍需人工修正的常見情境為？',
+ o:['影像永遠完美','側枝開口、殘留血影、支架小樑反光或病灶複雜處，自動邊界可能出錯','人工修正無意義','修正會降低準確度'],c:1,
+ e:'側枝、殘血、支架反光與複雜病灶會干擾自動描邊；量測前須人工核對並修正，否則面積與長度失真。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'trace',q:'OCT 相較 IVUS 在「鈣化量測」上的獨特能力為？',
+ o:['都不能測鈣化','OCT 光可穿過鈣化，能量測鈣化的「厚度、弧度、長度」並計算鈣化評分；IVUS 因聲影無法測厚度','OCT 完全看不到鈣化','兩者能力相同'],c:1,
+ e:'OCT 光可穿透鈣化，量測厚度、弧度與長度，計算 calcium score；IVUS 的鈣化後方為聲影，無法測厚度。這是 OCT 重要優勢。',s:'Fujino 等 OCT 鈣化評分（PMID 30012537）'},
+{cat:'trace',q:'依 OCT 鈣化評分，屬「擴張不全高風險、宜考慮鈣化修飾」的特徵組合為？',
+ o:['鈣化弧度 <90°、極薄','鈣化弧度 >180°、厚度 >0.5 mm、長度 >5 mm','任何微量鈣化','僅表淺點狀鈣化'],c:1,
+ e:'OCT 鈣化評分中，弧度 >180°、最大厚度 >0.5 mm、長度 >5 mm 者擴張不全風險高，宜考慮鈣化修飾（IVL／旋磨／scoring）。',s:'Fujino 等（PMID 30012537）'},
+{cat:'trace',q:'OCT 量測「纖維帽厚度」以判定薄纖維帽粥狀瘤（TCFA）的常用門檻為？',
+ o:['<650 µm','<65 µm','<6.5 mm','無門檻'],c:1,
+ e:'TCFA 定義為覆蓋大脂質核心的纖維帽厚度 <65 µm；此尺度遠小於 IVUS 解析度，唯 OCT 能可靠量測。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'trace',q:'OCT 評估富脂／壞死斑塊時，常量測的參數為？',
+ o:['鈣化厚度','脂質弧度（lipid arc）與脂質長度，並評估上覆纖維帽厚度','血流速度','支架顏色'],c:1,
+ e:'富脂斑塊常以脂質弧度與長度描述，並量上覆纖維帽厚度以判斷易損性（如大脂質弧＋薄帽＝TCFA）。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'trace',q:'OCT 評估支架「擴張（expansion）」的量化方式為？',
+ o:['支架顏色','最小支架面積（MSA）相對參考管腔面積；擴張不全是再狹窄與血栓的重要預測','支架長度／病灶長度','纖維帽厚度'],c:1,
+ e:'以 MSA 相對參考（或依 lumen-based 標準）表示支架擴張程度；擴張不全（小 MSA）與 ISR、支架血栓相關，須後擴張矯正。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'trace',q:'OCT 判定並量化支架「貼壁不良（malapposition）」的方式為？',
+ o:['只能定性','可精確量測支架小樑內緣與血管壁的距離（如超過小樑厚度＋一定閾值且後方為腔），優於 IVUS','無法量測','靠造影判斷'],c:1,
+ e:'OCT 高解析可清楚顯示每根小樑並精確量測小樑到管壁距離，判定貼壁不良比 IVUS 更敏感、可量化。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'trace',q:'進行任何 OCT 面積／距離量測前，最應先確認的校正項目為？',
+ o:['病人體重','Z-offset（校正線）正確且清血品質足夠','導管顏色','室溫'],c:1,
+ e:'Z-offset 校正錯誤會使量測系統性偏差；清血不足則邊界不清。兩者是 OCT 可靠量測的前提。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+
+/* ===== 六、健保給付適應症 nhi (Q46-53) ===== */
+{cat:'nhi',q:'關於我國健保對冠狀動脈 OCT 的給付，最正確的原則性認知為？',
+ o:['所有 PCI 都常規全額給付','採條件式給付：須符合特定適應症與病歷記載，並非每例 PCI 都給付','完全不給付','只給付門診'],c:1,
+ e:'健保對血管內影像（含 OCT）採條件式給付，須符合規範適應症並有病歷佐證。實際給付條件、次數與審查以健保署現行規範與醫院最新公告為準。',s:'健保署醫療服務給付項目規範（依現行版本，實務以醫院公告為準）'},
+{cat:'nhi',q:'下列何者較常被視為血管內影像（含 OCT）使用的合理適應症？',
+ o:['所有穩定病人例行檢查','左主幹或複雜病灶之評估、造影嚴重度界定不明之病灶、支架最佳化','無病灶健檢','單純門診追蹤'],c:1,
+ e:'左主幹／複雜病灶評估、ambiguous 病灶界定、支架最佳化等是影像輔助的合理臨床情境；健保實際給付條文以現行規範為準。',s:'健保規範精神＋ACC/AHA/SCAI 2021（PMID 34882435）'},
+{cat:'nhi',q:'相較 IVUS，OCT 在「腎功能不全者」的一個重要考量為？',
+ o:['OCT 完全不需對比，最適合腎功能差者','OCT 成像需注射對比劑清血，會增加對比劑負荷，腎功能不全者需權衡（此點 IVUS 較有利）','兩者對比用量相同','對比劑與腎臟無關'],c:1,
+ e:'OCT 需以對比劑清血、增加對比負荷，對腎功能不全者是相對不利處；此類病人 IVUS（不需清血）較有優勢。給付與否仍以健保規範為準。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'nhi',q:'OCT 作為健保給付項目的一般行政要件，正確認知為？',
+ o:['不需任何記載','需符合適應症並於病歷載明使用理由與發現，部分情況有次數限制或審查機制','可無限次數','由病人自行申請'],c:1,
+ e:'健保給付通常要求適應症相符、病歷完整記載，並可能有每血管／每次限用與審查。細節以健保署規範與醫院公告為準。',s:'健保署醫療服務給付項目規範（依現行版本）'},
+{cat:'nhi',q:'關於「支架置放後以 OCT 評估」的給付認知，較正確的是？',
+ o:['所有支架術後都無條件給付','支架最佳化評估在臨床重要，但是否給付仍受健保適應症與條件限制','術後 OCT 一律禁止','只有自費才能做'],c:1,
+ e:'OCT 評估支架擴張／貼壁／邊緣在臨床上重要，但「臨床該做」不等於「健保給付」，須對照現行健保適應症與院內規範。',s:'健保現行規範＋EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'nhi',q:'教學上，關於健保 OCT 適應症題目最穩妥的查證態度為？',
+ o:['背固定數字，永不改變','健保條文會更新，應以「健保署最新規範＋醫院公告」查證為準','以網路傳言為準','由廠商決定'],c:1,
+ e:'健保給付規範會隨版本調整（項目、條件、點數、審查）；教學與實務都應以最新公告查證，避免援引過時條文。',s:'一般原則（依現行規範查證）'},
+{cat:'nhi',q:'臨床「該不該做 OCT」與健保「能不能給付」的關係，正確理解為？',
+ o:['兩者完全相同','是兩個層次：臨床適應症看病人獲益，給付適應症看健保條件，可能不完全重疊','給付一定大於臨床適應症','臨床不需考慮給付'],c:1,
+ e:'臨床適應症（依指引、獲益）與健保給付適應症（依行政規範）是不同層次，實務須同時考量，必要時與病人溝通自費或替代方案（如改用 IVUS）。',s:'一般原則；ACC/AHA/SCAI 2021（PMID 34882435）'},
+{cat:'nhi',q:'當健保未給付 OCT 但臨床評估有需要時，合理的作法為？',
+ o:['一律放棄評估','與病人溝通後考慮自費，或選擇符合給付／臨床同樣適用的替代影像（如 IVUS）','偽造適應症申報','直接省略影像評估'],c:1,
+ e:'臨床有指徵而健保未給付時，應誠實溝通自費選項，或評估以 IVUS 等替代方式達成臨床目的；不得不當申報。',s:'一般原則；健保現行規範'},
+
+/* ===== 七、臨床指引適應症 guide (Q54-60) ===== */
+{cat:'guide',q:'2021 ACC/AHA/SCAI 血運重建指引對「複雜病灶 PCI 使用血管內影像（IVUS/OCT）導引」的態度為？',
+ o:['不建議','對複雜病灶（長病灶、左主幹、分叉等）給予正向建議（Class 2a）以指引支架置放與最佳化','僅限研究','列為禁忌'],c:1,
+ e:'指引對複雜／高風險病灶 PCI 使用血管內影像導引給予正向建議（Class 2a），OCT 與 IVUS 皆為可用工具。',s:'ACC/AHA/SCAI 2021（PMID 34882435）'},
+{cat:'guide',q:'OCT 在「鈣化病灶」評估上相較 IVUS 的指引價值在於？',
+ o:['無差別','可量測鈣化厚度並計算鈣化評分，較能預測擴張不全風險、指引是否先行鈣化修飾','OCT 看不到鈣化','只能術後評估'],c:0,
+ e:'OCT 能量鈣化厚度、弧度、長度並計算評分，對「是否需鈣化修飾」的決策比 IVUS（無法測厚度）更有幫助。',s:'Fujino 等（PMID 30012537）；EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'guide',q:'OCTOBER 試驗探討的臨床問題與結論方向為？',
+ o:['OCT 對比造影導引在「分叉病灶」PCI；結果顯示 OCT 導引可改善臨床結果','OCT 導引增加死亡','OCT 無法用於分叉','分叉不需影像'],c:0,
+ e:'OCTOBER 針對分叉病灶比較 OCT 導引 vs 造影導引，顯示 OCT 導引降低 2 年 MACE，支持複雜分叉使用 OCT。',s:'OCTOBER trial（Holm 等，PMID 37634092）'},
+{cat:'guide',q:'關於 OCT 與 IVUS 導引 PCI 的整體療效比較，較符合證據的是？',
+ o:['OCT 明顯劣於 IVUS','大型試驗（如 ILUMIEN III、OCTIVUS）顯示 OCT 導引與 IVUS 導引大致相當（非劣性）','IVUS 一律禁止','兩者皆劣於造影'],c:1,
+ e:'ILUMIEN III（OPTIMIZE PCI）與 OCTIVUS 等顯示 OCT 導引在支架結果／臨床終點與 IVUS 相當，兩者皆優於或不劣於造影導引。',s:'ILUMIEN III（PMID 27908497）；OCTIVUS（PMID 37772400）'},
+{cat:'guide',q:'ILUMIEN IV 試驗（OCT 導引 vs 造影導引）的主要結果，誠實的描述為？',
+ o:['OCT 組 MACE 顯著大幅下降','OCT 導引達到較大的最小支架面積（MSA），但主要臨床終點（2 年 TLF）未達統計顯著差異','OCT 組死亡增加','兩組 MSA 相同'],c:1,
+ e:'ILUMIEN IV 中 OCT 導引獲得較大 MSA、較少支架相關事件，但 2 年目標血管失敗的主要終點未達顯著；顯示影像優化有解剖獲益，臨床終點差異需更大族群或高風險族群。',s:'ILUMIEN IV（Ali 等，PMID 37634188）'},
+{cat:'guide',q:'血管內影像導引支架「最佳化」評估的核心項目為？',
+ o:['只看顏色','擴張（MSA／expansion）、貼壁（apposition）、邊緣剝離與 geographic miss，並協助 sizing','只看心跳','只看血壓'],c:1,
+ e:'最佳化核心：足夠擴張、良好貼壁、無顯著邊緣剝離、無 geographic miss；OCT 對邊緣剝離與貼壁尤其敏感。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'guide',q:'OCT 用於「急性冠心症罪犯病灶」的一個獨特臨床價值為？',
+ o:['無價值','可區分斑塊破裂（rupture）、斑塊侵蝕（erosion）與鈣化結節等機轉，可能影響治療策略','只能測血流','無法看血栓'],c:1,
+ e:'OCT 高解析可分辨 ACS 三大機轉（rupture／erosion／calcified nodule）；例如 erosion 病人在特定條件下有保守抗栓（不放支架）的研究基礎。',s:'EAPCI 影像共識 2018（PMID 29649459）；EROSION 研究（PMID 27585864）'},
+
+/* ===== 八、OCT 功能與限制 func (Q61-80) ===== */
+{cat:'func',q:'OCT 相較 IVUS 最突出的優勢為？',
+ o:['穿透較深','極高解析度（約 10–20 µm），可清楚辨識薄纖維帽、支架小樑、微小剝離與血栓細節','不需導絲','輻射較低'],c:1,
+ e:'OCT 解析度約 10–20 µm，對薄結構（纖維帽、支架小樑、微小夾層、血栓）辨識遠優於 IVUS，是其核心價值。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'func',q:'OCT 的根本限制（與 IVUS 相反）在於？',
+ o:['解析度太低','成像需以對比劑清血、且穿透僅約 1–2 mm，大血管／開口與深部結構受限','完全無法測量','不能看支架'],c:1,
+ e:'OCT 需清血（增加對比負荷）、穿透淺；大血管、aorto-ostial／左主幹開口與厚斑塊深部評估受限，此時 IVUS 較適合。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'func',q:'因穿透較淺，OCT 對下列何者評估較不可靠？',
+ o:['纖維帽厚度','以外彈力膜（EEM）為基準的血管 sizing（尤其大血管或厚斑塊）','支架小樑貼壁','管腔面積'],c:1,
+ e:'OCT 常無法完整顯示深部 EEM，故大血管的 EEM-based sizing 較受限，臨床多改用 lumen-based sizing。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'func',q:'下列哪一情境「較適合 IVUS 而非 OCT」？',
+ o:['評估薄纖維帽','左主幹開口／aorto-ostial 病灶、或需嚴格限制對比劑的腎功能不全者','支架小樑貼壁細節','紅白血栓區分'],c:1,
+ e:'開口病灶難清血、大血管超出穿透，加上 OCT 需對比；此類情境（含腎功能差）IVUS 較適合。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'func',q:'OCT 對「鈣化」的獨特能力為？',
+ o:['無法看鈣化','光可穿過鈣化，能量測鈣化厚度、弧度、長度並計算鈣化評分（IVUS 因聲影不能測厚度）','只能定性','會被鈣化完全遮蔽'],c:1,
+ e:'鈣化在 OCT 呈訊號較低但邊界銳利，且光可穿透，能量厚度並算評分，指引鈣化修飾決策。',s:'Fujino 等（PMID 30012537）'},
+{cat:'func',q:'OCT 判定薄纖維帽粥狀瘤（TCFA）的能力為？',
+ o:['不如 IVUS','可量測纖維帽厚度（TCFA 定義 <65 µm）並評估上覆大脂質核心，是 OCT 獨特強項','無法評估纖維帽','與 IVUS 相同'],c:1,
+ e:'TCFA（薄帽 <65 µm＋大脂核）尺度遠小於 IVUS 解析度；OCT 是唯一能可靠量纖維帽厚度、辨識 TCFA 的臨床影像。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'func',q:'OCT 上「富脂／壞死斑塊（lipid plaque）」的典型特徵為？',
+ o:['邊界銳利、訊號均勻','訊號較低、邊界模糊瀰漫、後方訊號快速衰減，上覆常見訊號較強的纖維帽','強回音伴聲影','完全無訊號'],c:1,
+ e:'脂質斑塊呈低訊號、邊界模糊、光快速衰減，上覆訊號較強的纖維帽；此與鈣化（低訊號但邊界銳利）為重要鑑別。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'func',q:'OCT 可辨識的斑塊「發炎」相關特徵為？',
+ o:['無法辨識發炎','巨噬細胞聚集呈點狀強訊號並伴後方陰影，與斑塊易損性相關','只能看鈣化','發炎在 OCT 呈黑色'],c:1,
+ e:'OCT 可見巨噬細胞聚集為明亮點狀訊號伴後方陰影（訊號衰減），常見於纖維帽，與斑塊發炎／易損相關。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'func',q:'OCT 相較 IVUS 在「血栓」判讀上的獨特能力為？',
+ o:['都不能看血栓','可區分紅血栓（高背向散射、後方強衰減陰影）與白血栓（訊號較均、衰減少）','只能看白血栓','血栓在 OCT 不顯示'],c:1,
+ e:'OCT 可區分紅血栓（富紅血球、高訊號＋強衰減）與白血栓（富血小板、訊號較均、衰減少）；IVUS 難以區分兩者。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'func',q:'OCT 對急性冠心症「三大罪犯機轉」的分辨能力為？',
+ o:['無法分辨','可區分斑塊破裂（rupture）、斑塊侵蝕（erosion）與鈣化結節（calcified nodule）','只能看破裂','需靠切片'],c:1,
+ e:'OCT 可分辨 rupture（纖維帽破裂＋空腔）、erosion（纖維帽完整＋表面血栓）、calcified nodule（突出鈣化結節）三大 ACS 機轉，影響治療策略。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'func',q:'OCT 評估支架「擴張（MSA／expansion）」的臨床意義為？',
+ o:['不重要','擴張不全（小 MSA）是支架內再狹窄與血栓最強的可矯正機械因子，需以影像確認並後擴張','只影響外觀','與預後無關'],c:1,
+ e:'與 IVUS 一致，擴張不全是 ISR 與支架血栓最強可矯正因子；OCT 量測 MSA／expansion 指引後擴張達標。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'func',q:'OCT 在支架「貼壁不良（malapposition）」評估上的特點為？',
+ o:['不如 IVUS','高解析可清楚顯示每根小樑並精確量測貼壁距離，敏感度優於 IVUS','無法評估','只能定性'],c:1,
+ e:'OCT 逐根小樑成像，可精確量測小樑到管壁距離，判定與量化貼壁不良比 IVUS 更敏感。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'func',q:'OCT 對支架「邊緣剝離（edge dissection）」的偵測特性為？',
+ o:['敏感度低','敏感度高，可偵測微小邊緣剝離；須注意避免對臨床不顯著的小剝離過度處置','完全看不到','只能看大剝離'],c:1,
+ e:'OCT 對微小 edge dissection 極敏感；臨床上需依大小、深度、是否 flow-limiting 判斷顯著性，避免對無害小剝離過度置放支架。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'func',q:'OCT 在支架「小樑覆蓋／內皮化」評估上的角色為？',
+ o:['無法評估','高解析可評估支架小樑是否被組織覆蓋（追蹤研究常用，與晚期血栓風險相關）','只能看擴張','僅適用金屬裸支架'],c:1,
+ e:'OCT 可評估小樑覆蓋與內皮化程度，未覆蓋／貼壁不良小樑與晚期支架血栓相關，是 OCT 在追蹤研究的獨特能力。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'func',q:'OCT 與 IVUS 的關係，最正確的描述為？',
+ o:['OCT 全面取代 IVUS','兩者互補：OCT 解析度高但穿透淺／需清血，IVUS 穿透深／不需清血但解析度較低，依情境選用','兩者完全相同','IVUS 已淘汰'],c:1,
+ e:'OCT 與 IVUS 各有優勢與限制，臨床依病灶位置、血管大小、腎功能與評估目的選用或互補，而非互相取代。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'func',q:'OCT 於「支架失敗（ISR／支架血栓）」機轉釐清的價值為？',
+ o:['無法釐清','可辨擴張不全、貼壁不良、支架斷裂、未覆蓋小樑、neointima 與 neoatherosclerosis 等機轉，指引處置','只能量血流','與處置無關'],c:1,
+ e:'OCT 高解析可區分多種支架失敗機轉（含 OCT 獨有的未覆蓋小樑與支架內脂質／鈣化性 neoatherosclerosis），直接決定後續處置。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'func',q:'關於 OCT 導引對支架結果的影響，證據顯示？',
+ o:['使支架更小','可協助獲得更大、更佳擴張與貼壁的支架結果（如 ILUMIEN IV 中較大 MSA）','無任何影響','增加貼壁不良'],c:1,
+ e:'OCT 導引藉精確 sizing 與最佳化，可獲得較大 MSA 與較佳貼壁；ILUMIEN IV 顯示解剖結果改善（臨床主要終點差異未顯著）。',s:'ILUMIEN IV（PMID 37634188）'},
+{cat:'func',q:'下列何者屬於 OCT 的「限制」？',
+ o:['解析度過高','需對比劑清血、穿透淺、導管無法通過極緊病灶、大血管／開口與深部評估受限、殘血偽影','可看穿任何深度','不需導絲'],c:1,
+ e:'OCT 限制包括需清血（對比負荷）、穿透淺、極緊病灶導管難通過、大血管／開口受限、殘血偽影等，須與 IVUS／生理學互補。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'func',q:'OCT 屬「解剖影像」，與功能（缺血）評估的關係為？',
+ o:['OCT 直接測 FFR','OCT 提供解剖／形態資訊，中度病灶的缺血判定常需生理學（FFR/iFR）互補','解剖等於功能','OCT 可取代所有生理評估'],c:1,
+ e:'OCT 是高解析解剖影像，形態量測與缺血未必一致；中度病灶的功能意義常以 FFR/iFR 為準，影像與生理學互補最佳。',s:'EAPCI 影像共識 2018（PMID 29649459）；ACC/AHA/SCAI 2021（PMID 34882435）'},
+{cat:'func',q:'為降低 OCT 清血所需的顯影劑負荷，臨床上可採用的替代清血介質為？',
+ o:['空氣','低分子右旋糖酐（dextran／LMWD）等黏稠透明液體，可有效清血並減少對比劑用量','生理食鹽水最有效','病人自體血漿'],c:1,
+ e:'除顯影劑外，可用低分子右旋糖酐（dextran）等黏稠透明介質清血，有助降低對比劑負荷（對腎功能不全者尤佳）；單純食鹽水黏度低、清血效果較差。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+
+/* ===== 九、鑑別診斷與處置 ddx (Q81-100) ===== */
+{cat:'ddx',q:'OCT 上「鈣化斑塊」與「富脂斑塊」最關鍵的鑑別點為？',
+ o:['兩者無法區分','鈣化為低訊號但「邊界清晰銳利」；富脂為低訊號但「邊界模糊瀰漫、後方快速衰減」','鈣化呈黑色、脂質呈白色','兩者都強訊號'],c:1,
+ e:'鈣化與脂質在 OCT 都呈低訊號區，關鍵鑑別在邊界：鈣化邊界銳利清晰、脂質邊界模糊且光快速衰減。這是 OCT 判讀核心。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'ddx',q:'OCT 上「膽固醇結晶」與「微血管（microchannel）」的判讀意義為？',
+ o:['皆為正常結構','膽固醇結晶呈線狀強訊號、微血管呈斑塊內小型無訊號通道，兩者常見於進展／易損斑塊','兩者代表鈣化','皆為導管偽影'],c:1,
+ e:'膽固醇結晶為線狀（薄層）高訊號、微血管為斑塊內小型無訊號孔道（新生血管）；兩者與斑塊進展、發炎及易損性相關，是 OCT 可辨的組織特徵。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'ddx',q:'OCT 見「富脂／壞死斑塊上覆薄纖維帽（<65 µm）＋大脂質核心」，臨床意義與處置考量為？',
+ o:['穩定斑塊，無風險','屬薄纖維帽粥狀瘤（TCFA），易損、PCI 時遠端栓塞／no-reflow 風險較高，操作宜謹慎並評估覆蓋','立即外科','僅需觀察，不影響 PCI'],c:1,
+ e:'TCFA 為易損斑塊，PCI 時斑塊破裂與遠端栓塞風險較高；判讀後宜謹慎操作、評估支架覆蓋範圍與遠端保護策略。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'ddx',q:'依 OCT 鈣化評分，屬「支架擴張不全高風險」而宜先鈣化修飾者為？',
+ o:['薄且弧度小的鈣化','鈣化弧度 >180°、厚度 >0.5 mm、長度 >5 mm','任何點狀鈣化','僅深層鈣化'],c:1,
+ e:'OCT 鈣化評分：弧度 >180°、厚度 >0.5 mm、長度 >5 mm 者擴張不全風險高，宜先行鈣化修飾（IVL／旋磨／scoring）再置放支架。',s:'Fujino 等（PMID 30012537）'},
+{cat:'ddx',q:'OCT 上「鈣化結節（calcified nodule）」的特徵與意義為？',
+ o:['平滑纖維帽','突出於管腔、表面不規則的鈣化，常伴表面血栓，可為 ACS 罪犯機轉之一','均質低訊號','血管外鈣化'],c:1,
+ e:'鈣化結節為突出腔內、表面不規則的鈣化並常伴血栓，是 ACS 三大機轉之一；處置具挑戰，常需鈣化修飾且結果較差。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'ddx',q:'OCT 區分「紅血栓」與「白血栓」的依據為？',
+ o:['顏色直接可見','紅血栓（富紅血球）呈高背向散射並「後方強烈衰減陰影」；白血栓（富血小板）訊號較均勻、衰減較少','兩者相同','靠血流速度'],c:1,
+ e:'紅血栓高訊號伴後方強衰減（遮蔽其後結構）；白血栓訊號較均勻、衰減少。OCT 可區分，IVUS 則難以分辨，有助判斷血栓性質與抗栓策略。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'ddx',q:'OCT 上「斑塊破裂（plaque rupture）」的特徵為？',
+ o:['纖維帽完整','纖維帽破裂並形成與管腔相通的空腔（cavity），常伴血栓','支架斷裂','血管外積血'],c:1,
+ e:'斑塊破裂在 OCT 表現為纖維帽不連續、其下形成與腔相通的空腔，常伴附壁血栓，是 ACS 最常見罪犯機轉。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'ddx',q:'OCT 上「斑塊侵蝕（plaque erosion）」的特徵與可能的處置意涵為？',
+ o:['纖維帽破裂','纖維帽「完整」但表面附著血栓、無明顯破裂；部分符合條件者有保守抗栓（不放支架）的研究基礎','必為鈣化','與血栓無關'],c:1,
+ e:'Erosion 為纖維帽完整、表面血栓、無破裂空腔；EROSION 研究顯示部分殘餘狹窄不重的 erosion 病人可抗栓保守治療，OCT 是辨識關鍵。',s:'EROSION 研究（PMID 27585864）'},
+{cat:'ddx',q:'OCT 上「冠狀動脈剝離（dissection）」的特徵為？',
+ o:['管壁均勻增厚','內膜／中膜撕裂形成活動性內膜瓣與假腔，OCT 高解析對微小剝離敏感','支架內增生','外膜鈣化'],c:1,
+ e:'剝離表現為內膜／中膜撕裂、活動性 flap 與假腔；OCT 高解析對微小剝離極敏感，須依大小、深度、是否 flow-limiting 判斷處置。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'ddx',q:'關於 OCT 評估「壁內血腫（intramural hematoma）」的一個限制為？',
+ o:['OCT 最適合看深部血腫','因穿透較淺，較深或較大的中膜血腫其外緣可能超出成像深度而顯示不全','OCT 完全看不到血腫','血腫在 OCT 一定與腔相通'],c:1,
+ e:'OCT 可見中膜內積血將內膜推向管腔，但穿透淺，較深／較大血腫的外緣可能超出成像深度；此時 IVUS 較能顯示血腫範圍。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'ddx',q:'OCT 判定支架「擴張不全（underexpansion）」後的主要處置為？',
+ o:['直接結束','以非順應性（NC）球囊高壓後擴張；若因鈣化阻力，先鈣化修飾再擴張','再放一支長支架','僅加強抗血小板'],c:1,
+ e:'擴張不全首選高壓 NC 球囊後擴張以增大 MSA；若底層鈣化阻力大，需先修飾（IVL／旋磨）再擴張。OCT 可量鈣化厚度指引此決策。',s:'EAPCI 影像共識 2018（PMID 29649459）；Fujino（PMID 30012537）'},
+{cat:'ddx',q:'為何 OCT 上發現「支架擴張不全」要優先矯正？',
+ o:['只是美觀','擴張不全（小 MSA）是支架內再狹窄與支架血栓最強的可矯正機械因子','不影響血流','會自行改善'],c:1,
+ e:'低 MSA／擴張不全與 ISR、血栓密切相關且可矯正，故術中即應以影像確認並後擴張達標。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'ddx',q:'術中 OCT 見「急性支架貼壁不良（acute malapposition）」，處置原則為？',
+ o:['一律忽略','依貼壁不良的距離與範圍評估，顯著者以適當尺寸球囊後擴張使支架貼合；OCT 可精測距離指引','立即移除支架','僅觀察不處理'],c:1,
+ e:'OCT 可精確量測貼壁距離與範圍；顯著急性貼壁不良以後擴張改善貼合。小而不顯著者則依臨床判斷，避免過度處置。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'ddx',q:'OCT 上「組織脫垂（tissue／plaque prolapse）」指的是？',
+ o:['支架斷裂','斑塊或血栓組織自支架支柱間突入管腔','外膜破裂','導管偽影'],c:1,
+ e:'組織脫垂為斑塊／血栓經支柱間隙突入腔內，常見於軟斑或血栓性病灶；大量脫垂可能與血流受阻或事件相關，需與貼壁不良區分。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'ddx',q:'OCT 對支架「邊緣剝離」是否需處置的判斷原則為？',
+ o:['任何微小剝離都要放支架','範圍大／長、深達中膜或外膜、造成管腔受限（flow-limiting）或伴血腫者較需額外覆蓋；小而表淺者常可保守','完全不需處置','只看顏色'],c:1,
+ e:'OCT 對微小 edge dissection 敏感；判斷顯著性看大小、深度、flow-limiting 與是否伴血腫。小而表淺者常可保守觀察，避免過度處置。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'ddx',q:'OCT 見支架邊緣「geographic miss／殘餘病灶」時的處置原則為？',
+ o:['不理會','若殘餘顯著斑塊或病灶未被覆蓋，考慮延伸支架覆蓋至相對正常的 landing zone','移除原支架','僅加藥物'],c:1,
+ e:'Geographic miss 與邊緣事件、再狹窄相關；顯著者延伸覆蓋到斑塊負荷較小的正常段，OCT 的 ACR 有助精準定位。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'ddx',q:'造影出現「模糊影（haziness）」而病因不明時，OCT 的鑑別價值為？',
+ o:['無法幫忙','可高解析區分斑塊破裂／侵蝕、剝離、壁內血腫、血栓（紅／白）與鈣化結節等，指引正確處置','只會增加混淆','只能看血流'],c:1,
+ e:'造影 haziness 病因多樣；OCT 高解析可分辨 rupture／erosion／dissection／hematoma／thrombus／calcified nodule，避免誤判與不當處置（大血管深部除外）。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'ddx',q:'OCT 對支架內再狹窄（ISR）機轉判讀的獨特能力為？',
+ o:['無法判讀','可辨擴張不全 vs 均質內膜增生 vs 新生動脈硬化（neoatherosclerosis：支架內脂質／鈣化），對症處置','只能量血流','只看鈣化'],c:1,
+ e:'OCT 可高解析辨 ISR 機轉：擴張不全→後擴張；均質 neointima 或 neoatherosclerosis（支架內脂質／鈣化性斑塊）→ 依情況 DCB／再支架，處置不同。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'ddx',q:'OCT 於追蹤時可評估、而 IVUS 較難的支架相關特徵為？',
+ o:['支架長度','支架小樑是否被組織覆蓋（未覆蓋／貼壁不良小樑與晚期支架血栓相關）','血管總長','病人身高'],c:1,
+ e:'OCT 高解析可逐根評估小樑覆蓋與內皮化；未覆蓋／貼壁不良小樑與晚期／極晚期支架血栓相關，是 OCT 獨特的追蹤能力。',s:'EAPCI 影像共識 2018（PMID 29649459）'},
+{cat:'ddx',q:'OCT 見支架「縱向變形／斷裂（longitudinal deformation／fracture）」的處置方向為？',
+ o:['無需處置','依部位與嚴重度考慮再擴張或於變形／斷裂處補放支架恢復支撐與覆蓋','立即外科','僅追蹤，與再狹窄無關'],c:1,
+ e:'支架斷裂／縱向變形可致局部支撐不足、再狹窄或血栓；OCT 可清楚定位，依情況以球囊再擴張或補放支架恢復支撐。',s:'EAPCI 影像共識 2018（PMID 29649459）'}
+];
+
+/* ---------- 洗牌：每題選項打亂，記錄正確選項文字 ---------- */
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+const deck = QUESTIONS.map(item=>{
+  const correctText = item.o[item.c];
+  const opts = shuffle(item.o.slice());
+  return { cat:item.cat, q:item.q, opts, correctText, correctIdx:opts.indexOf(correctText), e:item.e, s:item.s };
+});
+
+/* ---------- 狀態 ---------- */
+const state = { idx:0, score:0, answered:false, picked:null, results:[] };
+const app = document.getElementById('app');
+const LETTERS = ['A','B','C','D'];
+const TOTAL = deck.length;
+
+function render(){
+  if(state.idx >= TOTAL){ renderResult(); return; }
+  const item = deck[state.idx];
+  const cat = CATS[item.cat];
+  const pct = Math.round(state.idx / TOTAL * 100);
+
+  let html = '';
+  if(state.idx === 0){
+    html += `<div class="disclaimer">🔎 本測驗共 100 題，涵蓋 OCT 機器操作設定、健保／臨床適應症、功能與鑑別診斷處置。<b>操作題以 vendor-neutral 為原則</b>，平台差異處標示 Abbott（Abbott/St. Jude OPTIS＋Dragonfly）與 Terumo（OFDI＋FastView）。OCT 與 IVUS 最大不同在於<b>需以對比劑清血、超高解析但穿透淺</b>。<b>健保題以現行給付規範精神出題，實際給付條件、次數與審查請以健保署最新規範與院內公告為準。</b></div>`;
+  }
+  html += `<div class="progress-info"><span>作答進度 <b>${state.idx}/${TOTAL}</b></span><span>目前得分 <b>${state.score}</b></span></div>`;
+  html += `<div class="bar"><div style="width:${pct}%"></div></div>`;
+  html += `<div class="qcard">`;
+  html += `<span class="cat-chip" style="background:${cat.color}">${cat.name}</span>`;
+  html += `<div class="qtext"><span class="num">Q${state.idx+1}.</span>${item.q}</div>`;
+  html += `<div class="opts">`;
+  item.opts.forEach((opt,i)=>{
+    let cls='opt';
+    if(state.answered){
+      if(i===item.correctIdx) cls+=' correct';
+      else if(i===state.picked) cls+=' wrong';
+    }
+    const dis = state.answered ? 'disabled' : '';
+    html += `<button class="${cls}" ${dis} onclick="pick(${i})"><span class="mark">${LETTERS[i]}</span><span>${opt}</span></button>`;
+  });
+  html += `</div>`;
+
+  if(state.answered){
+    const ok = state.picked===item.correctIdx;
+    html += `<div class="explain ${ok?'ok':'no'}">`;
+    html += `<div class="verdict">${ok?'✓ 答對了':'✗ 答錯了，正解為 '+LETTERS[item.correctIdx]}</div>`;
+    html += `<div>${item.e}</div>`;
+    html += `<div class="src">📖 出處：${item.s}</div>`;
+    html += `</div>`;
+    html += `<div class="nav"><button class="btn" onclick="next()">${state.idx < TOTAL-1 ? '下一題 →' : '看總成績 →'}</button></div>`;
+  }
+  html += `</div>`;
+  app.innerHTML = html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function pick(i){
+  if(state.answered) return;
+  state.answered = true;
+  state.picked = i;
+  const item = deck[state.idx];
+  const ok = i===item.correctIdx;
+  if(ok) state.score++;
+  state.results.push({ cat:item.cat, ok });
+  render();
+}
+
+function next(){
+  state.idx++;
+  state.answered=false;
+  state.picked=null;
+  render();
+}
+
+function renderResult(){
+  const pct = Math.round(state.score / TOTAL * 100);
+  let grade, emoji, grad;
+  if(pct>=90){ grade='優異'; emoji='🏆'; grad='linear-gradient(135deg,#f6a821,#e8890c)'; }
+  else if(pct>=80){ grade='及格 · 良好'; emoji='🎉'; grad='linear-gradient(135deg,#10b981,#059669)'; }
+  else if(pct>=60){ grade='待加強'; emoji='👍'; grad='linear-gradient(135deg,#6d28d9,#3730a3)'; }
+  else { grade='需複習'; emoji='📚'; grad='linear-gradient(135deg,#e74c3c,#c0392b)'; }
+
+  const perCat = {};
+  Object.keys(CATS).forEach(k=> perCat[k]={ok:0,total:0});
+  state.results.forEach(r=>{ perCat[r.cat].total++; if(r.ok) perCat[r.cat].ok++; });
+
+  const now = new Date();
+  const stamp = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  let html = '';
+  html += `<div class="result-card">`;
+  html += `<div class="score-hero" style="background:${grad}">`;
+  html += `<div class="emoji">${emoji}</div>`;
+  html += `<div class="big">${state.score} / ${TOTAL}</div>`;
+  html += `<div class="pct">正確率 ${pct}%</div>`;
+  html += `<div class="grade">${grade}</div>`;
+  html += `</div>`;
+  html += `<div class="breakdown"><h3>分區成績</h3>`;
+  Object.keys(CATS).forEach(k=>{
+    const c=CATS[k], d=perCat[k];
+    const p = d.total? Math.round(d.ok/d.total*100):0;
+    html += `<div class="brow"><div class="lbl">${c.name}</div>`;
+    html += `<div class="track"><div style="width:${p}%;background:${c.color}"></div></div>`;
+    html += `<div class="val">${d.ok}/${d.total}</div></div>`;
+  });
+  html += `</div></div>`;
+  html += `<div class="meta-line">測驗完成時間：${stamp}　｜　OCT 100 · 光學同調斷層操作與判讀</div>`;
+  html += `<div class="tip no-print">📸 請截圖此頁保存成績，或點「列印／存 PDF」。</div>`;
+  html += `<div class="actions no-print">`;
+  html += `<button class="btn secondary" onclick="window.print()">🖨️ 列印／存 PDF</button>`;
+  html += `<button class="btn" onclick="restart()">🔄 重新測驗</button>`;
+  html += `</div>`;
+  app.innerHTML = html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function restart(){
+  deck.forEach(item=>{
+    shuffle(item.opts);
+    item.correctIdx = item.opts.indexOf(item.correctText);
+  });
+  state.idx=0; state.score=0; state.answered=false; state.picked=null; state.results=[];
+  render();
+}
+
+render();
+</script>
+
+<script>
+  const PAGE_URL = "https://drake1128.github.io/saq-questionnaire/oct-exam-100.html";
+  const QR_DATA = "data:image/png;base64,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";
+  function initShareButtons() {
+    const pageUrl = PAGE_URL; const pageTitle = document.title; const encodedUrl = encodeURIComponent(pageUrl);
+    const qrCodeImg = document.getElementById('qrCode'); if (qrCodeImg && QR_DATA) qrCodeImg.src = QR_DATA;
+    const lineShare = document.getElementById('lineShare'); if (lineShare) lineShare.href = `https://social-plugins.line.me/lineit/share?url=${encodedUrl}`;
+    const emailShare = document.getElementById('emailShare'); if (emailShare) { const emailSubject = encodeURIComponent(`分享：${pageTitle}`); const emailBody = encodeURIComponent(`我想和您分享這個頁面：\n\n${pageTitle}\n\n${pageUrl}`); emailShare.href = `mailto:?subject=${emailSubject}&body=${emailBody}`; } }
+  function toggleShareMenu() { const menu = document.getElementById('shareMenu'); if (menu) menu.classList.toggle('active'); }
+  function copyPageUrl() { const pageUrl = PAGE_URL; navigator.clipboard.writeText(pageUrl).then(() => { alert('連結已複製到剪貼簿！'); }).catch(() => { const textArea = document.createElement('textarea'); textArea.value = pageUrl; document.body.appendChild(textArea); textArea.select(); document.execCommand('copy'); document.body.removeChild(textArea); alert('連結已複製到剪貼簿！'); }); }
+  initShareButtons();
+</script>
+</body>
+</html>
