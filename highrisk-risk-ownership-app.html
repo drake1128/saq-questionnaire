@@ -240,12 +240,47 @@ html.dark .sign .nm{color:var(--gold-light)}
   color:#fff;padding:12px 22px;border-radius:26px;font-size:14px;z-index:99;
   box-shadow:0 6px 24px rgba(0,0,0,.3);animation:up .25s}
 @keyframes up{from{opacity:0;transform:translate(-50%,14px)}to{opacity:1;transform:translate(-50%,0)}}
+
+/* share modal */
+.ov{position:fixed;inset:0;background:rgba(10,20,30,.62);z-index:80;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  animation:fade .2s;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet{background:var(--card);border:1px solid var(--border);border-radius:18px;
+  max-width:334px;width:100%;padding:24px 22px 22px;text-align:center;position:relative;
+  box-shadow:0 18px 54px rgba(0,0,0,.38);animation:pop .22s}
+@keyframes pop{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+.sheet h3{margin:0 0 3px;font-size:17px;font-weight:700;color:var(--text)}
+.sheet .st{font-size:12.5px;color:var(--muted);margin-bottom:16px}
+.qrbox{background:#fff;border-radius:14px;padding:14px;display:inline-block;
+  border:1px solid var(--border);box-shadow:0 2px 10px rgba(26,58,92,.08)}
+.qrbox img{display:block;width:196px;height:196px;image-rendering:pixelated}
+.sheet .hint{font-size:12px;color:var(--muted);margin:12px 4px 16px;line-height:1.6}
+.sheet .lk{font-size:11px;color:var(--muted);word-break:break-all;
+  background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-bottom:14px}
+.sbtns{display:flex;gap:8px}
+.sx{position:absolute;top:11px;right:11px;width:32px;height:32px;border:none;
+  background:var(--bg);border-radius:9px;color:var(--muted);font-size:20px;line-height:1;
+  cursor:pointer;transition:.15s}
+.sx:active{transform:scale(.9)}
+
+/* references */
+.rg{font-size:13.5px;font-weight:700;color:var(--navy);letter-spacing:.01em;
+  padding-left:11px;border-left:3px solid var(--gold);margin-bottom:12px}
+html.dark .rg{color:var(--gold-light)}
+.refl{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px}
+.refl li{font-size:12.5px;line-height:1.65;color:var(--text)}
+.refl li::marker{color:var(--gold);font-weight:700}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
 const {useState,useMemo} = React;
+
+/* ---------- share (offline base64 QR，不依賴外部服務) ---------- */
+const SHARE_URL = "https://drake1128.github.io/saq-questionnaire/highrisk-risk-ownership-app.html";
+const QR_DATA = "data:image/png;base64,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";
 
 /* ---------- icons ---------- */
 const I = {
@@ -451,6 +486,33 @@ const QZ = [
   {q:"術者 A 只接 elective、stable 個案，總併發症率 2.0%。術者 B 不篩選個案，總併發症率 8.0%，但單看非複雜個案為 1.4%。正確的結論是？",
    o:["A 比 B 安全，應優先安排 A 執行手術","B 需要接受再訓練","在可比較的個案上 B 的表現優於 A；未校正的數字得到了與事實相反的結論","兩人無法比較，應停止所有品質評估"],c:2,
    e:"B 的總併發症率是 A 的四倍，但在同類個案上 B 其實更好（1.4% vs 2.0%）。若只看未經校正的數字，不只會得到相反的結論，還會教會 B 一件事：不要再接複雜個案。這正是 risk-averse case selection 的形成機制 —— 系統懲罰了願意承擔風險的人。"}
+];
+
+/* ---------- data: references ---------- */
+const REFS = [
+  {g:"結果偏誤 (Outcome Bias)", items:[
+    "Baron J, Hershey JC. Outcome bias in decision evaluation. J Pers Soc Psychol. 1988;54(4).",
+    "Caplan RA, Posner KL, Cheney FW. Effect of outcome on physician judgments of appropriateness of care. JAMA. 1991;265(15)."]},
+  {g:"公開績效報告與風險趨避的個案選擇", items:[
+    "Resnic FS, Welt FGP. The public health hazards of risk avoidance associated with public reporting of risk-adjusted outcomes in coronary intervention. J Am Coll Cardiol. 2009;53(10).",
+    "Joynt KE, Blumenthal DM, Orav EJ, Resnic FS, Jha AK. Association of public reporting for percutaneous coronary intervention with utilization and outcomes among Medicare beneficiaries with acute myocardial infarction. JAMA. 2012;308(14).",
+    "Waldo SW, McCabe JM, O'Brien C, Kennedy KF, Joynt KE, Yeh RW. Association between public reporting of outcomes with procedural management and mortality for patients with acute myocardial infarction. J Am Coll Cardiol. 2015;65(11).",
+    "Gupta A, Yeh RW, Tamis-Holland JE, et al. Implications of public reporting of risk-adjusted mortality following percutaneous coronary intervention. JACC Cardiovasc Interv. 2016;9(20).",
+    "Wadhera RK, Joynt Maddox KE, Yeh RW, Bhatt DL. Public reporting of percutaneous coronary intervention outcomes. JAMA Cardiol. 2018;3(7)."]},
+  {g:"高風險個案的流程、退場條件與治理", items:[
+    "Riley RF, Henry TD, Mahmud E, et al. SCAI position statement on optimal percutaneous coronary interventional therapy for complex coronary artery disease. Catheter Cardiovasc Interv. 2020;96(2).",
+    "Naidu SS, Abbott JD, Bagai J, et al. SCAI expert consensus update on best practices in the cardiac catheterization laboratory. Catheter Cardiovasc Interv. 2021;98(2).",
+    "Haynes AB, Weiser TG, Berry WR, et al. A surgical safety checklist to reduce morbidity and mortality in a global population. N Engl J Med. 2009;360(5)."]},
+  {g:"高風險決策溝通與知情理解", items:[
+    "Taylor LJ, Nabozny MJ, Steffens NM, et al. A framework to improve surgeon communication in high-stakes surgical decisions: Best Case/Worst Case. JAMA Surg. 2017;152(6).",
+    "Schwarze ML, Bradley CT, Brasel KJ. Surgical \"buy-in\": the contractual relationship between surgeons and patients that influences decisions regarding life-supporting therapy. Crit Care Med. 2010;38(3).",
+    "Schillinger D, Piette J, Grumbach K, et al. Closing the loop: physician communication with diabetic patients who have low health literacy. Arch Intern Med. 2003;163(1).",
+    "Glaser J, Nouri S, Fernandez A, et al. Interventions to improve patient comprehension in informed consent for medical and surgical procedures: an updated systematic review. Med Decis Making. 2020;40(2).",
+    "Schenker Y, Fernandez A, Sudore R, Schillinger D. Interventions to improve patient comprehension in informed consent for medical and surgical procedures: a systematic review. Med Decis Making. 2011;31(1).",
+    "Levinson W, Roter DL, Mullooly JP, Dull VT, Frankel RM. Physician-patient communication: the relationship with malpractice claims among primary care physicians and surgeons. JAMA. 1997;277(7)."]},
+  {g:"併發症後的揭露與術者本身的承擔", items:[
+    "Gallagher TH, Waterman AD, Ebers AG, Fraser VJ, Levinson W. Patients' and physicians' attitudes regarding the disclosure of medical errors. JAMA. 2003;289(8).",
+    "Wu AW. Medical error: the second victim. BMJ. 2000;320(7237)."]}
 ];
 
 /* ================= components ================= */
@@ -874,40 +936,80 @@ const Sign = ()=>(
   </div>
 );
 
+const Refs = ()=>(
+  <div>
+    <div className="card">
+      <h2 className="sec"><span className="bar"></span>參考文獻 References</h2>
+      <p className="sec-sub">本模組觀點的實證與文獻基礎，依主題分組列示</p>
+    </div>
+    {REFS.map((s,i)=>(
+      <div className="card" key={i}>
+        <div className="rg">{s.g}</div>
+        <ol className="refl">
+          {s.items.map((r,j)=><li key={j}>{r}</li>)}
+        </ol>
+      </div>))}
+  </div>
+);
+
+const ShareModal = ({onClose,say})=>{
+  const copy = async ()=>{
+    try{ await navigator.clipboard.writeText(SHARE_URL); say("連結已複製"); }
+    catch(e){ say("請手動複製連結"); }
+  };
+  const native = async ()=>{
+    try{ await navigator.share({
+      title:"順風與逆風：高風險介入的風險承擔能力",
+      text:"手技能力與風險承擔能力是兩種不同的能力。含術者自評、風險溝通三層、術前家屬溝通查核表。",
+      url:SHARE_URL }); }
+    catch(e){ if(e.name!=="AbortError") say("此裝置不支援系統分享"); }
+  };
+  return (
+    <div className="ov" onClick={onClose}>
+      <div className="sheet" onClick={e=>e.stopPropagation()}>
+        <button className="sx" onClick={onClose} aria-label="關閉">×</button>
+        <h3>分享此教學模組</h3>
+        <div className="st">順風與逆風・高風險介入的風險承擔能力</div>
+        <div className="qrbox"><img src={QR_DATA} alt="教學模組網址 QR Code" width="196" height="196"/></div>
+        <div className="hint">用手機相機或掃描器掃描 QR Code 即可開啟本模組</div>
+        <div className="lk">{SHARE_URL}</div>
+        <div className="sbtns">
+          <button className="btn gold" style={{flex:1}} onClick={copy}>複製連結</button>
+          {typeof navigator!=="undefined" && navigator.share &&
+            <button className="btn ghost" style={{flex:1}} onClick={native}>系統分享</button>}
+        </div>
+      </div>
+    </div>);
+};
+
 const TABS=[
   {k:"c",n:"01",t:"核心觀念",C:Concept},
   {k:"s",n:"02",t:"能力自評",C:SelfAssess},
   {k:"l",n:"03",t:"溝通三層",C:Layers},
   {k:"k",n:"04",t:"術前查核表",C:Checklist},
-  {k:"q",n:"05",t:"情境測驗",C:Quiz}
+  {k:"q",n:"05",t:"情境測驗",C:Quiz},
+  {k:"r",n:"06",t:"參考文獻",C:Refs}
 ];
 
 const App = ()=>{
   const [tab,setTab]=useState("c");
   const [dark,setDark]=useState(false);
   const [toast,setToast]=useState("");
+  const [shareOpen,setShareOpen]=useState(false);
   const say = m=>{setToast(m);setTimeout(()=>setToast(""),2100);};
 
   const toggleDark=()=>{ const d=!dark; setDark(d);
     document.documentElement.classList.toggle("dark",d); };
 
-  const share = async ()=>{
-    const d={ title:"順風與逆風：高風險介入的風險承擔能力",
-      text:"手技能力與風險承擔能力是兩種不同的能力。含術者自評、風險溝通三層、術前家屬溝通查核表。",
-      url:location.href };
-    if(navigator.share){ try{ await navigator.share(d); return; }catch(e){ if(e.name==="AbortError") return; } }
-    try{ await navigator.clipboard.writeText(d.title+"\n"+d.url); say("連結已複製"); }
-    catch(e){ say("請手動複製網址列連結"); }
-  };
-
   const Cur = TABS.find(t=>t.k===tab).C;
   return (
     <div>
       <Toast m={toast}/>
+      {shareOpen && <ShareModal onClose={()=>setShareOpen(false)} say={say}/>}
       <div className="hdr">
         <div className="hdr-btns">
           <button className="icb" onClick={toggleDark} aria-label="夜間模式"><I.moon/></button>
-          <button className="icb" onClick={share} aria-label="分享"><I.share/></button>
+          <button className="icb" onClick={()=>setShareOpen(true)} aria-label="分享"><I.share/></button>
         </div>
         <div className="eyebrow">CARDIOVASCULAR CENTER ・ 教學模組</div>
         <h1>順風與逆風<br/>高風險介入的風險承擔能力</h1>
