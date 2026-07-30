@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>順風與逆風：高風險介入的風險承擔能力｜教學模組</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1a3a5c; --navy-light:#2d5a87; --navy-deep:#12293f;
+  --gold:#c9a227; --gold-light:#e0bf52; --gold-pale:#f5ecd0;
+  --danger:#b03a2e; --danger-pale:#fdecea;
+  --warn:#c07d14; --warn-pale:#fdf3e0;
+  --ok:#1e7a54; --ok-pale:#e8f5ef;
+  --bg:#faf8f5; --card:#ffffff;
+  --text:#22303c; --muted:#6b7a88; --border:#e6e2db;
+  --shadow:0 2px 14px rgba(26,58,92,.09);
+}
+html.dark{
+  --bg:#101a24; --card:#17242f; --text:#e8ecef; --muted:#93a3b1;
+  --border:#2a3a48; --gold-pale:#2c2a1d; --danger-pale:#2e1c1a;
+  --warn-pale:#2c2418; --ok-pale:#152a22; --shadow:0 2px 14px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:'Noto Sans TC',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  line-height:1.75;font-size:16px;padding-bottom:env(safe-area-inset-bottom)}
+#root{max-width:860px;margin:0 auto}
+
+/* header */
+.hdr{background:linear-gradient(140deg,var(--navy-deep),var(--navy) 55%,var(--navy-light));
+  color:#fff;padding:22px 20px 18px;position:relative;overflow:hidden}
+.hdr:after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;
+  background:linear-gradient(90deg,var(--gold),var(--gold-light),var(--gold))}
+.hdr .eyebrow{font-size:11.5px;letter-spacing:.16em;color:var(--gold-light);font-weight:500}
+.hdr h1{margin:8px 0 4px;font-size:21px;font-weight:700;line-height:1.4}
+.hdr .sub{font-size:13px;opacity:.82;font-weight:300}
+.hdr-btns{position:absolute;top:18px;right:16px;display:flex;gap:8px}
+.icb{width:40px;height:40px;border-radius:11px;border:1px solid rgba(255,255,255,.28);
+  background:rgba(255,255,255,.1);color:#fff;display:flex;align-items:center;
+  justify-content:center;cursor:pointer;transition:.18s}
+.icb:active{transform:scale(.92);background:rgba(255,255,255,.24)}
+
+/* nav */
+.nav{display:flex;gap:6px;overflow-x:auto;padding:10px 14px;background:var(--card);
+  border-bottom:1px solid var(--border);position:sticky;top:0;z-index:20;
+  scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;min-height:42px;padding:8px 15px;border-radius:21px;border:1px solid var(--border);
+  background:transparent;color:var(--muted);font-size:13.5px;font-weight:500;
+  font-family:inherit;cursor:pointer;white-space:nowrap;transition:.18s}
+.tab.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.tab .n{opacity:.55;margin-right:5px;font-size:11.5px}
+
+.wrap{padding:18px 16px 60px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+h2.sec{font-size:18px;font-weight:700;color:var(--navy);margin:0 0 4px;
+  display:flex;align-items:center;gap:9px}
+html.dark h2.sec{color:var(--gold-light)}
+h2.sec span.bar{width:4px;height:20px;background:var(--gold);border-radius:2px;flex:0 0 auto}
+.sec-sub{font-size:13px;color:var(--muted);margin:0 0 16px}
+h3{font-size:15.5px;font-weight:700;margin:20px 0 8px;color:var(--navy)}
+html.dark h3{color:#cfe0ee}
+h3:first-child{margin-top:0}
+p{margin:0 0 11px}
+.small{font-size:13.5px;color:var(--muted)}
+b,strong{font-weight:700}
+mark{background:var(--gold-pale);color:inherit;padding:1px 4px;border-radius:3px;font-weight:500}
+
+/* takehome */
+.takehome{background:linear-gradient(135deg,var(--navy),var(--navy-light));color:#fff;
+  border:none;border-left:5px solid var(--gold)}
+.takehome .lbl{font-size:11.5px;letter-spacing:.14em;color:var(--gold-light);font-weight:500;margin-bottom:9px}
+.takehome p{margin-bottom:9px;font-size:15px}
+.takehome p:last-child{margin-bottom:0}
+
+/* callouts */
+.co{border-radius:11px;padding:14px 15px;margin:13px 0;font-size:14.5px;border-left:4px solid}
+.co .t{font-weight:700;margin-bottom:5px;font-size:14px}
+.co.d{background:var(--danger-pale);border-color:var(--danger)} .co.d .t{color:var(--danger)}
+.co.w{background:var(--warn-pale);border-color:var(--warn)} .co.w .t{color:var(--warn)}
+.co.g{background:var(--ok-pale);border-color:var(--ok)} .co.g .t{color:var(--ok)}
+.co.n{background:var(--gold-pale);border-color:var(--gold)} .co.n .t{color:var(--warn)}
+
+/* two-col compare */
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:14px 0}
+@media(max-width:560px){.cmp{grid-template-columns:1fr}}
+.cmp>div{border:1px solid var(--border);border-radius:11px;padding:14px}
+.cmp .h{font-weight:700;font-size:14px;margin-bottom:9px;padding-bottom:7px;border-bottom:1px dashed var(--border)}
+.cmp .tail{background:var(--ok-pale)} .cmp .tail .h{color:var(--ok)}
+.cmp .head{background:var(--danger-pale)} .cmp .head .h{color:var(--danger)}
+.cmp ul{margin:0;padding-left:19px;font-size:13.5px}
+.cmp li{margin-bottom:6px}
+
+/* table */
+.tblw{overflow-x:auto;margin:14px 0;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:440px}
+th{background:var(--navy);color:#fff;padding:10px 11px;text-align:left;font-weight:500;font-size:13px}
+td{padding:10px 11px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:none}
+
+/* capability cards */
+.caps{display:grid;gap:10px;margin:14px 0}
+.cap{border:1px solid var(--border);border-radius:11px;padding:14px;background:var(--bg)}
+.cap .num{display:inline-flex;width:26px;height:26px;border-radius:8px;background:var(--gold);
+  color:var(--navy-deep);font-weight:700;font-size:14px;align-items:center;justify-content:center;margin-right:9px}
+.cap .nm{font-weight:700;font-size:15px}
+.cap .ds{font-size:13.5px;color:var(--muted);margin-top:7px}
+.cap .tag{display:inline-block;margin-top:9px;font-size:11.5px;padding:3px 9px;border-radius:20px;font-weight:500}
+.cap .tag.teach{background:var(--ok-pale);color:var(--ok)}
+.cap .tag.disc{background:var(--danger-pale);color:var(--danger)}
+
+/* self assessment */
+.calib{background:var(--gold-pale);border:1px dashed var(--gold);border-radius:11px;padding:15px;margin-bottom:16px}
+.calib label{display:block;font-weight:700;font-size:14.5px;margin-bottom:9px}
+.slider{width:100%;accent-color:var(--navy);height:32px}
+.q{border-bottom:1px solid var(--border);padding:14px 0}
+.q:last-of-type{border-bottom:none}
+.q .txt{font-size:14.5px;margin-bottom:10px}
+.opts{display:flex;gap:7px}
+.opt{flex:1;min-height:46px;border:1px solid var(--border);border-radius:9px;background:var(--card);
+  color:var(--muted);font-size:13px;font-family:inherit;cursor:pointer;transition:.16s;padding:6px 2px;font-weight:500}
+.opt.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.dom{margin-bottom:22px}
+.dom .dh{font-weight:700;font-size:15px;color:var(--navy);padding-bottom:8px;
+  border-bottom:2px solid var(--gold);margin-bottom:4px;display:flex;justify-content:space-between;align-items:baseline}
+html.dark .dom .dh{color:var(--gold-light)}
+.dom .dh em{font-style:normal;font-size:12.5px;color:var(--muted);font-weight:400}
+
+.score{background:linear-gradient(135deg,var(--navy),var(--navy-light));color:#fff;
+  border-radius:14px;padding:20px;margin:16px 0}
+.score .big{font-size:40px;font-weight:700;color:var(--gold-light);line-height:1.1}
+.score .band{font-size:16px;font-weight:700;margin:8px 0 4px}
+.score .desc{font-size:13.5px;opacity:.88}
+.bars{margin-top:16px}
+.bar-row{margin-bottom:11px}
+.bar-row .lb{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px;opacity:.9}
+.track{height:8px;background:rgba(255,255,255,.18);border-radius:4px;overflow:hidden}
+.fill{height:100%;border-radius:4px;transition:width .5s}
+.gapbox{border:1px solid var(--border);border-radius:11px;padding:15px;margin:14px 0;background:var(--bg)}
+.gapbox .g{font-size:15px;font-weight:700;margin-bottom:6px}
+
+/* layers */
+.layer{border:1px solid var(--border);border-radius:11px;margin-bottom:11px;overflow:hidden}
+.layer .lh{padding:13px 15px;display:flex;align-items:center;gap:11px;cursor:pointer;
+  background:var(--card);min-height:52px}
+.layer .lnum{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-weight:700;font-size:14px;flex:0 0 auto;background:var(--border);color:var(--muted)}
+.layer.on .lnum{background:var(--gold);color:var(--navy-deep)}
+.layer .lt{font-weight:700;font-size:14.5px;flex:1}
+.layer .lb{padding:0 15px 15px;font-size:14px}
+.said{background:var(--bg);border-left:3px solid var(--navy-light);padding:10px 13px;
+  border-radius:0 8px 8px 0;margin:9px 0;font-size:14px}
+.heard{background:var(--danger-pale);border-left:3px solid var(--danger);padding:10px 13px;
+  border-radius:0 8px 8px 0;margin:9px 0;font-size:13.5px}
+.heard b{color:var(--danger)}
+
+/* checklist */
+.prog{position:sticky;top:63px;z-index:15;background:var(--card);border:1px solid var(--border);
+  border-radius:11px;padding:12px 14px;margin-bottom:14px;box-shadow:var(--shadow)}
+.prog .pt{display:flex;justify-content:space-between;font-size:13px;font-weight:500;margin-bottom:7px}
+.prog .ptrack{height:7px;background:var(--border);border-radius:4px;overflow:hidden}
+.prog .pfill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));transition:width .35s}
+.grp{margin-bottom:8px}
+.grp .gh{font-weight:700;font-size:15px;color:var(--navy);margin:18px 0 4px;
+  padding-bottom:7px;border-bottom:2px solid var(--gold)}
+html.dark .grp .gh{color:var(--gold-light)}
+.grp .gn{font-size:12.5px;color:var(--muted);margin-bottom:10px}
+.ci{display:flex;gap:12px;padding:12px 13px;border:1px solid var(--border);border-radius:10px;
+  margin-bottom:8px;cursor:pointer;min-height:48px;align-items:flex-start;transition:.16s;background:var(--card)}
+.ci.on{background:var(--ok-pale);border-color:var(--ok)}
+.ci .box{width:22px;height:22px;border:2px solid var(--border);border-radius:6px;flex:0 0 auto;
+  margin-top:2px;display:flex;align-items:center;justify-content:center;transition:.16s}
+.ci.on .box{background:var(--ok);border-color:var(--ok)}
+.ci .cid{font-size:11.5px;color:var(--gold);font-weight:700;letter-spacing:.05em}
+.ci .ct{font-size:14.5px;line-height:1.6}
+.ci .cw{font-size:12.5px;color:var(--muted);margin-top:4px}
+.ci.key .ct:after{content:"關鍵";font-size:10.5px;background:var(--gold);color:var(--navy-deep);
+  padding:1px 7px;border-radius:20px;margin-left:7px;font-weight:700;vertical-align:2px}
+
+.btn{min-height:48px;padding:12px 20px;border-radius:11px;border:none;background:var(--navy);
+  color:#fff;font-size:15px;font-weight:500;font-family:inherit;cursor:pointer;transition:.16s;width:100%}
+.btn:active{transform:scale(.98)}
+.btn.gold{background:var(--gold);color:var(--navy-deep);font-weight:700}
+.btn.ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.btnrow{display:flex;gap:9px;margin-top:14px}
+
+/* quiz */
+.qbar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:16px}
+.qbar div{height:100%;background:var(--gold);transition:width .35s}
+.qmeta{font-size:12.5px;color:var(--muted);letter-spacing:.06em;margin-bottom:9px}
+.qtxt{font-size:16px;font-weight:500;line-height:1.7;margin-bottom:16px}
+.qopt{display:block;width:100%;text-align:left;padding:14px 15px;border:1px solid var(--border);
+  border-radius:11px;margin-bottom:9px;background:var(--card);color:var(--text);font-size:14.5px;
+  font-family:inherit;cursor:pointer;min-height:48px;line-height:1.6;transition:.16s}
+.qopt.right{background:var(--ok-pale);border-color:var(--ok);font-weight:500}
+.qopt.wrong{background:var(--danger-pale);border-color:var(--danger)}
+.qopt.dim{opacity:.5}
+.expl{background:var(--bg);border-left:4px solid var(--gold);border-radius:0 10px 10px 0;
+  padding:14px 15px;margin-top:14px;font-size:14px}
+.expl .vd{font-weight:700;margin-bottom:6px}
+
+/* sign */
+.sign{border-top:2px solid var(--gold);padding-top:16px;margin-top:8px}
+.sign .r{font-size:12.5px;color:var(--muted);letter-spacing:.05em}
+.sign .nm{font-size:16px;font-weight:700;color:var(--navy);margin:3px 0}
+html.dark .sign .nm{color:var(--gold-light)}
+.sign .fld{font-size:13px;color:var(--muted)}
+.disc{margin-top:16px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.9}
+.disc div:before{content:"·";margin-right:6px;color:var(--gold);font-weight:700}
+
+/* 2x2 quadrant */
+.mx{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:12px 0}
+.qd{border:1.5px solid var(--border);border-radius:11px;padding:13px;cursor:pointer;
+  min-height:104px;transition:.16s;background:var(--card)}
+.qd:active{transform:scale(.98)}
+.qd .qt{font-weight:700;font-size:13.5px;margin-bottom:6px;line-height:1.45}
+.qd .qs{font-size:12px;color:var(--muted);line-height:1.6}
+.qd.sel{box-shadow:0 0 0 2px var(--gold) inset}
+.qd.k-ok{background:var(--ok-pale);border-color:var(--ok)}
+.qd.k-ok .qt{color:var(--ok)}
+.qd.k-bad{background:var(--danger-pale);border-color:var(--danger)}
+.qd.k-bad .qt{color:var(--danger)}
+.qd.k-mid{background:var(--warn-pale);border-color:var(--warn)}
+.qd.k-mid .qt{color:var(--warn)}
+.axis{font-size:11.5px;color:var(--muted);letter-spacing:.06em;font-weight:500}
+.axis.y{writing-mode:vertical-rl;text-align:center}
+.mxwrap{display:grid;grid-template-columns:20px 1fr;gap:6px;align-items:center}
+.detail{border-left:4px solid var(--gold);background:var(--bg);border-radius:0 10px 10px 0;
+  padding:14px 15px;margin-top:4px;font-size:14px}
+.detail .dt{font-weight:700;margin-bottom:6px}
+.obs{background:var(--bg);border-radius:9px;padding:11px 13px;margin-top:9px;font-size:13px;line-height:1.7}
+.obs .ol{font-size:11.5px;letter-spacing:.08em;color:var(--gold);font-weight:700;display:block;margin-bottom:3px}
+.obs .ol2{margin-top:8px}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--navy-deep);
+  color:#fff;padding:12px 22px;border-radius:26px;font-size:14px;z-index:99;
+  box-shadow:0 6px 24px rgba(0,0,0,.3);animation:up .25s}
+@keyframes up{from{opacity:0;transform:translate(-50%,14px)}to{opacity:1;transform:translate(-50%,0)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useMemo} = React;
+
+/* ---------- icons ---------- */
+const I = {
+  share:()=>(<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>),
+  moon:()=>(<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>),
+  check:()=>(<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>)
+};
+
+/* ---------- data: technical skill vs risk ownership ---------- */
+const SKILLCMP = [
+  {d:"本質",
+   t:"把器械送到該去的地方，並完成預定動作。",
+   r:"為「這個決定可能造成的所有後果」負責 —— 包含決定不做、決定停手、決定求援。"},
+  {d:"習得方式",
+   t:"重複、例數、hands-on proctoring。做得越多越熟。",
+   r:"必須經歷過壞結果，並且沒有逃走。例數本身不會產生它。"},
+  {d:"如何被衡量",
+   t:"technical success rate、手術時間、器械使用數。<b>容易量化。</b>",
+   r:"幾乎沒有現成指標。只能看流程符合度與行為紀錄。<b>難以量化。</b>"},
+  {d:"何時被獎勵",
+   t:"<b>每一次順利的個案都在獎勵它。</b>持續、可見、公開。",
+   r:"幾乎不被獎勵。做得好的時候，看起來像「什麼事都沒發生」。"},
+  {d:"何時被需要",
+   t:"每一台手術。",
+   r:"<b>只在少數逆風個案上。</b>但那幾次決定了整個科的信譽與團隊耗損。"},
+  {d:"缺乏時的表現",
+   t:"手術做不完、時間拉長、需要他人接手 —— <b>當場就看得出來。</b>",
+   r:"順風時完全看不出來。第一次顯現，往往就是一個已經失控的個案 + 一群憤怒的家屬。"},
+  {d:"對團隊的影響",
+   t:"影響個案效率。",
+   r:"影響整個團隊。缺乏時，成本會外部化到護理、值班同事、以及被叫來收尾的人身上。"}
+];
+
+const QUAD = [
+  {k:"k-ok",tit:"高技術 ＋ 高承擔",sub:"可獨立承擔複雜個案",
+   det:"這是目標狀態。特徵是：接了 case 就是自己的 case，會事先想過失敗、會主動求援、會在失敗後親自面對家屬。這種人的併發症率可能不低，但團隊願意跟他上台。"},
+  {k:"k-bad",tit:"高技術 ＋ 低承擔",sub:"最危險的組合",
+   det:"<b>這是最需要被辨識、也最不容易被辨識的一格。</b>因為技術好，順風個案的結果漂亮，所以在任何以結果為基礎的評價系統裡都無可挑剔 —— 沒有人有立場質疑他的流程。缺陷只在逆風個案上一次全部顯現：沒有退場條件、沒有事前溝通、失敗後把家屬與團隊留給別人。<br><br>他的好結果本身，就是讓問題無法被討論的原因。"},
+  {k:"k-mid",tit:"低技術 ＋ 高承擔",sub:"相對安全，成長最快",
+   det:"技術還在累積，但會事先規劃、會設退場條件、會早期求援、會親自面對家屬。這種人造成的損害通常有限，而且進步速度最快 —— 因為他的回饋迴路是完整的。<b>訓練體系應該優先保護這一格的人</b>，他們最容易因為併發症數字而被誤判。"},
+  {k:"",tit:"低技術 ＋ 低承擔",sub:"訓練需求明確",
+   det:"看起來最糟，但實際風險相對可控 —— 因為通常不會被派到真正複雜的個案。處理方式單純：明確的訓練計畫，以及在補齊之前，高風險個案共同決策、共同執行。"}
+];
+
+/* ---------- data: case mix worked example ---------- */
+const MIXROW = [
+  {l:"總個案數",a:"100 例",b:"100 例"},
+  {l:"其中複雜個案<br><span style='font-size:12px;color:var(--muted)'>cardiogenic shock／CTO／高齡多共病</span>",a:"0 例",b:"30 例"},
+  {l:"<b>總併發症率（未校正）</b>",a:"<b>2.0%</b><br>2／100",b:"<b>8.0%</b><br>8／100"},
+  {l:"單看非複雜個案",a:"2.0%<br>2／100",b:"<b>1.4%</b><br>1／70"},
+  {l:"單看複雜個案",a:"—",b:"23.3%<br>7／30"}
+];
+
+/* ---------- data: capabilities ---------- */
+const CAPS = [
+  {n:1,nm:"術前風險分層 (Risk stratification)",
+   ds:"把病人放進哪一格，決定後面所有事。說不出「這個病人不適合做」的理由，就等於沒有做分層 —— 只是做了一次事後合理化。",
+   obs:"能在術前 30 秒內說出這個 case 的三個主要風險來源，以及它們的優先順序。",
+   train:"每個高風險 case 術前口頭 briefing，由第二人負責提問：「如果不做會怎樣？」「什麼情況下你會取消？」",
+   tag:"可教學",cls:"teach"},
+  {n:2,nm:"Bail-out 規劃與退場條件 (Exit criteria)",
+   ds:"併發症發生的當下沒有時間思考，只能執行事先想好的。沒有退場條件的手術，等於把停手的決定交給運氣 —— 而運氣不會在對比劑用到 400 mL 時提醒你。",
+   obs:"進導管室前已經說出退場條件的<b>具體數字</b>，而不是「看情況」。",
+   train:"pre-procedure huddle 強制填寫退場條件；MMC (Mortality and Morbidity Conference) 檢討時回頭核對當時是否設定過、以及有沒有遵守。",
+   tag:"可教學",cls:"teach"},
+  {n:3,nm:"壞消息的「事前」溝通",
+   ds:"把代價講在前面。術後才講的一切，都會被家屬解讀為辯解 —— 無論內容多正確、態度多誠懇。時間點本身就是內容的一部分。",
+   obs:"病歷可查到三項記載：中間結果、術中應變預告、以及「這個手術有可能失敗」。",
+   train:"資深者陪同談話後立即 debrief；固定要求 teach-back 並記錄家屬實際複述的內容。",
+   tag:"可教學",cls:"teach"},
+  {n:4,nm:"併發症後的持續承擔 (Ownership)",
+   ds:"不轉手、不消失、由主術者本人向家屬解釋、主動進 MMC。這一項無法靠教學養成 —— 沒有人會因為上了一堂課而變得願意承擔。",
+   obs:"併發症後的家屬解釋由主術者本人完成；該個案主動出現在 MMC，而不是被別人提出來。",
+   train:"制度規定：主術者即 case owner，責任不隨著病人離開導管室而移轉；求援需登錄並回饋結果。",
+   tag:"需制度規範",cls:"disc"}
+];
+
+/* ---------- data: self assessment ---------- */
+const DOMS = [
+  {id:"d1",nm:"D1 術前風險分層",items:[
+    "我會在術前明確記錄這個 case 的風險等級與主要風險來源",
+    "我能說出這個病人「不適合做」的理由，而不只是「適合做」的理由",
+    "我會在術前確認 EF、renal function、frailty、是否已在 vasopressor 或 ventilator"]},
+  {id:"d2",nm:"D2 Bail-out 與退場條件",items:[
+    "進導管室前，我已經想好至少兩種主要併發症的處理路徑",
+    "我會事先設定退場條件：時間、contrast volume、fluoro time、嘗試次數上限",
+    "我知道今天誰可以支援，並已確認對方在院內且聯絡得到"]},
+  {id:"d3",nm:"D3 壞消息的事前溝通",items:[
+    "我會主動說出「這個手術有可能失敗」，而不只是列併發症百分比",
+    "我會說明中間結果：做了但沒成功、只做到一半、需要第二次",
+    "插管、洗腎、CPR、DNR 的意向，我在術前而非術後討論"]},
+  {id:"d4",nm:"D4 併發症後的承擔",items:[
+    "併發症發生後，向家屬解釋的人是我本人",
+    "我會把自己的併發症案例主動提到 MMC 討論",
+    "我求援時會留下紀錄，並在事後回饋結果給支援者"]}
+];
+const OPTS = ["從未／很少","有時","幾乎總是"];
+
+const bandOf = (s)=>{
+  if(s>=20) return {b:"流程成熟 (Process-mature)",d:"你的好結果來自流程，而不是來自運氣。維持並把它文件化，讓它可以被複製、被教。",c:"var(--gold-light)"};
+  if(s>=14) return {b:"有基礎，但關鍵環節仰賴臨場反應",d:"順風時看不出差別；逆風時差別全部出現。優先補最低分的那個 domain。",c:"#e0bf52"};
+  if(s>=8)  return {b:"高度依賴順風條件",d:"目前的成功很可能來自 case selection 而非流程。一旦遇到真正的逆風個案，處理將落在他人身上。",c:"#f0a24a"};
+  return {b:"系統性風險",d:"這不是個人指責，而是明確的訓練需求。在補齊 D1–D2 之前，高風險個案應共同決策、共同執行。",c:"#e8746a"};
+};
+
+/* ---------- data: risk layers ---------- */
+const LAYERS = [
+  {t:"第一層：機率 (Probability)",
+   said:"「這個手術的死亡風險大約 5%，中風風險大約 2%。」",
+   heard:"家屬聽到的是：「醫師說成功率 95%，那應該沒問題。」5% 對非醫療人員在心理上等於 0%。",
+   note:"機率是法律語言，不是理解語言。單獨使用時，它幾乎不改變家屬的期待。",
+   done:"多數人只做到這裡就請家屬簽名。"},
+  {t:"第二層：情境 (Scenario)",
+   said:"「如果發生併發症，會是術中血壓突然掉、需要緊急插管、可能需要輸血、然後直接進加護病房，不會回普通病房。」",
+   heard:"家屬開始能想像畫面，但仍停留在「醫師會處理」的位置上。",
+   note:"情境讓風險變得具體。這一層能大幅降低「怎麼會這樣」的震驚，但還不足以降低憤怒。",
+   done:"少數人做到這裡。"},
+  {t:"第三層：代價 (Consequence to the family)",
+   said:"「如果進到那個狀況，你們可能明天早上就要決定：要不要繼續插管、要不要洗腎、要不要壓胸。這個決定會落在你們身上，而且時間可能只有幾個小時。我今天先跟你們講，是希望那個時候你們不是第一次聽到。」",
+   heard:"家屬第一次意識到：這件事有他們自己要付的代價，而不只是病人的風險。",
+   note:"能真正降低事後憤怒的是這一層。因為憤怒的來源通常不是結果本身，而是「我從來沒被告知我會面對這個」。",
+   done:"這一層必須在術前完成 —— 術後講的同一段話，會被聽成推卸責任。"}
+];
+
+/* ---------- data: checklist ---------- */
+const CL = [
+  {g:"A. 定位：先講目的，不要先講風險",n:"開場如果直接跳到併發症，家屬會進入防衛狀態，後面的內容都聽不進去。",
+   items:[
+    {id:"A1",t:"明確說出手術目的：救命／減症狀／延緩惡化 —— 並說出「這不是根治」",key:true},
+    {id:"A2",t:"如果不做，預期的自然病史與時間軸是什麼"},
+    {id:"A3",t:"病人本身的手術耐受度：frailty、EF、renal function、是否 shock、是否已在 ventilator"},
+    {id:"A4",t:"其他選項及各自代價（含保守治療、外科、緩和醫療）"}]},
+  {g:"B. 命名壞結果：用家屬能想像的語言",n:"不要用百分比帶過。要說出「會發生什麼事」。",
+   items:[
+    {id:"B1",t:"最可能發生的併發症，以及我們的處理路徑"},
+    {id:"B2",t:"最壞結果：死亡、stroke、長期洗腎、長期插管、需緊急外科"},
+    {id:"B3",t:"中間結果：手術做了但沒成功、只做到一半、需要第二次",key:true,w:"最常被漏掉的一項。多數家屬的認知裡只有「成功」與「死亡」兩格。"},
+    {id:"B4",t:"若併發，可能動用的資源：緊急外科、ECMO、IABP、大量輸血、ICU 天數"}]},
+  {g:"C. 決策預演：把術後才會出現的決定提前到現在",n:"在壓力下第一次面對的決定，最容易變成日後的衝突與自責。",
+   items:[
+    {id:"C1",t:"「如果術中發生 X，我們會做 Y」—— 事先告知，而非事後通知",key:true},
+    {id:"C2",t:"若術後需決定插管／洗腎／CPR，家屬意向是什麼（DNR 討論放在術前）",key:true},
+    {id:"C3",t:"確認主要決策代理人是誰"},
+    {id:"C4",t:"是否有具影響力但今天不在場的家屬",key:true,w:"事後衝突最大的單一來源。缺席者往往是最後最憤怒的人。"}]},
+  {g:"D. 期待對齊",n:"這一段的目的不是免責，而是讓「失敗」在家屬的認知裡是一個原本就存在的選項。",
+   items:[
+    {id:"D1",t:"定義成功：technical success ≠ clinical success ≠ 症狀改善"},
+    {id:"D2",t:"明確說出：「這個手術有可能失敗。失敗不代表沒有盡力，也不代表判斷錯誤。」",key:true},
+    {id:"D3",t:"病人本人的意願是否曾表達、由誰見證"},
+    {id:"D4",t:"Teach-back：請家屬用自己的話說一次「最壞的情況可能是什麼」",key:true,w:"這是整份查核表唯一能驗證「理解」而非「同意」的項目。"}]},
+  {g:"E. 紀錄",n:"知情同意 (informed consent) 轉移法律風險；知情理解 (informed understanding) 才降低衝突。病歷要能證明後者。",
+   items:[
+    {id:"E1",t:"在場人員、時間、使用語言（是否需台語或翻譯）"},
+    {id:"E2",t:"是否提供圖示或影像說明（不只口頭）"},
+    {id:"E3",t:"記錄家屬實際問了什麼問題"},
+    {id:"E4",t:"病歷須明確記載 B3、C1、D2 三項已說明",key:true}]},
+  {g:"F. 團隊 Pre-procedure Huddle（給術者與導管室，非家屬）",n:"這一段是整份查核表的槓桿點。",
+   items:[
+    {id:"F1",t:"主術者、第二術者、求援對象與聯絡方式已確認"},
+    {id:"F2",t:"退場條件已明確設定：時間上限、contrast 上限、fluoro 上限、失敗嘗試次數上限",key:true},
+    {id:"F3",t:"備血、外科／ECMO 是否 standby 或已告知"},
+    {id:"F4",t:"若失敗，由誰向家屬解釋 —— 原則為主術者本人",key:true},
+    {id:"F5",t:"若動用外部支援，該案列入後續 MMC 檢討"}]}
+];
+
+const REDFLAGS = [
+  "家屬只問「什麼時候可以做」",
+  "家屬說「醫師你決定就好」（這是信任，但不是理解）",
+  "有影響力的家屬未到場且未被告知",
+  "家屬複述不出最壞結果（teach-back 失敗）",
+  "你自己說不出這個 case 的退場條件"
+];
+
+/* ---------- data: quiz ---------- */
+const QZ = [
+  {q:"一位 82 歲、EF 25%、Cr 2.4 的病人要做 high-risk PCI。術前你告訴家屬「風險大概 5%」，家屬點頭同意。最主要的溝通缺陷是什麼？",
+   o:["沒有提供書面資料","5% 這個數字估得不夠精準","只講了機率，沒有講情境與代價","沒有請家屬簽署同意書"],c:2,
+   e:"風險溝通有三層：機率、情境、代價。單講機率時，5% 在家屬的心理上幾乎等於 0%。能真正降低事後憤怒的是第三層 —— 明確說出「你們可能需要在幾小時內決定要不要洗腎、要不要繼續插管」。"},
+  {q:"術中發生 coronary perforation，緊急處理後病人送 ICU。家屬情緒非常激動。臨床上，事後憤怒最主要的來源是什麼？",
+   o:["併發症本身","術前期待與實際結果的落差","醫療費用","等待時間過長"],c:1,
+   e:"憤怒多數時候不是針對結果，而是針對期待落差。同一個併發症，若家屬在術前就被明確告知過「這是可能的結果之一」，反應會完全不同。這也是為什麼代價必須講在前面。"},
+  {q:"某術者連續 50 例 PCI 無重大併發症，因此認為自己不需要事先設定退場條件。這個推論的問題在哪裡？",
+   o:["樣本量太小，而且順風個案的好結果會掩蓋流程缺陷","退場條件只適用於 CTO","沒有問題，經驗就是最好的判斷","應該累積到 100 例才算有效"],c:0,
+   e:"順風手術的特性是：好的結果會掩蓋壞的流程。沒有計畫、沒有退場條件、沒有備援，只要病人順利出院，一切看起來都成立。缺陷只會在第一個真正的逆風個案上一次全部出現。"},
+  {q:"公開績效報告 (public reporting) 對高風險介入最常見的非預期後果是什麼？",
+   o:["整體照護品質提升","risk-averse case selection：術者開始迴避高風險病人","醫療費用下降","病人自主權提高"],c:1,
+   e:"當一個系統無法做適當的 risk adjustment，它就會懲罰願意承擔風險的人。術者會開始拒接 cardiogenic shock、CTO、高齡多共病，因為個人數字比病人利益更容易被衡量。願意接高風險個案的人必然累積更多壞結果 —— 這是數學上的必然，不是能力缺陷。"},
+  {q:"家屬在術前說「醫師你決定就好」。正確的解讀是？",
+   o:["溝通已完成，可以進導管室","這是信任，但不代表理解；teach-back 尚未通過","家屬不在意結果","應建議家屬另尋醫師"],c:1,
+   e:"這是紅旗之一。信任會在結果不如預期時消失，理解不會。此時應改為：「我想確認我講清楚了 —— 可以請您用自己的話說一次，最壞的情況可能是什麼？」"},
+  {q:"下列哪一項在術前溝通中最常被漏掉？",
+   o:["死亡風險","stroke 風險","中間結果：做了但沒成功、只做到一半、需要第二次","長期洗腎的可能"],c:2,
+   e:"多數家屬的認知裡只有「成功」和「死亡」兩格。技術上最常見的實際結果 —— partial success、aborted procedure、需要 staged procedure —— 反而完全不在他們的預期範圍內，因此最容易被解讀為「醫師失手了」。"},
+  {q:"下列哪一項最能區分「只能做順風手術」與「能承擔逆風手術」的術者？",
+   o:["累積手術例數","使用的器械品牌與新舊","是否事先想過失敗、並準備好自己面對失敗的解釋","technical success rate 的高低"],c:2,
+   e:"手技能力 (technical skill) 與風險承擔能力 (risk ownership) 是兩種不同的能力。醫療系統只獎勵前者，卻只在出事時才需要後者。開始一個高風險個案的前提，是你已經想過失敗，並且準備好自己面對失敗的解釋。"},
+  {q:"評估一位術者的水準時，下列哪一組指標最適當？",
+   o:["未經校正的併發症率","流程符合度：術前分層、退場條件、備援啟動時機、併發處理速度","病人滿意度問卷","手術時間長短"],c:1,
+   e:"未經校正的併發症率反映的是 case mix，不是水準。要評估能力必須看流程指標。這也是給自己的自我評價系統：因為外部環境不會給你一套不依賴結果的評價方式，你必須自己建立。"},
+  {q:"在「手技能力 × 風險承擔能力」的 2×2 中，哪一格最危險，而且最不容易被辨識？",
+   o:["低技術 ＋ 低承擔","高技術 ＋ 低承擔","低技術 ＋ 高承擔","高技術 ＋ 高承擔"],c:1,
+   e:"因為技術好，順風個案的結果漂亮，在任何以結果為基礎的評價系統裡都無可挑剔 —— 沒有人有立場質疑他的流程。他的好結果本身，就是讓問題無法被討論的原因。缺陷只在逆風個案上一次全部顯現：沒有退場條件、沒有事前溝通、失敗後把家屬與團隊留給別人。"},
+  {q:"術者 A 只接 elective、stable 個案，總併發症率 2.0%。術者 B 不篩選個案，總併發症率 8.0%，但單看非複雜個案為 1.4%。正確的結論是？",
+   o:["A 比 B 安全，應優先安排 A 執行手術","B 需要接受再訓練","在可比較的個案上 B 的表現優於 A；未校正的數字得到了與事實相反的結論","兩人無法比較，應停止所有品質評估"],c:2,
+   e:"B 的總併發症率是 A 的四倍，但在同類個案上 B 其實更好（1.4% vs 2.0%）。若只看未經校正的數字，不只會得到相反的結論，還會教會 B 一件事：不要再接複雜個案。這正是 risk-averse case selection 的形成機制 —— 系統懲罰了願意承擔風險的人。"}
+];
+
+/* ================= components ================= */
+
+const Toast = ({m})=> m ? <div className="toast">{m}</div> : null;
+
+const TakeHome = ()=>(
+  <div className="card takehome">
+    <div className="lbl">TAKE HOME</div>
+    <p><b>手技能力 (technical skill) 與風險承擔能力 (risk ownership) 是兩種不同的能力。</b>醫療系統只獎勵前者，卻只在出事時才需要後者。</p>
+    <p>「只能做順風手術」不是人格問題，而是四項<b>可以被訓練</b>的能力缺口：術前分層、bail-out 規劃、壞消息的事前溝通、併發後的持續承擔。</p>
+    <p>家屬的憤怒，多數時候不是針對結果，而是針對<b>期待落差</b>。降低憤怒的唯一時機是術前，不是術後。</p>
+  </div>
+);
+
+const Concept = ()=>{
+  const [q,setQ]=useState(1);
+  return (
+  <div>
+    <TakeHome/>
+
+    <div className="card">
+      <h2 className="sec"><span className="bar"></span>一、兩種能力：Technical Skill 與 Risk Ownership</h2>
+      <p className="sec-sub">整套邏輯的地基 —— 這不是同一種能力的高低，而是兩個獨立的軸</p>
+      <p><b>手技能力 (technical skill)</b> 是把器械送到該去的地方並完成預定動作。<b>風險承擔能力 (risk ownership)</b> 是為這個決定可能造成的所有後果負責 —— 包含決定不做、決定停手、決定求援，以及事情不如預期時留在原地。</p>
+      <div className="co d"><div className="t">問題的根源是「獎勵的非對稱」</div>
+        技術能力<b>每一台順利的手術都在獎勵它</b>，持續、可見、可量化。承擔能力<b>只在少數逆風個案上被需要</b>，而且做得好的時候看起來像「什麼事都沒發生」。
+        一個只獎勵可量化項目的系統，必然會養出前者強、後者弱的人 —— 這不是個人的道德失敗，是<b>制度的必然產物</b>。</div>
+      <div className="tblw"><table><tbody>
+        <tr><th style={{width:"20%"}}>面向</th><th style={{width:"40%"}}>Technical Skill</th><th style={{width:"40%"}}>Risk Ownership</th></tr>
+        {SKILLCMP.map((r,i)=>(
+          <tr key={i}>
+            <td><b>{r.d}</b></td>
+            <td dangerouslySetInnerHTML={{__html:r.t}}></td>
+            <td dangerouslySetInnerHTML={{__html:r.r}}></td>
+          </tr>))}
+      </tbody></table></div>
+
+      <h3>兩種能力可以獨立存在：四種術者</h3>
+      <p className="small" style={{marginBottom:"4px"}}>點選任一格看說明。橫軸為手技能力，縱軸為風險承擔能力。</p>
+      <div className="mxwrap">
+        <div className="axis y">承擔能力 →</div>
+        <div>
+          <div className="mx">
+            {QUAD.map((k,i)=>(
+              <div className={"qd "+k.k+(q===i?" sel":"")} key={i} onClick={()=>setQ(i)}>
+                <div className="qt">{k.tit}</div>
+                <div className="qs">{k.sub}</div>
+              </div>))}
+          </div>
+        </div>
+      </div>
+      <div className="axis" style={{display:"block",textAlign:"center",marginBottom:"10px"}}>手技能力 →</div>
+      <div className="detail">
+        <div className="dt">{QUAD[q].tit}　—　{QUAD[q].sub}</div>
+        <div dangerouslySetInnerHTML={{__html:QUAD[q].det}}></div>
+      </div>
+      <div className="co n"><div className="t">為什麼這個 2×2 值得放進科內教學</div>
+        因為它把最難講的一句話，變成一個<b>結構性描述而非人身評價</b>：
+        高技術＋低承擔之所以危險，正是因為<b>他的好結果讓他的流程無法被質疑</b>。
+        討論這一格，討論的是制度的盲點，不是某個人。</div>
+    </div>
+
+    <div className="card">
+      <h2 className="sec"><span className="bar"></span>二、順風與逆風的非對稱性</h2>
+      <p className="sec-sub">為什麼「零併發症」不能證明流程正確</p>
+      <div className="cmp">
+        <div className="tail"><div className="h">順風手術</div>
+          <ul>
+            <li><b>好的結果會掩蓋壞的流程</b></li>
+            <li>沒有風險分層、沒有退場條件、沒有備援 —— 只要病人順利出院，一切看起來都成立</li>
+            <li>回饋迴路是失效的：術者無法從成功中得知自己漏了什麼</li>
+            <li>累積的不是能力，是運氣的樣本數</li>
+          </ul></div>
+        <div className="head"><div className="h">逆風手術</div>
+          <ul>
+            <li><b>壞的結果會掩蓋好的流程</b></li>
+            <li>做足 risk stratification、備血、談好 ECMO、術前講清最壞情境 —— 病人仍可能走了</li>
+            <li>外界只看到「他的併發症比較多」</li>
+            <li>這是 outcome bias 的標準形態</li>
+          </ul></div>
+      </div>
+      <h3>順風個案上，有哪些東西是「隱形」的</h3>
+      <div className="tblw"><table><tbody>
+        <tr><th style={{width:"46%"}}>沒有做的事</th><th>在順風個案上的後果</th></tr>
+        <tr><td>沒有做術前風險分層</td><td>沒有後果。病人本來就會好。</td></tr>
+        <tr><td>沒有設退場條件</td><td>沒有後果。因為根本不需要退場。</td></tr>
+        <tr><td>沒有講中間結果與失敗可能</td><td>沒有後果。家屬很滿意，還會道謝。</td></tr>
+        <tr><td>沒有確認求援對象在不在院內</td><td>沒有後果。沒有用到。</td></tr>
+      </tbody></table></div>
+      <div className="co w"><div className="t">這張表是整個問題的核心</div>
+        以上四項的「沒有後果」，會被大腦誤讀為<b>「所以我不需要做這些」</b>。
+        順風個案不只無法訓練這些能力，它還會<b>主動教你不要做</b> —— 這是一個負向學習迴路。</div>
+      <div className="co n"><div className="t">結論</div>
+        你必須自己建立一套<b>不依賴結果</b>的自我評價系統，因為外部環境不會給你。</div>
+    </div>
+
+    <div className="card">
+      <h2 className="sec"><span className="bar"></span>三、併發症率是複雜度的函數，不是能力的函數</h2>
+      <p className="sec-sub">願意接高風險個案的人，必然累積更多壞結果 —— 這是數學，不是缺陷</p>
+      <p>公開績效報告 (public reporting) 的非預期後果已被討論很久：它會誘發 <b>risk-averse case selection</b>。術者開始拒接 cardiogenic shock、拒接 CTO、拒接高齡多共病，因為個人數字比病人利益更容易被衡量。</p>
+      <div className="co d"><div className="t">核心命題</div>
+        當一個系統無法做適當的 risk adjustment，它就會<b>懲罰願意承擔風險的人</b>。</div>
+
+      <h3>示意計算：兩位術者，相同技術水準</h3>
+      <div className="tblw"><table><tbody>
+        <tr><th style={{width:"40%"}}></th><th>術者 A<br/><span style={{fontWeight:300,fontSize:"12px"}}>只接 elective, stable</span></th><th>術者 B<br/><span style={{fontWeight:300,fontSize:"12px"}}>不篩選個案</span></th></tr>
+        {MIXROW.map((r,i)=>(
+          <tr key={i}>
+            <td dangerouslySetInnerHTML={{__html:r.l}}></td>
+            <td dangerouslySetInnerHTML={{__html:r.a}}></td>
+            <td dangerouslySetInnerHTML={{__html:r.b}}></td>
+          </tr>))}
+      </tbody></table></div>
+      <div className="co g"><div className="t">請讀出這張表真正說的事</div>
+        術者 B 的總併發症率是 A 的<b>四倍</b>。但在<b>可比較的同類個案</b>上，B 的表現其實優於 A（1.4% vs 2.0%）。<br/><br/>
+        若科內只看未經校正的總體數字，會得到一個<b>與事實相反</b>的結論 —— 並且這個錯誤結論會讓 B 學會一件事：<b>不要再接複雜個案。</b>
+        <div className="small" style={{marginTop:"8px",fontStyle:"normal"}}>（上表為示意數字，用於說明 case mix 效應，非引用特定研究數據。）</div></div>
+
+      <h3>請把兩個數字分開看</h3>
+      <div className="tblw"><table><tbody>
+        <tr><th style={{width:"38%"}}>指標</th><th>它真正代表什麼</th></tr>
+        <tr><td><b>未經校正的併發症率</b></td><td>你的 case mix。不是你的水準。</td></tr>
+        <tr><td><b>流程符合度</b><br/><span className="small">術前分層、退場條件、備援啟動時機、併發處理速度</span></td><td><b>這才是你的水準。</b>也是唯一你能負責、能改善、能教給別人的部分。</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <div className="card">
+      <h2 className="sec"><span className="bar"></span>四、「只做成功手術」本質上是缺少一種可訓練的能力</h2>
+      <p className="sec-sub">把觀察從人格指控，轉換成一份能力清單</p>
+      <p>「他只能做順風手術」如果停在這裡，它是一句抱怨，無法處理、也無法討論。但如果把它拆成<b>四項具名的能力</b>，它就變成一份可以排課、可以查核、可以驗收的清單 —— 而清單是可以被討論的，人格不行。</p>
+      <div className="caps">
+        {CAPS.map(c=>(
+          <div className="cap" key={c.n}>
+            <div><span className="num">{c.n}</span><span className="nm">{c.nm}</span></div>
+            <div className="ds">{c.ds}</div>
+            <div className="obs">
+              <span className="ol">可觀察行為</span>
+              <span dangerouslySetInnerHTML={{__html:c.obs}}></span>
+              <span className="ol ol2">如何訓練／規範</span>
+              <span dangerouslySetInnerHTML={{__html:c.train}}></span>
+            </div>
+            <div className={"tag "+c.cls}>{c.tag}</div>
+          </div>))}
+      </div>
+      <div className="co g"><div className="t">為什麼要做 1–3 與 4 的區分</div>
+        第 1–3 項是<b>教學問題</b>，可以透過查核表與 huddle 制度化，而且成效可以觀察。第 4 項是<b>紀律問題</b>，沒有人會因為上了一堂課而變得願意承擔，必須靠制度要求。<br/><br/>
+        單靠少數人「收尾」是不可持續的 —— 把 1–3 教出來，才是唯一能真正減輕負擔的路徑。</div>
+      <div className="co w"><div className="t">同時也是一個保護機制</div>
+        當你能說出「這位同事缺的是 D2 與 D3」，你就不需要說出「這位同事不行」。
+        前者可以進科務會議並產生行動；後者只會產生對立，然後什麼都不會改變。</div>
+    </div>
+
+    <div className="card">
+      <h2 className="sec"><span className="bar"></span>五、要拆掉的三個錯誤自我認知</h2>
+      <p className="sec-sub">給做重症與複雜介入者的認知校正</p>
+      <div className="tblw"><table><tbody>
+        <tr><th style={{width:"44%"}}>錯誤認知</th><th>替換</th></tr>
+        <tr><td>「如果我準備得夠好，就不該有壞結果」</td><td>有一部分風險是<b>不可壓縮的 (irreducible risk)</b>。準備的目的是減少「可避免的壞結果」，不是消滅所有壞結果。</td></tr>
+        <tr><td>「併發症代表我能力有問題」</td><td>併發症是<b>結果指標</b>；能力要看<b>流程指標</b>。兩者相關，但不等同。</td></tr>
+        <tr><td>「我應該無限支援」</td><td>沒有無限的最後防線。求援必須有<b>明確路徑</b>，也必須有<b>紀錄與 MMC 回饋</b> —— 否則就變成單方面的隱形補貼。</td></tr>
+      </tbody></table></div>
+      <div className="co w"><div className="t">給自己的一句話</div>
+        你的挫折感是<b>制度訊號</b>，不是情緒缺陷。它該被翻譯成兩件事：一套認知框架，和一份把代價講在前面的查核表。</div>
+    </div>
+  </div>);
+};
+
+const SelfAssess = ()=>{
+  const [pred,setPred]=useState(18);
+  const [ans,setAns]=useState({});
+  const [show,setShow]=useState(false);
+  const total = useMemo(()=>Object.values(ans).reduce((a,b)=>a+b,0),[ans]);
+  const answered = Object.keys(ans).length;
+  const all = answered===12;
+  const domScore = (d)=> d.items.reduce((s,_,i)=> s+(ans[d.id+"-"+i]??0),0);
+  const band = bandOf(total);
+  const gap = pred-total;
+  const weakest = useMemo(()=>{
+    if(!all) return null;
+    return DOMS.reduce((w,d)=> domScore(d)<domScore(w)?d:w, DOMS[0]);
+  },[ans,all]);
+
+  return (
+    <div>
+      <div className="card">
+        <h2 className="sec"><span className="bar"></span>術者風險承擔能力自評</h2>
+        <p className="sec-sub">12 題 · 每題 0–2 分 · 滿分 24 分 · 全科同一份，包含資深者</p>
+        <div className="calib">
+          <label>第一步：先預測你自己的分數（不要跳過）</label>
+          <input className="slider" type="range" min="0" max="24" value={pred}
+            onChange={e=>setPred(+e.target.value)} disabled={show}/>
+          <div style={{display:"flex",justifyContent:"space-between",fontSize:"13px"}}>
+            <span className="small">0</span>
+            <b style={{fontSize:"18px",color:"var(--warn)"}}>{pred} 分</b>
+            <span className="small">24</span>
+          </div>
+          <div className="small" style={{marginTop:"8px"}}>
+            預測與實際的<b>落差 (calibration gap)</b> 本身就是結果。落差越大，代表自我評估的準確度越低 ——
+            而自我評估的準確度，正是能否安全承擔高風險個案的前提。
+          </div>
+        </div>
+
+        {DOMS.map(d=>(
+          <div className="dom" key={d.id}>
+            <div className="dh"><span>{d.nm}</span><em>{domScore(d)} / 6</em></div>
+            {d.items.map((t,i)=>{
+              const k=d.id+"-"+i;
+              return (
+                <div className="q" key={k}>
+                  <div className="txt">{t}</div>
+                  <div className="opts">
+                    {OPTS.map((o,v)=>(
+                      <button key={v} className={"opt"+(ans[k]===v?" on":"")}
+                        onClick={()=>setAns({...ans,[k]:v})}>{o}</button>))}
+                  </div>
+                </div>);
+            })}
+          </div>))}
+
+        {!show && <button className="btn gold" disabled={!all}
+          onClick={()=>setShow(true)}>
+          {all?"查看結果":"尚有 "+(12-answered)+" 題未作答"}</button>}
+      </div>
+
+      {show && (
+        <div className="card">
+          <div className="score">
+            <div className="small" style={{opacity:.8,letterSpacing:".1em"}}>總分</div>
+            <div className="big">{total}<span style={{fontSize:"20px",opacity:.6}}> / 24</span></div>
+            <div className="band" style={{color:band.c}}>{band.b}</div>
+            <div className="desc">{band.d}</div>
+            <div className="bars">
+              {DOMS.map(d=>{
+                const s=domScore(d), pct=s/6*100;
+                const c = s>=5?"var(--gold-light)":s>=3?"#f0a24a":"#e8746a";
+                return (
+                  <div className="bar-row" key={d.id}>
+                    <div className="lb"><span>{d.nm}</span><span>{s}/6</span></div>
+                    <div className="track"><div className="fill" style={{width:pct+"%",background:c}}></div></div>
+                  </div>);
+              })}
+            </div>
+          </div>
+
+          <div className="gapbox">
+            <div className="g">Calibration gap：{gap>0?"+"+gap:gap} 分</div>
+            <div className="small">
+              {gap>=6 && <span><b style={{color:"var(--danger)"}}>高估自己 {gap} 分。</b>這是最需要注意的一種模式：<b>不是能力不足，而是不知道自己不足</b>。在順風個案上完全看不出來，在第一個逆風個案上會一次全部出現。建議：下一個高風險 case 請第二位術者共同完成術前 huddle，用外部視角校正。</span>}
+              {gap>=2 && gap<6 && <span>輕微高估。方向大致正確，但請特別留意最低分的 domain —— 那通常是自我認知最模糊的地方。</span>}
+              {gap>-2 && gap<2 && <span><b style={{color:"var(--ok)"}}>校正良好。</b>你對自己的判斷與實際相符，這是能安全承擔高風險個案的重要前提。</span>}
+              {gap<=-2 && <span><b style={{color:"var(--ok)"}}>低估自己 {Math.abs(gap)} 分。</b>常見於長期處理併發症、被 outcome bias 壓抑的術者。請回到「流程符合度才是你的水準」這一點 —— 你的實際流程比你以為的更完整。</span>}
+            </div>
+          </div>
+
+          {weakest &&
+            <div className="co w"><div className="t">優先補強：{weakest.nm}</div>
+              最低分的 domain 就是你的實際上限。在真正的逆風個案裡，決定結果的不是你最強的能力，而是最弱的那一項。</div>}
+
+          <div className="co n"><div className="t">這份分數的正確用法</div>
+            <b>不用於績效考核，不用於個別比較。</b>建議用法：全科同時填寫、只公布<span> </span>
+            <b>去識別化的分佈與各 domain 平均</b>，然後把最低的 domain 排進下一季的科內教學。
+            當資料顯示 D2（退場條件）全科平均只有 2/6，討論就會從「誰不行」轉向「我們缺什麼」。</div>
+
+          <button className="btn ghost" onClick={()=>{setShow(false);setAns({});}}>重新作答</button>
+        </div>)}
+    </div>);
+};
+
+const Layers = ()=>{
+  const [open,setOpen]=useState(2);
+  return (
+    <div>
+      <div className="card">
+        <h2 className="sec"><span className="bar"></span>風險溝通的三層</h2>
+        <p className="sec-sub">同一個病人、同一位醫師、三種講法 —— 家屬事後的反應完全不同</p>
+        <div className="co d"><div className="t">關鍵區分</div>
+          <b>知情同意 (informed consent) ≠ 知情理解 (informed understanding)。</b><br/>
+          同意書轉移法律風險，但不建立理解。多數「我覺得我溝通得很好」的自我評估，落差就在這裡 ——
+          <b>講過</b>不等於<b>被聽懂</b>，被聽懂不等於<b>能複述</b>。</div>
+        {LAYERS.map((l,i)=>(
+          <div className={"layer"+(open===i?" on":"")} key={i}>
+            <div className="lh" onClick={()=>setOpen(open===i?-1:i)}>
+              <div className="lnum">{i+1}</div>
+              <div className="lt">{l.t}</div>
+              <div style={{color:"var(--muted)",fontSize:"18px"}}>{open===i?"–":"+"}</div>
+            </div>
+            {open===i && (
+              <div className="lb">
+                <div className="said"><b>醫師說：</b><br/>{l.said}</div>
+                <div className="heard"><b>家屬實際接收到：</b><br/>{l.heard}</div>
+                <p className="small" style={{marginBottom:"6px"}}>{l.note}</p>
+                <p className="small" style={{margin:0,color:"var(--gold)",fontWeight:500}}>{l.done}</p>
+              </div>)}
+          </div>))}
+        <div className="co g"><div className="t">操作原則</div>
+          第三層必須在<b>術前</b>完成。術後講的同一段話，無論多正確，都會被聽成辯解 ——
+          這也是為什麼「失敗後才開始溝通」的個案，幾乎都會把整個團隊拖進衝突裡。</div>
+      </div>
+    </div>);
+};
+
+const Checklist = ()=>{
+  const [ck,setCk]=useState({});
+  const [toast,setToast]=useState("");
+  const flat = CL.flatMap(g=>g.items);
+  const done = flat.filter(i=>ck[i.id]).length;
+  const keys = flat.filter(i=>i.key);
+  const keyDone = keys.filter(i=>ck[i.id]).length;
+  const say = m=>{setToast(m);setTimeout(()=>setToast(""),2100);};
+
+  const copyRec = async ()=>{
+    let s="【高風險介入 — 術前溝通與團隊查核紀錄】\n";
+    s+="日期："+new Date().toLocaleString("zh-TW")+"\n病人／Case：____________\n主術者：____________\n";
+    s+="完成度："+done+"/"+flat.length+"（關鍵項 "+keyDone+"/"+keys.length+"）\n\n";
+    CL.forEach(g=>{ s+="■ "+g.g+"\n";
+      g.items.forEach(i=>{ s+="  ["+(ck[i.id]?"V":" ")+"] "+i.id+" "+i.t+(i.key?"（關鍵）":"")+"\n"; });
+      s+="\n"; });
+    s+="※ 病歷應明確記載 B3（中間結果）、C1（術中應變事先告知）、D2（可能失敗）三項。\n";
+    try{ await navigator.clipboard.writeText(s); say("已複製，可貼入病歷或 huddle 紀錄"); }
+    catch(e){ say("複製失敗，請長按選取"); }
+  };
+
+  return (
+    <div>
+      <Toast m={toast}/>
+      <div className="prog">
+        <div className="pt"><span>查核進度</span><span><b>{done}</b> / {flat.length}　關鍵項 <b style={{color:done?"var(--gold)":"inherit"}}>{keyDone}/{keys.length}</b></span></div>
+        <div className="ptrack"><div className="pfill" style={{width:(done/flat.length*100)+"%"}}></div></div>
+      </div>
+      <div className="card">
+        <h2 className="sec"><span className="bar"></span>高風險介入術前查核表</h2>
+        <p className="sec-sub">適用：所有預期 high-risk 或 complex 個案</p>
+        <div className="co n"><div className="t">使用原則</div>
+          於術前完成（<b>不是術當天推入導管室前</b>）。<br/>
+          <b>開 case 的人談、開 case 的人簽、開 case 的人在失敗後解釋。</b></div>
+        {CL.map(g=>(
+          <div className="grp" key={g.g}>
+            <div className="gh">{g.g}</div>
+            <div className="gn">{g.n}</div>
+            {g.items.map(it=>(
+              <div className={"ci"+(ck[it.id]?" on":"")+(it.key?" key":"")} key={it.id}
+                onClick={()=>setCk({...ck,[it.id]:!ck[it.id]})}>
+                <div className="box">{ck[it.id] && <I.check/>}</div>
+                <div>
+                  <div className="cid">{it.id}</div>
+                  <div className="ct">{it.t}</div>
+                  {it.w && <div className="cw">→ {it.w}</div>}
+                </div>
+              </div>))}
+          </div>))}
+        <div className="btnrow">
+          <button className="btn gold" onClick={copyRec}>複製查核紀錄</button>
+          <button className="btn ghost" style={{flex:"0 0 96px"}} onClick={()=>setCk({})}>清除</button>
+        </div>
+      </div>
+
+      <div className="card">
+        <h2 className="sec"><span className="bar"></span>紅旗：溝通尚未完成</h2>
+        <p className="sec-sub">出現以下任一項，不應推進導管室</p>
+        {REDFLAGS.map((r,i)=>(
+          <div className="co d" key={i} style={{margin:"9px 0",fontSize:"14px",padding:"11px 14px"}}>{r}</div>))}
+        <div className="co g"><div className="t">槓桿點在 F2 與 F4</div>
+          這兩項把整個觀念制度化：<b>開始一個高風險個案的前提，是你已經想過失敗，並且準備好自己面對失敗的解釋。</b>
+          它不針對任何人，但會自然篩掉「只能做順風手術」的操作模式。</div>
+      </div>
+    </div>);
+};
+
+const Quiz = ()=>{
+  const [i,setI]=useState(0),[sel,setSel]=useState(null),[sc,setSc]=useState(0),[fin,setFin]=useState(false);
+  if(fin){
+    const pct=Math.round(sc/QZ.length*100);
+    return (
+      <div className="card">
+        <h2 className="sec"><span className="bar"></span>測驗結果</h2>
+        <div className="score">
+          <div className="big">{sc}<span style={{fontSize:"20px",opacity:.6}}> / {QZ.length}</span></div>
+          <div className="band">{pct>=80?"觀念清楚":pct>=50?"部分觀念需補強":"建議重讀核心觀念"}</div>
+          <div className="desc">{pct>=80?"請把重點放在把這些觀念寫進科內 SOP，而不是留在個人層面。":"建議回到「核心觀念」分頁，特別是順風／逆風的非對稱性與風險溝通三層。"}</div>
+        </div>
+        <button className="btn gold" onClick={()=>{setI(0);setSel(null);setSc(0);setFin(false);}}>重新測驗</button>
+      </div>);
+  }
+  const q=QZ[i];
+  const pick=(v)=>{ if(sel!==null) return; setSel(v); if(v===q.c) setSc(s=>s+1); };
+  const next=()=>{ if(i<QZ.length-1){setI(i+1);setSel(null);} else setFin(true); };
+  return (
+    <div className="card">
+      <div className="qbar"><div style={{width:((i+1)/QZ.length*100)+"%"}}></div></div>
+      <div className="qmeta">第 {i+1} 題 ／ 共 {QZ.length} 題</div>
+      <div className="qtxt">{q.q}</div>
+      {q.o.map((o,v)=>{
+        let c="qopt";
+        if(sel!==null){ if(v===q.c) c+=" right"; else if(v===sel) c+=" wrong"; else c+=" dim"; }
+        return <button className={c} key={v} onClick={()=>pick(v)}>{o}</button>;
+      })}
+      {sel!==null &&
+        <div className="expl">
+          <div className="vd" style={{color:sel===q.c?"var(--ok)":"var(--danger)"}}>
+            {sel===q.c?"正確":"再想一次"}</div>
+          <div>{q.e}</div>
+          <button className="btn gold" style={{marginTop:"14px"}} onClick={next}>
+            {i<QZ.length-1?"下一題":"查看結果"}</button>
+        </div>}
+    </div>);
+};
+
+const Sign = ()=>(
+  <div className="card">
+    <div className="sign">
+      <div className="r">讀書會共筆整理人</div>
+      <div className="nm">謝慕揚 醫師　MD, PhD, FESC</div>
+      <div className="fld">結構性心臟病與介入心臟學 ・ 重症醫學</div>
+    </div>
+    <div className="disc">
+      <div>本內容為讀書會共筆整理，未必涵蓋所有相關文獻</div>
+      <div>僅供學術與教育用途，不代表任何單位之官方立場</div>
+      <div>本內容未涉及任何利益衝突</div>
+    </div>
+  </div>
+);
+
+const TABS=[
+  {k:"c",n:"01",t:"核心觀念",C:Concept},
+  {k:"s",n:"02",t:"能力自評",C:SelfAssess},
+  {k:"l",n:"03",t:"溝通三層",C:Layers},
+  {k:"k",n:"04",t:"術前查核表",C:Checklist},
+  {k:"q",n:"05",t:"情境測驗",C:Quiz}
+];
+
+const App = ()=>{
+  const [tab,setTab]=useState("c");
+  const [dark,setDark]=useState(false);
+  const [toast,setToast]=useState("");
+  const say = m=>{setToast(m);setTimeout(()=>setToast(""),2100);};
+
+  const toggleDark=()=>{ const d=!dark; setDark(d);
+    document.documentElement.classList.toggle("dark",d); };
+
+  const share = async ()=>{
+    const d={ title:"順風與逆風：高風險介入的風險承擔能力",
+      text:"手技能力與風險承擔能力是兩種不同的能力。含術者自評、風險溝通三層、術前家屬溝通查核表。",
+      url:location.href };
+    if(navigator.share){ try{ await navigator.share(d); return; }catch(e){ if(e.name==="AbortError") return; } }
+    try{ await navigator.clipboard.writeText(d.title+"\n"+d.url); say("連結已複製"); }
+    catch(e){ say("請手動複製網址列連結"); }
+  };
+
+  const Cur = TABS.find(t=>t.k===tab).C;
+  return (
+    <div>
+      <Toast m={toast}/>
+      <div className="hdr">
+        <div className="hdr-btns">
+          <button className="icb" onClick={toggleDark} aria-label="夜間模式"><I.moon/></button>
+          <button className="icb" onClick={share} aria-label="分享"><I.share/></button>
+        </div>
+        <div className="eyebrow">CARDIOVASCULAR CENTER ・ 教學模組</div>
+        <h1>順風與逆風<br/>高風險介入的風險承擔能力</h1>
+        <div className="sub">Risk Ownership in Complex &amp; Critical Intervention</div>
+      </div>
+      <div className="nav">
+        {TABS.map(t=>(
+          <button key={t.k} className={"tab"+(tab===t.k?" on":"")} onClick={()=>{setTab(t.k);window.scrollTo(0,0);}}>
+            <span className="n">{t.n}</span>{t.t}</button>))}
+      </div>
+      <div className="wrap">
+        <Cur/>
+        <Sign/>
+      </div>
+    </div>);
+};
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
