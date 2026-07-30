@@ -268,9 +268,15 @@ html.dark .sign .nm{color:var(--gold-light)}
 .rg{font-size:13.5px;font-weight:700;color:var(--navy);letter-spacing:.01em;
   padding-left:11px;border-left:3px solid var(--gold);margin-bottom:12px}
 html.dark .rg{color:var(--gold-light)}
-.refl{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px}
+.refl{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:13px}
 .refl li{font-size:12.5px;line-height:1.65;color:var(--text)}
 .refl li::marker{color:var(--gold);font-weight:700}
+.refl .rt{display:block}
+.refl .doi{display:inline-block;margin-top:4px;font-size:11.5px;color:var(--navy-light);
+  text-decoration:none;border-bottom:1px dotted currentColor;word-break:break-all;transition:.15s}
+.refl .doi:hover,.refl .doi:active{color:var(--gold)}
+html.dark .refl .doi{color:var(--gold-light)}
+html.dark .refl .doi:hover{color:var(--gold)}
 </style>
 </head>
 <body>
@@ -488,31 +494,31 @@ const QZ = [
    e:"B 的總併發症率是 A 的四倍，但在同類個案上 B 其實更好（1.4% vs 2.0%）。若只看未經校正的數字，不只會得到相反的結論，還會教會 B 一件事：不要再接複雜個案。這正是 risk-averse case selection 的形成機制 —— 系統懲罰了願意承擔風險的人。"}
 ];
 
-/* ---------- data: references ---------- */
+/* ---------- data: references（DOI 已於 doi.org 逐一驗證可解析至原文） ---------- */
 const REFS = [
   {g:"結果偏誤 (Outcome Bias)", items:[
-    "Baron J, Hershey JC. Outcome bias in decision evaluation. J Pers Soc Psychol. 1988;54(4).",
-    "Caplan RA, Posner KL, Cheney FW. Effect of outcome on physician judgments of appropriateness of care. JAMA. 1991;265(15)."]},
+    {t:"Baron J, Hershey JC. Outcome bias in decision evaluation. J Pers Soc Psychol. 1988;54(4).", doi:"10.1037/0022-3514.54.4.569"},
+    {t:"Caplan RA, Posner KL, Cheney FW. Effect of outcome on physician judgments of appropriateness of care. JAMA. 1991;265(15).", doi:"10.1001/jama.1991.03460150061024"}]},
   {g:"公開績效報告與風險趨避的個案選擇", items:[
-    "Resnic FS, Welt FGP. The public health hazards of risk avoidance associated with public reporting of risk-adjusted outcomes in coronary intervention. J Am Coll Cardiol. 2009;53(10).",
-    "Joynt KE, Blumenthal DM, Orav EJ, Resnic FS, Jha AK. Association of public reporting for percutaneous coronary intervention with utilization and outcomes among Medicare beneficiaries with acute myocardial infarction. JAMA. 2012;308(14).",
-    "Waldo SW, McCabe JM, O'Brien C, Kennedy KF, Joynt KE, Yeh RW. Association between public reporting of outcomes with procedural management and mortality for patients with acute myocardial infarction. J Am Coll Cardiol. 2015;65(11).",
-    "Gupta A, Yeh RW, Tamis-Holland JE, et al. Implications of public reporting of risk-adjusted mortality following percutaneous coronary intervention. JACC Cardiovasc Interv. 2016;9(20).",
-    "Wadhera RK, Joynt Maddox KE, Yeh RW, Bhatt DL. Public reporting of percutaneous coronary intervention outcomes. JAMA Cardiol. 2018;3(7)."]},
+    {t:"Resnic FS, Welt FGP. The public health hazards of risk avoidance associated with public reporting of risk-adjusted outcomes in coronary intervention. J Am Coll Cardiol. 2009;53(10).", doi:"10.1016/j.jacc.2008.11.034"},
+    {t:"Joynt KE, Blumenthal DM, Orav EJ, Resnic FS, Jha AK. Association of public reporting for percutaneous coronary intervention with utilization and outcomes among Medicare beneficiaries with acute myocardial infarction. JAMA. 2012;308(14).", doi:"10.1001/jama.2012.12922"},
+    {t:"Waldo SW, McCabe JM, O'Brien C, Kennedy KF, Joynt KE, Yeh RW. Association between public reporting of outcomes with procedural management and mortality for patients with acute myocardial infarction. J Am Coll Cardiol. 2015;65(11).", doi:"10.1016/j.jacc.2015.01.008"},
+    {t:"Gupta A, Yeh RW, Tamis-Holland JE, et al. Implications of public reporting of risk-adjusted mortality following percutaneous coronary intervention. JACC Cardiovasc Interv. 2016;9(20).", doi:"10.1016/j.jcin.2016.08.012"},
+    {t:"Wadhera RK, Joynt Maddox KE, Yeh RW, Bhatt DL. Public reporting of percutaneous coronary intervention outcomes. JAMA Cardiol. 2018;3(7).", doi:"10.1001/jamacardio.2018.0947"}]},
   {g:"高風險個案的流程、退場條件與治理", items:[
-    "Riley RF, Henry TD, Mahmud E, et al. SCAI position statement on optimal percutaneous coronary interventional therapy for complex coronary artery disease. Catheter Cardiovasc Interv. 2020;96(2).",
-    "Naidu SS, Abbott JD, Bagai J, et al. SCAI expert consensus update on best practices in the cardiac catheterization laboratory. Catheter Cardiovasc Interv. 2021;98(2).",
-    "Haynes AB, Weiser TG, Berry WR, et al. A surgical safety checklist to reduce morbidity and mortality in a global population. N Engl J Med. 2009;360(5)."]},
+    {t:"Riley RF, Henry TD, Mahmud E, et al. SCAI position statement on optimal percutaneous coronary interventional therapy for complex coronary artery disease. Catheter Cardiovasc Interv. 2020;96(2).", doi:"10.1002/ccd.28994"},
+    {t:"Naidu SS, Abbott JD, Bagai J, et al. SCAI expert consensus update on best practices in the cardiac catheterization laboratory. Catheter Cardiovasc Interv. 2021;98(2).", doi:"10.1002/ccd.29744"},
+    {t:"Haynes AB, Weiser TG, Berry WR, et al. A surgical safety checklist to reduce morbidity and mortality in a global population. N Engl J Med. 2009;360(5).", doi:"10.1056/NEJMsa0810119"}]},
   {g:"高風險決策溝通與知情理解", items:[
-    "Taylor LJ, Nabozny MJ, Steffens NM, et al. A framework to improve surgeon communication in high-stakes surgical decisions: Best Case/Worst Case. JAMA Surg. 2017;152(6).",
-    "Schwarze ML, Bradley CT, Brasel KJ. Surgical \"buy-in\": the contractual relationship between surgeons and patients that influences decisions regarding life-supporting therapy. Crit Care Med. 2010;38(3).",
-    "Schillinger D, Piette J, Grumbach K, et al. Closing the loop: physician communication with diabetic patients who have low health literacy. Arch Intern Med. 2003;163(1).",
-    "Glaser J, Nouri S, Fernandez A, et al. Interventions to improve patient comprehension in informed consent for medical and surgical procedures: an updated systematic review. Med Decis Making. 2020;40(2).",
-    "Schenker Y, Fernandez A, Sudore R, Schillinger D. Interventions to improve patient comprehension in informed consent for medical and surgical procedures: a systematic review. Med Decis Making. 2011;31(1).",
-    "Levinson W, Roter DL, Mullooly JP, Dull VT, Frankel RM. Physician-patient communication: the relationship with malpractice claims among primary care physicians and surgeons. JAMA. 1997;277(7)."]},
+    {t:"Taylor LJ, Nabozny MJ, Steffens NM, et al. A framework to improve surgeon communication in high-stakes surgical decisions: Best Case/Worst Case. JAMA Surg. 2017;152(6).", doi:"10.1001/jamasurg.2016.5674"},
+    {t:"Schwarze ML, Bradley CT, Brasel KJ. Surgical \"buy-in\": the contractual relationship between surgeons and patients that influences decisions regarding life-supporting therapy. Crit Care Med. 2010;38(3).", doi:"10.1097/CCM.0b013e3181cc466b"},
+    {t:"Schillinger D, Piette J, Grumbach K, et al. Closing the loop: physician communication with diabetic patients who have low health literacy. Arch Intern Med. 2003;163(1).", doi:"10.1001/archinte.163.1.83"},
+    {t:"Glaser J, Nouri S, Fernandez A, et al. Interventions to improve patient comprehension in informed consent for medical and surgical procedures: an updated systematic review. Med Decis Making. 2020;40(2).", doi:"10.1177/0272989X19896348"},
+    {t:"Schenker Y, Fernandez A, Sudore R, Schillinger D. Interventions to improve patient comprehension in informed consent for medical and surgical procedures: a systematic review. Med Decis Making. 2011;31(1).", doi:"10.1177/0272989X10364247"},
+    {t:"Levinson W, Roter DL, Mullooly JP, Dull VT, Frankel RM. Physician-patient communication: the relationship with malpractice claims among primary care physicians and surgeons. JAMA. 1997;277(7).", doi:"10.1001/jama.277.7.553"}]},
   {g:"併發症後的揭露與術者本身的承擔", items:[
-    "Gallagher TH, Waterman AD, Ebers AG, Fraser VJ, Levinson W. Patients' and physicians' attitudes regarding the disclosure of medical errors. JAMA. 2003;289(8).",
-    "Wu AW. Medical error: the second victim. BMJ. 2000;320(7237)."]}
+    {t:"Gallagher TH, Waterman AD, Ebers AG, Fraser VJ, Levinson W. Patients' and physicians' attitudes regarding the disclosure of medical errors. JAMA. 2003;289(8).", doi:"10.1001/jama.289.8.1001"},
+    {t:"Wu AW. Medical error: the second victim. BMJ. 2000;320(7237).", doi:"10.1136/bmj.320.7237.726"}]}
 ];
 
 /* ================= components ================= */
@@ -940,13 +946,19 @@ const Refs = ()=>(
   <div>
     <div className="card">
       <h2 className="sec"><span className="bar"></span>參考文獻 References</h2>
-      <p className="sec-sub">本模組觀點的實證與文獻基礎，依主題分組列示</p>
+      <p className="sec-sub">本模組觀點的實證與文獻基礎，依主題分組列示。每篇皆附 DOI 連結，點擊即可開啟原文。</p>
     </div>
     {REFS.map((s,i)=>(
       <div className="card" key={i}>
         <div className="rg">{s.g}</div>
         <ol className="refl">
-          {s.items.map((r,j)=><li key={j}>{r}</li>)}
+          {s.items.map((r,j)=>(
+            <li key={j}>
+              <span className="rt">{r.t}</span>
+              <a className="doi" href={"https://doi.org/"+r.doi} target="_blank" rel="noopener noreferrer">
+                <span aria-hidden="true">🔗</span> doi.org/{r.doi}
+              </a>
+            </li>))}
         </ol>
       </div>))}
   </div>
