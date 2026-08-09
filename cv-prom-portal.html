@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>心血管照護品質追蹤 — 問卷入口</title>
+
+<!-- ============================================================
+     ⚙️  設定區：把下面兩條 REDCap「公開問卷連結」貼進來即可。
+     （在 REDCap → Survey Distribution → Public Survey Link 取得）
+     這一頁本身「不收集任何資料」，只負責把病人 / 家屬導向 REDCap。
+     ============================================================ -->
+<script>
+  const CONFIG = {
+    // ① 疾病追蹤問卷（實名，需填姓名/病歷號）— Project 1 intake 的公開連結
+    PROM_URL: "https://redcap.ntuh.gov.tw/surveys/?s=WT4P7J89RCCFNFD3",
+    // ② 術後滿意度問卷（匿名）— Project 2 satisfaction 的公開連結
+    SAT_URL: "https://redcap.ntuh.gov.tw/surveys/?s=348HX3ATK4HRPTMH"
+  };
+</script>
+
+<style>
+  :root{
+    --ink:#132a3a; --muted:#4a6274; --line:#dfe7ec; --bg:#eef3f6;
+    --promA:#0d6e8c; --promA2:#0a5a73;      /* 疾病追蹤：臨床藍綠 */
+    --satA:#1f8f6a; --satA2:#187457;        /* 滿意度：溫和綠 */
+    --warn:#8a6d1a;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,-apple-system,sans-serif;
+    background:var(--bg); color:var(--ink);
+    font-size:18px; line-height:1.65;
+    -webkit-text-size-adjust:100%;
+    padding:20px 16px 48px;
+  }
+  .wrap{max-width:640px; margin:0 auto;}
+  header{text-align:center; padding:8px 4px 20px;}
+  .hosp{font-size:15px; color:var(--muted); letter-spacing:.3px;}
+  h1{font-size:26px; margin:.35em 0 .15em; letter-spacing:.5px;}
+  .lead{font-size:17px; color:var(--muted); margin:.2em auto 0; max-width:34em;}
+
+  .card{
+    background:#fff; border:1px solid var(--line); border-radius:18px;
+    padding:22px 20px; margin:18px 0; box-shadow:0 2px 10px rgba(19,42,58,.06);
+  }
+  .card .ttl{display:flex; align-items:center; gap:12px; font-size:22px; font-weight:700;}
+  .card .ttl .emoji{font-size:30px; line-height:1;}
+  .tag{display:inline-block; font-size:14px; font-weight:700; padding:3px 12px;
+       border-radius:999px; vertical-align:middle; margin-left:2px;}
+  .tag.real{background:#e3f0f5; color:var(--promA2);}
+  .tag.anon{background:#e4f4ec; color:var(--satA2);}
+  .card p.desc{margin:12px 2px 18px; color:var(--muted); font-size:16.5px;}
+
+  .btn{
+    display:block; width:100%; text-align:center; text-decoration:none;
+    color:#fff; font-size:21px; font-weight:700; letter-spacing:1px;
+    padding:18px 16px; border-radius:14px; border:0; cursor:pointer;
+    box-shadow:0 3px 0 rgba(0,0,0,.12);
+    transition:transform .04s ease, filter .15s ease;
+  }
+  .btn:active{transform:translateY(2px); box-shadow:0 1px 0 rgba(0,0,0,.12);}
+  .btn.prom{background:linear-gradient(180deg,var(--promA),var(--promA2));}
+  .btn.sat{background:linear-gradient(180deg,var(--satA),var(--satA2));}
+  .btn.disabled{background:#b9c6ce; box-shadow:none; cursor:not-allowed; pointer-events:none;}
+
+  .qrbox{margin-top:18px; text-align:center; display:none;}
+  .qrbox .qrimg{display:inline-block; padding:12px; background:#fff;
+                border:1px solid var(--line); border-radius:12px;}
+  .qrbox .qrimg canvas,.qrbox .qrimg img{display:block;}
+  .qrbox small{display:block; margin-top:8px; color:var(--muted); font-size:13.5px;}
+
+  .notice{
+    margin-top:22px; padding:16px 18px; border-radius:14px;
+    background:#fbf6e6; border:1px solid #efe3bd; color:var(--warn);
+    font-size:15px; line-height:1.7;
+  }
+  .notice b{color:#6f560f;}
+  footer{text-align:center; color:var(--muted); font-size:13.5px; margin-top:26px; line-height:1.8;}
+  .cfgwarn{display:none; margin:14px 0; padding:12px 14px; border-radius:12px;
+           background:#fdecec; border:1px solid #f3c9c9; color:#9a2b2b; font-size:14.5px;}
+  .shareWrap{text-align:center; margin:22px 0 4px;}
+  .share{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:inherit; font-size:16px; font-weight:700; color:var(--ink);
+    background:#fff; border:1.5px solid var(--line); border-radius:999px;
+    padding:11px 22px; cursor:pointer; box-shadow:0 1px 4px rgba(19,42,58,.06);
+    transition:border-color .15s ease, transform .04s ease;
+  }
+  .share:hover{border-color:var(--promA);}
+  .share:active{transform:translateY(1px);}
+  .toast{
+    position:fixed; left:50%; bottom:28px; transform:translateX(-50%) translateY(12px);
+    background:#132a3a; color:#fff; font-size:15px; padding:11px 20px; border-radius:10px;
+    box-shadow:0 4px 16px rgba(0,0,0,.25); opacity:0; pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease; max-width:90vw; z-index:50; text-align:center;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  @media (max-width:380px){ body{font-size:17px;} h1{font-size:23px;} .btn{font-size:19px;} }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="hosp">國立臺灣大學醫學院附設醫院新竹臺大分院 · 心臟血管內科</div>
+      <h1>心血管照護品質追蹤</h1>
+      <p class="lead">感謝您協助我們持續改善醫療品質。<br>請依醫師或護理人員的指示，選擇下方問卷填寫。</p>
+    </header>
+
+    <div id="cfgwarn" class="cfgwarn">
+      ⚠️ 尚未設定 REDCap 問卷連結。請開啟本檔，於最上方「設定區」把兩條 Public Survey Link 貼進 <code>CONFIG</code>。
+    </div>
+
+    <!-- ① 疾病追蹤（實名） -->
+    <section class="card">
+      <div class="ttl"><span class="emoji">🫀</span>疾病追蹤問卷<span class="tag real">實名</span></div>
+      <p class="desc">需填寫您的<strong>姓名與病歷號</strong>，讓醫師追蹤您的恢復與生活品質。適用於冠心症（ACS）、主動脈剝離、心衰竭的回診追蹤。</p>
+      <a id="promBtn" class="btn prom" href="#" rel="noopener">開始填寫 ›</a>
+      <div id="promQR" class="qrbox">
+        <div class="qrimg"></div>
+        <small>也可直接掃描此 QR（醫護可截圖 / 列印）</small>
+      </div>
+    </section>
+
+    <!-- ② 術後滿意度（匿名） -->
+    <section class="card">
+      <div class="ttl"><span class="emoji">💬</span>術後滿意度<span class="tag anon">不記名</span></div>
+      <p class="desc">完全<strong>匿名</strong>，不會記錄您的姓名或病歷號。您對這次心血管治療的真實回饋，將直接用於改善我們的服務。約 2 分鐘。</p>
+      <a id="satBtn" class="btn sat" href="#" rel="noopener">開始填寫 ›</a>
+      <div id="satQR" class="qrbox">
+        <div class="qrimg"></div>
+        <small>也可直接掃描此 QR（醫護可截圖 / 列印）</small>
+      </div>
+    </section>
+
+    <div class="notice">
+      <b>關於這份問卷：</b>本問卷為<b>照護品質追蹤（QI）用途，非研究</b>。<br>
+      <b>本網頁不會收集您的任何資料</b>，僅提供上方連結；所有填答都在院方的 REDCap 系統中完成與保存。
+    </div>
+
+    <div class="shareWrap">
+      <button id="shareBtn" class="share" type="button">🔗 分享這個頁面</button>
+    </div>
+
+    <footer>
+      如有疑問請洽心臟血管內科門診或個案管理師。<br>
+      © 新竹臺大分院 心臟血管內科 · 照護品質追蹤
+    </footer>
+  </div>
+
+  <!-- QR 產生器：優先用 CDN；若院內網路封鎖，按鈕仍可用，QR 區塊自動隱藏。
+       （若要完全離線：下載 qrcode.min.js 放同資料夾，把 src 改成 "qrcode.min.js"） -->
+  <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+  <script>
+    (function(){
+      var PLACEHOLDER = /REDCAP_.*_LINK|^\s*$/;
+      function isSet(u){ return u && !PLACEHOLDER.test(u); }
+
+      function wireButton(btnId, url){
+        var btn = document.getElementById(btnId);
+        if(isSet(url)){
+          btn.setAttribute("href", url);
+        }else{
+          btn.classList.add("disabled");
+          btn.textContent = "連結尚未設定";
+          return false;
+        }
+        return true;
+      }
+
+      function makeQR(boxId, url){
+        if(!isSet(url) || typeof QRCode === "undefined") return;
+        var box = document.getElementById(boxId);
+        var slot = box.querySelector(".qrimg");
+        try{
+          new QRCode(slot, { text:url, width:168, height:168,
+                             correctLevel: QRCode.CorrectLevel.M });
+          box.style.display = "block";
+        }catch(e){ /* QR 失敗不影響按鈕 */ }
+      }
+
+      var okP = wireButton("promBtn", CONFIG.PROM_URL);
+      var okS = wireButton("satBtn",  CONFIG.SAT_URL);
+      if(!okP || !okS){ document.getElementById("cfgwarn").style.display = "block"; }
+
+      // CDN 載入完成後再產 QR
+      function tryQR(){
+        if(typeof QRCode === "undefined"){ return; }
+        makeQR("promQR", CONFIG.PROM_URL);
+        makeQR("satQR",  CONFIG.SAT_URL);
+      }
+      if(document.readyState === "complete"){ tryQR(); }
+      else{ window.addEventListener("load", tryQR); }
+    })();
+  </script>
+
+  <!-- 分享按鈕：手機用原生分享面板，桌機 / 不支援時自動複製連結 -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>
+    (function(){
+      var btn = document.getElementById("shareBtn");
+      var toast = document.getElementById("toast");
+      var timer;
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add("show");
+        clearTimeout(timer);
+        timer = setTimeout(function(){ toast.classList.remove("show"); }, 2400);
+      }
+      btn.addEventListener("click", async function(){
+        var url = location.href;
+        var data = { title:"心血管照護品質追蹤", text:"心血管照護品質追蹤問卷", url:url };
+        if(navigator.share){
+          try{ await navigator.share(data); }catch(e){ /* 使用者取消，不處理 */ }
+          return;
+        }
+        try{
+          await navigator.clipboard.writeText(url);
+          showToast("已複製連結，可貼到 LINE / email 分享");
+        }catch(e){
+          showToast(url);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
