@@ -1,0 +1,1277 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>先問是哪一種酶：CCU 新型抗生素教學模組</title>
+<meta name="description" content="給心血管急重症團隊的新型抗生素教學模組：Ambler 四類 β-lactamase、七種新藥的「鎖 × 鑰匙」涵蓋矩陣、CCU 五大情境（CIED／LVAD／IE／術後縱膈炎／ECMO-CRRT）、心血管交互作用地雷、延長輸注與療程長度，附 83 條縮寫對照表與六題自測。">
+<meta name="author" content="心血管照護教學資源中心">
+<meta name="theme-color" content="#06161c">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="心血管照護教學資源中心">
+<meta property="og:title" content="先問是哪一種酶：CCU 新型抗生素教學模組">
+<meta property="og:description" content="你不必記住所有新藥，先問一句話：是哪一種酶？八種抗藥表現型 × 七支新藥的涵蓋矩陣、CCU 專屬情境與心血管交互作用地雷。">
+<meta property="og:url" content="https://drake1128.github.io/saq-questionnaire/ccu-new-antibiotics-guide.html">
+<meta property="og:image" content="https://drake1128.github.io/saq-questionnaire/og-image.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="先問是哪一種酶：CCU 新型抗生素教學模組">
+<meta name="twitter:description" content="八種抗藥表現型 × 七支新藥的涵蓋矩陣、CCU 專屬情境與心血管交互作用地雷。">
+<link rel="canonical" href="https://drake1128.github.io/saq-questionnaire/ccu-new-antibiotics-guide.html">
+<style>
+/* ============================================================
+   Tokens
+   色彩本身就是資訊：綠＝涵蓋，琥珀＝有活性但非首選，珊瑚＝不涵蓋。
+   除此之外整頁只有一個結構色（cyan），用於眉標與連結。
+   ============================================================ */
+:root{
+  --ink:      #06161c;
+  --ink-2:    #0b2029;
+  --ink-3:    #123039;
+  --line:     rgba(150,205,216,.14);
+  --line-2:   rgba(150,205,216,.28);
+  --paper:    #e6eff0;
+  --mute:     #8ba9b1;
+  --faint:    #5d7d86;
+  --S:        #4fd1a5;
+  --I:        #f2b441;
+  --R:        #ff6f5c;
+  --cyan:     #63c7d6;
+
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue",
+          "PingFang TC", "Heiti TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+
+  --pad: clamp(1.25rem, 5vw, 4rem);
+  --maxw: 1080px;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--ink);
+  color:var(--paper);
+  font-family:var(--sans);
+  font-size:clamp(15px,.55vw + 13.6px,17px);
+  line-height:1.75;
+  letter-spacing:.01em;
+  /* 培養皿的菌落：極淡的點陣，唯一的環境裝飾 */
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(99,199,214,.05) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 71% 62%, rgba(99,199,214,.045) 0 2px, transparent 2.5px),
+    radial-gradient(circle at 38% 88%, rgba(79,209,165,.04) 0 1.5px, transparent 2px);
+  background-size: 340px 340px, 470px 470px, 290px 290px;
+}
+
+/* ---------- 排版系統 ----------
+   規則：任何會出現在微生物報告上的字串（酶名、菌名、劑量、基因）一律等寬。
+   中文敘述用系統無襯線。這是這一頁唯一的字體規則。 */
+.code{font-family:var(--mono); letter-spacing:.02em}
+.eyebrow{
+  font-family:var(--mono);
+  font-size:.7rem; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--cyan); margin:0 0 1rem;
+}
+h1,h2,h3,h4{ margin:0; font-weight:700; letter-spacing:-.02em; line-height:1.25 }
+h2{ font-size:clamp(1.5rem,2.6vw,2.1rem); }
+h3{ font-size:1.12rem; letter-spacing:-.01em }
+p{margin:0 0 1.1em}
+a{color:var(--cyan)}
+strong{ color:#fff; font-weight:650 }
+em{ font-style:normal; color:var(--S) }
+
+.wrap{max-width:var(--maxw); margin-inline:auto; padding-inline:var(--pad)}
+
+/* ---------- Hero ---------- */
+.hero{ padding:clamp(4rem,11vh,7.5rem) 0 clamp(3rem,7vh,5rem); border-bottom:1px solid var(--line) }
+.hero h1{
+  font-size:clamp(2rem,5.4vw,3.6rem);
+  line-height:1.18; max-width:19ch; margin-bottom:1.6rem;
+}
+.hero h1 .hl{ color:var(--cyan) }
+.hero-links{ margin-top:2rem; display:flex; gap:1.6rem; flex-wrap:wrap; font-family:var(--mono); font-size:.75rem; letter-spacing:.1em }
+.hero-links a{ text-decoration:none; border-bottom:1px solid rgba(99,199,214,.4); padding-bottom:.2rem }
+.hero-links a:hover{ border-bottom-color:var(--cyan) }
+.hero-sub{ max-width:56ch; color:var(--mute); font-size:1.03rem }
+
+.rule{
+  margin:2.6rem 0 0; padding:1.4rem 1.5rem;
+  border:1px solid var(--line-2); border-left:3px solid var(--R);
+  background:linear-gradient(90deg, rgba(255,111,92,.07), transparent 60%);
+  max-width:60ch; border-radius:0 6px 6px 0;
+}
+.rule .lab{
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.2em;
+  color:var(--R); display:block; margin-bottom:.5rem;
+}
+.rule p{margin:0; font-size:1.05rem}
+
+/* ---------- 出處小卡（LINE 三行規則） ---------- */
+.origin{
+  margin-top:2.4rem; padding:1.2rem 1.4rem; border-radius:8px;
+  background:var(--ink-2); border:1px solid var(--line);
+  max-width:60ch; font-size:.9rem; color:var(--mute);
+}
+.origin ul{margin:.7rem 0 .8rem; padding-left:1.1rem}
+.origin li{margin-bottom:.25rem}
+
+/* ---------- Section ---------- */
+.sec{ padding:clamp(3.2rem,8vh,5.5rem) 0; border-bottom:1px solid var(--line) }
+.sec-head{ margin-bottom:2.4rem; max-width:62ch }
+.sec-head p{ color:var(--mute); margin-top:.9rem; margin-bottom:0 }
+
+/* ---------- 通用卡片格 ---------- */
+.grid{ display:grid; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:8px; overflow:hidden }
+/* 固定兩欄：四張卡剛好 2×2，不會在最後一列留下空的色塊。 */
+.g2{ grid-template-columns:repeat(2,1fr) }
+@media (max-width:760px){ .g2{ grid-template-columns:1fr } }
+.cell{ background:var(--ink-2); padding:1.5rem 1.4rem }
+.cell h3{ margin-bottom:.6rem }
+.cell p:last-child{margin-bottom:0}
+.cell .tag{
+  font-family:var(--mono); font-size:.66rem; letter-spacing:.16em;
+  color:var(--faint); display:block; margin-bottom:.7rem;
+}
+.cell.is-pivot{ background:linear-gradient(180deg, rgba(255,111,92,.09), var(--ink-2) 65%) }
+.cell.is-pivot h3{ color:var(--R) }
+
+/* ---------- 矩陣（本頁的招牌） ---------- */
+.matrix-shell{ border:1px solid var(--line-2); border-radius:10px; background:var(--ink-2); overflow:hidden }
+.matrix-scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch }
+table.mx{ border-collapse:collapse; width:100%; min-width:780px; font-size:.86rem }
+table.mx th, table.mx td{ padding:.72rem .5rem; text-align:center; border-bottom:1px solid var(--line) }
+table.mx thead th{
+  font-family:var(--mono); font-weight:500; font-size:.7rem; line-height:1.45;
+  color:var(--mute); vertical-align:bottom; padding-top:1.1rem;
+  border-bottom:1px solid var(--line-2);
+}
+table.mx thead th .brand{ display:block; color:var(--paper); font-size:.78rem; letter-spacing:.01em }
+table.mx th.rowh{
+  text-align:left; padding-left:1.1rem; min-width:190px;
+  position:sticky; left:0; z-index:2; background:var(--ink-2);
+  border-right:1px solid var(--line-2); cursor:pointer;
+  font-weight:600; font-size:.85rem;
+}
+table.mx th.rowh .sub{ display:block; font-family:var(--mono); font-size:.66rem; color:var(--faint); font-weight:400; letter-spacing:.1em }
+table.mx thead th.corner{ position:sticky; left:0; z-index:3; background:var(--ink-2); text-align:left; padding-left:1.1rem }
+table.mx tbody tr:hover th.rowh,
+table.mx tbody tr.on th.rowh{ background:var(--ink-3); color:#fff }
+table.mx tbody tr:hover td,
+table.mx tbody tr.on td{ background:rgba(99,199,214,.05) }
+table.mx tbody tr.on th.rowh{ box-shadow:inset 3px 0 0 var(--cyan) }
+/* 三種狀態用三種「形狀」，不只靠顏色分辨：實心＝涵蓋，空心環＝次選，叉＝不涵蓋。 */
+.dot{
+  display:inline-block; width:16px; height:16px; line-height:15px;
+  text-align:center; vertical-align:middle; box-sizing:border-box;
+  font-family:var(--mono); font-size:13px; font-weight:700;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact;
+}
+.dot.s{ border-radius:50%; background:var(--S); box-shadow:0 0 0 3px rgba(79,209,165,.12) }
+.dot.i{ border-radius:50%; border:2px solid var(--I) }
+.dot.r{ color:rgba(255,111,92,.78) }
+.dot.r::after{ content:"✕" }
+.mx-note{
+  padding:1.15rem 1.4rem; background:var(--ink-3); border-top:1px solid var(--line-2);
+  font-size:.9rem; color:var(--mute); min-height:4.6rem;
+}
+.mx-note b{ color:var(--paper); font-weight:600 }
+.legend{
+  display:flex; flex-wrap:wrap; gap:1.4rem; margin-top:1.1rem;
+  font-family:var(--mono); font-size:.72rem; color:var(--faint);
+}
+.legend span{ display:inline-flex; align-items:center; gap:.55rem }
+.hint{ font-family:var(--mono); font-size:.68rem; color:var(--faint); letter-spacing:.12em; margin:0 0 .9rem }
+
+/* ---------- 藥卡 ---------- */
+.drugs{ display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1rem }
+.drug{
+  border:1px solid var(--line); border-radius:8px; background:var(--ink-2);
+  padding:1.4rem; display:flex; flex-direction:column; gap:.75rem;
+}
+.drug-top{ display:flex; justify-content:space-between; align-items:baseline; gap:1rem }
+.drug h3{ font-size:1.02rem }
+.drug .gen{ font-family:var(--mono); font-size:.72rem; color:var(--cyan); letter-spacing:.06em }
+.drug .body{ font-size:.9rem; color:var(--mute); margin:0 }
+.drug .body b{ color:var(--paper) }
+.drug dl{ margin:0; font-size:.82rem; display:grid; grid-template-columns:auto 1fr; gap:.35rem .9rem }
+.drug dt{ font-family:var(--mono); font-size:.66rem; letter-spacing:.14em; color:var(--faint); padding-top:.15rem }
+.drug dd{ margin:0; color:var(--paper) }
+.drug dd.no{ color:var(--R) }
+.drug dd.dose{ font-family:var(--mono); font-size:.76rem; color:var(--mute) }
+
+/* ---------- 情境 / 地雷條列 ---------- */
+.stack{ display:flex; flex-direction:column; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:8px; overflow:hidden }
+.item{ background:var(--ink-2); padding:1.5rem 1.5rem; display:grid; grid-template-columns:minmax(150px,210px) 1fr; gap:1.6rem }
+.item h3{ font-size:1rem; margin-bottom:.35rem }
+.item .k{ font-family:var(--mono); font-size:.66rem; letter-spacing:.14em; color:var(--faint) }
+.item p{ margin:0 0 .7rem; font-size:.93rem; color:var(--mute) }
+.item p:last-child{margin-bottom:0}
+.item .flag{ color:var(--I); font-weight:600 }
+@media (max-width:720px){ .item{ grid-template-columns:1fr; gap:.7rem } }
+
+/* ---------- 測驗 ---------- */
+.quiz{ display:flex; flex-direction:column; gap:1rem }
+.qcard{ border:1px solid var(--line); border-radius:8px; background:var(--ink-2); padding:1.5rem }
+.qcard .stem{ font-size:.97rem; margin-bottom:1.1rem }
+.qcard .stem .n{ font-family:var(--mono); color:var(--cyan); font-size:.72rem; letter-spacing:.16em; display:block; margin-bottom:.5rem }
+.opts{ display:flex; flex-direction:column; gap:.5rem }
+.opt{
+  text-align:left; font:inherit; font-size:.9rem; color:var(--paper);
+  background:transparent; border:1px solid var(--line-2); border-radius:6px;
+  padding:.7rem .9rem; cursor:pointer; transition:background .15s ease, border-color .15s ease;
+}
+.opt:hover{ background:var(--ink-3) }
+.opt:focus-visible{ outline:2px solid var(--cyan); outline-offset:2px }
+.opt.right{ border-color:var(--S); background:rgba(79,209,165,.1); color:#fff }
+.opt.wrong{ border-color:var(--R); background:rgba(255,111,92,.09) }
+.opt[disabled]{ cursor:default }
+.exp{
+  display:none; margin-top:1rem; padding:.95rem 1.05rem; border-radius:6px;
+  background:var(--ink-3); border-left:2px solid var(--S);
+  font-size:.87rem; color:var(--mute);
+}
+.exp.show{ display:block }
+.exp b{ color:var(--paper) }
+
+/* ---------- 縮寫對照表 ---------- */
+.gfilter{
+  width:100%; max-width:520px; font:inherit; font-size:.92rem;
+  background:var(--ink-2); color:var(--paper);
+  border:1px solid var(--line-2); border-radius:6px;
+  padding:.72rem .95rem; margin-bottom:2.2rem;
+  -webkit-appearance:none; appearance:none;
+}
+.gfilter::placeholder{ color:var(--faint) }
+.gfilter:focus{ outline:2px solid var(--cyan); outline-offset:2px; border-color:transparent }
+.gset{ margin-bottom:2.4rem }
+.gset[hidden]{ display:none }
+.gtitle{
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.18em; color:var(--cyan);
+  margin-bottom:.4rem; padding-bottom:.65rem; border-bottom:1px solid var(--line-2);
+}
+.glist{ margin:0 }
+.grow{
+  display:grid; grid-template-columns:132px minmax(200px,1.05fr) 1.5fr;
+  gap:.35rem 1.5rem; padding:.72rem 0; border-bottom:1px solid var(--line);
+  align-items:baseline;
+}
+.grow[hidden]{ display:none }
+.grow dt{ font-family:var(--mono); font-size:.85rem; font-weight:600; color:#fff }
+.grow dd{ margin:0 }
+.grow .full{ font-size:.84rem; color:var(--paper) }
+.grow .zh{ font-size:.84rem; color:var(--mute); line-height:1.65 }
+.gempty{ color:var(--mute); font-size:.9rem }
+.gempty[hidden]{ display:none }
+@media (max-width:760px){
+  .grow{ grid-template-columns:1fr; gap:.2rem; padding:.9rem 0 }
+  .grow .full{ font-size:.82rem; color:var(--mute) }
+}
+
+/* ---------- 分享 ----------
+   兩個入口：hero 的實心按鈕，以及捲動後出現的浮動按鈕。
+   QR 是離線 base64，不打任何外部服務。 */
+.sharebtn{
+  display:inline-flex; align-items:center; gap:.55rem;
+  font:inherit; font-size:.86rem; font-weight:650; letter-spacing:.01em;
+  background:var(--cyan); color:#04222a; border:none; border-radius:999px;
+  padding:.72rem 1.2rem; cursor:pointer; transition:background .15s ease, transform .15s ease;
+}
+.sharebtn:hover{ background:#82d9e6 }
+.sharebtn:active{ transform:scale(.97) }
+.sharebtn:focus-visible{ outline:2px solid var(--paper); outline-offset:3px }
+.sharebtn svg{ width:16px; height:16px; flex:none }
+
+.share-fab{
+  position:fixed; z-index:60;
+  right:clamp(1rem,3.5vw,2.2rem); bottom:clamp(1rem,3.5vw,2.2rem);
+  box-shadow:0 10px 30px rgba(0,0,0,.5);
+  opacity:0; transform:translateY(14px); pointer-events:none;
+  transition:opacity .3s ease, transform .3s ease, background .15s ease;
+}
+.share-fab.on{ opacity:1; transform:none; pointer-events:auto }
+
+.ov{
+  position:fixed; inset:0; z-index:90; display:none;
+  align-items:center; justify-content:center; padding:1.25rem;
+  background:rgba(3,12,16,.74);
+  -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px);
+}
+.ov.on{ display:flex }
+.sheet{
+  position:relative; width:100%; max-width:362px; text-align:center;
+  background:var(--ink-2); border:1px solid var(--line-2); border-radius:14px;
+  padding:1.7rem 1.4rem 1.4rem; box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+.sheet h3{ font-size:1.05rem; margin-bottom:.35rem }
+.sheet .st{ font-size:.78rem; color:var(--mute); margin-bottom:1.25rem }
+.qrbox{ background:#fff; border-radius:12px; padding:12px; display:inline-block }
+.qrbox img{ display:block; width:190px; height:190px; image-rendering:pixelated }
+.sheet .hint{ font-size:.78rem; color:var(--faint); margin:.95rem .2rem 1rem; line-height:1.6 }
+.sheet .lk{
+  font-family:var(--mono); font-size:.66rem; color:var(--mute); word-break:break-all;
+  background:var(--ink); border:1px solid var(--line); border-radius:6px;
+  padding:.6rem .7rem; margin-bottom:1rem;
+}
+.sbtns{ display:flex; gap:.55rem }
+.sbtn{
+  flex:1; font:inherit; font-size:.85rem; font-weight:600; cursor:pointer;
+  border:1px solid var(--line-2); background:transparent; color:var(--paper);
+  border-radius:8px; padding:.7rem .6rem; transition:background .15s ease;
+}
+.sbtn:hover{ background:var(--ink-3) }
+.sbtn.primary{ background:var(--cyan); color:#04222a; border-color:var(--cyan) }
+.sbtn.primary:hover{ background:#82d9e6 }
+.sbtn:focus-visible{ outline:2px solid var(--cyan); outline-offset:2px }
+.sx{
+  position:absolute; top:.6rem; right:.6rem; width:30px; height:30px;
+  border:none; background:var(--ink-3); border-radius:8px;
+  color:var(--mute); font-size:17px; line-height:1; cursor:pointer;
+}
+.sx:hover{ color:var(--paper) }
+.toast{
+  position:fixed; left:50%; bottom:1.7rem; z-index:120;
+  transform:translate(-50%,14px); opacity:0; pointer-events:none;
+  background:var(--ink-3); border:1px solid var(--line-2); color:var(--paper);
+  padding:.7rem 1.25rem; border-radius:999px; font-size:.85rem;
+  transition:opacity .25s ease, transform .25s ease;
+}
+.toast.on{ opacity:1; transform:translate(-50%,0) }
+
+/* ---------- 尾 ---------- */
+.refs{ font-size:.83rem; color:var(--faint); columns:2; column-gap:2.5rem }
+.refs li{ margin-bottom:.6rem; break-inside:avoid }
+@media (max-width:640px){ .refs{ columns:1 } }
+footer{ padding:3rem 0 4.5rem; color:var(--faint); font-size:.8rem }
+footer .code{ color:var(--mute) }
+
+/* ---------- 進場 ---------- */
+.rise{ opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease }
+.rise.in{ opacity:1; transform:none }
+@media (prefers-reduced-motion:reduce){
+  .rise{ opacity:1; transform:none; transition:none }
+  *{ animation:none !important }
+}
+
+/* ---------- 列印（貼在 CCU 牆上用） ---------- */
+@media print{
+  body{ background:#fff; color:#000; background-image:none }
+  .sec,.hero{ border-color:#ccc; page-break-inside:avoid }
+  .cell,.drug,.item,.qcard,.matrix-shell,.origin,.mx-note{ background:#fff; border-color:#bbb; color:#000 }
+  .mute,.drug .body,.item p,.refs,.grow .zh{ color:#333 }
+  h1,h2,h3,strong,.drug dd,.grow dt,.grow .full{ color:#000 }
+  .quiz,.exp,.gfilter,.hero-links,.sharebtn,.share-fab,.ov,.toast{ display:none !important }
+  .grow[hidden]{ display:grid !important }
+  .gset[hidden]{ display:block !important }
+  .gtitle{ color:#000; border-bottom-color:#999 }
+  table.mx{ min-width:0; font-size:9pt }
+}
+</style>
+</head>
+<body>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow rise">CCU 抗生素備忘 · 2026</p>
+    <h1 class="rise">你不必記住所有新藥。<br>先問<span class="hl">一句話</span>：<br>是哪一種酶？</h1>
+    <p class="hero-sub rise">三個 avibactam 家族成員、一個單環 β-lactam、一個特洛伊木馬、一個專打 Acinetobacter 的老藥新配方。它們的差別不在強弱，而在各自能解開哪一把鎖。而那把鎖，微生物室一小時內就能告訴你。</p>
+
+    <div class="rule rise">
+      <span class="lab code">THE ONE RULE</span>
+      <p>看到 <span class="code">MBL</span>（<span class="code">NDM / VIM / IMP</span>），整個 avibactam 家族同時失效。此時檯面上只剩兩張牌：<strong>aztreonam-avibactam</strong> 與 <strong>cefiderocol</strong>。</p>
+    </div>
+
+    <div class="origin rise">
+      這份講義起於一則 LINE 訊息裡的三行規則：
+      <ul>
+        <li class="code">Emblaveo → KPC, MBL, OXA-48</li>
+        <li class="code">Recarbrio → KPC</li>
+        <li class="code">Zavicefta → KPC, OXA-48</li>
+      </ul>
+      三行都對，但少了兩件事：<strong>它們各自打不到什麼</strong>，以及<strong>在 CCU 這個滿是異物與心律不整藥的地方，選對了菌還可能輸在別的地方</strong>。以下把它展開。
+    </div>
+
+    <nav class="hero-links rise">
+      <a href="#matrix">鎖 × 鑰匙矩陣 →</a>
+      <a href="#abbr">縮寫對照表 →</a>
+      <a href="#quiz-sec">六題自測 →</a>
+    </nav>
+
+    <p class="rise" style="margin-top:1.8rem">
+      <button type="button" class="sharebtn" data-share aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        分享給同事
+      </button>
+    </p>
+  </div>
+</header>
+
+<!-- ================= 為什麼是我們 ================= -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <p class="eyebrow">為什麼心臟科要管這件事</p>
+      <h2>CCU 的感染，決策權不在感染科手上</h2>
+      <p>會診當然要，但有四件事只有你能決定，而每一件都會改寫抗生素計畫。</p>
+    </div>
+    <div class="grid g2 rise">
+      <div class="cell">
+        <span class="tag code">異物</span>
+        <h3>你的病房裡幾乎沒有「乾淨」的病人</h3>
+        <p>節律器與 ICD 導線、人工瓣膜、LVAD driveline、ECMO 管路、Impella、鼠蹊部鞘管、長期中心靜脈導管。異物感染的鐵律是「不移除就治不好」，而要不要移除、什麼時候移除，是心臟科的決定 —— 抗生素只是替這個決定爭取時間。</p>
+      </div>
+      <div class="cell">
+        <span class="tag code">容積</span>
+        <h3>抗生素是一種點滴</h3>
+        <p>心衰竭病人對鈉與液體比誰都敏感。一天四劑 piperacillin-tazobactam，光藥物本身就帶進約 45 mEq 鈉（≈1 克鈉），還沒算稀釋液的 400–600 mL。利尿劑調整了半天，可能敗給抗生素單。</p>
+      </div>
+      <div class="cell">
+        <span class="tag code">交互作用</span>
+        <h3>QT、CYP3A4、P-gp 的三方會談</h3>
+        <p>抗心律不整藥＋抗凝血劑＋抗生素，是最容易出事的組合。clarithromycin 同時抑制 CYP3A4 與 P-gp，一次拉高 DOAC、digoxin、statin 與 amiodarone；rifampin 則反向把 DOAC 與 ticagrelor 的效果抽掉。</p>
+      </div>
+      <div class="cell">
+        <span class="tag code">行政</span>
+        <h3>申請單是你在寫</h3>
+        <p>新一代 β-lactam 幾乎都要事前審查，理由欄要寫得出「為什麼舊藥不行」。而能寫出這句話的前提，是你看得懂培養報告上那串酶的名字。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 四把鎖 ================= -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <p class="eyebrow">Ambler 分類</p>
+      <h2>四把鎖，一個分水嶺</h2>
+      <p>β-lactamase 依活性中心分四類。前三類（A、C、D）用<strong>絲胺酸</strong>水解，可以被新一代抑制劑擋下來；只有 Class B 用<strong>鋅離子</strong>，機轉完全不同，現有的 avibactam、relebactam、vaborbactam 全部無效。整張選藥表就在這裡分岔。</p>
+    </div>
+    <div class="grid g2 rise">
+      <div class="cell">
+        <span class="tag code">CLASS A · SERINE</span>
+        <h3>ESBL 與 KPC</h3>
+        <p><span class="code">CTX-M</span> 型 ESBL 水解第三代 cephalosporin；<span class="code">KPC</span> 進一步水解 carbapenem，是台灣與全球最常見的碳青黴烯酶之一。</p>
+        <p><em>三種新抑制劑（avibactam、relebactam、vaborbactam）都擋得住。</em></p>
+      </div>
+      <div class="cell is-pivot">
+        <span class="tag code">CLASS B · METALLO（鋅）</span>
+        <h3>NDM / VIM / IMP</h3>
+        <p>幾乎水解所有 β-lactam，唯獨<strong>不水解 aztreonam</strong> —— 因為 aztreonam 是單環結構，不是它的受質。這個例外，就是 Emblaveo 的全部設計邏輯。</p>
+        <p>問題在於帶 MBL 的菌通常同時帶 ESBL 或 AmpC，會把單獨使用的 aztreonam 分解掉。所以要補一個 avibactam 去保護它。</p>
+      </div>
+      <div class="cell">
+        <span class="tag code">CLASS C · AMPC</span>
+        <h3>可被誘導的染色體酶</h3>
+        <p>Enterobacter、Serratia、Citrobacter freundii、Pseudomonas 天生帶有。用 ceftriaxone 治療時可能在療程中被誘導而失效，這是「治療到一半突然抗藥」的經典原因。</p>
+        <p>首選 <span class="code">cefepime</span>（若 MIC ≤ 2）或 carbapenem。tazobactam 對 AmpC 不可靠；avibactam 與 relebactam 可靠。</p>
+      </div>
+      <div class="cell">
+        <span class="tag code">CLASS D · OXA</span>
+        <h3>OXA-48-like 與它的偽裝</h3>
+        <p><span class="code">OXA-48</span> 水解 carbapenem 的效率不高，卻足以造成治療失敗；更麻煩的是它<strong>常常不水解 ceftazidime</strong>，導致藥敏報告看起來還很漂亮，MIC 落在判讀邊緣容易被誤判為敏感。</p>
+        <p><em>只有 avibactam 擋得住 OXA-48。vaborbactam 與 relebactam 都不行</em> —— 這是 Vabomere 與 Recarbrio 最大的盲點。Acinetobacter 的 <span class="code">OXA-23/24/58</span> 則是另一個故事。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 診斷 ================= -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <p class="eyebrow">在選藥之前</p>
+      <h2>沒有酶的名字，下面那張表只是知識，不是決策</h2>
+      <p>血液培養變色後，快速分子檢測（如 BCID2 型多重 PCR 面板）通常能在一小時內直接報出 <span class="code">KPC / NDM / VIM / IMP / OXA-48-like</span>，比傳統藥敏早 24–48 小時。這段時間差，正是敗血性休克病人能不能等的差別。</p>
+    </div>
+    <div class="stack rise">
+      <div class="item">
+        <div><span class="k">實務動作</span><h3>血培陽性當下就打電話</h3></div>
+        <div>
+          <p>問微生物室兩件事：<strong>有沒有做碳青黴烯酶基因套組</strong>，以及<strong>報告什麼時候會出來</strong>。很多醫院有這個能力但不會主動加做。</p>
+          <p>如果只有表型檢測（mCIM／eCIM），也足以分辨「是不是 MBL」—— 那正是你最需要的那一刀。</p>
+        </div>
+      </div>
+      <div class="item">
+        <div><span class="k">別忘了</span><h3>CCU 的發燒不一定是感染</h3></div>
+        <div>
+          <p>心肌梗塞後炎症反應、Dressler 症候群、心包切開後症候群、輸血反應、深部靜脈栓塞、藥物熱、Impella 溶血 —— 在心臟加護病房，這些都比在一般 ICU 常見。</p>
+          <p class="flag">先送兩套血培、找感染源，再決定要不要開廣效抗生素。經驗性用藥不等於永久用藥。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 矩陣（招牌） ================= -->
+<section class="sec" id="matrix">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <p class="eyebrow">鎖 × 鑰匙</p>
+      <h2>一張表把七把鑰匙擺在八把鎖前面</h2>
+      <p>橫排是你在報告上看到的酶或抗藥表現型，直排是可以拿來對付它的藥。點任何一列，下方會說明那一列的臨床要點。</p>
+    </div>
+
+    <p class="hint rise">← 左右可捲動 · 點列名看說明</p>
+
+    <div class="matrix-shell rise">
+      <div class="matrix-scroll">
+        <table class="mx">
+          <thead>
+            <tr>
+              <th class="corner">酶 / 表現型</th>
+              <th>CAZ-AVI<span class="brand">Zavicefta</span></th>
+              <th>C/T<span class="brand">Zerbaxa</span></th>
+              <th>MEM-VAB<span class="brand">Vabomere</span></th>
+              <th>IMI-REL<span class="brand">Recarbrio</span></th>
+              <th>ATM-AVI<span class="brand">Emblaveo</span></th>
+              <th>FDC<span class="brand">Fetroja</span></th>
+              <th>SUL-DUR<span class="brand">Xacduro</span></th>
+            </tr>
+          </thead>
+          <tbody id="mxbody">
+            <tr data-note="<b>重症仍以 carbapenem 為首選</b>（MERINO 試驗顯示 piperacillin-tazobactam 在 ESBL 菌血症劣於 meropenem）。新藥留給 carbapenem 打不到的情形，不要在這一列消耗掉。單純泌尿道感染可考慮降階。">
+              <th class="rowh">ESBL<span class="sub">CTX-M · CLASS A</span></th>
+              <td><i class="dot s"></i></td><td><i class="dot i"></i></td><td><i class="dot s"></i></td><td><i class="dot s"></i></td><td><i class="dot s"></i></td><td><i class="dot s"></i></td><td><i class="dot r"></i></td>
+            </tr>
+            <tr data-note="Enterobacter cloacae、Klebsiella aerogenes、Citrobacter freundii 這三隻誘導風險最高。<b>首選 cefepime（若 MIC ≤ 2）或 carbapenem，避開 ceftriaxone</b>；新藥同樣不是這一列的第一線。">
+              <th class="rowh">AmpC<span class="sub">CLASS C</span></th>
+              <td><i class="dot s"></i></td><td><i class="dot i"></i></td><td><i class="dot s"></i></td><td><i class="dot s"></i></td><td><i class="dot s"></i></td><td><i class="dot s"></i></td><td><i class="dot r"></i></td>
+            </tr>
+            <tr data-note="三個新 β-lactam 都可以，臨床上以 <b>meropenem-vaborbactam 或 ceftazidime-avibactam</b> 為主。關鍵警告：CAZ-AVI 使用中可能誘發 KPC 變異（如 KPC-31、KPC-33，源自 D179Y 取代）而產生抗藥，且弔詭地讓 meropenem 恢復敏感 —— <b>治療反應不佳時務必重送菌株做藥敏，不要只是加量</b>。">
+              <th class="rowh">KPC<span class="sub">CLASS A CARBAPENEMASE</span></th>
+              <td><i class="dot s"></i></td><td><i class="dot r"></i></td><td><i class="dot s"></i></td><td><i class="dot s"></i></td><td><i class="dot s"></i></td><td><i class="dot s"></i></td><td><i class="dot r"></i></td>
+            </tr>
+            <tr data-note="<b>這一列是 Recarbrio 與 Vabomere 的盲點</b>，也是三行 LINE 規則裡最值得記住的一行。OXA-48 只有 avibactam 系列擋得住，所以是 <b>ceftazidime-avibactam</b> 的主場（aztreonam-avibactam 與 cefiderocol 亦可）。注意 OXA-48 常合併 ESBL，此時 ceftazidime 單用會失效。">
+              <th class="rowh">OXA-48-like<span class="sub">CLASS D</span></th>
+              <td><i class="dot s"></i></td><td><i class="dot r"></i></td><td><i class="dot r"></i></td><td><i class="dot r"></i></td><td><i class="dot s"></i></td><td><i class="dot s"></i></td><td><i class="dot r"></i></td>
+            </tr>
+            <tr data-note="<b>分水嶺。</b>鋅離子機轉，所有絲胺酸抑制劑同時陣亡。首選 <b>aztreonam-avibactam</b>；院內尚未進藥時，公認的替代方案是 <b>ceftazidime-avibactam ＋ aztreonam 併用</b>（同時輸注，讓 avibactam 保護 aztreonam），這是 Emblaveo 上市前的標準做法。cefiderocol 為另一選項。">
+              <th class="rowh">MBL<span class="sub">NDM · VIM · IMP · CLASS B</span></th>
+              <td><i class="dot r"></i></td><td><i class="dot r"></i></td><td><i class="dot r"></i></td><td><i class="dot r"></i></td><td><i class="dot s"></i></td><td><i class="dot s"></i></td><td><i class="dot r"></i></td>
+            </tr>
+            <tr data-note="機轉多半是孔道缺失＋幫浦外排＋AmpC 過度表現，而非碳青黴烯酶。<b>首選 ceftolozane-tazobactam</b>，其次 ceftazidime-avibactam 或 imipenem-relebactam。注意：<b>vaborbactam 對綠膿桿菌沒有加成，Vabomere 不是抗綠膿選項</b>。這一列在 LVAD driveline 與呼吸器相關肺炎最常遇到。">
+              <th class="rowh">DTR-Pseudomonas<span class="sub">無碳青黴烯酶</span></th>
+              <td><i class="dot s"></i></td><td><i class="dot s"></i></td><td><i class="dot r"></i></td><td><i class="dot s"></i></td><td><i class="dot i"></i></td><td><i class="dot s"></i></td><td><i class="dot r"></i></td>
+            </tr>
+            <tr data-note="台灣加護病房的老對手。骨幹是<b>高劑量 ampicillin-sulbactam 的併用療法</b>；<b>sulbactam-durlobactam</b>（ATTACK 試驗）是專為它設計的新藥。cefiderocol 有活性，但 CREDIBLE-CR 試驗在 CRAB 族群出現死亡率警訊，多主張併用而非單用。">
+              <th class="rowh">CRAB<span class="sub">A. BAUMANNII · OXA-23/24</span></th>
+              <td><i class="dot r"></i></td><td><i class="dot r"></i></td><td><i class="dot r"></i></td><td><i class="dot r"></i></td><td><i class="dot r"></i></td><td><i class="dot i"></i></td><td><i class="dot s"></i></td>
+            </tr>
+            <tr data-note="天生同時帶 L1（金屬酶）與 L2（絲胺酸頭孢菌素酶），所以<b>對 carbapenem 天然抗藥 —— 用 meropenem 只會養大它</b>。首選 TMP-SMX 或 minocycline，重症常需兩藥併用；<b>aztreonam-avibactam</b> 是機轉上合理的備案，cefiderocol 亦有活性。">
+              <th class="rowh">Stenotrophomonas<span class="sub">S. MALTOPHILIA</span></th>
+              <td><i class="dot r"></i></td><td><i class="dot r"></i></td><td><i class="dot r"></i></td><td><i class="dot r"></i></td><td><i class="dot s"></i></td><td><i class="dot s"></i></td><td><i class="dot r"></i></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mx-note" id="mxnote">點左側任何一列，這裡會顯示該列的臨床要點。</div>
+    </div>
+
+    <div class="legend rise">
+      <span><i class="dot s"></i> 實心 · 可靠涵蓋，可作為治療選項</span>
+      <span><i class="dot i"></i> 空心 · 有活性但非首選，或資料有限</span>
+      <span><i class="dot r"></i> 叉 · 不涵蓋，不要用</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 藥卡 ================= -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <p class="eyebrow">七把鑰匙</p>
+      <h2>每一張卡先講它打不到什麼</h2>
+      <p>因為在加護病房，害死人的從來不是「這個藥有效」，而是「我以為這個藥有效」。劑量為腎功能正常之成人參考值，實際須依 CrCl、CRRT 與院內規範調整。</p>
+    </div>
+
+    <div class="drugs rise">
+      <article class="drug">
+        <div class="drug-top"><h3>Zavicefta</h3><span class="gen">ceftazidime-avibactam</span></div>
+        <p class="body">最泛用的一把。avibactam 是 diazabicyclooctane 型抑制劑，同時擋 Class A、C、D，<b>是 OXA-48 的主場</b>，對 DTR-Pseudomonas 也有角色。</p>
+        <dl>
+          <dt>打不到</dt><dd class="no">MBL（NDM/VIM/IMP）、CRAB、Stenotrophomonas、厭氧菌</dd>
+          <dt>陷阱</dt><dd>療程中可能長出 KPC 變異而抗藥，需重驗藥敏</dd>
+          <dt>劑量</dt><dd class="dose">2.5 g IV q8h，輸注 2 小時</dd>
+        </dl>
+      </article>
+
+      <article class="drug">
+        <div class="drug-top"><h3>Zerbaxa</h3><span class="gen">ceftolozane-tazobactam</span></div>
+        <p class="body">不是碳青黴烯酶剋星，而是<b>目前對綠膿桿菌最強的 cephalosporin</b>。對孔道缺失與幫浦外排型的抗藥性特別耐受。</p>
+        <dl>
+          <dt>打不到</dt><dd class="no">任何碳青黴烯酶（KPC／OXA-48／MBL）、CRAB</dd>
+          <dt>定位</dt><dd>DTR-Pseudomonas 的第一線</dd>
+          <dt>劑量</dt><dd class="dose">1.5 g q8h；院內肺炎／VAP 用 3 g q8h</dd>
+        </dl>
+      </article>
+
+      <article class="drug">
+        <div class="drug-top"><h3>Vabomere</h3><span class="gen">meropenem-vaborbactam</span></div>
+        <p class="body">硼酸類抑制劑，<b>對 KPC 極強</b>，是 KPC 型 CRE 的主力之一。抑制劑本身很專一，代價是譜很窄。</p>
+        <dl>
+          <dt>打不到</dt><dd class="no">OXA-48、MBL、CRAB；對綠膿桿菌無額外加成</dd>
+          <dt>陷阱</dt><dd>不要因為「裡面有 meropenem」就當成廣效藥</dd>
+          <dt>劑量</dt><dd class="dose">4 g IV q8h，輸注 3 小時</dd>
+        </dl>
+      </article>
+
+      <article class="drug">
+        <div class="drug-top"><h3>Recarbrio</h3><span class="gen">imipenem-cilastatin-relebactam</span></div>
+        <p class="body">擋 Class A 與 Class C。真正的附加價值不只在 KPC，更在<b>把 imipenem 對抗藥綠膿桿菌的活性救回來</b>。</p>
+        <dl>
+          <dt>打不到</dt><dd class="no">OXA-48、MBL、CRAB、Stenotrophomonas</dd>
+          <dt>陷阱</dt><dd>癲癇風險（imipenem 本質），CCU 老年腎功能不全者留意</dd>
+          <dt>劑量</dt><dd class="dose">1.25 g IV q6h，輸注 30 分鐘</dd>
+        </dl>
+      </article>
+
+      <article class="drug">
+        <div class="drug-top"><h3>Emblaveo</h3><span class="gen">aztreonam-avibactam</span></div>
+        <p class="body">2025 年 2 月獲 FDA 核准，第一個固定劑量的單環 β-lactam／抑制劑複方。aztreonam 天生躲過金屬酶，avibactam 負責擋掉同時存在的絲胺酸酶。<b>MBL 時代的答案</b>。</p>
+        <dl>
+          <dt>打不到</dt><dd class="no">綠膿桿菌不可靠、CRAB、革蘭氏陽性菌</dd>
+          <dt>替代</dt><dd>未進藥時用 CAZ-AVI ＋ aztreonam 同時輸注</dd>
+          <dt>劑量</dt><dd class="dose">ATM 1.5 g／AVI 0.5 g q6h，延長輸注，首劑給負荷劑量</dd>
+        </dl>
+      </article>
+
+      <article class="drug">
+        <div class="drug-top"><h3>Fetroja</h3><span class="gen">cefiderocol</span></div>
+        <p class="body">特洛伊木馬：接上鐵載體，被細菌的鐵運輸系統主動搬進菌體。<b>四類酶全涵蓋</b>，是唯一橫跨 CRE、綠膿、CRAB、Stenotrophomonas 的單一藥物。</p>
+        <dl>
+          <dt>警訊</dt><dd class="no">CREDIBLE-CR 在 CRAB 族群出現較高死亡率，單用要慎重</dd>
+          <dt>陷阱</dt><dd>腎功能亢進（CrCl ≥ 120）需縮短間隔，否則劑量不足</dd>
+          <dt>劑量</dt><dd class="dose">2 g IV q8h，輸注 3 小時</dd>
+        </dl>
+      </article>
+
+      <article class="drug">
+        <div class="drug-top"><h3>Xacduro</h3><span class="gen">sulbactam-durlobactam</span></div>
+        <p class="body">唯一為 Acinetobacter 設計的複方。sulbactam 本來就對 Acinetobacter 的 PBP 有直接活性，durlobactam 負責擋掉水解它的酶。</p>
+        <dl>
+          <dt>只用於</dt><dd>碳青黴烯抗藥 Acinetobacter baumannii</dd>
+          <dt>用法</dt><dd>臨床試驗中與 meropenem 併用</dd>
+          <dt>劑量</dt><dd class="dose">1 g／1 g IV q6h，輸注 3 小時</dd>
+        </dl>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 革蘭氏陽性 ================= -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <p class="eyebrow">別忘了另一半</p>
+      <h2>CCU 最常遇到的其實是葡萄球菌</h2>
+      <p>導線、瓣膜、胸骨傷口、中心靜脈導管 —— 這些感染的主角是 <span class="code">S. aureus</span> 與凝固酶陰性葡萄球菌，不是 CRE。上面那七把鑰匙一把都用不上。</p>
+    </div>
+    <div class="drugs rise">
+      <article class="drug">
+        <div class="drug-top"><h3>Daptomycin</h3><span class="gen">高劑量策略</span></div>
+        <p class="body">MRSA 菌血症與心內膜炎用 <b>8–10 mg/kg</b>，比仿單的 6 mg/kg 高。</p>
+        <dl>
+          <dt>禁忌</dt><dd class="no">肺炎無效 —— 會被肺泡表面張力素去活化</dd>
+          <dt>監測</dt><dd>每週 CK；與 statin 併用時留意橫紋肌溶解</dd>
+        </dl>
+      </article>
+      <article class="drug">
+        <div class="drug-top"><h3>Ceftaroline</h3><span class="gen">抗 MRSA 的 cephalosporin</span></div>
+        <p class="body">頑固性 MRSA 菌血症的救援選項，常與 daptomycin 併用。</p>
+        <dl>
+          <dt>要點</dt><dd>菌血症／心內膜炎用 600 mg q8h，不是 q12h</dd>
+        </dl>
+      </article>
+      <article class="drug">
+        <div class="drug-top"><h3>Ceftobiprole</h3><span class="gen">Zevtera</span></div>
+        <p class="body">2024 年 FDA 核准用於 <b>S. aureus 菌血症</b>（ERADICATE 試驗），同時涵蓋 MRSA 與綠膿桿菌，在混合感染的重症有其位置。</p>
+        <dl>
+          <dt>劑量</dt><dd class="dose">菌血症 500 mg IV q6h，輸注 2 小時</dd>
+        </dl>
+      </article>
+      <article class="drug">
+        <div class="drug-top"><h3>Dalbavancin</h3><span class="gen">長效脂醣胜肽</span></div>
+        <p class="body">半衰期約兩週，第 1 天與第 8 天各一劑即完成療程。DOTS 試驗（JAMA 2025）顯示對複雜性 <span class="code">S. aureus</span> 菌血症<b>並未優於標準治療</b>，療效相當。</p>
+        <dl>
+          <dt>怎麼想它</dt><dd>不是升級，是<b>拔掉靜脈導管、提早出院</b>的工具</dd>
+          <dt>適合誰</dt><dd>血培已轉陰、感染源已控制、無法維持長期靜脈輸注者</dd>
+        </dl>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CCU 情境 ================= -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <p class="eyebrow">五個情境</p>
+      <h2>抗生素只是配角的那些決定</h2>
+    </div>
+    <div class="stack rise">
+      <div class="item">
+        <div><span class="k">情境 01</span><h3>CIED 感染<br>節律器 / ICD</h3></div>
+        <div>
+          <p>只要確診裝置相關感染 —— 不論是囊袋感染還是導線贅生物 —— <strong>核心處置是完整移除整套系統</strong>。沒有任何抗生素可以取代這件事，包括最新的那幾支。</p>
+          <p>經驗性用 vancomycin；確認是 MSSA 就換回 <span class="code">cefazolin</span> 或 nafcillin，別留在 vancomycin（MSSA 用 vancomycin 的結果較差）。</p>
+          <p>療程<strong>從移除當日重新起算</strong>：單純囊袋感染約 10–14 天；合併菌血症或贅生物則需 4–6 週。</p>
+        </div>
+      </div>
+      <div class="item">
+        <div><span class="k">情境 02</span><h3>LVAD driveline<br>與裝置相關感染</h3></div>
+        <div>
+          <p>主角是 <span class="code">S. aureus</span> 與<strong>綠膿桿菌</strong>。這是矩陣裡「DTR-Pseudomonas」那一列在心臟科最常現身的地方 —— ceftolozane-tazobactam 的主場。</p>
+          <p>裝置無法移除時常需長期抑制性口服治療，此時要提前把<strong>與 warfarin 的交互作用</strong>納入選藥：TMP-SMX 會拉高 INR，rifampin 會把它壓垮。</p>
+        </div>
+      </div>
+      <div class="item">
+        <div><span class="k">情境 03</span><h3>感染性心內膜炎</h3></div>
+        <div>
+          <p>MSSA 用 <span class="code">cefazolin</span> 或抗葡萄球菌青黴素；MRSA 用 vancomycin（以 AUC 導向給藥）或 daptomycin 8–10 mg/kg。</p>
+          <p class="flag">心內膜炎是短療程規則的例外區 —— 下一段的 7 天原則在這裡完全不適用。</p>
+          <p>穩定的左心心內膜炎在完成初期靜脈治療後，可考慮部分口服轉換（POET 試驗），但需要團隊共識與嚴格追蹤。</p>
+        </div>
+      </div>
+      <div class="item">
+        <div><span class="k">情境 04</span><h3>心臟術後<br>胸骨與縱膈感染</h3></div>
+        <div>
+          <p>清創與傷口處理是主軸。病原以 <span class="code">S. aureus</span>、凝固酶陰性葡萄球菌為主，晚發者需涵蓋革蘭氏陰性菌。</p>
+          <p>取得深部組織培養再開藥；表淺拭子培養常只長出移生菌，會把你導向錯誤的廣效抗生素。</p>
+        </div>
+      </div>
+      <div class="item">
+        <div><span class="k">情境 05</span><h3>ECMO、Impella、CRRT<br>上的藥物動力學</h3></div>
+        <div>
+          <p>體外循環管路會<strong>擴大分佈體積</strong>，並吸附親脂性、高蛋白結合率的藥物。β-lactam 的吸附相對輕微，但 Vd 增加仍會壓低血中濃度。</p>
+          <p class="flag">最常見的錯誤是 CRRT 病人「因為腎功能差」而被過度減量。連續性血液透析的清除率不低，β-lactam 在這裡經常給不夠。</p>
+          <p>對策：<strong>延長或持續輸注</strong>＋能做治療藥物監測就做。vancomycin 改用 AUC 導向（目標 AUC₂₄/MIC 400–600），不要再追 trough 15–20。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 心血管地雷 ================= -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <p class="eyebrow">心血管地雷</p>
+      <h2>選對了菌，還可能輸在這四件事</h2>
+    </div>
+    <div class="grid g2 rise">
+      <div class="cell">
+        <span class="tag code">QT 間期</span>
+        <h3>你的病人本來就在吃 amiodarone</h3>
+        <p>巨環類（azithromycin、clarithromycin、erythromycin）、fluoroquinolone（moxifloxacin ＞ levofloxacin ＞ ciprofloxacin）、azole 類抗黴菌藥都會延長 QT。</p>
+        <p>與 amiodarone、sotalol、dofetilide 併用時：<strong>基準與追蹤心電圖、把鉀維持在 4 以上、鎂維持在 2 以上</strong>，並主動檢視有沒有更安全的替代。</p>
+      </div>
+      <div class="cell">
+        <span class="tag code">CYP3A4 / P-gp</span>
+        <h3>兩個方向都會出事</h3>
+        <p><strong>抑制端：</strong>clarithromycin 與 erythromycin 同時抑制 CYP3A4 與 P-gp，一次拉高 apixaban、rivaroxaban、dabigatran、digoxin、amiodarone 與 statin（simvastatin 屬禁忌組合）。要用巨環類時，azithromycin 相對安全。</p>
+        <p><strong>誘導端：</strong>rifampin 會顯著削弱 DOAC、warfarin 與 ticagrelor。<strong>抑制端：</strong>TMP-SMX 抑制 CYP2C9 而拉高 INR，同時可能造成高血鉀。</p>
+        <p>另外 linezolid 是弱單胺氧化酶抑制劑，與 SSRI／SNRI 併用有血清素症候群風險，與升壓劑併用也需留意血壓反應。</p>
+      </div>
+      <div class="cell">
+        <span class="tag code">鈉與容積</span>
+        <h3>看不見的鹽水</h3>
+        <p>piperacillin-tazobactam 每 4.5 g 含約 11 mEq 鈉，一天四劑就是約 45 mEq（≈1 克鈉，相當於 2.5 克食鹽），再加上稀釋液每日 400–600 mL。</p>
+        <p>對急性失代償心衰竭病人，這是利尿計畫裡最容易被忽略的一筆。<strong>把抗生素的鈉與容積算進每日輸出入</strong>；必要時與藥師討論濃縮配製或改用鈉含量較低的替代品。</p>
+      </div>
+      <div class="cell">
+        <span class="tag code">腎與腦</span>
+        <h3>兩個被低估的副作用</h3>
+        <p><strong>Cefepime 神經毒性：</strong>腎功能不全的高齡病人可能出現意識改變甚至非痙攣性癲癇重積。CCU 病人「查不出原因的譫妄」要把 cefepime 列入鑑別診斷。</p>
+        <p><strong>Vancomycin 加 piperacillin-tazobactam：</strong>長年被認為會加重急性腎損傷，但隨機分派的 ACORN 試驗並未顯示兩者在腎損傷上有差異（反而 cefepime 組神經學事件較多）。這是一個近年方向改變的觀念，不必為了避開 AKI 而放棄 piperacillin-tazobactam。</p>
+        <p>Linezolid 使用超過兩週要追蹤血小板。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 給藥與停藥 ================= -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <p class="eyebrow">給多久，怎麼給</p>
+      <h2>新藥之外，還有兩個免費的槓桿</h2>
+    </div>
+    <div class="stack rise">
+      <div class="item">
+        <div><span class="k">槓桿一</span><h3>延長輸注</h3></div>
+        <div>
+          <p>β-lactam 的殺菌效力取決於<strong>濃度高於 MIC 的時間比例</strong>，不是尖峰濃度。把 30 分鐘推注改成 3–4 小時延長輸注或持續輸注，不多花一毛錢就能改善藥效指標。</p>
+          <p>證據面：BLING III 的主要指標（90 天死亡率）未達統計顯著，但方向有利；同期的統合分析則顯示持續輸注可降低死亡率。<strong>在重症、高 MIC、腎功能亢進、體外循環的病人身上，這是合理且低風險的預設做法</strong>。</p>
+          <p>新藥本身多數也已設計為延長輸注：CAZ-AVI 2 小時、MEM-VAB 與 cefiderocol、SUL-DUR 3 小時。</p>
+        </div>
+      </div>
+      <div class="item">
+        <div><span class="k">槓桿二</span><h3>更短的療程</h3></div>
+        <div>
+          <p>BALANCE 試驗（NEJM 2024，含加護病房族群，n≈3600）證實菌血症治療 <strong>7 天不劣於 14 天</strong>：90 天死亡率 13.3% 對 14.3%，復發率與住院天數無差異。</p>
+          <p class="flag">但 7 天有明確的排除區：感染性心內膜炎、金黃色葡萄球菌菌血症未達清除標準、未移除的人工植入物、未引流的深部膿瘍、嚴重免疫抑制 —— 這些在 CCU 全都不少見。</p>
+          <p>可靠的節奏是：48–72 小時看培養與臨床反應就<strong>降階</strong>，每天問一次「今天是第幾天、停藥條件是什麼」，並確保金黃色葡萄球菌菌血症有追蹤血培。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 測驗 ================= -->
+<section class="sec" id="quiz-sec">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <p class="eyebrow">六發子彈</p>
+      <h2>把表蓋起來，試試看</h2>
+      <p>致敬那款抗生素射擊遊戲 —— 只是這裡的靶，都是你這個月可能真的會遇到的。</p>
+    </div>
+    <div class="quiz rise" id="quiz"></div>
+  </div>
+</section>
+
+<!-- ================= 縮寫對照表 ================= -->
+<section class="sec" id="abbr">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <p class="eyebrow">附錄</p>
+      <h2>縮寫對照表</h2>
+      <p>培養報告、指引與這一頁上會出現的縮寫，分六組列出。輸入關鍵字可即時篩選 —— 英文、縮寫、中文都能搜。</p>
+    </div>
+
+    <input id="gfilter" class="gfilter rise" type="search" autocomplete="off"
+           placeholder="搜尋：OXA、metallo、金屬酶、心內膜炎…" aria-label="篩選縮寫">
+
+    <div id="glossary" class="rise">
+
+      <div class="gset">
+        <h3 class="gtitle">A · β-LACTAMASE 與抗藥表現型</h3>
+        <dl class="glist">
+          <div class="grow"><dt>ESBL</dt><dd class="full">Extended-Spectrum β-Lactamase</dd><dd class="zh">廣效性乙內醯胺酶。Ambler Class A，臨床上以 CTX-M 型為主，水解第三代 cephalosporin。</dd></div>
+          <div class="grow"><dt>CTX-M</dt><dd class="full">Cefotaximase-Munich</dd><dd class="zh">目前全球最主要的 ESBL 基因家族，得名於它對 cefotaxime 的水解力。</dd></div>
+          <div class="grow"><dt>AmpC</dt><dd class="full">AmpC β-Lactamase</dd><dd class="zh">Class C 頭孢菌素酶，多為染色體性且可被誘導。tazobactam 抑制不可靠，avibactam 與 relebactam 有效。</dd></div>
+          <div class="grow"><dt>KPC</dt><dd class="full">Klebsiella pneumoniae Carbapenemase</dd><dd class="zh">Class A 碳青黴烯酶，台灣與全球最常見者之一。avibactam、relebactam、vaborbactam 三者皆可抑制。</dd></div>
+          <div class="grow"><dt>MBL</dt><dd class="full">Metallo-β-Lactamase</dd><dd class="zh">Class B 金屬酶，活性中心含鋅離子。水解幾乎所有 β-lactam，唯獨不水解 aztreonam；現有絲胺酸型抑制劑全部無效。</dd></div>
+          <div class="grow"><dt>NDM</dt><dd class="full">New Delhi Metallo-β-Lactamase</dd><dd class="zh">臨床最常見的 MBL，以質體傳播，常合併多種其他抗藥基因。</dd></div>
+          <div class="grow"><dt>VIM</dt><dd class="full">Verona Integron-encoded Metallo-β-Lactamase</dd><dd class="zh">MBL 的一種，在綠膿桿菌與腸道菌皆可見。</dd></div>
+          <div class="grow"><dt>IMP</dt><dd class="full">Imipenemase</dd><dd class="zh">MBL 的一種，在台灣與亞洲地區相對常見。</dd></div>
+          <div class="grow"><dt>OXA</dt><dd class="full">Oxacillinase</dd><dd class="zh">Class D。OXA-48-like 見於腸道菌（只有 avibactam 擋得住）；OXA-23／24／58 見於 Acinetobacter。</dd></div>
+          <div class="grow"><dt>CRE</dt><dd class="full">Carbapenem-Resistant Enterobacterales</dd><dd class="zh">碳青黴烯抗藥腸道菌科。抗藥機轉可能是碳青黴烯酶，也可能只是孔道缺失＋AmpC／ESBL —— 兩者選藥不同。</dd></div>
+          <div class="grow"><dt>CRAB</dt><dd class="full">Carbapenem-Resistant <i>Acinetobacter baumannii</i></dd><dd class="zh">碳青黴烯抗藥鮑氏不動桿菌，台灣加護病房的長期問題菌。</dd></div>
+          <div class="grow"><dt>CRPA</dt><dd class="full">Carbapenem-Resistant <i>Pseudomonas aeruginosa</i></dd><dd class="zh">碳青黴烯抗藥綠膿桿菌。</dd></div>
+          <div class="grow"><dt>DTR</dt><dd class="full">Difficult-to-Treat Resistance</dd><dd class="zh">對所有第一線 β-lactam（含 carbapenem）與 fluoroquinolone 皆不敏感。DTR-Pseudomonas 是 IDSA 指引使用的正式分類。</dd></div>
+          <div class="grow"><dt>MDR / XDR / PDR</dt><dd class="full">Multidrug- / Extensively- / Pandrug-Resistant</dd><dd class="zh">多重、極度、全類抗藥。定義依抗生素類別數計算，各家用法不完全一致。</dd></div>
+          <div class="grow"><dt>MRSA / MSSA</dt><dd class="full">Methicillin-Resistant / -Susceptible <i>S. aureus</i></dd><dd class="zh">抗甲氧西林／對甲氧西林敏感之金黃色葡萄球菌。MSSA 應改回 cefazolin 或抗葡萄球菌青黴素，不要留在 vancomycin。</dd></div>
+          <div class="grow"><dt>CoNS</dt><dd class="full">Coagulase-Negative Staphylococci</dd><dd class="zh">凝固酶陰性葡萄球菌。裝置與導線相關感染的常見主角，也是最常見的血培汙染菌。</dd></div>
+          <div class="grow"><dt>VRE</dt><dd class="full">Vancomycin-Resistant <i>Enterococcus</i></dd><dd class="zh">抗萬古黴素腸球菌。</dd></div>
+          <div class="grow"><dt>PBP</dt><dd class="full">Penicillin-Binding Protein</dd><dd class="zh">青黴素結合蛋白，是所有 β-lactam 的作用標的。sulbactam 對 Acinetobacter 的 PBP 有直接活性。</dd></div>
+          <div class="grow"><dt>DBO</dt><dd class="full">Diazabicyclooctane</dd><dd class="zh">新一代非 β-lactam 型抑制劑的化學骨架，avibactam、relebactam、durlobactam 皆屬此類。</dd></div>
+        </dl>
+      </div>
+
+      <div class="gset">
+        <h3 class="gtitle">B · 抗生素與複方（縮寫 · 學名 · 常見商品名）</h3>
+        <dl class="glist">
+          <div class="grow"><dt>CAZ-AVI</dt><dd class="full">ceftazidime-avibactam</dd><dd class="zh">Zavicefta。涵蓋 Class A／C／D，是 OXA-48 的主場；打不到 MBL。</dd></div>
+          <div class="grow"><dt>C/T</dt><dd class="full">ceftolozane-tazobactam</dd><dd class="zh">Zerbaxa。DTR-Pseudomonas 首選；對任何碳青黴烯酶皆無效。</dd></div>
+          <div class="grow"><dt>MEM-VAB</dt><dd class="full">meropenem-vaborbactam</dd><dd class="zh">Vabomere。對 KPC 極強；打不到 OXA-48 與 MBL，對綠膿桿菌無額外加成。</dd></div>
+          <div class="grow"><dt>IMI-REL</dt><dd class="full">imipenem-cilastatin-relebactam</dd><dd class="zh">Recarbrio。涵蓋 KPC 與 AmpC，並救回 imipenem 對抗藥綠膿桿菌的活性；打不到 OXA-48 與 MBL。</dd></div>
+          <div class="grow"><dt>ATM-AVI</dt><dd class="full">aztreonam-avibactam</dd><dd class="zh">Emblaveo。2025 年 2 月 FDA 核准。MBL 的答案；對綠膿桿菌不可靠。</dd></div>
+          <div class="grow"><dt>FDC</dt><dd class="full">cefiderocol</dd><dd class="zh">Fetroja。鐵載體型「特洛伊木馬」cephalosporin，四類酶全涵蓋。</dd></div>
+          <div class="grow"><dt>SUL-DUR</dt><dd class="full">sulbactam-durlobactam</dd><dd class="zh">Xacduro。專為碳青黴烯抗藥 Acinetobacter 設計。</dd></div>
+          <div class="grow"><dt>TZP</dt><dd class="full">piperacillin-tazobactam</dd><dd class="zh">Tazocin／Zosyn。注意鈉負荷：每 4.5 g 約含 11 mEq 鈉。</dd></div>
+          <div class="grow"><dt>SAM</dt><dd class="full">ampicillin-sulbactam</dd><dd class="zh">Unasyn。高劑量時是 CRAB 治療的骨幹。</dd></div>
+          <div class="grow"><dt>FEP</dt><dd class="full">cefepime</dd><dd class="zh">第四代 cephalosporin，AmpC 型菌的首選之一；腎功能不全者留意神經毒性。</dd></div>
+          <div class="grow"><dt>MEM / IPM / ETP</dt><dd class="full">meropenem / imipenem / ertapenem</dd><dd class="zh">碳青黴烯類。ertapenem 不涵蓋綠膿桿菌與 Acinetobacter。</dd></div>
+          <div class="grow"><dt>CRO / CAZ</dt><dd class="full">ceftriaxone / ceftazidime</dd><dd class="zh">第三代 cephalosporin。ceftriaxone 不可與含鈣輸液同時輸注。</dd></div>
+          <div class="grow"><dt>TMP-SMX（SXT）</dt><dd class="full">trimethoprim-sulfamethoxazole</dd><dd class="zh">Baktar。Stenotrophomonas 首選；會抑制 CYP2C9 而拉高 INR，並可能造成高血鉀。</dd></div>
+          <div class="grow"><dt>VAN</dt><dd class="full">vancomycin</dd><dd class="zh">改以 AUC 導向給藥（AUC₂₄/MIC 400–600），不再單看 trough 15–20。</dd></div>
+          <div class="grow"><dt>DAP</dt><dd class="full">daptomycin</dd><dd class="zh">MRSA 菌血症／心內膜炎用 8–10 mg/kg；肺炎無效，會被肺泡表面張力素去活化。</dd></div>
+          <div class="grow"><dt>LZD</dt><dd class="full">linezolid</dd><dd class="zh">弱單胺氧化酶抑制劑，與 SSRI／SNRI 併用有血清素症候群風險；超過兩週要追蹤血小板。</dd></div>
+          <div class="grow"><dt>DAL</dt><dd class="full">dalbavancin</dd><dd class="zh">長效脂醣胜肽，第 1 天與第 8 天各一劑；定位是提早出院，不是療效升級。</dd></div>
+        </dl>
+      </div>
+
+      <div class="gset">
+        <h3 class="gtitle">C · 本文引用的臨床試驗</h3>
+        <dl class="glist">
+          <div class="grow"><dt>BALANCE</dt><dd class="full">Bacteremia Antibiotic Length Actually Needed for Clinical Effectiveness</dd><dd class="zh">NEJM 2024。菌血症 7 天不劣於 14 天；排除心內膜炎與未移除植入物者。</dd></div>
+          <div class="grow"><dt>MERINO</dt><dd class="full">—</dd><dd class="zh">ESBL 菌血症中 piperacillin-tazobactam 劣於 meropenem，確立重症仍以碳青黴烯為首選。</dd></div>
+          <div class="grow"><dt>BLING III</dt><dd class="full">Beta-Lactam Infusion Group</dd><dd class="zh">JAMA 2024。持續輸注 vs 間歇推注，主要指標未達顯著但方向有利；同期統合分析顯示死亡率獲益。</dd></div>
+          <div class="grow"><dt>ACORN</dt><dd class="full">Antibiotic Choice On Renal Outcomes</dd><dd class="zh">JAMA 2023。cefepime 與 piperacillin-tazobactam 在急性腎損傷上無差異，但 cefepime 組神經學事件較多。</dd></div>
+          <div class="grow"><dt>CREDIBLE-CR</dt><dd class="full">—</dd><dd class="zh">cefiderocol 在嚴重碳青黴烯抗藥感染；CRAB 次族群出現較高死亡率的警訊。</dd></div>
+          <div class="grow"><dt>ATTACK</dt><dd class="full">—</dd><dd class="zh">sulbactam-durlobactam vs colistin 治療 CRAB，支持前者。</dd></div>
+          <div class="grow"><dt>ERADICATE</dt><dd class="full">—</dd><dd class="zh">ceftobiprole 用於 <i>S. aureus</i> 菌血症，支持其 2024 年 FDA 核准。</dd></div>
+          <div class="grow"><dt>DOTS</dt><dd class="full">Dalbavancin as an Option for Treatment of <i>S. aureus</i> Bacteremia</dd><dd class="zh">JAMA 2025。對複雜性 SAB 並未優於標準治療，療效相當。</dd></div>
+          <div class="grow"><dt>POET</dt><dd class="full">Partial Oral Endocarditis Treatment</dd><dd class="zh">穩定的左心心內膜炎完成初期靜脈治療後，可考慮部分口服轉換。</dd></div>
+          <div class="grow"><dt>OVIVA</dt><dd class="full">Oral versus Intravenous Antibiotics for bone and joint infection</dd><dd class="zh">骨關節感染口服不劣於靜脈；概念常被延伸引用於長療程情境。</dd></div>
+        </dl>
+      </div>
+
+      <div class="gset">
+        <h3 class="gtitle">D · 心血管與加護情境</h3>
+        <dl class="glist">
+          <div class="grow"><dt>CIED</dt><dd class="full">Cardiac Implantable Electronic Device</dd><dd class="zh">心臟植入式電子裝置，含節律器、ICD、CRT。確診感染時須完整移除整套系統。</dd></div>
+          <div class="grow"><dt>ICD</dt><dd class="full">Implantable Cardioverter-Defibrillator</dd><dd class="zh">植入式心律去顫器。</dd></div>
+          <div class="grow"><dt>CRT</dt><dd class="full">Cardiac Resynchronization Therapy</dd><dd class="zh">心臟再同步治療裝置。</dd></div>
+          <div class="grow"><dt>TLE</dt><dd class="full">Transvenous Lead Extraction</dd><dd class="zh">經靜脈導線拔除。療程天數自拔除當日重新起算。</dd></div>
+          <div class="grow"><dt>LVAD</dt><dd class="full">Left Ventricular Assist Device</dd><dd class="zh">左心室輔助裝置。driveline 感染主角為 <i>S. aureus</i> 與綠膿桿菌。</dd></div>
+          <div class="grow"><dt>IE</dt><dd class="full">Infective Endocarditis</dd><dd class="zh">感染性心內膜炎。短療程規則的明確例外區。</dd></div>
+          <div class="grow"><dt>PVE / NVE</dt><dd class="full">Prosthetic / Native Valve Endocarditis</dd><dd class="zh">人工瓣膜／自體瓣膜心內膜炎。</dd></div>
+          <div class="grow"><dt>SAB</dt><dd class="full"><i>Staphylococcus aureus</i> Bacteremia</dd><dd class="zh">金黃色葡萄球菌菌血症。務必追蹤血培至轉陰，並評估有無心內膜炎。</dd></div>
+          <div class="grow"><dt>HAP / VAP</dt><dd class="full">Hospital-Acquired / Ventilator-Associated Pneumonia</dd><dd class="zh">院內肺炎／呼吸器相關肺炎。ceftolozane-tazobactam 於此適應症需加倍劑量。</dd></div>
+          <div class="grow"><dt>cIAI / cUTI</dt><dd class="full">complicated Intra-Abdominal / Urinary Tract Infection</dd><dd class="zh">複雜性腹腔內／泌尿道感染。多數新藥的核准適應症落在這兩項。</dd></div>
+          <div class="grow"><dt>ABSSSI</dt><dd class="full">Acute Bacterial Skin and Skin Structure Infection</dd><dd class="zh">急性細菌性皮膚與皮膚結構感染。</dd></div>
+          <div class="grow"><dt>CLABSI</dt><dd class="full">Central Line-Associated Bloodstream Infection</dd><dd class="zh">中心導管相關血流感染。</dd></div>
+          <div class="grow"><dt>ADHF</dt><dd class="full">Acute Decompensated Heart Failure</dd><dd class="zh">急性失代償心衰竭。抗生素的鈉與稀釋液容積要算進每日輸出入。</dd></div>
+          <div class="grow"><dt>ECMO</dt><dd class="full">Extracorporeal Membrane Oxygenation</dd><dd class="zh">體外膜氧合。擴大分佈體積並吸附部分藥物，β-lactam 建議延長輸注。</dd></div>
+          <div class="grow"><dt>CRRT / CVVHDF</dt><dd class="full">Continuous Renal Replacement Therapy / Continuous Veno-Venous Hemodiafiltration</dd><dd class="zh">連續性腎臟替代療法。清除率不低，β-lactam 最常見的錯誤是給不夠。</dd></div>
+          <div class="grow"><dt>AKI</dt><dd class="full">Acute Kidney Injury</dd><dd class="zh">急性腎損傷。</dd></div>
+          <div class="grow"><dt>ARC</dt><dd class="full">Augmented Renal Clearance</dd><dd class="zh">腎功能亢進（CrCl ≥ 130）。年輕、敗血症、燒傷病人常見，會讓標準劑量不足；cefiderocol 於 CrCl ≥ 120 需縮短給藥間隔。</dd></div>
+        </dl>
+      </div>
+
+      <div class="gset">
+        <h3 class="gtitle">E · 藥動藥效與微生物檢驗</h3>
+        <dl class="glist">
+          <div class="grow"><dt>MIC</dt><dd class="full">Minimum Inhibitory Concentration</dd><dd class="zh">最低抑菌濃度。判讀為 S／I／R 取決於機構折點，不同標準可能給出不同結論。</dd></div>
+          <div class="grow"><dt>AUC</dt><dd class="full">Area Under the Concentration-Time Curve</dd><dd class="zh">濃度–時間曲線下面積。vancomycin 目標 AUC₂₄/MIC 400–600。</dd></div>
+          <div class="grow"><dt>fT&gt;MIC</dt><dd class="full">free drug Time above MIC</dd><dd class="zh">游離藥物濃度高於 MIC 的時間比例，是 β-lactam 的關鍵藥效指標 —— 延長輸注就是為了拉高它。</dd></div>
+          <div class="grow"><dt>TDM</dt><dd class="full">Therapeutic Drug Monitoring</dd><dd class="zh">治療藥物監測。ECMO 與 CRRT 病人若能做就做。</dd></div>
+          <div class="grow"><dt>Vd</dt><dd class="full">Volume of Distribution</dd><dd class="zh">分佈體積。敗血症與體外循環會顯著擴大，稀釋掉血中濃度。</dd></div>
+          <div class="grow"><dt>CrCl</dt><dd class="full">Creatinine Clearance</dd><dd class="zh">肌酸酐廓清率，新藥劑量調整的主要依據。</dd></div>
+          <div class="grow"><dt>S / I / R</dt><dd class="full">Susceptible / Susceptible-Dose Dependent（Intermediate）／ Resistant</dd><dd class="zh">敏感／劑量依賴性敏感（中度）／抗藥。標為 I 常代表「要用足劑量才有效」，不是「效果普通」。</dd></div>
+          <div class="grow"><dt>CLSI / EUCAST</dt><dd class="full">Clinical and Laboratory Standards Institute / European Committee on Antimicrobial Susceptibility Testing</dd><dd class="zh">兩大藥敏判讀標準機構。折點不同，看報告時要知道貴院用哪一套。</dd></div>
+          <div class="grow"><dt>mCIM / eCIM</dt><dd class="full">modified / EDTA-modified Carbapenem Inactivation Method</dd><dd class="zh">表型檢測。mCIM 判斷有無碳青黴烯酶，eCIM 再區分是否為金屬酶 —— 沒有分子檢測時，這一組就足以做出關鍵分流。</dd></div>
+          <div class="grow"><dt>BCID2</dt><dd class="full">Blood Culture Identification Panel 2</dd><dd class="zh">血液培養快速分子鑑定面板，陽性後約一小時可報出菌種與 KPC／NDM／VIM／IMP／OXA-48 等抗藥基因。</dd></div>
+          <div class="grow"><dt>PCT</dt><dd class="full">Procalcitonin</dd><dd class="zh">降鈣素原。可輔助停藥決策，但不能單獨用來開始或延長抗生素。</dd></div>
+        </dl>
+      </div>
+
+      <div class="gset">
+        <h3 class="gtitle">F · 心血管用藥交互作用相關</h3>
+        <dl class="glist">
+          <div class="grow"><dt>DOAC</dt><dd class="full">Direct Oral Anticoagulant</dd><dd class="zh">直接口服抗凝血劑（apixaban、rivaroxaban、edoxaban、dabigatran）。同時受 CYP3A4 與 P-gp 影響。</dd></div>
+          <div class="grow"><dt>CYP3A4</dt><dd class="full">Cytochrome P450 3A4</dd><dd class="zh">最主要的藥物代謝酵素。clarithromycin／erythromycin 抑制之，rifampin 強力誘導之。</dd></div>
+          <div class="grow"><dt>CYP2C9</dt><dd class="full">Cytochrome P450 2C9</dd><dd class="zh">warfarin 的主要代謝途徑，被 TMP-SMX 與 fluconazole 抑制而拉高 INR。</dd></div>
+          <div class="grow"><dt>P-gp</dt><dd class="full">P-glycoprotein</dd><dd class="zh">外排轉運蛋白。同時抑制 CYP3A4 與 P-gp 的藥物（如 clarithromycin）對 DOAC 濃度的影響最大。</dd></div>
+          <div class="grow"><dt>QTc</dt><dd class="full">Corrected QT interval</dd><dd class="zh">校正後 QT 間期。與巨環類、fluoroquinolone、azole 併用時應追蹤，並把鉀維持 &gt;4、鎂 &gt;2。</dd></div>
+          <div class="grow"><dt>MAOI</dt><dd class="full">Monoamine Oxidase Inhibitor</dd><dd class="zh">單胺氧化酶抑制劑。linezolid 具弱 MAOI 活性，與 SSRI／SNRI 及升壓劑併用需留意。</dd></div>
+          <div class="grow"><dt>SSRI / SNRI</dt><dd class="full">Selective Serotonin / Serotonin-Norepinephrine Reuptake Inhibitor</dd><dd class="zh">血清素再回收抑制劑類抗憂鬱藥。</dd></div>
+          <div class="grow"><dt>INR</dt><dd class="full">International Normalized Ratio</dd><dd class="zh">國際標準化比值，warfarin 的監測指標。加抗生素後 2–3 天內應複驗。</dd></div>
+          <div class="grow"><dt>CK</dt><dd class="full">Creatine Kinase</dd><dd class="zh">肌酸激酶。使用 daptomycin 期間每週追蹤，尤其併用 statin 時。</dd></div>
+        </dl>
+      </div>
+
+    </div>
+    <p class="gempty rise" id="gempty" hidden>沒有符合的縮寫。換個關鍵字試試。</p>
+  </div>
+</section>
+
+<!-- ================= 出處 ================= -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <p class="eyebrow">依據</p>
+      <h2>出處與延伸</h2>
+      <p>本文為臨床教學整理，不取代個別病人的處方判斷。劑量、給付規定與院內可及性請以最新版指引與貴院藥委會公告為準。</p>
+    </div>
+    <ul class="refs rise">
+      <li>IDSA Guidance on the Treatment of Antimicrobial-Resistant Gram-Negative Infections（2026 更新版，取代 2024 年版）</li>
+      <li>FDA 核准 EMBLAVEO（aztreonam-avibactam），2025 年 2 月 7 日，適應症為複雜性腹腔內感染且治療選項有限之成人</li>
+      <li>BALANCE：Antibiotic Treatment for 7 versus 14 Days in Patients with Bloodstream Infections. NEJM 2024</li>
+      <li>DOTS：Dalbavancin for Treatment of <i>Staphylococcus aureus</i> Bacteremia. JAMA 2025</li>
+      <li>BLING III：Continuous vs Intermittent β-Lactam Infusion in Severe Sepsis. JAMA 2024（含同期統合分析）</li>
+      <li>ACORN：Cefepime vs Piperacillin-Tazobactam and Acute Kidney Injury. JAMA 2023</li>
+      <li>CREDIBLE-CR：Cefiderocol in serious carbapenem-resistant infections. Lancet Infect Dis 2021</li>
+      <li>ATTACK：Sulbactam-durlobactam versus colistin for carbapenem-resistant <i>A. baumannii</i>. Lancet Infect Dis 2023</li>
+      <li>AHA 心臟植入式電子裝置感染科學聲明；ESC 2023 感染性心內膜炎指引</li>
+      <li>Vancomycin 治療藥物監測共識指引（AUC 導向給藥）</li>
+      <li>健保署關於 ceftazidime＋avibactam（Zavicefta）給付規定之公告；其餘新藥之院內供應與給付狀況請逐項確認</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>整理給心血管急重症團隊 · 2026 年 8 月<br>
+    <span class="code">起點：一則 LINE 訊息裡的三行規則。終點：血液培養報告上的那一個字。</span></p>
+  </div>
+</footer>
+
+<!-- ================= 分享 ================= -->
+<button type="button" class="sharebtn share-fab" id="fab" data-share aria-haspopup="dialog" aria-label="分享此教學模組">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+  分享
+</button>
+
+<div class="ov" id="shareov" role="dialog" aria-modal="true" aria-labelledby="sharetitle" hidden>
+  <div class="sheet">
+    <button type="button" class="sx" id="sharex" aria-label="關閉">✕</button>
+    <h3 id="sharetitle">分享此教學模組</h3>
+    <div class="st">先問是哪一種酶 · CCU 新型抗生素</div>
+    <div class="qrbox"><img id="qrimg" alt="本教學模組網址的 QR Code" width="190" height="190"></div>
+    <p class="hint">用手機相機掃描即可開啟。歡迎轉傳給住院醫師與 CCU 團隊。</p>
+    <div class="lk" id="sharelink"></div>
+    <div class="sbtns">
+      <button type="button" class="sbtn primary" id="sharecopy">複製連結</button>
+      <button type="button" class="sbtn" id="sharenative" hidden>系統分享</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  'use strict';
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- 進場 ---- */
+  var rises = document.querySelectorAll('.rise');
+  if (reduce || !('IntersectionObserver' in window)) {
+    rises.forEach(function(el){ el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    rises.forEach(function(el, i){
+      if (el.closest('.hero')) { setTimeout(function(){ el.classList.add('in'); }, 90 * i); }
+      else io.observe(el);
+    });
+  }
+
+  /* ---- 矩陣：點列看說明 ---- */
+  var body = document.getElementById('mxbody');
+  var note = document.getElementById('mxnote');
+  if (body && note) {
+    body.addEventListener('click', function(ev){
+      var row = ev.target.closest('tr');
+      if (!row || !row.dataset.note) return;
+      body.querySelectorAll('tr.on').forEach(function(r){ r.classList.remove('on'); });
+      row.classList.add('on');
+      note.innerHTML = row.dataset.note;
+    });
+    body.querySelectorAll('th.rowh').forEach(function(th){
+      th.tabIndex = 0;
+      th.addEventListener('keydown', function(ev){
+        if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); th.click(); }
+      });
+    });
+  }
+
+  /* ---- 測驗 ---- */
+  var QUESTIONS = [
+    {
+      stem: '血液培養長出 <span class="code">Klebsiella pneumoniae</span>，快速分子檢測報 <span class="code">NDM-1</span> 陽性。病人在 CCU、休克中。以下何者最合理？',
+      opts: ['Ceftazidime-avibactam (Zavicefta)','Meropenem-vaborbactam (Vabomere)','Aztreonam-avibactam (Emblaveo)','Imipenem-relebactam (Recarbrio)'],
+      ans: 2,
+      exp: 'NDM 是<b>金屬 β-lactamase</b>，鋅離子機轉，avibactam、vaborbactam、relebactam 三種絲胺酸抑制劑全部無效。aztreonam 本身不被金屬酶水解，加上 avibactam 擋掉共存的絲胺酸酶，是唯一機轉正確的選項。院內尚未進藥時，改用 <b>ceftazidime-avibactam ＋ aztreonam 同時輸注</b>；cefiderocol 亦為選項。'
+    },
+    {
+      stem: '腹腔內感染，<span class="code">E. coli</span> 帶 <span class="code">OXA-48-like</span>。哪一個打得到？',
+      opts: ['Meropenem-vaborbactam','Ceftazidime-avibactam','Ceftolozane-tazobactam','Imipenem-relebactam'],
+      ans: 1,
+      exp: 'OXA-48 屬 <b>Class D</b>，只有 <b>avibactam</b> 擋得住。vaborbactam 與 relebactam 都不涵蓋 Class D —— 這正是 Vabomere 與 Recarbrio 的盲點，也是那三行 LINE 規則裡最該記住的一行。ceftolozane-tazobactam 對任何碳青黴烯酶都無效。'
+    },
+    {
+      stem: 'LVAD 病人發生呼吸器相關肺炎，培養為 <span class="code">difficult-to-treat</span> 綠膿桿菌，未測到碳青黴烯酶。首選？',
+      opts: ['Meropenem-vaborbactam','Ceftolozane-tazobactam','Aztreonam-avibactam','Sulbactam-durlobactam'],
+      ans: 1,
+      exp: '沒有碳青黴烯酶時，抗藥機轉多半是孔道缺失、幫浦外排與 AmpC 過度表現，<b>ceftolozane-tazobactam</b> 對這些機轉最耐受，是公認首選。<b>vaborbactam 對綠膿桿菌沒有加成</b>，Vabomere 不是抗綠膿選項；sulbactam-durlobactam 只用於 Acinetobacter。'
+    },
+    {
+      stem: '78 歲男性長期服用 apixaban 與 amiodarone，因非典型肺炎需加一支抗生素。哪一個最應該避開？',
+      opts: ['Doxycycline','Clarithromycin','Amoxicillin','Ceftriaxone'],
+      ans: 1,
+      exp: 'clarithromycin <b>同時抑制 CYP3A4 與 P-gp</b>，會一口氣拉高 apixaban 濃度（出血風險）、amiodarone 濃度，並延長 QT。要用巨環類時 azithromycin 相對安全；只需涵蓋非典型病原時，doxycycline 也是務實的替代。'
+    },
+    {
+      stem: '65 歲急性失代償心衰竭病人，<span class="code">E. coli</span> 菌血症源自泌尿道，第 3 天血培轉陰、感染源已控制、無心內膜炎也無植入物。療程？',
+      opts: ['7 天','14 天','4 週','直到發炎指數完全正常'],
+      ans: 0,
+      exp: 'BALANCE 試驗（NEJM 2024）在包含加護病房的族群中證實 <b>7 天不劣於 14 天</b>，90 天死亡率 13.3% 對 14.3%，復發率相當。這位病人完全落在適用族群內。額外的好處：少 7 天抗生素，也少了 7 天的鈉與液體負荷。'
+    },
+    {
+      stem: '下列哪一個情況<b>不能</b>套用 7 天療程？',
+      opts: ['泌尿道來源的大腸桿菌菌血症','導管相關革蘭氏陰性菌血症、導管已拔除','人工瓣膜心內膜炎','肺炎鏈球菌肺炎併菌血症、已臨床改善'],
+      ans: 2,
+      exp: 'BALANCE 明確排除<b>感染性心內膜炎</b>，也排除未移除植入物、未引流膿瘍、金黃色葡萄球菌菌血症未清除者。人工瓣膜心內膜炎仍需 6 週以上的靜脈治療，且常需外科介入。在 CCU，這些例外出現的頻率遠高於一般病房。'
+    }
+  ];
+
+  var quiz = document.getElementById('quiz');
+  if (quiz) {
+    QUESTIONS.forEach(function(q, qi){
+      var card = document.createElement('div');
+      card.className = 'qcard';
+      var stem = document.createElement('div');
+      stem.className = 'stem';
+      stem.innerHTML = '<span class="n">Q' + String(qi+1).padStart(2,'0') + '</span>' + q.stem;
+      card.appendChild(stem);
+
+      var opts = document.createElement('div');
+      opts.className = 'opts';
+      var exp = document.createElement('div');
+      exp.className = 'exp';
+      exp.innerHTML = q.exp;
+
+      q.opts.forEach(function(text, oi){
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'opt';
+        b.innerHTML = '<span class="code">' + 'ABCD'[oi] + '</span>　' + text;
+        b.addEventListener('click', function(){
+          opts.querySelectorAll('.opt').forEach(function(x){ x.disabled = true; });
+          if (oi === q.ans) { b.classList.add('right'); }
+          else {
+            b.classList.add('wrong');
+            opts.querySelectorAll('.opt')[q.ans].classList.add('right');
+          }
+          exp.classList.add('show');
+        });
+        opts.appendChild(b);
+      });
+
+      card.appendChild(opts);
+      card.appendChild(exp);
+      quiz.appendChild(card);
+    });
+  }
+
+  /* ---- 分享（離線 QR，不依賴外部服務） ---- */
+  var SHARE_URL = "https://drake1128.github.io/saq-questionnaire/ccu-new-antibiotics-guide.html";
+  var QR_DATA = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQIAAAECAQMAAAAvgUsTAAAABlBMVEUGFhz///+G7/bFAAAB3UlEQVR42u1ZW2oDMQwU9QF8JF3dR/IBDKo0I6ehP/0ohQ7sEsLG648M8jyktfjhWvbseHb8dseyvCZ+mJ8ZxzzvT63W0w/76fovO+rfJoyE8H4/th2gk8OSJTizvgdKNbbHzgItm6pYshaxDRVZIxeVsYApVtXBARPFAo5kLQLcLwi6fIGOrfPtI6ljrc5VHWhyLSb977ocX9JfwI5opiSoazpadWEheKgO7lPHAsosiMWrLsZzVSKQKKpMW5AvZSvO6FJSMGsF1imnY1FqPFuWx26LsWKNpo7dusD9HaBcUMfi5SlkPfhSj4YeX4CilXnhU0ZzSyaGZYDvhkjZCfkmAT1NnhThoEWWrCH5k0FidQEQhmQIGkEBl54m0+UNdtlSTKNUzMlntmOitYyXCOjVhb7PhiXhXERDL48tUiMP2LhtPh9J+guil3UAK/owxihmS2QwJnxkgDJK5wRAUZPpMjQX2iUzpyZfXoXouZ+mv3QJTueWBmK3nVHDwsledP9ydcz0MkzPW95QOBVMkS9IxVeKKzN/jchE55b8RvjviaWoV/boFbi6UlgUfmexHdHFedJGCM/5o0fiAe6HLF84E0MX0++Vlu6cv/sXtMZs/4/qnP95F/3s+KMdn6G+Xpay2BieAAAAAElFTkSuQmCC";
+  var SHARE_TEXT = "你不必記住所有新藥，先問一句話：是哪一種酶？CCU 新型抗生素教學模組 —— 八種抗藥表現型 × 七支新藥的涵蓋矩陣、CCU 專屬情境與心血管交互作用地雷。";
+
+  var ov = document.getElementById('shareov');
+  var toastEl = document.getElementById('toast');
+  var toastTimer = null;
+  var lastFocus = null;
+
+  var say = function(msg){
+    if (!toastEl) return;
+    toastEl.textContent = msg;
+    toastEl.classList.add('on');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove('on'); }, 2200);
+  };
+
+  if (ov) {
+    var qrimg = document.getElementById('qrimg');
+    var linkEl = document.getElementById('sharelink');
+    var copyBtn = document.getElementById('sharecopy');
+    var nativeBtn = document.getElementById('sharenative');
+    var closeBtn = document.getElementById('sharex');
+
+    /* 從本機檔案或其他網域開啟時，QR 仍指向 GitHub Pages 的正式網址 */
+    if (qrimg) qrimg.src = QR_DATA;
+    if (linkEl) linkEl.textContent = SHARE_URL;
+
+    var openShare = function(){
+      lastFocus = document.activeElement;
+      ov.hidden = false;
+      ov.classList.add('on');
+      if (closeBtn) closeBtn.focus();
+    };
+    var closeShare = function(){
+      ov.classList.remove('on');
+      ov.hidden = true;
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    };
+
+    [].slice.call(document.querySelectorAll('[data-share]')).forEach(function(b){
+      b.addEventListener('click', openShare);
+    });
+    if (closeBtn) closeBtn.addEventListener('click', closeShare);
+    ov.addEventListener('click', function(e){ if (e.target === ov) closeShare(); });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && ov.classList.contains('on')) closeShare();
+    });
+
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function(){
+        var done = function(){ say('連結已複製'); };
+        var fail = function(){ say('請長按上方連結手動複製'); };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(SHARE_URL).then(done, fail);
+        } else {
+          try {
+            var ta = document.createElement('textarea');
+            ta.value = SHARE_URL;
+            ta.setAttribute('readonly','');
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            done();
+          } catch (err) { fail(); }
+        }
+      });
+    }
+
+    if (nativeBtn && navigator.share) {
+      nativeBtn.hidden = false;
+      nativeBtn.addEventListener('click', function(){
+        navigator.share({
+          title: '先問是哪一種酶：CCU 新型抗生素教學模組',
+          text: SHARE_TEXT,
+          url: SHARE_URL
+        }).catch(function(e){
+          if (e && e.name !== 'AbortError') say('此裝置不支援系統分享');
+        });
+      });
+    }
+
+    /* 捲離首屏後才顯示浮動分享鈕 */
+    var fab = document.getElementById('fab');
+    var heroEl = document.querySelector('header.hero');
+    if (fab && heroEl) {
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function(entries){
+          fab.classList.toggle('on', !entries[0].isIntersecting);
+        }, { threshold: 0 }).observe(heroEl);
+      } else {
+        fab.classList.add('on');
+      }
+    }
+  }
+
+  /* ---- 縮寫表篩選 ---- */
+  var gf = document.getElementById('gfilter');
+  var gl = document.getElementById('glossary');
+  var ge = document.getElementById('gempty');
+  if (gf && gl && ge) {
+    var sets = [].slice.call(gl.querySelectorAll('.gset'));
+    sets.forEach(function(set){
+      set._rows = [].slice.call(set.querySelectorAll('.grow'));
+      set._rows.forEach(function(r){ r._t = r.textContent.toLowerCase(); });
+      set._t = set.querySelector('.gtitle').textContent.toLowerCase();
+    });
+    var run = function(){
+      var q = gf.value.trim().toLowerCase();
+      var total = 0;
+      sets.forEach(function(set){
+        var titleHit = q && set._t.indexOf(q) !== -1;
+        var shown = 0;
+        set._rows.forEach(function(r){
+          var hit = !q || titleHit || r._t.indexOf(q) !== -1;
+          r.hidden = !hit;
+          if (hit) shown++;
+        });
+        set.hidden = shown === 0;
+        total += shown;
+      });
+      ge.hidden = total !== 0;
+    };
+    gf.addEventListener('input', run);
+    gf.addEventListener('search', run);
+  }
+})();
+</script>
+</body>
+</html>
