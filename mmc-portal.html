@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>MMC 案例提報 — 心血管中心</title>
+
+<!-- ============================================================
+     ⚙️  設定區：把下面兩條 REDCap「公開問卷連結」貼進來即可。
+     （REDCap → Survey Distribution → Public Survey Link）
+
+     ① EVENT_URL  = Project 1【MMC 事件登錄】mmc_event 的公開連結
+     ② REFLECT_URL = Project 2【MMC 感受回饋】mmc_reflect 的公開連結
+
+     ⚠️ 這兩條連結必須來自「兩個不同的 REDCap project」。
+        這是本系統的核心設計：感受回饋的資料庫裡沒有病歷號欄位，
+        結構上就無法與事件登錄對應。請勿為了方便而合併成一個 project。
+
+     本網頁「不收集任何資料」，只負責把同仁導向 REDCap。
+     ============================================================ -->
+<script>
+  const CONFIG = {
+    EVENT_URL:   "https://redcap.ntuh.gov.tw/surveys/?s=YKC3Y9XLLY9L8N8L",
+    REFLECT_URL: "https://redcap.ntuh.gov.tw/surveys/?s=XTXRJHATRM7MJMEE"
+  };
+</script>
+
+<style>
+  :root{
+    --ink:#152532; --muted:#54697a; --line:#dde5ea; --bg:#eff3f5;
+    --evA:#1d6f8b; --evA2:#155a72;        /* 事件登錄：臨床藍 */
+    --rfA:#5b6bab; --rfA2:#4a5891;        /* 感受回饋：靛紫 */
+    --warn:#8a6d1a; --ok:#1f7a52;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,-apple-system,sans-serif;
+    background:var(--bg); color:var(--ink);
+    font-size:17px; line-height:1.65;
+    -webkit-text-size-adjust:100%;
+    padding:20px 16px 48px;
+  }
+  .wrap{max-width:660px; margin:0 auto;}
+  header{text-align:center; padding:8px 4px 18px;}
+  .hosp{font-size:14.5px; color:var(--muted); letter-spacing:.3px;}
+  h1{font-size:26px; margin:.35em 0 .15em; letter-spacing:.5px;}
+  .lead{font-size:16.5px; color:var(--muted); margin:.2em auto 0; max-width:34em;}
+
+  .pledge{
+    background:#fff; border:1px solid var(--line); border-left:5px solid var(--ok);
+    border-radius:14px; padding:16px 18px; margin:16px 0 4px;
+    font-size:16px; line-height:1.8;
+  }
+  .pledge b{color:#155c3e;}
+  .pledge .src{display:block; margin-top:8px; font-size:13.5px; color:var(--muted);}
+
+  .card{
+    background:#fff; border:1px solid var(--line); border-radius:18px;
+    padding:22px 20px; margin:18px 0; box-shadow:0 2px 10px rgba(21,37,50,.06);
+  }
+  .card .ttl{display:flex; align-items:center; gap:12px; font-size:21px; font-weight:700;}
+  .card .ttl .emoji{font-size:28px; line-height:1;}
+  .tag{display:inline-block; font-size:13.5px; font-weight:700; padding:3px 12px;
+       border-radius:999px; vertical-align:middle; margin-left:2px;}
+  .tag.opt{background:#e3f0f5; color:var(--evA2);}
+  .tag.anon{background:#eceefa; color:var(--rfA2);}
+  .card p.desc{margin:12px 2px 18px; color:var(--muted); font-size:16px;}
+
+  .btn{
+    display:block; width:100%; text-align:center; text-decoration:none;
+    color:#fff; font-size:20px; font-weight:700; letter-spacing:1px;
+    padding:18px 16px; border-radius:14px; border:0; cursor:pointer;
+    box-shadow:0 3px 0 rgba(0,0,0,.12);
+    transition:transform .04s ease, filter .15s ease;
+  }
+  .btn:active{transform:translateY(2px); box-shadow:0 1px 0 rgba(0,0,0,.12);}
+  .btn.ev{background:linear-gradient(180deg,var(--evA),var(--evA2));}
+  .btn.rf{background:linear-gradient(180deg,var(--rfA),var(--rfA2));}
+  .btn.disabled{background:#b9c6ce; box-shadow:none; cursor:not-allowed; pointer-events:none;}
+
+  .qrbox{margin-top:18px; text-align:center; display:none;}
+  .qrbox .qrimg{display:inline-block; padding:12px; background:#fff;
+                border:1px solid var(--line); border-radius:12px;}
+  .qrbox .qrimg canvas,.qrbox .qrimg img{display:block;}
+  .qrbox small{display:block; margin-top:8px; color:var(--muted); font-size:13.5px;}
+
+  details.crit{
+    background:#fff; border:1px solid var(--line); border-radius:16px;
+    padding:4px 20px; margin:18px 0;
+  }
+  details.crit summary{
+    cursor:pointer; font-size:17.5px; font-weight:700; padding:16px 0;
+    list-style:none; display:flex; align-items:center; gap:10px;
+  }
+  details.crit summary::-webkit-details-marker{display:none;}
+  details.crit summary::after{content:"▾"; margin-left:auto; color:var(--muted); font-size:15px;}
+  details.crit[open] summary::after{content:"▴";}
+  details.crit .note{font-size:14.5px; color:var(--muted); margin:0 0 12px;}
+  details.crit ol{margin:0 0 18px; padding-left:1.5em; font-size:15.5px; line-height:1.9;}
+  details.crit li{margin-bottom:2px;}
+
+  .notice{
+    margin-top:22px; padding:16px 18px; border-radius:14px;
+    background:#fbf6e6; border:1px solid #efe3bd; color:var(--warn);
+    font-size:15px; line-height:1.75;
+  }
+  .notice b{color:#6f560f;}
+  footer{text-align:center; color:var(--muted); font-size:13.5px; margin-top:26px; line-height:1.8;}
+  .cfgwarn{display:none; margin:14px 0; padding:12px 14px; border-radius:12px;
+           background:#fdecec; border:1px solid #f3c9c9; color:#9a2b2b; font-size:14.5px;}
+  .shareWrap{text-align:center; margin:22px 0 4px;}
+  .share{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:inherit; font-size:15.5px; font-weight:700; color:var(--ink);
+    background:#fff; border:1.5px solid var(--line); border-radius:999px;
+    padding:11px 22px; cursor:pointer; box-shadow:0 1px 4px rgba(21,37,50,.06);
+    transition:border-color .15s ease, transform .04s ease;
+  }
+  .share:hover{border-color:var(--evA);}
+  .share:active{transform:translateY(1px);}
+  .toast{
+    position:fixed; left:50%; bottom:28px; transform:translateX(-50%) translateY(12px);
+    background:#152532; color:#fff; font-size:15px; padding:11px 20px; border-radius:10px;
+    box-shadow:0 4px 16px rgba(0,0,0,.25); opacity:0; pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease; max-width:90vw; z-index:50; text-align:center;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  @media (max-width:380px){ body{font-size:16px;} h1{font-size:23px;} .btn{font-size:18px;} }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="hosp">國立臺灣大學醫學院附設醫院新竹臺大分院 · 心血管中心</div>
+      <h1>MMC 案例提報</h1>
+      <p class="lead">Mortality &amp; Morbidity Conference<br>隨時提報 · 全職類皆可 · 可匿名</p>
+    </header>
+
+    <div class="pledge">
+      <b>一、發生併發症或不良結果，不作為考績、獎懲之依據。</b><br>
+      <b>二、應登錄而未登錄、或知情而隱匿者，依 2021-01 科會決議辦理。</b>
+      <span class="src">— 心血管中心 MMC 通報作業辦法 第一條</span>
+    </div>
+
+    <div id="cfgwarn" class="cfgwarn">
+      ⚠️ 尚未設定 REDCap 問卷連結。請開啟本檔，於最上方「設定區」把兩條 Public Survey Link 貼進 <code>CONFIG</code>。
+    </div>
+
+    <!-- ① 事件登錄 -->
+    <section class="card">
+      <div class="ttl"><span class="emoji">📋</span>案例提報<span class="tag opt">姓名選填</span></div>
+      <p class="desc">
+        <strong>任何照顧到這位病人的人都可以提報</strong> —— 術者本人、主治醫師、住院醫師、PGY、實習醫師、NP、護理師、放射師、體循師。<br>
+        <strong>只要有疑慮、有辨識，就可以通報。</strong><br>
+        必填只有 6 項，約 1 分鐘。姓名留空即為匿名。
+      </p>
+      <a id="evBtn" class="btn ev" href="#" rel="noopener">開始提報 ›</a>
+      <div id="evQR" class="qrbox">
+        <div class="qrimg"></div>
+        <small>可截圖或列印張貼（導管室、CCU、2A、值班室）</small>
+      </div>
+    </section>
+
+    <!-- ② 感受回饋 -->
+    <section class="card">
+      <div class="ttl"><span class="emoji">💬</span>感受回饋<span class="tag anon">完全匿名</span></div>
+      <p class="desc">
+        3 題，30 秒。這是<strong>另一個獨立的資料庫，欄位裡沒有病歷號、也沒有姓名</strong> ——
+        不是我們承諾不去對應，是結構上對應不起來。<br>
+        結果只以總分與趨勢在科會呈現，不會出現個案。
+      </p>
+      <a id="rfBtn" class="btn rf" href="#" rel="noopener">填寫回饋 ›</a>
+      <div id="rfQR" class="qrbox">
+        <div class="qrimg"></div>
+        <small>可截圖或列印張貼</small>
+      </div>
+    </section>
+
+    <!-- 納入條件速查 -->
+    <details class="crit">
+      <summary>📌 MMC 納入條件速查（2024-03-02 科會修訂版）</summary>
+      <p class="note">
+        符合以下任何一項即為<strong>強制討論案例</strong>。<br>
+        您不需要自己判斷這件事算不算嚴重、是不是誰的錯 —— 勾選條件即可，是否排入會議由專責小組決定。
+      </p>
+      <ol>
+        <li>病患住院後死亡</li>
+        <li>併發症導致住院天數拉長</li>
+        <li>病患轉加護病房（排除一般導管後觀察床）</li>
+        <li>導管後洗腎</li>
+        <li>導管室內發生併發症</li>
+        <li>導管室內緊急插管或困難插管</li>
+        <li>導管室內穿刺部位出血</li>
+        <li>導管後中風或住院後中風</li>
+        <li>支架在冠脈內脫落</li>
+        <li>支架栓塞再上台</li>
+        <li>導管室內發生 VT</li>
+        <li>發生 no reflow</li>
+        <li>發生 cardiac tamponade</li>
+        <li>節律器感染</li>
+        <li>穿刺部位血腫、假性動脈瘤或動靜脈瘻管</li>
+        <li>導管室內任何原因置放 ECMO</li>
+        <li>病患家屬投書</li>
+        <li>預期應執行 kissing balloon 但未能執行（Culotte / DK crush）</li>
+        <li>植入物 dislodge（含 TEER clip、ASD / VSD / PFO / PDA occluder）</li>
+        <li>導絲遺落在血管內（wire entrapment）</li>
+        <li>Burr entrapment</li>
+        <li>Coronary perforation</li>
+        <li>病房病患無預警 CPR</li>
+        <li>急診病患照會後在急診 INCA</li>
+        <li>導管室內 CPR 至死亡（以至於沒有住院）</li>
+      </ol>
+      <p class="note">
+        不符合以上任一項，但您認為值得討論 —— <strong>一樣請提報</strong>。<br>
+        許多制度改善都是從「以上皆非，但我覺得怪怪的」開始的。
+      </p>
+    </details>
+
+    <div class="notice">
+      <b>關於這套系統：</b>本系統為<b>照護品質改善（QI）用途</b>，依三年發展計畫每季彙整為 MMC 紀錄。<br>
+      <b>本網頁不收集任何資料</b>，僅提供上方連結；所有填答都在院方 REDCap 系統中完成與保存。<br>
+      案例分流由<b>專責小組（主任 ＋ 一位資深主治醫師 ＋ 護理長，三人共識制）</b>決定；具名通報者一律回覆處理結果。
+    </div>
+
+    <div class="shareWrap">
+      <button id="shareBtn" class="share" type="button">🔗 分享這個頁面</button>
+    </div>
+
+    <footer>
+      如有疑問請洽心血管中心辦公室。<br>
+      © 新竹臺大分院 心血管中心 · Mortality &amp; Morbidity Conference
+    </footer>
+  </div>
+
+  <!-- QR 產生器：優先用 CDN；若院內網路封鎖，按鈕仍可用，QR 區塊自動隱藏。
+       （若要完全離線：下載 qrcode.min.js 放同資料夾，把 src 改成 "qrcode.min.js"） -->
+  <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+  <script>
+    (function(){
+      var PLACEHOLDER = /REDCAP_.*_LINK|^\s*$/;
+      function isSet(u){ return u && !PLACEHOLDER.test(u); }
+
+      function wireButton(btnId, url){
+        var btn = document.getElementById(btnId);
+        if(isSet(url)){
+          btn.setAttribute("href", url);
+          return true;
+        }
+        btn.classList.add("disabled");
+        btn.textContent = "連結尚未設定";
+        return false;
+      }
+
+      function makeQR(boxId, url){
+        if(!isSet(url) || typeof QRCode === "undefined") return;
+        var box = document.getElementById(boxId);
+        var slot = box.querySelector(".qrimg");
+        try{
+          new QRCode(slot, { text:url, width:168, height:168,
+                             correctLevel: QRCode.CorrectLevel.M });
+          box.style.display = "block";
+        }catch(e){ /* QR 失敗不影響按鈕 */ }
+      }
+
+      var okE = wireButton("evBtn", CONFIG.EVENT_URL);
+      var okR = wireButton("rfBtn", CONFIG.REFLECT_URL);
+      if(!okE || !okR){ document.getElementById("cfgwarn").style.display = "block"; }
+
+      function tryQR(){
+        if(typeof QRCode === "undefined"){ return; }
+        makeQR("evQR", CONFIG.EVENT_URL);
+        makeQR("rfQR", CONFIG.REFLECT_URL);
+      }
+      if(document.readyState === "complete"){ tryQR(); }
+      else{ window.addEventListener("load", tryQR); }
+    })();
+  </script>
+
+  <!-- 分享按鈕：手機用原生分享面板，桌機 / 不支援時自動複製連結 -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>
+    (function(){
+      var btn = document.getElementById("shareBtn");
+      var toast = document.getElementById("toast");
+      var timer;
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add("show");
+        clearTimeout(timer);
+        timer = setTimeout(function(){ toast.classList.remove("show"); }, 2400);
+      }
+      btn.addEventListener("click", async function(){
+        var url = location.href;
+        var data = { title:"MMC 案例提報", text:"心血管中心 MMC 案例提報", url:url };
+        if(navigator.share){
+          try{ await navigator.share(data); }catch(e){ /* 使用者取消 */ }
+          return;
+        }
+        try{
+          await navigator.clipboard.writeText(url);
+          showToast("已複製連結，可貼到 TEAMS / LINE 分享");
+        }catch(e){
+          showToast(url);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
