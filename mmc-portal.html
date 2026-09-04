@@ -127,7 +127,76 @@
     transition:opacity .2s ease, transform .2s ease; max-width:90vw; z-index:50; text-align:center;
   }
   .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
-  @media (max-width:380px){ body{font-size:16px;} h1{font-size:23px;} .btn{font-size:18px;} }
+
+  /* ---- 頁籤 ---- */
+  .tabs{
+    display:flex; gap:8px; margin:20px 0 4px; padding:5px;
+    background:#e3e9ed; border-radius:14px;
+  }
+  .tab{
+    flex:1; font-family:inherit; font-size:16px; font-weight:700; color:var(--muted);
+    background:transparent; border:0; border-radius:10px; padding:11px 8px;
+    cursor:pointer; transition:background .15s ease, color .15s ease, box-shadow .15s ease;
+  }
+  .tab:hover{color:var(--ink);}
+  .tab[aria-selected="true"]{
+    background:#fff; color:var(--evA2);
+    box-shadow:0 1px 4px rgba(21,37,50,.12);
+  }
+  .tab:focus-visible{outline:2px solid var(--evA); outline-offset:2px;}
+
+  /* ---- 文獻依據頁 ---- */
+  .ev-lead{
+    background:#fff; border:1px solid var(--line); border-radius:16px;
+    padding:18px 20px; margin:16px 0; font-size:15.5px; color:var(--muted);
+  }
+  .ev-lead b{color:var(--ink);}
+  .ev-h{
+    font-size:19px; font-weight:700; margin:26px 0 4px;
+    padding-left:12px; border-left:5px solid var(--evA);
+  }
+  .ev-h small{display:block; font-size:13.5px; font-weight:400; color:var(--muted); margin-top:3px;}
+
+  .kp{
+    background:#fff; border:1px solid var(--line); border-left:4px solid var(--rfA);
+    border-radius:12px; padding:13px 16px; margin:9px 0; font-size:15.5px;
+  }
+  .kp b{color:var(--rfA2);}
+
+  .study{
+    background:#fff; border:1px solid var(--line); border-radius:16px;
+    padding:17px 19px; margin:13px 0;
+  }
+  .study h4{margin:0 0 3px; font-size:16.5px; line-height:1.5;}
+  .study .meta{font-size:13.5px; color:var(--muted); margin:0 0 11px;}
+  .study .meta a{color:var(--evA2);}
+  .study p{margin:9px 0; font-size:15px;}
+  .study .impl{
+    margin:12px -19px -17px; padding:12px 19px;
+    background:#f4f8fa; border-top:1px solid var(--line);
+    border-radius:0 0 15px 15px; font-size:14.5px; color:#2f4a5c;
+  }
+  .study .impl b{color:var(--evA2);}
+
+  .tblwrap{overflow-x:auto; -webkit-overflow-scrolling:touch; margin:11px 0;}
+  .tblwrap table{border-collapse:collapse; width:100%; min-width:420px; font-size:14.5px;}
+  .tblwrap th,.tblwrap td{border:1px solid var(--line); padding:8px 11px; text-align:left;}
+  .tblwrap th{background:#eef3f6; font-weight:700;}
+  .tblwrap td.n{text-align:right; white-space:nowrap;}
+  .tblwrap tr:nth-child(even) td{background:#fafcfd;}
+  .hi{color:#a13b2f; font-weight:700;}
+
+  .caveat{
+    background:#fff5f5; border:1px solid #f3c9c9; border-radius:14px;
+    padding:16px 19px; margin:13px 0; font-size:15px; color:#7a2b2b;
+  }
+  .caveat ol{margin:8px 0 0; padding-left:1.3em; line-height:1.8;}
+  .caveat b{color:#9a2b2b;}
+
+  .reflist{font-size:13.5px; line-height:1.85; color:var(--muted);}
+  .reflist a{color:var(--evA2);}
+  .srcnote{font-size:13px; color:var(--muted); text-align:center; margin:18px 0 0;}
+  @media (max-width:380px){ body{font-size:16px;} h1{font-size:23px;} .btn{font-size:18px;} .tab{font-size:15px;} }
 </style>
 </head>
 <body>
@@ -144,6 +213,15 @@
       <span class="src">— 心血管中心 MMC 通報作業辦法 第一條</span>
     </div>
 
+
+    <div class="tabs" role="tablist" aria-label="頁面切換">
+      <button class="tab" id="tab-report" role="tab" aria-selected="true"
+              aria-controls="panel-report" type="button">📋 提報</button>
+      <button class="tab" id="tab-evidence" role="tab" aria-selected="false"
+              aria-controls="panel-evidence" type="button">📚 文獻依據</button>
+    </div>
+
+    <section id="panel-report" role="tabpanel" aria-labelledby="tab-report">
     <div id="cfgwarn" class="cfgwarn">
       ⚠️ 尚未設定 REDCap 問卷連結。請開啟本檔，於最上方「設定區」把兩條 Public Survey Link 貼進 <code>CONFIG</code>。
     </div>
@@ -223,6 +301,341 @@
       <b>本網頁不收集任何資料</b>，僅提供上方連結；所有填答都在院方 REDCap 系統中完成與保存。<br>
       案例分流由<b>專責小組（主任 ＋ 一位資深主治醫師 ＋ 護理長，三人共識制）</b>決定；具名通報者一律回覆處理結果。
     </div>
+    </section>
+
+
+    <section id="panel-evidence" role="tabpanel" aria-labelledby="tab-evidence" hidden>
+
+      <div class="ev-lead">
+        這一頁整理支撐本系統設計的 <b>18 篇文獻</b>（依 PubMed，2026-09 檢索），分三層：
+        <b>理論</b>（為什麼這樣做）、<b>數字</b>（做了有什麼效果）、<b>事實</b>（已知的限制與陷阱）。<br><br>
+        放在這裡的目的很單純：<b>這套系統的每一個欄位都有來源，不是誰拍腦袋想出來的。</b>
+      </div>
+
+      <div class="ev-h">如果只記住五句話</div>
+      <div class="kp"><b>1.</b> 通報件數上升是文化改善的指標，<b>不是</b>品質變差的指標。</div>
+      <div class="kp"><b>2.</b> 最常見的錯誤是<b>溝通</b>，不是技術。</div>
+      <div class="kp"><b>3.</b> 通報者對自己的評分，與小組共識有 <b>84% 一致</b> —— 而且傾向比小組更嚴格。</div>
+      <div class="kp"><b>4.</b> 東亞脈絡下，沉默往往來自<b>羞恥與訴訟恐懼</b>，而非不在乎。</div>
+      <div class="kp"><b>5.</b> 格式可以改，<b>氣氛最難改</b> —— 那一題文獻上還沒有人解決。</div>
+
+      <div class="ev-h">〇、先看這一篇：我們所在文化圈的實證
+        <small>為什麼「沉默」不等於「不在乎」</small></div>
+
+      <div class="study">
+        <h4>日本 vs 美國：醫療錯誤後的「第二受害者症候群」</h4>
+        <p class="meta">Takatani 等 2026, <i>Critical Care</i>　|　橫斷面調查＋1:1 傾向分數配對　|　日本 14 家醫院，542 人回覆（40.0%），配對後 185 對　|　<a href="https://doi.org/10.1186/s13054-026-06212-5" target="_blank" rel="noopener">DOI</a></p>
+        <p>使用與美國前期研究<b>完全相同的臨床情境</b>，依專科、職類、年資配對後比較。作者稱結果為<b>「心理負擔悖論」</b>：</p>
+        <div class="tblwrap">
+          <table>
+            <tr><th>指標</th><th>日本</th><th>美國</th><th>P</th></tr>
+            <tr><td>曾實際涉及嚴重醫療錯誤</td><td class="n hi">11.9%</td><td class="n">73.0%</td><td class="n">&lt;.001</td></tr>
+            <tr><td>錯誤後感到罪惡感</td><td class="n hi">94.6%</td><td class="n">61.6%</td><td class="n">&lt;.001</td></tr>
+            <tr><td>焦慮</td><td class="n hi">84.9%</td><td class="n">55.7%</td><td class="n">&lt;.001</td></tr>
+            <tr><td>害怕被告</td><td class="n hi">76.2%</td><td class="n">42.2%</td><td class="n">&lt;.001</td></tr>
+            <tr><td>曾考慮離開這個職業</td><td class="n hi">30.8%</td><td class="n">8.6%</td><td class="n">&lt;.001</td></tr>
+            <tr><td>覺得機構有給支持</td><td class="n">83.8%</td><td class="n">70.6%</td><td class="n">.012</td></tr>
+            <tr><td>應對方式：「就這樣過去算了」</td><td class="n hi">34.1%</td><td class="n">11.4%</td><td class="n">&lt;.001</td></tr>
+            <tr><td>會與同事討論該事件</td><td class="n">48.6%</td><td class="n">61.1%</td><td class="n">.027</td></tr>
+          </table>
+        </div>
+        <p>日本醫療人員<b>實際涉及嚴重錯誤的比例只有美國的六分之一</b>，罪惡感、焦慮、害怕被告卻遠高於美國，
+        想離開這一行的比例是三倍以上。作者歸因於以羞恥為核心的文化規範，加上將醫療錯誤入罪化的法律架構，
+        共同造就他們所稱的 <b>“culture of silence”</b>。</p>
+        <p>另一個細節：日本人<b>自認機構支持較多</b>（83.8% vs 70.6%），卻<b>更少與同事討論</b>、
+        更常選擇「就這樣過去算了」。<b>機構說有支持，不等於人會用。</b></p>
+        <div class="impl"><b>對我們的意義：</b>我們處在同一個文化圈與相似的法律環境。
+        同仁的沉默不必然代表不在乎，也可能代表<b>負擔過重</b>。
+        這正是為什麼表單裡保留了「無可歸因，疾病本身如此」與「我不確定」兩個合法出口 ——
+        <b>你可以完成整份通報，而不歸咎任何人。</b></div>
+      </div>
+
+      <div class="study">
+        <h4>醫療人員最想要的支持是什麼</h4>
+        <p class="meta">Fisher 等 2026, <i>Isr J Health Policy Res</i>　|　橫斷面調查　|　483 位醫師、1,359 位護理師　|　<a href="https://doi.org/10.1186/s13584-026-00764-1" target="_blank" rel="noopener">DOI</a></p>
+        <p>錯誤後的負擔（1–6 分）：情緒壓力 醫師 4.89 / 護理師 <b>5.16</b>；難堪羞愧 4.76 / <b>4.94</b>；睡眠障礙 3.96 / <b>4.22</b>（均 p&lt;0.005）。
+        <b>兩個職類中，護理師的每一項負擔分數都高於醫師。</b></p>
+        <p>最想要的支持形式：<b>有一位同事可以談這件事</b>（顯著優於其他選項）；51.6% 明確表達想要同儕支持。</p>
+        <div class="impl"><b>對我們的意義：</b>支持不必是心理諮商這種大工程 —— 人最想要的是<b>有人可以講</b>。
+        匿名回饋的自由陳述欄與 MMC 會議本身，就是提供這件事的場所。</div>
+      </div>
+
+      <div class="ev-h">一、理論：M&amp;M 是什麼，又該往哪裡去</div>
+
+      <div class="study">
+        <h4>從 Codman 到當代：一百年的演進</h4>
+        <p class="meta">Torres-Landa &amp; Farrell 2026, <i>The American Surgeon</i>　|　歷史回顧　|　<a href="https://doi.org/10.1177/00031348261448909" target="_blank" rel="noopener">DOI</a></p>
+        <p>M&amp;M 是外科超過一世紀的基礎傳統，同時承載<b>教育、課責與病人安全</b>三重功能。
+        演進路徑：Ernest Codman 的「End Result System」→ 美國外科醫學會制度化 → 納入正式醫學教育要求 →
+        <b>文化轉向：individual blame → systems-based learning</b> → 當代的資料分析與跨專業參與。</p>
+        <p>作者明列三項持續存在的挑戰：<b>結構的高度歧異性、通報不足、醫療法律疑慮</b>。</p>
+        <p>結論：形式不斷演變，但核心目的從未改變 ——
+        <b>為了更安全、更高品質的照護而進行誠實的反省。</b></p>
+        <div class="impl"><b>對我們的意義：</b>M&amp;M 是百年專業傳統，不是新增的管制。
+        當代方向明確是<b>從個人歸咎轉向系統學習</b>。</div>
+      </div>
+
+      <div class="study">
+        <h4>Teaming：把 M&amp;M 當成動態協作場域</h4>
+        <p class="meta">Nataraj 等 2025, <i>Academic Medicine</i>（Mayo Clinic 內科）　|　課程介入　|　104 位 PGY-2，74 位回覆（71.2%）　|　<a href="https://doi.org/10.1097/ACM.0000000000006090" target="_blank" rel="noopener">DOI</a></p>
+        <p>由住院醫師主導、主治醫師輔導的品質與病安小組執行改版，三個元件：
+        <b>案例選擇工具</b>、<b>由小組審核案例</b>、<b>結構化時程表</b>確保跨專業參與。</p>
+        <div class="tblwrap">
+          <table>
+            <tr><th>指標</th><th>前</th><th>後</th><th>P</th></tr>
+            <tr><td>有能力辨識病安事件</td><td class="n">77%</td><td class="n hi">93.2%</td><td class="n">.002</td></tr>
+            <tr><td>通報的信心</td><td class="n">67.6%</td><td class="n hi">97.2%</td><td class="n">&lt;.001</td></tr>
+            <tr><td>分析病安事件的能力</td><td class="n">59.5%</td><td class="n hi">94.6%</td><td class="n">&lt;.001</td></tr>
+            <tr><td>相信 M&amp;M 會改善未來照護</td><td class="n">78.4%</td><td class="n hi">94.6%</td><td class="n">.004</td></tr>
+          </table>
+        </div>
+        <p>另有 <b>82.4%</b> 同意參與 M&amp;M 會改變他們未來的臨床行為。</p>
+        <div class="impl"><b>對我們的意義：</b>「案例選擇工具 ＋ 專責小組審核 ＋ 結構化流程」正是我們的設計，
+        這篇是最直接的依據。</div>
+      </div>
+
+      <div class="ev-h">二、數字：介入之後發生了什麼</div>
+
+      <div class="study">
+        <h4>閉環式改良會議：最完整的一組成效數字</h4>
+        <p class="meta">Dickinson 等 2025, <i>Jt Comm J Qual Patient Saf</i>　|　前後對照　|　<a href="https://doi.org/10.1016/j.jcjq.2025.06.008" target="_blank" rel="noopener">DOI</a></p>
+        <p>每季一次，由<b>當事同仁本人</b>向跨學科聽眾回顧事件，現場一起找根本原因；
+        可執行的解方實際執行，<b>並在下一次會議報告結果</b>。</p>
+        <div class="tblwrap">
+          <table>
+            <tr><th>指標</th><th>前</th><th>後</th></tr>
+            <tr><td>出席人數</td><td class="n">—</td><td class="n hi">+157.5%</td></tr>
+            <tr><td>覺得可以安心提出疑慮</td><td class="n">84.0%</td><td class="n hi">100.0%</td></tr>
+            <tr><td>跨專業團隊合作改善</td><td class="n">84.0%</td><td class="n hi">100.0%</td></tr>
+            <tr><td>單位轉向學習文化</td><td class="n">64.0%</td><td class="n hi">93.4%</td></tr>
+            <tr><td>臨床區域出現正向改變</td><td class="n">52.0%</td><td class="n hi">90.0%</td></tr>
+            <tr><td>每月安全通報件數</td><td class="n">—</td><td class="n hi">+17.0%</td></tr>
+          </table>
+        </div>
+        <div class="impl"><b>對我們的意義：</b><b>通報件數上升被當成成功指標，不是失敗指標。</b>
+        第一季通報變多，代表大家願意講了。</div>
+      </div>
+
+      <div class="study">
+        <h4>心臟科專屬：重新設計的 M&amp;M</h4>
+        <p class="meta">Redmon 等 2025, <i>JACC Case Reports</i>（Medical College of Wisconsin）　|　實務報告　|　<a href="https://doi.org/10.1016/j.jaccas.2025.105827" target="_blank" rel="noopener">DOI</a></p>
+        <p>原文論點：傳統心臟科 M&amp;M 常強調 error identification 與 accountability，
+        這會<b>助長懲罰性環境並阻礙開放討論</b>。</p>
+        <p>改版納入三項元件：<b>結構化案例呈現</b>、<b>匿名回饋機制</b>、<b>病人視角</b>；
+        另設<b>每季一次的 Board Review</b>，辨識反覆出現的主題並確保行動項目有後續。</p>
+        <div class="impl"><b>對我們的意義：</b>唯一一篇心臟科專屬的 M&amp;M 重新設計文獻。
+        「匿名回饋」與「每季 Board Review」我們都做進去了。</div>
+      </div>
+
+      <div class="study">
+        <h4>以 REDCap 承載 M&amp;M：最接近我們做法的前例</h4>
+        <p class="meta">Clark 等 2025, <i>J Surg Res</i>（華盛頓大學創傷中心）　|　資料庫研究　|　679 位病人、916 個事件　|　<a href="https://doi.org/10.1016/j.jss.2025.04.022" target="_blank" rel="noopener">DOI</a></p>
+        <p>住院醫師將事件登錄於 <b>REDCap</b>，並以照護品質評分（QCS）標準化 ——
+        <b>通報者會前先自評，會後再給共識評分</b>。</p>
+        <div class="tblwrap">
+          <table>
+            <tr><th>自評 vs 會後共識</th><th>比例</th></tr>
+            <tr><td>完全一致</td><td class="n hi">84%</td></tr>
+            <tr><td>共識評分<b>低於</b>通報者自評（通報者對自己更嚴格）</td><td class="n">12%</td></tr>
+            <tr><td>共識評分<b>高於</b>通報者自評</td><td class="n">3%</td></tr>
+          </table>
+        </div>
+        <p>另一個發現：死亡案例佔全期事件的 47%，但<b>佔比隨時間下降</b> ——
+        一開始大家只敢報死亡，後來願意報非死亡的併發症。</p>
+        <div class="impl"><b>對我們的意義：</b>表單裡那題「照護品質自評」就是照這篇設計的。
+        <b>大家的判斷其實差不多，請放心依直覺填。</b>而且不一致時，通報者多半是對自己比較嚴格。</div>
+      </div>
+
+      <div class="study">
+        <h4>護理端主導的 M&amp;M</h4>
+        <p class="meta">Dunlap 等 2026, <i>J Vasc Nurs</i>（馬里蘭大學血管外科病房）　|　前後對照（5 分量表）　|　<a href="https://doi.org/10.1016/j.jvn.2026.01.002" target="_blank" rel="noopener">DOI</a></p>
+        <div class="tblwrap">
+          <table>
+            <tr><th>指標</th><th>前</th><th>後</th></tr>
+            <tr><td>醫學知識</td><td class="n">3.0</td><td class="n hi">4.7</td></tr>
+            <tr><td>照護信心</td><td class="n">3.2</td><td class="n hi">4.3</td></tr>
+            <tr><td>與醫師溝通的自在度</td><td class="n">2.3</td><td class="n hi">4.1</td></tr>
+            <tr><td>反映病人疑慮（escalation）的信心</td><td class="n">2.2</td><td class="n hi">4.3</td></tr>
+          </table>
+        </div>
+        <p>作者指出此舉有效降低 <b>failure-to-rescue</b> 風險。</p>
+        <div class="impl"><b>對我們的意義：</b>這是「全職類皆可通報」最強的證據。
+        請注意介入前那兩個低於 2.5 分的項目 —— 那正是我們心理安全第二題要測的東西。</div>
+      </div>
+
+      <div class="study">
+        <h4>標準化模板本身就有效</h4>
+        <p class="meta">Dermody 等 2025, <i>Patient Safety in Surgery</i>（密西根大學）　|　前後對照，127 → 61 份回覆　|　<a href="https://doi.org/10.1186/s13037-025-00433-3" target="_blank" rel="noopener">DOI</a></p>
+        <p>導入標準化簡報模板與八向度評估工具後，幾乎所有向度顯著上升（p&lt;0.05）：
+        案例選擇理由的清晰度、安全事件的性質、導致事件的情境、<b>促成因子</b>、對事件的理解、預期的病人效益。
+        效果量從中等到小。作者註明有<b>天花板效應</b>。</p>
+        <div class="impl"><b>對我們的意義：</b>把納入條件、錯誤分類、品質自評直接寫進表單，
+        等於在通報當下就完成半份結構化簡報。</div>
+      </div>
+
+      <div class="study">
+        <h4>會議產出的改善建議，最後有多少真的落實？</h4>
+        <p class="meta">Bechtold 等 2008, <i>Postgrad Med J</i>（密蘇里大學內科）　|　前後對照　|　<a href="https://doi.org/10.1136/qshc.2006.021139" target="_blank" rel="noopener">DOI</a></p>
+        <div class="tblwrap">
+          <table>
+            <tr><th>階段</th><th>數量</th></tr>
+            <tr><td>會議產出的系統改善建議</td><td class="n">121 項</td></tr>
+            <tr><td>經篩選後實際推動</td><td class="n">39 項</td></tr>
+            <tr><td><b>已實施</b></td><td class="n hi">23 項（59%）</td></tr>
+            <tr><td>部分實施或進行中</td><td class="n">11 項（28%）</td></tr>
+            <tr><td>因不切實際或重複而放棄</td><td class="n">5 項（13%）</td></tr>
+          </table>
+        </div>
+        <p>出席人數同時從 41 ± 8 增加到 50 ± 10（p&lt;0.03）。</p>
+        <div class="impl"><b>對我們的意義：</b>這是合理的期待值 ——
+        <b>大約五分之一的建議會真正變成制度。</b>不必期待每個案例都能產出規範。</div>
+      </div>
+
+      <div class="ev-h">三、事實：已知的限制與陷阱
+        <small>包含對我們不利的資料。知道對方能怎麼反駁，比只有正面數字安全。</small></div>
+
+      <div class="study">
+        <h4>最常見的錯誤是溝通，不是技術</h4>
+        <p class="meta">Gloor 等 2025, <i>Eur J Trauma Emerg Surg</i>（瑞士 Level I 創傷中心，2013–2022）　|　回溯性系列，189 例　|　<a href="https://doi.org/10.1007/s00068-025-02913-8" target="_blank" rel="noopener">DOI</a></p>
+        <p>族群極重症（ISS 中位數 32，77% 於 90 天內死亡）。共辨識出 130 個潛在錯誤：</p>
+        <div class="tblwrap">
+          <table>
+            <tr><th>錯誤類型</th><th>件數</th></tr>
+            <tr><td><b>溝通錯誤</b></td><td class="n hi">29</td></tr>
+            <tr><td>技術或知識不足</td><td class="n">24</td></tr>
+            <tr><td>流程延遲</td><td class="n">19</td></tr>
+          </table>
+        </div>
+        <p><b>溝通錯誤經常「觸發」後續的其他錯誤</b> —— 診斷遺漏、under-triage、偏離規範。作者稱為漣漪效應。</p>
+        <div class="impl"><b>對我們的意義：</b>表單的「相關面向」分類就是照這個架構設計的。
+        <b>多數案例會落在溝通與流程，而不是某個人技術差 —— 分類本身就是去人格化的工具。</b></div>
+      </div>
+
+      <div class="study">
+        <h4>「不指責」不會自動發生，而且會退步</h4>
+        <p class="meta">Stocker 等 2021, <i>Transl Gastroenterol Hepatol</i>（瑞士兒童醫院）　|　前瞻觀察，18 場會議、29 案例、466 人次　|　<a href="https://doi.org/10.21037/tgh-20-42" target="_blank" rel="noopener">DOI</a></p>
+        <p>產出面很好：辨識 27 項問題，產出 17 條臨床建議，其中 <b>10 條成為新增或修訂的臨床指引</b>。</p>
+        <p>文化面則有三個警告：</p>
+        <p>⚠️ <b>非醫師（護理師等）在每一題的評分都低於醫師。</b><br>
+        ⚠️ 只有約 <b>四分之三</b>的參與者覺得會議中存在不指責的文化，<b>且結果依案例而異</b>。<br>
+        ⚠️ <b>高情緒張力的案例是退回「blame and shame」的風險因子。</b></p>
+        <p>💡 作者建議：<b>事件與會議之間留一段時間差</b>，可能有正面效果。</p>
+        <div class="impl"><b>對我們的意義：</b>不指責不是一次達成的狀態，是<b>每一個案例都要重新爭取</b>的東西。
+        死亡與家屬投書這類高張力案例，主持要格外小心；也不要在事件剛發生就排進會議。</div>
+      </div>
+
+      <div class="study">
+        <h4>受訓者其實在怕什麼</h4>
+        <p class="meta">Hilvano-Cabungcal 等 2025, <i>Acta Med Philipp</i>（菲律賓總醫院外科）　|　問卷調查，64 人（回覆率 71.9%），1–10 分　|　<a href="https://doi.org/10.47895/amp.vi0.9793" target="_blank" rel="noopener">DOI</a></p>
+        <div class="tblwrap">
+          <table>
+            <tr><th>項目</th><th>平均分</th></tr>
+            <tr><td>認為會議有助於學習／服務改善</td><td class="n">7.8</td></tr>
+            <tr><td>願意公開談論自己的併發症</td><td class="n">7.1</td></tr>
+            <tr><td><b>覺得會議聚焦在「個人表現」</b></td><td class="n hi">7.3</td></tr>
+            <tr><td>覺得會議聚焦在「系統與流程」</td><td class="n">5.6</td></tr>
+            <tr><td>覺得會議環境帶有評判性</td><td class="n">5.2</td></tr>
+            <tr><td>害怕被批評</td><td class="n">4.4</td></tr>
+            <tr><td>害怕報告後的負面後果</td><td class="n">4.1</td></tr>
+          </table>
+        </div>
+        <p>另外：<b>78.1% 不知道會議的案例納入條件是什麼</b>；<b>45.3% 不知道會議結論後來怎麼被傳達</b>。
+        資深住院醫師願意公開談論併發症的分數（7.7）<b>顯著高於</b>年輕住院醫師（6.3），p = 0.008。</p>
+        <div class="impl"><b>對我們的意義（三項直接對應）：</b>
+        ① 不知道納入條件 → 我們把 25 項條件直接印在表單與這一頁上；
+        ② 不知道結論怎麼傳達 → 具名者一律回覆、匿名者於會議公開回覆；
+        ③ 聚焦個人 &gt; 聚焦系統 → 用錯誤分類把討論框架拉向系統面。<br>
+        還有一點：<b>階層越低，越不敢說。</b></div>
+      </div>
+
+      <div class="study">
+        <h4>反面資料：光開會不足以改變文化</h4>
+        <p class="meta">Walker 等 2016, <i>MedEdPORTAL</i>（Baylor College of Medicine）　|　135 位受訓者、7 場會議　|　<a href="https://doi.org/10.15766/mep_2374-8265.10475" target="_blank" rel="noopener">DOI</a></p>
+        <p>有效的部分：教會受訓者用系統性觀點分析錯誤、辨識減量策略，且自認更可能填寫事件通報單。</p>
+        <p>⚠️ 沒有改變的部分：<b>受訓者對「所屬機構安全文化」的感受完全沒有變化。</b>
+        作者明白寫道：<b>每月參加一次會議，不足以改變文化。</b></p>
+        <div class="impl"><b>對我們的意義：</b>這套系統能改善的是通報行為與分析能力；
+        <b>整體安全文化靠的是日常，不是每季一次的會議。</b>
+        這也是為什麼心理安全第三題（「我相信通報之後會帶來改變」）要長期追蹤。</div>
+      </div>
+
+      <div class="study">
+        <h4>沒有黃金標準，也缺乏客觀成效指標</h4>
+        <p class="meta">de Vos 等 2023, <i>Eur J Pediatr Surg</i>　|　實務指引回顧　|　<a href="https://doi.org/10.1055/s-0043-1760836" target="_blank" rel="noopener">DOI</a></p>
+        <p>M&amp;M <b>不存在標準做法</b>，原因之一是缺乏客觀成效指標，導致不同格式無法比較。
+        僅有的三條共通建議：<b>技巧純熟且主動的主持人</b>、<b>結構化的呈現與討論格式</b>、
+        <b>一個專責小組負責追蹤改善計畫</b>。作者強調格式必須依在地脈絡與文化量身調整。</p>
+        <div class="impl"><b>對我們的意義：</b>三條建議我們都有了。
+        但也要承認：<b>評估我們自己這套系統，不會有現成的客觀指標</b> —— 所以才要自己造那三題。</div>
+      </div>
+
+      <div class="study">
+        <h4>跨院所驗證：唯一沒有改善的那一題</h4>
+        <p class="meta">Leng 等 2026, <i>Urology</i>（M-PROVE 模型，三家學術機構）　|　前瞻多中心，65 → 54 份回覆　|　<a href="https://doi.org/10.1016/j.urology.2026.06.007" target="_blank" rel="noopener">DOI</a></p>
+        <p>所有題目（品質、實務與系統改變、包容性、教育價值、滿意度）皆顯著改善，
+        整體平均 <b>3.70 → 4.17（P &lt; .001）</b>，且出席者的職務、性別、參加場次都不影響改善幅度。</p>
+        <p>⚠️ 但是：<b>「M&amp;M 是否為一個不具威脅感的環境」這一題有改善，卻未達統計顯著。</b></p>
+        <div class="impl"><b>對我們的意義：</b>在跨三家院所、其他所有向度都顯著改善的情況下，
+        唯獨「威脅感」沒有跨過門檻。<b>改格式相對容易，改氣氛最難 —— 這一題表單代勞不了。</b></div>
+      </div>
+
+      <div class="ev-h">四、每一個欄位的來源</div>
+      <div class="tblwrap">
+        <table>
+          <tr><th>設計元件</th><th>依據</th><th>關鍵數字</th></tr>
+          <tr><td>兩個獨立資料庫</td><td>Redmon 2025</td><td>匿名回饋機制</td></tr>
+          <tr><td>全職類皆可通報</td><td>Dunlap 2026</td><td>escalation 信心 2.2 → 4.3</td></tr>
+          <tr><td>25 項納入條件寫在表單上</td><td>Hilvano-Cabungcal 2025</td><td>78.1% 不知道納入條件</td></tr>
+          <tr><td>錯誤面向分類</td><td>Gloor 2025</td><td>溝通 29 &gt; 技術 24 &gt; 延遲 19</td></tr>
+          <tr><td>「無可歸因／我不確定」出口</td><td>Takatani 2026</td><td>罪惡感 94.6%、怕被告 76.2%</td></tr>
+          <tr><td>自評 ＋ 會後共識評分</td><td>Clark 2025</td><td>84% 一致；12% vs 3%</td></tr>
+          <tr><td>標準化表單即模板</td><td>Dermody 2025</td><td>幾乎所有向度 p&lt;0.05</td></tr>
+          <tr><td>near miss / good catch / 正向案例</td><td>Dickinson 2025</td><td>通報件數 +17% 是好事</td></tr>
+          <tr><td>專責小組三人共識制</td><td>de Vos 2023、Nataraj 2025</td><td>三條共通建議之一</td></tr>
+          <tr><td>回覆通報人義務</td><td>Hilvano-Cabungcal 2025</td><td>45.3% 不知道結論怎麼傳達</td></tr>
+          <tr><td>制度化追蹤欄位</td><td>Bechtold 2008</td><td>121 → 39 → 23（59%）落實</td></tr>
+          <tr><td>心理安全三題</td><td>Walker 2016、de Vos 2023</td><td>光開會改變不了文化</td></tr>
+          <tr><td>事件與會議間留時間差</td><td>Stocker 2021</td><td>高張力案例易退回 blame</td></tr>
+        </table>
+      </div>
+
+      <div class="ev-h">五、必須誠實面對的四件事</div>
+      <div class="caveat">
+        <ol>
+          <li><b>證據等級普遍不高。</b>絕大多數是單中心、前後對照、以自評問卷為成效的研究。
+          沒有隨機分派，<b>也沒有任何一篇證明 M&amp;M 改善了病人的臨床結果</b>（死亡率、併發症率）。</li>
+          <li><b>回覆率與選擇偏差。</b>多數研究後測回覆數低於前測；願意填問卷的人，可能本來就比較投入。</li>
+          <li><b>天花板效應是真的。</b>如果我們的會議本來就開得不錯，改善幅度不會戲劇性 ——
+          這不代表沒有價值，但不要用別人的百分比設定自己的期待。</li>
+          <li><b>最想改的那一題，文獻上沒人改成功。</b>那不是設計問題，是主持與長期累積的問題。</li>
+        </ol>
+      </div>
+
+      <div class="ev-h">六、完整引用清單</div>
+      <div class="reflist">
+        1. Takatani 等 2026, <i>Crit Care</i> — 日美第二受害者對照 · <a href="https://doi.org/10.1186/s13054-026-06212-5" target="_blank" rel="noopener">DOI</a><br>
+        2. Fisher 等 2026, <i>Isr J Health Policy Res</i> — 第二受害者支持需求 · <a href="https://doi.org/10.1186/s13584-026-00764-1" target="_blank" rel="noopener">DOI</a><br>
+        3. Torres-Landa &amp; Farrell 2026, <i>Am Surg</i> — 從 Codman 到當代 · <a href="https://doi.org/10.1177/00031348261448909" target="_blank" rel="noopener">DOI</a><br>
+        4. Nataraj 等 2025, <i>Acad Med</i> — Teaming 重振 M&amp;M · <a href="https://doi.org/10.1097/ACM.0000000000006090" target="_blank" rel="noopener">DOI</a><br>
+        5. Dickinson 等 2025, <i>Jt Comm J Qual Patient Saf</i> — 閉環式改良會議 · <a href="https://doi.org/10.1016/j.jcjq.2025.06.008" target="_blank" rel="noopener">DOI</a><br>
+        6. Redmon 等 2025, <i>JACC Case Rep</i> — 心臟科 M&amp;M 重新設計 · <a href="https://doi.org/10.1016/j.jaccas.2025.105827" target="_blank" rel="noopener">DOI</a><br>
+        7. Clark 等 2025, <i>J Surg Res</i> — REDCap ＋ 品質評分 · <a href="https://doi.org/10.1016/j.jss.2025.04.022" target="_blank" rel="noopener">DOI</a><br>
+        8. Dermody 等 2025, <i>Patient Saf Surg</i> — 標準化模板驗證 · <a href="https://doi.org/10.1186/s13037-025-00433-3" target="_blank" rel="noopener">DOI</a><br>
+        9. Gloor 等 2025, <i>Eur J Trauma Emerg Surg</i> — 10 年錯誤分類 · <a href="https://doi.org/10.1007/s00068-025-02913-8" target="_blank" rel="noopener">DOI</a><br>
+        10. Leng 等 2026, <i>Urology</i> — M-PROVE 多院所 · <a href="https://doi.org/10.1016/j.urology.2026.06.007" target="_blank" rel="noopener">DOI</a><br>
+        11. Dunlap 等 2026, <i>J Vasc Nurs</i> — 護理主導 M&amp;M · <a href="https://doi.org/10.1016/j.jvn.2026.01.002" target="_blank" rel="noopener">DOI</a><br>
+        12. Hilvano-Cabungcal 等 2025, <i>Acta Med Philipp</i> — 受訓者觀感 · <a href="https://doi.org/10.47895/amp.vi0.9793" target="_blank" rel="noopener">DOI</a><br>
+        13. Furey 等 2025, <i>J Surg Educ</i> — 結構化回饋與教學評核 · <a href="https://doi.org/10.1016/j.jsurg.2025.103751" target="_blank" rel="noopener">DOI</a><br>
+        14. Ghazi 等 2026, <i>J Pak Med Assoc</i> — 資源有限環境的共通障礙 · <a href="https://doi.org/10.47391/JPMA.AKU-10Surg-25" target="_blank" rel="noopener">DOI</a><br>
+        15. de Vos 等 2023, <i>Eur J Pediatr Surg</i> — 百年實踐的改進空間 · <a href="https://doi.org/10.1055/s-0043-1760836" target="_blank" rel="noopener">DOI</a><br>
+        16. Stocker 等 2021, <i>Transl Gastroenterol Hepatol</i> — 跨專業 MMC · <a href="https://doi.org/10.21037/tgh-20-42" target="_blank" rel="noopener">DOI</a><br>
+        17. Walker 等 2016, <i>MedEdPORTAL</i> — Stop the Blame Game · <a href="https://doi.org/10.15766/mep_2374-8265.10475" target="_blank" rel="noopener">DOI</a><br>
+        18. Bechtold 等 2008, <i>Postgrad Med J</i> — 病人安全導向 MMC · <a href="https://doi.org/10.1136/qshc.2006.021139" target="_blank" rel="noopener">DOI</a>
+      </div>
+
+      <p class="srcnote">文獻依 PubMed 檢索（2026-09-04）。<br>本頁內容摘自各研究之公開摘要，僅供院內品質改善討論使用。</p>
+
+    </section>
 
     <div class="shareWrap">
       <button id="shareBtn" class="share" type="button">🔗 分享這個頁面</button>
@@ -275,6 +688,36 @@
       }
       if(document.readyState === "complete"){ tryQR(); }
       else{ window.addEventListener("load", tryQR); }
+    })();
+  </script>
+
+
+  <!-- 頁籤切換：預設停在「提報」，掃碼的人不會被文獻擋住 -->
+  <script>
+    (function(){
+      var tabs = [
+        {btn:"tab-report",   panel:"panel-report",   hash:"#report"},
+        {btn:"tab-evidence", panel:"panel-evidence", hash:"#evidence"}
+      ];
+      function show(i, push){
+        tabs.forEach(function(t, j){
+          var b = document.getElementById(t.btn);
+          var p = document.getElementById(t.panel);
+          if(!b || !p) return;
+          b.setAttribute("aria-selected", j === i ? "true" : "false");
+          p.hidden = (j !== i);
+        });
+        if(push && history.replaceState){
+          history.replaceState(null, "", tabs[i].hash);
+        }
+        window.scrollTo({top:0, behavior:"smooth"});
+      }
+      tabs.forEach(function(t, i){
+        var b = document.getElementById(t.btn);
+        if(b){ b.addEventListener("click", function(){ show(i, true); }); }
+      });
+      // 支援直接連到文獻頁：...mmc-portal.html#evidence
+      if(location.hash === "#evidence"){ show(1, false); }
     })();
   </script>
 
