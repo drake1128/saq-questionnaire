@@ -135,6 +135,10 @@
             background: var(--info);
         }
 
+        .nav-tab.experience.active {
+            background: var(--success);
+        }
+
         /* Card */
         .card {
             background: white;
@@ -756,6 +760,12 @@
                     onClick={() => setActiveTab('safety')}
                 >
                     ⚠️ 安全查核
+                </button>
+                <button
+                    className={`nav-tab experience ${activeTab === 'experience' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('experience')}
+                >
+                    🩺 醫師經驗分享
                 </button>
                 <button
                     className={`nav-tab ${activeTab === 'reference' ? 'active' : ''}`}
@@ -2150,6 +2160,301 @@ Power Pulse 噴藥（${fraction === 0.5 ? '1/2' : '1/3'} of total）= ${r1(spray
             );
         };
 
+        // ==================== 醫師經驗分享 (鐘文榮醫師) ====================
+        const ExperienceTab = () => {
+            const [dailyKU, setDailyKU] = useState(900);      // 千單位 (kU) / day
+            const [bagVolume, setBagVolume] = useState(250);  // ml per bag
+            const [copied, setCopied] = useState(false);
+
+            const SHIFTS = 3;                 // 三班制，每班 8 小時
+            const HOURS_PER_SHIFT = 8;
+
+            const ampsPerDay = dailyKU / 60;                        // 60,000 IU/amp
+            const perShiftKU = dailyKU / SHIFTS;
+            const ampsPerShift = perShiftKU / 60;
+            const rate = bagVolume / HOURS_PER_SHIFT;               // ml/hr
+            const concentration = (perShiftKU * 1000) / bagVolume;  // IU/ml
+
+            const r1 = (v) => Math.round(v * 10) / 10;
+
+            const copyOrder = () => {
+                const order = `【低劑量 Urokinase：每班一包（鐘文榮醫師做法）】
+每日總量 ${dailyKU.toLocaleString()},000 IU (${r1(ampsPerDay)} amps)
+每 8 小時一包：Urokinase ${r1(ampsPerShift)} amps (${perShiftKU.toLocaleString()},000 IU) in N/S ${bagVolume} ml
+Pump rate: ${r1(rate)} ml/hr（${bagVolume} ml 於 8 小時跑完）
+濃度: ${Math.round(concentration).toLocaleString()} IU/ml
+每日 3 包（三班各換一包），確保藥效新鮮度
+Heparin: keep aPTT 30-40 sec（偏低）`;
+                navigator.clipboard.writeText(order);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            };
+
+            return (
+                <div className="fade-in">
+                    <div className="card">
+                        <h2 className="card-title" style={{color: 'var(--success)'}}>
+                            🩺 醫師經驗分享：高雄長庚 鐘文榮醫師
+                        </h2>
+                        <p style={{color: 'var(--text-gray)', fontSize: '0.9rem', marginTop: '4px'}}>
+                            來源：電子郵件回覆之個人臨床經驗（非藥廠仿單、非指引建議）。
+                            本頁整理其 Urokinase 低劑量／每班換包做法，以及對 sheath thrombosis 與 Heparin 的看法。
+                        </p>
+
+                        <div className="info-box warning" style={{marginTop: '14px'}}>
+                            <div className="info-title">⚠️ 閱讀前提醒</div>
+                            <p style={{marginTop: '6px'}}>
+                                以下為<strong>單一術者的個人經驗與推論</strong>，與本手冊其他分頁的劑量（依體重、
+                                較高總量）並不相同。臨床採用前請自行評估病人狀況、院內藥事規範與科內共識。
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* 1. 低劑量總量 */}
+                    <div className="card">
+                        <h2 className="card-title success">① 每日總量：低劑量 0.9–1.08 MIU</h2>
+                        <div className="summary-grid">
+                            <div className="result-box success">
+                                <div className="result-label">每日總量</div>
+                                <div className="result-value">0.9–1.08<span className="result-unit">MIU/day</span></div>
+                            </div>
+                            <div className="result-box success">
+                                <div className="result-label">Amps (60,000 IU/amp)</div>
+                                <div className="result-value">15–18<span className="result-unit">amps/day</span></div>
+                            </div>
+                            <div className="result-box">
+                                <div className="result-label">給藥方式</div>
+                                <div className="result-value" style={{fontSize: '1.1rem'}}>不依體重<span className="result-unit">固定總量</span></div>
+                            </div>
+                        </div>
+                        <div className="info-box info">
+                            <div className="info-title">💡 重點</div>
+                            <p style={{marginTop: '6px'}}>
+                                「通常我都沒用這麼多，一天大概就 90–108 萬 unit 差不多，6 萬 u × 15–18 amp 的低劑量而已。」
+                                ── 換算為每小時約 <strong>37,500–45,000 IU/hr</strong>；若以 60 kg 計，約
+                                <strong> 625–750 IU/kg/hr</strong>，明顯低於本手冊 Urokinase 分頁的高劑量做法。
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* 2. 8 小時換包的理由 */}
+                    <div className="card">
+                        <h2 className="card-title warning">② 為什麼每 8 小時換一包？</h2>
+                        <div className="prep-card">
+                            <div className="prep-step">
+                                <div className="prep-number">1</div>
+                                <div className="prep-content">
+                                    Urokinase <strong>缺乏清楚的使用說明或仿單</strong>可循，尤其是泡製後的穩定性資料。
+                                </div>
+                            </div>
+                            <div className="prep-step">
+                                <div className="prep-number">2</div>
+                                <div className="prep-content">
+                                    參考 <strong>Actilyse (alteplase) 仿單</strong>：粉劑以生理食鹽水回溶後，
+                                    <span className="prep-highlight">室溫下藥效可維持約 8 小時</span>。
+                                </div>
+                            </div>
+                            <div className="prep-step">
+                                <div className="prep-number">3</div>
+                                <div className="prep-content">
+                                    推論同為凍晶粉劑的 Urokinase 應有相近特性 →
+                                    以 <strong>一班（8 小時）一包</strong>、一天三包的方式，確保藥物新鮮度。
+                                </div>
+                            </div>
+                            <div className="prep-step">
+                                <div className="prep-number">4</div>
+                                <div className="prep-content">
+                                    附帶好處：若<strong>臨時需要停藥</strong>（出血、達成再通、轉手術），
+                                    已泡好的藥量少，藥費損失也較小。
+                                </div>
+                            </div>
+                        </div>
+                        <div className="info-box danger">
+                            <div className="info-title">⚠️ 判讀注意</div>
+                            <p style={{marginTop: '6px'}}>
+                                「室溫 8 小時」是 <strong>alteplase</strong> 仿單的敘述，
+                                <strong>並非 urokinase 的官方穩定性數據</strong>，此處為醫師的合理外推。
+                                若院內藥劑部有 urokinase 稀釋後之穩定性建議，應以院內規範為準。
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* 3. 每班一包計算器 */}
+                    <div className="card">
+                        <h2 className="card-title">③ 每班一包 — 配置計算</h2>
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label className="form-label">每日總量</label>
+                                <select
+                                    className="form-input"
+                                    value={dailyKU}
+                                    onChange={(e) => setDailyKU(Number(e.target.value))}
+                                >
+                                    <option value={900}>900,000 IU/day（15 amps）</option>
+                                    <option value={960}>960,000 IU/day（16 amps）</option>
+                                    <option value={1020}>1,020,000 IU/day（17 amps）</option>
+                                    <option value={1080}>1,080,000 IU/day（18 amps）</option>
+                                </select>
+                                <div className="form-hint">鐘醫師常用區間 15–18 amps/day</div>
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">每包 N/S 容量</label>
+                                <select
+                                    className="form-input"
+                                    value={bagVolume}
+                                    onChange={(e) => setBagVolume(Number(e.target.value))}
+                                >
+                                    <option value={250}>N/S 250 ml</option>
+                                    <option value={500}>N/S 500 ml</option>
+                                </select>
+                                <div className="form-hint">8 小時跑完一包</div>
+                            </div>
+                        </div>
+
+                        <div className="summary-grid">
+                            <div className="result-box success">
+                                <div className="result-label">每包 Urokinase</div>
+                                <div className="result-value">{r1(ampsPerShift)}<span className="result-unit">amps</span></div>
+                                <div className="result-note">{perShiftKU.toLocaleString()},000 IU</div>
+                            </div>
+                            <div className="result-box success">
+                                <div className="result-label">Pump rate</div>
+                                <div className="result-value">{r1(rate)}<span className="result-unit">ml/hr</span></div>
+                                <div className="result-note">{bagVolume} ml ÷ 8 hr</div>
+                            </div>
+                            <div className="result-box">
+                                <div className="result-label">濃度</div>
+                                <div className="result-value" style={{fontSize: '1.3rem'}}>{Math.round(concentration).toLocaleString()}<span className="result-unit">IU/ml</span></div>
+                            </div>
+                            <div className="result-box">
+                                <div className="result-label">每日包數</div>
+                                <div className="result-value">3<span className="result-unit">包/day</span></div>
+                                <div className="result-note">共 {r1(ampsPerDay)} amps</div>
+                            </div>
+                        </div>
+
+                        <div className="info-box success">
+                            <div className="info-title">📋 原文範例</div>
+                            <p style={{marginTop: '6px'}}>
+                                「如果我想用 900 kU/day，就是 300 kU（60 kU × 5）in N/S（250 或 500），
+                                run 8 小時流速，三班就可以維持鮮度。」
+                            </p>
+                        </div>
+
+                        <button className={`copy-btn ${copied ? 'copied' : ''}`} onClick={copyOrder}>
+                            {copied ? '✅ 已複製' : '📋 複製醫囑'}
+                        </button>
+                    </div>
+
+                    {/* 4. Heparin 與 sheath thrombosis */}
+                    <div className="card">
+                        <h2 className="card-title danger">④ Heparin 與 Sheath Thrombosis 的看法</h2>
+                        <div className="info-box info">
+                            <div className="info-title">🔍 觀察</div>
+                            <p style={{marginTop: '6px'}}>
+                                「自己發生過的 thrombosis 都不是 sheath 內，而是 <strong>sheath 外跟血管內之間的空腔</strong>
+                                流速慢產生的血栓。」→ 認為<strong>血管管徑與 sheath 的相對大小</strong>（殘餘空腔、
+                                低流速）才是關鍵因素，而非單靠 Heparin 劑量。
+                            </p>
+                        </div>
+                        <div className="summary-grid">
+                            <div className="result-box danger">
+                                <div className="result-label">其 Heparin 目標</div>
+                                <div className="result-value">30–40<span className="result-unit">sec aPTT</span></div>
+                                <div className="result-note">甚至只 keep 30–35 sec</div>
+                            </div>
+                            <div className="result-box">
+                                <div className="result-label">用意</div>
+                                <div className="result-value" style={{fontSize: '1.1rem'}}>降低出血<span className="result-unit">風險</span></div>
+                            </div>
+                        </div>
+                        <div className="info-box warning">
+                            <div className="info-title">⚠️ 對照</div>
+                            <p style={{marginTop: '6px'}}>
+                                本手冊「方法 B：Urokinase ＋ Heparin」是滴定至<strong>一般治療性 aPTT target</strong>；
+                                鐘醫師則刻意維持在<strong>次治療劑量（sub-therapeutic）</strong>。兩者出血／再阻塞的取捨不同，
+                                請依病人 sheath 大小、血管管徑與出血風險決定。
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* 5. 對照表 */}
+                    <div className="card">
+                        <h2 className="card-title">⑤ 與本手冊做法對照</h2>
+                        <div style={{overflowX: 'auto'}}>
+                            <table className="protocol-table">
+                                <thead>
+                                    <tr>
+                                        <th>項目</th>
+                                        <th>本手冊（方法 A／B）</th>
+                                        <th>鐘文榮醫師做法</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>每日總量</td>
+                                        <td>1.25 MIU/day 起（依體重可更高）</td>
+                                        <td className="highlight">0.9–1.08 MIU/day</td>
+                                    </tr>
+                                    <tr>
+                                        <td>劑量依據</td>
+                                        <td>IU/kg/hr（依體重）</td>
+                                        <td className="highlight">固定總量，不依體重</td>
+                                    </tr>
+                                    <tr>
+                                        <td>配置方式</td>
+                                        <td>大包裝，約 24 小時一袋</td>
+                                        <td className="highlight">每 8 小時一包，一天三包</td>
+                                    </tr>
+                                    <tr>
+                                        <td>流速</td>
+                                        <td>21 ml/hr（500 ml／24 hr）或 10 ml/hr</td>
+                                        <td className="highlight">31.3 ml/hr（250 ml）或 62.5 ml/hr（500 ml）</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Heparin</td>
+                                        <td>滴定至常規治療性 aPTT</td>
+                                        <td className="highlight">aPTT 30–40（甚至 30–35）</td>
+                                    </tr>
+                                    <tr>
+                                        <td>考量重點</td>
+                                        <td>溶栓效率、標準化流程</td>
+                                        <td className="highlight">藥物新鮮度、停藥彈性、出血風險</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {/* 6. 原文 */}
+                    <div className="card">
+                        <h2 className="card-title">📩 來信原文摘錄</h2>
+                        <div style={{
+                            background: 'var(--bg-light)',
+                            borderLeft: '4px solid var(--success)',
+                            borderRadius: '8px',
+                            padding: '14px 16px',
+                            fontSize: '0.9rem',
+                            lineHeight: '1.9',
+                            color: 'var(--text-dark)',
+                            whiteSpace: 'pre-line'
+                        }}>
+{`通常我都沒用這麼多，一天大概就 90–108 萬 unit 差不多，6 萬 u × 15–18 amp 的低劑量而已。
+
+對於 urokinase 我一直沒有找到清楚的使用說明或是仿單，反而在使用 tPA 的經驗讓我注意到這些粉劑加入生理食鹽水後應該跟 tPA 相同：室溫下藥效持續 8 小時（這一部分 Actilyse tPA 仿單寫很清楚）。
+
+所以我習慣先算一天的總量，每一班（8 小時）一包，這樣來確保超過 8 小時後藥物的有效性。如果我想用 900 kU/day，就是 300 kU（60 kU × 5）in NS（250 或 500）run 8 小時流速，三班就可以維持鮮度。如果突然要停藥，或許藥品費用也可以少一點。
+
+至於 heparin 的 sheath thrombosis prevention，私以為血管大小可能才是因素，因為自己發生過的 thrombosis 都不是 sheath 內，而是 sheath 外跟血管內之間空腔流速慢產生的血栓，所以通常我的 heparin 都只有 keep APTT 30–40，甚至 30–35 而已。`}
+                        </div>
+                        <p style={{marginTop: '12px', fontSize: '0.85rem', color: 'var(--text-gray)'}}>
+                            ── 高雄長庚紀念醫院　鐘文榮醫師（Email 分享，文字經排版整理，內容未改動原意）
+                        </p>
+                    </div>
+                </div>
+            );
+        };
+
         // ==================== MAIN APP ====================
         const App = () => {
             const [activeTab, setActiveTab] = useState('urokinase');
@@ -2160,6 +2465,7 @@ Power Pulse 噴藥（${fraction === 0.5 ? '1/2' : '1/3'} of total）= ${r1(spray
                     case 'alteplase': return <AlteplaseTab />;
                     case 'angiojet': return <AngioJetTab />;
                     case 'safety': return <SafetyTab />;
+                    case 'experience': return <ExperienceTab />;
                     case 'reference': return <ReferenceTab />;
                     default: return <UrokinaseTab />;
                 }
