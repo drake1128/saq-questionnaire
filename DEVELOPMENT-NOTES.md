@@ -8,6 +8,36 @@ NTUH Hsinchu Branch - Cardiovascular Center
 
 ## Recent Updates
 
+### 2026-09-14: 新增「竹北 3F ICU 心血管重症教學案例集」（chubei-icu-cardiovascular-cases.html）
+
+**來源：** Drive `004 教學資料 at Hsinchu 院內/Chubei 3F ICU/` — 2021/9–2022/6 竹北生醫 M3FI 晨間跨團隊教學會議紀錄 14 份 docx、1 pptx（疫苗心肌炎 journal reading）、1 gslides（COVID 心血管臨床實務）、1 PAD 衛教文。無影片檔。
+
+**產出：** 單一 HTML 8.97 MB，68 張照片 base64 內嵌，純 HTML/CSS/vanilla JS、無外部依賴、離線可開。Drive 內同步保留一份中文檔名 `竹北3F-ICU心血管重症教學案例集.html`，並附 `製作記錄_竹北3F-ICU教學案例集.md`（完整製作記錄）。
+
+| 區塊 | 單元 |
+|------|------|
+| 真實病例 ×4 | 術後 PSVT（含 9/3 完整時間軸）、插管後疑似 PE、停 DAPT 後 LAD stent thrombosis、SAH 與 Takotsubo |
+| 主題講座 ×5 | STEMI 流程＋交班查核表、DAPT、TPM、呼吸器設定兩題情境、IE |
+| COVID 專題 ×3 | Paxlovid 心血管 DDI（2024/6 院內共識）、心肌炎＋NEJM Mevorach 導讀、PAD |
+| 附錄 | 藥物速查（15 種）、出處對照、去識別化與更正說明、文獻 |
+
+**互動設計：** 頂端「全部／臨床推理／照護實務」雙層切換（`body.layer-*` + `.wrap [data-layer]`）、`<details>` 揭曉式 Q&A、燈箱、深淺色主題、列印自動展開、手機收合目錄。
+
+**去識別化：** 移除病歷號／床號／姓名／簽到名單；排除簽到表照片；兩張投影片照片的病人姓名以 PIL 像素化。教學現場照含同仁臉孔，依作者指示保留。
+
+**內容忠實度處理（皆於附錄 B 註明）：** adenosine 劑量依主持人修訂（口述 6–6–6 → 醫囑 3–3–3）；單元 01 性別依病史取男性；單元 03 胸痛時間紀錄表與投影片矛盾 → 並列；DVT 骨盆腔比例依 10/7 修訂版。文獻 6 篇 PMID 以 PubMed 查證。
+
+**技術眉角：**
+- 9 MB 單檔載入時 Chrome 的 scroll restoration 會蓋掉 URL hash → 有 hash 時 `history.scrollRestoration='manual'` 並於 `load` 後重新 `scrollIntoView`
+- 層次切換的 `display:none` 選擇器要限定在 `.wrap` 內，否則會把頂端切換按鈕（同樣帶 `data-layer`）一起藏掉
+- 內容以 `{{img:key|class|caption}}` 巨集寫在 template，由 build.py 注入 base64；日後改內容直接編輯 HTML 即可
+
+**index.html：** ICU/CCU 類別新增卡片（🏥，第一張），計數 10→11；`sitemap.xml` 新增。
+
+**Git commits:** `e65cd95`
+
+---
+
 ### 2026-04-19: 文獻庫雙軌化 — 修復 journal-reading 頁面 & 新增 LATEX Drive 索引
 
 **背景：**
