@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>周邊動脈疾病 (PAOD) 居家症狀追蹤問卷</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .info-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 30px;
+            border-radius: 5px;
+        }
+
+        .info-box strong {
+            color: #856404;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .patient-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .patient-info h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .form-group input {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .section {
+            background: #f8f9fa;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-number {
+            background: #667eea;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .question {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .question-text {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+
+        .table-question {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .activity-name {
+            text-align: left !important;
+            font-weight: 500;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .radio-option:hover {
+            background: #f0f4ff;
+            border-color: #667eea;
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .radio-option label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .radio-option input[type="radio"]:checked + label {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        input[type="radio"] {
+            accent-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .results {
+            display: none;
+            background: #e8f5e9;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 30px;
+            border-left: 5px solid #4caf50;
+        }
+
+        .results h2 {
+            color: #2e7d32;
+            margin-bottom: 20px;
+        }
+
+        .score-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .score-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .score-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .interpretation {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .interpretation h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+            }
+            .btn, .progress-bar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 0;
+            }
+            .content {
+                padding: 15px;
+            }
+            .section {
+                padding: 15px;
+            }
+            table {
+                font-size: 12px;
+            }
+            th, td {
+                padding: 8px 4px;
+            }
+        }
+
+        .required {
+            color: red;
+        }
+
+        /* Share Button */
+        .share-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .share-toggle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .share-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .share-menu {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 20px;
+            min-width: 280px;
+            display: none;
+            animation: shareMenuFadeIn 0.3s ease;
+        }
+
+        .share-menu.active {
+            display: block;
+        }
+
+        @keyframes shareMenuFadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .share-menu h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qr-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .qr-container img {
+            max-width: 150px;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .qr-container p {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .share-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .share-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: white;
+        }
+
+        .share-btn.line {
+            background: #00B900;
+        }
+
+        .share-btn.email {
+            background: #EA4335;
+        }
+
+        .share-btn.copy {
+            background: #667eea;
+        }
+
+        .share-btn:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .share-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .share-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #666;
+            padding: 5px;
+        }
+
+        .share-close:hover {
+            color: #333;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #c62828;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Share Button -->
+    <div class="share-button">
+        <button class="share-toggle" onclick="toggleShareMenu()" title="分享此頁面">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
+            </svg>
+        </button>
+        <div class="share-menu" id="shareMenu">
+            <button class="share-close" onclick="toggleShareMenu()">&times;</button>
+            <h4>📤 分享此頁面</h4>
+            <div class="qr-container">
+                <img id="qrCode" src="" alt="QR Code">
+                <p>掃描 QR Code 開啟頁面</p>
+            </div>
+            <div class="share-buttons">
+                <a class="share-btn line" href="#" id="lineShare" target="_blank">
+                    <svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+                    LINE 分享
+                </a>
+                <a class="share-btn email" href="#" id="emailShare">
+                    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                    Email 分享
+                </a>
+                <button class="share-btn copy" onclick="copyPageUrl()">
+                    <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                    複製連結
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* 本頁專用樣式 */
+        .section.redflag { border-left-color: #c62828; }
+        .section.redflag h2 { color: #c62828; }
+        .section.redflag .section-number { background: #c62828; }
+        .flag-group { display: flex; flex-direction: column; gap: 10px; }
+        .flag-option {
+            display: flex; align-items: flex-start; gap: 12px;
+            padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;
+            cursor: pointer; background: white; transition: all 0.3s;
+        }
+        .flag-option:hover { border-color: #c62828; background: #fff5f5; }
+        .flag-option input[type="checkbox"] { width: 20px; height: 20px; margin-top: 2px; accent-color: #c62828; cursor: pointer; }
+        .flag-option label { flex: 1; cursor: pointer; }
+        .flag-option .flag-level { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-right: 6px; }
+        .flag-level.urgent { background: #c62828; color: white; }
+        .flag-level.soon { background: #ef6c00; color: white; }
+        .flag-option input:checked + label { color: #c62828; font-weight: 600; }
+        .sub-note { color: #666; font-size: 13px; margin: -8px 0 12px 0; }
+        .prev-score-note { color: #666; font-size: 13px; margin-top: 8px; }
+        .alert-card {
+            display: none; padding: 20px; border-radius: 8px; margin-bottom: 15px;
+            border-left: 5px solid #c62828; background: #ffebee; color: #b71c1c;
+        }
+        .alert-card.soon { border-left-color: #ef6c00; background: #fff3e0; color: #e65100; }
+        .alert-card h4 { margin-bottom: 8px; font-size: 18px; }
+        .alert-card ul { margin-left: 20px; }
+        .delta { font-size: 14px; font-weight: 600; margin-left: 10px; }
+        .delta.worse { color: #c62828; }
+        .delta.better { color: #2e7d32; }
+        .delta.same { color: #666; }
+        .score-side { text-align: right; }
+        .score-side small { display: block; color: #888; font-size: 12px; font-weight: normal; }
+        .citation { font-size: 12px; color: #888; margin-top: 10px; line-height: 1.5; }
+        @media print { .section.redflag, .alert-card { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+    </style>
+
+    <div class="container">
+        <div class="header">
+            <h1>周邊動脈疾病居家症狀追蹤問卷</h1>
+            <p>PAOD Home Symptom Tracker：VascuQoL-6 ＋ WELCH ＋ 缺血警訊</p>
+        </div>
+
+        <div class="info-box">
+            <strong>📋 填寫說明：</strong>
+            本問卷約 3 分鐘完成。第一、二部分請依<strong>過去 2 週</strong>的情況作答；第三部分是<strong>缺血警訊</strong>，只要有任何一項符合，請依提示儘速就醫。
+            若您手邊有上次的分數，請填入基本資料欄，系統會自動比較是否惡化。
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="content">
+            <form id="paodForm">
+                <!-- 基本資料 -->
+                <div class="patient-info">
+                    <h3>📝 基本資料</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>姓名 <span class="required">*</span></label>
+                            <input type="text" id="patientName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>病歷號</label>
+                            <input type="text" id="patientID">
+                        </div>
+                        <div class="form-group">
+                            <label>填寫日期 <span class="required">*</span></label>
+                            <input type="date" id="fillDate" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>上次 VascuQoL-6 總分（6–24，選填）</label>
+                            <input type="number" id="prevVq6" min="6" max="24" step="1" placeholder="例：18">
+                        </div>
+                        <div class="form-group">
+                            <label>上次 WELCH 分數（0–100，選填）</label>
+                            <input type="number" id="prevWelch" min="0" max="100" step="1" placeholder="例：30">
+                        </div>
+                        <div class="form-group">
+                            <label>上次填寫日期（選填）</label>
+                            <input type="date" id="prevDate">
+                        </div>
+                    </div>
+                    <p class="prev-score-note">💡 填入上次分數後，結果會顯示與上次的差異，用來判斷症狀是否惡化。</p>
+                </div>
+
+                <div class="error-message" id="errorMessage">
+                    ⚠️ 請回答所有必填問題
+                </div>
+
+                <!-- 第一部分：VascuQoL-6 -->
+                <div class="section">
+                    <h2><span class="section-number">1</span>腿部循環對生活的影響（VascuQoL-6）</h2>
+                    <p style="margin-bottom: 15px; color: #666;">請回想<strong>過去 2 週</strong>，選出最符合您情況的一項。</p>
+
+                    <div class="question">
+                        <div class="question-text">1. 因為腿部血液循環不好，過去 2 週我想做的活動範圍……</div>
+                        <div class="radio-group">
+                            <div class="radio-option"><input type="radio" name="v1" value="1" id="v1a" required><label for="v1a">受到嚴重限制</label></div>
+                            <div class="radio-option"><input type="radio" name="v1" value="2" id="v1b"><label for="v1b">受到相當限制</label></div>
+                            <div class="radio-option"><input type="radio" name="v1" value="3" id="v1c"><label for="v1c">受到一點限制</label></div>
+                            <div class="radio-option"><input type="radio" name="v1" value="4" id="v1d"><label for="v1d">完全不受限制</label></div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">2. 過去 2 週，我的腿感到疲倦或無力的時間……</div>
+                        <div class="radio-group">
+                            <div class="radio-option"><input type="radio" name="v2" value="1" id="v2a" required><label for="v2a">一直都有</label></div>
+                            <div class="radio-option"><input type="radio" name="v2" value="2" id="v2b"><label for="v2b">大部分時間有</label></div>
+                            <div class="radio-option"><input type="radio" name="v2" value="3" id="v2c"><label for="v2c">偶爾有</label></div>
+                            <div class="radio-option"><input type="radio" name="v2" value="4" id="v2d"><label for="v2d">完全沒有</label></div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">3. 過去 2 週，因為腿部血液循環不好，我的行走能力……</div>
+                        <div class="radio-group">
+                            <div class="radio-option"><input type="radio" name="v3" value="1" id="v3a" required><label for="v3a">受到極大限制</label></div>
+                            <div class="radio-option"><input type="radio" name="v3" value="2" id="v3b"><label for="v3b">受到相當限制</label></div>
+                            <div class="radio-option"><input type="radio" name="v3" value="3" id="v3c"><label for="v3c">受到一點限制</label></div>
+                            <div class="radio-option"><input type="radio" name="v3" value="4" id="v3d"><label for="v3d">完全不受限制</label></div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">4. 過去 2 週，我擔心自己腿部血液循環不好的時間……</div>
+                        <div class="radio-group">
+                            <div class="radio-option"><input type="radio" name="v4" value="1" id="v4a" required><label for="v4a">一直都在擔心</label></div>
+                            <div class="radio-option"><input type="radio" name="v4" value="2" id="v4b"><label for="v4b">大部分時間在擔心</label></div>
+                            <div class="radio-option"><input type="radio" name="v4" value="3" id="v4c"><label for="v4c">偶爾擔心</label></div>
+                            <div class="radio-option"><input type="radio" name="v4" value="4" id="v4d"><label for="v4d">完全不擔心</label></div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">5. 過去 2 週，因為腿部血液循環不好，我參與社交活動（聚會、出門訪友、宗教活動等）的能力……</div>
+                        <div class="radio-group">
+                            <div class="radio-option"><input type="radio" name="v5" value="1" id="v5a" required><label for="v5a">完全受限，無法參與</label></div>
+                            <div class="radio-option"><input type="radio" name="v5" value="2" id="v5b"><label for="v5b">受到相當限制</label></div>
+                            <div class="radio-option"><input type="radio" name="v5" value="3" id="v5c"><label for="v5c">受到一點限制</label></div>
+                            <div class="radio-option"><input type="radio" name="v5" value="4" id="v5d"><label for="v5d">完全不受限制</label></div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">6. 過去 2 週，當我的腿（或腳）疼痛時，它帶給我的不適或困擾是……</div>
+                        <div class="radio-group">
+                            <div class="radio-option"><input type="radio" name="v6" value="1" id="v6a" required><label for="v6a">非常大的不適或困擾</label></div>
+                            <div class="radio-option"><input type="radio" name="v6" value="2" id="v6b"><label for="v6b">相當的不適或困擾</label></div>
+                            <div class="radio-option"><input type="radio" name="v6" value="3" id="v6c"><label for="v6c">一點不適或困擾</label></div>
+                            <div class="radio-option"><input type="radio" name="v6" value="4" id="v6d"><label for="v6d">沒有不適或困擾（或沒有疼痛）</label></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第二部分：WELCH -->
+                <div class="section">
+                    <h2><span class="section-number">2</span>行走耐力估計（WELCH）</h2>
+                    <p style="margin-bottom: 15px; color: #666;">以下三題請估計：在平地上，用不同速度走路，<strong>最多能連續走多久</strong>才必須因腿部不舒服停下來。「平常速度」指與同年齡親友相近的速度。</p>
+
+                    <div class="question table-question">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="text-align:left;">走路速度</th>
+                                    <th>走不動</th>
+                                    <th>30 秒</th>
+                                    <th>1 分鐘</th>
+                                    <th>3 分鐘</th>
+                                    <th>10 分鐘</th>
+                                    <th>30 分鐘</th>
+                                    <th>1 小時</th>
+                                    <th>3 小時以上</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="activity-name">A. 慢速走（比同齡親友慢）</td>
+                                    <td><input type="radio" name="wa" value="0" required></td>
+                                    <td><input type="radio" name="wa" value="1"></td>
+                                    <td><input type="radio" name="wa" value="2"></td>
+                                    <td><input type="radio" name="wa" value="3"></td>
+                                    <td><input type="radio" name="wa" value="4"></td>
+                                    <td><input type="radio" name="wa" value="5"></td>
+                                    <td><input type="radio" name="wa" value="6"></td>
+                                    <td><input type="radio" name="wa" value="7"></td>
+                                </tr>
+                                <tr>
+                                    <td class="activity-name">B. 平常速度走（和同齡親友一樣）</td>
+                                    <td><input type="radio" name="wb" value="0" required></td>
+                                    <td><input type="radio" name="wb" value="1"></td>
+                                    <td><input type="radio" name="wb" value="2"></td>
+                                    <td><input type="radio" name="wb" value="3"></td>
+                                    <td><input type="radio" name="wb" value="4"></td>
+                                    <td><input type="radio" name="wb" value="5"></td>
+                                    <td><input type="radio" name="wb" value="6"></td>
+                                    <td><input type="radio" name="wb" value="7"></td>
+                                </tr>
+                                <tr>
+                                    <td class="activity-name">C. 快速走（比同齡親友快）</td>
+                                    <td><input type="radio" name="wc" value="0" required></td>
+                                    <td><input type="radio" name="wc" value="1"></td>
+                                    <td><input type="radio" name="wc" value="2"></td>
+                                    <td><input type="radio" name="wc" value="3"></td>
+                                    <td><input type="radio" name="wc" value="4"></td>
+                                    <td><input type="radio" name="wc" value="5"></td>
+                                    <td><input type="radio" name="wc" value="6"></td>
+                                    <td><input type="radio" name="wc" value="7"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">D. 和同年齡的親友相比，您平常走路的速度……</div>
+                        <div class="radio-group">
+                            <div class="radio-option"><input type="radio" name="wd" value="1" id="wd1" required><label for="wd1">慢很多</label></div>
+                            <div class="radio-option"><input type="radio" name="wd" value="2" id="wd2"><label for="wd2">慢一些</label></div>
+                            <div class="radio-option"><input type="radio" name="wd" value="3" id="wd3"><label for="wd3">稍微慢一點</label></div>
+                            <div class="radio-option"><input type="radio" name="wd" value="4" id="wd4"><label for="wd4">差不多一樣</label></div>
+                            <div class="radio-option"><input type="radio" name="wd" value="5" id="wd5"><label for="wd5">比較快</label></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第三部分：缺血警訊 -->
+                <div class="section redflag">
+                    <h2><span class="section-number">3</span>缺血警訊（請務必作答）</h2>
+                    <p style="margin-bottom: 15px; color: #666;">以下情況<strong>最近 2 週內</strong>是否發生過？請勾選所有符合的項目；沒有就不用勾。</p>
+
+                    <div class="flag-group">
+                        <div class="flag-option">
+                            <input type="checkbox" name="rf" value="urgent" id="rf1">
+                            <label for="rf1"><span class="flag-level urgent">立即就醫</span>腳突然變得冰冷、蒼白或發紫（尤其和另一隻腳明顯不同）</label>
+                        </div>
+                        <div class="flag-option">
+                            <input type="checkbox" name="rf" value="urgent" id="rf2">
+                            <label for="rf2"><span class="flag-level urgent">立即就醫</span>腳突然麻木、無力，或動不了</label>
+                        </div>
+                        <div class="flag-option">
+                            <input type="checkbox" name="rf" value="urgent" id="rf3">
+                            <label for="rf3"><span class="flag-level urgent">立即就醫</span>腳突然劇烈疼痛，且持續不緩解</label>
+                        </div>
+                        <div class="flag-option">
+                            <input type="checkbox" name="rf" value="soon" id="rf4">
+                            <label for="rf4"><span class="flag-level soon">一週內回診</span>沒有走路、休息時腳也會痛；或晚上躺平時腳痛，要把腳垂到床邊才比較舒服</label>
+                        </div>
+                        <div class="flag-option">
+                            <input type="checkbox" name="rf" value="soon" id="rf5">
+                            <label for="rf5"><span class="flag-level soon">一週內回診</span>腳趾或腳上有傷口超過 2 週沒有癒合、變黑、或有分泌物</label>
+                        </div>
+                        <div class="flag-option">
+                            <input type="checkbox" name="rf" value="soon" id="rf6">
+                            <label for="rf6"><span class="flag-level soon">一週內回診</span>能走的距離最近突然明顯縮短（例如以前能走 10 分鐘，現在走 2–3 分鐘就要停）</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">📊 計算結果</button>
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">🔄 重新填寫</button>
+                </div>
+
+                <!-- 結果 -->
+                <div class="results" id="results">
+                    <h2>📈 評估結果</h2>
+
+                    <div class="alert-card" id="alertUrgent">
+                        <h4>🆘 請立即就醫（急診）</h4>
+                        <p>您勾選的警訊可能代表<strong>急性肢體缺血</strong>，血流可能突然中斷，延誤可能造成肢體壞死。請立刻到急診，不要等門診。</p>
+                        <ul id="alertUrgentList"></ul>
+                    </div>
+                    <div class="alert-card soon" id="alertSoon">
+                        <h4>🚨 請於一週內回診</h4>
+                        <p>您勾選的警訊可能代表病情進展到<strong>慢性肢體威脅性缺血（CLTI）</strong>階段，需要醫師評估是否要安排血管檢查或治療。</p>
+                        <ul id="alertSoonList"></ul>
+                    </div>
+
+                    <div class="score-card">
+                        <span class="score-label">VascuQoL-6 總分<small style="display:block;color:#888;font-weight:normal;">6–24 分，越高代表生活受影響越少</small></span>
+                        <span class="score-side"><span class="score-value" id="vq6Score">--</span><span class="delta" id="vq6Delta"></span></span>
+                    </div>
+                    <div class="score-card">
+                        <span class="score-label">WELCH 行走耐力分數<small style="display:block;color:#888;font-weight:normal;">0–100 分，≤22 分約等於最多只能走 250 公尺</small></span>
+                        <span class="score-side"><span class="score-value" id="welchScore">--</span><span class="delta" id="welchDelta"></span></span>
+                    </div>
+                    <div class="score-card">
+                        <span class="score-label">缺血警訊</span>
+                        <span class="score-value" id="flagScore" style="font-size:20px;">--</span>
+                    </div>
+
+                    <div class="interpretation" id="interpretation">
+                        <h4>💡 結果解釋</h4>
+                        <p id="interpretationText"></p>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn btn-primary" onclick="window.print()">🖨️ 列印結果</button>
+                        <button type="button" class="btn btn-secondary" onclick="copyResults()">📋 複製結果</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="footer">
+            <p>周邊動脈疾病居家症狀追蹤問卷 © 2025</p>
+            <p>本問卷僅供醫療專業人員使用，不可作為自我診斷工具</p>
+            <p class="citation">
+                VascuQoL-6：Nordanstig J, et al. J Vasc Surg 2014;59:700-7 (PMID 24342060)；MID 依 Larsen ASF, et al. Health Qual Life Outcomes 2017;15:184 (PMID 28938901)。<br>
+                WELCH：Ouedraogo N, et al. J Vasc Surg 2013;58:981-8 (PMID 23663870)；≤22 分切點依 Tollenaere Q, et al. Front Cardiovasc Med 2023;10:968213 (PMID 37025694)。<br>
+                缺血警訊為本站依 CLTI／急性肢體缺血臨床表現自編，未經量表驗證。中文題目為本站翻譯，非官方驗證譯本。
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('fillDate').valueAsDate = new Date();
+        initShareButtons();
+
+        function initShareButtons() {
+            const pageUrl = window.location.href;
+            const pageTitle = document.title;
+            const encodedUrl = encodeURIComponent(pageUrl);
+            document.getElementById('qrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodedUrl}`;
+            document.getElementById('lineShare').href = `https://social-plugins.line.me/lineit/share?url=${encodedUrl}`;
+            const emailSubject = encodeURIComponent(`分享：${pageTitle}`);
+            const emailBody = encodeURIComponent(`我想和您分享這個問卷：\n\n${pageTitle}\n\n${pageUrl}`);
+            document.getElementById('emailShare').href = `mailto:?subject=${emailSubject}&body=${emailBody}`;
+        }
+
+        function toggleShareMenu() {
+            document.getElementById('shareMenu').classList.toggle('active');
+        }
+
+        function copyPageUrl() {
+            const pageUrl = window.location.href;
+            navigator.clipboard.writeText(pageUrl).then(() => {
+                alert('✅ 連結已複製到剪貼簿！');
+            }).catch(() => {
+                const textArea = document.createElement('textarea');
+                textArea.value = pageUrl;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('✅ 連結已複製到剪貼簿！');
+            });
+        }
+
+        document.addEventListener('click', function(event) {
+            const shareButton = document.querySelector('.share-button');
+            const shareMenu = document.getElementById('shareMenu');
+            if (shareButton && shareMenu && !shareButton.contains(event.target) && shareMenu.classList.contains('active')) {
+                shareMenu.classList.remove('active');
+            }
+        });
+
+        // 進度：VQ-6 六題 + WELCH 四題 = 10 個必答
+        const form = document.getElementById('paodForm');
+        const requiredNames = ['v1','v2','v3','v4','v5','v6','wa','wb','wc','wd'];
+        form.addEventListener('change', updateProgress);
+
+        function updateProgress() {
+            const answered = requiredNames.filter(n => document.querySelector(`input[name="${n}"]:checked`)).length;
+            document.getElementById('progressFill').style.width = (answered / requiredNames.length * 100) + '%';
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!document.getElementById('patientName').value) {
+                alert('請填寫姓名');
+                return;
+            }
+            calculateScores();
+        });
+
+        function val(name) {
+            return parseInt(document.querySelector(`input[name="${name}"]:checked`).value);
+        }
+
+        // VascuQoL-6：六題各 1–4 分加總，6–24，越高越好
+        function scoreVq6() {
+            return ['v1','v2','v3','v4','v5','v6'].reduce((s, n) => s + val(n), 0);
+        }
+
+        // WELCH：[(A+B+C) − 1] × D，範圍 0–100；三題皆「走不動」時公式為負，歸 0
+        function scoreWelch() {
+            const raw = (val('wa') + val('wb') + val('wc') - 1) * val('wd');
+            return Math.max(0, raw);
+        }
+
+        function collectFlags() {
+            const urgent = [], soon = [];
+            document.querySelectorAll('input[name="rf"]:checked').forEach(cb => {
+                const text = cb.nextElementSibling.textContent.replace(/^(立即就醫|一週內回診)/, '').trim();
+                (cb.value === 'urgent' ? urgent : soon).push(text);
+            });
+            return { urgent, soon };
+        }
+
+        // 與上次比較：VQ-6 MID 2 分（疑似）／4 分（確定）；WELCH 無公認 MID，以 ≥10 分粗略提示
+        function describeDelta(elId, current, prev, thresholds, unit) {
+            const el = document.getElementById(elId);
+            el.textContent = ''; el.className = 'delta';
+            if (prev === null || isNaN(prev)) return null;
+            const d = current - prev;
+            const sign = d > 0 ? '+' : '';
+            el.textContent = `（上次 ${prev}，${sign}${d}${unit}）`;
+            if (d <= -thresholds.certain) { el.classList.add('worse'); return 'certain-worse'; }
+            if (d <= -thresholds.indicative) { el.classList.add('worse'); return 'indicative-worse'; }
+            if (d >= thresholds.indicative) { el.classList.add('better'); return 'better'; }
+            el.classList.add('same'); return 'same';
+        }
+
+        function calculateScores() {
+            const vq6 = scoreVq6();
+            const welch = scoreWelch();
+            const flags = collectFlags();
+
+            document.getElementById('vq6Score').textContent = vq6;
+            document.getElementById('welchScore').textContent = welch;
+
+            const prevVq6Raw = document.getElementById('prevVq6').value;
+            const prevWelchRaw = document.getElementById('prevWelch').value;
+            const vq6Trend = describeDelta('vq6Delta', vq6, prevVq6Raw === '' ? null : parseInt(prevVq6Raw), { indicative: 2, certain: 4 }, ' 分');
+            const welchTrend = describeDelta('welchDelta', welch, prevWelchRaw === '' ? null : parseInt(prevWelchRaw), { indicative: 10, certain: 20 }, ' 分');
+
+            // 警訊卡
+            const urgentCard = document.getElementById('alertUrgent');
+            const soonCard = document.getElementById('alertSoon');
+            urgentCard.style.display = flags.urgent.length ? 'block' : 'none';
+            soonCard.style.display = (!flags.urgent.length && flags.soon.length) ? 'block' : 'none';
+            document.getElementById('alertUrgentList').innerHTML = flags.urgent.concat(flags.soon).map(t => `<li>${t}</li>`).join('');
+            document.getElementById('alertSoonList').innerHTML = flags.soon.map(t => `<li>${t}</li>`).join('');
+
+            const flagEl = document.getElementById('flagScore');
+            if (flags.urgent.length) { flagEl.textContent = '🆘 急性缺血警訊'; flagEl.style.color = '#c62828'; }
+            else if (flags.soon.length) { flagEl.textContent = '🚨 CLTI 警訊'; flagEl.style.color = '#ef6c00'; }
+            else { flagEl.textContent = '✅ 無'; flagEl.style.color = '#2e7d32'; }
+
+            // 綜合解釋：警訊 > VQ-6 惡化 > WELCH ≤22 > 穩定
+            let text = '';
+            if (flags.urgent.length) {
+                text = '🆘 <strong>請立即就醫：</strong>您勾選了急性肢體缺血的警訊。不論下方分數如何，請立刻前往急診，並告知醫師您有周邊動脈疾病。';
+            } else if (flags.soon.length) {
+                text = '🚨 <strong>請於一週內回診：</strong>休息痛、傷口不癒合或行走距離驟減，都是周邊動脈疾病進展到慢性肢體威脅性缺血（CLTI）的訊號，需要醫師重新評估血流與治療。';
+            } else if (vq6Trend === 'certain-worse' || welchTrend === 'certain-worse') {
+                text = '⚠️ <strong>明顯惡化：</strong>與上次相比，您的分數下降幅度已超過臨床有意義的變化（VascuQoL-6 下降 ≥4 分或 WELCH 下降 ≥20 分）。建議提前回診，與醫師討論是否需要調整治療或安排檢查。';
+            } else if (vq6Trend === 'indicative-worse' || welchTrend === 'indicative-worse') {
+                text = '⚠️ <strong>疑似惡化：</strong>與上次相比，您的分數有下降（VascuQoL-6 下降 2–3 分或 WELCH 下降 10–19 分）。請持續每 2–4 週追蹤，若下次仍下降或出現警訊，請回診。';
+            } else if (welch <= 22) {
+                text = '🚶 <strong>行走耐力偏低：</strong>WELCH ≤22 分約相當於最多只能走 250 公尺。請於下次回診時與醫師討論規律步行運動計畫（監督式運動是跛行的第一線治療）與藥物調整。';
+            } else if (vq6 <= 12) {
+                text = '⚠️ <strong>生活受影響程度高：</strong>VascuQoL-6 總分偏低，代表腿部循環問題對日常生活有明顯影響。請於下次回診時告知醫師。';
+            } else {
+                text = '✅ <strong>目前穩定：</strong>沒有缺血警訊，分數也沒有明顯下降。請繼續規律步行、戒菸、控制血糖血壓血脂，並每 2–4 週重新填寫一次以持續追蹤。';
+            }
+            if ((vq6Trend === 'better' || welchTrend === 'better') && !flags.urgent.length && !flags.soon.length) {
+                text += '<br><br>👍 與上次相比有進步，請維持現有的運動與治療。';
+            }
+
+            document.getElementById('interpretationText').innerHTML = text;
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetForm() {
+            if (confirm('確定要重新填寫問卷嗎？所有資料將會清除。')) {
+                form.reset();
+                document.getElementById('fillDate').valueAsDate = new Date();
+                document.getElementById('results').style.display = 'none';
+                document.getElementById('progressFill').style.width = '0%';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function copyResults() {
+            const name = document.getElementById('patientName').value;
+            const date = document.getElementById('fillDate').value;
+            const vq6 = document.getElementById('vq6Score').textContent;
+            const vq6d = document.getElementById('vq6Delta').textContent;
+            const welch = document.getElementById('welchScore').textContent;
+            const welchd = document.getElementById('welchDelta').textContent;
+            const flags = collectFlags();
+            const flagText = flags.urgent.concat(flags.soon).length
+                ? flags.urgent.map(t => '  [立即就醫] ' + t).concat(flags.soon.map(t => '  [一週內回診] ' + t)).join('\n')
+                : '  無';
+            const interp = document.getElementById('interpretationText').textContent;
+
+            const text = `
+周邊動脈疾病居家症狀追蹤問卷 結果
+
+姓名：${name}
+日期：${date}
+
+評估結果：
+- VascuQoL-6 總分：${vq6} / 24 ${vq6d}
+- WELCH 行走耐力：${welch} / 100 ${welchd}
+- 缺血警訊：
+${flagText}
+
+判讀：${interp}
+            `.trim();
+
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ 結果已複製到剪貼簿！');
+            }).catch(() => {
+                alert('❌ 複製失敗，請手動複製結果');
+            });
+        }
+    </script>
+</body>
+</html>
