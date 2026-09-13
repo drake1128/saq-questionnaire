@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>羞辱式教學 Teaching by Humiliation｜文獻與各國比較</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#1e3a5f; --primary-light:#2d5a87; --accent:#e74c3c; --accent-light:#ff6b5b;
+  --success:#27ae60; --warning:#f39c12; --bg-cream:#faf8f5; --bg-card:#ffffff;
+  --text-dark:#2c3e50; --text-muted:#7f8c8d; --border:#ecf0f1; --shadow:0 4px 20px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:'Noto Sans TC',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--bg-cream);color:var(--text-dark);line-height:1.78;font-size:16px}
+.app{max-width:780px;margin:0 auto;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+header{background:linear-gradient(135deg,#5b2333,#8c3a4a);color:#fff;padding:22px 18px 18px}
+header h1{margin:0;font-size:20px;font-weight:700}
+header .sub{margin:4px 0 0;font-size:13.5px;opacity:.9;font-weight:300;letter-spacing:.3px}
+main{padding:16px 14px}
+.card{background:var(--bg-card);border-radius:14px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+.card h2{font-size:17px;margin:0 0 10px;color:var(--primary);font-weight:700}
+.card h3{font-size:15px;margin:18px 0 8px;color:var(--primary-light);font-weight:600}
+.card h3:first-child{margin-top:0}
+p{margin:0 0 10px}
+.muted{color:var(--text-muted);font-size:13px}
+.takehome{border-left:4px solid var(--accent);background:#fff8f7}
+.takehome ol{margin:0;padding-left:20px}
+.takehome li{margin-bottom:9px;font-size:15px}
+.hero{background:linear-gradient(135deg,#fdeeec,#fff8f7);border:1px solid #f6cfca;
+  border-radius:14px;padding:18px;text-align:center;margin-bottom:14px}
+.hero .big{font-size:46px;font-weight:700;color:var(--accent);line-height:1.05}
+.hero .cap{font-size:13.5px;color:var(--text-dark);margin-top:6px}
+.hero .src{font-size:12px;color:var(--text-muted);margin-top:8px}
+.datum{background:#f4f8fb;border-radius:9px;padding:10px 12px;margin:9px 0;font-size:14px}
+.datum b{color:var(--primary)}
+.warn{background:#fef7ea;border-left:3px solid var(--warning);border-radius:0 8px 8px 0;
+  padding:10px 12px;margin:10px 0;font-size:13.5px}
+.warn b{color:#b9770e}
+.impl{background:#f0f9f3;border-left:3px solid var(--success);border-radius:0 8px 8px 0;
+  padding:10px 12px;margin:10px 0;font-size:13.5px}
+.impl b{color:var(--success)}
+.quote{border-left:3px solid var(--border);padding:2px 0 2px 12px;margin:10px 0;
+  font-size:14px;color:#4a5b6a;font-style:italic}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+th,td{border-bottom:1px solid var(--border);padding:8px 5px;text-align:left;vertical-align:top}
+th{color:var(--primary);font-weight:600;background:#f7fafc;font-size:12.5px}
+td.n{font-weight:700;color:var(--accent);white-space:nowrap}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.scroll table{min-width:540px}
+.bar-row{margin-bottom:11px}
+.bar-top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px}
+.bar-top .nm{font-weight:600}
+.bar-top .vl{font-weight:700;color:var(--accent)}
+.bar-track{height:11px;border-radius:99px;background:var(--border);overflow:hidden}
+.bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#ff9b8f,#e74c3c)}
+.bar-note{font-size:11.5px;color:var(--text-muted);margin-top:2px}
+.acc{border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;background:#fff}
+.acc-head{display:flex;align-items:center;gap:10px;padding:13px 14px;min-height:48px;cursor:pointer;
+  font-weight:600;font-size:14.5px}
+.flag{flex:0 0 auto;font-size:13px;font-weight:700;background:var(--primary);color:#fff;
+  border-radius:7px;padding:2px 8px}
+.acc-arrow{margin-left:auto;color:var(--text-muted);font-size:12px;transition:transform .2s}
+.acc-arrow.open{transform:rotate(90deg)}
+.acc-body{padding:12px 14px 14px;font-size:14px;border-top:1px solid var(--border)}
+.acc-body ul{margin:8px 0;padding-left:19px}
+.acc-body li{margin-bottom:5px}
+.ref{font-size:13.2px;margin-bottom:11px;padding-bottom:11px;border-bottom:1px dashed var(--border)}
+.ref:last-child{border-bottom:none}
+.ref .t{font-weight:600;color:var(--text-dark)}
+.ref .j{color:var(--text-muted);font-size:12.5px}
+.ref a{color:var(--primary-light);word-break:break-all;font-size:12.5px}
+.pill{display:inline-block;background:#eef3f8;color:var(--primary-light);border-radius:99px;
+  padding:2px 9px;font-size:11.5px;font-weight:600;margin-right:6px;margin-bottom:4px}
+.pill.red{background:#fdeeec;color:var(--accent)}
+.pill.grn{background:#eff9f3;color:var(--success)}
+.sc{border:1.5px solid var(--border);border-radius:12px;padding:13px;margin-bottom:10px;background:#fff}
+.sc-q{font-size:14.5px;font-weight:500;margin-bottom:10px}
+.sc-btns{display:flex;gap:8px}
+.sc-btn{flex:1;min-height:48px;border:1.5px solid var(--border);border-radius:10px;background:#fff;
+  font-family:inherit;font-size:14px;font-weight:600;color:var(--text-muted);cursor:pointer}
+.sc-btn.pick-y{border-color:var(--accent);background:#fdeeec;color:var(--accent)}
+.sc-btn.pick-n{border-color:var(--success);background:#eff9f3;color:var(--success)}
+.sc-ans{margin-top:11px;padding:11px;border-radius:10px;font-size:13.8px}
+.sc-ans.yes{background:#fdeeec;border:1px solid #f6cfca}
+.sc-ans.no{background:#eff9f3;border:1px solid #cdeadb}
+.sc-ans .lab{font-weight:700;margin-bottom:4px}
+.swap{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:10px}
+.swap .bad{background:#fdeeec;padding:10px 12px;font-size:14px}
+.swap .good{background:#eff9f3;padding:10px 12px;font-size:14px;border-top:1px solid var(--border)}
+.swap .tagx{font-size:11.5px;font-weight:700;color:var(--accent);display:block;margin-bottom:2px}
+.swap .tago{font-size:11.5px;font-weight:700;color:var(--success);display:block;margin-bottom:2px}
+.btn{width:100%;min-height:50px;border:none;border-radius:12px;background:var(--primary);color:#fff;
+  font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;margin-top:8px;padding:12px}
+.btn.ghost{background:#fff;color:var(--primary);border:1.5px solid var(--primary)}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);
+  display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:20;box-shadow:0 -2px 14px rgba(0,0,0,.06)}
+nav button{flex:1;min-height:60px;border:none;background:none;font-family:inherit;font-size:11.5px;
+  font-weight:600;color:var(--text-muted);cursor:pointer;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3px;padding:6px 2px}
+nav button.on{color:#8c3a4a}
+nav .dot{width:20px;height:20px;border-radius:7px;background:currentColor;opacity:.18}
+nav button.on .dot{opacity:1}
+footer{padding:20px 16px 30px;text-align:center;font-size:12px;color:var(--text-muted);line-height:1.9}
+footer .sig{color:var(--text-dark);font-weight:600;font-size:13px}
+@media print{nav,.btn{display:none!important}body{background:#fff}
+  .card{box-shadow:none;border:1px solid #ddd;page-break-inside:avoid}}
+
+/* Share */
+.sharefab{position:fixed;right:16px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:30;width:54px;height:54px;border-radius:50%;border:2px solid #f6cfca;background:linear-gradient(135deg,#5b2333,#8c3a4a);color:#fff;font-size:22px;cursor:pointer;box-shadow:0 6px 20px rgba(91,35,51,.35);display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.sharefab:hover{transform:translateY(-2px)}
+.shovl{position:fixed;inset:0;z-index:200;background:rgba(44,20,28,.6);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;padding:20px}
+.shovl.on{display:flex}
+.shbox{background:#fff;border-radius:16px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);overflow:hidden}
+.shhead{background:linear-gradient(135deg,#5b2333,#8c3a4a);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.shhead b{font-size:16px}
+.shhead button{background:none;border:0;color:#fff;font-size:26px;line-height:1;cursor:pointer;padding:0 4px}
+.shbody{padding:16px 20px 20px}
+.shbody p{margin:0 0 12px;font-size:13.5px;color:var(--text-muted)}
+.qrwrap{text-align:center;background:#faf8f5;border-radius:12px;padding:12px;margin-bottom:10px}
+.qrwrap img{width:150px;height:150px;border-radius:8px}
+.qrwrap small{display:block;color:var(--text-muted);font-size:12px;margin-top:6px}
+.shbtn{display:flex;align-items:center;gap:12px;width:100%;text-align:left;margin:8px 0;padding:12px 16px;border:1px solid var(--border);border-radius:11px;background:#faf8f5;color:var(--text-dark);font-family:inherit;font-size:14.5px;font-weight:600;cursor:pointer;text-decoration:none;transition:border-color .15s,background .15s}
+.shbtn:hover,.shbtn.ok{border-color:#f6cfca;background:#fdeeec}
+.shbtn .ic{font-size:19px;flex-shrink:0;width:24px;text-align:center}
+.shbtn small{display:block;font-weight:400;font-size:12px;color:var(--text-muted);margin-top:1px}
+@media print{.sharefab,.shovl{display:none!important}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState} = React;
+
+/* ========== 各國資料 ========== */
+const BARS = [
+  {nm:"奈及利亞 Nigeria（言語）", v:92.6, note:"Owoaje 等系列研究；羞辱 87.4%"},
+  {nm:"澳洲 Australia（成人科）", v:74.0, note:"Scott 2015 MJA；目擊 83.1%"},
+  {nm:"日本 Japan", v:68.5, note:"Nagata-Kobayashi 2006 JGIM；女 81.6% / 男 61.2%"},
+  {nm:"泰國 Thailand", v:63.4, note:"引自泰國 2023 跨國比較文獻"},
+  {nm:"巴基斯坦 Pakistan", v:62.5, note:"Shoukat 2010, Karachi"},
+  {nm:"全球 pooled（任一 harassment）", v:59.4, note:"Fnais 2014 Acad Med；51 研究 / 38,353 人"},
+  {nm:"全球 pooled（TBH）", v:57.1, note:"Wigg 2025；20 研究納入 meta-analysis"},
+  {nm:"奧地利 Austria（大吼）", v:60.2, note:"Siller 2017；羞辱 40.9%、肢體 27.3%"},
+  {nm:"美國 USA（任一型態）", v:38.0, note:"AAMC 2023；2018 GQ 為 42%"},
+  {nm:"墨西哥 Mexico", v:27.0, note:"UNAM 醫學院調查"},
+  {nm:"美國 USA（公開羞辱）", v:21.1, note:"AAMC GQ 2016–17；27,500 份問卷"},
+  {nm:"英國 UK（單一 placement）", v:8.0, note:"GMC NTS；目擊 14%。時間框架僅一個 placement"},
+];
+
+const COUNTRIES = [
+  {f:"全球", t:"Teaching by Humiliation 的統合分析", body:<>
+    <div className="datum">Wigg、Li、Leow（<b>Med Sci Educ 2025;35:569–85</b>）：7 個資料庫、<b>28 篇研究、34,821 位受訓者</b>，其中 20 篇納入 meta-analysis。TBH 的合併發生率為 <b>57.1%（95% CI 41.3–71.6%）</b>，各研究間範圍 <b>8.0–90.8%</b>。</div>
+    <p>該文將 TBH 定義為「教育者的教學行為導致受訓者產生羞辱感」——<b>以學習者的感受為判準，而非教師的意圖</b>。這個定義上的選擇很重要，也是後面各國數字差異這麼大的主因之一。</p>
+    <p>研究同時指出，經歷 TBH 與憂鬱、焦慮、壓力、burnout、物質濫用及<b>自殺意念</b>症狀有關，並伴隨恐懼、憤怒、挫折、羞辱、羞恥與尷尬等情緒。</p>
+    <div className="datum">Fnais 等（<b>Acad Med 2014;89:817–27</b>）：51 篇研究、38,353 位受訓者，<b>59.4%（95% CI 52.0–66.7%）</b>曾遭遇至少一種 harassment 或 discrimination；<b>言語騷擾最常見（63.0%，95% CI 54.8–71.2%）</b>。加害來源最常見為<b>主治醫師（34.4%）</b>，其次為病人或家屬（21.9%）。作者明白指出：這個比例<b>並未隨時間下降</b>。</div>
+  </>},
+  {f:"美國", t:"AAMC 畢業問卷（GQ）＋ LCME 標準", body:<>
+    <div className="datum">JAMA Intern Med 分析 2016–2017 年 <b>27,500 份 GQ</b>（占當年畢業生 72.1%）：超過三分之一曾經歷至少一種不當對待；最常見為<b>公開羞辱 21.1%</b>。女性 <b>40.9%</b> vs 男性 25.2%；LGB 學生公開羞辱 27.1% vs 異性戀 20.7%。</div>
+    <div className="datum">AAMC 2023 年資料：至少 <b>38%</b> 美國醫學生回報曾遭不當對待；絕大多數申訴對象為<b>臨床與課堂教師</b>。全國資料同時顯示，自認被不當對待者中約 <b>80% 未提出申訴</b>。</div>
+    <p><b>制度特徵：</b>GQ 自 1978 年開始施行，1991 年起加入不當對待題組。LCME 明確期待學校運用 GQ 資料做出以數據為基礎的改善決策——換句話說，<b>「有沒有調查」不是選項，「調查結果難看怎麼辦」才是學校要回答的問題</b>。</p>
+    <div className="impl"><b>可借鏡：</b>某校發現 GQ 顯示學生不熟悉申訴政策、且不相信通報會被追蹤後，成立工作小組重新設計處理流程並提高透明度，後續 GQ 數據明顯改善。介入的重點不在宣導，而在<b>讓學生看見案件確實被處理</b>。</div>
+  </>},
+  {f:"澳洲", t:"「Teaching by Humiliation」一詞的來源地", body:<>
+    <div className="datum">Scott KM 等（<b>Med J Aust 2015;203(4)</b>）：兩所澳洲醫學院最後階段學生，146/151 完成問卷（回收率 96.7%）。成人科輪訓中<b>曾親身經歷 74.0%、曾目擊 83.1%</b>；兒科輪訓則為 28.8% 與 45.1%。</div>
+    <p>質性資料的關鍵發現：學生描述的羞辱與威嚇行為，<b>多半是隱微而非公然的</b>，其中包含具攻擊性的提問方式。作者結論直接呼籲必須<b>中斷這種跨世代延續的文化</b>。</p>
+    <div className="datum">同年外科界的震撼彈：RACS 委託的 Expert Advisory Group 調查 3,516 人（回收率 47.8%），<b>49.2%</b> 曾遭遇歧視、霸凌或性騷擾；<b>受訓醫師遭霸凌者達 54%</b>；71% 醫院承認過去五年院內發生過此類事件。歧視案件<b>僅 12% 獲得有效解決</b>。</div>
+    <p><b>制度回應：</b>RACS 全盤接受 EAG 建議、<b>公開道歉</b>，並推出 Building Respect 行動計畫，承諾<b>每五年重複一次同一份調查</b>。這是少見的「調查—承認—承諾—再調查」完整循環。</p>
+  </>},
+  {f:"英國", t:"GMC 全國訓練調查（NTS）", body:<>
+    <div className="datum">GMC NTS 為每年一次的全國普查，2025 年涵蓋<b>逾 71,000 名受訓醫師與訓練者</b>。較早期資料顯示，<b>8%</b> 於<b>當前這一個 placement</b> 期間經歷霸凌或貶抑、<b>14%</b> 曾目擊。</div>
+    <div className="warn"><b>數字不可直接橫向比較：</b>NTS 問的是「單一 placement 期間」，而 AAMC GQ 問的是「整個醫學院四年」。時間框架不同，8% 與 38% 並非同一件事。</div>
+    <div className="datum">2025 年 NTS 其他發現：少數族裔的英國畢業生 <b>34%</b> 回報遭遇微歧視等行為，白人同儕為 25%；女性受訓者 <b>17%</b> 曾被忽略或排除，男性 13%；同志 39%、雙性戀 45% 曾聽聞歧視性言論，異性戀者 24%。另有 <b>61%</b> 受訓醫師處於中度或高度 burnout 風險。</div>
+    <p><b>制度特徵：</b>NTS 回收率極高、且資料可<b>辨識到個別訓練單位</b>，GMC 得以鎖定異常單位進行介入。這是英國制度最值得學的地方——調查不只是統計，是<b>監理工具</b>。</p>
+  </>},
+  {f:"日本", t:"亞洲最早的系統性調查", body:<>
+    <div className="datum">Nagata-Kobayashi 等（<b>J Gen Intern Med 2006;21:212–8</b>）：六所醫學院五、六年級學生，276 份有效問卷。<b>68.5%</b> 於臨床實習期間至少遭遇一次 abuse。<b>言語 abuse 最常見</b>（男 52.8%、女 63.3%）。女性整體遭遇率 <b>81.6%</b>，顯著高於男性 <b>61.2%</b>。</div>
+    <p>研究者特別記錄了一個台灣讀者會很熟悉的型態：<b>學生被指導醫師頻繁忽視或無視</b>，並表示這種態度令他們氣餒、降低學習動機。這是「沉默型羞辱」——不罵人，但當學生不存在。</p>
+    <p>後續研究延伸到住院醫師（<b>Med Educ 2009</b>，37 家醫院、619 人）與酒精相關騷擾（<b>Med Educ 2010</b>）。2025 年一篇質性研究則轉向<b>微歧視（microaggressions）</b>，並提出在既有的「加害者—受害者—旁觀者」三角模型外，需要加入第四個元素：<b>話題本身</b>。</p>
+    <p><b>制度特徵：</b>文部科學省 1999 年即發布防治性騷擾指引，但缺乏英美式的年度全國普查機制。</p>
+  </>},
+  {f:"台灣", t:"本土實證：質性但明確", body:<>
+    <div className="datum">2023 年 9–12 月，訪談<b>32 位在教學醫院實習的六年級醫學生</b>的質性研究：結果顯示臨床學習中的「羞辱式教學」<b>確實存在</b>，尤其發生在學生對所面對的疾病或病例<b>欠缺臨床所期待的專業知識能力</b>時。</div>
+    <p>該研究同時識別出正向的一端：<b>「從批評中學習」與「尊重的教學氛圍」是尊嚴教學的樣態</b>——這說明批評本身不是問題，羞辱才是。</p>
+    <div className="warn"><b>最關鍵的一句：</b>儘管羞辱性的教學行為需要被制止，<b>考量成績的因素</b>，許多醫學生選擇隱忍所遭遇的羞辱與恐嚇，<b>鮮少透過正式申訴管道反映</b>。與 AAMC 全國資料的 80% 未通報率高度一致。</div>
+    <p><b>制度現況：</b>教育部《大學校院辦理新制醫學系醫學生臨床實習實施原則》已要求學校與實習機構訂定申訴管道與處理程序（受理後 14 個工作天內處理完畢，必要時延長至多 14 天），且爭議處理之審議<b>應有醫學生代表參與</b>；實施成果與申訴處理情形<b>納入教學醫院評鑑考核</b>。職場霸凌防治新制亦於 2026 年 7 月上路。</p>
+    <div className="impl"><b>缺口在哪：</b>台灣有申訴制度、有評鑑掛鉤、有新法規，<b>但沒有常規化的全國匿名調查</b>。沒有基線數據，就無法知道介入是否有效，也無法辨識異常單位。這是與美、英、澳最大的結構差異。</div>
+  </>},
+  {f:"其他", t:"歐洲、拉美、非洲、東南亞", body:<>
+    <p><b>奧地利</b>（Siller 2017, BMC Med Educ）：來自大學職員的行為中，大吼／怒罵 <b>60.2%</b>、羞辱 <b>40.9%</b>、貶低學生未來職業的言論 28.4%，甚至肢體不當對待（推、踢、打）<b>27.3%</b>。</p>
+    <p><b>波蘭</b>（Makowska & Wyleżałek 2021, IJERPH）：質性研究，主題為醫學生遭授課教師不當對待。</p>
+    <p><b>挪威</b>（Whelan 2021, Perspect Med Educ）：clerkship 中的羞恥經驗，標題直接引用學生原話，描述那種「被踩在腳底」的感受。</p>
+    <p><b>瑞典</b>（Lindström 2011, Med Educ）：醫學生在專業社會化過程中的羞恥經驗。</p>
+    <p><b>奈及利亞</b>（narrative review）：言語不當對待 <b>92.6%</b>、羞辱 <b>87.4%</b>、貶抑言論 71.4%。後果自陳包括造成壓力 64.0%、降低自信 45.4%、造成憂鬱 40.5%、<b>曾考慮自殺 1.9%</b>。</p>
+    <p><b>墨西哥</b>（UNAM）：<b>27%</b>，是各國調查中相對低的一端。</p>
+    <p><b>泰國 63.4%、巴基斯坦 62.5%</b>（Shoukat 2010, Karachi 私立醫學院）。泰國 2023 年的研究亦引用資料指出，某些調查中高年級學生到畢業前的遭遇率可達 <b>80.6%</b>。</p>
+    <p><b>阿根廷</b>（Galli 2020, Rev Argent Cardiol）：<b>心臟科住院醫師</b>訓練中的不當對待——與你的領域直接相關的少數專科別研究之一。</p>
+  </>},
+];
+
+/* ========== 情境判斷 ========== */
+const SCENARIOS = [
+  {q:"查房時對學生連續丟出五個他答不出來的問題，其他團隊成員在旁邊看著。", a:true,
+   e:"這正是 Brancati 1989 年在《The Art of Pimping》中諷刺描述的手法——問題應「快速連發且基本上無法回答」。旁觀者的存在會顯著加深羞辱感（Mann 2017：觀眾的笑聲與自我威脅會使羞辱更強烈）。"},
+  {q:"提問後給學生 30 秒思考時間，答錯時說「這個猜測有道理，我們看看還有什麼可能」。", a:false,
+   e:"Stoddard 與 O'Dell 指出，Socratic method 與 pimping 的差別在於<b>提問者的意圖</b>，以及<b>心理安全感是否存在</b>。給予思考時間、對錯誤答案給出建設性回應，正是心理安全的具體表現。"},
+  {q:"手術中對學生說：「你連拉鉤都不會，站旁邊去。」", a:true,
+   e:"能力貶低 + 公開排除，兩者兼具。台灣有報導指出，職場霸凌防治新制上路前，醫學中心特別提醒資深醫師在手術室避免「笨」「沒帶腦子上班」這類用語。"},
+  {q:"整天不把學生介紹給團隊、不與他目光接觸、不叫他的名字。", a:true,
+   e:"這是<b>最容易被低估的型態</b>。日本 2006 年的研究就記錄到學生被指導醫師「頻繁忽視或無視」，並明確表示這會降低學習動機。挪威研究中學生形容的「被踩在腳底」也屬此類。不罵人，但當學生不存在。"},
+  {q:"病人安全當下直接制止：「停，那是錯的側邊。」", a:false,
+   e:"病安相關的即時糾正是必要且正當的。關鍵在<b>之後</b>——事件過後是否給予私下、對事不對人的回饋，而非在團隊面前反覆提起。"},
+  {q:"事後在科部教學會議上公開點名該學生寫錯的病歷。", a:true,
+   e:"錯誤本身可以拿來教學，但<b>去識別化</b>是基本要求。公開點名會把學習素材變成懲罰工具，並讓其他學生學到「犯錯要隱瞞」——這正是病安文化最不希望發生的事。"},
+  {q:"私下告知：「你的 presentation 太長，下次先講 chief complaint 和 assessment。」", a:false,
+   e:"具體、可行動、私下進行、針對行為而非人格。這是回饋，不是羞辱。台灣 2023 年的質性研究也發現「從批評中學習」是尊嚴教學的樣態之一——問題從來不是批評本身。"},
+  {q:"「我當年被罵得更慘，你們現在的學生太脆弱了。」", a:true,
+   e:"這句話本身就是一種貶抑，同時也是<b>世代循環的合理化</b>。AAMC 指出，部分教師會把嚴厲教學視為訓練學生面對生死場域的準備，另一些人則是在重演自己受訓時經歷過的模式。Scott 2015 明確呼籲必須中斷這種跨世代延續。"},
+];
+
+/* ========== 語言替換 ========== */
+const SWAPS = [
+  {b:"「這你都不知道？」", g:"「這題有點難，我們一起把 differential 列出來。」"},
+  {b:"連珠炮式提問直到學生答不出來", g:"一次一題，答不出來時說「回去查，明天早上告訴我三個重點」"},
+  {b:"「你到底有沒有讀書？」", g:"「你昨天讀到哪裡？我幫你找下一步該補的部分。」"},
+  {b:"在病人與家屬面前糾正學生", g:"離開病室後、在走廊或討論室私下說"},
+  {b:"「這種程度也想當醫師？」", g:"「這個階段答不出來很正常，但下週我會再問你一次。」"},
+  {b:"沉默、不介紹、不叫名字", g:"查房開始時向病人介紹：「這位是我們團隊的○○醫學生。」"},
+];
+
+/* ========== 文獻 ========== */
+const REFS = {
+  "統合分析與大型調查":[
+    {t:"A Systematic Review and Meta-analysis on Teaching by Humiliation in Medical Training",
+     j:"Wigg L, Li WW, Leow T. Med Sci Educ. 2025;35:569–85.",
+     n:"TBH 合併發生率 57.1%（95% CI 41.3–71.6%），範圍 8.0–90.8%；28 篇研究、34,821 人。本主題最新、最直接的定量基礎。",
+     u:"https://doi.org/10.1007/s40670-024-02213-7"},
+    {t:"Harassment and Discrimination in Medical Training: A Systematic Review and Meta-Analysis",
+     j:"Fnais N, et al. Acad Med. 2014;89(5):817–27.",
+     n:"59.4% 曾遭遇至少一種；言語騷擾 63.0% 最常見；主治醫師為最主要來源（34.4%）。明確指出比例未隨時間下降。",
+     u:"https://pubmed.ncbi.nlm.nih.gov/24667512/"},
+    {t:"Assessment of the Prevalence of Medical Student Mistreatment by Sex, Race/Ethnicity, and Sexual Orientation",
+     j:"JAMA Intern Med（AAMC GQ 2016–2017，27,500 份）",
+     n:"公開羞辱 21.1% 為最常見型態；女性、少數族裔與性少數學生遭遇率顯著較高。",
+     u:"https://pmc.ncbi.nlm.nih.gov/articles/PMC7042809/"},
+    {t:"Medical student abuse during clinical clerkships in Japan",
+     j:"Nagata-Kobayashi S, et al. J Gen Intern Med. 2006;21(3):212–8.",
+     n:"亞洲最早的系統性調查，68.5%；並記錄「被忽視」此一常被低估的型態。",
+     u:"https://pubmed.ncbi.nlm.nih.gov/16390504/"},
+    {t:"\u201cTeaching by humiliation\u201d and mistreatment of medical students in clinical rotations: a pilot study",
+     j:"Scott KM, Caldwell PH, Barnes EH, Barrett J. Med J Aust. 2015;203(4):185e.1–6.",
+     n:"確立「teaching by humiliation」此一名詞；成人科經歷 74.0%、目擊 83.1%；強調行為多屬隱微而非公然。",
+     u:"https://doi.org/10.5694/mja15.00189"},
+    {t:"Prevalence of bullying, discrimination and sexual harassment in surgery in Australasia",
+     j:"RACS Expert Advisory Group 系列（2015），3,516 人",
+     n:"49.2% 曾遭遇；受訓醫師霸凌 54%；歧視案件僅 12% 有效解決。促成 RACS 公開道歉與 Building Respect 行動計畫。",
+     u:"https://pubmed.ncbi.nlm.nih.gov/26510837/"},
+  ],
+  "概念與機轉":[
+    {t:"The art of pimping",
+     j:"Brancati FL. JAMA. 1989;262(1):89–90.",
+     n:"諷刺文，卻成為此一教學文化的原始文本：建議問題「快速連發且基本上無法回答」。理解羞辱式教學的起點。",
+     u:"https://pubmed.ncbi.nlm.nih.gov/2733go"},
+    {t:"Socrates was not a pimp: changing the paradigm of questioning in medical education",
+     j:"Kost A, Chen FM. Acad Med. 2015;90(1):20–4.",
+     n:"主張 pimping 的定義應限縮為「以羞辱或使人難堪為意圖、藉以維持醫學教育權力階層的提問」。區分蘇格拉底式提問與羞辱的關鍵文獻。",
+     u:"https://doi.org/10.1097/ACM.0000000000000446"},
+    {t:"Pimping: a tradition of gendered disempowerment",
+     j:"Chen DR, Priest KC. BMC Med Educ. 2019;19:345.",
+     n:"檢視此一用語本身反映的性別化階層，並呼籲終止該詞與該實踐。回顧了 Wear 對 good vs malignant pimping 的區分。",
+     u:"https://link.springer.com/article/10.1186/s12909-019-1761-1"},
+    {t:"\u201cI'm unworthy of being in this space\u201d: the origins of shame in medical students",
+     j:"Bynum WE, Varpio L, Lagoo J, Teunissen PW. Med Educ. 2021;55(2):185–97.",
+     n:"醫學生羞恥感的來源分析。理解為什麼同一句話對不同學生的殺傷力差距如此之大。",
+     u:"https://doi.org/10.1111/medu.14354"},
+    {t:"Shame in medical clerkship: \u201cyou just feel like dirt under someone's shoe\u201d",
+     j:"Whelan B, Hjörleifsson S, Schei E. Perspect Med Educ. 2021;10(5):265–71.",
+     n:"挪威質性研究，標題即為學生原話。",
+     u:"https://doi.org/10.1007/s40037-021-00665-w"},
+    {t:"The hidden curriculum in undergraduate medical education",
+     j:"Lempp H, Seale C. BMJ. 2004;329(7469):770–3.",
+     n:"潛在課程的經典文獻。羞辱式教學之所以難以根除，是因為它教的不是知識，是「這裡的規矩」。",
+     u:"https://doi.org/10.1136/bmj.329.7469.770"},
+    {t:"Questioning Style and Pimping in Clinical Education",
+     j:"McEvoy JW, Shatzer JH, Desai SV, Wright SM. Teach Learn Med. 2019;31(1):53–64.",
+     n:"嘗試將提問風格量化評分，讓「怎樣算過頭」有可測量的定義。",
+     u:"https://doi.org/10.1080/10401334.2018.1481752"},
+  ],
+  "後果與通報":[
+    {t:"Exploring medical students' barriers to reporting mistreatment during clerkships",
+     j:"Chung MP, et al. Med Educ Online. 2018;23(1):1478170.",
+     n:"UCLA 質性研究：63% 焦點團體參與者自認曾遭不當對待，其中超過半數選擇不通報。與台灣「顧慮成績而隱忍」的發現互相印證。",
+     u:"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5990956/"},
+    {t:"Improved processing workflow and student transparency with student mistreatment reports leads to GQ data gains",
+     j:"MedEdPublish. 2024.",
+     n:"重新設計通報處理流程並提高透明度後，GQ 數據改善。少數有前後對照的介入報告。",
+     u:"https://pmc.ncbi.nlm.nih.gov/articles/PMC12413609/"},
+    {t:"Assessment of Programs Aimed to Decrease or Prevent Mistreatment of Medical Trainees",
+     j:"Mazer LM, et al. JAMA Netw Open. 2018;1(3):e180870.",
+     n:"篩選 3,300 餘篇，僅 10 篇報告了實際實施成果，整體品質低，多數僅有滿意度資料。<b>介入證據極度薄弱，是這個領域最誠實也最尷尬的結論。</b>",
+     u:"https://pmc.ncbi.nlm.nih.gov/articles/PMC6324298/"},
+    {t:"Is There a Relationship Between Medical Student Mistreatment and Specialty Choice and Career Intentions?",
+     j:"Systematic review, 2025（搜尋至 2024 年 6 月）",
+     n:"不當對待與專科選擇及生涯意向的關聯——對招募困難的科別特別有意義。",
+     u:"https://pmc.ncbi.nlm.nih.gov/articles/PMC12228901/"},
+    {t:"尊嚴教學？抑是羞辱式教學？實習醫學生的觀察與質性述說",
+     j:"台灣，2023 年 9–12 月訪談 32 位六年級醫學生",
+     n:"目前最直接的台灣本土實證。指出羞辱式教學確實存在，且學生因顧慮成績而隱忍、鮮少正式申訴。",
+     u:"https://www.airitilibrary.com/Article/Detail/23046856-N202511180012-00005"},
+  ],
+};
+
+/* ========== 元件 ========== */
+const Accordion = ({items}) => {
+  const [open, setOpen] = useState(0);
+  return items.map((it, i) => (
+    <div className="acc" key={i}>
+      <div className="acc-head" onClick={()=>setOpen(open===i?null:i)}>
+        <span className="flag">{it.f}</span>
+        <span style={{flex:1}}>{it.t}</span>
+        <span className={"acc-arrow"+(open===i?" open":"")}>▶</span>
+      </div>
+      {open===i && <div className="acc-body">{it.body}</div>}
+    </div>
+  ));
+};
+
+const Scenario = ({item, idx}) => {
+  const [pick, setPick] = useState(null);
+  return (
+    <div className="sc">
+      <div className="sc-q">{idx+1}. {item.q}</div>
+      <div className="sc-btns">
+        <button className={"sc-btn"+(pick==="y"?" pick-y":"")} onClick={()=>setPick("y")}>算羞辱式教學</button>
+        <button className={"sc-btn"+(pick==="n"?" pick-n":"")} onClick={()=>setPick("n")}>不算</button>
+      </div>
+      {pick && (
+        <div className={"sc-ans "+(item.a?"yes":"no")}>
+          <div className="lab" style={{color:item.a?"#e74c3c":"#27ae60"}}>
+            {item.a ? "屬於羞辱式教學" : "屬於正當教學／回饋"}
+            {((pick==="y")===item.a) ? "　✓ 判斷一致" : "　← 與文獻判準不同"}
+          </div>
+          <div dangerouslySetInnerHTML={{__html:item.e}}/>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const TABS = [
+  {id:"home", label:"總覽"},
+  {id:"what", label:"定義機轉"},
+  {id:"world", label:"各國比較"},
+  {id:"judge", label:"情境判斷"},
+  {id:"refs", label:"文獻"},
+];
+
+const App = () => {
+  const [tab, setTab] = useState("home");
+  const [openRef, setOpenRef] = useState("統合分析與大型調查");
+  const go = t => { setTab(t); window.scrollTo(0,0); };
+
+  return (
+    <div className="app">
+      <header>
+        <h1>羞辱式教學</h1>
+        <div className="sub">Teaching by Humiliation　·　文獻回顧與各國比較</div>
+      </header>
+      <main>
+
+        {tab==="home" && <>
+          <div className="hero">
+            <div className="big">57.1%</div>
+            <div className="cap">全球醫學受訓者曾經歷羞辱式教學的<br/>合併發生率（95% CI 41.3–71.6%）</div>
+            <div className="src">Wigg L, Li WW, Leow T. Med Sci Educ 2025;35:569–85<br/>28 篇研究、34,821 位受訓者</div>
+          </div>
+          <div className="card takehome">
+            <h2>Take Home</h2>
+            <ol>
+              <li><b>這不是少數個案。</b>兩篇獨立的統合分析分別得到 57.1%（羞辱式教學）與 59.4%（任一形式的騷擾或歧視）。Fnais 明確指出：這個比例<b>三十年來沒有下降</b>。</li>
+              <li><b>各國數字不能直接比大小。</b>差異主要來自定義（以感受判定 vs 以行為判定）、時間框架（單一 placement vs 整個醫學院）與回收率。英國的 8% 與美國的 38% 問的不是同一個問題。</li>
+              <li><b>台灣有本土實證，缺的是常規資料。</b>2023 年質性研究已確認羞辱式教學存在，且學生因顧慮成績而隱忍。制度面（申訴時限、學生代表、評鑑掛鉤）都有了，<b>唯獨沒有每年一次的匿名普查</b>。</li>
+              <li><b>介入的證據非常薄弱。</b>3,300 餘篇文獻中僅 10 篇報告實施成果，且多數只有滿意度資料。目前最可靠的做法不是辦講座，而是<b>常規調查 + 資料可辨識到單位 + 公開追蹤處理結果</b>。</li>
+            </ol>
+          </div>
+          <div className="card">
+            <h2>為什麼要處理這件事</h2>
+            <div className="datum">Wigg 2025 的統合分析指出，經歷 TBH 與<b>憂鬱、焦慮、壓力、burnout、物質濫用及自殺意念</b>症狀有關。</div>
+            <p>其他文獻補上的因果鏈：言語不當對待會削弱學生對自身臨床能力的信心（Schuchert 1998）；不當對待與 PTSD 症狀相關（Heru 2009）；並與專科選擇及生涯意向改變有關（2025 systematic review）。</p>
+            <div className="warn"><b>病人安全的角度：</b>2015 年一項新生兒加護病房的模擬研究顯示，人際攻擊行為會透過損害<b>認知處理與團隊溝通</b>而導致醫源性事件。羞辱式教學不只是學生福祉問題，是團隊表現問題。</div>
+            <p className="muted" style={{marginBottom:0}}>換句話說：即使完全不從學生權益出發，只從病安與人力留任出發，這件事也值得處理。</p>
+            <button className="btn" onClick={()=>go("what")}>先看定義與機轉</button>
+          </div>
+        </>}
+
+        {tab==="what" && <>
+          <div className="card">
+            <h2>定義：以誰的感受為準？</h2>
+            <p>Wigg 等人的統合分析採用的定義是：<b>「教育者的教學行為導致受訓者產生羞辱感」</b>——判準在<b>學習者的感受</b>，不在教師的意圖。</p>
+            <p>這個選擇會直接影響數字。以行為清單（有沒有被大吼、被貶低）測量，得到的數字通常較低；以感受測量，數字較高但也更貼近實際傷害。看任何一份調查時，第一件事是確認它用哪一種。</p>
+            <div className="warn"><b>常見誤解：</b>「我沒有要羞辱他的意思」不足以排除 TBH。反過來，「學生覺得不舒服」也不等於教師做錯——關鍵在<b>行為本身是否可辯護</b>：這個提問方式、這個時機、這個場合，換成任何一位學生都合理嗎？</div>
+          </div>
+          <div className="card">
+            <h2>Pimping：從諷刺文到教學傳統</h2>
+            <p>1989 年 Brancati 在 JAMA 發表〈The Art of Pimping〉，形式是<b>諷刺文</b>，內容卻被廣泛當成操作指南：他建議提問應「快速連發，且基本上無法回答」，並虛構了 William Harvey 與 Osler 的典故為其背書。</p>
+            <div className="quote">同期讀者投書的回應是：pimping 只達成四件事——建立位階、壓抑誠實而自發的提問、製造敵意與憤怒、延續醫學教育長期為人詬病的去人性化。</div>
+            <p>2009 年 Detsky 在 JAMA 的續篇宣稱 pimping 在學術醫學中「依然健在」，並建議主治醫師拿捏「羞辱答錯的學生」與「無聊到全場」之間的平衡。這段話今日讀來刺眼，但正說明<b>問題不在個別壞人，在被合理化的教學傳統</b>。</p>
+            <h3>如何區分蘇格拉底式提問與羞辱</h3>
+            <div className="scroll"><table>
+              <thead><tr><th></th><th>蘇格拉底式提問</th><th>羞辱式提問</th></tr></thead>
+              <tbody>
+                <tr><td><b>意圖</b></td><td>引導思考、暴露推理缺口</td><td>維持權力階層、使人難堪</td></tr>
+                <tr><td><b>難度</b></td><td>略高於學生現有程度</td><td>刻意超出程度，或根本無解</td></tr>
+                <tr><td><b>節奏</b></td><td>一次一題，給思考時間</td><td>連珠炮，不給喘息</td></tr>
+                <tr><td><b>答錯時</b></td><td>順著錯誤往下拆解</td><td>轉向質疑學生的能力或用功程度</td></tr>
+                <tr><td><b>觀眾</b></td><td>與教學需要相稱</td><td>觀眾本身就是懲罰的一部分</td></tr>
+                <tr><td><b>心理安全</b></td><td>說「我不知道」是安全的</td><td>說「我不知道」會被懲罰</td></tr>
+              </tbody>
+            </table></div>
+            <p className="muted">Kost 與 Chen（Acad Med 2015）主張把 pimping 的定義直接限縮為後者；Stoddard 與 O'Dell 則指出兩者真正的分界在<b>提問者的意圖與心理安全感是否存在</b>。Wear 等人（2005）發現學生自己會區分 good pimping 與 malignant pimping——多數學生並不反對被問倒，反對的是被羞辱。</p>
+          </div>
+          <div className="card">
+            <h2>為什麼難以根除</h2>
+            <p><span className="pill red">世代循環</span>AAMC 指出，部分教師視嚴厲教學為訓練學生面對生死場域的準備；另一些人則是在重演自己受訓時經歷過的模式。Scott 2015 直接稱之為需要中斷的「跨世代遺產」。</p>
+            <p><span className="pill red">潛在課程</span>Lempp 與 Seale（BMJ 2004）：羞辱式教學傳遞的不是知識，是「這裡的位階與規矩」。因此正式的專業素養課程與臨床現場的示範互相矛盾時，學生學的是後者。</p>
+            <p><span className="pill red">通報成本不對稱</span>台灣 2023 年研究與 UCLA 質性研究得到同樣的答案：學生顧慮成績。AAMC 全國資料則顯示約 80% 未通報。<b>當通報者承擔全部風險、被通報者幾乎不承擔任何後果時，低通報率是理性選擇，不是文化問題。</b></p>
+            <p><span className="pill red">隱微化</span>Scott 2015 特別指出，當代的羞辱多屬<b>隱微</b>而非公然——丟器械的時代或許在減少，但忽視、排除、具攻擊性的提問仍在持續。這使得「我們醫院沒有這個問題」這種判斷極不可靠。</p>
+          </div>
+        </>}
+
+        {tab==="world" && <>
+          <div className="card">
+            <h2>盛行率概覽</h2>
+            <div className="warn"><b>先讀這段再看圖：</b>下列數字<b>不可直接橫向比較</b>。各研究的定義（羞辱 vs 任一不當對待 vs 言語騷擾）、時間框架（單一 placement vs 整個醫學院）、對象（醫學生 vs 含住院醫師）與回收率都不同。此圖的用途是呈現<b>量級</b>，不是排名。</div>
+            {BARS.map((b,i)=>(
+              <div className="bar-row" key={i}>
+                <div className="bar-top"><span className="nm">{b.nm}</span><span className="vl">{b.v}%</span></div>
+                <div className="bar-track"><div className="bar-fill" style={{width:b.v+"%"}}/></div>
+                <div className="bar-note">{b.note}</div>
+              </div>
+            ))}
+          </div>
+          <div className="card">
+            <h2>各國詳述</h2>
+            <p className="muted" style={{marginBottom:12}}>點開可看研究設計、數據細節與該國的制度回應。</p>
+            <Accordion items={COUNTRIES}/>
+          </div>
+          <div className="card">
+            <h2>制度回應的比較</h2>
+            <div className="scroll"><table>
+              <thead><tr><th>國家</th><th>常規全國調查</th><th>可辨識到單位</th><th>專業團體公開承諾</th></tr></thead>
+              <tbody>
+                <tr><td><b>美國</b></td><td>AAMC GQ，1978 起，每年</td><td>是（校層級，含全國對照）</td><td>LCME 要求以資料驅動改善</td></tr>
+                <tr><td><b>英國</b></td><td>GMC NTS，每年，逾 7 萬人</td><td>是（訓練單位層級，可介入）</td><td>GMC 監理權；2014 專題報告</td></tr>
+                <tr><td><b>澳紐</b></td><td>RACS 承諾每五年重複</td><td>部分</td><td>2015 公開道歉＋Action Plan</td></tr>
+                <tr><td><b>日本</b></td><td>無常規普查（多為單次研究）</td><td>否</td><td>MEXT 1999 性騷擾防治指引</td></tr>
+                <tr><td><b>台灣</b></td><td className="n">無</td><td>否</td><td>教育部實施原則＋教學醫院評鑑</td></tr>
+              </tbody>
+            </table></div>
+            <div className="impl"><b>共同模式：</b>有實質進展的國家，做的都是同三件事——<b>（1）常規化的匿名普查、（2）資料可辨識到單位層級、（3）主管機關或專業團體公開承諾並持續追蹤</b>。宣導海報與單次講座不在這個清單上。</div>
+            <div className="warn"><b>台灣的缺口很明確：</b>制度骨架其實齊備——申訴管道、14 個工作天處理時限、學生代表參與審議、實施成果納入教學醫院評鑑、2026 年 7 月上路的職場霸凌防治新制。<b>缺的是基線數據</b>。沒有每年一次的匿名調查，就無法知道現況、無法辨識異常單位、也無法證明任何改善措施有效。</div>
+            <p className="muted" style={{marginBottom:0}}>對單一醫院而言，可行的第一步不是等全國制度，而是<b>在院內建立一份與成績脫鉤的匿名輪訓結束問卷</b>，並每年公布彙總結果與處理件數。</p>
+          </div>
+        </>}
+
+        {tab==="judge" && <>
+          <div className="card">
+            <h2>情境判斷</h2>
+            <p className="muted">共 8 題，先自己判斷再看解析。適合放在臨床教師 orientation 或科部教學會議討論——重點不在答對，在於發現大家的判準其實不一致。</p>
+          </div>
+          <div className="card">
+            {SCENARIOS.map((s,i)=><Scenario key={i} item={s} idx={i}/>)}
+          </div>
+          <div className="card">
+            <h2>語言替換對照</h2>
+            <p className="muted" style={{marginBottom:12}}>教師層級最小、也最立即可行的改變。</p>
+            {SWAPS.map((s,i)=>(
+              <div className="swap" key={i}>
+                <div className="bad"><span className="tagx">避免</span>{s.b}</div>
+                <div className="good"><span className="tago">改為</span>{s.g}</div>
+              </div>
+            ))}
+            <h3>三個層級的介入</h3>
+            <p><span className="pill">教師層</span>提問一次一題、給思考時間；答錯往下拆解而非轉向質疑能力；公開場合只做病安相關的即時糾正，其餘私下說；查房時向病人介紹學生的姓名與角色。</p>
+            <p><span className="pill">科部層</span>每科 orientation 明說行為界線（不是只講排班）；資深醫師示範說出「我不知道，我們一起查」；訓練旁觀者介入——現有文獻指出旁觀者反應模式是關鍵但研究不足的環節。</p>
+            <p><span className="pill">機構層</span>與成績脫鉤的匿名管道；14 個工作天內回覆並留紀錄；<b>對累犯建立紀錄</b>（台灣報導指出，院方「有申訴卻無紀錄」是基層最大的不信任來源）；每年公布處理件數與結果彙總。</p>
+            <div className="warn"><b>誠實的但書：</b>Mazer 等人（JAMA Netw Open 2018）系統性回顧 3,300 餘篇文獻，只找到 10 篇報告了實施成果的介入研究，整體品質低，多數僅有參與者滿意度資料。<b>上述建議是基於機轉與少數前後對照的合理推論，不是高強度證據。</b>任何院內介入都值得同時規劃評估方式。</div>
+          </div>
+        </>}
+
+        {tab==="refs" && <>
+          <div className="card">
+            <h2>文獻</h2>
+            <p className="muted" style={{marginBottom:12}}>依主題分組，點標題展開。連結為 DOI 或全文頁面。</p>
+            {Object.keys(REFS).map(k=>(
+              <div key={k}>
+                <div className="acc-head" style={{borderTop:"1px solid #ecf0f1",paddingLeft:0,paddingRight:0}}
+                     onClick={()=>setOpenRef(openRef===k?null:k)}>
+                  <span style={{flex:1,color:"#1e3a5f"}}>{k}　<span className="muted" style={{fontWeight:400}}>（{REFS[k].length}）</span></span>
+                  <span className={"acc-arrow"+(openRef===k?" open":"")}>▶</span>
+                </div>
+                {openRef===k && <div style={{paddingTop:8}}>
+                  {REFS[k].map((r,i)=>(
+                    <div className="ref" key={i}>
+                      <div className="t">{r.t}</div>
+                      <div className="j">{r.j}</div>
+                      <div style={{fontSize:13,margin:"5px 0"}} dangerouslySetInnerHTML={{__html:r.n}}/>
+                      {r.u && <a href={r.u} target="_blank" rel="noopener">{r.u}</a>}
+                    </div>
+                  ))}
+                </div>}
+              </div>
+            ))}
+          </div>
+          <div className="card">
+            <h2>台灣相關法規</h2>
+            <div className="ref">
+              <div className="t">大學校院辦理新制醫學系醫學生臨床實習實施原則</div>
+              <div className="j">教育部，112.03.03 臺教高（五）字第1122200255A號令</div>
+              <div style={{fontSize:13,margin:"5px 0"}}>第十二點規範醫學生申訴管道與處理程序：14 個工作天內處理完畢（必要時延長至多 14 天），爭議處理之審議應有醫學生代表參與。第十三點明定實施成果與申訴處理情形納入教學醫院評鑑考核。</div>
+              <a href="https://edu.law.moe.gov.tw/LawContent.aspx?id=GL002207" target="_blank" rel="noopener">edu.law.moe.gov.tw/LawContent.aspx?id=GL002207</a>
+            </div>
+            <div className="ref" style={{borderBottom:"none"}}>
+              <div className="t">職場霸凌防治新制</div>
+              <div className="j">2026 年 7 月 1 日上路</div>
+              <div style={{fontSize:13,margin:"5px 0"}}>對講究師徒制的醫療院所形成挑戰。相關報導指出，醫學中心已在主管會議中提醒資深醫師於手術室避免辱罵用語；但同時也指出院方最大的問題是「有申訴卻無紀錄」。</div>
+            </div>
+          </div>
+          <div className="card">
+            <h2>幾個閱讀提醒</h2>
+            <ul style={{paddingLeft:20,margin:0,fontSize:14}}>
+              <li style={{marginBottom:8}}>看到任何盛行率數字，先問三件事：<b>定義（感受 vs 行為）、時間框架、回收率</b>。</li>
+              <li style={{marginBottom:8}}>Wigg 2025 的 95% CI 是 41.3–71.6%，<b>區間非常寬</b>，異質性高。引用時應同時呈現區間，不宜只講 57.1%。</li>
+              <li style={{marginBottom:8}}>Fnais 2014 的資料檢索停在 2011 年；Scott 2015 為<b>兩校的 pilot study</b>；台灣的研究為<b>32 人的質性訪談</b>。三者都不宜當成推論全國的依據。</li>
+              <li>介入面的證據強度最弱。任何宣稱「某方案有效降低羞辱式教學」的說法，都值得先確認它有沒有<b>對照組與客觀結果指標</b>。</li>
+            </ul>
+          </div>
+        </>}
+
+      </main>
+
+      <footer>
+        <div className="sig">資料整理</div>
+        <div className="sig">謝慕揚 醫師　MD, PhD, FESC</div>
+        <div className="sig">醫學教育與臨床教學</div>
+        <div style={{marginTop:12}}>
+          本內容為文獻與法規整理，未必涵蓋所有相關文獻<br/>
+          僅供學術與教育用途，不代表任何單位之官方立場<br/>
+          本內容未涉及任何利益衝突
+        </div>
+        <div style={{marginTop:10,fontSize:11}}>法規內容以主管機關公發布之版本為準。本頁不儲存任何使用者資料。</div>
+      </footer>
+
+      <nav>
+        {TABS.map(t=>(
+          <button key={t.id} className={tab===t.id?"on":""} onClick={()=>go(t.id)}>
+            <div className="dot"/>{t.label}
+          </button>
+        ))}
+      </nav>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+
+<button class="sharefab" onclick="shOpen()" aria-label="分享本頁" title="分享本頁">📤</button>
+
+<div class="shovl" id="shovl" onclick="if(event.target===this)shClose()" role="dialog" aria-modal="true" aria-labelledby="shttl">
+  <div class="shbox">
+    <div class="shhead"><b id="shttl">📤 分享本頁</b><button onclick="shClose()" aria-label="關閉">&times;</button></div>
+    <div class="shbody">
+      <p>把這份教學材料分享給同事或教學團隊。</p>
+      <div class="qrwrap"><img id="shQr" src="" alt="本頁 QR Code"><small>掃描 QR Code 開啟本頁</small></div>
+      <button class="shbtn" id="shNative" onclick="shNativeGo()" hidden><span class="ic">📱</span><span>使用手機分享<small>叫出系統分享選單</small></span></button>
+      <button class="shbtn" id="shCopyPage" onclick="shCopy(SH_PAGE,'shCopyPage')"><span class="ic">🔗</span><span>複製本頁連結<small>含定義機轉、各國比較、情境判斷與文獻</small></span></button>
+      <a class="shbtn" id="shLine" target="_blank" rel="noopener"><span class="ic">💬</span><span>LINE 分享</span></a>
+      <a class="shbtn" id="shMail"><span class="ic">📧</span><span>Email 分享</span></a>
+    </div>
+  </div>
+</div>
+
+<script>
+var SH_CANON="https://drake1128.github.io/saq-questionnaire/teaching-by-humiliation-app.html";
+var SH_PAGE=(location.protocol==="http:"||location.protocol==="https:")?location.href.split("#")[0]:SH_CANON;
+var SH_TITLE="羞辱式教學 Teaching by Humiliation｜文獻與各國比較";
+var SH_TEXT="Teaching by Humiliation 的定義與機轉、全球 meta-analysis 與各國盛行率比較、情境判斷練習與替代說法，附完整文獻。";
+document.getElementById("shLine").href="https://social-plugins.line.me/lineit/share?url="+encodeURIComponent(SH_PAGE);
+document.getElementById("shMail").href="mailto:?subject="+encodeURIComponent(SH_TITLE)+"&body="+encodeURIComponent(SH_TEXT+"\n\n"+SH_PAGE);
+document.getElementById("shQr").src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data="+encodeURIComponent(SH_PAGE);
+if(navigator.share){document.getElementById("shNative").hidden=false;}
+function shOpen(){document.getElementById("shovl").classList.add("on");}
+function shClose(){document.getElementById("shovl").classList.remove("on");}
+document.addEventListener("keydown",function(e){if(e.key==="Escape")shClose();});
+function shNativeGo(){navigator.share({title:SH_TITLE,text:SH_TEXT,url:SH_PAGE}).catch(function(){});}
+function shCopy(url,id){
+  var b=document.getElementById(id), sp=b.querySelector("span:last-child");
+  var done=function(){var o=sp.innerHTML; b.classList.add("ok"); sp.innerHTML="已複製到剪貼簿 ✓"; setTimeout(function(){sp.innerHTML=o;b.classList.remove("ok");},1800);};
+  if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(url).then(done).catch(function(){shFallback(url,done);});}
+  else{shFallback(url,done);}
+}
+function shFallback(url,done){
+  var t=document.createElement("textarea"); t.value=url; t.style.position="fixed"; t.style.opacity="0";
+  document.body.appendChild(t); t.select();
+  try{document.execCommand("copy");done();}catch(e){prompt("請複製此連結：",url);}
+  document.body.removeChild(t);
+}
+</script>
+</body>
+</html>
