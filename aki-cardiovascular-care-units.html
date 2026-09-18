@@ -1,0 +1,928 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>心血管加護病房的急性腎損傷：一步一步處理</title>
+<meta name="description" content="給 CCU 團隊的 AKI 教學頁：KDIGO 分期與 biomarker 新分期、確認體液過量、利尿劑抗性階梯、Furosemide stress test、CRRT 適應症／時機／設定／脫離與併發症，附床邊計算器與自測。依 EHJ Acute Cardiovascular Care 2025 review 重製。">
+<meta name="author" content="心血管照護教學資源中心">
+<meta name="theme-color" content="#153038">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="心血管照護教學資源中心">
+<meta property="og:title" content="心血管加護病房的急性腎損傷：一步一步處理">
+<meta property="og:description" content="認 AKI → 確認體液過量 → 藥物 → CRRT → 脫離。表格與流程圖依 EHJ ACVC 2025 review 重製，附床邊計算器。">
+<meta property="og:url" content="https://drake1128.github.io/saq-questionnaire/aki-cardiovascular-care-units.html">
+<meta property="og:image" content="https://drake1128.github.io/saq-questionnaire/og-image.svg">
+<link rel="canonical" href="https://drake1128.github.io/saq-questionnaire/aki-cardiovascular-care-units.html">
+<style>
+/* ============================================================
+   Tokens — 色彩就是資訊：琥珀＝尿量／警訊，藍＝CRRT，紅＝停止／危險
+   ============================================================ */
+:root{
+  --bg:      #eef3f3;
+  --bg-2:    #ffffff;
+  --bg-3:    #e2eaeb;
+  --ink:     #153038;
+  --ink-2:   #3d5a63;
+  --mute:    #6f8890;
+  --line:    #c9d7d9;
+  --line-2:  #a9bfc3;
+  --amber:   #c98a1e;
+  --amber-bg:#fbf1dc;
+  --blue:    #2c6d8c;
+  --blue-bg: #dfeef5;
+  --red:     #b33f2c;
+  --red-bg:  #f9e4df;
+  --green:   #2f7d5b;
+  --green-bg:#dff0e7;
+  --violet:  #6b4f9e;
+  --violet-bg:#ece5f6;
+  --sans: -apple-system, BlinkMacSystemFont, "PingFang TC", "Heiti TC",
+          "Noto Sans TC", "Microsoft JhengHei", "Segoe UI", sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --maxw: 960px;
+  --pad: clamp(1rem, 4vw, 2.5rem);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1f24; --bg-2:#172c32; --bg-3:#1e363d;
+    --ink:#e6eef0; --ink-2:#b9cbd0; --mute:#8aa3aa;
+    --line:#2b444b; --line-2:#3d5a62;
+    --amber:#e5a93a; --amber-bg:#3a2e14;
+    --blue:#6fb3d2; --blue-bg:#173340;
+    --red:#ef7b66; --red-bg:#3e1d18;
+    --green:#6cc79c; --green-bg:#173a2b;
+    --violet:#b39ddb; --violet-bg:#2b2340;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1f24; --bg-2:#172c32; --bg-3:#1e363d;
+  --ink:#e6eef0; --ink-2:#b9cbd0; --mute:#8aa3aa;
+  --line:#2b444b; --line-2:#3d5a62;
+  --amber:#e5a93a; --amber-bg:#3a2e14;
+  --blue:#6fb3d2; --blue-bg:#173340;
+  --red:#ef7b66; --red-bg:#3e1d18;
+  --green:#6cc79c; --green-bg:#173a2b;
+  --violet:#b39ddb; --violet-bg:#2b2340;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} }
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--sans); font-size:clamp(15px,.5vw + 13.5px,17px);
+  line-height:1.8; letter-spacing:.01em;
+}
+a{color:var(--blue)}
+strong{font-weight:700}
+h1,h2,h3,h4{margin:0; line-height:1.3; letter-spacing:-.01em}
+h2{font-size:clamp(1.4rem,2.4vw,1.9rem); font-weight:800}
+h3{font-size:1.1rem; font-weight:700; margin-top:1.6rem; margin-bottom:.5rem}
+p{margin:0 0 1em}
+ul,ol{margin:0 0 1em; padding-left:1.4em}
+li{margin:.2em 0}
+.num{font-family:var(--mono); font-variant-numeric:tabular-nums}
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 var(--pad)}
+section.block{padding:3rem 0 1rem; border-top:1px solid var(--line)}
+section.block > .wrap > h2{margin-bottom:1rem}
+.lead{font-size:1.06em; color:var(--ink-2); max-width:38em}
+
+/* ---------- Top bar ---------- */
+.topbar{
+  position:sticky; top:0; z-index:20; background:var(--bg-2);
+  border-bottom:1px solid var(--line);
+}
+.topbar .wrap{display:flex; align-items:center; gap:.75rem; padding-top:.5rem; padding-bottom:.5rem; flex-wrap:wrap}
+.topbar a.home{color:var(--mute); text-decoration:none; font-size:.85rem; white-space:nowrap}
+.steps-nav{display:flex; gap:.25rem; overflow-x:auto; flex:1; scrollbar-width:none}
+.steps-nav::-webkit-scrollbar{display:none}
+.steps-nav a{
+  white-space:nowrap; text-decoration:none; color:var(--ink-2);
+  font-size:.85rem; padding:.3rem .65rem; border-radius:999px; border:1px solid transparent;
+}
+.steps-nav a:hover, .steps-nav a:focus-visible{border-color:var(--line-2); color:var(--ink)}
+.steps-nav a b{font-family:var(--mono); color:var(--amber); font-weight:700; margin-right:.25em}
+.theme-btn{
+  border:1px solid var(--line-2); background:transparent; color:var(--ink-2);
+  border-radius:999px; padding:.25rem .6rem; font:inherit; font-size:.8rem; cursor:pointer;
+}
+
+/* ---------- Hero ---------- */
+.hero{padding:3rem 0 2.5rem}
+.hero .wrap{display:grid; grid-template-columns:minmax(0,1fr) 260px; gap:2.5rem; align-items:start}
+@media (max-width:760px){ .hero .wrap{grid-template-columns:1fr} }
+.hero h1{font-size:clamp(1.9rem,4.4vw,3rem); font-weight:900; letter-spacing:-.03em; line-height:1.15}
+.hero h1 small{display:block; font-size:.42em; font-weight:500; letter-spacing:0; color:var(--ink-2); margin-top:.6rem}
+.hero .src{font-size:.85rem; color:var(--mute); margin:1.2rem 0 0}
+.epi{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:.75rem; margin-top:1.75rem}
+.epi div{border-left:3px solid var(--amber); padding:.2rem 0 .2rem .8rem}
+.epi b{display:block; font-family:var(--mono); font-size:1.5rem; line-height:1.1; color:var(--ink)}
+.epi span{font-size:.82rem; color:var(--ink-2); line-height:1.4; display:block; margin-top:.3rem}
+
+/* 尿量刻度尺：整頁唯一的大型視覺 */
+.ruler{
+  position:relative; border:1px solid var(--line-2); border-radius:14px;
+  background:linear-gradient(180deg,var(--amber-bg),var(--bg-2)); padding:1rem 1rem 1.1rem;
+}
+.ruler h2{font-size:.95rem; font-weight:700; margin:0 0 .25rem}
+.ruler p.cap{font-size:.78rem; color:var(--mute); margin:0 0 .8rem; line-height:1.5}
+.ruler ol{list-style:none; margin:0; padding:0; border-left:3px solid var(--amber); margin-left:.4rem}
+.ruler li{position:relative; padding:.45rem 0 .45rem 1rem; font-size:.8rem; line-height:1.4; color:var(--ink-2)}
+.ruler li::before{content:""; position:absolute; left:-3px; top:.9rem; width:12px; height:3px; background:var(--amber)}
+.ruler li b{display:block; font-family:var(--mono); font-size:1rem; color:var(--ink); font-weight:700}
+.ruler li.rrt b{color:var(--blue)}
+.ruler li.rrt::before{background:var(--blue)}
+
+/* ---------- Generic components ---------- */
+.card{background:var(--bg-2); border:1px solid var(--line); border-radius:12px; padding:1.1rem 1.25rem; margin:1rem 0}
+.card.amber{border-color:var(--amber); background:var(--amber-bg)}
+.card.blue{border-color:var(--blue); background:var(--blue-bg)}
+.card.red{border-color:var(--red); background:var(--red-bg)}
+.card.green{border-color:var(--green); background:var(--green-bg)}
+.card h3{margin-top:0}
+.grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem}
+.step-tag{
+  display:inline-block; font-family:var(--mono); font-size:.8rem; font-weight:700;
+  color:var(--amber); border:1.5px solid var(--amber); border-radius:6px; padding:.05rem .5rem; margin-bottom:.6rem;
+}
+.note{font-size:.85rem; color:var(--mute); line-height:1.6}
+.pill{display:inline-block; font-size:.75rem; padding:.05em .5em; border-radius:999px; border:1px solid var(--line-2); color:var(--ink-2); margin-left:.3em; vertical-align:middle}
+.pill.pos{border-color:var(--green); color:var(--green)}
+.pill.neg{border-color:var(--mute)}
+kbd.f{font-family:var(--mono); background:var(--bg-3); padding:.05em .35em; border-radius:4px; font-size:.9em}
+
+/* ---------- Tables ---------- */
+.tbl-wrap{overflow-x:auto; margin:1rem 0; border:1px solid var(--line); border-radius:10px; background:var(--bg-2)}
+table{border-collapse:collapse; width:100%; font-size:.9rem; min-width:560px}
+caption{caption-side:top; text-align:left; font-weight:700; padding:.8rem 1rem .4rem; color:var(--ink)}
+caption small{display:block; font-weight:400; color:var(--mute); font-size:.8rem}
+th,td{padding:.55rem .8rem; text-align:left; vertical-align:top; border-top:1px solid var(--line)}
+th{font-weight:700; background:var(--bg-3); color:var(--ink); border-top:0}
+thead tr:first-child th{border-top:0}
+tbody tr.sub th{background:transparent; color:var(--mute); font-size:.8rem; font-weight:600; border-top:2px solid var(--line-2)}
+td.stage{font-family:var(--mono); font-weight:700; white-space:nowrap}
+td.s1{color:var(--amber)} td.s2{color:var(--amber); filter:saturate(1.4)} td.s3{color:var(--red)}
+td.bio{white-space:nowrap}
+.tfoot{font-size:.78rem; color:var(--mute); padding:.5rem 1rem .8rem; line-height:1.5}
+
+/* ---------- Flowchart（graphical abstract 重製） ---------- */
+.flow{display:flex; flex-direction:column; align-items:center; gap:0; margin:1.25rem 0}
+.fnode{
+  border:2px solid var(--ink-2); border-radius:10px; background:var(--bg-2);
+  padding:.6rem .9rem; text-align:center; max-width:440px; width:100%; font-size:.92rem; line-height:1.45;
+}
+.fnode small{display:block; color:var(--mute); font-size:.78rem; line-height:1.4; margin-top:.15rem}
+.fnode.start{background:var(--amber-bg); border-color:var(--amber)}
+.fnode.crrt{background:var(--blue-bg); border-color:var(--blue); font-weight:700}
+.fnode.q{border-style:dashed}
+.farrow{width:2px; height:22px; background:var(--ink-2); position:relative}
+.farrow::after{content:""; position:absolute; left:-5px; bottom:-2px; border:6px solid transparent; border-top:8px solid var(--ink-2); border-bottom:0}
+.farrow span{
+  position:absolute; left:10px; top:0; font-family:var(--mono); font-size:.72rem; font-weight:700;
+  padding:0 .35em; border-radius:4px; background:var(--bg-2); border:1px solid var(--line-2); color:var(--ink-2); line-height:1.4;
+}
+.farrow span.y{color:var(--green); border-color:var(--green)}
+.farrow span.n{color:var(--red); border-color:var(--red)}
+.fbranch{display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem; width:100%; max-width:860px; margin:.4rem 0}
+.fbranch > div{display:flex; flex-direction:column; align-items:center}
+.fbranch .fnode{max-width:100%}
+@media (max-width:640px){ .fbranch{grid-template-columns:1fr} }
+.fside{
+  font-size:.8rem; color:var(--ink-2); border-left:3px solid var(--line-2); padding:.3rem .7rem; margin:.3rem 0; max-width:440px; width:100%;
+}
+.fside b{color:var(--ink)}
+
+/* ---------- Pyramid（Figure 1 重製） ---------- */
+.pyramid{display:flex; flex-direction:column; align-items:center; gap:4px; margin:1.25rem 0}
+.tier{
+  text-align:center; padding:.6rem 1rem; border-radius:6px; line-height:1.4; font-size:.92rem;
+  clip-path:polygon(0 100%, 100% 100%, calc(100% - var(--cut)) 0, var(--cut) 0);
+}
+.tier small{display:block; font-size:.78rem; color:var(--ink-2); margin-top:.2rem}
+.tier:nth-child(1){width:34%; --cut:22%; background:var(--amber-bg); border:1px solid var(--amber)}
+.tier:nth-child(2){width:50%; --cut:14%; background:var(--bg-3)}
+.tier:nth-child(3){width:64%; --cut:10%; background:var(--violet-bg)}
+.tier:nth-child(4){width:78%; --cut:8%; background:var(--amber-bg)}
+.tier:nth-child(5){width:90%; --cut:6%; background:var(--blue-bg)}
+.tier:nth-child(6){width:100%; --cut:4%; background:var(--green-bg)}
+@media (max-width:640px){
+  .tier{width:100% !important; --cut:0 !important; clip-path:none; border-left:6px solid var(--line-2)}
+}
+.tier-num{font-family:var(--mono); font-size:.7rem; color:var(--mute); display:block}
+
+/* ---------- Four quadrants（Figure 2 重製） ---------- */
+.quad{display:grid; grid-template-columns:1fr 1fr; gap:.75rem; margin:1.25rem 0}
+@media (max-width:640px){ .quad{grid-template-columns:1fr} }
+.quad > div{border-radius:12px; padding:1rem 1.1rem; border:1px solid var(--line)}
+.quad h4{font-size:1rem; margin:0 0 .5rem; display:flex; align-items:baseline; gap:.5rem}
+.quad h4 span{font-family:var(--mono); font-size:.75rem; color:var(--mute); font-weight:500}
+.quad ul{margin:0; padding-left:1.2em; font-size:.9rem}
+.quad .q1{background:var(--red-bg)} .quad .q2{background:var(--green-bg)}
+.quad .q3{background:var(--blue-bg)} .quad .q4{background:var(--violet-bg)}
+
+/* ---------- Complication ring（Figure 3 重製） ---------- */
+.ring{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:.6rem; margin:1.25rem 0}
+.ring > div{border-radius:10px; padding:.75rem .9rem; background:var(--bg-2); border:1px solid var(--line); font-size:.88rem}
+.ring b{display:block; margin-bottom:.15rem}
+.ring .watch{color:var(--amber); font-size:.8rem; display:block; margin-top:.3rem}
+.ring .watch::before{content:"護理觀察 "; font-weight:700}
+
+/* ---------- Calculators ---------- */
+.calc{background:var(--bg-2); border:1px solid var(--line-2); border-radius:12px; padding:1rem 1.2rem; margin:1rem 0}
+.calc h3{margin-top:0; font-size:1rem}
+.calc .row{display:flex; flex-wrap:wrap; gap:.75rem 1.25rem; align-items:flex-end}
+.calc label{display:flex; flex-direction:column; font-size:.8rem; color:var(--ink-2); gap:.2rem}
+.calc input{width:8.5em}
+.calc input, .calc select{
+  font:inherit; font-family:var(--mono); font-size:.95rem; padding:.35rem .5rem;
+  border:1px solid var(--line-2); border-radius:6px; background:var(--bg); color:var(--ink);
+}
+.calc select{width:auto; min-width:8.5em;
+}
+.calc input:focus-visible, .calc select:focus-visible, button:focus-visible, a:focus-visible{outline:2px solid var(--amber); outline-offset:2px}
+.calc .out{margin-top:.8rem; padding:.6rem .8rem; border-radius:8px; background:var(--bg-3); font-size:.92rem; line-height:1.6}
+.calc .out b.big{font-family:var(--mono); font-size:1.25rem}
+.calc .out.s1{background:var(--amber-bg)} .calc .out.s3{background:var(--red-bg)} .calc .out.ok{background:var(--green-bg)}
+
+/* ---------- Checklist ---------- */
+.check{list-style:none; padding:0; margin:0}
+.check li{display:flex; gap:.6rem; align-items:flex-start; padding:.45rem 0; border-top:1px solid var(--line)}
+.check li:first-child{border-top:0}
+.check input{margin-top:.35rem; accent-color:var(--amber); width:1.05rem; height:1.05rem; flex:none}
+.check label{cursor:pointer}
+.check .why{display:block; font-size:.8rem; color:var(--mute); line-height:1.5}
+
+/* ---------- Quiz ---------- */
+.quiz{counter-reset:q}
+.qitem{background:var(--bg-2); border:1px solid var(--line); border-radius:12px; padding:1rem 1.2rem; margin:.8rem 0}
+.qitem p.q{font-weight:700; margin-bottom:.5rem}
+.qitem p.q::before{counter-increment:q; content:"Q" counter(q) " "; font-family:var(--mono); color:var(--amber)}
+.opts{display:grid; gap:.35rem; margin:0; padding:0; list-style:none}
+.opts button{
+  text-align:left; font:inherit; font-size:.92rem; padding:.45rem .7rem; border-radius:8px; cursor:pointer;
+  border:1px solid var(--line-2); background:var(--bg); color:var(--ink); line-height:1.5;
+}
+.opts button:hover{border-color:var(--ink-2)}
+.opts button.right{background:var(--green-bg); border-color:var(--green)}
+.opts button.wrong{background:var(--red-bg); border-color:var(--red)}
+.opts button:disabled{cursor:default}
+.expl{display:none; margin-top:.6rem; font-size:.88rem; color:var(--ink-2); border-left:3px solid var(--green); padding-left:.7rem}
+.qitem.done .expl{display:block}
+.score{font-weight:700; margin:1rem 0}
+
+details{border:1px solid var(--line); border-radius:10px; padding:.5rem .9rem; margin:.6rem 0; background:var(--bg-2)}
+summary{cursor:pointer; font-weight:700}
+details[open] summary{margin-bottom:.4rem}
+
+footer{border-top:1px solid var(--line); padding:2.5rem 0 3rem; font-size:.85rem; color:var(--mute)}
+footer ol{padding-left:1.4em}
+footer li{margin:.3em 0}
+@media print{
+  .topbar,.theme-btn{display:none}
+  body{background:#fff; color:#000}
+  details{page-break-inside:avoid} details[open]{display:block}
+  .card,.calc,.qitem{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="頁內導覽">
+  <div class="wrap">
+    <a class="home" href="index.html">← 教學資源中心</a>
+    <div class="steps-nav">
+      <a href="#s1"><b>1</b>認 AKI</a>
+      <a href="#s2"><b>2</b>確認體液過量</a>
+      <a href="#s3"><b>3</b>藥物</a>
+      <a href="#s4"><b>4</b>CRRT</a>
+      <a href="#s5"><b>5</b>脫離</a>
+      <a href="#s6"><b>6</b>併發症</a>
+      <a href="#s7"><b>7</b>每班要看</a>
+      <a href="#quiz"><b>Q</b>自測</a>
+    </div>
+    <button class="theme-btn" type="button" id="themeBtn" aria-label="切換深淺色">深／淺</button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <h1>心血管加護病房的<br>急性腎損傷
+        <small>Acute kidney injury in cardiovascular care units — 一步一步處理</small>
+      </h1>
+      <p class="lead">AKI 在急性心衰住院病人並不少見，在心因性休克更是常態。這一頁把一篇 2025 年的教育性回顧拆成五個步驟：認出來、確認是不是體液過量、先用藥、該用 CRRT 時怎麼設定、什麼時候可以脫離——每一步都標出床邊真正要盯的數字。</p>
+      <div class="epi" aria-label="流行病學數字">
+        <div><b class="num">13–36%</b><span>急性心衰住院病人發生 AKI</span></div>
+        <div><b class="num">≤80%</b><span>心因性休克病人發生 AKI</span></div>
+        <div><b class="num">5–8%</b><span>需要透析；休克者 >13%</span></div>
+        <div><b class="num">~15%</b><span>ACS 接受 PCI 後的顯影劑相關 AKI</span></div>
+      </div>
+      <p class="src">依 Riccardi M, Pagnesi M, Lombardi CM, Metra M. <i>Eur Heart J Acute Cardiovasc Care</i> 2025;14:618–630（PMID 40578821）重新整理；表格與流程圖為重製，非原圖。此為 narrative review，並非指引。</p>
+    </div>
+
+    <aside class="ruler" aria-labelledby="ruler-h">
+      <h2 id="ruler-h">尿量刻度尺</h2>
+      <p class="cap">整篇文章的決策幾乎都掛在尿量上。這些數字值得背起來。</p>
+      <ol>
+        <li><b class="num">&lt;0.5 mL/kg/h ×6–12 h</b>KDIGO stage 1 起跳</li>
+        <li><b class="num">&lt;0.3 mL/kg/h ×24 h</b>或無尿 ≥12 h：stage 3</li>
+        <li><b class="num">&gt;100–150 mL/h</b>用藥後「足夠」的尿量</li>
+        <li><b class="num">&lt;200 mL／2 h</b>Furosemide stress test 未通過</li>
+        <li class="rrt"><b class="num">&lt;600 mL／6 h</b>Stage 3 者預測需要 RRT</li>
+        <li class="rrt"><b class="num">1.0–1.75 mL/kg/h</b>CRRT net UF 死亡率最低區間</li>
+        <li><b class="num">&gt;436 mL／24 h</b>（無利尿劑）脫離 CRRT 的門檻</li>
+        <li><b class="num">&gt;2330 mL／24 h</b>（有利尿劑）脫離 CRRT 的門檻</li>
+      </ol>
+    </aside>
+  </div>
+</header>
+
+<!-- ============================================================ -->
+<section class="block" id="overview">
+  <div class="wrap">
+    <h2>整體流程（依 graphical abstract 重製）</h2>
+    <p class="lead">先排除可逆原因，再依 KDIGO 分期決定要走「繼續觀察」、「Furosemide stress test」還是「直接考慮 CRRT」。</p>
+
+    <div class="flow" role="img" aria-label="AKI 處理流程圖">
+      <div class="fnode start"><strong>急性腎損傷</strong><small>SCr 上升 ≥0.3 mg/dL、或升到 baseline 的 1.5–2 倍、或尿量 &lt;0.5 mL/kg/h 達 6–12 h</small></div>
+      <div class="farrow"></div>
+      <div class="fnode q">體液過量嗎？<small>頸靜脈超音波、LVOT-VTI 變化、VExUS 分數</small></div>
+      <div class="fside"><b>否 →</b> 先補足體液（晶體液）；腎功能恢復就處理原本的病因，沒恢復再回頭找可逆原因</div>
+      <div class="farrow"><span class="y">是</span></div>
+      <div class="fnode q">有可逆原因嗎？<small>抗生素、NSAID、顯影劑、腎臟本身問題、腹水／膀胱滯留……</small></div>
+      <div class="fside"><b>有 →</b> 處理可逆原因，追蹤腎功能</div>
+      <div class="farrow"><span class="n">無</span></div>
+      <div class="fnode start"><strong>KDIGO 分期</strong></div>
+      <div class="fbranch">
+        <div>
+          <div class="fnode"><strong>Stage 1</strong></div>
+          <div class="farrow"></div>
+          <div class="fnode q">尿量足夠嗎？<small>&gt;100–150 mL/h</small></div>
+          <div class="farrow"><span class="n">否</span></div>
+          <div class="fnode">最佳化 MAP 與利尿劑<small>① MAP &lt;65 → 強心／升壓 ② 連續輸注最高到約 1 g ③ 加第二種利尿劑 ④ 加 SGLT2i ⑤ 矯正低白蛋白 ⑥ 高張食鹽水（證據有限）</small></div>
+          <div class="fside"><b>足夠 →</b> 維持目前利尿劑；<b>仍不夠 →</b> 考慮 CRRT</div>
+        </div>
+        <div>
+          <div class="fnode"><strong>Stage 2</strong></div>
+          <div class="farrow"></div>
+          <div class="fnode q">Furosemide stress test<small>1.0 mg/kg（未用過利尿劑）或 1.5 mg/kg（已在用）</small></div>
+          <div class="farrow"></div>
+          <div class="fnode q">2 小時尿量 &lt;200 mL？</div>
+          <div class="fside"><b>是 →</b> 考慮 CRRT　<b>否 →</b> 回到「最佳化 MAP 與利尿劑」</div>
+        </div>
+        <div>
+          <div class="fnode"><strong>Stage 3</strong></div>
+          <div class="farrow"></div>
+          <div class="fnode crrt">考慮 CRRT</div>
+        </div>
+      </div>
+      <div class="farrow"></div>
+      <div class="fnode crrt">CRRT 進行中 ＋ diuretic holiday</div>
+      <div class="farrow"></div>
+      <div class="fnode q">可以脫離了嗎？<small>① AKI 原因已找到並解決 ② 血流動力與呼吸穩定 ③ 體液狀態已最佳化 ④ 無利尿劑下尿量 &gt;400–500 mL/24 h</small></div>
+      <div class="fside"><b>四項都是 →</b> 停 CRRT　<b>否 →</b> 繼續，之後再評估</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="block" id="s1">
+  <div class="wrap">
+    <span class="step-tag">步驟 1</span>
+    <h2>把 AKI 認出來：KDIGO 分期</h2>
+    <p class="lead">AKI 的定義是 7 天內 SCr 上升或尿量下降。心衰病人最常見的機轉是 type 1 cardiorenal syndrome；最強的危險因子是原本就有 CKD，其他還有高齡、高血壓、糖尿病，以及介入治療用的顯影劑。</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <caption>表 1　KDIGO 分期與 2020 年 ADQI 加入 biomarker 的新分期<small>依原文 Table 1 重製。SCr = serum creatinine；NGAL = neutrophil gelatinase-associated lipocalin。</small></caption>
+        <thead><tr><th style="width:5.5em">分期</th><th>SCr</th><th>尿量</th></tr></thead>
+        <tbody>
+          <tr class="sub"><th colspan="3">KDIGO 2012</th></tr>
+          <tr><td class="stage s1">Stage 1</td><td>升到 baseline 的 1.5–1.9 倍，或上升 ≥0.3 mg/dL</td><td class="num">&lt;0.5 mL/kg/h，持續 6–12 h</td></tr>
+          <tr><td class="stage s2">Stage 2</td><td>升到 baseline 的 2.0–2.9 倍</td><td class="num">&lt;0.5 mL/kg/h，≥12 h</td></tr>
+          <tr><td class="stage s3">Stage 3</td><td>升到 baseline 的 3.0 倍、或 SCr ≥4.0 mg/dL、或開始 RRT</td><td class="num">&lt;0.3 mL/kg/h ≥24 h，或無尿 ≥12 h</td></tr>
+        </tbody>
+        <thead><tr><th>分期</th><th>SCr 與尿量</th><th>Biomarker（cystatin C、NGAL）</th></tr></thead>
+        <tbody>
+          <tr class="sub"><th colspan="3">KDIGO update（ADQI 2020）</th></tr>
+          <tr><td class="stage s1">1S</td><td>SCr 沒變或上升 &lt;0.3 mg/dL，且尿量未達標準</td><td class="bio">陽性 <span class="pill pos">+</span></td></tr>
+          <tr><td class="stage s1">1A</td><td rowspan="2">SCr ≤48 h 內上升 ≥0.3 mg/dL、或 ≤7 天內升 ≥150%；和／或尿量 &lt;0.5 mL/kg/h &gt;6 h</td><td class="bio">陰性 <span class="pill neg">−</span></td></tr>
+          <tr><td class="stage s1">1B</td><td class="bio">陽性 <span class="pill pos">+</span></td></tr>
+          <tr><td class="stage s2">2A</td><td rowspan="2">SCr 上升 &gt;200%；和／或尿量 &lt;0.5 mL/kg/h &gt;12 h</td><td class="bio">陰性 <span class="pill neg">−</span></td></tr>
+          <tr><td class="stage s2">2B</td><td class="bio">陽性 <span class="pill pos">+</span></td></tr>
+          <tr><td class="stage s3">3A</td><td rowspan="2">SCr 上升 &gt;300%（≥4.0 mg/dL 且急性上升 ≥0.5 mg/dL）；和／或尿量 &lt;0.3 mL/kg/h &gt;24 h、無尿 &gt;12 h；和／或急性 RRT</td><td class="bio">陰性 <span class="pill neg">−</span></td></tr>
+          <tr><td class="stage s3">3B</td><td class="bio">陽性 <span class="pill pos">+</span></td></tr>
+        </tbody>
+      </table>
+      <div class="tfoot">1S 是新分期：SCr 與尿量都還正常，但 biomarker 已經陽性——「亞臨床」AKI。這個分期在本院多數情況下沒有檢驗可用，知道概念即可。</div>
+    </div>
+
+    <div class="calc" id="calcStage">
+      <h3>床邊分期計算</h3>
+      <div class="row">
+        <label>Baseline SCr（mg/dL）<input type="number" step="0.1" min="0.1" id="scrB" placeholder="1.0"></label>
+        <label>目前 SCr（mg/dL）<input type="number" step="0.1" min="0.1" id="scrN" placeholder="1.8"></label>
+        <label>體重（kg）<input type="number" step="1" min="10" id="wt1" placeholder="65"></label>
+        <label>近幾小時總尿量（mL）<input type="number" step="10" min="0" id="uo" placeholder="180"></label>
+        <label>觀察時數（h）<input type="number" step="1" min="1" id="uoH" placeholder="8"></label>
+        <label>已開始 RRT<select id="rrt"><option value="0">否</option><option value="1">是</option></select></label>
+      </div>
+      <div class="out" id="stageOut">輸入數值後自動計算。SCr 與尿量各算一個分期，取較高者。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="block" id="s2">
+  <div class="wrap">
+    <span class="step-tag">步驟 2</span>
+    <h2>確認是不是體液過量，順便找可逆原因</h2>
+    <p class="lead">SCr 一升、尿量一掉，第一件事不是開利尿劑，而是先問：這個人真的太濕嗎？有沒有可以馬上拿掉的原因？</p>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>床邊超音波（POCUS）能回答什麼</h3>
+        <ul>
+          <li><strong>腎臟</strong>：大小、回音——排除腎臟本身的病因。</li>
+          <li><strong>膀胱</strong>：尿量掉，先排除尿滯留。</li>
+          <li><strong>頸靜脈（IJV）</strong>：判斷高／低血容量的敏感度與特異度中等，但可以當第一線。</li>
+          <li><strong>LVOT-VTI</strong>：看給水後有沒有反應（fluid responsiveness）。</li>
+          <li><strong>VExUS</strong>（IVC ＋ 肝靜脈 ＋ 門靜脈）：≥1 分與 AKI、之後 48 h 用更多利尿劑、預後較差相關。需要都卜勒基礎。</li>
+          <li><strong>門靜脈都卜勒</strong>：VExUS 各項中最適合即時追蹤「有沒有脫水成功」。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>可逆原因清單</h3>
+        <ul>
+          <li>腎毒性藥物：aminoglycoside、NSAID 等 → 停。</li>
+          <li>近期顯影劑（PCI、CT）→ 確認時間點。</li>
+          <li>尿滯留、腹水造成的腹內高壓（膀胱壓 &gt;12 mmHg，於吐氣末測）→ 導尿／放腹水。</li>
+          <li>低血壓、低心輸出 → 見步驟 3。</li>
+        </ul>
+        <p class="note">腹內高壓是常被忽略的 AKI 原因。緊繃腹水放液可以明顯降低 IAP、改善腎灌流、讓利尿劑重新有效。</p>
+      </div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <caption>心衰常規藥在 AKI 時怎麼辦<small>依原文「Reassessment of ongoing therapy」整理。</small></caption>
+        <thead><tr><th>藥物</th><th>建議</th><th>依據</th></tr></thead>
+        <tbody>
+          <tr><td>Aminoglycoside、NSAID</td><td style="color:var(--red)"><strong>立即停用</strong></td><td>腎毒性</td></tr>
+          <tr><td>MRA（spironolactone、eplerenone）</td><td>輕度 AKI 可先續用；腎功能持續惡化或高血鉀 → 停</td><td>心血管保護效益</td></tr>
+          <tr><td>SGLT2 inhibitor</td><td>建議續用，即使 eGFR 降到 &lt;25–30</td><td>DAPA-HF／DELIVER 中 eGFR &lt;25 的病人仍有效益</td></tr>
+          <tr><td>ARNI（sacubitril/valsartan）</td><td>建議續用，即使 eGFR &lt;30</td><td>PARADIGM-HF／PARAGON-HF 次分析；透析病人 meta-analysis（n=2494）效益持續、高血鉀與低血壓沒有增加</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="block" id="s3">
+  <div class="wrap">
+    <span class="step-tag">步驟 3</span>
+    <h2>藥物治療：先把 MAP 顧好，再把利尿劑用對</h2>
+    <p class="lead">沒有任何一種血管活性藥能「預防」或「治療」AKI；腎劑量 dopamine 已被 ROSE trial 與 meta-analysis 否定，不建議。藥物能做的，是維持腎臟灌流壓，然後讓利尿劑到得了它該去的地方。</p>
+
+    <div class="calc" id="calcRPP">
+      <h3>腎灌流壓（renal perfusion pressure）</h3>
+      <p class="note">RPP ＝ MAP − 腹內壓 − CVP − 氣道壓。原文引用的估算：nephron 至少需要 <b class="num">40.7 mmHg</b>。尿量不夠時，可以往「拉高 MAP」或「降低 CVP」兩個方向做。</p>
+      <div class="row">
+        <label>MAP（mmHg）<input type="number" id="map" placeholder="65"></label>
+        <label>CVP（mmHg）<input type="number" id="cvp" placeholder="14"></label>
+        <label>腹內壓／膀胱壓（mmHg）<input type="number" id="iap" placeholder="8"></label>
+        <label>平均氣道壓（mmHg）<input type="number" id="paw" placeholder="7"></label>
+      </div>
+      <div class="out" id="rppOut">輸入後計算。cmH₂O 換 mmHg 約 ×0.74。</div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>MAP 與升壓劑</h3>
+        <ul>
+          <li>MAP &lt;65 mmHg → 可考慮強心／升壓劑，目標 MAP &gt;65。</li>
+          <li>把 MAP 推到 &gt;80–85：心輸出會增加，但尿量與肌酸酐廓清率沒有差別。</li>
+          <li>Levosimendan 減少 AKI 的資料只限心臟手術後。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Loop diuretic 怎麼給（DOSE trial 與指引）</h3>
+        <ul>
+          <li>Bolus 與連續輸注：症狀與 SCr 變化沒有差別。</li>
+          <li>高劑量：尿多、結果較好，但會有短暫的腎功能惡化。</li>
+          <li>ICU 裡血流動力不穩、需要精準調整或高劑量者，連續輸注較合適；<strong>開始輸注前一定先給一劑 bolus</strong>，才能達到啟動利尿的閾值濃度。</li>
+          <li>指引起始劑量：未用過 → furosemide 40 mg IV；已在用 → 口服日劑量的 1–2 倍 IV。2–6 h 後看尿量／尿鈉，不夠就加倍。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="calc" id="calcFST">
+      <h3>Furosemide stress test</h3>
+      <p class="note">適用 AKI stage 1–2 且體液過量者。給藥後看 2 小時尿量。</p>
+      <div class="row">
+        <label>體重（kg）<input type="number" id="wt2" placeholder="65"></label>
+        <label>平常有在用 loop diuretic<select id="naive"><option value="1">沒有（1.0 mg/kg）</option><option value="1.5">有（1.5 mg/kg）</option></select></label>
+      </div>
+      <div class="out" id="fstOut">輸入體重後計算建議劑量。</div>
+    </div>
+
+    <h3>為什麼利尿劑會失效</h3>
+    <div class="tbl-wrap">
+      <table>
+        <caption>利尿劑抗性的機轉與對策<small>依原文「Diuretic resistance」整理。</small></caption>
+        <thead><tr><th>機轉</th><th>臨床線索</th><th>對策</th></tr></thead>
+        <tbody>
+          <tr><td>腸道水腫、口服吸收差</td><td>口服劑量越加越沒用</td><td>改 IV（或皮下）furosemide</td></tr>
+          <tr><td>低血壓、低心輸出，藥到不了腎臟</td><td>休克</td><td>先處理灌流（在心衰病人這類「腎前」機轉反而比腎內機轉次要）</td></tr>
+          <tr><td>極度低白蛋白，藥物分佈容積變大</td><td>Albumin &lt;2 g/dL</td><td>補 albumin 可能增強排鈉</td></tr>
+          <tr><td>代謝性酸中毒與其他有機陰離子競爭 OAT1／OAT3，藥物分泌不到腎小管</td><td>AKI 常見的酸中毒</td><td>可考慮 bicarbonate 矯正 pH；但要避免製造低氯性鹼中毒（會反而降低利尿反應）。Furosemide 失效時可試 ethacrynic acid</td></tr>
+          <tr><td>CKD：腎小管分泌能力下降</td><td>原本就有 CKD</td><td>需要更高劑量</td></tr>
+          <tr><td>遠端腎元代償性再吸收鈉（最重要）</td><td>單用 loop diuretic 越來越沒反應</td><td>Sequential nephron blockade：加 thiazide 類</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>克服抗性的階梯（依 Figure 1 重製）</h3>
+    <div class="pyramid" role="img" aria-label="利尿劑抗性處理階梯，由下往上升級">
+      <div class="tier"><span class="tier-num">6</span><strong>RRT</strong></div>
+      <div class="tier"><span class="tier-num">5</span>謹慎使用高張食鹽水 HSS<small>證據有限；SALT-HF 雙盲試驗陰性，只有低氯亞組有效</small></div>
+      <div class="tier"><span class="tier-num">4</span>評估體液狀態，考慮 albumin<small>證據有限；Albumin &lt;2 g/dL 時較有理由</small></div>
+      <div class="tier"><span class="tier-num">3</span>考慮 SGLT2 inhibitor<small>可增加排鈉與糖尿，但排鈉遠弱於 thiazide；定位是疾病修飾藥，不是解抗性主力</small></div>
+      <div class="tier"><span class="tier-num">2</span>Sequential nephron blockade<small>反應不佳 → 加 <strong>metolazone</strong>（口服，不劣於 IV chlorothiazide）或 <strong>hydrochlorothiazide</strong>（CLOROTIC）；代謝性鹼中毒 → 考慮 <strong>acetazolamide</strong>（ADVOR；HCO₃ 高者效果更明顯）</small></div>
+      <div class="tier"><span class="tier-num">1</span>先把 loop diuretic 用對<small>足夠劑量、IV 給藥、監測尿量與 spot urine Na</small></div>
+    </div>
+    <p class="note">IV furosemide 偶爾可以加到約 1 g 才有反應，但腎臟同時是 furosemide 代謝的主要器官，AKI 時血中濃度會累積、副作用（耳毒性等）風險上升。合併利尿劑時電解質與腎功能要密切追蹤。</p>
+
+    <h3>先用藥，還是先超過濾（UF）？</h3>
+    <p>原文結論：<strong>沒有強證據支持把 UF 當第一線</strong>，先試藥物。但四個試驗的方向並不一致，值得知道全貌。</p>
+    <div class="tbl-wrap">
+      <table>
+        <caption>表 2　UF 對比利尿劑的主要隨機試驗<small>依原文 Table 2 重製。WRF = worsening renal function；AE = adverse events。</small></caption>
+        <thead><tr><th>試驗</th><th>人數</th><th>主要結果</th><th>注意</th></tr></thead>
+        <tbody>
+          <tr><td><strong>CARRESS-HF</strong>（2012）</td><td class="num">188</td><td>96 h：UF 組 WRF 較多（P=0.003）、體重減輕無差（P=0.58）、AE 較多（72% vs 57%，P=0.03）；60 天死亡或再住院無差（38% vs 35%）</td><td>UF 速率被規定為 200 mL/h；90% 未充分脫水；交叉率高</td></tr>
+          <tr><td>CARRESS-HF per-protocol（2018）</td><td class="num">188</td><td>UF 組累積脫水、淨脫水、體重下降都較多；WRF 仍較多（P&lt;0.001）；60 天結果無差</td><td>未 power 到長期結果</td></tr>
+          <tr><td><strong>UNLOAD</strong>（2007）</td><td class="num">200</td><td>48 h 體重與脫水量 UF 較多（P=0.001）；90 天心衰再住院 UF 較少（P=0.037）</td><td>—</td></tr>
+          <tr><td><strong>CUORE</strong>（2014）</td><td class="num">56</td><td>體重下降相似；一年內心衰再住院較少（P=0.002）；腎功能不變</td><td>樣本小；平均 75 歲</td></tr>
+          <tr><td><strong>AVOID-HF</strong>（2016）</td><td class="num">110</td><td>到第一次心衰事件 62 vs 34 天（P=0.106，未達顯著）；30 天心衰與心血管再住院較少（P=0.034／0.037）；90 天死亡無差</td><td>廠商提前終止；60% 未充分脫水</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="block" id="s4">
+  <div class="wrap">
+    <span class="step-tag">步驟 4</span>
+    <h2>CRRT：什麼時候開、怎麼設定</h2>
+    <p class="lead">ICU 最常見的 RRT 適應症不是尿毒，而是<strong>藥物無效的體液過量合併血流動力不穩</strong>（65%）。不穩定的病人用 CRRT 而非間歇透析；三種模式沒有證據誰比較好。</p>
+
+    <div class="quad" role="img" aria-label="CRRT 四象限：適應症、時機、管理、脫離（依 Figure 2 重製）">
+      <div class="q1">
+        <h4>適應症 <span>Indication</span></h4>
+        <ul>
+          <li><strong>A</strong>cidosis 代謝性酸中毒</li>
+          <li><strong>E</strong>lectrolyte 電解質異常</li>
+          <li><strong>I</strong>ntoxication 中毒</li>
+          <li><strong>O</strong>verload 藥物無效的體液過量</li>
+          <li><strong>U</strong>remia 尿毒</li>
+        </ul>
+      </div>
+      <div class="q2">
+        <h4>時機 <span>Timing</span></h4>
+        <ul>
+          <li>「早開」對 28 天死亡率沒有好處（兩個 meta-analysis：1879 人與 5086 人）</li>
+          <li>早開反而多了不必要的暴露、低血壓與感染</li>
+          <li>採 wait-and-see；但從 <strong>AKI stage 2 就開始評估</strong>適應症，避免耽誤</li>
+          <li>SCr 已經開始降 → 可以再等；持續往上 → 積極一點</li>
+        </ul>
+      </div>
+      <div class="q3">
+        <h4>管理 <span>Management</span></h4>
+        <ul>
+          <li><strong>血管通路</strong>：右頸內靜脈首選，導管尖端在 SVC–RA 交界；股靜脈、腋靜脈備選</li>
+          <li><strong>劑量</strong> 25–30 mL/kg/h（肥胖者總量不超過 5000 mL/h）</li>
+          <li><strong>Blood flow</strong> 150–250 mL/min</li>
+          <li><strong>Net UF</strong> 1.0–1.75 mL/kg/h</li>
+          <li><strong>抗凝</strong>：RCA ≫ heparin</li>
+          <li>電解質監測、營養補充、藥物動力學調整</li>
+        </ul>
+      </div>
+      <div class="q4">
+        <h4>脫離 <span>Weaning</span></h4>
+        <ul>
+          <li>AKI 原因已找到並解決</li>
+          <li>血流動力與呼吸穩定</li>
+          <li>體液狀態已最佳化</li>
+          <li>無利尿劑下尿量 &gt;400–500 mL/24 h</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <caption>表 3　三種 CRRT 模式<small>依原文 Table 3 重製。</small></caption>
+        <thead><tr><th>模式</th><th>清除機轉</th><th>Blood flow（mL/min）</th><th>超過濾率（mL/h）</th><th>優點</th><th>缺點</th></tr></thead>
+        <tbody>
+          <tr><td><strong>CVVHD</strong></td><td>擴散</td><td class="num">100–200</td><td class="num">80–200</td><td>不需要置換液</td><td>脫水量較少</td></tr>
+          <tr><td><strong>CVVH</strong></td><td>對流</td><td class="num">200–400</td><td class="num">1000–4000</td><td>積極控制體液</td><td>需要置換液</td></tr>
+          <tr><td><strong>CVVHDF</strong></td><td>對流＋擴散</td><td class="num">100–200</td><td class="num">1000–2000</td><td>體液控制與溶質清除的平衡</td><td>成本高</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="calc" id="calcCRRT">
+      <h3>CRRT 設定換算</h3>
+      <div class="row">
+        <label>體重（kg）<input type="number" id="wt3" placeholder="65"></label>
+      </div>
+      <div class="out" id="crrtOut">輸入體重後計算劑量與 net UF 區間。</div>
+    </div>
+
+    <div class="grid2">
+      <div class="card blue">
+        <h3>抗凝：RCA 為首選</h3>
+        <ul>
+          <li>迴路通暢較久、出血風險低、避開 HIT。已在用全身抗凝的病人也可以加 RCA 延長濾器壽命。</li>
+          <li>目標血中 citrate <b class="num">3–4 mmol/L</b>，對應迴路 iCa <b class="num">0.25–0.4 mmol/L</b>；需另外補全身鈣。</li>
+          <li>肝衰竭與深度休克代謝不掉 citrate → 減量。</li>
+          <li><strong>Citrate 中毒</strong>：補鈣需求越來越高、或 total Ca / iCa &gt;2.5 → 停 RCA。</li>
+          <li>UFH 備選：便宜、半衰期短、可用 protamine 逆轉；缺點是藥動不可預測、抗凝血酶低時抗性、HIT、出血。</li>
+        </ul>
+      </div>
+      <div class="card amber">
+        <h3>電解質、營養、藥物</h3>
+        <ul>
+          <li>RCA 期間看 total／ionized Ca；其他電解質<strong>每 6–12 h</strong>一次，包括 P 與 Mg。</li>
+          <li>AKI 病人是分解代謝狀態，國際共識建議<strong>補充蛋白質</strong>。</li>
+          <li>腎排泄藥物：CRRT 開始與停止時都要調整劑量。</li>
+          <li><strong>Milrinone</strong>：在 RRT 病人半衰期可長達 20 h，會累積中毒——CCU 最需要記住的一條。</li>
+          <li>Levosimendan 代謝物半衰期 ×1.5、峰濃度可到 2 倍 → 減量、密切觀察。</li>
+          <li>抗生素在 CRRT 期間通常要<strong>加量或加頻次</strong>。</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note">Net UF 與死亡率是 U 型關係：脫太慢體液過量拖太久，脫太快低血壓與器官灌流不足。1.0–1.75 mL/kg/h 是死亡率最低的區間，實際目標仍要跨團隊依病人耐受度調整。</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="block" id="s5">
+  <div class="wrap">
+    <span class="step-tag">步驟 5</span>
+    <h2>脫離 CRRT</h2>
+    <p class="lead">成功脫離率只有 21–60%，脫離失敗與死亡率上升相關。KDIGO 只說「腎功能足夠恢復時就停」，沒有公認的具體標準；原文給的是實務做法。</p>
+    <div class="grid2">
+      <div class="card">
+        <h3>怎麼判斷可以停</h3>
+        <ul>
+          <li>尿量增加是最常見的脫離理由：<b class="num">&gt;436 mL/24 h</b>（無利尿劑）或 <b class="num">&gt;2330 mL/24 h</b>（有利尿劑）。</li>
+          <li>但只看尿量不保證成功；SCr 低、urea 低是正向預測因子。</li>
+          <li>合併分析：CKD、CRRT 天數、停機時尿量，是短期脫離成敗的預測因子。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Diuretic holiday 與試脫</h3>
+        <ul>
+          <li>CRRT 期間可以停利尿劑（沒有證據顯示利尿劑能促進腎功能恢復）；慢性使用者可維持 5–10 mg/h。</li>
+          <li>可在<strong>濾器到期時</strong>開一個小視窗：暫停 CRRT、同時開始利尿劑連續輸注，看尿量反應再決定要不要重接。</li>
+          <li>脫離後利尿劑的角色只是幫忙排尿。</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note">CRRT 中斷的原因除了脫離成功，還有低 MAP、躁動、無法使用任何抗凝、以及人力不足——最後一項在交班時值得誠實記錄。</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="block" id="s6">
+  <div class="wrap">
+    <span class="step-tag">步驟 6</span>
+    <h2>CRRT 併發症（依 Figure 3 重製）</h2>
+    <p class="lead">每一項都附上床邊最先看得到的徵象。</p>
+    <div class="ring">
+      <div><b>血管通路</b>置放時：氣胸、血腫、誤穿動脈、心律不整。留置後：血管狹窄、血栓、血管壁受傷、股靜脈導管限制活動。感染（頸與股感染率沒有差別）。<span class="watch">穿刺處滲血／腫、導管回抽不順、壓力警報、發燒。</span></div>
+      <div><b>低血壓</b>超過三分之一的病人會發生，但多半不是 CRRT 本身造成。與體液不足有關時：回輸、下修 UF 目標；同時找其他原因。<span class="watch">開始 CRRT 後 1 小時內、每次上修 UF 後的血壓。</span></div>
+      <div><b>低體溫</b>輕度散熱會血管收縮、看起來更穩，但會<strong>遮掉發燒</strong>；明顯低體溫需要積極保溫。<span class="watch">核心體溫；體溫正常不代表沒有感染。</span></div>
+      <div><b>電解質異常</b>低磷最常見（持續被清掉）→ 預防性補磷或含磷透析液。RCA：低鈣、高鈉、代謝性鹼中毒；citrate 中毒（total/iCa &gt;2.5）→ 停 RCA。<span class="watch">每 6–12 h 的 iCa、P、Mg、Na、HCO₃；補鈣速度是否越開越大。</span></div>
+      <div><b>迴路凝血</b>常因導管功能不良；必要時換管。Filtration fraction 太高會在濾器內血液濃縮。<span class="watch">跨膜壓、濾器前後壓力上升趨勢、迴路顏色變深。</span></div>
+      <div><b>血液學</b>UFH 相關：HIT、貧血。常被低估。<span class="watch">血小板趨勢（尤其 5–10 天）、Hb。</span></div>
+      <div><b>營養流失</b>胺基酸與微量元素持續被清掉。與營養師密切合作。<span class="watch">蛋白質攝取是否達標。</span></div>
+      <div><b>Cardiac stunning</b>開始 CRRT 與心肌頓抑相關。<span class="watch">新的血壓下降、心律不整、乳酸上升。</span></div>
+      <div><b>Dialysis disequilibrium</b>溶質快速移動造成；CRRT 較慢、風險較低，但仍有個案報告。<span class="watch">頭痛、意識改變、抽搐。</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="block" id="s7">
+  <div class="wrap">
+    <span class="step-tag">步驟 7</span>
+    <h2>每班要看的東西</h2>
+    <p class="lead">把上面的內容濃縮成交班時可以逐項勾的清單。勾選狀態只存在這台裝置的瀏覽器裡，換班請重新勾。</p>
+    <div class="card">
+      <ul class="check" id="checklist">
+        <li><input type="checkbox" id="c1"><label for="c1">每小時尿量已換算成 mL/kg/h，並與 KDIGO 門檻（0.5／0.3）比過<span class="why">分期靠的是「每公斤每小時」，不是總量。</span></label></li>
+        <li><input type="checkbox" id="c2"><label for="c2">今天的 SCr 與 baseline 比過倍數，趨勢是往上還是往下<span class="why">往下可以等 CRRT；持續往上要積極。</span></label></li>
+        <li><input type="checkbox" id="c3"><label for="c3">新開的抗生素、止痛藥、顯影劑有沒有腎毒性；MRA 在高血鉀時有沒有停<span class="why">SGLT2i 與 ARNI 原則上續用。</span></label></li>
+        <li><input type="checkbox" id="c4"><label for="c4">MAP 是否 ≥65；CVP、膀胱壓、氣道壓有沒有把腎灌流壓吃掉<span class="why">RPP ＝ MAP − IAP − CVP − Paw，至少 40.7 mmHg。</span></label></li>
+        <li><input type="checkbox" id="c5"><label for="c5">利尿劑連續輸注前有沒有先給 bolus；給藥後 2–6 h 的尿量有沒有回報<span class="why">沒到閾值濃度的輸注等於白給。</span></label></li>
+        <li><input type="checkbox" id="c6"><label for="c6">合併利尿劑（metolazone／HCTZ／acetazolamide）後的 K、Na、Cl、HCO₃、SCr<span class="why">合併治療電解質風險高。</span></label></li>
+        <li><input type="checkbox" id="c7"><label for="c7">CRRT：劑量（mL/kg/h）、blood flow、net UF 與醫囑一致，實際脫水量有沒有落在 1.0–1.75 mL/kg/h<span class="why">U 型曲線。</span></label></li>
+        <li><input type="checkbox" id="c8"><label for="c8">RCA：迴路 iCa 0.25–0.4、全身 iCa、補鈣速率趨勢；total/iCa 比值<span class="why">比值 &gt;2.5 是 citrate 中毒。</span></label></li>
+        <li><input type="checkbox" id="c9"><label for="c9">P、Mg 有沒有每 6–12 h 追；蛋白質攝取有沒有達標</label></li>
+        <li><input type="checkbox" id="c10"><label for="c10">病人在用 milrinone 或 levosimendan 嗎？劑量有沒有因 CRRT 調整<span class="why">Milrinone 在 RRT 半衰期可達 20 h。</span></label></li>
+        <li><input type="checkbox" id="c11"><label for="c11">體溫：CRRT 期間「沒發燒」是否可信；穿刺處與導管功能</label></li>
+        <li><input type="checkbox" id="c12"><label for="c12">脫離評估：AKI 原因解決了嗎、血流動力穩嗎、體液最佳化了嗎、無利尿劑尿量 &gt;400–500 mL/24 h 了嗎<span class="why">四項都是才考慮停。</span></label></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="block" id="s8">
+  <div class="wrap">
+    <h2>還沒有答案的問題（表 4）</h2>
+    <p class="lead">知道證據的邊界在哪裡，也是床邊判斷的一部分。</p>
+    <div class="tbl-wrap">
+      <table>
+        <caption>表 4　未來研究方向<small>依原文 Table 4 重製。</small></caption>
+        <thead><tr><th style="width:30%">主題</th><th>證據缺口</th></tr></thead>
+        <tbody>
+          <tr><td>藥物治療</td><td>正確的多步驟順序</td></tr>
+          <tr><td>CRRT 模式</td><td>某一模式是否優於其他</td></tr>
+          <tr><td>CRRT 時機</td><td>早開 vs. 在最大化藥物治療下的 wait-and-see；biomarker（cystatin C、NGAL、IL-18、IL-6、osteopontin）在風險分層的角色</td></tr>
+          <tr><td>劑量、blood flow、net UF</td><td>肥胖者的正確劑量；正確的 net UF；可以容忍或用升壓劑處理的低血壓程度</td></tr>
+          <tr><td>停止 CRRT</td><td>正確的停機策略；轉成間歇透析；diuretic holiday vs. 繼續利尿劑；biomarker 的角色</td></tr>
+          <tr><td>CRRT 併發症</td><td>避免 cardiac stunning 的策略；CRRT 期間早期活動</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <details>
+      <summary>讀這篇 review 時要注意的幾件事</summary>
+      <ul>
+        <li>這是 narrative review，不是指引也不是系統性回顧；Furosemide stress test 閾值、diuretic holiday、以 SCr 趨勢決定 CRRT 時機，都是專家意見。</li>
+        <li>範圍是「體液過量的重度 AKI」，不是所有 ICU AKI；敗血症、橫紋肌溶解等非心腎機轉不在討論內。</li>
+        <li>UF 的結論偏保守，但 UNLOAD／CUORE／AVOID-HF 有正向訊號，不宜只記得 CARRESS-HF。</li>
+        <li>早 vs. 晚 CRRT 只引用 meta-analysis，沒細談 STARRT-AKI、AKIKI-2 等個別試驗。</li>
+      </ul>
+    </details>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="block" id="quiz">
+  <div class="wrap">
+    <h2>八題自測</h2>
+    <p class="lead">選了就會顯示解答。</p>
+    <div class="quiz" id="quizBox"></div>
+    <p class="score" id="score"></p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><strong>資料來源</strong></p>
+    <ol>
+      <li>Riccardi M, Pagnesi M, Lombardi CM, Metra M. Severe acute kidney injury in the intensive care unit: step-to-step management. <i>Eur Heart J Acute Cardiovasc Care</i>. 2025;14(10):618–630. PMID 40578821. <a href="https://doi.org/10.1093/ehjacc/zuaf084">doi:10.1093/ehjacc/zuaf084</a>（OUP 網站可免費全文）</li>
+      <li>Khwaja A. KDIGO clinical practice guidelines for acute kidney injury. <i>Nephron Clin Pract</i> 2012;120:c179–c184.</li>
+      <li>Ostermann M, et al. Recommendations on acute kidney injury biomarkers from the ADQI consensus conference. <i>JAMA Netw Open</i> 2020;3:e2019209.</li>
+      <li>Bart BA, et al. CARRESS-HF. <i>N Engl J Med</i> 2012;367:2296–2304.　Costanzo MR, et al. UNLOAD. <i>J Am Coll Cardiol</i> 2007;49:675–683.　Marenzi G, et al. CUORE. <i>J Card Fail</i> 2014;20:9–17.　Costanzo MR, et al. AVOID-HF. <i>JACC Heart Fail</i> 2016;4:95–105.</li>
+    </ol>
+    <p>本頁所有表格與圖示皆依原文內容重新繪製，未使用原始圖檔。本頁為教學用途，非醫療建議；個別病人的用藥與治療請依主治醫師醫囑。心血管照護教學資源中心 · 2026-09</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // ---------- theme ----------
+  var root=document.documentElement, btn=document.getElementById('themeBtn');
+  try{ var t=localStorage.getItem('aki-theme'); if(t) root.setAttribute('data-theme',t); }catch(e){}
+  btn.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme');
+    var dark=cur?cur==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var next=dark?'light':'dark'; root.setAttribute('data-theme',next);
+    try{ localStorage.setItem('aki-theme',next); }catch(e){}
+  });
+
+  function v(id){ var x=parseFloat(document.getElementById(id).value); return isNaN(x)?null:x; }
+  function on(ids,fn){ ids.forEach(function(id){ document.getElementById(id).addEventListener('input',fn); document.getElementById(id).addEventListener('change',fn); }); }
+
+  // ---------- KDIGO stage ----------
+  function stage(){
+    var b=v('scrB'), n=v('scrN'), wt=v('wt1'), uo=v('uo'), h=v('uoH'), rrt=document.getElementById('rrt').value==='1';
+    var out=document.getElementById('stageOut'); out.className='out';
+    var sCr=0, sUO=0, lines=[];
+    if(b&&n){
+      var ratio=n/b, delta=n-b;
+      if(ratio>=3||n>=4.0) sCr=3; else if(ratio>=2) sCr=2; else if(ratio>=1.5||delta>=0.3) sCr=1;
+      lines.push('SCr：'+n.toFixed(1)+' ÷ '+b.toFixed(1)+' = <b class="num">'+ratio.toFixed(2)+'×</b>，差 '+delta.toFixed(1)+' mg/dL → SCr 分期 '+(sCr||'未達'));
+    }
+    if(wt&&uo!=null&&h){
+      var rate=uo/wt/h;
+      if(h>=24&&rate<0.3) sUO=3; else if(h>=12&&rate<0.5) sUO=2; else if(h>=6&&rate<0.5) sUO=1;
+      if(uo===0&&h>=12) sUO=3;
+      lines.push('尿量：'+uo+' mL ÷ '+wt+' kg ÷ '+h+' h = <b class="num">'+rate.toFixed(2)+' mL/kg/h</b> → 尿量分期 '+(sUO||'未達'));
+    }
+    if(rrt){ lines.push('已開始 RRT → 直接為 stage 3'); }
+    var s=Math.max(sCr,sUO,rrt?3:0);
+    if(!lines.length){ out.innerHTML='輸入數值後自動計算。SCr 與尿量各算一個分期，取較高者。'; return; }
+    var head = s? '<b class="big">KDIGO stage '+s+'</b>' : '<b class="big">未達 AKI 標準</b>';
+    var tip = s===1?'　→ 尿量 &gt;100–150 mL/h 嗎？不夠就最佳化 MAP 與利尿劑' : s===2?'　→ 做 furosemide stress test；同時開始評估 CRRT 適應症' : s===3?'　→ 考慮 CRRT':'';
+    out.className='out '+(s===3?'s3':s?'s1':'ok');
+    out.innerHTML=head+tip+'<br>'+lines.join('<br>');
+  }
+  on(['scrB','scrN','wt1','uo','uoH','rrt'],stage);
+
+  // ---------- RPP ----------
+  function rpp(){
+    var m=v('map'), c=v('cvp'), i=v('iap'), p=v('paw'); var out=document.getElementById('rppOut'); out.className='out';
+    if(m==null){ out.innerHTML='輸入後計算。cmH₂O 換 mmHg 約 ×0.74。'; return; }
+    var r=m-(c||0)-(i||0)-(p||0);
+    out.className='out '+(r<40.7?'s3':'ok');
+    out.innerHTML='RPP ≈ <b class="big num">'+r.toFixed(0)+' mmHg</b>'+(r<40.7?'　低於 40.7 mmHg：拉高 MAP（&lt;65 時考慮升壓劑）或降低 CVP／腹內壓':'　達到 nephron 最低需求')+(m<65?'<br>MAP &lt;65 mmHg。':'')+(i!=null&&i>12?'<br>腹內壓 &gt;12 mmHg：腹內高壓，有腹水的話考慮放液。':'');
+  }
+  on(['map','cvp','iap','paw'],rpp);
+
+  // ---------- FST ----------
+  function fst(){
+    var w=v('wt2'), k=parseFloat(document.getElementById('naive').value); var out=document.getElementById('fstOut'); out.className='out';
+    if(!w){ out.innerHTML='輸入體重後計算建議劑量。'; return; }
+    out.className='out s1';
+    out.innerHTML='Furosemide <b class="big num">'+Math.round(w*k)+' mg IV</b>（'+k+' mg/kg × '+w+' kg）<br>2 h 尿量 <b class="num">&lt;200 mL</b> → AKI 進展與需要 RRT 的風險高；stage 3 者 6 h 尿量 <b class="num">&lt;600 mL</b> 預測需要 RRT。<br><span class="note">給藥後請記錄 0–2 h 的每小時尿量並回報。</span>';
+  }
+  on(['wt2','naive'],fst);
+
+  // ---------- CRRT ----------
+  function crrt(){
+    var w=v('wt3'); var out=document.getElementById('crrtOut'); out.className='out';
+    if(!w){ out.innerHTML='輸入體重後計算劑量與 net UF 區間。'; return; }
+    var d1=Math.round(w*25), d2=Math.min(Math.round(w*30),5000);
+    out.className='out ok';
+    out.innerHTML='CRRT 劑量 25–30 mL/kg/h → <b class="big num">'+d1+'–'+d2+' mL/h</b>'+(w*30>5000?'（上限 5000 mL/h）':'')+'<br>Net UF 1.0–1.75 mL/kg/h → <b class="num">'+Math.round(w)+'–'+Math.round(w*1.75)+' mL/h</b>（每日約 '+Math.round(w*24)+'–'+Math.round(w*42)+' mL）<br>Blood flow 150–250 mL/min；RCA 目標迴路 iCa 0.25–0.4 mmol/L。';
+  }
+  on(['wt3'],crrt);
+
+  // ---------- checklist persistence ----------
+  try{
+    var saved=JSON.parse(localStorage.getItem('aki-check')||'{}');
+    document.querySelectorAll('#checklist input').forEach(function(cb){
+      cb.checked=!!saved[cb.id];
+      cb.addEventListener('change',function(){ saved[cb.id]=cb.checked; localStorage.setItem('aki-check',JSON.stringify(saved)); });
+    });
+  }catch(e){}
+
+  // ---------- quiz ----------
+  var Q=[
+    {q:'65 kg 病人，過去 8 小時尿量共 200 mL，SCr 從 1.0 升到 1.6 mg/dL。KDIGO 分期？',
+     o:['未達 AKI','Stage 1','Stage 2','Stage 3'],a:1,
+     e:'尿量 200÷65÷8 = 0.38 mL/kg/h，<0.5 持續 ≥6 h → stage 1；SCr 1.6 倍 → stage 1。取較高者仍為 stage 1。'},
+    {q:'心衰病人發生 AKI，eGFR 掉到 28。SGLT2 inhibitor 與 ARNI 要怎麼辦？',
+     o:['兩者都立即停用','停 SGLT2i，續用 ARNI','原則上續用','改成 MRA'],a:2,
+     e:'DAPA-HF／DELIVER 與 PARADIGM／PARAGON 的次分析顯示 eGFR <25–30 仍有效益，原文建議續用。MRA 才是在惡化或高血鉀時要停的。'},
+    {q:'關於腎劑量（低劑量）dopamine，下列何者正確？',
+     o:['可以改善 AKI 病人的腎灌流','ROSE trial 證實可以保護腎功能','meta-analysis 顯示無法預防或改善 AKI，不建議','只在心臟手術後有效'],a:2,
+     e:'ROSE trial 與 meta-analysis 都是陰性，重症病人甚至可能惡化腎灌流。只在心臟手術後有資料的是 levosimendan。'},
+    {q:'要開始 furosemide 連續輸注時，最重要的一件事是？',
+     o:['先給一劑 bolus 達到閾值濃度','先確認 K >4.0','從 1 mg/h 慢慢往上調','同時加 metolazone'],a:0,
+     e:'連續輸注沒有先 bolus，血中濃度可能一直達不到啟動利尿的閾值。'},
+    {q:'70 kg、平常有在吃 furosemide 的病人要做 furosemide stress test，劑量與判讀？',
+     o:['70 mg；2 h 尿量 <200 mL 為未通過','105 mg；2 h 尿量 <200 mL 為未通過','105 mg；6 h 尿量 <600 mL 為未通過','40 mg；2 h 尿量 <100 mL 為未通過'],a:1,
+     e:'已在用利尿劑 → 1.5 mg/kg = 105 mg；看 2 h 尿量 <200 mL。6 h <600 mL 是 stage 3 者預測需要 RRT 的指標。'},
+    {q:'關於 CRRT 的時機，原文的建議是？',
+     o:['一到 stage 3 就立刻開，越早越好','早開可以降低 28 天死亡率','wait-and-see，但從 stage 2 就開始評估適應症','等到 BUN >100 再開'],a:2,
+     e:'兩個 meta-analysis 顯示早開沒有降低 28 天死亡，反而多了低血壓與感染。原文建議從 stage 2 就評估，並看 SCr 趨勢。'},
+    {q:'CRRT 中病人在用 milrinone，要注意什麼？',
+     o:['沒有影響，milrinone 不經腎排泄','半衰期可達 20 h，會累積中毒','要加量因為會被濾掉','改成 dobutamine 才能做 CRRT'],a:1,
+     e:'CCU 常用的血管活性藥大多不受 CRRT 影響，例外就是 milrinone：在 RRT 病人半衰期可長達 20 h。'},
+    {q:'RCA 期間，補鈣速率越開越大、total Ca / iCa 比值 2.8。應該？',
+     o:['繼續增加補鈣','降低 blood flow','停止 RCA（citrate 中毒）','改 CVVH'],a:2,
+     e:'補鈣需求上升與 total/iCa >2.5 是 citrate 中毒的表現，必須暫停或停止 RCA。肝衰竭與深度休克病人特別容易發生。'}
+  ];
+  var box=document.getElementById('quizBox'), scoreEl=document.getElementById('score'), got=0, done=0;
+  Q.forEach(function(it,idx){
+    var d=document.createElement('div'); d.className='qitem';
+    var h='<p class="q">'+it.q+'</p><ul class="opts">';
+    it.o.forEach(function(o,i){ h+='<li><button type="button" data-i="'+i+'">'+String.fromCharCode(65+i)+'. '+o+'</button></li>'; });
+    h+='</ul><div class="expl">'+it.e+'</div>';
+    d.innerHTML=h;
+    d.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click',function(){
+        if(d.classList.contains('done')) return;
+        var i=+b.getAttribute('data-i');
+        d.classList.add('done'); done++;
+        if(i===it.a){ b.classList.add('right'); got++; }
+        else { b.classList.add('wrong'); d.querySelector('button[data-i="'+it.a+'"]').classList.add('right'); }
+        d.querySelectorAll('button').forEach(function(x){ x.disabled=true; });
+        scoreEl.textContent='答對 '+got+' / '+done+(done===Q.length?'　—　全部完成':'');
+      });
+    });
+    box.appendChild(d);
+  });
+})();
+</script>
+</body>
+</html>

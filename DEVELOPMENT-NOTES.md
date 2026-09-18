@@ -8,6 +8,26 @@ NTUH Hsinchu Branch - Cardiovascular Center
 
 ## Recent Updates
 
+### 2026-09-19: 新增「CCU 急性腎損傷處理」（aki-cardiovascular-care-units.html）
+
+**來源：** Riccardi M, Pagnesi M, Lombardi CM, Metra M. Severe acute kidney injury in the intensive care unit: step-to-step management. *Eur Heart J Acute Cardiovasc Care* 2025;14:618–630（PMID 40578821，OUP 免費全文）。起點是 IG 帳號 drluis.intensivista 的貼文分析（`~/Downloads/reel_analysis_drluis.intensivista_20260918.md`）。
+
+**產出：** 單一 HTML，純 HTML/CSS/vanilla JS、無外部依賴、離線可開。目標讀者為 CCU 護理師／NP／住院醫師。
+
+| 區塊 | 內容 |
+|------|------|
+| Hero | 流行病學四個數字 ＋「尿量刻度尺」（全頁唯一大型視覺：把論文裡所有尿量門檻排成一把尺） |
+| 整體流程 | Graphical abstract 以 CSS flowchart 重製（三分支：stage 1 / 2 / 3） |
+| 步驟 1–7 | 表 1 KDIGO＋ADQI biomarker 分期、可逆原因與心衰藥處置表、RPP 公式、DOSE、利尿劑抗性機轉表、Figure 1 階梯（clip-path 梯形）、表 2 UF 試驗、Figure 2 四象限、表 3 CRRT 模式、RCA／電解質／藥動、脫離、Figure 3 併發症（每項附護理觀察）、每班檢核表（localStorage）、表 4 |
+| 計算器 | KDIGO 分期（SCr 倍數＋mL/kg/h）、腎灌流壓、Furosemide stress test 劑量、CRRT 劑量與 net UF 區間 |
+| 自測 | 8 題即時解答 |
+
+**設計：** 淡青灰底＋墨青字，琥珀＝尿量／警訊、藍＝CRRT、紅＝停止；深淺色以 token 切換（`prefers-color-scheme` ＋ 手動按鈕存 localStorage）。所有表格與圖皆重繪，未使用原始圖檔；頁面明示此為 narrative review 並列出讀時注意事項（UF 證據不一致、早晚 CRRT 只引 meta-analysis 等）。
+
+**index.html：** ICU/CCU 類別新增卡片（🫘，第一張），計數 11→12；`sitemap.xml` 新增。
+
+---
+
 ### 2026-09-14: 新增「竹北 3F ICU 心血管重症教學案例集」（chubei-icu-cardiovascular-cases.html）
 
 **來源：** Drive `004 教學資料 at Hsinchu 院內/Chubei 3F ICU/` — 2021/9–2022/6 竹北生醫 M3FI 晨間跨團隊教學會議紀錄 14 份 docx、1 pptx（疫苗心肌炎 journal reading）、1 gslides（COVID 心血管臨床實務）、1 PAD 衛教文。無影片檔。
