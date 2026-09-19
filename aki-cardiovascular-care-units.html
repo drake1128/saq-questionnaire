@@ -275,11 +275,48 @@ details{border:1px solid var(--line); border-radius:10px; padding:.5rem .9rem; m
 summary{cursor:pointer; font-weight:700}
 details[open] summary{margin-bottom:.4rem}
 
+
+/* ---------- 分享：hero 實心按鈕 ＋ 捲離首屏後的浮動按鈕；QR 離線 base64 ---------- */
+.sharebtn{
+  display:inline-flex; align-items:center; gap:.5rem; font:inherit; font-size:.9rem; font-weight:700;
+  background:var(--amber); color:#fff; border:none; border-radius:999px; padding:.6rem 1.15rem; cursor:pointer;
+  transition:filter .15s ease, transform .15s ease;
+}
+.sharebtn:hover{filter:brightness(1.08)}
+.sharebtn:active{transform:scale(.97)}
+.sharebtn svg{width:16px; height:16px; flex:none}
+.hero-actions{display:flex; gap:.75rem; flex-wrap:wrap; margin-top:1.4rem; align-items:center}
+.hero-actions .note{margin:0}
+.share-fab{
+  position:fixed; z-index:60; right:clamp(1rem,3.5vw,2rem); bottom:clamp(1rem,3.5vw,2rem);
+  box-shadow:0 10px 30px rgba(0,0,0,.35); opacity:0; transform:translateY(14px); pointer-events:none;
+  transition:opacity .3s ease, transform .3s ease;
+}
+.share-fab.on{opacity:1; transform:none; pointer-events:auto}
+@media (prefers-reduced-motion:reduce){ .share-fab{transition:none} }
+.ov{position:fixed; inset:0; z-index:90; display:none; align-items:center; justify-content:center; padding:1.25rem; background:rgba(8,20,24,.7); -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px)}
+.ov.on{display:flex}
+.sheet{position:relative; width:min(100%,380px); background:var(--bg-2); color:var(--ink); border:1px solid var(--line-2); border-radius:16px; padding:1.5rem 1.4rem 1.3rem; text-align:center; box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.sheet h3{margin:0 0 .2rem; font-size:1.05rem}
+.sheet .st{font-size:.8rem; color:var(--mute); margin-bottom:1.1rem}
+.qrbox{display:inline-block; background:#fff; padding:10px; border-radius:10px; border:1px solid var(--line)}
+.qrbox img{display:block; width:190px; height:190px; image-rendering:pixelated; image-rendering:crisp-edges}
+.sheet .hint{font-size:.8rem; color:var(--mute); margin:.9rem .2rem 1rem; line-height:1.6}
+.sheet .lk{font-family:var(--mono); font-size:.74rem; word-break:break-all; background:var(--bg-3); border-radius:8px; padding:.55rem .7rem; margin-bottom:.8rem; user-select:all; -webkit-user-select:all; text-align:left}
+.sbtns{display:flex; gap:.55rem}
+.sbtn{flex:1; font:inherit; font-size:.88rem; font-weight:700; padding:.6rem .8rem; border-radius:999px; cursor:pointer; border:1px solid var(--line-2); background:transparent; color:var(--ink)}
+.sbtn:hover{background:var(--bg-3)}
+.sbtn.primary{background:var(--amber); color:#fff; border-color:var(--amber)}
+.sx{position:absolute; top:.6rem; right:.7rem; background:none; border:none; font-size:1.1rem; color:var(--mute); cursor:pointer; padding:.3rem .5rem; line-height:1}
+.sx:hover{color:var(--ink)}
+.toast{position:fixed; left:50%; bottom:clamp(4.5rem,10vw,6rem); transform:translate(-50%,10px); z-index:100; background:var(--ink); color:var(--bg); padding:.55rem 1rem; border-radius:999px; font-size:.85rem; opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease}
+.toast.on{opacity:1; transform:translate(-50%,0)}
+
 footer{border-top:1px solid var(--line); padding:2.5rem 0 3rem; font-size:.85rem; color:var(--mute)}
 footer ol{padding-left:1.4em}
 footer li{margin:.3em 0}
 @media print{
-  .topbar,.theme-btn{display:none}
+  .topbar,.theme-btn,.sharebtn,.share-fab,.ov,.toast{display:none !important}
   body{background:#fff; color:#000}
   details{page-break-inside:avoid} details[open]{display:block}
   .card,.calc,.qitem{page-break-inside:avoid}
@@ -317,6 +354,10 @@ footer li{margin:.3em 0}
         <div><b class="num">≤80%</b><span>心因性休克病人發生 AKI</span></div>
         <div><b class="num">5–8%</b><span>需要透析；休克者 >13%</span></div>
         <div><b class="num">~15%</b><span>ACS 接受 PCI 後的顯影劑相關 AKI</span></div>
+      </div>
+      <div class="hero-actions">
+        <button type="button" class="sharebtn" data-share aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>分享給 CCU 同事</button>
+        <span class="note">QR Code ＋ 連結，手機掃了就開</span>
       </div>
       <p class="src">依 Riccardi M, Pagnesi M, Lombardi CM, Metra M. <i>Eur Heart J Acute Cardiovasc Care</i> 2025;14:618–630（PMID 40578821）重新整理；表格與流程圖為重製，非原圖。此為 narrative review，並非指引。</p>
     </div>
@@ -796,6 +837,24 @@ footer li{margin:.3em 0}
   </div>
 </footer>
 
+<button type="button" class="sharebtn share-fab" id="fab" data-share aria-haspopup="dialog" aria-label="分享此教學頁"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>分享</button>
+
+<div class="ov" id="shareov" role="dialog" aria-modal="true" aria-labelledby="sharetitle" hidden>
+  <div class="sheet">
+    <button type="button" class="sx" id="sharex" aria-label="關閉">✕</button>
+    <h3 id="sharetitle">分享此教學頁</h3>
+    <div class="st">心血管加護病房的急性腎損傷</div>
+    <div class="qrbox"><img id="qrimg" alt="本頁網址的 QR Code" width="190" height="190"></div>
+    <p class="hint">用手機相機掃描即可開啟。歡迎轉傳給 CCU 護理師、NP 與住院醫師。</p>
+    <div class="lk" id="sharelink"></div>
+    <div class="sbtns">
+      <button type="button" class="sbtn primary" id="sharecopy">複製連結</button>
+      <button type="button" class="sbtn" id="sharenative" hidden>系統分享</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 <script>
 (function(){
   // ---------- theme ----------
@@ -922,6 +981,37 @@ footer li{margin:.3em 0}
     });
     box.appendChild(d);
   });
+
+  // ---------- 分享（離線 QR，不打外部服務） ----------
+  var SHARE_URL="https://drake1128.github.io/saq-questionnaire/aki-cardiovascular-care-units.html";
+  var SHARE_TEXT="CCU 急性腎損傷處理：認 AKI → 確認體液過量 → 藥物 → CRRT → 脫離。KDIGO 分期、利尿劑抗性階梯、Furosemide stress test、CRRT 設定與併發症，附床邊計算器。";
+  var QR_DATA="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAAnAQAAAACk2GyYAAAA9UlEQVR42gHqABX/Af8AAAD/AwEksZpOAL76/tL6A0PZH9WyAgAJYdwAAgDt75wAAhwJ6mRwAyEXQAwwAP+W7Sf+AKDmHoYOAdFwNuQbAMjZOfQyAv9CO0aoAaAllTbyAvtRV+38BAMDx1pAAuXwMBIsAeijSK0qBBf9UCbmAez75/SgArUo6jnYAdb4EWlGAeuALOhXAsUG4SM8Ak/bRAEgAcbu5mqqBOnA8zcwAg8G2EeUAKf6bCS6BPtn8WRQAf+U7dNLAwFNjWX+Ab7qBE+XBOQbMcWYA1H7NfhBBADe7gTvBBxVufAaAyHWNhO+Af8AAAD/86pjexDwWhEAAAAASUVORK5CYII=";
+  var ov=document.getElementById('shareov'), toastEl=document.getElementById('toast'), toastTimer=null, lastFocus=null;
+  function say(msg){ toastEl.textContent=msg; toastEl.classList.add('on'); clearTimeout(toastTimer); toastTimer=setTimeout(function(){ toastEl.classList.remove('on'); },2200); }
+  document.getElementById('qrimg').src=QR_DATA;
+  document.getElementById('sharelink').textContent=SHARE_URL;
+  var closeBtn=document.getElementById('sharex'), copyBtn=document.getElementById('sharecopy'), nativeBtn=document.getElementById('sharenative');
+  function openShare(){ lastFocus=document.activeElement; ov.hidden=false; ov.classList.add('on'); closeBtn.focus(); }
+  function closeShare(){ ov.classList.remove('on'); ov.hidden=true; if(lastFocus&&lastFocus.focus) lastFocus.focus(); }
+  document.querySelectorAll('[data-share]').forEach(function(b){ b.addEventListener('click',openShare); });
+  closeBtn.addEventListener('click',closeShare);
+  ov.addEventListener('click',function(e){ if(e.target===ov) closeShare(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&ov.classList.contains('on')) closeShare(); });
+  copyBtn.addEventListener('click',function(){
+    var done=function(){ say('連結已複製'); }, fail=function(){ say('請長按上方連結手動複製'); };
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(SHARE_URL).then(done,fail); }
+    else{ try{ var ta=document.createElement('textarea'); ta.value=SHARE_URL; ta.setAttribute('readonly',''); ta.style.cssText='position:fixed;opacity:0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); done(); }catch(err){ fail(); } }
+  });
+  if(navigator.share){
+    nativeBtn.hidden=false;
+    nativeBtn.addEventListener('click',function(){
+      navigator.share({title:document.title,text:SHARE_TEXT,url:SHARE_URL}).catch(function(e){ if(e&&e.name!=='AbortError') say('此裝置不支援系統分享'); });
+    });
+  }
+  var fab=document.getElementById('fab'), heroEl=document.querySelector('header.hero');
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(en){ fab.classList.toggle('on',!en[0].isIntersecting); },{threshold:0}).observe(heroEl);
+  } else { fab.classList.add('on'); }
 })();
 </script>
 </body>
