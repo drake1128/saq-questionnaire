@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>冠狀動脈慢性全阻塞(CTO)心導管治療 - 病人衛教</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -134,27 +134,27 @@
 
         // Risk data
         const riskData = [
-            { name: '冠狀動脈穿孔', rate: '2.5-8.8%', value: 8.8, color: 'bg-orange-500', desc: '大多是良性的，可能需要球囊止血或包膜支架' },
+            { name: '冠狀動脈穿孔', rate: '2.5-8.8%', value: 8.8, color: 'bg-orange-500', desc: '大多是良性的；較大的穿孔可能需要長時間球囊壓迫、包膜支架或栓塞止血' },
             { name: '心包填塞', rate: '0.3-0.9%', value: 0.9, color: 'bg-red-500', desc: '可能需要心包穿刺術引流' },
-            { name: '手術期間心肌梗塞', rate: '0.6-2.6%', value: 2.6, color: 'bg-red-400', desc: '可能由側支損傷或血栓形成導致' },
-            { name: '主動脈剝離', rate: '0.8-1.8%', value: 1.8, color: 'bg-orange-400', desc: '大多數會自行癒合，少數需要手術' },
-            { name: '導絲/導管困住', rate: '~1.5%', value: 1.5, color: 'bg-yellow-500', desc: '可能延長手術時間' },
+            { name: '手術期間心肌梗塞', rate: '0.6-2.6%', value: 2.6, color: 'bg-red-400', desc: '原因包括供應側支的血管受損 (0.6%)、分支阻塞、急性支架血栓 (0.3%) 或栓塞' },
+            { name: '主動脈–冠狀動脈剝離', rate: '0.8-1.8%', value: 1.8, color: 'bg-orange-400', desc: '導管或注射顯影劑造成主動脈壁小血腫，大多數會自行癒合，少數需要手術' },
+            { name: '器材斷裂或卡住', rate: '~1.5%', value: 1.5, color: 'bg-yellow-500', desc: '多數只是延長手術時間取出；少數小段導絲會留在血管內，通常無害' },
             { name: '危及生命心律不整', rate: '~1.2%', value: 1.2, color: 'bg-red-600', desc: '可能需要電擊或起搏器' },
-            { name: '急性心臟衰竭', rate: '~1.1%', value: 1.1, color: 'bg-red-500', desc: '可能需要機械循環支持' },
+            { name: '急性心臟衰竭 / 心因性休克', rate: '~1.1%', value: 1.1, color: 'bg-red-500', desc: '藥物不足時可能需要 IABP、Impella 或 ECMO 等機械循環支持' },
             { name: '緊急心臟手術', rate: '0.1-0.7%', value: 0.7, color: 'bg-red-700', desc: '罕見但可能發生' },
             { name: '死亡', rate: '0.2-0.9%', value: 0.9, color: 'bg-gray-700', desc: '極少數情況' }
         ];
 
         const nonCardiacRisks = [
             { name: '血管穿刺併發症', rate: '0.5-1.5%', desc: '血腫、偽動脈瘤等' },
-            { name: '顯影劑腎病變', rate: '0.8-3.8%', desc: '腎功能暫時下降' },
+            { name: '顯影劑過敏或腎病變', rate: '0.8-3.8%', desc: '過敏反應或腎功能暫時下降' },
             { name: '重大出血', rate: '0.4-0.8%', desc: '可能需要輸血' },
             { name: '中風', rate: '<0.01%', desc: '極罕見' },
             { name: '皮膚輻射傷害', rate: '<0.01%', desc: '極罕見' }
         ];
 
         const lateRisks = [
-            { name: '支架血栓', rate: '0-3%', desc: '需終身服用抗血小板藥物預防' },
+            { name: '支架血栓', rate: '0-3%', desc: '使用新一代塗藥支架已很少見；務必按時服用抗血小板藥物預防' },
             { name: '再狹窄', rate: '2-8%', desc: '支架內組織增生，可再次治療' }
         ];
 
@@ -164,9 +164,8 @@
                 {/* Header */}
                 <div className="text-center mb-8">
                     <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-red-500 to-pink-500 mb-4">
-                        <Icons.Heart />
-                        <span className="text-white text-3xl">
-                            <svg viewBox="0 0 24 24" fill="currentColor" className="w-10 h-10">
+                        <span className="text-white">
+                            <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" className="w-10 h-10">
                                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                             </svg>
                         </span>
@@ -206,9 +205,10 @@
 
                 {/* Footer Reference */}
                 <div className="mt-8 pt-4 border-t border-white/10">
-                    <p className="text-gray-500 text-xs text-center">
-                        內容來源：臺大醫院新竹分院心臟血管中心<br/>
-                        CTO PCI 病人知情同意書 2023 版
+                    <p className="text-gray-500 text-xs text-center leading-relaxed">
+                        內容依據：Di Mario C, et al. Recanalisation of coronary chronic total occlusions. <em>EuroIntervention</em> 2022;18:535-561，Supplementary Appendix 1「Patient informed consent for CTO recanalisation」中譯改寫<br/>
+                        <a href="https://doi.org/10.4244/EIJ-D-21-01117" target="_blank" rel="noopener" className="text-blue-400 underline">doi:10.4244/EIJ-D-21-01117</a><br/>
+                        整理：謝慕揚 MD, PhD, FESC｜臺大醫院新竹分院心臟血管中心
                     </p>
                 </div>
             </div>
@@ -311,7 +311,7 @@
             const procedureSteps = [
                 {
                     title: '血管穿刺',
-                    content: '通常需要在兩個以上位置進行動脈穿刺。穿刺位置可能在：\n• 腹股溝（股動脈）\n• 手腕（橈動脈）\n• 手臂（肱動脈）\n\n醫師會根據情況選擇最適合的位置。'
+                    content: '大多數情況需要兩個動脈穿刺位置（尤其側支來自對側血管時）。穿刺位置可能在：\n• 腹股溝（股動脈）\n• 手腕（橈動脈）\n• 手臂（肱動脈）\n\n醫師會根據情況選擇最適合的位置。'
                 },
                 {
                     title: '導絲穿越阻塞',
@@ -328,6 +328,10 @@
                 {
                     title: '支架植入',
                     content: '擴張後，幾乎都需要植入一個或多個金屬支架。\n\n• 支架由惰性金屬製成，不會產生排斥\n• 新一代塗藥支架可減少再狹窄風險\n• 支架在高壓下會嵌入動脈壁，不會移動'
+                },
+                {
+                    title: '若當天無法完全開通',
+                    content: '與一般心導管手術（成功率接近 100%）不同，CTO 手術失敗雖少見但仍可能發生。\n\n當達到預先設定的 X 光劑量或顯影劑用量上限時，醫師會先中止手術以確保安全；有時會先部分開通、不放支架，改日再做第二次嘗試（稱為「投資性手術」）。'
                 }
             ];
 
@@ -399,7 +403,10 @@
                                     <p className="text-gray-500 text-xs">如 Clopidogrel</p>
                                 </div>
                             </div>
-                            <p className="text-yellow-400 text-xs mt-3">
+                            <p className="text-gray-400 text-xs mt-3">
+                                雙抗血小板藥物的服用時間依病情複雜度、支架數量與長度及其他疾病而定；之後仍需<span className="text-white">終身服用一種</span>抗血小板藥物。
+                            </p>
+                            <p className="text-yellow-400 text-xs mt-2">
                                 ⚠️ 請告知醫師您是否對阿斯匹靈過敏或有重大出血病史
                             </p>
                         </div>
@@ -642,6 +649,26 @@
                         最適合您的治療方式取決於您的整體健康狀況、症狀嚴重程度、冠狀動脈病變的複雜度等因素。請與您的心臟科醫師充分討論，共同決定最佳治療方案。
                     </p>
                 </div>
+
+                <div className="glass-card rounded-2xl p-5">
+                    <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                        <span className="text-2xl">📜</span> 您的權利
+                    </h3>
+                    <ul className="text-gray-300 text-sm space-y-2">
+                        <li className="flex items-start gap-2">
+                            <span className="text-blue-400">•</span>
+                            <span>您可以隨時要求醫療團隊進一步說明</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-blue-400">•</span>
+                            <span>在手術開始前，您都可以撤回同意的決定</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-blue-400">•</span>
+                            <span>簽署同意書前，請確認已與醫師討論過本手術的風險與好處</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
         );
 
@@ -674,6 +701,7 @@
                         <p className="text-gray-300 mb-2">通常在手術後</p>
                         <p className="text-4xl font-bold text-blue-400">隔天</p>
                         <p className="text-gray-400 text-sm mt-2">即可出院</p>
+                        <p className="text-gray-500 text-xs mt-2">若發生併發症，住院時間會依其種類與嚴重度延長</p>
                     </div>
                 </div>
 
@@ -752,6 +780,7 @@
                             <div className="flex items-center gap-3 p-4">
                                 <button
                                     onClick={() => setCurrentSection('home')}
+                                    aria-label="返回首頁"
                                     className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white"
                                 >
                                     <Icons.ArrowLeft />
@@ -787,6 +816,8 @@
                                         <button
                                             key={section.id}
                                             onClick={() => setCurrentSection(section.id)}
+                                            aria-label={section.title}
+                                            aria-current={isActive ? 'page' : undefined}
                                             className={`flex flex-col items-center p-2 transition-colors ${isActive ? 'text-blue-400' : 'text-gray-400 hover:text-white'}`}
                                         >
                                             <div className={`section-indicator ${isActive ? 'bg-blue-400 w-2 h-2' : 'bg-gray-600 w-1.5 h-1.5'}`} />
