@@ -8,6 +8,16 @@ NTUH Hsinchu Branch - Cardiovascular Center
 
 ## Recent Updates
 
+### 2026-09-20: 新增「冠狀動脈與傳導系統」（coronary-conduction-system.html）
+
+**來源：** 使用者提供的講義頁（原檔名 `冠狀動脈與傳導系統.html`），內容為傳導系統各段供血解剖、RCA 阻塞→AV block／LAD 近端阻塞→RBBB 的機轉、nodal vs. infranodal 對照、臨床決策、5 題自測與 PubMed 查證文獻；圖片以 base64 內嵌（約 3 MB）。
+
+**本次處理：** 改名搬入 repo；沿用 aki-cardiovascular-care-units 的分享模式加入分享按鈕（hero 按鈕＋捲離首屏後的浮動鈕、離線 base64 QR、複製連結、系統分享、Esc／點遮罩關閉、列印時隱藏）。主色沿用頁面既有 `--lad` 藍。
+
+**index.html：** 導管室教學類別新增卡片（🫀，第一張，`data-disease="coronary arrhythmia"`），計數 13→14；`sitemap.xml` 新增。
+
+---
+
 ### 2026-09-19: 新增「CCU 急性腎損傷處理」（aki-cardiovascular-care-units.html）
 
 **來源：** Riccardi M, Pagnesi M, Lombardi CM, Metra M. Severe acute kidney injury in the intensive care unit: step-to-step management. *Eur Heart J Acute Cardiovasc Care* 2025;14:618–630（PMID 40578821，OUP 免費全文）。起點是 IG 帳號 drluis.intensivista 的貼文分析（`~/Downloads/reel_analysis_drluis.intensivista_20260918.md`）。
