@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>ACS 降脂治療 藥師前後測題庫｜主治醫師試作與審題</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap" rel="stylesheet">
+<style>
+:root {
+    --paper: #f1f5f3;
+    --surface: #ffffff;
+    --ink: #173b36;
+    --ink-soft: #4d6763;
+    --line: #cfdad6;
+    --foil: #dbe3e0;
+    --foil-edge: #b9c7c2;
+    --lipid: #e3a21a;
+    --lipid-wash: #fdf4dc;
+    --right: #1e7b52;
+    --right-wash: #e4f3ea;
+    --wrong: #b4372b;
+    --wrong-wash: #fbe9e6;
+    --serif: 'Noto Serif TC', 'Songti TC', 'PMingLiU', serif;
+    --sans: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--ink);
+    background: var(--paper);
+}
+button, textarea, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--lipid); outline-offset: 2px; }
+
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 20px 96px; }
+
+/* 頁首 */
+.masthead {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+    padding: 18px 0 12px;
+    font-size: 14px; color: var(--ink-soft);
+}
+.masthead strong { font-family: var(--serif); font-weight: 900; font-size: 16px; color: var(--ink); }
+.masthead span { white-space: nowrap; flex-shrink: 0; }
+.masthead button { background: none; border: 0; color: var(--ink-soft); text-decoration: underline; font-size: 14px; }
+
+/* 藥排：25 格，每排 5 顆＝一個領域 */
+.pack { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 14px; scrollbar-width: none; }
+.pack::-webkit-scrollbar { display: none; }
+.strip {
+    flex: 1 1 0; min-width: 0;
+    background: linear-gradient(180deg, #e6ecea, var(--foil));
+    border: 1px solid var(--foil-edge);
+    border-radius: 10px;
+    padding: 7px 9px 6px;
+}
+.strip-name { font-size: 12px; color: var(--ink-soft); line-height: 1.3; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.strip.is-here .strip-name { color: var(--ink); font-weight: 700; }
+.cells { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+.cell {
+    width: 100%; max-width: 28px; aspect-ratio: 1; padding: 0; justify-self: center; border-radius: 50%;
+    border: 1px solid var(--foil-edge);
+    background: radial-gradient(circle at 35% 30%, #fff, #eef2f0 70%);
+    font-size: 11px; line-height: 1; color: var(--ink-soft);
+    display: grid; place-items: center;
+}
+.cell.is-right { background: var(--right); border-color: var(--right); color: #fff; }
+.cell.is-wrong { background: var(--wrong); border-color: var(--wrong); color: #fff; }
+.cell.is-here { box-shadow: 0 0 0 3px var(--lipid); color: var(--ink); font-weight: 700; }
+.cell.is-here.is-right, .cell.is-here.is-wrong { color: #fff; }
+
+/* 起始頁 */
+.intro h1 {
+    font-family: var(--serif); font-weight: 900;
+    font-size: clamp(30px, 6.4vw, 46px); line-height: 1.25; letter-spacing: 0.01em;
+    margin: 28px 0 10px; text-wrap: balance;
+}
+.intro .lede { font-size: 18px; color: var(--ink-soft); max-width: 34em; }
+.chain { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 0; margin: 30px 0 8px; }
+.chain li {
+    position: relative;
+    background: var(--ink); color: #fff;
+    padding: 9px 26px 9px 22px; margin-right: 4px;
+    font-weight: 500; font-size: 16px;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%, 12px 50%);
+}
+.chain li:first-child { clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%); padding-left: 16px; }
+.chain li:last-child { background: var(--lipid); color: var(--ink); font-weight: 700; }
+.chain-note { font-size: 14px; color: var(--ink-soft); margin-bottom: 30px; }
+.facts { border-top: 2px solid var(--ink); margin: 0 0 28px; }
+.facts div { display: grid; grid-template-columns: 7.5em 1fr; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.facts dt { font-weight: 700; }
+.facts dd { color: var(--ink-soft); }
+.caution {
+    background: var(--lipid-wash); border-left: 5px solid var(--lipid);
+    padding: 14px 18px; margin-bottom: 28px; font-size: 16px;
+}
+.field label { display: block; font-weight: 700; margin-bottom: 6px; }
+.field input {
+    width: 100%; max-width: 320px; padding: 10px 12px;
+    border: 1.5px solid var(--ink); border-radius: 6px; background: var(--surface);
+}
+.field small { display: block; color: var(--ink-soft); font-size: 14px; margin-top: 4px; }
+
+.btn {
+    display: inline-block; border: 2px solid var(--ink); border-radius: 6px;
+    padding: 11px 24px; font-weight: 700; background: var(--surface);
+}
+.btn-main { background: var(--ink); color: #fff; }
+.btn-main:disabled { opacity: 0.35; cursor: not-allowed; }
+.btn-danger { border-color: var(--wrong); color: var(--wrong); }
+.row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 26px; }
+.row .push { margin-left: auto; }
+
+/* 題目 */
+.qhead { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; color: var(--ink-soft); margin-top: 14px; }
+.scenario {
+    background: var(--surface); border: 1px solid var(--line); border-left: 5px solid var(--ink);
+    padding: 14px 18px; margin: 14px 0 4px; font-size: 17px;
+}
+.scenario b { display: block; font-size: 14px; color: var(--ink-soft); font-weight: 500; }
+.stem { font-family: var(--serif); font-weight: 600; font-size: clamp(20px, 4.6vw, 24px); line-height: 1.6; margin: 12px 0 20px; }
+.opts { display: grid; gap: 10px; }
+.opt {
+    display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; text-align: left;
+    background: var(--surface); border: 1.5px solid var(--line); border-radius: 8px;
+    padding: 13px 16px; width: 100%;
+}
+.opt .letter {
+    width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--ink);
+    display: grid; place-items: center; font-weight: 700; font-size: 15px; line-height: 1;
+}
+.opt:hover:not(:disabled) { border-color: var(--ink); }
+.opt.is-picked { border-color: var(--ink); background: var(--lipid-wash); }
+.opt.is-picked .letter { background: var(--lipid); border-color: var(--lipid); }
+.opt:disabled { cursor: default; color: var(--ink); }
+.opt.is-key { border-color: var(--right); background: var(--right-wash); }
+.opt.is-key .letter { background: var(--right); border-color: var(--right); color: #fff; }
+.opt.is-miss { border-color: var(--wrong); background: var(--wrong-wash); }
+.opt.is-miss .letter { background: var(--wrong); border-color: var(--wrong); color: #fff; }
+.opt .why { grid-column: 2; font-size: 15px; color: var(--ink-soft); line-height: 1.65; margin-top: 2px; }
+.opt .mark { font-size: 13px; font-weight: 700; margin-left: 8px; white-space: nowrap; }
+.opt.is-key .mark { color: var(--right); }
+.opt.is-miss .mark { color: var(--wrong); }
+
+/* 詳解 */
+.verdict { font-family: var(--serif); font-weight: 900; font-size: 24px; margin: 30px 0 6px; }
+.verdict:focus { outline: none; }
+.verdict.ok { color: var(--right); }
+.verdict.no { color: var(--wrong); }
+.explain p { margin-bottom: 12px; }
+.explain h3 { font-size: 15px; font-weight: 700; margin: 20px 0 6px; }
+.explain ul { padding-left: 1.3em; }
+.explain li { margin-bottom: 3px; }
+.sources { font-size: 14px; color: var(--ink-soft); }
+.sources a, .reflist a { color: var(--ink); }
+.hint { border: 1.5px dashed var(--ink-soft); border-radius: 8px; padding: 12px 16px; margin-top: 20px; font-size: 15.5px; }
+.hint b { display: block; font-size: 14px; }
+
+.review { border-top: 2px solid var(--ink); margin-top: 30px; padding-top: 16px; }
+.review h3 { font-size: 17px; margin-bottom: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.chip { border: 1.5px solid var(--ink); border-radius: 999px; background: var(--surface); padding: 6px 18px; font-size: 15.5px; }
+.chip[aria-pressed="true"] { background: var(--ink); color: #fff; }
+.review textarea {
+    width: 100%; min-height: 84px; resize: vertical; padding: 10px 12px;
+    border: 1.5px solid var(--line); border-radius: 6px; background: var(--surface); line-height: 1.6;
+}
+.review textarea:focus { border-color: var(--ink); }
+
+/* 成績 */
+.score { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; margin: 26px 0 6px; }
+.score b { font-family: var(--serif); font-weight: 900; font-size: clamp(54px, 13vw, 84px); line-height: 1; }
+.score span { font-size: 18px; color: var(--ink-soft); }
+.domains { border-top: 2px solid var(--ink); margin: 20px 0 34px; }
+.domain { display: grid; grid-template-columns: 1fr auto auto; gap: 14px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.domain .dots { display: flex; gap: 5px; }
+.domain .dots i { width: 18px; height: 18px; border-radius: 50%; background: var(--wrong); }
+.domain .dots i.r { background: var(--right); }
+.domain .n { font-weight: 700; min-width: 2.6em; text-align: right; }
+h2.sec { font-family: var(--serif); font-weight: 900; font-size: 24px; margin: 40px 0 10px; }
+.filter { display: flex; align-items: center; gap: 8px; font-size: 15px; margin-bottom: 8px; }
+.filter input { width: 18px; height: 18px; accent-color: var(--ink); }
+.qlist { list-style: none; border-top: 1px solid var(--line); }
+.qlist button {
+    display: grid; grid-template-columns: 4.2em 1fr auto; gap: 10px; align-items: baseline; width: 100%; text-align: left;
+    background: none; border: 0; border-bottom: 1px solid var(--line); padding: 10px 2px;
+}
+.qlist button:hover { background: var(--surface); }
+.qlist .no { font-weight: 700; }
+.qlist .no.bad { color: var(--wrong); }
+.qlist .no.good { color: var(--right); }
+.qlist .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15.5px; }
+.qlist .tag { font-size: 13px; color: var(--ink-soft); white-space: nowrap; }
+.observe { background: var(--surface); border: 1px solid var(--line); padding: 16px 20px; }
+.observe li { margin: 0 0 8px 1.2em; }
+.export textarea {
+    width: 100%; min-height: 220px; padding: 12px; font-size: 14.5px; line-height: 1.6;
+    border: 1.5px solid var(--line); border-radius: 6px; background: var(--surface);
+}
+.said { font-size: 15px; color: var(--right); font-weight: 700; }
+.reflist { padding-left: 1.4em; font-size: 14.5px; color: var(--ink-soft); }
+.reflist li { margin-bottom: 8px; }
+.foot { margin-top: 48px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--ink-soft); }
+
+@media (max-width: 560px) {
+    body { font-size: 16.5px; }
+    .wrap { padding: 0 16px 80px; }
+    .strip { flex: 0 0 158px; }
+    .facts div { grid-template-columns: 1fr; gap: 0; }
+    .row .btn { flex: 1 1 auto; text-align: center; }
+    .row .push { margin-left: 0; }
+    .domain { grid-template-columns: 1fr auto; }
+    .domain .dots { grid-column: 1; grid-row: 2; }
+    .domain .n { grid-row: 1 / span 2; }
+}
+@media (prefers-reduced-motion: no-preference) {
+    .cell, .opt, .chip { transition: background-color .15s, border-color .15s, box-shadow .15s; }
+}
+@media print {
+    .pack, .row, .review, .masthead button { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+    <header class="masthead">
+        <strong>ACS 降脂治療 藥師前後測題庫</strong>
+        <span id="mastRight"></span>
+    </header>
+    <nav class="pack" id="pack" aria-label="題目進度"></nav>
+    <main id="app"></main>
+    <footer class="foot">
+        審閱稿，2026 年 10 月 6 日。題目、選項與答案取自心血管中心 QCC「提升藥師對 ACS 患者降脂治療之用藥衛教、副作用辨識、LDL 治療評估及轉介處理能力」前後測草案；詳解為製作本頁時依指引與文獻另行撰寫，尚待專科醫師審定。
+    </footer>
+</div>
+
+<script>
+/* ---------- 題庫 ---------- */
+const DOMAINS = [
+    { key: 'A', name: 'ACS 與 LDL 治療概念' },
+    { key: 'B', name: '降脂藥物知識' },
+    { key: 'C', name: '副作用辨識' },
+    { key: 'D', name: 'LDL 評估與轉介' },
+    { key: 'E', name: '臨床情境 Case' }
+];
+
+const REFS = {
+    G26: { short: '2026 ACC/AHA 血脂指引', full: 'Blumenthal RS, Morris PB, Gaudino M, et al. 2026 ACC/AHA/AACVPR/ABC/ACPM/ADA/AGS/APhA/ASPC/NLA/PCNA Guideline on the Management of Dyslipidemia. J Am Coll Cardiol 2026;87(19):2624-2757.', pmid: '41824590', doi: '10.1016/j.jacc.2025.11.016' },
+    ACS25: { short: '2025 ACC/AHA ACS 指引', full: 'Rao SV, O\'Donoghue ML, Ruel M, et al. 2025 ACC/AHA/ACEP/NAEMSP/SCAI Guideline for the Management of Patients With Acute Coronary Syndromes. Circulation 2025;151(13):e771-e862.', pmid: '40014670', doi: '10.1161/CIR.0000000000001309' },
+    TW22: { short: '2022 台灣高風險病人血脂指引更新', full: 'Chen PS, Lee M, Tang SC, et al. 2022 focused update of the 2017 Taiwan lipid guidelines for high risk patients: Coronary artery disease, peripheral artery disease and ischemic stroke. J Formos Med Assoc 2022;121(8):1363-1370.', pmid: '35410823', doi: '10.1016/j.jfma.2022.03.001' },
+    IMPROVE: { short: 'IMPROVE-IT', full: 'Cannon CP, Blazing MA, Giugliano RP, et al. Ezetimibe Added to Statin Therapy after Acute Coronary Syndromes. N Engl J Med 2015;372(25):2387-97.', pmid: '26039521', doi: '10.1056/NEJMoa1410489' },
+    FOURIER: { short: 'FOURIER', full: 'Sabatine MS, Giugliano RP, Keech AC, et al. Evolocumab and Clinical Outcomes in Patients with Cardiovascular Disease. N Engl J Med 2017;376(18):1713-1722.', pmid: '28304224', doi: '10.1056/NEJMoa1615664' },
+    ODYSSEY: { short: 'ODYSSEY OUTCOMES', full: 'Schwartz GG, Steg PG, Szarek M, et al. Alirocumab and Cardiovascular Outcomes after Acute Coronary Syndrome. N Engl J Med 2018;379(22):2097-2107.', pmid: '30403574', doi: '10.1056/NEJMoa1801174' },
+    CLEAR: { short: 'CLEAR Outcomes', full: 'Nissen SE, Lincoff AM, Brennan D, et al. Bempedoic Acid and Cardiovascular Outcomes in Statin-Intolerant Patients. N Engl J Med 2023;388(15):1353-1364.', pmid: '36876740', doi: '10.1056/NEJMoa2215024' },
+    SAMSON: { short: 'SAMSON', full: 'Wood FA, Howard JP, Finegold JA, et al. N-of-1 Trial of a Statin, Placebo, or No Treatment to Assess Side Effects. N Engl J Med 2020;383(22):2182-2184.', pmid: '33196154', doi: '10.1056/NEJMc2031173' },
+    ZOL: { short: 'Zolezzi 2020', full: 'Zolezzi M, Abdallah O, Sankaralingam S. Development and Evaluation of an Educational Program for Community Pharmacists on Cardiovascular Risk Assessment. Risk Manag Healthc Policy 2020;13:623-632.', pmid: '32607030', doi: '10.2147/RMHP.S231075' }
+};
+
+const QUESTIONS = [
+/* A. ACS 與 LDL 治療概念 */
+{ id: 'Q1', d: 0,
+  stem: '一名近期發生急性冠心症（ACS）的病人，其降脂治療之主要目標為何？',
+  opts: ['僅降低總膽固醇', '降低LDL-C以降低後續ASCVD事件風險', '僅改善HDL-C', '僅控制三酸甘油脂'],
+  ans: 1,
+  why: '<p>LDL-C 是動脈粥狀硬化的致病因子，也是 ACS 後降脂治療的療效指標。2025 ACC/AHA ACS 指引建議所有 ACS 病人使用高強度 statin（COR 1）。2026 ACC/AHA 血脂指引對臨床 ASCVD 設定的目標是 LDL-C &lt;70 mg/dL 且降幅 ≥50%，very-high-risk ASCVD 則是 &lt;55 mg/dL。</p>',
+  notes: ['總膽固醇包含 HDL 與 VLDL，不是治療標的。', '正解。', '以藥物提高 HDL-C 的試驗（niacin、多數 CETP 抑制劑）沒有減少心血管事件，HDL-C 不是治療目標。', '三酸甘油脂是 LDL-C 達標之後才處理的殘餘風險；數值很高時治療的目的是預防胰臟炎。'],
+  refs: ['ACS25', 'G26'] },
+{ id: 'Q2', d: 0,
+  stem: '對於已發生ASCVD的病人，statin在降脂治療中的角色，下列何者最適當？',
+  opts: ['僅於LDL-C >190 mg/dL時使用', 'Statin通常是降脂治療的基礎治療', 'Statin應避免與其他降脂藥物併用', 'Statin只能用於無心血管疾病病人'],
+  ans: 1,
+  why: '<p>Statin 是次級預防的基礎用藥。已有 ASCVD 的病人不論治療前 LDL-C 多少都應使用，再依達標情形決定是否加上其他藥物。</p>',
+  notes: ['LDL-C ≥190 mg/dL 是初級預防中「嚴重高膽固醇血症」的門檻，與 ASCVD 病人是否用藥無關。', '正解。', '相反。最大耐受劑量 statin 仍未達標時，指引建議併用 ezetimibe、PCSK9 單株抗體等 non-statin 藥物。', '敘述顛倒，ASCVD 病人正是獲益最大的族群。'],
+  refs: ['G26', 'ACS25'] },
+{ id: 'Q3', d: 0,
+  stem: '下列何者最能代表「LDL-C治療未達標」時，藥師應進一步評估的內容？',
+  opts: ['僅詢問病人是否喜歡目前藥物', '僅確認病人是否有吃早餐', '評估用藥順從性、治療強度及是否需要進一步治療', '直接建議病人自行增加statin劑量'],
+  ans: 2,
+  why: '<p>LDL-C 未達標最常見的三個原因是：沒有按時服藥、治療強度不足、該加藥卻沒有加。2026 指引建議在開始治療或調整劑量後 4 到 12 週追蹤血脂，之後每 6 到 12 個月追蹤一次，用來同時評估療效與順從性（COR 1）。</p><p>這題把「未達標」從一個數字變成需要拆解原因的臨床評估。</p>',
+  notes: ['病人的喜好不能解釋未達標的原因。', '是否吃早餐與 LDL-C 未達標的評估無關。', '正解。', '劑量調整是處方決定，不應請病人自行增加。'],
+  refs: ['G26'] },
+{ id: 'Q4', d: 0,
+  stem: '下列何者最符合高強度statin（high-intensity statin）的概念？',
+  opts: ['LDL-C平均降低約10%', 'LDL-C平均降低約20%', 'LDL-C平均降低≥50%', 'LDL-C完全不變'],
+  ans: 2,
+  why: '<p>高強度 statin 指平均可使 LDL-C 下降 ≥50% 的劑量，也就是 atorvastatin 40 到 80 mg 或 rosuvastatin 20 到 40 mg。中強度為下降 30% 到 49%，低強度為 &lt;30%。</p><p>補充：statin 劑量每加倍一次，LDL-C 大約只多降 6%。所以高強度 statin 仍未達標時，加上 non-statin 藥物通常比再加倍 statin 有效。</p>',
+  notes: ['屬於低強度的範圍。', '屬於低強度的範圍。', '正解。', 'Statin 一定會使 LDL-C 下降。'],
+  refs: ['G26'],
+  hint: '四個選項裡沒有中強度的「30% 到 49%」，最容易混淆的干擾項缺席，鑑別度可能偏低。可考慮把其中一個選項換成 30% 到 49%。' },
+{ id: 'Q5', d: 0,
+  stem: '一名ACS患者使用最大耐受statin後，LDL-C仍高於治療門檻。此時藥師最適當的處理為何？',
+  opts: ['告知病人不需要再處理', '建議自行增加藥物劑量', '評估順從性、目前治療強度及可能需要加用non-statin therapy，必要時轉介', '直接停用statin'],
+  ans: 2,
+  why: '<p>2025 ACC/AHA ACS 指引：已使用最大耐受劑量 statin 而 LDL-C ≥70 mg/dL 時，建議加上 non-statin 降脂藥（COR 1）；LDL-C 在 55 到 69 mg/dL 之間時，加藥是合理的（COR 2a）。</p><p>藥師在這裡的工作是先確認順從性與目前的治療強度，再把資訊整理好轉給處方醫師。這題開始測「LDL 異常、評估、介入或轉介」這條流程，不只是藥理知識。</p>',
+  notes: ['未達標卻不處理，正是這次 QCC 要改善的問題。', '病人已在最大耐受劑量，而且劑量不應由病人自行調整。', '正解。', '停藥會讓 ACS 後的病人失去最重要的次級預防藥物。'],
+  refs: ['ACS25', 'G26'] },
+
+/* B. 降脂藥物知識 */
+{ id: 'Q6', d: 1,
+  stem: 'Statin降低LDL-C的主要作用機轉為何？',
+  opts: ['抑制腸道膽固醇吸收', '抑制HMG-CoA reductase', '抑制PCSK9', '增加腎臟膽固醇排除'],
+  ans: 1,
+  why: '<p>Statin 抑制 HMG-CoA reductase，也就是肝臟合成膽固醇的速率決定步驟。肝細胞內膽固醇減少後，細胞表面的 LDL receptor 增加，把更多 LDL 從血中清除。</p>',
+  notes: ['這是 ezetimibe 的機轉。', '正解。', '這是 PCSK9 抑制劑（evolocumab、alirocumab、inclisiran）的機轉。', '膽固醇不經腎臟排除，沒有這類降脂藥。'],
+  refs: ['G26'] },
+{ id: 'Q7', d: 1,
+  stem: 'Ezetimibe主要透過何種機轉降低LDL-C？',
+  opts: ['抑制腸道膽固醇吸收', '抑制HMG-CoA reductase', '增加胰島素分泌', '抑制PCSK9產生'],
+  ans: 0,
+  why: '<p>Ezetimibe 抑制小腸刷狀緣上的 NPC1L1 蛋白，減少膽固醇吸收。與 statin 併用時可再讓 LDL-C 下降約 20% 到 25%。</p><p>IMPROVE-IT 試驗收的正是 ACS 後病人：simvastatin 加上 ezetimibe 使 LDL-C 中位數降到 53.7 mg/dL（對照組 69.5 mg/dL），7 年主要終點事件率為 32.7% 對 34.7%。</p>',
+  notes: ['正解。', '這是 statin 的機轉。', '與降脂無關。', '抑制 PCSK9 合成的是 siRNA 藥物 inclisiran。'],
+  refs: ['IMPROVE', 'G26'] },
+{ id: 'Q8', d: 1,
+  stem: 'PCSK9 monoclonal antibody（例如 evolocumab、alirocumab）的主要作用為何？',
+  opts: ['增加LDL receptor degradation', '抑制LDL receptor recycling', '抑制PCSK9，使LDL receptor可被回收利用', '抑制膽酸合成'],
+  ans: 2,
+  why: '<p>PCSK9 會與 LDL receptor 結合，使它被送進溶酶體分解。單株抗體把血中的 PCSK9 中和掉之後，LDL receptor 可以回到肝細胞表面重複使用，LDL-C 約下降 60%。</p><p>FOURIER（evolocumab）與 ODYSSEY OUTCOMES（alirocumab，收 ACS 後病人）都顯示心血管事件減少。2026 指引對 very-high-risk ASCVD 在最大耐受劑量 statin 下仍未達標者，加上 PCSK9 單株抗體為 COR 1。</p>',
+  notes: ['方向相反，這是 PCSK9 本身的作用。', '方向相反。', '正解。', '與 PCSK9 無關。'],
+  refs: ['FOURIER', 'ODYSSEY', 'G26'] },
+{ id: 'Q9', d: 1,
+  stem: '下列何者最適合描述bempedoic acid的臨床定位？',
+  opts: ['僅用於治療高三酸甘油脂血症', '可作為降低LDL-C的non-statin therapy之一', '主要作用為降低血壓', '主要用於治療心律不整'],
+  ans: 1,
+  why: '<p>Bempedoic acid 抑制 ATP-citrate lyase，位置在膽固醇合成路徑中 HMG-CoA reductase 的上游。它是前驅藥，要在肝臟才會被活化，骨骼肌缺少活化所需的酵素，所以肌肉相關副作用少。</p><p>CLEAR Outcomes 試驗收的是 statin 不耐受的病人，主要心血管事件相對風險下降 13%（HR 0.87）。使用時要留意尿酸上升、痛風與膽結石。</p>',
+  notes: ['它降的是 LDL-C，不是三酸甘油脂用藥。', '正解。', '沒有降壓作用。', '與心律不整治療無關。'],
+  refs: ['CLEAR', 'G26'],
+  hint: '請確認本院處方集目前是否有 bempedoic acid。如果沒有，這題考的是藥師實務上接觸不到的藥；可以保留當新知題，或改考院內有的品項。' },
+{ id: 'Q10', d: 1,
+  stem: '一名ACS患者因statin相關肌肉症狀而無法耐受原本的治療強度，下列何者最適當？',
+  opts: ['永久停止所有降脂治療', '評估secondary causes，並依耐受程度考慮調整statin及加入non-statin therapy', '告知病人肌肉症狀一定與statin無關', '改成只使用魚油'],
+  ans: 1,
+  why: '<p>2026 指引對 statin 相關肌肉症狀的處理有兩個重點。第一，先評估 secondary causes（COR 1）。第二，臨床 ASCVD 病人確實無法耐受時，使用降低劑量的 statin，再併用 bempedoic acid、ezetimibe 或 PCSK9 單株抗體（COR 1）。</p><p>原則是盡量保留病人能耐受的 statin 劑量，不是全有或全無。</p>',
+  notes: ['ACS 後病人停掉所有降脂治療，復發風險會明顯上升。', '正解。', '沒有評估之前不能斷言與 statin 無關。', '魚油（omega-3）主要降三酸甘油脂，不降 LDL-C，不能取代 statin。'],
+  refs: ['G26', 'CLEAR'] },
+
+/* C. 副作用辨識 */
+{ id: 'Q11', d: 2,
+  stem: '下列何者最可能提示statin-associated rhabdomyolysis，需要立即進一步評估？',
+  opts: ['輕微鼻塞', '輕微口乾', '嚴重肌肉疼痛或無力合併深色尿液', '輕微腹脹'],
+  ans: 2,
+  why: '<p>橫紋肌溶解症的三個警訊是嚴重肌肉疼痛、肌無力，以及茶色或可樂色的尿（肌球蛋白尿）。雖然罕見，但可能造成急性腎損傷，必須請病人暫停服藥並立即就醫，檢查 CK、腎功能與尿液。</p><p>2026 指引：出現嚴重肌肉症狀時建議檢測 CK 以評估嚴重度（COR 1）。</p>',
+  notes: ['非特異症狀，與肌肉毒性無關。', '非特異症狀，與肌肉毒性無關。', '正解。', '非特異症狀，與肌肉毒性無關。'],
+  refs: ['G26'] },
+{ id: 'Q12', d: 2,
+  stem: '病人服用statin後出現輕微、非特異性的肌肉痠痛，藥師最適當的第一步為何？',
+  opts: ['立即告知病人永久停用statin', '評估症狀特徵、用藥情形及其他可能造成肌肉症狀的因素', '告知這一定是rhabdomyolysis', '建議病人自行加倍statin'],
+  ans: 1,
+  why: '<p>肌肉痠痛、statin 不耐受、橫紋肌溶解症是三件不同的事，不能畫上等號。</p><p>肌肉痠痛很常見，多數與 statin 無關。SAMSON 試驗讓病人輪流服用 statin、安慰劑與不服藥，結果服 statin 時的症狀強度有九成在服安慰劑時也出現。ACC 2026 年的專文估計真正由 statin 造成的肌肉症狀約 5%。</p><p>評估時先問三件事：症狀特徵（對稱、近端大肌群、開始用藥或加量後幾週內出現的比較像 statin 造成）、實際服藥情形與併用藥物、有沒有其他原因。</p>',
+  notes: ['輕微症狀就永久停藥，病人會失去最重要的次級預防藥物。', '正解。', '沒有肌無力與深色尿，不符合橫紋肌溶解症。', '有肌肉症狀時加倍劑量可能加重症狀。'],
+  refs: ['SAMSON', 'G26'] },
+{ id: 'Q13', d: 2,
+  stem: '下列何者屬於藥師在評估statin-associated muscle symptoms時應考慮的因素？',
+  opts: ['藥物交互作用', '甲狀腺功能異常', '其他可能造成肌肉症狀的因素', '以上皆是'],
+  ans: 3,
+  why: '<p>三項都要評估。</p><ul><li>藥物交互作用：CYP3A4 抑制劑（clarithromycin、azole 類抗黴菌藥、cyclosporine）、gemfibrozil。ACS 病人常用的 ticagrelor 與 simvastatin 或 lovastatin 併用時，後兩者劑量不宜超過 40 mg。</li><li>甲狀腺功能低下：本身就會造成肌肉症狀與 CK 上升。</li><li>其他因素：維生素 D 缺乏、劇烈運動、飲酒、腎功能不全、高齡、體型瘦小。</li></ul>',
+  notes: ['正確，但不是唯一。', '正確，但不是唯一。', '正確，但不是唯一。', '正解。'],
+  refs: ['G26'],
+  hint: '選項 C「其他可能造成肌肉症狀的因素」的寫法已經涵蓋 A 與 B，加上「以上皆是」，答案幾乎寫在題目上。建議改成單一最佳答案，例如「下列何者不是 statin 肌肉症狀的危險因子」。' },
+{ id: 'Q14', d: 2,
+  stem: '對於沒有嚴重肌肉症狀的statin使用者，下列何者正確？',
+  opts: ['每次皆需例行檢測CK', '每週檢測CK', '不需要因為使用statin而例行監測CK', 'CK越低越好'],
+  ans: 2,
+  why: '<p>2026 指引：沒有嚴重肌肉症狀的病人，例行檢測 CK 對評估安全性沒有幫助（COR 3: No Benefit，LOE A）。例行檢測肝功能同樣列為 No Benefit。出現嚴重肌肉症狀時才建議檢測 CK（COR 1）。</p><p>無症狀的 CK 輕度上升很常見，例如運動之後。例行檢測只會帶來不必要的擔心與停藥。</p>',
+  notes: ['指引不建議例行檢測。', '指引不建議例行檢測。', '正解。', 'CK 高低與降脂療效無關，也不是治療目標。'],
+  refs: ['G26'] },
+{ id: 'Q15', d: 2,
+  stem: '下列何者是藥師進行降脂藥物衛教時最重要的內容之一？',
+  opts: ['告知病人只要沒有症狀就可以自行停藥', '說明治療目的、用藥方式、可能副作用及出現警訊時的處理方式', '鼓勵病人自行調整劑量', '只說明藥品價格'],
+  ans: 1,
+  why: '<p>衛教要讓病人知道四件事：為什麼吃（降低再次心肌梗塞與中風的風險）、怎麼吃、可能有什麼副作用、出現警訊時怎麼辦（嚴重肌肉痛、無力、深色尿要停藥就醫）。</p><p>高血脂本身沒有症狀，病人最常見的停藥理由就是「沒有不舒服」，所以治療目的要講清楚。</p>',
+  notes: ['LDL-C 高沒有症狀；停藥後數週內 LDL-C 就會回升。', '正解。', '劑量調整應由處方醫師決定。', '價格不是衛教的核心。'],
+  refs: ['G26'] },
+
+/* D. LDL 評估與轉介 */
+{ id: 'Q16', d: 3,
+  stem: '一名ACS患者使用statin後，追蹤LDL-C仍高於治療目標。藥師首先應確認：',
+  opts: ['是否有規則服藥', '目前降脂治療強度', '是否存在治療相關問題', '以上皆是'],
+  ans: 3,
+  why: '<p>三項都要確認。實務上的順序是：先看順從性（最常見、也最容易修正），再看目前的強度是否足夠，最後看有沒有副作用、交互作用或費用等造成病人中斷治療的問題。</p>',
+  notes: ['正確，但不是唯一。', '正確，但不是唯一。', '正確，但不是唯一。', '正解。'],
+  refs: ['G26'],
+  hint: '題幹問的是「首先」應確認什麼，答案卻是「以上皆是」，語意不一致。另外這題與 Q3、Q5 考的是同一個概念。可考慮改成排序題，或換成具體情境。' },
+{ id: 'Q17', d: 3,
+  stem: '若病人表示「因為覺得LDL已經下降，所以自己把statin減半」，藥師最適當的處理為何？',
+  opts: ['接受病人自行調整', '說明降脂治療目的及持續治療的重要性，並評估實際用藥情形', '直接停藥', '建議改吃保健食品即可'],
+  ans: 1,
+  why: '<p>LDL-C 下降是藥物作用的結果，不是可以減藥的理由。減半之後 LDL-C 會回升，而 statin 的效益來自長期把 LDL-C 維持在低點。</p><p>先了解病人減藥的真正原因（擔心副作用、費用、覺得病好了），針對原因說明，並把實際服藥情形回報給處方醫師。</p>',
+  notes: ['未經評估就接受，等於默許治療強度不足。', '正解。', '停藥比減半更危險。', '保健食品不能取代 statin。紅麴含有與 lovastatin 相同的成分，但含量不穩定。'],
+  refs: ['G26'] },
+{ id: 'Q18', d: 3,
+  stem: '下列哪一種情況最需要藥師進一步與醫師／相關照護團隊進行治療評估？',
+  opts: ['LDL-C已達治療目標且順從性良好', 'LDL-C未達標且病人已使用最大耐受statin', '病人每天都有服藥', '病人沒有副作用'],
+  ans: 1,
+  why: '<p>病人已經用到最大耐受劑量的 statin 而 LDL-C 仍未達標，下一步是加上 non-statin 藥物，這需要處方醫師決定，所以要轉介。</p><p>2026 指引對 very-high-risk ASCVD：加上 ezetimibe 為 COR 1，加上 PCSK9 單株抗體為 COR 1。2025 ACS 指引：LDL-C ≥70 mg/dL 加 non-statin 為 COR 1。</p>',
+  notes: ['已達標且順從性好，維持現況並定期追蹤即可。', '正解。', '這是好現象，不需要轉介。', '這是好現象，不需要轉介。'],
+  refs: ['G26', 'ACS25'] },
+{ id: 'Q19', d: 3,
+  stem: '藥師進行LDL異常個案轉介時，下列哪一項資訊最重要？',
+  opts: ['病人最喜歡的藥品顏色', 'LDL-C結果、目前降脂藥物及劑量、用藥順從性及相關副作用', '病人早餐吃什麼', '病人最喜歡的醫師'],
+  ans: 1,
+  why: '<p>好的轉介讓醫師不必重問一遍就能做決定。四項必備資訊是：LDL-C 數值與抽血日期、目前降脂藥物與劑量、順從性評估結果、有沒有副作用。</p>',
+  notes: ['與治療決定無關。', '正解。', '與治療決定無關。', '與治療決定無關。'],
+  refs: ['G26'],
+  hint: '三個干擾選項明顯不合理，不需要專業知識也能答對。可考慮改成較貼近實務的錯誤，例如「只提供 LDL-C 數值」或「只告知病人回診，不附用藥資訊」。' },
+{ id: 'Q20', d: 3,
+  stem: '下列何者最符合本QCC中藥師對ACS患者降脂治療的角色？',
+  opts: ['僅負責發藥', '僅告知藥品名稱', '進行用藥衛教、副作用辨識、LDL治療評估，並於需要時適當轉介', '自行決定所有處方調整'],
+  ans: 2,
+  why: '<p>這是本次 QCC 對藥師角色的定義：衛教、辨識副作用、評估 LDL 治療狀況，並在需要時轉介。藥師負責評估與建議，處方調整仍由醫師決定。</p>',
+  notes: ['低估了藥師的角色。', '低估了藥師的角色。', '正解。', '處方調整屬於醫師權責，藥師提供評估與建議。'],
+  refs: ['ZOL'] },
+
+/* 第二部分：5 個 Case */
+{ id: 'Case 1', d: 4, title: 'LDL 未達標＋治療評估',
+  scenario: '68歲男性，近期ACS出院，使用atorvastatin 40 mg QD。出院後追蹤LDL-C為92 mg/dL。病人表示「每天都有吃藥」。',
+  stem: '藥師下一步最適當的處理為何？',
+  opts: ['告知病人LDL已經下降，不需處理', '評估用藥順從性、治療強度及是否需要進一步降脂治療，必要時轉介', '建議病人自行增加atorvastatin劑量', '停用atorvastatin'],
+  ans: 1,
+  why: '<p>Atorvastatin 40 mg 已經是高強度 statin，LDL-C 92 mg/dL 仍高於 70 mg/dL。先核對病人是否真的每天服藥（可對照領藥紀錄），也確認抽血時間距離開始用藥是否已有 4 到 12 週。</p><p>確認之後仍未達標，依 2025 ACS 指引應加上 non-statin 藥物（LDL-C ≥70 mg/dL，COR 1）。IMPROVE-IT 支持 ACS 後加上 ezetimibe。</p>',
+  points: ['確認LDL結果', '確認目前藥物／劑量', '評估順從性', '評估是否需要治療強化', '必要時轉介'],
+  notes: ['92 mg/dL 未達標，不能不處理。', '正解。', '不應請病人自行加量；而且 40 mg 加到 80 mg 大約只多降 6%。', '停藥會讓 LDL-C 回升、風險上升。'],
+  refs: ['ACS25', 'IMPROVE', 'G26'],
+  hint: '題幹沒有寫治療前的 LDL-C、出院後多久抽血，也沒有寫院內採用的目標值（&lt;70 或 &lt;55 mg/dL）。補上之後，「未達標」的判斷才有明確依據。' },
+{ id: 'Case 2', d: 4, title: 'Statin-associated muscle symptoms',
+  scenario: '65歲男性，ACS後使用rosuvastatin 20 mg QD約2個月。最近出現雙側大腿痠痛，但沒有無力、深色尿液或發燒。',
+  stem: '藥師最適當的處理為何？',
+  opts: ['立即判定為rhabdomyolysis', '直接告知病人永久停用statin', '進一步評估症狀、其他藥物及secondary causes，並依嚴重程度決定是否需要醫療評估', '告知病人這一定與statin無關'],
+  ans: 2,
+  why: '<p>雙側大腿痠痛，沒有肌無力、深色尿或發燒，表示沒有警訊，不是橫紋肌溶解症。但對稱、近端、用藥後兩個月出現，也不能直接排除是 statin 造成的。</p><p>接下來要問清楚：症狀出現的時間與運動量有沒有關係、最近有沒有新加的藥物、有沒有甲狀腺功能低下等其他原因。再依嚴重程度決定是否請病人回診檢測 CK。</p>',
+  points: ['不立即貼上「statin intolerance」標籤', '評估症狀', 'review medication', '評估secondary causes', '判斷是否需要醫師評估'],
+  notes: ['沒有無力與深色尿，不符合。', '未經評估就永久停藥，病人失去次級預防的保護。', '正解。', '症狀型態與時序都有可能相關，不能直接否定。'],
+  refs: ['G26', 'SAMSON'] },
+{ id: 'Case 3', d: 4, title: '疑似 rhabdomyolysis',
+  scenario: '68歲男性，使用rosuvastatin。最近出現嚴重雙側大腿肌肉疼痛及無力，並發現尿液呈深褐色。',
+  stem: '藥師最適當的處理為何？',
+  opts: ['建議繼續觀察一週', '建議增加statin劑量', '立即轉介醫療團隊進一步評估', '建議多吃高膽固醇食物'],
+  ans: 2,
+  why: '<p>嚴重肌肉疼痛、肌無力加上深褐色尿，是橫紋肌溶解症的典型表現，屬於急症。請病人暫停服藥並立即就醫，由醫療團隊檢查 CK、腎功能、電解質與尿液。</p><p>這題測的是辨識警訊並正確轉介，不是認不認得 rhabdomyolysis 這個單字。</p>',
+  points: ['辨識red flag', '正確轉介'],
+  notes: ['延誤一週可能進展成急性腎損傷。', '會加重肌肉傷害。', '正解。', '與處置無關。'],
+  refs: ['G26'] },
+{ id: 'Case 4', d: 4, title: 'LDL 未達標＋順從性問題',
+  scenario: '72歲女性，ACS後使用rosuvastatin 20 mg QD。追蹤LDL-C仍偏高。病人表示：「這個藥我有時候會忘記吃，因為沒有不舒服。」',
+  stem: '藥師最適當的處理為何？',
+  opts: ['直接認定藥物無效', '直接建議加第二種降脂藥', '先評估實際服藥情形、用藥障礙及加強用藥衛教，再評估後續治療', '建議停止statin'],
+  ans: 2,
+  why: '<p>順從性不佳時，LDL-C 偏高不代表藥物無效。這時候加藥，只是多一顆會被忘記的藥。</p><p>先找出障礙（忘記、沒有症狀所以覺得不必吃、擔心副作用），再給具體做法：固定時間服用、使用藥盒、與其他每天吃的藥放在一起。Rosuvastatin 一天中任何固定時間服用都可以。順從性改善後 4 到 12 週再追蹤 LDL-C，才能判斷強度夠不夠。</p><p>這題對應 QCC 找到的真因：未定期追蹤、治療強度不足、未適時調整，以及病人順從性。</p>',
+  notes: ['沒有規則服藥，無法判斷藥物有沒有效。', '順從性問題沒有解決，加藥也無法達標。', '正解。', '停藥只會讓情況更糟。'],
+  refs: ['G26'] },
+{ id: 'Case 5', d: 4, title: '需要轉介進一步治療',
+  scenario: '70歲男性，ACS後持續使用高強度statin，表示每天規則服藥，也沒有明顯副作用。追蹤LDL-C仍高於治療門檻。',
+  stem: '藥師最適當的處理為何？',
+  opts: ['告知病人目前已經足夠，不需追蹤', '建議自行將statin加倍', '整理目前LDL-C、用藥及順從性資訊，評估需要進一步降脂治療並適當轉介', '建議停止所有降脂藥物'],
+  ans: 2,
+  why: '<p>順從性良好、沒有副作用、已經使用高強度 statin，LDL-C 仍未達標，原因就是治療強度不足，需要加上 non-statin 藥物。這是處方決定，所以藥師要把資訊整理好之後轉介。</p><p>這題是本次 QCC 最想改善的流程：LDL 異常、藥師辨識、評估、轉介、治療強化，最後反映在 ACS 病人 120 天 LDL 達標率。</p>',
+  points: ['LDL abnormality', 'pharmacist identifies', 'evaluates', 'referral', 'treatment intensification'],
+  notes: ['未達標卻不追蹤，就是 clinical inertia。', '不應請病人自行加量。', '正解。', '停藥會使復發風險上升。'],
+  refs: ['ACS25', 'G26'] }
+];
+
+/* ---------- 狀態 ---------- */
+const KEY = 'ldl-pharm-qcc-exam-v1';
+const LETTERS = ['A', 'B', 'C', 'D'];
+const RATINGS = ['適切', '需修改', '建議刪除'];
+const blank = () => ({ view: 'start', name: '', cur: 0, pick: {}, done: {}, rev: {}, wrongOnly: false });
+let S = blank();
+try { const saved = JSON.parse(localStorage.getItem(KEY)); if (saved && saved.view) S = Object.assign(blank(), saved); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const $ = id => document.getElementById(id);
+
+const isRight = q => S.done[q.id] && S.pick[q.id] === q.ans;
+const doneCount = () => QUESTIONS.filter(q => S.done[q.id]).length;
+const rightCount = () => QUESTIONS.filter(isRight).length;
+const firstOpen = () => QUESTIONS.findIndex(q => !S.done[q.id]);
+const label = q => q.id.startsWith('Q') ? '第 ' + q.id.slice(1) + ' 題' : q.id;
+
+/* ---------- 畫面 ---------- */
+function renderPack() {
+    const pack = $('pack');
+    if (S.view === 'start') { pack.hidden = true; return; }
+    pack.hidden = false;
+    pack.innerHTML = DOMAINS.map((d, di) => {
+        const here = S.view === 'quiz' && QUESTIONS[S.cur].d === di;
+        const cells = QUESTIONS.map((q, i) => ({ q, i })).filter(x => x.q.d === di).map(({ q, i }) => {
+            const cls = ['cell'];
+            if (S.done[q.id]) cls.push(isRight(q) ? 'is-right' : 'is-wrong');
+            if (S.view === 'quiz' && i === S.cur) cls.push('is-here');
+            const state = S.done[q.id] ? (isRight(q) ? '答對' : '答錯') : '未作答';
+            return `<button class="${cls.join(' ')}" data-go="${i}" aria-label="${label(q)}，${state}">${i + 1}</button>`;
+        }).join('');
+        return `<div class="strip${here ? ' is-here' : ''}"><div class="strip-name">${d.name}</div><div class="cells">${cells}</div></div>`;
+    }).join('');
+    const here = pack.querySelector('.cell.is-here');
+    if (here) pack.scrollLeft = Math.max(0, here.offsetLeft - pack.offsetLeft - pack.clientWidth / 2);
+}
+
+function renderStart() {
+    const n = doneCount();
+    return `<section class="intro">
+        <h1>先替藥師考一次，再決定題目能不能用</h1>
+        <p class="lede">這 25 題是心血管中心 QCC 準備給藥劑部藥物諮詢組藥師的前後測。請各位主治醫師作答一遍，看完詳解後告訴我們每一題適不適合。</p>
+        <ol class="chain" aria-label="QCC 想建立的流程">
+            <li>LDL 異常</li><li>藥師評估</li><li>用藥衛教</li><li>判斷是否轉介</li>
+        </ol>
+        <p class="chain-note">題目就是沿著這條流程出的：前 20 題考知識，後 5 題考臨床情境的判斷。</p>
+        <dl class="facts">
+            <div><dt>題數與配分</dt><dd>25 題單選，每題 4 分，滿分 100 分</dd></div>
+            <div><dt>作答方式</dt><dd>選好答案後送出，立刻顯示對錯、詳解與文獻出處</dd></div>
+            <div><dt>審題</dt><dd>每題詳解下方可以勾選「適切、需修改、建議刪除」並留言</dd></div>
+            <div><dt>交回意見</dt><dd>全部作答完，在成績頁按「複製作答與審題意見」，貼到 LINE 或 email 回傳</dd></div>
+            <div><dt>所需時間</dt><dd>大約 15 分鐘。作答紀錄只存在這台裝置的瀏覽器，可以中途離開再回來</dd></div>
+        </dl>
+        <p class="caution">這份是含答案的正式題庫。受測藥師如果先看過，前測就失去意義，請不要轉傳連結。</p>
+        <div class="field">
+            <label for="who">審題者姓名</label>
+            <input id="who" type="text" autocomplete="name" value="${esc(S.name)}" placeholder="例如：謝醫師">
+            <small>選填，只會出現在您複製的意見文字裡。</small>
+        </div>
+        <div class="row">
+            <button class="btn btn-main" data-act="start">${n ? (n === QUESTIONS.length ? '查看成績' : '繼續作答（已答 ' + n + ' 題）') : '開始作答'}</button>
+        </div>
+    </section>`;
+}
+
+function refLinks(keys) {
+    return keys.map(k => `<a href="https://pubmed.ncbi.nlm.nih.gov/${REFS[k].pmid}/" target="_blank" rel="noopener">${REFS[k].short}</a>`).join('、');
+}
+
+function renderQuiz() {
+    const q = QUESTIONS[S.cur], d = DOMAINS[q.d], done = !!S.done[q.id], pick = S.pick[q.id];
+    const opts = q.opts.map((o, i) => {
+        const cls = ['opt'];
+        let mark = '';
+        if (done) {
+            if (i === q.ans) { cls.push('is-key'); mark = '<span class="mark">正確答案</span>'; }
+            else if (i === pick) { cls.push('is-miss'); mark = '<span class="mark">您的選擇</span>'; }
+        } else if (i === pick) cls.push('is-picked');
+        const why = done && i !== q.ans ? `<span class="why">${q.notes[i]}</span>` : '';
+        return `<button class="${cls.join(' ')}" data-pick="${i}" ${done ? 'disabled' : ''} aria-pressed="${i === pick}">
+            <span class="letter">${LETTERS[i]}</span><span>${esc(o)}${mark}</span>${why}</button>`;
+    }).join('');
+
+    let after = '';
+    if (done) {
+        const ok = pick === q.ans, r = S.rev[q.id] || {};
+        after = `<section class="explain" id="explain">
+            <h2 class="verdict ${ok ? 'ok' : 'no'}" tabindex="-1">${ok ? '答對了' : '答錯了，正確答案是 ' + LETTERS[q.ans]}</h2>
+            ${q.why}
+            ${q.points ? '<h3>原題評分重點</h3><ul>' + q.points.map(p => '<li>' + esc(p) + '</li>').join('') + '</ul>' : ''}
+            <p class="sources" style="margin-top:16px">出處：${refLinks(q.refs)}</p>
+            ${q.hint ? '<aside class="hint"><b>製作本頁時對這題的觀察，供審題參考</b>' + q.hint + '</aside>' : ''}
+        </section>
+        <section class="review">
+            <h3>這一題適合拿來考藥師嗎？</h3>
+            <div class="chips">${RATINGS.map(x => `<button class="chip" data-rate="${x}" aria-pressed="${r.rating === x}">${x}</button>`).join('')}</div>
+            <label for="cmt" style="font-size:15px;display:block;margin-bottom:4px">想修改的地方或其他意見</label>
+            <textarea id="cmt" placeholder="例如：選項 C 太明顯；建議把目標值寫進題幹">${esc(r.comment || '')}</textarea>
+        </section>`;
+    }
+
+    const last = S.cur === QUESTIONS.length - 1, open = firstOpen();
+    let next;
+    if (!done) next = `<button class="btn btn-main push" data-act="submit" ${pick === undefined ? 'disabled' : ''}>送出答案</button>`;
+    else if (!last) next = `<button class="btn btn-main push" data-act="next">下一題</button>`;
+    else if (open === -1) next = `<button class="btn btn-main push" data-act="result">查看成績</button>`;
+    else next = `<button class="btn btn-main push" data-go="${open}">前往未作答的${label(QUESTIONS[open])}</button>`;
+
+    return `<article>
+        <div class="qhead"><span>${d.name}</span><span>${label(q)}，共 ${QUESTIONS.length} 題</span></div>
+        ${q.scenario ? `<div class="scenario"><b>${esc(q.title)}</b>${esc(q.scenario)}</div>` : ''}
+        <h1 class="stem">${esc(q.stem)}</h1>
+        <div class="opts">${opts}</div>
+        ${after}
+        <div class="row">
+            ${S.cur > 0 ? '<button class="btn" data-act="prev">上一題</button>' : ''}
+            ${done && !last && open === -1 ? '<button class="btn" data-act="result">查看成績</button>' : ''}
+            ${next}
+        </div>
+    </article>`;
+}
+
+function keyStats() {
+    const dist = [0, 0, 0, 0];
+    let longest = 0;
+    QUESTIONS.forEach(q => {
+        dist[q.ans]++;
+        const len = q.opts.map(o => o.length);
+        if (len[q.ans] === Math.max(...len) && len.filter(l => l === len[q.ans]).length === 1) longest++;
+    });
+    return { dist, longest };
+}
+
+function exportText() {
+    const total = QUESTIONS.length, right = rightCount();
+    const lines = ['【ACS 降脂治療 藥師前後測題庫｜主治醫師試作與審題】'];
+    lines.push('審題者：' + (S.name.trim() || '未填') + '　日期：' + new Date().toLocaleDateString('zh-TW'));
+    lines.push('成績：' + right * 4 + ' 分（答對 ' + right + '／' + total + ' 題）');
+    lines.push('各領域：' + DOMAINS.map((d, di) => d.name + ' ' + QUESTIONS.filter(q => q.d === di && isRight(q)).length + '／5').join('；'));
+    const wrong = QUESTIONS.filter(q => S.done[q.id] && !isRight(q));
+    lines.push('答錯：' + (wrong.length ? wrong.map(q => q.id + '（選 ' + LETTERS[S.pick[q.id]] + '，正解 ' + LETTERS[q.ans] + '）').join('、') : '無'));
+    lines.push('', '審題意見');
+    RATINGS.forEach(r => {
+        const ids = QUESTIONS.filter(q => (S.rev[q.id] || {}).rating === r).map(q => q.id);
+        lines.push(r + '（' + ids.length + ' 題）：' + (ids.join('、') || '無'));
+    });
+    const unrated = QUESTIONS.filter(q => !(S.rev[q.id] || {}).rating).map(q => q.id);
+    if (unrated.length) lines.push('未評（' + unrated.length + ' 題）：' + unrated.join('、'));
+    const withCmt = QUESTIONS.filter(q => ((S.rev[q.id] || {}).comment || '').trim());
+    lines.push('', '逐題留言');
+    if (!withCmt.length) lines.push('無');
+    withCmt.forEach(q => lines.push(q.id + '［' + (S.rev[q.id].rating || '未評') + '］' + S.rev[q.id].comment.trim()));
+    return lines.join('\n');
+}
+
+function renderResult() {
+    const total = QUESTIONS.length, right = rightCount(), st = keyStats();
+    const domains = DOMAINS.map((d, di) => {
+        const qs = QUESTIONS.filter(q => q.d === di);
+        return `<div class="domain"><span>${d.name}</span><span class="dots" aria-hidden="true">${qs.map(q => `<i class="${isRight(q) ? 'r' : ''}"></i>`).join('')}</span><span class="n">${qs.filter(isRight).length}／5</span></div>`;
+    }).join('');
+    const list = QUESTIONS.map((q, i) => ({ q, i })).filter(x => !S.wrongOnly || !isRight(x.q)).map(({ q, i }) => {
+        const ok = isRight(q), r = (S.rev[q.id] || {}).rating;
+        return `<li><button data-go="${i}"><span class="no ${ok ? 'good' : 'bad'}">${q.id}</span><span class="t">${esc(q.scenario || q.stem)}</span><span class="tag">${ok ? '答對' : '選 ' + LETTERS[S.pick[q.id]] + '，正解 ' + LETTERS[q.ans]}${r ? '｜' + r : ''}</span></button></li>`;
+    }).join('');
+    const rated = QUESTIONS.filter(q => (S.rev[q.id] || {}).rating).length;
+    const refs = Object.values(REFS).map(r => `<li>${esc(r.full)} PMID <a href="https://pubmed.ncbi.nlm.nih.gov/${r.pmid}/" target="_blank" rel="noopener">${r.pmid}</a>；<a href="https://doi.org/${r.doi}" target="_blank" rel="noopener">doi:${r.doi}</a></li>`).join('');
+
+    return `<section>
+        <div class="score"><b>${right * 4}</b><span>分，答對 ${right}／${total} 題</span></div>
+        <div class="domains">${domains}</div>
+
+        <h2 class="sec">逐題結果</h2>
+        <label class="filter"><input type="checkbox" id="wrongOnly" ${S.wrongOnly ? 'checked' : ''}>只看答錯的題目</label>
+        <ul class="qlist">${list || '<li style="padding:12px 2px;color:var(--ink-soft)">全部答對，沒有需要重看的題目。</li>'}</ul>
+
+        <h2 class="sec">把意見交回來</h2>
+        <p>您已評了 ${rated}／${total} 題。還沒評的題目可以從上面的清單點回去補。</p>
+        <div class="export">
+            <textarea id="exportBox" readonly aria-label="作答與審題意見文字">${esc(exportText())}</textarea>
+            <div class="row" style="margin-top:12px">
+                <button class="btn btn-main" data-act="copy">複製作答與審題意見</button>
+                <span class="said" id="said" role="status"></span>
+            </div>
+        </div>
+
+        <h2 class="sec">整份題庫的觀察</h2>
+        <div class="observe">
+            <p style="margin-bottom:8px">以下是製作本頁時從題庫本身統計與閱讀得到的，供審題討論，不是定論。</p>
+            <ul>
+                <li>正確答案的分布是 A ${st.dist[0]} 題、B ${st.dist[1]} 題、C ${st.dist[2]} 題、D ${st.dist[3]} 題，集中在 B 與 C。</li>
+                <li>${total} 題當中有 ${st.longest} 題的正確答案是四個選項裡字數最多的，熟悉考試的人不必懂內容也能猜中。可以把干擾選項寫得一樣完整，或縮短正解。</li>
+                <li>Q13 與 Q16 的答案是「以上皆是」，這種題型只要認出兩個正確選項就能作答。</li>
+                <li>Q3、Q5、Q16、Q18、Case 1、Case 5 考的都是「未達標時評估順從性與強度，必要時轉介」。重複考同一概念會讓前後測分數的進步集中在單一知識點。</li>
+                <li>題幹多以「治療目標」或「治療門檻」帶過，沒有寫出院內採用的 LDL-C 數值。建議先決定採用 &lt;70 或 &lt;55 mg/dL，再寫進題目與教材。</li>
+            </ul>
+        </div>
+
+        <h2 class="sec">詳解引用的指引與文獻</h2>
+        <ol class="reflist">${refs}</ol>
+
+        <div class="row">
+            <button class="btn" data-go="0">回到第 1 題重看</button>
+            <button class="btn btn-danger push" data-act="reset">清除紀錄，重新作答</button>
+        </div>
+    </section>`;
+}
+
+function render(scrollTop) {
+    const app = $('app');
+    app.innerHTML = S.view === 'start' ? renderStart() : S.view === 'quiz' ? renderQuiz() : renderResult();
+    $('mastRight').innerHTML = S.view === 'start' ? '主治醫師試作與審題' :
+        `已答 ${doneCount()}／${QUESTIONS.length}　<button data-act="home">說明</button>`;
+    renderPack();
+    save();
+    if (scrollTop) window.scrollTo(0, 0);
+}
+
+/* ---------- 互動 ---------- */
+document.addEventListener('click', e => {
+    const t = e.target.closest('button');
+    if (!t) return;
+    if (t.dataset.go !== undefined) { S.view = 'quiz'; S.cur = +t.dataset.go; return render(true); }
+    if (t.dataset.pick !== undefined) { S.pick[QUESTIONS[S.cur].id] = +t.dataset.pick; return render(false); }
+    if (t.dataset.rate) {
+        const id = QUESTIONS[S.cur].id, r = S.rev[id] || (S.rev[id] = {});
+        r.rating = r.rating === t.dataset.rate ? '' : t.dataset.rate;
+        document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', c.dataset.rate === r.rating));
+        return save();
+    }
+    switch (t.dataset.act) {
+        case 'start': {
+            const open = firstOpen();
+            if (open === -1) S.view = 'result'; else { S.view = 'quiz'; S.cur = open; }
+            return render(true);
+        }
+        case 'home': S.view = 'start'; return render(true);
+        case 'submit': {
+            const q = QUESTIONS[S.cur];
+            if (S.pick[q.id] === undefined) return;
+            S.done[q.id] = true; render(false);
+            const v = document.querySelector('.verdict');
+            if (v) { v.focus({ preventScroll: true }); v.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }
+            return;
+        }
+        case 'next': S.cur = Math.min(S.cur + 1, QUESTIONS.length - 1); return render(true);
+        case 'prev': S.cur = Math.max(S.cur - 1, 0); return render(true);
+        case 'result': S.view = 'result'; return render(true);
+        case 'copy': {
+            const box = $('exportBox'), said = $('said');
+            const ok = () => { said.textContent = '已複製，可以貼到 LINE 或 email。'; };
+            const manual = () => { box.focus(); box.select(); said.textContent = '已選取全部文字，請按複製。'; };
+            if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(box.value).then(ok, manual); else manual();
+            return;
+        }
+        case 'reset':
+            if (t.dataset.armed) { const name = S.name; S = blank(); S.name = name; return render(true); }
+            t.dataset.armed = '1'; t.textContent = '確定清除？再按一次';
+            return;
+    }
+});
+document.addEventListener('input', e => {
+    if (e.target.id === 'who') { S.name = e.target.value; save(); }
+    if (e.target.id === 'cmt') { const id = QUESTIONS[S.cur].id; (S.rev[id] || (S.rev[id] = {})).comment = e.target.value; save(); }
+    if (e.target.id === 'wrongOnly') { S.wrongOnly = e.target.checked; render(false); }
+});
+
+render(false);
+</script>
+</body>
+</html>

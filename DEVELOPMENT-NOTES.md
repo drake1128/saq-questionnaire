@@ -8,6 +8,16 @@ NTUH Hsinchu Branch - Cardiovascular Center
 
 ## Recent Updates
 
+### 2026-10-06: 新增「ACS 降脂治療 藥師前後測題庫」主治醫師試作與審題頁（ldl-pharmacist-qcc-exam.html，暫不掛 index）
+
+**來源：** QCC／PDCA「提升藥師對 ACS 患者降脂治療之用藥衛教、副作用辨識、LDL 治療評估及轉介處理能力」前後測草案（20 題知識題＋5 個 Case，取自 2026-10-06 的來信 PDF）。題目、選項、答案照原文；詳解為本頁另寫，引用 2026 ACC/AHA 血脂指引（PMID 41824590）、2025 ACC/AHA ACS 指引（PMID 40014670）等 9 篇，PMID／DOI 均經 PubMed 查證。
+
+**功能：** 單檔 vanilla JS。選答後送出即顯示對錯、各選項解析、詳解與出處；每題可勾「適切／需修改／建議刪除」並留言；成績頁有各領域得分、只看錯題、一鍵複製作答與審題意見（貼回 LINE／email 彙整）、題庫整體觀察（答案分布等由題庫資料即時統計）。作答紀錄存 localStorage（`ldl-pharm-qcc-exam-v1`）。
+
+**不公開的原因：** 這是含答案的正式題庫，受測藥師先看到會污染前測。頁面加 `noindex, nofollow`，不掛 index、不進 sitemap、不放分享按鈕。
+
+---
+
 ### 2026-09-20: 新增「冠狀動脈與傳導系統」（coronary-conduction-system.html）
 
 **來源：** 使用者提供的講義頁（原檔名 `冠狀動脈與傳導系統.html`），內容為傳導系統各段供血解剖、RCA 阻塞→AV block／LAD 近端阻塞→RBBB 的機轉、nodal vs. infranodal 對照、臨床決策、5 題自測與 PubMed 查證文獻；圖片以 base64 內嵌（約 3 MB）。
