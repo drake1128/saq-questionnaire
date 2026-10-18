@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>節律辨認 II ｜ 生理功能室訓練 M3</title>
+<meta name="description" content="生理功能室 12 個月訓練第 3 月：心房顫動、心房撲動、上心室頻脈與預激症候群的辨認。">
+<style>
+:root{--b:#8a1538;--bd:#5e0e26;--bl:#faf3f5;--bk:#111;--mut:#5b6472;--line:#e3d3d8;--ok:#1b7f3b;--okbg:#e6f4ea;--no:#c62828;--nobg:#fdecea;--bg:#f4f1f2;--card:#fff;--y:#ffe08a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",Roboto,sans-serif;background:var(--bg);color:var(--bk);line-height:1.55;font-size:16px;-webkit-font-smoothing:antialiased}
+header{position:sticky;top:0;z-index:20;background:var(--b);color:#fff;padding:10px 14px 8px;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+header .t{font-size:16px;font-weight:800;display:flex;justify-content:space-between;align-items:center;gap:8px}
+header .t small{font-weight:600;font-size:12px;opacity:.9}
+header .sub{font-size:12px;opacity:.9;margin-top:2px}
+nav.tabs{display:flex;gap:6px;margin-top:8px}
+nav.tabs button{flex:1;border:none;border-radius:999px;padding:7px 4px;font-size:14px;font-weight:700;background:rgba(255,255,255,.18);color:#fff;font-family:inherit;cursor:pointer}
+nav.tabs button.on{background:#fff;color:var(--b)}
+.wrap{max-width:720px;margin:0 auto;padding:12px 12px 90px}
+.panel{display:none}.panel.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px;box-shadow:0 1px 3px rgba(20,30,50,.05)}
+.card h2{font-size:17px;color:var(--b);margin:0 0 8px}
+.card h3{font-size:15px;margin:12px 0 6px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;border:1.5px solid var(--b);border-radius:999px;overflow:hidden}
+.seg button{border:none;background:#fff;color:var(--b);padding:6px 12px;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer}
+.seg button.on{background:var(--b);color:#fff}
+.lbl{font-size:12.5px;color:var(--mut);font-weight:700}
+.ecgbox{margin-top:10px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff8f6;position:relative}
+.ecgbox svg{display:block;width:100%;height:auto}
+.ecgbox .zoomhint{position:absolute;right:8px;bottom:6px;font-size:11px;color:#8a1538;background:rgba(255,255,255,.85);padding:2px 8px;border-radius:999px}
+.q{font-size:16.5px;font-weight:700;margin:12px 0 8px}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.opt{border:1.5px solid var(--line);background:#fff;border-radius:11px;padding:11px 8px;font-size:14.5px;font-weight:700;color:var(--bk);font-family:inherit;cursor:pointer;min-height:48px;line-height:1.25;text-align:center}
+.opt small{display:block;font-weight:500;font-size:11px;color:var(--mut)}
+.opt.correct{border-color:var(--ok);background:var(--okbg)}
+.opt.wrong{border-color:var(--no);background:var(--nobg)}
+.opt:disabled{cursor:default}.opt.dim{opacity:.5}
+.verdict{font-weight:800;font-size:16px;margin:12px 0 6px}
+.verdict.ok{color:var(--ok)}.verdict.no{color:var(--no)}
+.exp{background:#fbfbfc;border:1px solid var(--line);border-left:4px solid var(--b);border-radius:0 10px 10px 0;padding:10px 12px;font-size:14.5px}
+.exp b{color:var(--bd)}
+.nav{display:flex;gap:10px;margin-top:14px}
+.btn{flex:1;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;min-height:48px}
+.btn.primary{background:var(--b);color:#fff;box-shadow:0 2px 8px rgba(138,21,56,.28)}
+.btn.primary:disabled{background:#d9b3bf;box-shadow:none;cursor:default}
+.btn.ghost{background:#fff;color:var(--b);border:1.5px solid var(--line)}
+.stat{display:flex;justify-content:space-between;font-size:13px;color:var(--mut);margin-top:10px}
+.stat b{color:var(--b)}
+.hint{font-size:12.5px;color:var(--mut);margin-top:8px}
+.bar{height:7px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:8px}
+.bar>i{display:block;height:100%;width:0;background:var(--b);transition:width .25s}
+.big{font-size:56px;font-weight:900;color:var(--b);line-height:1.05;text-align:center}
+.big small{font-size:22px;color:var(--mut)}
+.tier{display:inline-block;margin:8px auto;padding:6px 16px;border-radius:999px;font-weight:800;font-size:15px;background:var(--bl);color:var(--b)}
+table.rules{border-collapse:collapse;width:100%;font-size:13.5px;margin:6px 0}
+table.rules th{background:var(--b);color:#fff;padding:5px 6px;text-align:left}
+table.rules td{padding:5px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+table.rules tr:nth-child(even) td{background:var(--bl)}
+.pearl{border-left:5px solid var(--b);background:var(--bl);padding:8px 12px;border-radius:0 8px 8px 0;margin:8px 0;font-size:14.5px}
+.alert{border-left:5px solid var(--no);background:var(--nobg);padding:8px 12px;border-radius:0 8px 8px 0;margin:8px 0;font-size:14.5px}
+.gallery figure{margin:10px 0 0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff8f6}
+.gallery svg{display:block;width:100%;height:auto}
+.gallery figcaption{font-size:13px;padding:6px 10px;background:#fff}
+.gallery figcaption b{color:var(--b)}
+.kit{display:flex;gap:10px;align-items:flex-start;margin:8px 0;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:14px}
+.kit .ic{font-size:24px;flex:0 0 32px;text-align:center}
+.kit a{color:var(--b);font-weight:700}
+footer{text-align:center;color:var(--mut);font-size:11.5px;margin-top:24px;line-height:1.7}
+footer a{color:var(--b)}
+.zoom{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:50;display:none;flex-direction:column}
+.zoom.on{display:flex}
+.zoom .zb{display:flex;justify-content:space-between;align-items:center;color:#fff;padding:10px 14px;font-weight:700}
+.zoom .zb button{background:#fff;color:var(--b);border:none;border-radius:999px;padding:8px 16px;font-weight:800;font-family:inherit}
+.zoom .zc{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:0 10px 20px}
+.zoom .zc svg{height:auto;min-width:900px;width:100%;background:#fff8f6;border-radius:8px}
+.share-fab{position:fixed;right:14px;bottom:18px;z-index:30}
+.share-toggle{width:50px;height:50px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:var(--b);color:#fff;box-shadow:0 4px 14px rgba(138,21,56,.4);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.share-toggle svg{width:22px;height:22px;fill:#fff}
+.share-menu{position:absolute;bottom:60px;right:0;background:#fff;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.25);padding:14px;width:250px;display:none}
+.share-menu.on{display:block}
+.share-menu h4{margin:0 0 8px;font-size:14px}
+.share-menu img{display:block;margin:0 auto 8px;border-radius:8px}
+.share-menu .sb{display:block;width:100%;border:none;border-radius:9px;padding:10px;margin:6px 0;font-weight:700;font-family:inherit;color:#fff;text-align:center;text-decoration:none;font-size:14px;cursor:pointer}
+.sb.line{background:#06C755}.sb.copy{background:var(--b)}
+</style>
+</head>
+<body>
+<header>
+  <div class="t"><span>🌀 M3 節律辨認 II</span><small id="hScore">連勝 0</small></div>
+  <div class="sub">生理功能室 12 個月訓練 ｜ AF、心房撲動、SVT、WPW</div>
+  <nav class="tabs">
+    <button class="on" data-tab="read">讀</button>
+    <button data-tab="practice">練</button>
+    <button data-tab="quiz">測 10 題</button>
+    <button data-tab="kit">輪盤</button>
+  </nav>
+</header>
+<div class="wrap">
+
+<section class="panel on" id="tab-read">
+  
+  <div class="card"><h2>本月要會的三件事</h2>
+    <ol style="padding-left:1.3em;margin:0">
+      <li><b>AF 三要件</b>：RR 完全不規則、沒有 P 波、基線顫動。</li>
+      <li><b>撲動與 SVT</b>：鋸齒 F 波是撲動；規則 150/分的窄 QRS 頻脈先想 2:1 撲動，再想 SVT。</li>
+      <li><b>WPW</b>：短 PR 加 delta 波。上跑步機前先告知醫師；合併 AF 是急症。</li>
+    </ol></div>
+  <div class="card"><h2>四種頻脈怎麼分</h2>
+    <table class="rules"><tr><th></th><th>RR</th><th>P 波</th><th>速率</th><th>線索</th></tr>
+      <tr><td>竇性心搏過速</td><td>規則</td><td>直立可見</td><td>100–150</td><td>逐漸快慢、有原因</td></tr>
+      <tr><td>SVT</td><td>規則</td><td>看不到</td><td>150–200</td><td>突然開始突然停</td></tr>
+      <tr><td>心房撲動</td><td>多規則</td><td>鋸齒 F 波</td><td>150（2:1）／75（4:1）</td><td>下壁導程鋸齒</td></tr>
+      <tr><td>心房顫動</td><td><b>不規則</b></td><td>沒有</td><td>任何</td><td>基線顫動</td></tr></table>
+    <div class="pearl">口訣：<b>不規則又沒 P，就是 AF；鋸齒是撲動；規則 150 先懷疑 2:1。</b></div></div>
+  <div class="card"><h2>WPW：為什麼生理功能室一定要會</h2>
+    <p style="font-size:14.5px;margin:0 0 6px">運動員篩檢抓到的致命疾病裡，WPW 占四成以上（Harmon 2015）。它在 resting ECG 上就看得到：<b>PR < 0.12 秒、QRS 起始慢上升（delta 波）、QRS 偏寬</b>。</p>
+    <div class="alert"><b>兩個動作：</b>(1) 運動心電圖前看到 delta 波，先告知開單醫師再決定做不做；(2) WPW 合併 AF（不規則、寬、極快）是急症，立即通知並準備急救。</div></div>
+  <div class="card"><h2>看到就要通報</h2>
+    <div class="alert">新發現的 AF（病人不知道自己有）、心室速率 > 120 的 AF 或撲動、任何 SVT、resting ECG 的 delta 波：依通報機制通知主治醫師並留 log。</div></div>
+  <div class="card gallery"><h2>圖例：本月要認得的每一種</h2><div class="hint">每張都是合成圖，每次打開會換一組；看 3 秒就要說得出名字。</div><div id="gallery"></div></div>
+</section>
+
+<section class="panel" id="tab-practice">
+  <div class="card">
+    <div class="row"><span class="lbl">題型</span><span class="seg" id="segType"><button data-v="id" class="on">認節律</button><button data-v="hr">算心率</button></span>
+      <span class="lbl">圖</span><span class="seg" id="segView"><button data-v="strip" class="on">節律條 II</button><button data-v="full">12 導程</button></span></div>
+    <div class="ecgbox" id="ecgP"><div class="zoomhint">點圖放大</div></div>
+    <div class="q" id="qP"></div>
+    <div class="opts" id="optsP"></div>
+    <div class="verdict" id="verP"></div>
+    <div class="exp" id="expP" style="display:none"></div>
+    <div class="nav"><button class="btn ghost" id="skipP" style="flex:0 0 auto;padding:14px 18px">換一題</button><button class="btn primary" id="nextP" disabled>請先作答</button></div>
+    <div class="stat"><span>本次 <b id="okP">0</b> 對 ・ <b id="noP">0</b> 錯</span><span>最長連勝 <b id="bestStreak">0</b></span><span>累計 <b id="totalP">0</b></span></div>
+  </div>
+</section>
+
+<section class="panel" id="tab-quiz">
+  <div class="card" id="chIntro">
+    <h2>月考 10 題</h2>
+    <p>認節律 7 題、算心率 3 題，計時。<b>8 分達標</b>，10 分最佳。成績自動記到輪盤，可在輪盤頁一鍵複製回報。</p>
+    <div class="row"><span class="lbl">本月最佳</span><span id="chBest">尚無紀錄</span></div>
+    <div class="nav"><button class="btn primary" id="chStart">開始</button></div>
+  </div>
+  <div class="card" id="chGame" style="display:none">
+    <div class="stat" style="margin:0"><span>第 <b id="chN">1</b> / 10 題</span><span>⏱ <b id="chTime">0</b> 秒</span><span><b id="chOk">0</b> 對</span></div>
+    <div class="bar"><i id="chBar"></i></div>
+    <div class="ecgbox" id="ecgC"><div class="zoomhint">點圖放大</div></div>
+    <div class="q" id="qC"></div>
+    <div class="opts" id="optsC"></div>
+    <div class="verdict" id="verC"></div>
+    <div class="exp" id="expC" style="display:none"></div>
+    <div class="nav"><button class="btn primary" id="nextC" disabled>請先作答</button></div>
+  </div>
+  <div class="card" id="chResult" style="display:none">
+    <div class="big"><span id="rScore">0</span><small>/10</small></div>
+    <div style="text-align:center"><span class="tier" id="rTier"></span></div>
+    <p style="text-align:center;color:var(--mut);font-size:14px" id="rTime"></p>
+    <div id="rList" style="font-size:14px"></div>
+    <div class="nav"><button class="btn ghost" id="chAgain">再來一次</button><a class="btn primary" style="text-align:center;text-decoration:none;line-height:20px" href="physiology-lab-training.html">回輪盤回報</a></div>
+  </div>
+</section>
+
+<section class="panel" id="tab-kit">
+  <div class="card">
+    <h2>這是第 3 月</h2>
+    <div class="kit"><div class="ic">🎯</div><div><a href="physiology-lab-training.html">生理功能室 12 個月訓練輪盤</a><br>月考成績自動記錄；回輪盤勾選本月現場任務並複製進度。</div></div>
+    <div class="kit"><div class="ic">📋</div><div><b>本月現場任務</b><br>檢查前 resting ECG 看到 delta 波或 AF，依流程通知醫師一次並留紀錄；本月至少完成一次。</div></div>
+    <div class="kit"><div class="ic">📘</div><div><b>手冊對應章節</b><br>第 2 章 心電圖基本判讀、第 8 章 看到就要通報的心電圖、第 9 章 運動心電圖檢查前評估、第 19 章 長天期貼片與事件記錄</div></div>
+    
+    <h3>參考文獻</h3>
+    <ol style="font-size:13px;padding-left:1.3em;margin:0;color:#333"><li>Joglar JA, et al. 2023 ACC/AHA/ACCP/HRS guideline for the diagnosis and management of atrial fibrillation. <a href="https://doi.org/10.1161/CIR.0000000000001193" target="_blank" rel="noopener">Circulation 2024;149:e1-e156</a></li><li>Harmon KG, et al. Screening history, physical exam, and ECG to detect potentially lethal cardiac disorders in athletes. <a href="https://doi.org/10.1016/j.jelectrocard.2015.02.001" target="_blank" rel="noopener">J Electrocardiol 2015;48:329-38</a></li><li>Crinion D, Baranchuk A. Algorithms to identify accessory pathways' location on the 12-lead ECG. <a href="https://doi.org/10.1016/j.ccep.2020.08.007" target="_blank" rel="noopener">Card Electrophysiol Clin 2020;12:465-74</a></li></ol>
+    <p style="font-size:12.5px;color:var(--mut);margin-top:10px">所有心電圖均為合成圖（單一偶極模型 + 節律排程），沒有病人資料；合成圖比真實圖乾淨，真實判讀仍以對照圖庫與醫師覆核為準。</p>
+  </div>
+  <footer>謝慕揚 MD, PhD, FESC ｜ 新竹臺大分院 心血管中心 ｜ 生理功能室進階訓練手冊 ｜ 2026<br>僅供醫療專業人員教學參考</footer>
+</section>
+</div>
+
+<div class="zoom" id="zoom"><div class="zb"><span>左右滑動看全圖</span><button id="zoomClose">關閉</button></div><div class="zc" id="zoomC"></div></div>
+<div class="share-fab">
+  <div class="share-menu" id="shareMenu"><h4>分享這一頁</h4>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=https%3A%2F%2Fdrake1128.github.io%2Fsaq-questionnaire%2Fplab-m03-rhythm-2.html" alt="QR" width="150" height="150" loading="lazy">
+    <a class="sb line" href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdrake1128.github.io%2Fsaq-questionnaire%2Fplab-m03-rhythm-2.html" target="_blank" rel="noopener">LINE 分享</a>
+    <button class="sb copy" onclick="copyShareLink(this)">複製連結</button></div>
+  <button type="button" class="share-toggle" onclick="toggleShare()" aria-label="分享"><svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></button>
+</div>
+
+<script>
+/* ecg-sim.js — 合成 12 導程心電圖引擎（肢體導極錯置教學用）
+ * 單一心電偶極 (dipole) 模型：x = 病人左側、y = 足側、z = 前方。
+ * 電極電位 φ = d · u_electrode。任何「接線錯置」只是把導線貼到不同電極位置，
+ * 導程則照定義重新計算，因此波形變化完全依照 Einthoven / Wilson 的物理，
+ * 與 Batchvarov 2007 Table 1 / Table 3 一致。
+ * 可在瀏覽器 (window.ECG) 與 Node (module.exports) 使用。
+ */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.ECG = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  function norm(v) { var l = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0] / l, v[1] / l, v[2] / l]; }
+  function dot(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
+  function rotZ(v, deg) { // 額面旋轉（繞前後軸）
+    var r = deg * Math.PI / 180, c = Math.cos(r), s = Math.sin(r);
+    return [v[0] * c - v[1] * s, v[0] * s + v[1] * c, v[2]];
+  }
+  function gauss(t, mu, s) { var x = (t - mu) / s; return Math.exp(-0.5 * x * x); }
+
+  // ---------- 電極方向向量 ----------
+  // 標準（四肢末端）貼法；RL 與 LL 幾乎同電位
+  var ELECTRODES_STD = {
+    RA: norm([-0.866, -0.5, 0]), LA: norm([0.866, -0.5, 0]),
+    LL: norm([0, 1, 0]), RL: norm([-0.08, 0.997, 0]),
+    V1: norm([-0.33, 0.12, 0.94]), V2: norm([0.05, 0.15, 0.98]), V3: norm([0.42, 0.22, 0.88]),
+    V4: norm([0.68, 0.30, 0.67]), V5: norm([0.86, 0.26, 0.44]), V6: norm([0.95, 0.22, 0.22])
+  };
+  // Mason–Likar（運動心電圖室）：四肢電極移到軀幹；兩腿電極不再等電位，軸偏右
+  var ELECTRODES_ML = {
+    RA: norm([-0.78, -0.55, 0.25]), LA: norm([0.78, -0.55, 0.25]),
+    LL: norm([0.30, 0.92, 0.15]), RL: norm([-0.30, 0.92, 0.15]),
+    V1: ELECTRODES_STD.V1, V2: ELECTRODES_STD.V2, V3: ELECTRODES_STD.V3,
+    V4: ELECTRODES_STD.V4, V5: ELECTRODES_STD.V5, V6: ELECTRODES_STD.V6
+  };
+  var LIMB_K = 1 / 1.732;   // 使 lead I 振幅 = dipole x 分量 (mV)
+  var CHEST_K = 1.15;
+
+  // ---------- 錯置類型：導線「標籤」→ 實際貼的位置 ----------
+  var SWAPS = {
+    'normal': { RA: 'RA', LA: 'LA', LL: 'LL' },
+    'RA-LA':  { RA: 'LA', LA: 'RA', LL: 'LL' },
+    'LA-LL':  { RA: 'RA', LA: 'LL', LL: 'LA' },
+    'RA-LL':  { RA: 'LL', LA: 'LA', LL: 'RA' },
+    'CW':     { RA: 'LA', LA: 'LL', LL: 'RA' },   // 順時針：RA→LA→LL→RA
+    'CCW':    { RA: 'LL', LA: 'RA', LL: 'LA' },   // 逆時針：RA→LL→LA→RA
+    'RA-RL':  { RA: 'RL', LA: 'LA', LL: 'LL' },
+    'LA-RL':  { RA: 'RA', LA: 'RL', LL: 'LL' },
+    'LL-RL':  { RA: 'RA', LA: 'LA', LL: 'RL' },
+    'dextro': { RA: 'RA', LA: 'LA', LL: 'LL' }    // 真正右位心（不是接錯）
+  };
+  var SWAP_INFO = {
+    'normal': { zh: '接線正確', en: 'Correct' },
+    'RA-LA':  { zh: '右手–左手互換', en: 'RA–LA reversal' },
+    'LA-LL':  { zh: '左手–左腳互換', en: 'LA–LL reversal' },
+    'RA-LL':  { zh: '右手–左腳互換', en: 'RA–LL reversal' },
+    'CW':     { zh: '三肢順時針輪轉', en: 'Clockwise rotation' },
+    'CCW':    { zh: '三肢逆時針輪轉', en: 'Counter-clockwise rotation' },
+    'RA-RL':  { zh: '右手–右腳互換', en: 'RA–RL reversal' },
+    'LA-RL':  { zh: '左手–右腳互換', en: 'LA–RL reversal' },
+    'LL-RL':  { zh: '左腳–右腳互換', en: 'LL–RL reversal' },
+    'dextro': { zh: '真正右位心', en: 'True dextrocardia' }
+  };
+
+  // ---------- 心搏模型 ----------
+  // 每個心搏由成分 (t 相對心搏起點 s, s 寬度 s, a 振幅 mV, d 方向) 組成。
+  // beatOpts: { axisRot, gain, pGain, mirror, kind:'sinus'|'apc'|'vpc'|'escapeJ'|'escapeV', pr, wide:'rbbb'|'lbbb'|null, wpw, noP, pDir, qrsDir, tFlip, qrsGain }
+  function makeBeat(p) {
+    p = p || {};
+    var axis = p.axisRot || 0, g = p.gain || 1, mirror = p.mirror ? -1 : 1;
+    function dir(v) { var r = rotZ(norm(v), axis); return [r[0] * mirror, r[1], r[2]]; }
+    var pr = p.pr != null ? p.pr : 0.16;          // PR 間期
+    var q0 = 0.08 + pr - 0.02;                    // QRS 起點（P 起點約 0.05）
+    var c = [];
+    if (!p.noP) c.push({ t: 0.10, s: 0.026, a: 0.17 * g * (p.pGain || 1), d: dir(p.pDir || [0.45, 0.80, 0.30]), P: true });
+    var qg = (p.qrsGain || 1) * g;
+    if (p.kind === 'vpc' || p.kind === 'escapeV') {
+      // 心室性：寬 QRS、方向不同、T 相反
+      var vd = p.qrsDir || [-0.5, 0.6, -0.6];
+      c.push({ t: q0 + 0.02, s: 0.030, a: 2.1 * qg, d: dir(vd) });
+      c.push({ t: q0 + 0.075, s: 0.022, a: 0.6 * qg, d: dir([-vd[0], -vd[1], -vd[2]]) });
+      c.push({ t: q0 + 0.30, s: 0.060, a: 0.45 * g, d: dir([-vd[0] * 0.8, -vd[1] * 0.8, -vd[2]]), T: true });
+      return c;
+    }
+    if (p.wpw) {
+      // 預激：短 PR + delta 波（慢上升，提早於 QRS）
+      c.push({ t: q0 - 0.02, s: 0.022, a: 0.45 * qg, d: dir(p.deltaDir || [0.5, 0.45, 0.6]) });
+    }
+    if (p.wide !== 'lbbb') c.push({ t: q0 + 0.016, s: 0.007, a: 0.16 * qg, d: dir([-0.45, -0.15, 0.60]) });   // q（中隔）
+    if (p.wide === 'lbbb') {
+      c.push({ t: q0 + 0.040, s: 0.022, a: 1.5 * qg, d: dir([0.80, 0.45, -0.45]) });
+      c.push({ t: q0 + 0.085, s: 0.020, a: 0.9 * qg, d: dir([0.75, 0.35, -0.55]) });
+      c.push({ t: q0 + 0.32, s: 0.055, a: 0.35 * g, d: dir([-0.65, -0.35, 0.45]), T: true });   // 續發性 T 相反
+      return c;
+    }
+    c.push({ t: q0 + 0.036, s: 0.011, a: 1.5 * qg, d: dir(p.qrsDir || [0.72, 0.56, -0.40]) });   // R
+    c.push({ t: q0 + 0.057, s: 0.009, a: 0.42 * qg, d: dir([-0.35, -0.30, -0.42]) });             // S
+    if (p.wide === 'rbbb') {
+      c.push({ t: q0 + 0.085, s: 0.016, a: 0.75 * qg, d: dir([-0.70, -0.10, 0.70]) });            // 終末向右前（V1 R'、I/V6 寬 S）
+      c.push({ t: q0 + 0.30, s: 0.052, a: 0.30 * g, d: dir([0.55, 0.45, -0.35]), T: true });       // T 在 V1 相反
+      return c;
+    }
+    c.push({ t: q0 + 0.235, s: 0.052, a: 0.32 * g * (p.tFlip ? -1 : 1), d: dir([0.65, 0.50, 0.40]), T: true });
+    return c;
+  }
+  function dipoleAt(t, beat) {
+    var d = [0, 0, 0];
+    for (var i = 0; i < beat.length; i++) {
+      var c = beat[i];
+      var s = (c.T && t > c.t) ? c.s * 0.78 : c.s;
+      var w = c.a * gauss(t, c.t, s);
+      d[0] += w * c.d[0]; d[1] += w * c.d[1]; d[2] += w * c.d[2];
+    }
+    return d;
+  }
+
+  // ---------- 節律排程：產生心搏清單 [{t0, beat, kind}] ----------
+  // rhythm: sinus | apc | vpc | bigeminy | couplet | nsvt | af | flutter | svt | wpw | avb1 | wenckebach | mobitz2 | chb | rbbb | lbbb | pause
+  function schedule(cfg, rnd) {
+    var rhythm = cfg.rhythm || 'sinus', hr = cfg.hr || 72, dur = cfg.dur || 10;
+    var base = { axisRot: cfg.axisRot || 0, gain: cfg.gain || 1, pGain: cfg.pGain, mirror: cfg.swap === 'dextro' };
+    var beats = [], extra = { atrialNoise: 0, flutter: 0 };
+    var rr = 60 / hr, t = 0.15;
+    function sinus(o) { return makeBeat(Object.assign({}, base, o || {})); }
+    var i;
+    switch (rhythm) {
+      case 'sinus': default:
+        while (t < dur + 1) { beats.push({ t0: t, beat: sinus(), kind: 'sinus' }); t += rr * (1 + (rnd() - 0.5) * 0.06); }
+        break;
+      case 'rbbb': case 'lbbb':
+        while (t < dur + 1) { beats.push({ t0: t, beat: sinus({ wide: rhythm }), kind: 'sinus' }); t += rr * (1 + (rnd() - 0.5) * 0.06); }
+        break;
+      case 'wpw':
+        while (t < dur + 1) { beats.push({ t0: t, beat: sinus({ wpw: true, pr: 0.10 }), kind: 'sinus' }); t += rr * (1 + (rnd() - 0.5) * 0.06); }
+        break;
+      case 'avb1':
+        while (t < dur + 1) { beats.push({ t0: t, beat: sinus({ pr: 0.30 }), kind: 'sinus' }); t += rr * (1 + (rnd() - 0.5) * 0.05); }
+        break;
+      case 'apc': case 'vpc': case 'bigeminy': case 'couplet': case 'nsvt': {
+        var n = 0, nextEctopic = rhythm === 'bigeminy' ? 1 : 2 + Math.floor(rnd() * 3);
+        while (t < dur + 1) {
+          beats.push({ t0: t, beat: sinus(), kind: 'sinus' }); n++;
+          if (n >= nextEctopic) {
+            if (rhythm === 'apc') {
+              var ct = t + rr * (0.55 + rnd() * 0.15);   // 提早
+              beats.push({ t0: ct, beat: sinus({ pDir: [0.2, -0.6, 0.4], pGain: 0.8 }), kind: 'apc' });
+              t = ct + rr * 0.95;                            // 不完全代償
+            } else {
+              var cnt = rhythm === 'couplet' ? 2 : rhythm === 'nsvt' ? 4 + Math.floor(rnd() * 5) : 1;
+              var vt = t + rr * (0.5 + rnd() * 0.12);
+              for (i = 0; i < cnt; i++) { beats.push({ t0: vt, beat: sinus({ kind: 'vpc', noP: true }), kind: 'vpc' }); vt += 60 / (150 + rnd() * 30); }
+              t = cnt === 1 ? t + 2 * rr : vt + rr * 0.9;    // 單發完全代償
+            }
+            n = 0; nextEctopic = rhythm === 'bigeminy' ? 1 : (rhythm === 'nsvt' ? 6 + Math.floor(rnd() * 4) : 2 + Math.floor(rnd() * 4));
+          } else t += rr * (1 + (rnd() - 0.5) * 0.05);
+        }
+        break;
+      }
+      case 'af': {
+        extra.atrialNoise = 1;
+        var mean = 60 / (cfg.hr || (90 + rnd() * 50));
+        while (t < dur + 1) { beats.push({ t0: t, beat: sinus({ noP: true }), kind: 'sinus' }); t += mean * (0.55 + rnd() * 0.9); }
+        break;
+      }
+      case 'flutter': {
+        extra.flutter = 300 / 60;                       // 5 Hz 鋸齒
+        var ratio = cfg.ratio || (rnd() < 0.5 ? 2 : 4), fl = 60 / 300;
+        var k = 0; t = 0.2;
+        while (t < dur + 1) { if (k % ratio === 0) beats.push({ t0: t, beat: sinus({ noP: true }), kind: 'sinus' }); t += fl; k++; }
+        break;
+      }
+      case 'svt': {
+        var srr = 60 / (cfg.hr || (160 + rnd() * 30));
+        while (t < dur + 1) { beats.push({ t0: t, beat: sinus({ noP: true }), kind: 'sinus' }); t += srr; }
+        break;
+      }
+      case 'wenckebach': {
+        var cyc = cfg.cycle || 4, j = 0;
+        while (t < dur + 1) {
+          var prs = [0.18, 0.26, 0.32, 0.36, 0.40];
+          var pos = j % cyc;
+          if (pos === cyc - 1) beats.push({ t0: t, beat: sinus({ noQRS: true }), kind: 'blockedP' });   // 脫落
+          else beats.push({ t0: t, beat: sinus({ pr: prs[Math.min(pos, 4)] }), kind: 'sinus' });
+          t += rr; j++;
+        }
+        break;
+      }
+      case 'mobitz2': {
+        var m = 0;
+        while (t < dur + 1) {
+          if (m % 3 === 2) beats.push({ t0: t, beat: sinus({ noQRS: true }), kind: 'blockedP' });
+          else beats.push({ t0: t, beat: sinus({ pr: 0.18 }), kind: 'sinus' });
+          t += rr; m++;
+        }
+        break;
+      }
+      case 'chb': {
+        var pt = 0.15, prr = 60 / (cfg.atrialRate || 80);
+        while (pt < dur + 1) { beats.push({ t0: pt, beat: sinus({ noQRS: true }), kind: 'blockedP' }); pt += prr; }
+        var vt2 = 0.45, vrr = 60 / (cfg.escapeRate || 38), ventricular = cfg.escape !== 'junctional';
+        while (vt2 < dur + 1) { beats.push({ t0: vt2, beat: sinus(ventricular ? { kind: 'escapeV', noP: true, qrsDir: [0.4, 0.7, -0.5] } : { noP: true }), kind: 'escape' }); vt2 += vrr; }
+        break;
+      }
+      case 'pause': {
+        var pStart = cfg.pauseAt || (3 + rnd() * 2), pLen = cfg.pauseLen || (3 + rnd() * 1.5);
+        while (t < dur + 1) { beats.push({ t0: t, beat: sinus(), kind: 'sinus' }); t += rr * (1 + (rnd() - 0.5) * 0.05); if (t > pStart && t < pStart + pLen) t = pStart + pLen; }
+        break;
+      }
+    }
+    // noQRS：只留 P 波
+    beats.forEach(function (b) { if (b.beat && b.kind === 'blockedP') b.beat = b.beat.filter(function (c) { return c.P; }); });
+    return { beats: beats, extra: extra };
+  }
+
+  // ---------- 主函式：產生 12 導程取樣 ----------
+  // cfg: { swap, rhythm, hr, dur, fs, axisRot, gain, masonLikar, noise, seed, emg }
+  function generate(cfg) {
+    cfg = cfg || {};
+    var swap = cfg.swap || 'normal';
+    var dur = cfg.dur || 10, fs = cfg.fs || 250;
+    var E = cfg.masonLikar ? ELECTRODES_ML : ELECTRODES_STD;
+    var map = SWAPS[swap] || SWAPS.normal;
+    var rnd = mulberry32(cfg.seed || 1);
+    var sch = schedule(cfg, rnd), beats = sch.beats, extra = sch.extra;
+    var n = Math.floor(dur * fs);
+    var names = ['I', 'II', 'III', 'aVR', 'aVL', 'aVF', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6'];
+    var out = {}; names.forEach(function (k) { out[k] = new Float32Array(n); });
+    var noise = cfg.noise == null ? 1 : cfg.noise, emg = cfg.emg || 0;
+    var wanderPh = rnd() * 6.28, wanderF = 0.18 + rnd() * 0.15;
+    var fibPh = [rnd() * 6, rnd() * 6, rnd() * 6], fibF = [5.8, 7.3, 9.1];
+    var atrialDir = rotZ(norm([0.45, 0.80, 0.30]), cfg.axisRot || 0);
+
+    for (var i = 0; i < n; i++) {
+      var t = i / fs, d = [0, 0, 0];
+      for (var b = 0; b < beats.length; b++) {
+        var rel = t - beats[b].t0;
+        if (rel < -0.05 || rel > 0.8) continue;
+        var dd = dipoleAt(rel, beats[b].beat);
+        d[0] += dd[0]; d[1] += dd[1]; d[2] += dd[2];
+      }
+      if (extra.atrialNoise) {       // AF 顫動波：小振幅、不規則
+        var f = 0;
+        for (var k = 0; k < 3; k++) f += Math.sin(2 * Math.PI * fibF[k] * t + fibPh[k]) / (k + 1);
+        f *= 0.07;
+        d[0] += f * atrialDir[0]; d[1] += f * atrialDir[1]; d[2] += f * atrialDir[2] * 0.5;
+      }
+      if (extra.flutter) {           // 撲動波：鋸齒（下壁導程負向）
+        var ph = (t * extra.flutter) % 1, saw = (ph < 0.75 ? -(ph / 0.75) : (1 - (ph - 0.75) / 0.25) - 1) ;   // 慢降快升
+        var fa = 0.14 * (saw + 0.5);
+        d[0] += fa * 0.2; d[1] += fa * 0.9; d[2] += fa * 0.2;
+      }
+      var phi = {};
+      ['RA', 'LA', 'LL', 'RL'].forEach(function (e) { phi[e] = dot(d, E[e]) * LIMB_K; });
+      ['V1', 'V2', 'V3', 'V4', 'V5', 'V6'].forEach(function (e) { phi[e] = dot(d, E[e]) * CHEST_K; });
+      var ra = phi[map.RA], la = phi[map.LA], ll = phi[map.LL];
+      var wct = (ra + la + ll) / 3;
+      var base = noise * (0.035 * Math.sin(2 * Math.PI * wanderF * t + wanderPh) + 0.012 * (rnd() - 0.5)) + emg * 0.05 * (rnd() - 0.5);
+      out.I[i] = la - ra + base;
+      out.II[i] = ll - ra + base;
+      out.III[i] = ll - la + base;
+      out.aVR[i] = ra - (la + ll) / 2 + base;
+      out.aVL[i] = la - (ra + ll) / 2 + base;
+      out.aVF[i] = ll - (ra + la) / 2 + base;
+      for (var v = 1; v <= 6; v++) out['V' + v][i] = phi['V' + v] - wct + base;
+    }
+    return { leads: out, fs: fs, dur: dur, hr: cfg.hr, swap: swap, rhythm: cfg.rhythm || 'sinus', masonLikar: !!cfg.masonLikar, beats: beats.map(function (b) { return { t0: b.t0, kind: b.kind }; }) };
+  }
+
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  // ---------- SVG 繪圖 ----------
+  // layout: '4x3'（標準機器：4 欄各 2.5 s + 10 s 節律條）或 '3x4'（手機直式：3 欄各 2.5 s + 7.5 s 節律條）
+  function toSVG(rec, opt) {
+    opt = opt || {};
+    var layout = opt.layout || '4x3';
+    var pxmm = opt.pxPerMm || 4;              // 1 mm = 4 px
+    var mmPerSec = 25, mmPerMv = 10;
+    var cols = layout === '3x4' ? 3 : 4;
+    var rows = layout === '3x4' ? 4 : 3;
+    var order = ['I', 'II', 'III', 'aVR', 'aVL', 'aVF', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6'];
+    var segSec = 2.5, segW = segSec * mmPerSec * pxmm;   // 250 px
+    var rowH = (opt.rowMm || 30) * pxmm;                 // 120 px
+    var calW = 5 * pxmm;                                 // 定標脈衝 0.2 s
+    var W = calW + cols * segW, rhythm = opt.rhythm !== false;
+    var H = rows * rowH + (rhythm ? rowH : 0);
+    var fs = rec.fs, L = rec.leads;
+    var hi = opt.highlight || [];
+    var s = [];
+    s.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" font-family="Helvetica,Arial,sans-serif">');
+    s.push('<defs><pattern id="g1" width="' + pxmm + '" height="' + pxmm + '" patternUnits="userSpaceOnUse"><path d="M ' + pxmm + ' 0 L 0 0 0 ' + pxmm + '" fill="none" stroke="#f0b8b8" stroke-width="0.5"/></pattern>' +
+      '<pattern id="g5" width="' + 5 * pxmm + '" height="' + 5 * pxmm + '" patternUnits="userSpaceOnUse"><rect width="' + 5 * pxmm + '" height="' + 5 * pxmm + '" fill="url(#g1)"/><path d="M ' + 5 * pxmm + ' 0 L 0 0 0 ' + 5 * pxmm + '" fill="none" stroke="#e58a8a" stroke-width="0.9"/></pattern></defs>');
+    s.push('<rect width="' + W + '" height="' + H + '" fill="#fff8f6"/><rect width="' + W + '" height="' + H + '" fill="url(#g5)"/>');
+    function path(lead, t0, t1, x0, baseY) {
+      var i0 = Math.round(t0 * fs), i1 = Math.min(Math.round(t1 * fs), lead.length);
+      var step = Math.max(1, Math.round(fs / (mmPerSec * pxmm)));   // 1 sample / px
+      var d = '';
+      for (var i = i0; i < i1; i += step) {
+        var x = x0 + (i - i0) / fs * mmPerSec * pxmm;
+        var y = baseY - lead[i] * mmPerMv * pxmm;
+        d += (i === i0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1);
+      }
+      return d;
+    }
+    for (var r = 0; r < rows; r++) {
+      var baseY = r * rowH + rowH * 0.6;
+      // 定標脈衝
+      s.push('<path d="M0 ' + baseY + ' h' + pxmm + ' v-' + 10 * pxmm + ' h' + 3 * pxmm + ' v' + 10 * pxmm + ' h' + pxmm + '" fill="none" stroke="#111" stroke-width="1.3"/>');
+      for (var c = 0; c < cols; c++) {
+        var name = layout === '3x4' ? order[r * cols + c] : order[c * rows + r];   // 3x4：每列三個；4x3：每欄三個
+        var x0 = calW + c * segW, t0 = c * segSec;
+        var isHi = hi.indexOf(name) >= 0;
+        if (isHi) s.push('<rect x="' + x0 + '" y="' + (r * rowH) + '" width="' + segW + '" height="' + rowH + '" fill="#ffe08a" fill-opacity="0.35"/>');
+        s.push('<text x="' + (x0 + 6) + '" y="' + (r * rowH + 16) + '" font-size="' + 3.6 * pxmm + '" font-weight="bold" fill="#111">' + name + '</text>');
+        s.push('<path d="' + path(L[name], t0, t0 + segSec, x0, baseY) + '" fill="none" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/>');
+        if (c > 0) s.push('<path d="M' + x0 + ' ' + (r * rowH + 4) + ' v' + (rowH * 0.25) + '" stroke="#111" stroke-width="0.8"/>');
+      }
+    }
+    if (rhythm) {
+      var by = rows * rowH + rowH * 0.6, rl = opt.rhythmLead || 'II';
+      s.push('<path d="M0 ' + by + ' h' + pxmm + ' v-' + 10 * pxmm + ' h' + 3 * pxmm + ' v' + 10 * pxmm + ' h' + pxmm + '" fill="none" stroke="#111" stroke-width="1.3"/>');
+      s.push('<text x="' + (calW + 6) + '" y="' + (rows * rowH + 16) + '" font-size="' + 3.6 * pxmm + '" font-weight="bold" fill="#111">' + rl + '</text>');
+      s.push('<path d="' + path(L[rl], 0, cols * segSec, calW, by) + '" fill="none" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/>');
+    }
+    if (opt.caption) s.push('<text x="' + (W - 6) + '" y="' + (H - 6) + '" text-anchor="end" font-size="' + 3 * pxmm + '" fill="#666">' + opt.caption + '</text>');
+    s.push('</svg>');
+    return s.join('');
+  }
+
+  // 單一導程小圖（教學卡用）
+  function leadSVG(rec, name, opt) {
+    opt = opt || {};
+    var pxmm = opt.pxPerMm || 4, secs = opt.sec || 2.0;
+    var W = secs * 25 * pxmm, H = (opt.rowMm || 28) * pxmm, baseY = H * 0.62, fs = rec.fs, lead = rec.leads[name];
+    var i0 = Math.round((opt.t0 || 0.0) * fs), i1 = Math.min(Math.round(((opt.t0 || 0) + secs) * fs), lead.length);
+    var d = '';
+    for (var i = i0; i < i1; i++) { var x = (i - i0) / fs * 25 * pxmm, y = baseY - lead[i] * 10 * pxmm; d += (i === i0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1); }
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '">' +
+      '<defs><pattern id="lg1" width="' + pxmm + '" height="' + pxmm + '" patternUnits="userSpaceOnUse"><path d="M ' + pxmm + ' 0 L 0 0 0 ' + pxmm + '" fill="none" stroke="#f0b8b8" stroke-width="0.5"/></pattern>' +
+      '<pattern id="lg5" width="' + 5 * pxmm + '" height="' + 5 * pxmm + '" patternUnits="userSpaceOnUse"><rect width="' + 5 * pxmm + '" height="' + 5 * pxmm + '" fill="url(#lg1)"/><path d="M ' + 5 * pxmm + ' 0 L 0 0 0 ' + 5 * pxmm + '" fill="none" stroke="#e58a8a" stroke-width="0.9"/></pattern></defs>' +
+      '<rect width="' + W + '" height="' + H + '" fill="#fff8f6"/><rect width="' + W + '" height="' + H + '" fill="url(#lg5)"/>' +
+      '<text x="6" y="' + 4.2 * pxmm + '" font-size="' + 3.6 * pxmm + '" font-weight="bold" font-family="Helvetica,Arial,sans-serif" fill="#111">' + name + '</text>' +
+      '<path d="' + d + '" fill="none" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+  }
+
+  // 節律條：單導程 N 秒（預設 II、10 s，兩列各 5 s 可選）
+  function stripSVG(rec, name, opt) {
+    opt = opt || {};
+    var pxmm = opt.pxPerMm || 4, secs = opt.sec || 10, rows = opt.rows || 1, perRow = secs / rows;
+    var W = perRow * 25 * pxmm + 5 * pxmm, rowH = (opt.rowMm || 30) * pxmm, H = rowH * rows, fs = rec.fs, lead = rec.leads[name || 'II'];
+    var s = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" font-family="Helvetica,Arial,sans-serif">',
+      '<defs><pattern id="sg1" width="' + pxmm + '" height="' + pxmm + '" patternUnits="userSpaceOnUse"><path d="M ' + pxmm + ' 0 L 0 0 0 ' + pxmm + '" fill="none" stroke="#f0b8b8" stroke-width="0.5"/></pattern><pattern id="sg5" width="' + 5 * pxmm + '" height="' + 5 * pxmm + '" patternUnits="userSpaceOnUse"><rect width="' + 5 * pxmm + '" height="' + 5 * pxmm + '" fill="url(#sg1)"/><path d="M ' + 5 * pxmm + ' 0 L 0 0 0 ' + 5 * pxmm + '" fill="none" stroke="#e58a8a" stroke-width="0.9"/></pattern></defs>',
+      '<rect width="' + W + '" height="' + H + '" fill="#fff8f6"/><rect width="' + W + '" height="' + H + '" fill="url(#sg5)"/>'];
+    for (var r = 0; r < rows; r++) {
+      var baseY = r * rowH + rowH * 0.6, x0 = 5 * pxmm, t0 = r * perRow;
+      s.push('<path d="M0 ' + baseY + ' h' + pxmm + ' v-' + 10 * pxmm + ' h' + 3 * pxmm + ' v' + 10 * pxmm + ' h' + pxmm + '" fill="none" stroke="#111" stroke-width="1.3"/>');
+      s.push('<text x="' + (x0 + 6) + '" y="' + (r * rowH + 16) + '" font-size="' + 3.6 * pxmm + '" font-weight="bold" fill="#111">' + (name || 'II') + '</text>');
+      var i0 = Math.round(t0 * fs), i1 = Math.min(Math.round((t0 + perRow) * fs), lead.length), d = '';
+      for (var i = i0; i < i1; i++) { var x = x0 + (i - i0) / fs * 25 * pxmm, y = baseY - lead[i] * 10 * pxmm; d += (i === i0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1); }
+      s.push('<path d="' + d + '" fill="none" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/>');
+    }
+    s.push('</svg>'); return s.join('');
+  }
+  var RHYTHM_INFO = {
+    sinus: { zh: '正常竇性節律', en: 'Normal sinus rhythm' }, apc: { zh: '心房早期收縮', en: 'Atrial premature complex (APC)' },
+    vpc: { zh: '心室早期收縮', en: 'Ventricular premature complex (VPC)' }, bigeminy: { zh: '心室二聯律', en: 'Ventricular bigeminy' },
+    couplet: { zh: '心室早搏連發（couplet）', en: 'Ventricular couplet' }, nsvt: { zh: '非持續性心室頻脈', en: 'Non-sustained VT' },
+    af: { zh: '心房顫動', en: 'Atrial fibrillation' }, flutter: { zh: '心房撲動', en: 'Atrial flutter' }, svt: { zh: '上心室頻脈', en: 'SVT' },
+    wpw: { zh: '預激症候群（WPW）', en: 'Wolff–Parkinson–White' }, avb1: { zh: '第一度房室阻滯', en: 'First-degree AV block' },
+    wenckebach: { zh: '第二度房室阻滯 Mobitz I（Wenckebach）', en: 'Mobitz I' }, mobitz2: { zh: '第二度房室阻滯 Mobitz II', en: 'Mobitz II' },
+    chb: { zh: '完全房室阻滯', en: 'Complete heart block' }, rbbb: { zh: '右束支阻滯', en: 'RBBB' }, lbbb: { zh: '左束支阻滯', en: 'LBBB' },
+    pause: { zh: '竇性停搏（long pause）', en: 'Sinus pause' }
+  };
+
+  // 額面 QRS 軸（度）— 由 I 與 aVF 的 QRS 淨面積估計
+  function qrsAxis(rec) {
+    var fs = rec.fs, L = rec.leads, i0 = Math.round(0.36 * fs), i1 = Math.round(0.45 * fs); // 第一拍 QRS 區間（心搏起點 0.15 s）
+    var sI = 0, sF = 0;
+    for (var i = i0; i < i1; i++) { sI += L.I[i]; sF += L.aVF[i]; }
+    return Math.round(Math.atan2(sF, sI) * 180 / Math.PI);
+  }
+
+  return { generate: generate, toSVG: toSVG, leadSVG: leadSVG, stripSVG: stripSVG, qrsAxis: qrsAxis, SWAPS: SWAPS, SWAP_INFO: SWAP_INFO, RHYTHM_INFO: RHYTHM_INFO, ELECTRODES_STD: ELECTRODES_STD };
+});
+
+</script>
+<script>
+var CONFIG = {"month":3,"pool":[{"key":"sinus","answer":"sinus","cfg":{"rhythm":"sinus"},"hr":[60,98]},{"key":"apc","answer":"apc","cfg":{"rhythm":"apc"},"hr":[62,90]},{"key":"af-slow","answer":"af","cfg":{"rhythm":"af"},"hr":[60,95]},{"key":"af-fast","answer":"af","cfg":{"rhythm":"af"},"hr":[110,150]},{"key":"flutter2","answer":"flutter","cfg":{"rhythm":"flutter","ratio":2},"note":"這張是 2:1 傳導，心室約 150/分。"},{"key":"flutter4","answer":"flutter","cfg":{"rhythm":"flutter","ratio":4},"note":"這張是 4:1 傳導，心室約 75/分，鋸齒最容易看。"},{"key":"svt","answer":"svt","cfg":{"rhythm":"svt"},"hr":[155,195]},{"key":"wpw","answer":"wpw","cfg":{"rhythm":"wpw"},"hr":[60,90],"full":true}],"label":{"sinus":["正常竇性","規則、有 P"],"apc":["竇性 + APC","偶發提早"],"af":["心房顫動 AF","不規則、無 P"],"flutter":["心房撲動","鋸齒 F 波"],"svt":["SVT","規則、150–200"],"wpw":["WPW 預激","短 PR + delta"]},"explain":{"sinus":"<b>正常竇性節律。</b>RR 規則、每個 QRS 前有相同的 P 波、PR 固定。","apc":"<b>竇性節律加偶發 APC。</b>整體規則，偶爾一拍提早、P 形態不同；不要因為幾拍提早就說是 AF，AF 是<b>全程</b>不規則而且<b>沒有 P</b>。","af":"<b>心房顫動（AF）。</b>三要件：<b>RR 完全不規則</b>、<b>沒有 P 波</b>、基線有細小顫動波。心室速率可快可慢。檢查前新發現的 AF 要通知醫師；WPW 病人合併 AF 是急症。","flutter":"<b>心房撲動。</b>基線是<b>鋸齒狀 F 波</b>（約 300/分），下壁導程最清楚；QRS 以 2:1（心室 150）或 4:1（心室 75）傳導。<b>規則的 150/分窄 QRS 頻脈，先想 2:1 撲動。</b>","svt":"<b>上心室頻脈（SVT）。</b>規則、窄 QRS、150 到 200/分、<b>看不到 P 波</b>（藏在 QRS 或 T 裡）、突然開始突然停。與竇性心搏過速的差別：竇性會逐漸加速減速、P 直立可見。","wpw":"<b>預激症候群（WPW）。</b>竇性節律但 <b>PR 短（< 0.12 秒）</b>、QRS 起始有<b>慢上升的 delta 波</b>、QRS 偏寬。多個導程都看得到 delta 波，所以用 12 導程最好認。<b>運動心電圖前若 resting ECG 有 delta 波，先告知醫師</b>；合併 AF 時可能極快，需立即通知。"},"options":["sinus","apc","af","flutter","svt","wpw"],"question":"這是什麼節律？","gallery":[{"title":"正常竇性","tell":"規則、有 P、PR 固定。","cfg":{"rhythm":"sinus"},"hr":75},{"title":"心房顫動 AF","tell":"RR 全程不規則、無 P、細顫動基線。","cfg":{"rhythm":"af"},"hr":95},{"title":"心房撲動 4:1","tell":"鋸齒 F 波約 300/分，心室 75。","cfg":{"rhythm":"flutter","ratio":4}},{"title":"心房撲動 2:1","tell":"規則 150/分，鋸齒被 QRS 遮住一半。","cfg":{"rhythm":"flutter","ratio":2}},{"title":"SVT","tell":"規則、窄、150–200、看不到 P。","cfg":{"rhythm":"svt"},"hr":175},{"title":"WPW","tell":"短 PR、delta 波、QRS 偏寬；看 12 導程。","cfg":{"rhythm":"wpw"},"hr":72,"full":true}]};
+</script>
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id);};
+var MONTH=CONFIG.month, POOL=CONFIG.pool, LABEL=CONFIG.label, EXP=CONFIG.explain, HRQ=CONFIG.hrQuestions!==false;
+var store=load(); store.total=store.total||0; store.bestStreak=store.bestStreak||0;
+function load(){try{return JSON.parse(localStorage.getItem('plab-m'+MONTH+'-v1')||'{}');}catch(e){return {};}}
+function save(){try{localStorage.setItem('plab-m'+MONTH+'-v1',JSON.stringify(store));}catch(e){}}
+function rnd(a,b){return a+Math.random()*(b-a);}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function narrow(){return window.innerWidth<700;}
+
+// 心搏數（10 秒內 QRS 數 × 6）
+function countHR(rec){ var n=rec.beats.filter(function(b){return b.kind!=='blockedP'&&b.t0<rec.dur;}).length; return Math.round(n*60/rec.dur); }
+var lastKey=null;
+function newCase(forceType){
+  var item=pick(POOL), tries=0; while(item.key===lastKey&&tries++<4) item=pick(POOL); lastKey=item.key;
+  var cfg=Object.assign({dur:10,fs:250,seed:Math.floor(Math.random()*1e9),axisRot:Math.round(rnd(-20,30)),gain:rnd(0.85,1.15),noise:rnd(0.6,1.2)}, item.cfg||{});
+  if(item.hr) cfg.hr=Math.round(rnd(item.hr[0],item.hr[1]));
+  var rec=ECG.generate(cfg);
+  var type=forceType||(HRQ&&Math.random()<0.3?'hr':'id');
+  return {item:item,cfg:cfg,rec:rec,type:type,hr:countHR(rec)};
+}
+function renderECG(box,c,view){
+  var z=box.querySelector('.zoomhint');
+  var showFull = view==='full' || (c.item.full && view!=='strip');
+  box.innerHTML = showFull ? ECG.toSVG(c.rec,{layout:narrow()?'3x4':'4x3'}) : ECG.stripSVG(c.rec,'II',{sec:10,rows:narrow()?2:1});
+  if(z) box.appendChild(z);
+  box.onclick=function(){ $('zoomC').innerHTML= showFull ? ECG.toSVG(c.rec,{layout:'4x3'}) : ECG.stripSVG(c.rec,'II',{sec:10,rows:1}); $('zoom').classList.add('on'); };
+}
+function hrOptions(hr){
+  var opts=[hr], deltas=[-30,-20,-15,15,20,30,40];
+  while(opts.length<4){ var d=pick(deltas), v=Math.max(25,Math.round((hr+d)/5)*5); if(opts.indexOf(v)<0) opts.push(v); }
+  return opts.sort(function(a,b){return a-b;});
+}
+function buildOpts(container,c,onPick){
+  container.innerHTML='';
+  if(c.type==='hr'){
+    hrOptions(c.hr).forEach(function(v){ var b=document.createElement('button'); b.className='opt'; b.dataset.k=String(v); b.innerHTML=v+' <small>bpm</small>'; b.onclick=function(){onPick(String(v),b);}; container.appendChild(b); });
+  } else {
+    CONFIG.options.forEach(function(k){ var b=document.createElement('button'); b.className='opt'; b.dataset.k=k; b.innerHTML=LABEL[k][0]+'<small>'+LABEL[k][1]+'</small>'; b.onclick=function(){onPick(k,b);}; container.appendChild(b); });
+  }
+}
+function answerKey(c){ return c.type==='hr' ? String(c.hr) : c.item.answer; }
+function isRight(c,k){ if(c.type==='hr') return Math.abs(+k-c.hr)<=5; return k===c.item.answer; }
+function questionText(c){ return c.type==='hr' ? '這段 10 秒節律條的心搏數大約是多少？（數 QRS × 6）' : (CONFIG.question||'這是什麼節律？'); }
+function explainText(c){
+  if(c.type==='hr') return '<b>心搏數 '+c.hr+' bpm。</b>10 秒節律條裡數 QRS 的個數乘以 6；規則節律也可用 300 ÷ 大格數。這段的節律是 <b>'+LABEL[c.item.answer][0]+'</b>。';
+  return EXP[c.item.answer] + (c.item.note ? '<p style="margin:6px 0 0">'+c.item.note+'</p>' : '');
+}
+function grade(container,chosen,c){
+  var ans=answerKey(c);
+  container.querySelectorAll('.opt').forEach(function(b){ b.disabled=true; var ok = c.type==='hr' ? Math.abs(+b.dataset.k-c.hr)<=5 : b.dataset.k===ans; if(ok) b.classList.add('correct'); else if(b.dataset.k===chosen) b.classList.add('wrong'); else b.classList.add('dim'); });
+}
+
+/* 練習 */
+var P={cur:null,ok:0,no:0,streak:0,answered:false,type:'id',view:'strip'};
+function startP(){
+  P.cur=newCase(P.type); P.answered=false;
+  renderECG($('ecgP'),P.cur,P.view); $('qP').textContent=questionText(P.cur);
+  buildOpts($('optsP'),P.cur,answerP);
+  $('verP').textContent=''; $('verP').className='verdict'; $('expP').style.display='none';
+  $('nextP').disabled=true; $('nextP').textContent='請先作答';
+}
+function answerP(k){
+  if(P.answered) return; P.answered=true;
+  var right=isRight(P.cur,k); grade($('optsP'),k,P.cur);
+  if(right){P.ok++;P.streak++; if(P.streak>store.bestStreak) store.bestStreak=P.streak;} else {P.no++;P.streak=0;}
+  store.total++; save();
+  $('verP').textContent=right?'答對了':'答錯了，正確答案：'+(P.cur.type==='hr'?P.cur.hr+' bpm':LABEL[P.cur.item.answer][0]);
+  $('verP').className='verdict '+(right?'ok':'no');
+  $('expP').innerHTML=explainText(P.cur); $('expP').style.display='block';
+  $('nextP').disabled=false; $('nextP').textContent='下一題';
+  $('okP').textContent=P.ok; $('noP').textContent=P.no; $('bestStreak').textContent=store.bestStreak; $('totalP').textContent=store.total; $('hScore').textContent='連勝 '+P.streak;
+}
+$('nextP').onclick=startP; $('skipP').onclick=startP;
+function seg(id,fn){ $(id).querySelectorAll('button').forEach(function(b){ b.onclick=function(){ $(id).querySelectorAll('button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); fn(b.dataset.v); }; }); }
+seg('segType',function(v){ P.type=v; startP(); });
+seg('segView',function(v){ P.view=v; if(P.cur) renderECG($('ecgP'),P.cur,P.view); });
+if(!HRQ){ $('segType').style.display='none'; }
+
+/* 月考 */
+var C={i:0,ok:0,cur:null,t0:0,timer:null,log:[],answered:false,plan:[]};
+function fmtBest(){ try{ var pl=JSON.parse(localStorage.getItem('plab-progress-v1')||'{}'); var m=(pl.months||{})[MONTH]; return m&&m.best!=null ? m.best+' / 10（'+m.date+'）' : '尚無紀錄'; }catch(e){return '尚無紀錄';} }
+$('chBest').textContent=fmtBest();
+$('chStart').onclick=function(){
+  C={i:0,ok:0,cur:null,t0:Date.now(),timer:null,log:[],answered:false,plan:[]};
+  for(var i=0;i<10;i++) C.plan.push(HRQ && (i===2||i===5||i===8) ? 'hr' : 'id');
+  $('chIntro').style.display='none'; $('chResult').style.display='none'; $('chGame').style.display='block';
+  C.timer=setInterval(function(){ $('chTime').textContent=Math.floor((Date.now()-C.t0)/1000); },500);
+  nextC();
+};
+function nextC(){
+  C.i++; C.answered=false; C.cur=newCase(C.plan[C.i-1]);
+  $('chN').textContent=C.i; $('chBar').style.width=((C.i-1)*10)+'%';
+  renderECG($('ecgC'),C.cur,'auto'); $('qC').textContent=questionText(C.cur);
+  buildOpts($('optsC'),C.cur,answerC);
+  $('verC').textContent=''; $('verC').className='verdict'; $('expC').style.display='none';
+  $('nextC').disabled=true; $('nextC').textContent='請先作答';
+}
+function answerC(k){
+  if(C.answered) return; C.answered=true;
+  var right=isRight(C.cur,k); grade($('optsC'),k,C.cur); if(right) C.ok++;
+  C.log.push({n:C.i,label:C.cur.type==='hr'?('心率 '+C.cur.hr):LABEL[C.cur.item.answer][0],right:right,chosen:C.cur.type==='hr'?k+' bpm':LABEL[k][0]});
+  $('chOk').textContent=C.ok;
+  $('verC').textContent=right?'答對了':'答錯了，正確答案：'+(C.cur.type==='hr'?C.cur.hr+' bpm':LABEL[C.cur.item.answer][0]);
+  $('verC').className='verdict '+(right?'ok':'no');
+  $('expC').innerHTML=explainText(C.cur); $('expC').style.display='block';
+  $('nextC').disabled=false; $('nextC').textContent=C.i<10?'下一題':'看成績';
+}
+$('nextC').onclick=function(){ if(C.i<10) nextC(); else finishC(); };
+function finishC(){
+  clearInterval(C.timer); var sec=Math.floor((Date.now()-C.t0)/1000);
+  $('chGame').style.display='none'; $('chResult').style.display='block'; $('chBar').style.width='100%';
+  $('rScore').textContent=C.ok;
+  $('rTier').textContent=C.ok===10?'滿分 ・ 可帶教 L4':C.ok>=8?'達標 ・ 獨立執行 L3':C.ok>=6?'監督下執行 L2':'回去看學習卡';
+  $('rTime').textContent='用時 '+sec+' 秒';
+  $('rList').innerHTML=C.log.map(function(e){return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #e3d3d8"><span>第 '+e.n+' 題　'+e.label+'</span><b style="color:'+(e.right?'#1b7f3b':'#c62828')+'">'+(e.right?'✓':'✗ 選了 '+e.chosen)+'</b></div>';}).join('');
+  try{ var pl=JSON.parse(localStorage.getItem('plab-progress-v1')||'{}'); pl.months=pl.months||{}; var m=pl.months[MONTH]||{}; if(m.best==null||C.ok>m.best){m.best=C.ok;m.total=10;m.date=new Date().toISOString().slice(0,10);} m.attempts=(m.attempts||0)+1; pl.months[MONTH]=m; localStorage.setItem('plab-progress-v1',JSON.stringify(pl)); }catch(e){}
+  $('chBest').textContent=fmtBest();
+}
+$('chAgain').onclick=function(){ $('chResult').style.display='none'; $('chIntro').style.display='block'; };
+
+/* 分頁、放大、圖例 */
+document.querySelectorAll('nav.tabs button').forEach(function(b){ b.onclick=function(){ document.querySelectorAll('nav.tabs button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');}); $('tab-'+b.dataset.tab).classList.add('on'); window.scrollTo(0,0); }; });
+$('zoomClose').onclick=function(){ $('zoom').classList.remove('on'); };
+(function(){ var g=$('gallery'); CONFIG.gallery.forEach(function(it){ var cfg=Object.assign({dur:6,fs:250,seed:Math.floor(Math.random()*1e9),noise:0.5},it.cfg||{}); if(it.hr) cfg.hr=it.hr; var rec=ECG.generate(cfg); var f=document.createElement('figure'); f.innerHTML=(it.full?ECG.toSVG(rec,{layout:'4x3',rhythm:false}):ECG.stripSVG(rec,'II',{sec:6,rows:1}))+'<figcaption><b>'+it.title+'</b>　'+it.tell+'</figcaption>'; g.appendChild(f); }); })();
+$('bestStreak').textContent=store.bestStreak; $('totalP').textContent=store.total;
+startP();
+})();
+var SHARE_URL='https://drake1128.github.io/saq-questionnaire/plab-m03-rhythm-2.html';
+function toggleShare(){document.getElementById('shareMenu').classList.toggle('on');}
+function copyShareLink(btn){var done=function(){btn.textContent='已複製連結 ✓';setTimeout(function(){btn.textContent='複製連結';},1800);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(SHARE_URL).then(done);}else window.prompt('請手動複製連結',SHARE_URL);}
+document.addEventListener('click',function(e){var fab=document.querySelector('.share-fab');if(fab&&!fab.contains(e.target))document.getElementById('shareMenu').classList.remove('on');});
+</script>
+</body>
+</html>
