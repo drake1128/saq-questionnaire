@@ -34,6 +34,8 @@ nav.tabs button.on{background:#fff;color:var(--b)}
 .opts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .opt{border:1.5px solid var(--line);background:#fff;border-radius:11px;padding:11px 8px;font-size:14.5px;font-weight:700;color:var(--bk);font-family:inherit;cursor:pointer;min-height:48px;line-height:1.25;text-align:center}
 .opt small{display:block;font-weight:500;font-size:11px;color:var(--mut)}
+.opts.list{grid-template-columns:1fr}
+.opts.list .opt{text-align:left;padding:12px 14px;font-weight:600;line-height:1.45;font-size:15px}
 .opt.correct{border-color:var(--ok);background:var(--okbg)}
 .opt.wrong{border-color:var(--no);background:var(--nobg)}
 .opt:disabled{cursor:default}.opt.dim{opacity:.5}
@@ -123,13 +125,13 @@ footer a{color:var(--b)}
   <div class="card"><h2>看到就要通報</h2>
     <div class="alert"><b>NSVT、VPC 連發、多形性 VPC</b>：依本院 2023 通報機制，由檢查室護理師直接通知主治醫師並留 log（時間、內容、回覆、處置）。運動心電圖中出現 VT 或二聯律屬紅旗，先停再通知。</div>
     <p style="font-size:14px;margin:0">AHA 住院監測標準（Sandau 2017）與 ISHNE/HRS 2017 ambulatory ECG 共識都把「正確辨認心室性心律不整」列為監測人員的基本能力。</p></div>
-  <div class="card gallery"><h2>圖例：本月要認得的每一種</h2><div class="hint">每張都是合成圖，每次打開會換一組；看 3 秒就要說得出名字。</div><div id="gallery"></div></div>
+  <div class="card gallery" id="galleryCard"><h2>圖例：本月要認得的每一種</h2><div class="hint">每張都是合成圖，每次打開會換一組；看 3 秒就要說得出名字。</div><div id="gallery"></div></div>
 </section>
 
 <section class="panel" id="tab-practice">
   <div class="card">
-    <div class="row"><span class="lbl">題型</span><span class="seg" id="segType"><button data-v="id" class="on">認節律</button><button data-v="hr">算心率</button></span>
-      <span class="lbl">圖</span><span class="seg" id="segView"><button data-v="strip" class="on">節律條 II</button><button data-v="full">12 導程</button></span></div>
+    <div class="row"><span class="lbl">題型</span><span class="seg" id="segType"><button data-v="id" class="on">認心電圖</button><button data-v="hr">算心率</button><button data-v="bank">情境題</button></span>
+      <span class="lbl">圖</span><span class="seg" id="segView"><button data-v="strip">節律條</button><button data-v="full">12 導程</button></span></div>
     <div class="ecgbox" id="ecgP"><div class="zoomhint">點圖放大</div></div>
     <div class="q" id="qP"></div>
     <div class="opts" id="optsP"></div>
@@ -143,7 +145,7 @@ footer a{color:var(--b)}
 <section class="panel" id="tab-quiz">
   <div class="card" id="chIntro">
     <h2>月考 10 題</h2>
-    <p>認節律 7 題、算心率 3 題，計時。<b>8 分達標</b>，10 分最佳。成績自動記到輪盤，可在輪盤頁一鍵複製回報。</p>
+    <p><span id="quizDesc">認節律 7 題、算心率 3 題</span>，計時。<b>8 分達標</b>，10 分最佳。成績自動記到輪盤，可在輪盤頁一鍵複製回報。</p>
     <div class="row"><span class="lbl">本月最佳</span><span id="chBest">尚無紀錄</span></div>
     <div class="nav"><button class="btn primary" id="chStart">開始</button></div>
   </div>
@@ -294,7 +296,14 @@ footer a{color:var(--b)}
       c.push({ t: q0 + 0.30, s: 0.052, a: 0.30 * g, d: dir([0.55, 0.45, -0.35]), T: true });       // T 在 V1 相反
       return c;
     }
-    c.push({ t: q0 + 0.235, s: 0.052, a: 0.32 * g * (p.tFlip ? -1 : 1), d: dir([0.65, 0.50, 0.40]), T: true });
+    if (p.st) {   // ST 段偏移：elevation（向量朝向該導程）或 depression（向量背離）
+      var sd = dir(p.st.dir), sa = p.st.a * g, sh = p.st.shape || 'plateau';
+      if (sh === 'up') c.push({ t: q0 + 0.072, s: 0.020, a: sa, d: sd });                                   // J 點下降、快速上斜回基線
+      else if (sh === 'down') { c.push({ t: q0 + 0.085, s: 0.022, a: sa * 0.7, d: sd }); c.push({ t: q0 + 0.165, s: 0.045, a: sa, d: sd }); }
+      else { c.push({ t: q0 + 0.080, s: 0.026, a: sa, d: sd }); c.push({ t: q0 + 0.140, s: 0.050, a: sa, d: sd }); }
+    }
+    var tf = p.tFlip || (p.st && p.st.shape === 'down');
+    c.push({ t: q0 + 0.235, s: 0.052, a: 0.32 * g * (tf ? -1 : 1) * (p.st && p.st.hyperT ? 1.6 : 1), d: dir([0.65, 0.50, 0.40]), T: true });
     return c;
   }
   function dipoleAt(t, beat) {
@@ -312,8 +321,8 @@ footer a{color:var(--b)}
   // rhythm: sinus | apc | vpc | bigeminy | couplet | nsvt | af | flutter | svt | wpw | avb1 | wenckebach | mobitz2 | chb | rbbb | lbbb | pause
   function schedule(cfg, rnd) {
     var rhythm = cfg.rhythm || 'sinus', hr = cfg.hr || 72, dur = cfg.dur || 10;
-    var base = { axisRot: cfg.axisRot || 0, gain: cfg.gain || 1, pGain: cfg.pGain, mirror: cfg.swap === 'dextro' };
-    var beats = [], extra = { atrialNoise: 0, flutter: 0 };
+    var base = { axisRot: cfg.axisRot || 0, gain: cfg.gain || 1, pGain: cfg.pGain, mirror: cfg.swap === 'dextro', st: cfg.st };
+    var beats = [], extra = { atrialNoise: 0, flutter: 0, vf: 0, spikes: [] };
     var rr = 60 / hr, t = 0.15;
     function sinus(o) { return makeBeat(Object.assign({}, base, o || {})); }
     var i;
@@ -395,6 +404,31 @@ footer a{color:var(--b)}
         while (vt2 < dur + 1) { beats.push({ t0: vt2, beat: sinus(ventricular ? { kind: 'escapeV', noP: true, qrsDir: [0.4, 0.7, -0.5] } : { noP: true }), kind: 'escape' }); vt2 += vrr; }
         break;
       }
+      case 'vt': {
+        var vtrr = 60 / (cfg.hr || (150 + rnd() * 40)); t = 0.2;
+        while (t < dur + 1) { beats.push({ t0: t, beat: sinus({ kind: 'vpc', noP: true, qrsGain: 1.5 }), kind: 'vpc' }); t += vtrr; }
+        break;
+      }
+      case 'vf': extra.vf = 1; break;
+      case 'asystole': break;
+      case 'pacedV': case 'pacedDDD': case 'loc': {
+        var prr = 60 / (cfg.hr || 70), pk = 0, pdir = [0.5, -0.7, -0.5];
+        while (t < dur + 1) {
+          var dual = rhythm === 'pacedDDD';
+          if (dual) extra.spikes.push({ t: t + 0.04, a: 0.6 });
+          extra.spikes.push({ t: t + 0.17, a: 1.1 });
+          if (rhythm === 'loc' && pk % 3 === 2) beats.push({ t0: t, beat: [], kind: 'noCapture' });
+          else beats.push({ t0: t, beat: sinus({ kind: 'vpc', noP: !dual, qrsDir: pdir }), kind: 'paced' });
+          t += prr; pk++;
+        }
+        break;
+      }
+      case 'undersense': {
+        while (t < dur + 1) { beats.push({ t0: t, beat: sinus(), kind: 'sinus' }); t += rr * (1 + (rnd() - 0.5) * 0.05); }
+        var st0 = 0.55 + rnd() * 0.3, srr2 = 60 / (cfg.paceRate || 60);
+        while (st0 < dur) { extra.spikes.push({ t: st0, a: 1.1 }); st0 += srr2; }
+        break;
+      }
       case 'pause': {
         var pStart = cfg.pauseAt || (3 + rnd() * 2), pLen = cfg.pauseLen || (3 + rnd() * 1.5);
         while (t < dur + 1) { beats.push({ t0: t, beat: sinus(), kind: 'sinus' }); t += rr * (1 + (rnd() - 0.5) * 0.05); if (t > pStart && t < pStart + pLen) t = pStart + pLen; }
@@ -423,6 +457,9 @@ footer a{color:var(--b)}
     var wanderPh = rnd() * 6.28, wanderF = 0.18 + rnd() * 0.15;
     var fibPh = [rnd() * 6, rnd() * 6, rnd() * 6], fibF = [5.8, 7.3, 9.1];
     var atrialDir = rotZ(norm([0.45, 0.80, 0.30]), cfg.axisRot || 0);
+    var spk = new Float32Array(n);
+    (extra.spikes || []).forEach(function (sp) { var i0 = Math.round(sp.t * fs); if (i0 >= 0 && i0 + 3 < n) { spk[i0] += sp.a; spk[i0 + 1] += sp.a; spk[i0 + 2] -= sp.a * 0.25; } });
+    var vfPh = [rnd() * 6, rnd() * 6, rnd() * 6];
 
     for (var i = 0; i < n; i++) {
       var t = i / fs, d = [0, 0, 0];
@@ -438,6 +475,12 @@ footer a{color:var(--b)}
         f *= 0.07;
         d[0] += f * atrialDir[0]; d[1] += f * atrialDir[1]; d[2] += f * atrialDir[2] * 0.5;
       }
+      if (extra.vf) {               // VF：不規則、無 QRS 的粗顫動
+        var amp = 0.38 * (0.7 + 0.3 * Math.sin(2 * Math.PI * 0.23 * t + vfPh[0]));
+        var w = Math.sin(2 * Math.PI * 4.6 * t + vfPh[0]) + 0.7 * Math.sin(2 * Math.PI * 6.1 * t + vfPh[1]) + 0.4 * Math.sin(2 * Math.PI * 3.3 * t + vfPh[2]);
+        var vdir = [0.35 * Math.cos(0.9 * t), 0.9, 0.3 + 0.2 * Math.sin(0.7 * t)];
+        d[0] += amp * w * vdir[0]; d[1] += amp * w * vdir[1]; d[2] += amp * w * vdir[2];
+      }
       if (extra.flutter) {           // 撲動波：鋸齒（下壁導程負向）
         var ph = (t * extra.flutter) % 1, saw = (ph < 0.75 ? -(ph / 0.75) : (1 - (ph - 0.75) / 0.25) - 1) ;   // 慢降快升
         var fa = 0.14 * (saw + 0.5);
@@ -448,7 +491,7 @@ footer a{color:var(--b)}
       ['V1', 'V2', 'V3', 'V4', 'V5', 'V6'].forEach(function (e) { phi[e] = dot(d, E[e]) * CHEST_K; });
       var ra = phi[map.RA], la = phi[map.LA], ll = phi[map.LL];
       var wct = (ra + la + ll) / 3;
-      var base = noise * (0.035 * Math.sin(2 * Math.PI * wanderF * t + wanderPh) + 0.012 * (rnd() - 0.5)) + emg * 0.05 * (rnd() - 0.5);
+      var base = noise * (0.035 * Math.sin(2 * Math.PI * wanderF * t + wanderPh) + 0.012 * (rnd() - 0.5)) + emg * 0.05 * (rnd() - 0.5) + spk[i];
       out.I[i] = la - ra + base;
       out.II[i] = ll - ra + base;
       out.III[i] = ll - la + base;
@@ -591,7 +634,9 @@ var CONFIG = {"month":2,"pool":[{"key":"sinus","answer":"sinus","cfg":{"rhythm":
 (function(){
 'use strict';
 var $=function(id){return document.getElementById(id);};
-var MONTH=CONFIG.month, POOL=CONFIG.pool, LABEL=CONFIG.label, EXP=CONFIG.explain, HRQ=CONFIG.hrQuestions!==false;
+var MONTH=CONFIG.month, POOL=CONFIG.pool||[], LABEL=CONFIG.label||{}, EXP=CONFIG.explain||{}, HRQ=CONFIG.hrQuestions!==false, BANK=CONFIG.bank||[], HAS_POOL=POOL.length>0;
+if(!HAS_POOL) HRQ=false;
+var recentBank=[];
 var store=load(); store.total=store.total||0; store.bestStreak=store.bestStreak||0;
 function load(){try{return JSON.parse(localStorage.getItem('plab-m'+MONTH+'-v1')||'{}');}catch(e){return {};}}
 function save(){try{localStorage.setItem('plab-m'+MONTH+'-v1',JSON.stringify(store));}catch(e){}}
@@ -600,9 +645,18 @@ function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
 function narrow(){return window.innerWidth<700;}
 
 // 心搏數（10 秒內 QRS 數 × 6）
-function countHR(rec){ var n=rec.beats.filter(function(b){return b.kind!=='blockedP'&&b.t0<rec.dur;}).length; return Math.round(n*60/rec.dur); }
+function countHR(rec){ var n=rec.beats.filter(function(b){return b.kind!=='blockedP'&&b.kind!=='noCapture'&&b.t0<rec.dur;}).length; return Math.round(n*60/rec.dur); }
 var lastKey=null;
-function newCase(forceType){
+function bankCase(used){
+  var idx, tries=0, avoid=used||recentBank;
+  do { idx=Math.floor(Math.random()*BANK.length); tries++; } while(avoid.indexOf(idx)>=0 && tries<60);
+  if(!used){ recentBank.push(idx); if(recentBank.length>Math.min(8,BANK.length-1)) recentBank.shift(); } else used.push(idx);
+  var b=BANK[idx], rec=null;
+  if(b.ecg){ var cfg=Object.assign({dur:10,fs:250,seed:Math.floor(Math.random()*1e9),axisRot:Math.round(rnd(-15,25)),gain:rnd(0.9,1.1),noise:rnd(0.6,1.1)}, b.ecg.cfg||{}); rec=ECG.generate(cfg); }
+  return {type:'bank', b:b, rec:rec};
+}
+function newCase(forceType, used){
+  if(forceType==='bank') return bankCase(used);
   var item=pick(POOL), tries=0; while(item.key===lastKey&&tries++<4) item=pick(POOL); lastKey=item.key;
   var cfg=Object.assign({dur:10,fs:250,seed:Math.floor(Math.random()*1e9),axisRot:Math.round(rnd(-20,30)),gain:rnd(0.85,1.15),noise:rnd(0.6,1.2)}, item.cfg||{});
   if(item.hr) cfg.hr=Math.round(rnd(item.hr[0],item.hr[1]));
@@ -612,10 +666,13 @@ function newCase(forceType){
 }
 function renderECG(box,c,view){
   var z=box.querySelector('.zoomhint');
-  var showFull = view==='full' || (c.item.full && view!=='strip');
-  box.innerHTML = showFull ? ECG.toSVG(c.rec,{layout:narrow()?'3x4':'4x3'}) : ECG.stripSVG(c.rec,'II',{sec:10,rows:narrow()?2:1});
+  if(!c.rec){ box.style.display='none'; return; }
+  box.style.display='';
+  var meta = c.type==='bank' ? (c.b.ecg||{}) : c.item, lead = meta.lead||'II';
+  var showFull = view==='full' || (meta.full && view!=='strip');
+  box.innerHTML = showFull ? ECG.toSVG(c.rec,{layout:narrow()?'3x4':'4x3'}) : ECG.stripSVG(c.rec,lead,{sec:10,rows:narrow()?2:1});
   if(z) box.appendChild(z);
-  box.onclick=function(){ $('zoomC').innerHTML= showFull ? ECG.toSVG(c.rec,{layout:'4x3'}) : ECG.stripSVG(c.rec,'II',{sec:10,rows:1}); $('zoom').classList.add('on'); };
+  box.onclick=function(){ $('zoomC').innerHTML= showFull ? ECG.toSVG(c.rec,{layout:'4x3'}) : ECG.stripSVG(c.rec,lead,{sec:10,rows:1}); $('zoom').classList.add('on'); };
 }
 function hrOptions(hr){
   var opts=[hr], deltas=[-30,-20,-15,15,20,30,40];
@@ -623,30 +680,42 @@ function hrOptions(hr){
   return opts.sort(function(a,b){return a-b;});
 }
 function buildOpts(container,c,onPick){
-  container.innerHTML='';
+  container.innerHTML=''; container.classList.toggle('list', c.type==='bank');
+  if(c.type==='bank'){
+    var order=c.b.o.map(function(_,i){return i;});
+    var fixed=c.b.o.some(function(x){return /以上皆是|以上皆非/.test(x);});
+    if(!fixed){ for(var j=order.length-1;j>0;j--){ var r=Math.floor(Math.random()*(j+1)); var tmp=order[j]; order[j]=order[r]; order[r]=tmp; } }
+    c.letter={};
+    order.forEach(function(i,pos){ c.letter[i]='ABCDEF'[pos]; var b=document.createElement('button'); b.className='opt'; b.dataset.k=String(i); b.innerHTML='<b style="color:var(--b);margin-right:6px">'+'ABCDEF'[pos]+'</b>'+c.b.o[i]; b.onclick=function(){onPick(String(i),b);}; container.appendChild(b); });
+    return;
+  }
   if(c.type==='hr'){
     hrOptions(c.hr).forEach(function(v){ var b=document.createElement('button'); b.className='opt'; b.dataset.k=String(v); b.innerHTML=v+' <small>bpm</small>'; b.onclick=function(){onPick(String(v),b);}; container.appendChild(b); });
   } else {
     CONFIG.options.forEach(function(k){ var b=document.createElement('button'); b.className='opt'; b.dataset.k=k; b.innerHTML=LABEL[k][0]+'<small>'+LABEL[k][1]+'</small>'; b.onclick=function(){onPick(k,b);}; container.appendChild(b); });
   }
 }
-function answerKey(c){ return c.type==='hr' ? String(c.hr) : c.item.answer; }
-function isRight(c,k){ if(c.type==='hr') return Math.abs(+k-c.hr)<=5; return k===c.item.answer; }
-function questionText(c){ return c.type==='hr' ? '這段 10 秒節律條的心搏數大約是多少？（數 QRS × 6）' : (CONFIG.question||'這是什麼節律？'); }
+function answerKey(c){ return c.type==='bank' ? String(c.b.a) : c.type==='hr' ? String(c.hr) : c.item.answer; }
+function answerText(c){ return c.type==='bank' ? (c.letter?c.letter[c.b.a]+'　':'')+c.b.o[c.b.a] : c.type==='hr' ? c.hr+' bpm' : LABEL[c.item.answer][0]; }
+function chosenText(c,k){ return c.type==='bank' ? (c.letter?c.letter[+k]:'ABCDEF'[+k]) : c.type==='hr' ? k+' bpm' : LABEL[k][0]; }
+function shortLabel(c){ return c.type==='bank' ? (c.b.tag||c.b.q.replace(/<[^>]+>/g,'').slice(0,16)+'…') : c.type==='hr' ? '心率 '+c.hr : LABEL[c.item.answer][0]; }
+function isRight(c,k){ if(c.type==='bank') return k===String(c.b.a); if(c.type==='hr') return Math.abs(+k-c.hr)<=5; return k===c.item.answer; }
+function questionText(c){ if(c.type==='bank') return c.b.q; return c.type==='hr' ? '這段 10 秒節律條的心搏數大約是多少？（數 QRS × 6）' : (CONFIG.question||'這是什麼節律？'); }
 function explainText(c){
+  if(c.type==='bank') return c.b.e;
   if(c.type==='hr') return '<b>心搏數 '+c.hr+' bpm。</b>10 秒節律條裡數 QRS 的個數乘以 6；規則節律也可用 300 ÷ 大格數。這段的節律是 <b>'+LABEL[c.item.answer][0]+'</b>。';
   return EXP[c.item.answer] + (c.item.note ? '<p style="margin:6px 0 0">'+c.item.note+'</p>' : '');
 }
 function grade(container,chosen,c){
   var ans=answerKey(c);
-  container.querySelectorAll('.opt').forEach(function(b){ b.disabled=true; var ok = c.type==='hr' ? Math.abs(+b.dataset.k-c.hr)<=5 : b.dataset.k===ans; if(ok) b.classList.add('correct'); else if(b.dataset.k===chosen) b.classList.add('wrong'); else b.classList.add('dim'); });
+  container.querySelectorAll('.opt').forEach(function(b){ b.disabled=true; var ok = c.type==='bank' ? b.dataset.k===ans : c.type==='hr' ? Math.abs(+b.dataset.k-c.hr)<=5 : b.dataset.k===ans; if(ok) b.classList.add('correct'); else if(b.dataset.k===chosen) b.classList.add('wrong'); else b.classList.add('dim'); });
 }
 
 /* 練習 */
-var P={cur:null,ok:0,no:0,streak:0,answered:false,type:'id',view:'strip'};
+var P={cur:null,ok:0,no:0,streak:0,answered:false,type:'id',view:'auto'};
 function startP(){
   P.cur=newCase(P.type); P.answered=false;
-  renderECG($('ecgP'),P.cur,P.view); $('qP').textContent=questionText(P.cur);
+  renderECG($('ecgP'),P.cur,P.view); $('qP').innerHTML=questionText(P.cur);
   buildOpts($('optsP'),P.cur,answerP);
   $('verP').textContent=''; $('verP').className='verdict'; $('expP').style.display='none';
   $('nextP').disabled=true; $('nextP').textContent='請先作答';
@@ -656,7 +725,7 @@ function answerP(k){
   var right=isRight(P.cur,k); grade($('optsP'),k,P.cur);
   if(right){P.ok++;P.streak++; if(P.streak>store.bestStreak) store.bestStreak=P.streak;} else {P.no++;P.streak=0;}
   store.total++; save();
-  $('verP').textContent=right?'答對了':'答錯了，正確答案：'+(P.cur.type==='hr'?P.cur.hr+' bpm':LABEL[P.cur.item.answer][0]);
+  $('verP').textContent=right?'答對了':'答錯了，正確答案：'+answerText(P.cur);
   $('verP').className='verdict '+(right?'ok':'no');
   $('expP').innerHTML=explainText(P.cur); $('expP').style.display='block';
   $('nextP').disabled=false; $('nextP').textContent='下一題';
@@ -666,7 +735,18 @@ $('nextP').onclick=startP; $('skipP').onclick=startP;
 function seg(id,fn){ $(id).querySelectorAll('button').forEach(function(b){ b.onclick=function(){ $(id).querySelectorAll('button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); fn(b.dataset.v); }; }); }
 seg('segType',function(v){ P.type=v; startP(); });
 seg('segView',function(v){ P.view=v; if(P.cur) renderECG($('ecgP'),P.cur,P.view); });
-if(!HRQ){ $('segType').style.display='none'; }
+(function(){
+  var seg=$('segType');
+  if(CONFIG.idLabel) seg.querySelector('[data-v=id]').textContent=CONFIG.idLabel;
+  if(!HAS_POOL) seg.querySelector('[data-v=id]').remove();
+  if(!HRQ) seg.querySelector('[data-v=hr]').remove();
+  if(!BANK.length) seg.querySelector('[data-v=bank]').remove();
+  seg.querySelectorAll('button').forEach(function(b){b.classList.remove('on');});
+  var first=seg.querySelector('button'); first.classList.add('on'); P.type=first.dataset.v;
+  if(seg.querySelectorAll('button').length<2){ seg.style.display='none'; seg.previousElementSibling.style.display='none'; }
+  if(!HAS_POOL && !BANK.some(function(b){return b.ecg;})){ $('segView').style.display='none'; $('segView').previousElementSibling.style.display='none'; }
+  if(CONFIG.quizDesc) $('quizDesc').textContent=CONFIG.quizDesc;
+})();
 
 /* 月考 */
 var C={i:0,ok:0,cur:null,t0:0,timer:null,log:[],answered:false,plan:[]};
@@ -674,15 +754,16 @@ function fmtBest(){ try{ var pl=JSON.parse(localStorage.getItem('plab-progress-v
 $('chBest').textContent=fmtBest();
 $('chStart').onclick=function(){
   C={i:0,ok:0,cur:null,t0:Date.now(),timer:null,log:[],answered:false,plan:[]};
-  for(var i=0;i<10;i++) C.plan.push(HRQ && (i===2||i===5||i===8) ? 'hr' : 'id');
+  C.used=[];
+  if(CONFIG.quizPlan) C.plan=CONFIG.quizPlan.slice(); else for(var i=0;i<10;i++) C.plan.push(HRQ && (i===2||i===5||i===8) ? 'hr' : 'id');
   $('chIntro').style.display='none'; $('chResult').style.display='none'; $('chGame').style.display='block';
   C.timer=setInterval(function(){ $('chTime').textContent=Math.floor((Date.now()-C.t0)/1000); },500);
   nextC();
 };
 function nextC(){
-  C.i++; C.answered=false; C.cur=newCase(C.plan[C.i-1]);
+  C.i++; C.answered=false; C.cur=newCase(C.plan[C.i-1], C.plan[C.i-1]==='bank'?C.used:undefined);
   $('chN').textContent=C.i; $('chBar').style.width=((C.i-1)*10)+'%';
-  renderECG($('ecgC'),C.cur,'auto'); $('qC').textContent=questionText(C.cur);
+  renderECG($('ecgC'),C.cur,'auto'); $('qC').innerHTML=questionText(C.cur);
   buildOpts($('optsC'),C.cur,answerC);
   $('verC').textContent=''; $('verC').className='verdict'; $('expC').style.display='none';
   $('nextC').disabled=true; $('nextC').textContent='請先作答';
@@ -690,9 +771,9 @@ function nextC(){
 function answerC(k){
   if(C.answered) return; C.answered=true;
   var right=isRight(C.cur,k); grade($('optsC'),k,C.cur); if(right) C.ok++;
-  C.log.push({n:C.i,label:C.cur.type==='hr'?('心率 '+C.cur.hr):LABEL[C.cur.item.answer][0],right:right,chosen:C.cur.type==='hr'?k+' bpm':LABEL[k][0]});
+  C.log.push({n:C.i,label:shortLabel(C.cur),right:right,chosen:chosenText(C.cur,k)});
   $('chOk').textContent=C.ok;
-  $('verC').textContent=right?'答對了':'答錯了，正確答案：'+(C.cur.type==='hr'?C.cur.hr+' bpm':LABEL[C.cur.item.answer][0]);
+  $('verC').textContent=right?'答對了':'答錯了，正確答案：'+answerText(C.cur);
   $('verC').className='verdict '+(right?'ok':'no');
   $('expC').innerHTML=explainText(C.cur); $('expC').style.display='block';
   $('nextC').disabled=false; $('nextC').textContent=C.i<10?'下一題':'看成績';
@@ -713,7 +794,7 @@ $('chAgain').onclick=function(){ $('chResult').style.display='none'; $('chIntro'
 /* 分頁、放大、圖例 */
 document.querySelectorAll('nav.tabs button').forEach(function(b){ b.onclick=function(){ document.querySelectorAll('nav.tabs button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');}); $('tab-'+b.dataset.tab).classList.add('on'); window.scrollTo(0,0); }; });
 $('zoomClose').onclick=function(){ $('zoom').classList.remove('on'); };
-(function(){ var g=$('gallery'); CONFIG.gallery.forEach(function(it){ var cfg=Object.assign({dur:6,fs:250,seed:Math.floor(Math.random()*1e9),noise:0.5},it.cfg||{}); if(it.hr) cfg.hr=it.hr; var rec=ECG.generate(cfg); var f=document.createElement('figure'); f.innerHTML=(it.full?ECG.toSVG(rec,{layout:'4x3',rhythm:false}):ECG.stripSVG(rec,'II',{sec:6,rows:1}))+'<figcaption><b>'+it.title+'</b>　'+it.tell+'</figcaption>'; g.appendChild(f); }); })();
+(function(){ var g=$('gallery'); if(!(CONFIG.gallery||[]).length){ $('galleryCard').style.display='none'; return; } CONFIG.gallery.forEach(function(it){ var cfg=Object.assign({dur:6,fs:250,seed:Math.floor(Math.random()*1e9),noise:0.5},it.cfg||{}); if(it.hr) cfg.hr=it.hr; var rec=ECG.generate(cfg); var f=document.createElement('figure'); f.innerHTML=(it.full?ECG.toSVG(rec,{layout:'4x3',rhythm:false}):ECG.stripSVG(rec,it.lead||'II',{sec:6,rows:1}))+'<figcaption><b>'+it.title+'</b>　'+it.tell+'</figcaption>'; g.appendChild(f); }); })();
 $('bestStreak').textContent=store.bestStreak; $('totalP').textContent=store.total;
 startP();
 })();
