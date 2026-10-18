@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>生理功能室 12 個月訓練輪盤 ｜ 心血管中心</title>
+<meta name="description" content="新竹臺大分院心血管中心生理功能室進階訓練：12 個月一圈的滾動式教學，每月一題，讀、練、測、做。">
+<style>
+:root{--b:#8a1538;--bd:#5e0e26;--bl:#faf3f5;--bk:#111;--mut:#5b6472;--line:#e3d3d8;--ok:#1b7f3b;--okbg:#e6f4ea;--bg:#f4f1f2;--card:#fff;--y:#ffd166}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",Roboto,sans-serif;background:var(--bg);color:var(--bk);line-height:1.55;font-size:16px}
+header{background:var(--b);color:#fff;padding:14px 16px 12px;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+header h1{font-size:19px;margin:0;font-weight:800}
+header .sub{font-size:12.5px;opacity:.9;margin-top:3px}
+.wrap{max-width:720px;margin:0 auto;padding:12px 12px 80px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px;box-shadow:0 1px 3px rgba(20,30,50,.05)}
+.card h2{font-size:17px;color:var(--b);margin:0 0 8px}
+.now{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.now .big{font-size:22px;font-weight:900;color:var(--b)}
+.now .tag{font-size:12px;background:var(--bl);color:var(--b);padding:3px 10px;border-radius:999px;font-weight:700}
+#wheel{display:block;width:100%;max-width:420px;margin:6px auto 0;height:auto}
+#wheel .sec{cursor:pointer}
+#wheel .sec path{fill:#efe6e9;stroke:#fff;stroke-width:2;transition:fill .15s}
+#wheel .sec.done path{fill:#e2b9c5}
+#wheel .sec.cur path{fill:var(--b)}
+#wheel .sec.sel path{stroke:var(--y);stroke-width:4}
+#wheel .sec text{font-size:11px;font-weight:700;fill:var(--bk);pointer-events:none}
+#wheel .sec.cur text{fill:#fff}
+#wheel .sec.future path{fill:#f7f5f6}
+#wheel .hub{fill:#fff;stroke:var(--line)}
+.legend{display:flex;gap:12px;justify-content:center;font-size:12px;color:var(--mut);margin-top:6px;flex-wrap:wrap}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-1px;border:1px solid var(--line)}
+.steps{display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px}
+.step{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff}
+.step .k{flex:0 0 40px;height:40px;border-radius:10px;background:var(--bl);color:var(--b);font-weight:900;display:flex;align-items:center;justify-content:center;font-size:17px}
+.step b{display:block;font-size:14.5px}
+.step span{font-size:13.5px;color:#333}
+.step a{color:var(--b);font-weight:700}
+.step .st{font-size:12px;color:var(--mut)}
+.btn{border:none;border-radius:12px;padding:12px 14px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;min-height:44px}
+.btn.primary{background:var(--b);color:#fff}
+.btn.ghost{background:#fff;color:var(--b);border:1.5px solid var(--line)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+input[type=text]{font:inherit;padding:9px 10px;border:1.5px solid var(--line);border-radius:10px;min-width:160px}
+label.chk{display:flex;gap:8px;align-items:center;font-size:14.5px;cursor:pointer}
+label.chk input{width:20px;height:20px}
+.wip{display:inline-block;font-size:11.5px;background:#fff3cd;color:#7a5a00;padding:2px 8px;border-radius:999px;font-weight:700}
+.table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px}
+.table th{background:var(--b);color:#fff;padding:5px 6px;text-align:left}
+.table td{padding:5px 6px;border-bottom:1px solid var(--line)}
+.table tr.cur td{background:var(--bl)}
+.pearl{border-left:5px solid var(--b);background:var(--bl);padding:8px 12px;border-radius:0 8px 8px 0;margin:8px 0;font-size:14px}
+footer{text-align:center;color:var(--mut);font-size:11.5px;margin-top:24px;line-height:1.7}
+footer a{color:var(--b)}
+.share-fab{position:fixed;right:14px;bottom:18px;z-index:30}
+.share-toggle{width:50px;height:50px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:var(--b);color:#fff;box-shadow:0 4px 14px rgba(138,21,56,.4);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.share-toggle svg{width:22px;height:22px;fill:#fff}
+.share-menu{position:absolute;bottom:60px;right:0;background:#fff;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.25);padding:14px;width:250px;display:none}
+.share-menu.on{display:block}
+.share-menu h4{margin:0 0 8px;font-size:14px}
+.share-menu img{display:block;margin:0 auto 8px;border-radius:8px}
+.share-menu .sb{display:block;width:100%;border:none;border-radius:9px;padding:10px;margin:6px 0;font-weight:700;font-family:inherit;color:#fff;text-align:center;text-decoration:none;font-size:14px;cursor:pointer}
+.sb.line{background:#06C755}.sb.copy{background:var(--b)}
+</style>
+</head>
+<body>
+<header>
+  <h1>🎯 生理功能室 12 個月訓練輪盤</h1>
+  <div class="sub">心血管中心 生理功能室進階訓練手冊 ｜ 每月一題，讀・練・測・做 ｜ 第一圈 2026-11 起</div>
+</header>
+<div class="wrap">
+
+<div class="card">
+  <div class="now"><div><div style="font-size:12px;color:var(--mut)">本月題目</div><div class="big" id="nowTitle">—</div></div><div><span class="tag" id="nowTag">—</span></div></div>
+  <svg id="wheel" viewBox="0 0 420 420" aria-label="12 個月輪盤"></svg>
+  <div class="legend"><span><i style="background:#8a1538"></i>本月</span><span><i style="background:#e2b9c5"></i>已完成月考</span><span><i style="background:#efe6e9"></i>可練習</span><span><i style="background:#f7f5f6"></i>尚未開放</span></div>
+  <div class="pearl" style="margin-top:10px">點輪盤任何一格看該月內容。每月四段：<b>讀</b> 10 分鐘、<b>練</b> 無限題、<b>測</b> 10 題月考、<b>做</b> 一個現場任務。一圈 12 次月考都 ≥ 8 分加任務完成，就是 L3 情境測驗資格。</div>
+</div>
+
+<div class="card" id="detail">
+  <h2 id="dTitle">—</h2>
+  <div id="dSkills" style="font-size:14px;color:#333"></div>
+  <div class="steps" id="dSteps"></div>
+  <div class="row">
+    <label class="chk"><input type="checkbox" id="dTask"> 本月現場任務已完成（由資深同仁確認）</label>
+  </div>
+  <div class="row"><span style="font-size:13.5px;color:var(--mut)" id="dScore"></span></div>
+</div>
+
+<div class="card">
+  <h2>我的進度</h2>
+  <div class="row"><input type="text" id="name" placeholder="姓名（存在這支手機）"><button class="btn primary" id="copyProg">複製我的進度</button><button class="btn ghost" id="resetProg">清除</button></div>
+  <table class="table" id="progTable"></table>
+  <p style="font-size:12.5px;color:var(--mut);margin:8px 0 0">月考成績由各月模組自動記錄到這支手機；「複製我的進度」把文字貼到 LINE 或 Teams 給李怡箴護理師存檔。</p>
+</div>
+
+<div class="card">
+  <h2>手冊與延伸</h2>
+  <div style="font-size:14px">
+    <p style="margin:0 0 6px">📘 <b>生理功能室進階訓練手冊</b>（LaTeX 印刷版）：放在生理功能室，電子檔向主任索取。</p>
+    <p style="margin:0 0 6px">📱 既有模組：<a href="limb-lead-reversal-trainer.html">肢體導極錯置練習</a>、<a href="treadmill-ecg-teaching.html">運動心電圖判讀教學</a>、<a href="cpr-training-app.html">CPR 急救訓練</a>、<a href="exam-acls-ccu-2025.html">ACLS 急救藥物評核</a>、<a href="COBRA-BPS_bp-home-control.html">居家血壓管理</a>、<a href="stemi-er-protocol.html">STEMI 急診處置與 ECG 早期判讀</a></p>
+    <p style="margin:0">🏠 <a href="index.html">心血管照護教學資源中心</a></p>
+  </div>
+</div>
+
+<footer>謝慕揚 MD, PhD, FESC ｜ 新竹臺大分院 心血管中心 ｜ 生理功能室進階訓練手冊 ｜ 2026-10<br>僅供醫療專業人員教學參考</footer>
+</div>
+
+<div class="share-fab">
+  <div class="share-menu" id="shareMenu"><h4>分享輪盤</h4>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=https%3A%2F%2Fdrake1128.github.io%2Fsaq-questionnaire%2Fphysiology-lab-training.html" alt="QR" width="150" height="150" loading="lazy">
+    <a class="sb line" href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdrake1128.github.io%2Fsaq-questionnaire%2Fphysiology-lab-training.html" target="_blank" rel="noopener">LINE 分享</a>
+    <button class="sb copy" onclick="copyShareLink(this)">複製連結</button></div>
+  <button type="button" class="share-toggle" onclick="toggleShare()" aria-label="分享"><svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></button>
+</div>
+
+<script>
+(function(){
+'use strict';
+var START = {y:2026, m:11};   // 第一圈第 1 月
+var MONTHS = [
+ {n:1, short:'導極與貼片', title:'導極與貼片：肢體導極錯置、胸前位置、artifact', skills:'aVR 三步快篩、平線規則、Mason–Likar 例外；貼錯了馬上知道。',
+  read:{t:'肢體導極錯置學習卡', href:'limb-lead-reversal-trainer.html'}, practice:{t:'肢體導極錯置練習（無限題）', href:'limb-lead-reversal-trainer.html'}, quiz:{t:'練習頁的「挑戰 10 題」', href:'limb-lead-reversal-trainer.html'}, task:'本月挑 10 張自己錄的 ECG 回看 aVR，記錄有沒有疑似接錯。'},
+ {n:2, short:'節律 I', title:'節律辨認 I：心率、APC、VPC、二聯律、NSVT', skills:'算心率、分辨 APC 與 VPC、數 NSVT 拍數、代償間歇。', read:{t:'節律辨認 I 學習卡'}, practice:{t:'合成節律條無限題'}, quiz:{t:'10 題月考'}, task:'從本月 Holter 報告中找出 1 例 NSVT，與資深同仁核對拍數與心率。'},
+ {n:3, short:'節律 II', title:'節律辨認 II：AF、心房撲動、SVT、WPW', skills:'不規則加無 P 等於 AF；鋸齒等於撲動；短 PR 加 delta 等於 WPW，WPW 病人上跑步機前先告知醫師。', read:{t:'節律辨認 II 學習卡'}, practice:{t:'合成節律條無限題'}, quiz:{t:'10 題月考'}, task:'檢查前 resting ECG 看到 delta 波或 AF，依流程通知醫師一次並留紀錄。'},
+ {n:4, short:'阻滯與停搏', title:'傳導阻滯與停搏：AV block、BBB、long pause', skills:'Wenckebach 與 Mobitz II 的差別；完全阻滯的房室分離；>3 秒停搏要通報。', read:{t:'阻滯與停搏學習卡'}, practice:{t:'合成節律條無限題'}, quiz:{t:'10 題月考'}, task:'核對本月通報 log 一次：長停搏或高度阻滯是否都有通知與回覆。'},
+ {n:5, short:'看到就通報', title:'看到就要通報：STEMI、aVR 上升、VT；機器判讀陷阱', skills:'認 STEMI 那一行字與 aVR；MUSE 誤判 pacemaker 的處理。', read:{t:'STEMI 急診處置與 ECG 早期判讀', href:'stemi-er-protocol.html'}, practice:{t:'情境題（製作中）'}, quiz:{t:'10 題月考'}, task:'整理本月機器判讀與人工判讀不一致的 3 張 ECG，科會分享。'},
+ {n:6, short:'緊急應變 I', title:'緊急應變 I：從「病人說胸悶」到 ACLS 交接；mock code', skills:'10 分鐘內誰按鈴、誰拿除顫器、誰記錄、誰打電話；急救車與除顫器自檢。', read:{t:'CPR 急救訓練與評核', href:'cpr-training-app.html'}, practice:{t:'ACLS 急救藥物評核', href:'exam-acls-ccu-2025.html'}, quiz:{t:'10 題月考'}, task:'本月 mock code：情境「運動中 ST 上升加胸痛」，全員演練一次。'},
+ {n:7, short:'運動心電圖 I', title:'運動心電圖 I：歷史、檢查前評估、禁忌症、同意書、Bruce', skills:'絕對禁忌症背得出；聽診與 resting ECG；上台前看健保卡註記。', read:{t:'運動心電圖判讀教學：適應症・安全', href:'treadmill-ecg-teaching.html'}, practice:{t:'情境題：該不該上台？（製作中）'}, quiz:{t:'10 題月考'}, task:'抽查本月 10 份同意書與檢查前紀錄是否完整。'},
+ {n:8, short:'運動心電圖 II', title:'運動心電圖 II：ST 判讀、Duke、終止指標分級與通報、壁掛卡', skills:'絕對終止等於停加叫人；相對終止等於停加觀察加回報；紅旗表。', read:{t:'運動心電圖判讀教學：判讀、流程・終止、案例', href:'treadmill-ecg-teaching.html'}, practice:{t:'「停不停？」快問快答（製作中）'}, quiz:{t:'10 題月考'}, task:'把壁掛卡貼在跑步機旁，並用它對照本月一例提前終止的檢查。'},
+ {n:9, short:'Holter I', title:'Holter I：歷史、裝機、衛教、三段情境對話', skills:'皮膚準備與貼片位置；過敏、監測時間不足、昏倒的正確應對。', read:{t:'Holter I 學習卡（製作中）'}, practice:{t:'情境對話選擇題（製作中）'}, quiz:{t:'10 題月考'}, task:'對一位新病人完整做一次裝機衛教，請資深同仁旁聽回饋。'},
+ {n:10, short:'Holter II', title:'Holter II 與長天期貼片：判讀、報告、危急值', skills:'停搏、心搏過速、AF 負荷的報告語言；哪種症狀配哪種裝置。', read:{t:'Holter II 學習卡（製作中）'}, practice:{t:'報告填空題（製作中）'}, quiz:{t:'10 題月考'}, task:'獨立完成 3 份 Holter 初步報告，由醫師覆核。'},
+ {n:11, short:'血壓與 6MWT', title:'血壓與六分鐘走路：ABPM、居家血壓、6MWT 標準流程', skills:'ABPM 有效讀數比例；白袍、隱匿、夜間型；6MWT 終止條件。', read:{t:'居家血壓管理衛教', href:'COBRA-BPS_bp-home-control.html'}, practice:{t:'判讀題與流程查核表（製作中）'}, quiz:{t:'10 題月考'}, task:'依 ERS/ATS 標準做一次 6MWT 並填查核表。'},
+ {n:12, short:'節律器與 ICD', title:'節律器與 ICD 檢查；緊急應變 II（mock code）', skills:'DDD 與 VVI；失捕獲與失感知；裝置病人做運動心電圖與 Holter 的注意事項。原廠工程師每月到場支援。', read:{t:'節律器學習卡（製作中）'}, practice:{t:'合成 pacing 圖題（製作中）'}, quiz:{t:'10 題月考'}, task:'本月 mock code 第二次；與原廠工程師完成一次裝置檢查觀摩。'}
+];
+var $=function(id){return document.getElementById(id);};
+function load(){try{return JSON.parse(localStorage.getItem('plab-progress-v1')||'{}');}catch(e){return {};}}
+function save(p){try{localStorage.setItem('plab-progress-v1',JSON.stringify(p));}catch(e){}}
+var prog=load(); prog.months=prog.months||{};
+// 現在是第幾月（1–12），第一圈前為 0
+function currentMonth(){
+  var d=new Date(), idx=(d.getFullYear()-START.y)*12+(d.getMonth()+1-START.m);
+  if(idx<0) return 0;
+  return (idx%12)+1;
+}
+var cur=currentMonth(), lap=Math.floor(Math.max(0,(new Date().getFullYear()-START.y)*12+(new Date().getMonth()+1-START.m))/12)+1;
+var sel=cur||1;
+
+function monthLabel(n){ var total=(START.m-1)+(n-1); var y=START.y+Math.floor(total/12), m=total%12+1; return y+'-'+(m<10?'0':'')+m; }
+
+// 輪盤
+function drawWheel(){
+  var svg=$('wheel'), cx=210, cy=210, R=200, r=86, s='';
+  for(var i=0;i<12;i++){
+    var a0=(i*30-90-15)*Math.PI/180, a1=((i+1)*30-90-15)*Math.PI/180;
+    var p=function(rad,ang){return [cx+rad*Math.cos(ang), cy+rad*Math.sin(ang)];};
+    var o0=p(R,a0),o1=p(R,a1),i0=p(r,a0),i1=p(r,a1);
+    var d='M'+o0.join(' ')+' A'+R+' '+R+' 0 0 1 '+o1.join(' ')+' L'+i1.join(' ')+' A'+r+' '+r+' 0 0 0 '+i0.join(' ')+' Z';
+    var mid=(a0+a1)/2, tp=p((R+r)/2+6,mid);
+    var n=i+1, st=prog.months[n]||{};
+    var cls='sec'+(n===cur?' cur':'')+(st.best!=null?' done':'')+(cur&&n>cur&&lap===1?' future':'')+(n===sel?' sel':'');
+    s+='<g class="'+cls+'" data-n="'+n+'"><path d="'+d+'"/><text x="'+tp[0]+'" y="'+(tp[1]-6)+'" text-anchor="middle">M'+n+'</text><text x="'+tp[0]+'" y="'+(tp[1]+9)+'" text-anchor="middle" font-size="10">'+MONTHS[i].short+'</text></g>';
+  }
+  s+='<circle class="hub" cx="'+cx+'" cy="'+cy+'" r="'+(r-6)+'"/><text x="'+cx+'" y="'+(cy-6)+'" text-anchor="middle" font-size="13" font-weight="800" fill="#8a1538">第 '+lap+' 圈</text><text x="'+cx+'" y="'+(cy+14)+'" text-anchor="middle" font-size="12" fill="#5b6472">'+(cur?('本月 M'+cur):'2026-11 開始')+'</text>';
+  svg.innerHTML=s;
+  svg.querySelectorAll('.sec').forEach(function(g){ g.onclick=function(){ sel=+g.dataset.n; drawWheel(); showDetail(); }; });
+}
+function showDetail(){
+  var M=MONTHS[sel-1], st=prog.months[sel]||{};
+  $('dTitle').textContent='第 '+sel+' 月（'+monthLabel(sel)+'）'+M.title;
+  $('dSkills').innerHTML='<b>必會：</b>'+M.skills;
+  function step(k,label,o,extra){ var link=o.href?'<a href="'+o.href+'">'+o.t+'</a>':o.t+' <span class="wip">製作中</span>'; return '<div class="step"><div class="k">'+k+'</div><div><b>'+label+'</b><span>'+link+'</span>'+(extra||'')+'</div></div>'; }
+  $('dSteps').innerHTML=step('讀','10 分鐘核心內容',M.read)+step('練','無限題或情境題',M.practice)+step('測','10 題月考',M.quiz,'<div class="st">'+(st.best!=null?('最佳 '+st.best+' / '+(st.total||10)+'　'+(st.date||'')+'　作答 '+(st.attempts||1)+' 次'):'尚無成績')+'</div>')+'<div class="step"><div class="k">做</div><div><b>現場任務</b><span>'+M.task+'</span></div></div>';
+  $('dTask').checked=!!st.task;
+  $('dScore').textContent=(st.best!=null&&st.best>=8)?'月考達標（≥ 8 分）':'';
+  $('dTask').onchange=function(){ var x=prog.months[sel]||{}; x.task=$('dTask').checked; prog.months[sel]=x; save(prog); renderTable(); drawWheel(); };
+}
+function renderTable(){
+  var h='<tr><th>月</th><th>題目</th><th>月考</th><th>任務</th></tr>';
+  MONTHS.forEach(function(M){ var st=prog.months[M.n]||{}; h+='<tr class="'+(M.n===cur?'cur':'')+'"><td>M'+M.n+'</td><td>'+M.short+'</td><td>'+(st.best!=null?(st.best+'/'+(st.total||10)):'—')+'</td><td>'+(st.task?'✓':'—')+'</td></tr>'; });
+  $('progTable').innerHTML=h;
+}
+$('name').value=prog.name||''; $('name').onchange=function(){ prog.name=$('name').value.trim(); save(prog); };
+$('copyProg').onclick=function(){
+  var lines=['生理功能室訓練進度｜'+(prog.name||'未填姓名')+'｜第 '+lap+' 圈｜'+new Date().toISOString().slice(0,10)];
+  MONTHS.forEach(function(M){ var st=prog.months[M.n]||{}; if(st.best!=null||st.task) lines.push('M'+M.n+' '+M.short+'：月考 '+(st.best!=null?st.best+'/'+(st.total||10):'—')+(st.task?'，任務 ✓':'')); });
+  if(lines.length===1) lines.push('（尚無紀錄）');
+  var txt=lines.join('\n');
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(function(){ $('copyProg').textContent='已複製 ✓'; setTimeout(function(){$('copyProg').textContent='複製我的進度';},1800); }); } else window.prompt('複製進度', txt);
+};
+$('resetProg').onclick=function(){ if(window.confirm('清除這支手機上的所有進度？')){ prog={months:{}}; save(prog); renderTable(); drawWheel(); showDetail(); } };
+$('nowTitle').textContent=cur?('M'+cur+' '+MONTHS[cur-1].short):'尚未開始';
+$('nowTag').textContent=cur?(monthLabel(cur)+' ・ 第 '+lap+' 圈'):'第一圈 2026-11 開始';
+drawWheel(); showDetail(); renderTable();
+})();
+var SHARE_URL='https://drake1128.github.io/saq-questionnaire/physiology-lab-training.html';
+function toggleShare(){document.getElementById('shareMenu').classList.toggle('on');}
+function copyShareLink(btn){var done=function(){btn.textContent='已複製連結 ✓';setTimeout(function(){btn.textContent='複製連結';},1800);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(SHARE_URL).then(done);}else window.prompt('請手動複製連結',SHARE_URL);}
+document.addEventListener('click',function(e){var fab=document.querySelector('.share-fab');if(fab&&!fab.contains(e.target))document.getElementById('shareMenu').classList.remove('on');});
+</script>
+</body>
+</html>

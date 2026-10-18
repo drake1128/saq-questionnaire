@@ -221,6 +221,7 @@ footer a{color:var(--b)}
     <div class="kit"><div class="ic">📱</div><div><b>手機練習</b>（這一頁）<br>題目無限，每題有解釋。建議入門模式十題全對再開進階。</div></div>
     <h3>延伸</h3>
     <div class="kit"><div class="ic">🏃</div><div><a href="treadmill-ecg-teaching.html">運動心電圖 Treadmill ECG 判讀教學模組</a><br><span style="font-size:13px;color:var(--mut)">第三課的核心教材：終止指標與紅旗。</span></div></div>
+    <div class="kit"><div class="ic">🎯</div><div><a href="physiology-lab-training.html">生理功能室 12 個月訓練輪盤</a><br><span style="font-size:13px;color:var(--mut)">這是第 1 月。挑戰成績會自動記到輪盤。</span></div></div>
     <div class="kit"><div class="ic">🏠</div><div><a href="index.html">心血管照護教學資源中心</a><br><span style="font-size:13px;color:var(--mut)">其他教學模組與測驗。</span></div></div>
     <h3>怎麼算分</h3>
     <p style="font-size:14px;margin:0">練習模式不限次數；挑戰模式 10 題計時，10 對為「可帶教」、8–9 對為「獨立執行」、6–7 對為「監督下執行」、5 以下請回去看學習卡。對應能力認證 L2–L4 的自我檢核，不是正式考試。</p>
@@ -317,71 +318,199 @@ footer a{color:var(--b)}
     'dextro': { zh: '真正右位心', en: 'True dextrocardia' }
   };
 
-  // ---------- 一個心搏：各成分 (時間 s, 寬度 s, 振幅 mV, 方向) ----------
+  // ---------- 心搏模型 ----------
+  // 每個心搏由成分 (t 相對心搏起點 s, s 寬度 s, a 振幅 mV, d 方向) 組成。
+  // beatOpts: { axisRot, gain, pGain, mirror, kind:'sinus'|'apc'|'vpc'|'escapeJ'|'escapeV', pr, wide:'rbbb'|'lbbb'|null, wpw, noP, pDir, qrsDir, tFlip, qrsGain }
   function makeBeat(p) {
     p = p || {};
-    var axis = p.axisRot || 0;          // 額面旋轉角（度，正 = 順時針/往右偏）
-    var g = p.gain || 1;
-    var mirror = p.dextro ? -1 : 1;     // 右位心：x 鏡像
+    var axis = p.axisRot || 0, g = p.gain || 1, mirror = p.mirror ? -1 : 1;
     function dir(v) { var r = rotZ(norm(v), axis); return [r[0] * mirror, r[1], r[2]]; }
-    return [
-      { t: 0.100, s: 0.026, a: 0.17 * g * (p.pGain || 1), d: dir([0.45, 0.80, 0.30]) },      // P
-      { t: 0.236, s: 0.007, a: 0.16 * g, d: dir([-0.45, -0.15, 0.60]) },                      // q（中隔）
-      { t: 0.256, s: 0.011, a: 1.50 * g, d: dir([0.72, 0.56, -0.40]) },                       // R
-      { t: 0.277, s: 0.009, a: 0.42 * g, d: dir([-0.35, -0.30, -0.42]) },                     // S（終末）
-      { t: 0.455, s: 0.052, a: 0.32 * g, d: dir([0.65, 0.50, 0.40]) }                         // T
-    ];
+    var pr = p.pr != null ? p.pr : 0.16;          // PR 間期
+    var q0 = 0.08 + pr - 0.02;                    // QRS 起點（P 起點約 0.05）
+    var c = [];
+    if (!p.noP) c.push({ t: 0.10, s: 0.026, a: 0.17 * g * (p.pGain || 1), d: dir(p.pDir || [0.45, 0.80, 0.30]), P: true });
+    var qg = (p.qrsGain || 1) * g;
+    if (p.kind === 'vpc' || p.kind === 'escapeV') {
+      // 心室性：寬 QRS、方向不同、T 相反
+      var vd = p.qrsDir || [-0.5, 0.6, -0.6];
+      c.push({ t: q0 + 0.02, s: 0.030, a: 2.1 * qg, d: dir(vd) });
+      c.push({ t: q0 + 0.075, s: 0.022, a: 0.6 * qg, d: dir([-vd[0], -vd[1], -vd[2]]) });
+      c.push({ t: q0 + 0.30, s: 0.060, a: 0.45 * g, d: dir([-vd[0] * 0.8, -vd[1] * 0.8, -vd[2]]), T: true });
+      return c;
+    }
+    if (p.wpw) {
+      // 預激：短 PR + delta 波（慢上升，提早於 QRS）
+      c.push({ t: q0 - 0.02, s: 0.022, a: 0.45 * qg, d: dir(p.deltaDir || [0.5, 0.45, 0.6]) });
+    }
+    if (p.wide !== 'lbbb') c.push({ t: q0 + 0.016, s: 0.007, a: 0.16 * qg, d: dir([-0.45, -0.15, 0.60]) });   // q（中隔）
+    if (p.wide === 'lbbb') {
+      c.push({ t: q0 + 0.040, s: 0.022, a: 1.5 * qg, d: dir([0.80, 0.45, -0.45]) });
+      c.push({ t: q0 + 0.085, s: 0.020, a: 0.9 * qg, d: dir([0.75, 0.35, -0.55]) });
+      c.push({ t: q0 + 0.32, s: 0.055, a: 0.35 * g, d: dir([-0.65, -0.35, 0.45]), T: true });   // 續發性 T 相反
+      return c;
+    }
+    c.push({ t: q0 + 0.036, s: 0.011, a: 1.5 * qg, d: dir(p.qrsDir || [0.72, 0.56, -0.40]) });   // R
+    c.push({ t: q0 + 0.057, s: 0.009, a: 0.42 * qg, d: dir([-0.35, -0.30, -0.42]) });             // S
+    if (p.wide === 'rbbb') {
+      c.push({ t: q0 + 0.085, s: 0.016, a: 0.75 * qg, d: dir([-0.70, -0.10, 0.70]) });            // 終末向右前（V1 R'、I/V6 寬 S）
+      c.push({ t: q0 + 0.30, s: 0.052, a: 0.30 * g, d: dir([0.55, 0.45, -0.35]), T: true });       // T 在 V1 相反
+      return c;
+    }
+    c.push({ t: q0 + 0.235, s: 0.052, a: 0.32 * g * (p.tFlip ? -1 : 1), d: dir([0.65, 0.50, 0.40]), T: true });
+    return c;
   }
-
-  // 偶極在時間 t（相對心搏起點）
   function dipoleAt(t, beat) {
     var d = [0, 0, 0];
     for (var i = 0; i < beat.length; i++) {
       var c = beat[i];
-      // T 波用不對稱高斯（上升慢、下降快）
-      var s = (i === beat.length - 1 && t > c.t) ? c.s * 0.78 : c.s;
+      var s = (c.T && t > c.t) ? c.s * 0.78 : c.s;
       var w = c.a * gauss(t, c.t, s);
       d[0] += w * c.d[0]; d[1] += w * c.d[1]; d[2] += w * c.d[2];
     }
     return d;
   }
 
+  // ---------- 節律排程：產生心搏清單 [{t0, beat, kind}] ----------
+  // rhythm: sinus | apc | vpc | bigeminy | couplet | nsvt | af | flutter | svt | wpw | avb1 | wenckebach | mobitz2 | chb | rbbb | lbbb | pause
+  function schedule(cfg, rnd) {
+    var rhythm = cfg.rhythm || 'sinus', hr = cfg.hr || 72, dur = cfg.dur || 10;
+    var base = { axisRot: cfg.axisRot || 0, gain: cfg.gain || 1, pGain: cfg.pGain, mirror: cfg.swap === 'dextro' };
+    var beats = [], extra = { atrialNoise: 0, flutter: 0 };
+    var rr = 60 / hr, t = 0.15;
+    function sinus(o) { return makeBeat(Object.assign({}, base, o || {})); }
+    var i;
+    switch (rhythm) {
+      case 'sinus': default:
+        while (t < dur + 1) { beats.push({ t0: t, beat: sinus(), kind: 'sinus' }); t += rr * (1 + (rnd() - 0.5) * 0.06); }
+        break;
+      case 'rbbb': case 'lbbb':
+        while (t < dur + 1) { beats.push({ t0: t, beat: sinus({ wide: rhythm }), kind: 'sinus' }); t += rr * (1 + (rnd() - 0.5) * 0.06); }
+        break;
+      case 'wpw':
+        while (t < dur + 1) { beats.push({ t0: t, beat: sinus({ wpw: true, pr: 0.10 }), kind: 'sinus' }); t += rr * (1 + (rnd() - 0.5) * 0.06); }
+        break;
+      case 'avb1':
+        while (t < dur + 1) { beats.push({ t0: t, beat: sinus({ pr: 0.30 }), kind: 'sinus' }); t += rr * (1 + (rnd() - 0.5) * 0.05); }
+        break;
+      case 'apc': case 'vpc': case 'bigeminy': case 'couplet': case 'nsvt': {
+        var n = 0, nextEctopic = rhythm === 'bigeminy' ? 1 : 2 + Math.floor(rnd() * 3);
+        while (t < dur + 1) {
+          beats.push({ t0: t, beat: sinus(), kind: 'sinus' }); n++;
+          if (n >= nextEctopic) {
+            if (rhythm === 'apc') {
+              var ct = t + rr * (0.55 + rnd() * 0.15);   // 提早
+              beats.push({ t0: ct, beat: sinus({ pDir: [0.2, -0.6, 0.4], pGain: 0.8 }), kind: 'apc' });
+              t = ct + rr * 0.95;                            // 不完全代償
+            } else {
+              var cnt = rhythm === 'couplet' ? 2 : rhythm === 'nsvt' ? 4 + Math.floor(rnd() * 5) : 1;
+              var vt = t + rr * (0.5 + rnd() * 0.12);
+              for (i = 0; i < cnt; i++) { beats.push({ t0: vt, beat: sinus({ kind: 'vpc', noP: true }), kind: 'vpc' }); vt += 60 / (150 + rnd() * 30); }
+              t = cnt === 1 ? t + 2 * rr : vt + rr * 0.9;    // 單發完全代償
+            }
+            n = 0; nextEctopic = rhythm === 'bigeminy' ? 1 : (rhythm === 'nsvt' ? 6 + Math.floor(rnd() * 4) : 2 + Math.floor(rnd() * 4));
+          } else t += rr * (1 + (rnd() - 0.5) * 0.05);
+        }
+        break;
+      }
+      case 'af': {
+        extra.atrialNoise = 1;
+        var mean = 60 / (cfg.hr || (90 + rnd() * 50));
+        while (t < dur + 1) { beats.push({ t0: t, beat: sinus({ noP: true }), kind: 'sinus' }); t += mean * (0.55 + rnd() * 0.9); }
+        break;
+      }
+      case 'flutter': {
+        extra.flutter = 300 / 60;                       // 5 Hz 鋸齒
+        var ratio = cfg.ratio || (rnd() < 0.5 ? 2 : 4), fl = 60 / 300;
+        var k = 0; t = 0.2;
+        while (t < dur + 1) { if (k % ratio === 0) beats.push({ t0: t, beat: sinus({ noP: true }), kind: 'sinus' }); t += fl; k++; }
+        break;
+      }
+      case 'svt': {
+        var srr = 60 / (cfg.hr || (160 + rnd() * 30));
+        while (t < dur + 1) { beats.push({ t0: t, beat: sinus({ noP: true }), kind: 'sinus' }); t += srr; }
+        break;
+      }
+      case 'wenckebach': {
+        var cyc = cfg.cycle || 4, j = 0;
+        while (t < dur + 1) {
+          var prs = [0.18, 0.26, 0.32, 0.36, 0.40];
+          var pos = j % cyc;
+          if (pos === cyc - 1) beats.push({ t0: t, beat: sinus({ noQRS: true }), kind: 'blockedP' });   // 脫落
+          else beats.push({ t0: t, beat: sinus({ pr: prs[Math.min(pos, 4)] }), kind: 'sinus' });
+          t += rr; j++;
+        }
+        break;
+      }
+      case 'mobitz2': {
+        var m = 0;
+        while (t < dur + 1) {
+          if (m % 3 === 2) beats.push({ t0: t, beat: sinus({ noQRS: true }), kind: 'blockedP' });
+          else beats.push({ t0: t, beat: sinus({ pr: 0.18 }), kind: 'sinus' });
+          t += rr; m++;
+        }
+        break;
+      }
+      case 'chb': {
+        var pt = 0.15, prr = 60 / (cfg.atrialRate || 80);
+        while (pt < dur + 1) { beats.push({ t0: pt, beat: sinus({ noQRS: true }), kind: 'blockedP' }); pt += prr; }
+        var vt2 = 0.45, vrr = 60 / (cfg.escapeRate || 38), ventricular = cfg.escape !== 'junctional';
+        while (vt2 < dur + 1) { beats.push({ t0: vt2, beat: sinus(ventricular ? { kind: 'escapeV', noP: true, qrsDir: [0.4, 0.7, -0.5] } : { noP: true }), kind: 'escape' }); vt2 += vrr; }
+        break;
+      }
+      case 'pause': {
+        var pStart = cfg.pauseAt || (3 + rnd() * 2), pLen = cfg.pauseLen || (3 + rnd() * 1.5);
+        while (t < dur + 1) { beats.push({ t0: t, beat: sinus(), kind: 'sinus' }); t += rr * (1 + (rnd() - 0.5) * 0.05); if (t > pStart && t < pStart + pLen) t = pStart + pLen; }
+        break;
+      }
+    }
+    // noQRS：只留 P 波
+    beats.forEach(function (b) { if (b.beat && b.kind === 'blockedP') b.beat = b.beat.filter(function (c) { return c.P; }); });
+    return { beats: beats, extra: extra };
+  }
+
   // ---------- 主函式：產生 12 導程取樣 ----------
-  // cfg: { swap, hr, dur, fs, axisRot, gain, masonLikar, noise, seed }
+  // cfg: { swap, rhythm, hr, dur, fs, axisRot, gain, masonLikar, noise, seed, emg }
   function generate(cfg) {
     cfg = cfg || {};
     var swap = cfg.swap || 'normal';
-    var hr = cfg.hr || 72, dur = cfg.dur || 10, fs = cfg.fs || 250;
+    var dur = cfg.dur || 10, fs = cfg.fs || 250;
     var E = cfg.masonLikar ? ELECTRODES_ML : ELECTRODES_STD;
     var map = SWAPS[swap] || SWAPS.normal;
-    var beat = makeBeat({ axisRot: cfg.axisRot || 0, gain: cfg.gain || 1, dextro: swap === 'dextro', pGain: cfg.pGain });
     var rnd = mulberry32(cfg.seed || 1);
-    var rr = 60 / hr;
+    var sch = schedule(cfg, rnd), beats = sch.beats, extra = sch.extra;
     var n = Math.floor(dur * fs);
     var names = ['I', 'II', 'III', 'aVR', 'aVL', 'aVF', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6'];
     var out = {}; names.forEach(function (k) { out[k] = new Float32Array(n); });
-    var noise = cfg.noise == null ? 1 : cfg.noise;
+    var noise = cfg.noise == null ? 1 : cfg.noise, emg = cfg.emg || 0;
     var wanderPh = rnd() * 6.28, wanderF = 0.18 + rnd() * 0.15;
-    // 輕微竇性心律不整
-    var beatStarts = [], tb = 0.15;
-    while (tb < dur + 1) { beatStarts.push(tb); tb += rr * (1 + (rnd() - 0.5) * 0.06); }
+    var fibPh = [rnd() * 6, rnd() * 6, rnd() * 6], fibF = [5.8, 7.3, 9.1];
+    var atrialDir = rotZ(norm([0.45, 0.80, 0.30]), cfg.axisRot || 0);
 
     for (var i = 0; i < n; i++) {
       var t = i / fs, d = [0, 0, 0];
-      for (var b = 0; b < beatStarts.length; b++) {
-        var rel = t - beatStarts[b];
-        if (rel < -0.05 || rel > 0.75) continue;
-        var dd = dipoleAt(rel, beat);
+      for (var b = 0; b < beats.length; b++) {
+        var rel = t - beats[b].t0;
+        if (rel < -0.05 || rel > 0.8) continue;
+        var dd = dipoleAt(rel, beats[b].beat);
         d[0] += dd[0]; d[1] += dd[1]; d[2] += dd[2];
       }
-      // 電極電位
+      if (extra.atrialNoise) {       // AF 顫動波：小振幅、不規則
+        var f = 0;
+        for (var k = 0; k < 3; k++) f += Math.sin(2 * Math.PI * fibF[k] * t + fibPh[k]) / (k + 1);
+        f *= 0.07;
+        d[0] += f * atrialDir[0]; d[1] += f * atrialDir[1]; d[2] += f * atrialDir[2] * 0.5;
+      }
+      if (extra.flutter) {           // 撲動波：鋸齒（下壁導程負向）
+        var ph = (t * extra.flutter) % 1, saw = (ph < 0.75 ? -(ph / 0.75) : (1 - (ph - 0.75) / 0.25) - 1) ;   // 慢降快升
+        var fa = 0.14 * (saw + 0.5);
+        d[0] += fa * 0.2; d[1] += fa * 0.9; d[2] += fa * 0.2;
+      }
       var phi = {};
       ['RA', 'LA', 'LL', 'RL'].forEach(function (e) { phi[e] = dot(d, E[e]) * LIMB_K; });
       ['V1', 'V2', 'V3', 'V4', 'V5', 'V6'].forEach(function (e) { phi[e] = dot(d, E[e]) * CHEST_K; });
-      // 導線標籤 → 實際位置
       var ra = phi[map.RA], la = phi[map.LA], ll = phi[map.LL];
       var wct = (ra + la + ll) / 3;
-      var base = noise * (0.035 * Math.sin(2 * Math.PI * wanderF * t + wanderPh) + 0.012 * (rnd() - 0.5));
+      var base = noise * (0.035 * Math.sin(2 * Math.PI * wanderF * t + wanderPh) + 0.012 * (rnd() - 0.5)) + emg * 0.05 * (rnd() - 0.5);
       out.I[i] = la - ra + base;
       out.II[i] = ll - ra + base;
       out.III[i] = ll - la + base;
@@ -390,7 +519,7 @@ footer a{color:var(--b)}
       out.aVF[i] = ll - (ra + la) / 2 + base;
       for (var v = 1; v <= 6; v++) out['V' + v][i] = phi['V' + v] - wct + base;
     }
-    return { leads: out, fs: fs, dur: dur, hr: hr, swap: swap, masonLikar: !!cfg.masonLikar };
+    return { leads: out, fs: fs, dur: dur, hr: cfg.hr, swap: swap, rhythm: cfg.rhythm || 'sinus', masonLikar: !!cfg.masonLikar, beats: beats.map(function (b) { return { t0: b.t0, kind: b.kind }; }) };
   }
 
   function mulberry32(a) {
@@ -476,6 +605,35 @@ footer a{color:var(--b)}
       '<path d="' + d + '" fill="none" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/></svg>';
   }
 
+  // 節律條：單導程 N 秒（預設 II、10 s，兩列各 5 s 可選）
+  function stripSVG(rec, name, opt) {
+    opt = opt || {};
+    var pxmm = opt.pxPerMm || 4, secs = opt.sec || 10, rows = opt.rows || 1, perRow = secs / rows;
+    var W = perRow * 25 * pxmm + 5 * pxmm, rowH = (opt.rowMm || 30) * pxmm, H = rowH * rows, fs = rec.fs, lead = rec.leads[name || 'II'];
+    var s = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" font-family="Helvetica,Arial,sans-serif">',
+      '<defs><pattern id="sg1" width="' + pxmm + '" height="' + pxmm + '" patternUnits="userSpaceOnUse"><path d="M ' + pxmm + ' 0 L 0 0 0 ' + pxmm + '" fill="none" stroke="#f0b8b8" stroke-width="0.5"/></pattern><pattern id="sg5" width="' + 5 * pxmm + '" height="' + 5 * pxmm + '" patternUnits="userSpaceOnUse"><rect width="' + 5 * pxmm + '" height="' + 5 * pxmm + '" fill="url(#sg1)"/><path d="M ' + 5 * pxmm + ' 0 L 0 0 0 ' + 5 * pxmm + '" fill="none" stroke="#e58a8a" stroke-width="0.9"/></pattern></defs>',
+      '<rect width="' + W + '" height="' + H + '" fill="#fff8f6"/><rect width="' + W + '" height="' + H + '" fill="url(#sg5)"/>'];
+    for (var r = 0; r < rows; r++) {
+      var baseY = r * rowH + rowH * 0.6, x0 = 5 * pxmm, t0 = r * perRow;
+      s.push('<path d="M0 ' + baseY + ' h' + pxmm + ' v-' + 10 * pxmm + ' h' + 3 * pxmm + ' v' + 10 * pxmm + ' h' + pxmm + '" fill="none" stroke="#111" stroke-width="1.3"/>');
+      s.push('<text x="' + (x0 + 6) + '" y="' + (r * rowH + 16) + '" font-size="' + 3.6 * pxmm + '" font-weight="bold" fill="#111">' + (name || 'II') + '</text>');
+      var i0 = Math.round(t0 * fs), i1 = Math.min(Math.round((t0 + perRow) * fs), lead.length), d = '';
+      for (var i = i0; i < i1; i++) { var x = x0 + (i - i0) / fs * 25 * pxmm, y = baseY - lead[i] * 10 * pxmm; d += (i === i0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1); }
+      s.push('<path d="' + d + '" fill="none" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/>');
+    }
+    s.push('</svg>'); return s.join('');
+  }
+  var RHYTHM_INFO = {
+    sinus: { zh: '正常竇性節律', en: 'Normal sinus rhythm' }, apc: { zh: '心房早期收縮', en: 'Atrial premature complex (APC)' },
+    vpc: { zh: '心室早期收縮', en: 'Ventricular premature complex (VPC)' }, bigeminy: { zh: '心室二聯律', en: 'Ventricular bigeminy' },
+    couplet: { zh: '心室早搏連發（couplet）', en: 'Ventricular couplet' }, nsvt: { zh: '非持續性心室頻脈', en: 'Non-sustained VT' },
+    af: { zh: '心房顫動', en: 'Atrial fibrillation' }, flutter: { zh: '心房撲動', en: 'Atrial flutter' }, svt: { zh: '上心室頻脈', en: 'SVT' },
+    wpw: { zh: '預激症候群（WPW）', en: 'Wolff–Parkinson–White' }, avb1: { zh: '第一度房室阻滯', en: 'First-degree AV block' },
+    wenckebach: { zh: '第二度房室阻滯 Mobitz I（Wenckebach）', en: 'Mobitz I' }, mobitz2: { zh: '第二度房室阻滯 Mobitz II', en: 'Mobitz II' },
+    chb: { zh: '完全房室阻滯', en: 'Complete heart block' }, rbbb: { zh: '右束支阻滯', en: 'RBBB' }, lbbb: { zh: '左束支阻滯', en: 'LBBB' },
+    pause: { zh: '竇性停搏（long pause）', en: 'Sinus pause' }
+  };
+
   // 額面 QRS 軸（度）— 由 I 與 aVF 的 QRS 淨面積估計
   function qrsAxis(rec) {
     var fs = rec.fs, L = rec.leads, i0 = Math.round(0.36 * fs), i1 = Math.round(0.45 * fs); // 第一拍 QRS 區間（心搏起點 0.15 s）
@@ -484,7 +642,7 @@ footer a{color:var(--b)}
     return Math.round(Math.atan2(sF, sI) * 180 / Math.PI);
   }
 
-  return { generate: generate, toSVG: toSVG, leadSVG: leadSVG, qrsAxis: qrsAxis, SWAPS: SWAPS, SWAP_INFO: SWAP_INFO, ELECTRODES_STD: ELECTRODES_STD };
+  return { generate: generate, toSVG: toSVG, leadSVG: leadSVG, stripSVG: stripSVG, qrsAxis: qrsAxis, SWAPS: SWAPS, SWAP_INFO: SWAP_INFO, RHYTHM_INFO: RHYTHM_INFO, ELECTRODES_STD: ELECTRODES_STD };
 });
 
 </script>
@@ -621,6 +779,7 @@ function finishC(){
   var tier=C.ok===10?'可帶教 L4':C.ok>=8?'獨立執行 L3':C.ok>=6?'監督下執行 L2':'回去看學習卡';
   $('rTier').textContent=tier; $('rTime').textContent='用時 '+sec+' 秒 ・ '+(settings.diff==='easy'?'入門':'進階')+(settings.ml?' ・ 軀幹貼法':' ・ 四肢末端');
   $('rList').innerHTML=C.log.map(function(e){return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #e3d3d8"><span>第 '+e.n+' 題　'+LABEL[e.ans][0]+'</span><b style="color:'+(e.right?'#1b7f3b':'#c62828')+'">'+(e.right?'✓':'✗ 選了 '+LABEL[e.k][0])+'</b></div>';}).join('');
+  try{var pl=JSON.parse(localStorage.getItem('plab-progress-v1')||'{}');pl.months=pl.months||{};var m1=pl.months['1']||{};if(!m1.best||C.ok>m1.best){m1.best=C.ok;m1.total=10;m1.date=new Date().toISOString().slice(0,10);}m1.attempts=(m1.attempts||0)+1;pl.months['1']=m1;localStorage.setItem('plab-progress-v1',JSON.stringify(pl));}catch(e){}
   var better=!store.best||C.ok>store.best.score||(C.ok===store.best.score&&sec<store.best.sec);
   if(better){store.best={score:C.ok,sec:sec,diff:settings.diff==='easy'?'入門':'進階',ml:settings.ml}; save();}
   $('chBest').textContent=fmtBest();
