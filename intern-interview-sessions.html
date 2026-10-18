@@ -1,0 +1,441 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>實習醫學生訪談時間</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: a seminar "card deck" — draw strip on top, four suit columns of topic cards, a bottom sheet for each card's outline */
+:root{
+  --bg:#F1F4F3; --surface:#FFFFFF; --ink:#18262B; --muted:#5A6A6E; --line:#D5DEDC;
+  --accent:#1F5E63; --accent-ink:#FFFFFF;
+  --suit-a:#3D4FA0; --suit-b:#2B7A66; --suit-c:#A8701A; --suit-d:#894070;
+  --used:#E3E8E7; --used-ink:#8A9799;
+  --display:"Noto Serif TC", "Songti TC", serif;
+  --body:"Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111A1C; --surface:#182427; --ink:#E4ECEA; --muted:#93A4A6; --line:#2C3B3E;
+  --accent:#6FB8B4; --accent-ink:#0E1A1C;
+  --suit-a:#97A6EA; --suit-b:#72C9AF; --suit-c:#E2B25F; --suit-d:#DA92BF;
+  --used:#1B2629; --used-ink:#5E6F72; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#111A1C; --surface:#182427; --ink:#E4ECEA; --muted:#93A4A6; --line:#2C3B3E;
+  --accent:#6FB8B4; --accent-ink:#0E1A1C;
+  --suit-a:#97A6EA; --suit-b:#72C9AF; --suit-c:#E2B25F; --suit-d:#DA92BF;
+  --used:#1B2629; --used-ink:#5E6F72; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.65}
+.wrap{max-width:1120px;margin:0 auto;padding-block:28px 48px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));
+  display:flex;flex-direction:column;gap:26px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.3}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--muted);font-weight:500}
+header{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:flex-end;justify-content:space-between}
+header h1{font-size:clamp(26px,5vw,38px)}
+header p{margin:6px 0 0;color:var(--muted);max-width:56ch}
+.sync{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.sync i{width:8px;height:8px;border-radius:50%;background:var(--used-ink);display:inline-block}
+.sync.cloud i{background:var(--suit-b)}
+
+/* draw strip */
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px 28px;align-items:center}
+.progress{display:flex;flex-direction:column;gap:10px;min-width:0}
+.cells{display:grid;grid-template-columns:repeat(24,1fr);gap:3px}
+.cells span{height:14px;border-radius:3px;background:var(--line)}
+.cells span.on{background:var(--suit)}
+.count{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted)}
+.count b{font-size:22px;color:var(--ink);font-weight:500}
+.controls{display:flex;flex-direction:column;gap:10px;align-items:stretch}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:13px;border:1px solid var(--line);background:transparent;color:var(--ink);padding:4px 11px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.draw{font:inherit;font-weight:700;font-size:17px;background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:12px 22px;cursor:pointer}
+.draw:disabled{opacity:.45;cursor:default}
+button:focus-visible,.card:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (max-width:720px){.stage{grid-template-columns:1fr}}
+
+/* suits */
+.suits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}
+@media (max-width:980px){.suits{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.suits{grid-template-columns:1fr}}
+.suit{display:flex;flex-direction:column;gap:10px;min-width:0}
+.suit h2{font-size:19px;display:flex;align-items:baseline;gap:8px;color:var(--suit)}
+.suit h2 small{font-family:var(--body);font-size:12px;color:var(--muted);font-weight:500;letter-spacing:.04em}
+.card{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;align-items:start;
+  background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--suit);border-radius:8px;padding:11px 13px;transition:transform .15s, box-shadow .15s}
+.card:hover{transform:translateY(-1px)}
+.card .code{font-family:var(--mono);font-size:13px;color:var(--suit);padding-top:2px}
+.card .t{font-weight:700;font-size:15px;line-height:1.45}
+.card .en{grid-column:2;font-size:12px;color:var(--muted);line-height:1.4}
+.card .stamp{grid-column:2;font-family:var(--mono);font-size:12px;color:var(--used-ink)}
+.card.used{background:var(--used);border-left-color:var(--used-ink)}
+.card.used .t{color:var(--used-ink);text-decoration:line-through;text-decoration-thickness:1px}
+.card.used .code{color:var(--used-ink)}
+.card.lit{box-shadow:0 0 0 3px var(--suit);transform:scale(1.02)}
+.hideUsed .card.used{display:none}
+
+.tools{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;font-size:13px;color:var(--muted)}
+.linkbtn{all:unset;cursor:pointer;color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.confirm{display:inline-flex;gap:8px;align-items:center}
+.danger{font:inherit;font-size:13px;background:#B33A3A;color:#fff;border:0;border-radius:6px;padding:3px 10px;cursor:pointer}
+
+/* sheet */
+.veil{position:fixed;inset:0;background:rgba(10,20,22,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--surface);color:var(--ink);width:min(760px,100%);max-height:88vh;overflow-y:auto;border-radius:16px 16px 0 0;
+  padding:22px max(20px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px));
+  display:flex;flex-direction:column;gap:16px;border-top:6px solid var(--suit)}
+@media (min-width:760px){.veil{align-items:center}.sheet{border-radius:16px}}
+.sheet .top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.sheet h3{font-size:24px}
+.sheet .en{color:var(--muted);font-size:13px;margin-top:2px}
+.close{font:inherit;background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:4px 12px;cursor:pointer;flex:none}
+.prep{background:var(--bg);border-radius:10px;padding:12px 14px}
+.label{font-size:12px;letter-spacing:.1em;color:var(--suit);font-weight:700;margin-bottom:4px}
+.sheet ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.tip{font-size:14px;color:var(--muted);border-left:2px solid var(--line);padding-left:12px}
+.refs{margin:0;padding-left:1.1em;font-size:13px;display:flex;flex-direction:column;gap:5px}
+.refs a{color:var(--accent)}
+.act{display:flex;flex-wrap:wrap;gap:10px;align-items:center;border-top:1px solid var(--line);padding-top:14px}
+.act input{font:inherit;font-family:var(--mono);border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:7px 10px}
+.primary{font:inherit;font-weight:700;background:var(--suit);color:var(--surface);border:0;border-radius:8px;padding:9px 16px;cursor:pointer}
+.ghost{font:inherit;background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 14px;cursor:pointer}
+.note{font-size:13px;color:var(--muted)}
+
+footer{border-top:1px solid var(--line);padding-top:18px;font-size:12px;color:var(--muted);display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px 32px}
+footer p{margin:0}
+.sa{--suit:var(--suit-a)}.sb{--suit:var(--suit-b)}.sc{--suit:var(--suit-c)}.sd{--suit:var(--suit-d)}
+@media (prefers-reduced-motion:reduce){.card{transition:none}}
+</style>
+
+<div class="wrap" id="app">
+  <header>
+    <div>
+      <div class="eyebrow">新竹臺大分院 教學部 · 每兩週一 16:00–17:00</div>
+      <h1>實習醫學生訪談時間</h1>
+      <p>全年 24 題，分四組。抽題或讓學生挑一張，討論完就消去；下一次打開時，已用過的題目會留著日期。</p>
+    </div>
+    <div class="sync" id="sync"><i></i><span>讀取中…</span></div>
+  </header>
+
+  <section class="stage" aria-label="抽題">
+    <div class="progress">
+      <div class="count"><b id="left">24</b> 題未用 · 已討論 <span id="done">0</span> / 24</div>
+      <div class="cells" id="cells"></div>
+      <div class="tools">
+        <label><input type="checkbox" id="hideUsed"> 隱藏已用的題目</label>
+        <span id="resetArea"><button class="linkbtn" id="resetBtn" type="button">全部重設</button></span>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="chips" id="chips" role="group" aria-label="抽題範圍"></div>
+      <button class="draw" id="drawBtn" type="button">抽一題</button>
+    </div>
+  </section>
+
+  <section class="suits" id="suits"></section>
+
+  <footer>
+    <div>
+      <p>整理：謝慕揚 醫師 MD, PhD, FESC · 教學部</p>
+      <p>共同帶領：曾芬郁 教授</p>
+    </div>
+    <div>
+      <p>本內容為教學討論整理，未必涵蓋所有相關文獻。</p>
+      <p>僅供學術與教育用途，不代表任何單位之官方立場；未涉及任何利益衝突。</p>
+    </div>
+  </footer>
+</div>
+
+<div class="veil" id="veil" hidden>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sTitle"></div>
+</div>
+
+<script>
+const PM = q => "https://pubmed.ncbi.nlm.nih.gov/?term=" + encodeURIComponent(q);
+const SUITS = {
+  A:{name:"從學生到醫師", en:"Becoming a doctor", cls:"sa"},
+  B:{name:"病人與溝通", en:"Patients & communication", cls:"sb"},
+  C:{name:"團隊與系統", en:"Team & system", cls:"sc"},
+  D:{name:"自己與未來", en:"Self & career", cls:"sd"}
+};
+const T = [
+ {id:"A1",t:"我第一次覺得自己像（或不像）醫師",en:"Professional identity formation",
+  prep:"想一個這段實習中「我覺得自己像醫師」或「完全不像」的瞬間。",
+  out:["那一刻發生了什麼？誰在場？","是什麼讓你覺得「像」：穿白袍、被病人叫醫師、還是自己做了一個判斷？","你看過哪位老師讓你想成為那樣的醫師？哪位讓你不想？","「醫師」這個身分，跟原本的你有沒有衝突？"],
+  tip:"老師先講自己當見習生時的一個具體畫面，示範講細節，不講大道理。",
+  refs:[["Cruess RL, et al. Reframing medical education to support professional identity formation. Acad Med 2014;89:1446–51.",PM("Reframing medical education to support professional identity formation")],
+        ["Goldie J. The formation of professional identity in medical students. Med Teach 2012;34:e641–8.",PM("The formation of professional identity in medical students: considerations for educators")]]},
+ {id:"A2",t:"隱性課程：沒人教，但大家都這樣做",en:"Hidden curriculum",
+  prep:"寫下一件「沒人教，但你看大家都這樣做」的事。",
+  out:["這是好習慣還是壞習慣？","交班、病歷、對病人的稱呼裡，藏了哪些沒說出口的訊息？","你有沒有不知不覺也開始這樣做？","如果你是主治醫師，你想改掉哪一個？"],
+  tip:"文獻發現學生很少承認自己也跟著做。先問「你看過別人…」，比較不會防衛。",
+  refs:[["Hafferty FW, Franks R. The hidden curriculum, ethics teaching, and the structure of medical education. Acad Med 1994;69:861–71.",PM("The hidden curriculum, ethics teaching, and the structure of medical education")],
+        ["Holmes CL, et al. Reflecting on what? The difficulty of noticing formative experiences in the moment. Perspect Med Educ 2015.","https://nvmo.nl/?p=930"]]},
+ {id:"A3",t:"犯錯之後",en:"After a mistake",
+  prep:"想一個你做過或看到的小錯誤（不必具名），之後發生了什麼？",
+  out:["錯誤被發現時，大家說的第一句話是什麼？","說出來的代價，和不說的代價","異常事件通報在你看來是處罰，還是學習？","要不要告訴病人？誰來說、怎麼說？"],
+  tip:"老師先分享自己的一個錯誤，這比任何講義都有效。",
+  refs:[["Gallagher TH, et al. Patients' and physicians' attitudes regarding the disclosure of medical errors. JAMA 2003;289:1001–7.",PM("Patients' and physicians' attitudes regarding the disclosure of medical errors")],
+        ["Institute of Medicine. To Err Is Human: Building a Safer Health System. 1999.",""]]},
+ {id:"A4",t:"「我不知道」怎麼說出口",en:"Tolerating uncertainty",
+  prep:"這陣子你被問倒的一題，當下你怎麼回答？",
+  out:["被問倒時的反應：猜一個、沉默，還是說「我不知道，我去查」？","臨床上哪些事連老師也不確定？他們怎麼處理？","不確定的事要怎麼跟病人說？","怎麼把「不知道」變成下一個學習目標"],
+  tip:"讓不同科的學生比較：麻醉科和復健科面對的不確定性很不一樣。",
+  refs:[["Simpkin AL, Schwartzstein RM. Tolerating uncertainty — the next medical revolution? N Engl J Med 2016;375:1713–5.",PM("Tolerating uncertainty the next medical revolution")]]},
+ {id:"A5",t:"看到不對，但不敢說",en:"Moral distress",
+  prep:"有沒有一個時刻，你覺得「這樣好像不對」，卻沒有說出口？",
+  out:["是什麼讓你沒開口：身分、怕被打分數、還是不確定自己對？","那件事後來怎麼了？你現在怎麼想？","有沒有低風險的說法，例如用提問代替指正？","事後可以去找誰談？"],
+  tip:"先講清楚保密原則：這裡不追究人，只談經驗。",
+  refs:[["Martinez W, et al. Speaking up about traditional and professionalism-related patient safety threats. BMJ Qual Saf 2017;26:869–80.",PM("Speaking up about traditional and professionalism-related patient safety threats national survey")],
+        ["Branch WT. Use of critical incident reports in medical education. J Gen Intern Med 2005;20:1063–7.","https://pmc.ncbi.nlm.nih.gov/articles/PMC1490252"]]},
+ {id:"A6",t:"第一次面對病人死亡",en:"First patient death",
+  prep:"你遇過病人過世或急救嗎？那天下班後你做了什麼？",
+  out:["當下你在哪裡、在做什麼？","團隊怎麼處理（或沒有處理）情緒？","你怎麼跟家人或朋友說這件事？","醫師需要「習慣」死亡嗎？"],
+  tip:"這題可能觸動情緒。讓學生可以選擇不分享，最後留 5 分鐘收尾。",
+  refs:[["Rhodes-Kropf J, et al. Medical students' reactions to their 'most memorable' patient death. Acad Med 2005;80:634–40.",PM("medical students' reactions to their most memorable patient death")]]},
+
+ {id:"B1",t:"Balint：一位讓我放不下的病人",en:"Balint-style case",
+  prep:"帶一位讓你下班後還會想起的病人（去識別）。",
+  out:["報告者用 5 分鐘講這位病人，其他人只能問事實","報告者退後聆聽；大家談「如果我是病人、家屬、醫師，會有什麼感覺」","報告者回到討論，說說聽完後的想法","重點是關係與感受，不討論診斷與治療"],
+  tip:"人數最好不超過 7 人。老師不給答案，只守住流程。",
+  refs:[["Balint group sessions for medical students, a pilot study. BJPsych Open 2022.","https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9378053/"],
+        ["Yazdankhahfard M, et al. The Balint group and its application in medical education: a systematic review. J Educ Health Promot 2019.",PM("The Balint group and its application in medical education: A systematic review")]]},
+ {id:"B2",t:"病人願意讓見習生練習嗎？",en:"Patient consent & student roles",
+  prep:"你第一次做某個檢查或操作時，病人知道你是學生嗎？",
+  out:["你怎麼自我介紹：醫學生、實習醫師，還是含糊帶過？","病人拒絕你時，你的感受","婦產科內診、麻醉下檢查等情境的特殊性","教學醫院的學習需求與病人權利，怎麼取得平衡"],
+  tip:"婦產部的學生通常有很具體的經驗，可以請他們開場。",
+  refs:[["Ubel PA, et al. Don't ask, don't tell: medical student attitudes toward seeking consent for pelvic examinations on anesthetized patients. Am J Obstet Gynecol 2003;188:575–9.",PM("Don't ask, don't tell pelvic examinations anesthetized patient medical student attitudes")]]},
+ {id:"B3",t:"難相處的病人與家屬",en:"Difficult encounters",
+  prep:"想一位讓你緊張或生氣的病人或家屬。",
+  out:["「難相處」是病人的特質，還是情境造成的？","他們真正擔心的是什麼？","你看過哪位老師處理得很好？他做了什麼？","你自己的情緒怎麼處理"],
+  tip:"可以用 Balint 的形式進行。",
+  refs:[["Hull SK, Broquet K. How to manage difficult patient encounters. Fam Pract Manag 2007;14(6):30–4.",PM("How to manage difficult patient encounters Hull Broquet")]]},
+ {id:"B4",t:"看不見的就醫障礙",en:"Social determinants of health",
+  prep:"你這次遇到的病人中，有沒有人因為交通、經濟、語言或照顧者不足而影響治療？",
+  out:["新竹在地的樣貌：科學園區、偏鄉、新住民、獨居長者","這些因素寫在病歷的哪裡？","醫師能做什麼、不能做什麼？社工與個管師的角色","你自己的住宿交通困難，也是一種系統問題"],
+  tip:"原本訪談的住宿交通題可以放在這裡，從學生自身經驗延伸到病人。",
+  refs:[["Marmot M. Social determinants of health inequalities. Lancet 2005;365:1099–104.",PM("Marmot Social determinants of health inequalities Lancet 2005")]]},
+ {id:"B5",t:"醫病共享決策",en:"Shared decision making",
+  prep:"你看過病人要在兩個選擇之間做決定的場景嗎？",
+  out:["最後是誰做的決定？病人真的理解選項嗎？","你看過醫病共享決策輔助工具（PDA）嗎？","家屬意見和病人意願衝突時怎麼辦","見習生在這個過程中能幫上什麼忙"],
+  tip:"可以請學生用自己科別的一個真實決策當例子。",
+  refs:[["Elwyn G, et al. Shared decision making: a model for clinical practice. J Gen Intern Med 2012;27:1361–7.",PM("Shared decision making: a model for clinical practice")]]},
+ {id:"B6",t:"告知壞消息時，見習生在哪裡？",en:"Breaking bad news",
+  prep:"你旁觀過一次告知壞消息嗎？哪一句話讓你印象最深？",
+  out:["用 SPIKES 回顧那次對話","家屬的反應，以及醫師怎麼回應","見習生在現場的位置：站在哪裡、要不要開口","5 分鐘角色扮演"],
+  tip:"請兩位學生現場演，其他人當觀察者。",
+  refs:[["Baile WF, et al. SPIKES — a six-step protocol for delivering bad news. Oncologist 2000;5:302–11.",PM("SPIKES a six-step protocol for delivering bad news")]]},
+
+ {id:"C1",t:"他們眼中的實習醫學生",en:"Interprofessional view",
+  prep:"你覺得護理師怎麼看實習醫學生？",
+  out:["邀請一位護理師、呼吸治療師或專科護理師來分享 15 分鐘","他們最希望學生做的事，和最希望學生不要做的事","怎麼請求協助、怎麼道謝","同事相處：學長姐、同梯、其他職類"],
+  tip:"需要提前一週邀請來賓。",
+  refs:[["WHO. Framework for Action on Interprofessional Education & Collaborative Practice. 2010.",""]]},
+ {id:"C2",t:"醫療階層與勇於發聲",en:"Hierarchy & speaking up",
+  prep:"想一個你有話想說，但覺得「輪不到我」的時刻。",
+  out:["醫療團隊的階層從哪些地方看得出來？","航空業的 CRM 怎麼處理機長與副駕駛之間的階層？","學生可以用的句型，例如 CUS：I'm Concerned / Uncomfortable / This is a Safety issue","哪個團隊讓你敢開口？他們做對了什麼？"],
+  tip:"把「心理安全感」這個詞介紹給學生。",
+  refs:[["AHRQ. TeamSTEPPS®.","https://www.ahrq.gov/teamstepps-program/index.html"],
+        ["Edmondson A. Psychological safety and learning behavior in work teams. Adm Sci Q 1999;44:350–83.",""]]},
+ {id:"C3",t:"回饋、批評與羞辱式教學",en:"Feedback vs. humiliation",
+  prep:"回想一次你收到的回饋：讓你進步的，或讓你受傷的。",
+  out:["好的回饋和羞辱的差別在哪裡？","被當眾批評時，身體和腦袋有什麼反應？還學得進去嗎？","怎麼主動要回饋，例如「可以請您給我一個可以改進的地方嗎？」","遇到不當對待時，可以向誰反映"],
+  tip:"可以用你做好的「羞辱式教學」短片開場。事先準備教學部的反映管道。",
+  refs:[["Scott KM, et al. Teaching by humiliation and mistreatment of medical students in clinical rotations: a pilot study. Med J Aust 2015;203:185.",PM("Teaching by humiliation and mistreatment of medical students in clinical rotations")],
+        ["Ramani S, Krackov SK. Twelve tips for giving feedback effectively in the clinical environment. Med Teach 2012;34:787–91.",PM("Twelve tips for giving feedback effectively in the clinical environment")]]},
+ {id:"C4",t:"醫療爭議與法律",en:"Medicolegal basics",
+  prep:"最近有沒有看到醫療糾紛的新聞？",
+  out:["新聞報導和真實臨床的落差","《醫療事故預防及爭議處理法》的說明、溝通、關懷機制","為什麼病歷記載很重要","醫學生在醫療行為中的法律位置"],
+  tip:"時事題，可以用當週新聞替換開場。",
+  refs:[["全國法規資料庫：醫療事故預防及爭議處理法","https://law.moj.gov.tw/"]]},
+ {id:"C5",t:"一件差點出事的事：mini RCA",en:"Near miss & root cause analysis",
+  prep:"選一件你看過的「差一點」事件，去識別後帶來。",
+  out:["用時間軸重建事件","人、流程、設備、環境、溝通，哪裡出了問題？","不問「誰的錯」，問「系統怎麼讓錯誤變容易」","提出一個可以真的去改的小措施"],
+  tip:"白板畫魚骨圖，20 分鐘就能完成一輪。",
+  refs:[["WHO. Patient Safety Curriculum Guide: Multi-professional Edition. 2011.",""]]},
+ {id:"C6",t:"職場界線、性別與騷擾",en:"Boundaries & harassment",
+  prep:"你知道在醫院遇到讓你不舒服的言行時，可以找誰嗎？",
+  out:["什麼算騷擾、歧視、不當對待？灰色地帶有哪些？","旁觀者可以做什麼","本院申訴管道與保密方式","學生對病人的界線，包括社群媒體"],
+  tip:"事先準備好教學部與性平申訴窗口的聯絡方式。",
+  refs:[["Fnais N, et al. Harassment and discrimination in medical training: a systematic review and meta-analysis. Acad Med 2014;89:817–27.",PM("Harassment and discrimination in medical training: a systematic review and meta-analysis")]]},
+
+ {id:"D1",t:"怎麼選科",en:"Choosing a specialty",
+  prep:"你現在心中的前三名科別，以及理由。",
+  out:["影響選科的因素：興趣、老師、生活型態、收入、家人期待","五大科人力與醫美潮（帶當期新聞）","輪過這幾科之後，前三名有沒有改變？","老師分享自己當年怎麼選，後悔過嗎？"],
+  tip:"可以請學生把前三名寫在紙上，學期末再拿出來比對。",
+  refs:[["Querido SJ, et al. Dynamics of career choice among students in undergraduate medical courses. BEME Guide No. 33. Med Teach 2016;38:18–29.",PM("Dynamics of career choice among students in undergraduate medical courses BEME Guide 33")]]},
+ {id:"D2",t:"工時、勞動權益與住院醫師生活",en:"Duty hours & labor rights",
+  prep:"你知道住院醫師適用勞基法嗎？",
+  out:["2019 年起住院醫師納入勞基法，工時規範有哪些","工時限制對學習的影響：交班變多、連續照護變少？","實習醫學生的值班與休息","你理想中的工作與生活比例"],
+  tip:"上課前先確認最新的法規與院內規定。",
+  refs:[["衛生福利部：住院醫師勞動權益保障及工作時間指引","https://www.mohw.gov.tw/"]]},
+ {id:"D3",t:"在壓力下學習，以及求助",en:"Learning under stress",
+  prep:"這段實習最累的一週，你怎麼撐過去？",
+  out:["急性壓力對注意力與記憶的影響","睡眠不足時的學習策略","倦怠與憂鬱的警訊","本院與學校的身心支持資源；求助不是軟弱"],
+  tip:"可以用你的「壓力下學習」短片開場。提供資源，不要求個人揭露。",
+  refs:[["LeBlanc VR. The effects of acute stress on performance: implications for health professions education. Acad Med 2009;84(10 Suppl):S25–33.",PM("The effects of acute stress on performance: implications for health professions education")],
+        ["Dyrbye LN, et al. Burnout among U.S. medical students, residents, and early career physicians. Acad Med 2014;89:443–51.",PM("Burnout among U.S. medical students, residents, and early career physicians relative to the general U.S. population")]]},
+ {id:"D4",t:"AI 會怎麼改變我想選的科？",en:"AI in medicine",
+  prep:"你這週有用 AI 查資料或寫東西嗎？用在哪裡？",
+  out:["AI 在你想選的科會改變什麼？","哪些事不能交給 AI：病人關係、責任、最後的判斷","AI 的錯誤與偏誤，你怎麼發現？","病人拿 AI 的答案來問你時，怎麼回應"],
+  tip:"時事題，可以用當週的 AI 新聞替換開場。",
+  refs:[["Topol EJ. High-performance medicine: the convergence of human and artificial intelligence. Nat Med 2019;25:44–56.",PM("High-performance medicine: the convergence of human and artificial intelligence")]]},
+ {id:"D5",t:"CV 與學習歷程",en:"Writing your CV",
+  prep:"帶你目前的 CV，或一頁自我介紹（紙本或手機都可以）。",
+  out:["履歷寫的是「做過什麼」，還是「學到什麼」？","怎麼把一次見習寫成具體的成果","研究、服務、社團怎麼取捨","現場兩兩交換看一份，各給一個建議"],
+  tip:"老師可以拿自己早年和現在的 CV 對照。",
+  refs:[["Driessen E, et al. Portfolios in medical education: why do they meet with mixed success? Med Educ 2007;41:1224–33.",PM("Portfolios in medical education: why do they meet with mixed success")]]},
+ {id:"D6",t:"什麼叫做模擬訓練",en:"Simulation-based learning",
+  prep:"你做過哪些模擬訓練？哪一次最像真的？",
+  out:["模擬可以練什麼：技術、團隊、溝通、危機處理","為什麼 debriefing 比情境本身更重要","本院模擬中心有哪些資源","在模擬裡失敗的價值"],
+  tip:"可以安排一次直接到模擬中心現場進行。",
+  refs:[["Issenberg SB, et al. Features and uses of high-fidelity medical simulations that lead to effective learning: a BEME systematic review. Med Teach 2005;27:10–28.",PM("Features and uses of high-fidelity medical simulations that lead to effective learning BEME")],
+        ["Rudolph JW, et al. There's no such thing as \"nonjudgmental\" debriefing. Simul Healthc 2006;1:49–55.",PM("There's no such thing as nonjudgmental debriefing")]]}
+];
+const byId = Object.fromEntries(T.map(x=>[x.id,x]));
+
+let used = {};            // id -> {date}
+let mode = "local";       // "cloud" | "local"
+let canWrite = true;
+let dbRef = null;
+let filter = "ALL";
+let rolling = false;
+const LS = "intern-talk-used-v1";
+
+function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function loadLocal(){try{used=JSON.parse(localStorage.getItem(LS)||"{}")||{}}catch(e){used={}}}
+function saveLocal(){try{localStorage.setItem(LS,JSON.stringify(used))}catch(e){}}
+
+function setSync(){
+  const el=document.getElementById("sync");
+  el.className="sync"+(mode==="cloud"?" cloud":"");
+  el.querySelector("span").textContent = mode==="cloud"
+    ? (canWrite?"雲端同步：任何裝置打開都看到同一份進度":"雲端同步（唯讀）")
+    : "只存在這個瀏覽器";
+}
+
+function render(){
+  const suits=document.getElementById("suits");
+  suits.innerHTML=Object.entries(SUITS).map(([k,s])=>{
+    const cards=T.filter(x=>x.id[0]===k).map(x=>{
+      const u=used[x.id];
+      return `<button class="card ${s.cls}${u?" used":""}" data-id="${x.id}" type="button">
+        <span class="code">${x.id}</span><span class="t">${esc(x.t)}</span>
+        <span class="en">${esc(x.en)}</span>${u?`<span class="stamp">已討論 ${esc(u.date||"")}</span>`:""}</button>`}).join("");
+    return `<div class="suit ${s.cls}"><h2>${k} ${s.name}<small>${s.en}</small></h2>${cards}</div>`;
+  }).join("");
+  document.getElementById("cells").innerHTML=T.map(x=>`<span class="${SUITS[x.id[0]].cls}${used[x.id]?" on":""}" title="${x.id}"></span>`).join("");
+  const n=Object.keys(used).filter(k=>byId[k]).length;
+  document.getElementById("done").textContent=n;
+  document.getElementById("left").textContent=24-n;
+  document.getElementById("chips").innerHTML=[["ALL","全部"],...Object.entries(SUITS).map(([k,s])=>[k,k+" "+s.name])]
+    .map(([k,l])=>`<button class="chip" type="button" data-f="${k}" aria-pressed="${filter===k}">${l}</button>`).join("");
+  document.getElementById("drawBtn").disabled = rolling || pool().length===0;
+  document.getElementById("drawBtn").textContent = pool().length? "抽一題" : "這組已經用完";
+  setSync();
+}
+function pool(){return T.filter(x=>!used[x.id] && (filter==="ALL"||x.id[0]===filter))}
+
+function openSheet(id){
+  const x=byId[id], s=SUITS[id[0]], u=used[id];
+  const sheet=document.getElementById("sheet");
+  sheet.className="sheet "+s.cls;
+  const refs=x.refs.map(([t,url])=>`<li>${url?`<a href="${url}" target="_blank" rel="noopener">${esc(t)}</a>`:esc(t)}</li>`).join("");
+  const act = !canWrite ? `<span class="note">你目前只能檢視，無法消去題目。</span>`
+    : u ? `<span class="note">已於 <b>${esc(u.date)}</b> 討論。</span><button class="ghost" type="button" data-undo="${id}">復原為未用</button>`
+        : `<label class="note" for="useDate">討論日期</label><input type="date" id="useDate" value="${today()}"><button class="primary" type="button" data-use="${id}">這次討論這題，消去</button>`;
+  sheet.innerHTML=`
+    <div class="top"><div><div class="label">${id} · ${s.name}</div><h3 id="sTitle">${esc(x.t)}</h3><div class="en">${esc(x.en)}</div></div>
+      <button class="close" type="button" data-close>關閉</button></div>
+    <div class="prep"><div class="label">課前一句提示（可先傳到學生群組）</div>${esc(x.prep)}</div>
+    <div><div class="label">討論綱要</div><ol>${x.out.map(o=>`<li>${esc(o)}</li>`).join("")}</ol></div>
+    <div class="tip"><b>帶領提醒：</b>${esc(x.tip)}</div>
+    <div><div class="label">References</div><ul class="refs">${refs}</ul></div>
+    <div class="act">${act}</div>`;
+  document.getElementById("veil").hidden=false;
+  sheet.querySelector("[data-close]").focus();
+}
+function closeSheet(){document.getElementById("veil").hidden=true}
+
+async function markUsed(id,date){
+  used={...used,[id]:{date}}; render();
+  if(mode==="cloud"){try{await dbRef.doc("used/"+id).set({date})}catch(e){handleWriteErr(e)}} else saveLocal();
+}
+async function unmark(id){
+  const n={...used}; delete n[id]; used=n; render();
+  if(mode==="cloud"){try{await dbRef.doc("used/"+id).delete()}catch(e){handleWriteErr(e)}} else saveLocal();
+}
+async function resetAll(){
+  const ids=Object.keys(used); used={}; render();
+  if(mode==="cloud"){for(const id of ids){try{await dbRef.doc("used/"+id).delete()}catch(e){handleWriteErr(e);break}}} else saveLocal();
+}
+function handleWriteErr(e){
+  if(e && e.code==="invalid_argument"){canWrite=false;render()}
+}
+
+function draw(){
+  const p=pool(); if(!p.length||rolling) return;
+  const pick=p[Math.floor(Math.random()*p.length)];
+  const reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce||p.length===1){openSheet(pick.id);return}
+  rolling=true; render();
+  let i=0; const steps=16; let prev=null;
+  const tick=()=>{
+    if(prev) prev.classList.remove("lit");
+    const cand = i<steps-1 ? p[Math.floor(Math.random()*p.length)] : pick;
+    const el=document.querySelector(`.card[data-id="${cand.id}"]`);
+    if(el){el.classList.add("lit");prev=el}
+    i++;
+    if(i<steps) setTimeout(tick, 60+i*i*1.6);
+    else setTimeout(()=>{ if(prev) prev.classList.remove("lit"); rolling=false; render(); openSheet(pick.id)},520);
+  };
+  tick();
+}
+
+document.addEventListener("click",e=>{
+  const c=e.target.closest(".card"); if(c && !rolling){openSheet(c.dataset.id);return}
+  const f=e.target.closest(".chip"); if(f){filter=f.dataset.f;render();return}
+  if(e.target.id==="drawBtn"){draw();return}
+  if(e.target.closest("[data-close]")||e.target.id==="veil"){closeSheet();return}
+  const u=e.target.closest("[data-use]");
+  if(u){const d=(document.getElementById("useDate")||{}).value||today();markUsed(u.dataset.use,d);closeSheet();return}
+  const un=e.target.closest("[data-undo]"); if(un){unmark(un.dataset.undo);closeSheet();return}
+  if(e.target.id==="resetBtn"){
+    document.getElementById("resetArea").innerHTML=`<span class="confirm">確定清除全部進度？<button class="danger" type="button" id="resetYes">清除</button><button class="linkbtn" type="button" id="resetNo">取消</button></span>`;return}
+  if(e.target.id==="resetYes"||e.target.id==="resetNo"){
+    if(e.target.id==="resetYes") resetAll();
+    document.getElementById("resetArea").innerHTML=`<button class="linkbtn" id="resetBtn" type="button">全部重設</button>`;
+  }
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
+document.getElementById("hideUsed").addEventListener("change",e=>{document.getElementById("suits").classList.toggle("hideUsed",e.target.checked)});
+
+loadLocal(); render();
+
+(async()=>{
+  try{
+    if(!window.claude||!window.claude.use){setSync();return}
+    const db=await window.claude.use("db");
+    if(!db){setSync();return}
+    dbRef=db;
+    const user=await window.claude.use("user");
+    if(user){try{const w=await user.can("data.write"); if(w===false) canWrite=false}catch(e){}}
+    let first=true;
+    db.collection("used").onSnapshot(snap=>{
+      const n={}; snap.docs.forEach(d=>{if(d.exists&&byId[d.id]) n[d.id]=d.data()});
+      if(first){first=false;
+        // move any progress kept only in this browser up to the shared record
+        const localOnly=Object.keys(used).filter(k=>!n[k]&&byId[k]);
+        if(canWrite && localOnly.length){localOnly.forEach(k=>{n[k]=used[k]}); (async()=>{for(const k of localOnly){try{await db.doc("used/"+k).set(used[k])}catch(e){handleWriteErr(e);break}}})()}
+      }
+      mode="cloud"; used=n; render();
+    },()=>{mode="local";loadLocal();render()});
+  }catch(e){setSync()}
+})();
+</script>
+
+</body></html>
