@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>肢體導極錯置 練習 ｜ Limb Lead Reversal Trainer</title>
+<meta name="description" content="生理功能室進階訓練手冊第一課：合成 12 導程心電圖，練習辨認肢體導極錯置（RA–LA、LA–LL、RA–LL、RA–RL、LA–RL、輪轉、右位心）。">
+<style>
+:root{--b:#8a1538;--bd:#5e0e26;--bl:#faf3f5;--bk:#111;--mut:#5b6472;--line:#e3d3d8;--ok:#1b7f3b;--okbg:#e6f4ea;--no:#c62828;--nobg:#fdecea;--bg:#f4f1f2;--card:#fff;--y:#ffe08a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",Roboto,sans-serif;background:var(--bg);color:var(--bk);line-height:1.55;font-size:16px;-webkit-font-smoothing:antialiased}
+header{position:sticky;top:0;z-index:20;background:var(--b);color:#fff;padding:10px 14px 8px;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+header .t{font-size:16px;font-weight:800;display:flex;justify-content:space-between;align-items:center;gap:8px}
+header .t small{font-weight:600;font-size:12px;opacity:.9}
+header .sub{font-size:12px;opacity:.9;margin-top:2px}
+nav.tabs{display:flex;gap:6px;margin-top:8px}
+nav.tabs button{flex:1;border:none;border-radius:999px;padding:7px 4px;font-size:14px;font-weight:700;background:rgba(255,255,255,.18);color:#fff;font-family:inherit;cursor:pointer}
+nav.tabs button.on{background:#fff;color:var(--b)}
+.wrap{max-width:720px;margin:0 auto;padding:12px 12px 90px}
+.panel{display:none}.panel.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px;box-shadow:0 1px 3px rgba(20,30,50,.05)}
+.card h2{font-size:17px;color:var(--b);margin:0 0 8px}
+.card h3{font-size:15px;margin:12px 0 6px;color:var(--bk)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;border:1.5px solid var(--b);border-radius:999px;overflow:hidden}
+.seg button{border:none;background:#fff;color:var(--b);padding:6px 12px;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer}
+.seg button.on{background:var(--b);color:#fff}
+.lbl{font-size:12.5px;color:var(--mut);font-weight:700;margin-right:2px}
+.ecgbox{margin-top:10px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff8f6;position:relative}
+.ecgbox svg{display:block;width:100%;height:auto}
+.ecgbox .zoomhint{position:absolute;right:8px;bottom:6px;font-size:11px;color:#8a1538;background:rgba(255,255,255,.85);padding:2px 8px;border-radius:999px}
+.q{font-size:16.5px;font-weight:700;margin:12px 0 8px}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:380px){.opts{grid-template-columns:repeat(2,1fr)}}
+.opt{border:1.5px solid var(--line);background:#fff;border-radius:11px;padding:11px 6px;font-size:14px;font-weight:700;color:var(--bk);font-family:inherit;cursor:pointer;min-height:48px;line-height:1.25}
+.opt small{display:block;font-weight:500;font-size:11px;color:var(--mut)}
+.opt.correct{border-color:var(--ok);background:var(--okbg)}
+.opt.wrong{border-color:var(--no);background:var(--nobg)}
+.opt:disabled{cursor:default}
+.opt.dim{opacity:.5}
+.verdict{font-weight:800;font-size:16px;margin:12px 0 6px}
+.verdict.ok{color:var(--ok)}.verdict.no{color:var(--no)}
+.exp{background:#fbfbfc;border:1px solid var(--line);border-left:4px solid var(--b);border-radius:0 10px 10px 0;padding:10px 12px;font-size:14.5px}
+.exp b{color:var(--bd)}
+.exp table{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}
+.exp th{background:var(--b);color:#fff;padding:3px 6px;text-align:center}
+.exp td{padding:3px 6px;border-bottom:1px solid var(--line);text-align:center}
+.exp td:first-child,.exp th:first-child{text-align:left}
+.exp .hi{background:var(--y)}
+.nav{display:flex;gap:10px;margin-top:14px}
+.btn{flex:1;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;min-height:48px}
+.btn.primary{background:var(--b);color:#fff;box-shadow:0 2px 8px rgba(138,21,56,.28)}
+.btn.primary:disabled{background:#d9b3bf;box-shadow:none;cursor:default}
+.btn.ghost{background:#fff;color:var(--b);border:1.5px solid var(--line)}
+.stat{display:flex;justify-content:space-between;font-size:13px;color:var(--mut);margin-top:10px}
+.stat b{color:var(--b)}
+.hint{font-size:12.5px;color:var(--mut);margin-top:8px}
+.bar{height:7px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:8px}
+.bar>i{display:block;height:100%;width:0;background:var(--b);transition:width .25s}
+.big{font-size:56px;font-weight:900;color:var(--b);line-height:1.05;text-align:center}
+.big small{font-size:22px;color:var(--mut)}
+.tier{display:inline-block;margin:8px auto;padding:6px 16px;border-radius:999px;font-weight:800;font-size:15px;background:var(--bl);color:var(--b)}
+table.rules{border-collapse:collapse;width:100%;font-size:13.5px;margin:6px 0}
+table.rules th{background:var(--b);color:#fff;padding:5px 6px;text-align:left}
+table.rules td{padding:5px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+table.rules tr:nth-child(even) td{background:var(--bl)}
+.pearl{border-left:5px solid var(--b);background:var(--bl);padding:8px 12px;border-radius:0 8px 8px 0;margin:8px 0;font-size:14.5px}
+.mini{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
+.mini figure{margin:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff8f6}
+.mini svg{display:block;width:100%;height:auto}
+.mini figcaption{font-size:12px;padding:4px 8px;background:#fff;color:var(--mut)}
+.kit{display:flex;gap:10px;align-items:flex-start;margin:8px 0;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.kit .ic{font-size:26px;flex:0 0 34px;text-align:center}
+.kit b{color:var(--b)}
+.kit a{color:var(--b)}
+.kit code{font-size:12px;background:var(--bl);padding:1px 5px;border-radius:4px}
+footer{text-align:center;color:var(--mut);font-size:11.5px;margin-top:24px;line-height:1.7}
+footer a{color:var(--b)}
+/* zoom overlay */
+.zoom{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:50;display:none;flex-direction:column}
+.zoom.on{display:flex}
+.zoom .zb{display:flex;justify-content:space-between;align-items:center;color:#fff;padding:10px 14px;font-weight:700}
+.zoom .zb button{background:#fff;color:var(--b);border:none;border-radius:999px;padding:8px 16px;font-weight:800;font-family:inherit}
+.zoom .zc{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:0 10px 20px}
+.zoom .zc svg{height:auto;min-width:900px;width:100%;background:#fff8f6;border-radius:8px}
+/* share fab */
+.share-fab{position:fixed;right:14px;bottom:18px;z-index:30}
+.share-toggle{width:50px;height:50px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:var(--b);color:#fff;box-shadow:0 4px 14px rgba(138,21,56,.4);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.share-toggle svg{width:22px;height:22px;fill:#fff}
+.share-menu{position:absolute;bottom:60px;right:0;background:#fff;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.25);padding:14px;width:250px;display:none}
+.share-menu.on{display:block}
+.share-menu h4{margin:0 0 8px;font-size:14px;color:var(--bk)}
+.share-menu img{display:block;margin:0 auto 8px;border-radius:8px}
+.share-menu .sb{display:block;width:100%;border:none;border-radius:9px;padding:10px;margin:6px 0;font-weight:700;font-family:inherit;color:#fff;text-align:center;text-decoration:none;font-size:14px;cursor:pointer}
+.sb.line{background:#06C755}.sb.copy{background:var(--b)}.sb.mail{background:#555}
+</style>
+</head>
+<body>
+<header>
+  <div class="t"><span>🫀 肢體導極錯置 練習</span><small id="hScore">連勝 0</small></div>
+  <div class="sub">生理功能室進階訓練手冊 第一課 ｜ 合成 12 導程，題目無限</div>
+  <nav class="tabs">
+    <button class="on" data-tab="practice">練習</button>
+    <button data-tab="challenge">挑戰 10 題</button>
+    <button data-tab="learn">學習卡</button>
+    <button data-tab="kit">三件套</button>
+  </nav>
+</header>
+
+<div class="wrap">
+
+<!-- ===== 練習 ===== -->
+<section class="panel on" id="tab-practice">
+  <div class="card">
+    <div class="row">
+      <span class="lbl">難度</span>
+      <span class="seg" id="segDiff"><button data-v="easy" class="on">入門</button><button data-v="hard">進階</button></span>
+      <span class="lbl">貼法</span>
+      <span class="seg" id="segML"><button data-v="std" class="on">四肢末端</button><button data-v="ml">軀幹 Mason–Likar</button></span>
+    </div>
+    <div class="hint" id="diffHint">入門：正常／RA–LA／RA–LL／RA–RL／LA–RL。進階加入 LA–LL、三肢輪轉、真正右位心。</div>
+    <div class="ecgbox" id="ecgP"><div class="zoomhint">點圖放大</div></div>
+    <div class="q" id="qP">這張 ECG 怎麼了？先用三步快篩：aVR？I？平線？</div>
+    <div class="opts" id="optsP"></div>
+    <div class="verdict" id="verP"></div>
+    <div class="exp" id="expP" style="display:none"></div>
+    <div class="nav">
+      <button class="btn ghost" id="skipP" style="flex:0 0 auto;padding:14px 18px">換一題</button>
+      <button class="btn primary" id="nextP" disabled>請先作答</button>
+    </div>
+    <div class="stat"><span>本次 <b id="okP">0</b> 對 ・ <b id="noP">0</b> 錯</span><span>最長連勝 <b id="bestStreak">0</b></span><span>累計作答 <b id="totalP">0</b></span></div>
+  </div>
+</section>
+
+<!-- ===== 挑戰 ===== -->
+<section class="panel" id="tab-challenge">
+  <div class="card" id="chIntro">
+    <h2>挑戰 10 題</h2>
+    <p>連續 10 題，計時。難度與貼法沿用「練習」的設定。目標：<b>10 題全對</b>。最佳成績存在這支手機裡。</p>
+    <div class="row" style="margin-top:6px"><span class="lbl">最佳</span><span id="chBest">尚無紀錄</span></div>
+    <div class="nav"><button class="btn primary" id="chStart">開始</button></div>
+  </div>
+  <div class="card" id="chGame" style="display:none">
+    <div class="stat" style="margin:0"><span>第 <b id="chN">1</b> / 10 題</span><span>⏱ <b id="chTime">0</b> 秒</span><span><b id="chOk">0</b> 對</span></div>
+    <div class="bar"><i id="chBar"></i></div>
+    <div class="ecgbox" id="ecgC"><div class="zoomhint">點圖放大</div></div>
+    <div class="q">這張 ECG 怎麼了？</div>
+    <div class="opts" id="optsC"></div>
+    <div class="verdict" id="verC"></div>
+    <div class="exp" id="expC" style="display:none"></div>
+    <div class="nav"><button class="btn primary" id="nextC" disabled>請先作答</button></div>
+  </div>
+  <div class="card" id="chResult" style="display:none">
+    <div class="big"><span id="rScore">0</span><small>/10</small></div>
+    <div style="text-align:center"><span class="tier" id="rTier"></span></div>
+    <p style="text-align:center;color:var(--mut);font-size:14px" id="rTime"></p>
+    <div id="rList" style="font-size:14px"></div>
+    <div class="nav"><button class="btn ghost" id="chAgain">再來一次</button><button class="btn primary" id="chShare">複製成績</button></div>
+  </div>
+</section>
+
+<!-- ===== 學習卡 ===== -->
+<section class="panel" id="tab-learn">
+  <div class="card">
+    <h2>三步快篩：每張 ECG 印出來前看三秒</h2>
+    <ol style="padding-left:1.3em;margin:0">
+      <li><b>看 aVR</b>：P、QRS、T 是不是全部朝上？是 → 幾乎一定接錯（LA–LL 除外）。</li>
+      <li><b>看 I</b>：P 波或 QRS 是不是朝下？是 → RA–LA 或三肢輪轉；再看胸前是否正常。</li>
+      <li><b>找平線</b>：I、II、III 有沒有一條幾乎是直線？有 → 右腳的線被換走了（軀幹貼法例外）。</li>
+    </ol>
+    <div class="pearl">三步都過，再看 <b>III 是否單獨倒置</b>、<b>I 的 P 波是否比 II 高</b>：抓 LA–LL。</div>
+  </div>
+  <div class="card">
+    <h2>兩大類</h2>
+    <table class="rules"><tr><th></th><th>不含右腳</th><th>含右腳</th></tr>
+      <tr><td>例子</td><td>RA、LA、LL 互換或輪轉</td><td>RA–RL、LA–RL</td></tr>
+      <tr><td>胸前導程</td><td><b>完全不變</b></td><td>輕微失真</td></tr>
+      <tr><td>肢體導程</td><td>重排或上下翻轉</td><td>一條變<b>平線</b></td></tr>
+      <tr><td>間期</td><td>不變</td><td>不可信</td></tr></table>
+    <div class="pearl">第一眼先看胸前：<b>胸前正常、肢體怪</b>，就想 RA／LA／LL 互換。</div>
+  </div>
+  <div class="card">
+    <h2>速查：哪條被翻轉，就是哪種接錯</h2>
+    <table class="rules"><tr><th>看到什麼</th><th>接錯</th></tr>
+      <tr><td>I 與 aVL 整個倒置，aVR 直立</td><td><b>RA–LA</b></td></tr>
+      <tr><td>II、III、aVF 倒置（含 P），aVR 直立</td><td><b>RA–LL</b></td></tr>
+      <tr><td>只有 III 倒置，整張「更正常」</td><td><b>LA–LL</b>（最難）</td></tr>
+      <tr><td>I、II、aVL 倒置</td><td>逆時針輪轉</td></tr>
+      <tr><td>II、III 倒置，I 像 III</td><td>順時針輪轉</td></tr>
+      <tr><td><b>II 平線</b>，I 像 −III，只有 III 沒變</td><td><b>RA–RL</b></td></tr>
+      <tr><td><b>III 平線</b>，I 像 II</td><td><b>LA–RL</b></td></tr>
+      <tr><td>看不出來</td><td>LL–RL</td></tr></table>
+    <div class="mini" id="miniCards"></div>
+  </div>
+  <div class="card">
+    <h2>運動心電圖室的例外</h2>
+    <p style="margin:0 0 6px">Mason–Likar 軀幹貼法下，兩腿電位差變大，<b>平線會消失</b>：RA–RL 只會讓 II 變小。「沒有平線」不能排除接錯，要回到顏色與位置核對。切到「軀幹」模式練習看看差別。</p>
+    <h2 style="margin-top:12px">不是接錯，但很像</h2>
+    <table class="rules"><tr><th>情況</th><th>像</th><th>怎麼分</th></tr>
+      <tr><td>真正右位心</td><td>RA–LA</td><td>V4–V6 的 R 波消失</td></tr>
+      <tr><td>氣胸</td><td>RA–LA</td><td>處理後消失</td></tr>
+      <tr><td>下壁梗塞</td><td>RA–LL</td><td>II、aVF 的 <b>P 波仍直立</b></td></tr></table>
+  </div>
+  <div class="card">
+    <h2>發現疑似接錯，怎麼做</h2>
+    <ol style="padding-left:1.3em;margin:0">
+      <li><b>不要拆電極</b>，先核對四條肢體線的顏色與位置</li><li>接回正確位置，<b>重錄一張</b></li>
+      <li><b>兩張都存</b>，錯的那張註記「limb lead reversal, repeated」</li><li>與舊 ECG 比對軸向與 P 波</li>
+      <li>不在錯的圖上判讀 ST；病人已離開就<b>通知開單醫師</b></li></ol>
+    <div class="pearl">重錄永遠比在 12 導程上推理更快、更安全。</div>
+  </div>
+</section>
+
+<!-- ===== 三件套 ===== -->
+<section class="panel" id="tab-kit">
+  <div class="card">
+    <h2>這一課有三件套，互相搭配</h2>
+    <div class="kit"><div class="ic">📽️</div><div><b>投影片</b>（上課用，30 分鐘）<br><code>limb-lead-reversal-slides.pdf</code><br><span style="font-size:13px;color:var(--mut)">在手冊資料夾 <code>ECG_Lab_Handbook/01_limb_lead_reversal/</code>，向主任或單位索取。</span></div></div>
+    <div class="kit"><div class="ic">📄</div><div><b>講義 PDF</b>（印出來自讀，末頁 10 題自我測驗）<br><code>limb-lead-reversal-handout.pdf</code><br><span style="font-size:13px;color:var(--mut)">同一個資料夾；可印出來放在機器旁。</span></div></div>
+    <div class="kit"><div class="ic">📱</div><div><b>手機練習</b>（這一頁）<br>題目無限，每題有解釋。建議入門模式十題全對再開進階。</div></div>
+    <h3>延伸</h3>
+    <div class="kit"><div class="ic">🏃</div><div><a href="treadmill-ecg-teaching.html">運動心電圖 Treadmill ECG 判讀教學模組</a><br><span style="font-size:13px;color:var(--mut)">第三課的核心教材：終止指標與紅旗。</span></div></div>
+    <div class="kit"><div class="ic">🏠</div><div><a href="index.html">心血管照護教學資源中心</a><br><span style="font-size:13px;color:var(--mut)">其他教學模組與測驗。</span></div></div>
+    <h3>怎麼算分</h3>
+    <p style="font-size:14px;margin:0">練習模式不限次數；挑戰模式 10 題計時，10 對為「可帶教」、8–9 對為「獨立執行」、6–7 對為「監督下執行」、5 以下請回去看學習卡。對應能力認證 L2–L4 的自我檢核，不是正式考試。</p>
+    <h3>參考文獻</h3>
+    <ol style="font-size:13px;padding-left:1.3em;margin:0;color:#333">
+      <li>Batchvarov VN, Malik M, Camm AJ. Incorrect electrode cable connection during electrocardiographic recording. <a href="https://doi.org/10.1093/europace/eum198" target="_blank" rel="noopener">Europace 2007;9:1081-90</a></li>
+      <li>Ramadurai S, et al. Limb lead reversal in the electrocardiogram. <a href="https://doi.org/10.7759/cureus.92345" target="_blank" rel="noopener">Cureus 2025;17:e92345</a></li>
+      <li>Abdollah H, Milliken JA. Recognition of electrocardiographic left arm/left leg lead reversal. <a href="https://doi.org/10.1016/s0002-9149(97)00656-5" target="_blank" rel="noopener">Am J Cardiol 1997;80:1247-9</a></li>
+      <li>Rudiger A, et al. Electrocardiographic artifacts due to electrode misplacement and their frequency in different clinical settings. <a href="https://doi.org/10.1016/j.ajem.2006.06.018" target="_blank" rel="noopener">Am J Emerg Med 2007;25:174-8</a></li>
+    </ol>
+    <p style="font-size:12.5px;color:var(--mut);margin-top:10px">所有心電圖均為合成圖：單一心電偶極模型，電極電位依 Einthoven 與 Wilson 定義計算，接錯只是把導線貼到別的電極位置。沒有任何病人資料。</p>
+  </div>
+  <footer>謝慕揚 MD, PhD, FESC ｜ 新竹臺大分院 心血管中心 ｜ 生理功能室進階訓練手冊 ｜ 2026-10<br>僅供醫療專業人員教學參考</footer>
+</section>
+
+</div>
+
+<div class="zoom" id="zoom"><div class="zb"><span>左右滑動看全圖（4 欄 × 3 列 + 節律條）</span><button id="zoomClose">關閉</button></div><div class="zc" id="zoomC"></div></div>
+
+<div class="share-fab">
+  <div class="share-menu" id="shareMenu">
+    <h4>分享這一頁</h4>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=https%3A%2F%2Fdrake1128.github.io%2Fsaq-questionnaire%2Flimb-lead-reversal-trainer.html" alt="QR" width="150" height="150" loading="lazy">
+    <a class="sb line" href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdrake1128.github.io%2Fsaq-questionnaire%2Flimb-lead-reversal-trainer.html" target="_blank" rel="noopener">LINE 分享</a>
+    <button class="sb copy" onclick="copyShareLink(this)">複製連結</button>
+    <a class="sb mail" href="mailto:?subject=%E8%82%A2%E9%AB%94%E5%B0%8E%E6%A5%B5%E9%8C%AF%E7%BD%AE%E7%B7%B4%E7%BF%92&body=https%3A%2F%2Fdrake1128.github.io%2Fsaq-questionnaire%2Flimb-lead-reversal-trainer.html">Email</a>
+  </div>
+  <button type="button" class="share-toggle" onclick="toggleShare()" aria-label="分享"><svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></button>
+</div>
+
+<script>
+/* ecg-sim.js — 合成 12 導程心電圖引擎（肢體導極錯置教學用）
+ * 單一心電偶極 (dipole) 模型：x = 病人左側、y = 足側、z = 前方。
+ * 電極電位 φ = d · u_electrode。任何「接線錯置」只是把導線貼到不同電極位置，
+ * 導程則照定義重新計算，因此波形變化完全依照 Einthoven / Wilson 的物理，
+ * 與 Batchvarov 2007 Table 1 / Table 3 一致。
+ * 可在瀏覽器 (window.ECG) 與 Node (module.exports) 使用。
+ */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.ECG = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  function norm(v) { var l = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0] / l, v[1] / l, v[2] / l]; }
+  function dot(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
+  function rotZ(v, deg) { // 額面旋轉（繞前後軸）
+    var r = deg * Math.PI / 180, c = Math.cos(r), s = Math.sin(r);
+    return [v[0] * c - v[1] * s, v[0] * s + v[1] * c, v[2]];
+  }
+  function gauss(t, mu, s) { var x = (t - mu) / s; return Math.exp(-0.5 * x * x); }
+
+  // ---------- 電極方向向量 ----------
+  // 標準（四肢末端）貼法；RL 與 LL 幾乎同電位
+  var ELECTRODES_STD = {
+    RA: norm([-0.866, -0.5, 0]), LA: norm([0.866, -0.5, 0]),
+    LL: norm([0, 1, 0]), RL: norm([-0.08, 0.997, 0]),
+    V1: norm([-0.33, 0.12, 0.94]), V2: norm([0.05, 0.15, 0.98]), V3: norm([0.42, 0.22, 0.88]),
+    V4: norm([0.68, 0.30, 0.67]), V5: norm([0.86, 0.26, 0.44]), V6: norm([0.95, 0.22, 0.22])
+  };
+  // Mason–Likar（運動心電圖室）：四肢電極移到軀幹；兩腿電極不再等電位，軸偏右
+  var ELECTRODES_ML = {
+    RA: norm([-0.78, -0.55, 0.25]), LA: norm([0.78, -0.55, 0.25]),
+    LL: norm([0.30, 0.92, 0.15]), RL: norm([-0.30, 0.92, 0.15]),
+    V1: ELECTRODES_STD.V1, V2: ELECTRODES_STD.V2, V3: ELECTRODES_STD.V3,
+    V4: ELECTRODES_STD.V4, V5: ELECTRODES_STD.V5, V6: ELECTRODES_STD.V6
+  };
+  var LIMB_K = 1 / 1.732;   // 使 lead I 振幅 = dipole x 分量 (mV)
+  var CHEST_K = 1.15;
+
+  // ---------- 錯置類型：導線「標籤」→ 實際貼的位置 ----------
+  var SWAPS = {
+    'normal': { RA: 'RA', LA: 'LA', LL: 'LL' },
+    'RA-LA':  { RA: 'LA', LA: 'RA', LL: 'LL' },
+    'LA-LL':  { RA: 'RA', LA: 'LL', LL: 'LA' },
+    'RA-LL':  { RA: 'LL', LA: 'LA', LL: 'RA' },
+    'CW':     { RA: 'LA', LA: 'LL', LL: 'RA' },   // 順時針：RA→LA→LL→RA
+    'CCW':    { RA: 'LL', LA: 'RA', LL: 'LA' },   // 逆時針：RA→LL→LA→RA
+    'RA-RL':  { RA: 'RL', LA: 'LA', LL: 'LL' },
+    'LA-RL':  { RA: 'RA', LA: 'RL', LL: 'LL' },
+    'LL-RL':  { RA: 'RA', LA: 'LA', LL: 'RL' },
+    'dextro': { RA: 'RA', LA: 'LA', LL: 'LL' }    // 真正右位心（不是接錯）
+  };
+  var SWAP_INFO = {
+    'normal': { zh: '接線正確', en: 'Correct' },
+    'RA-LA':  { zh: '右手–左手互換', en: 'RA–LA reversal' },
+    'LA-LL':  { zh: '左手–左腳互換', en: 'LA–LL reversal' },
+    'RA-LL':  { zh: '右手–左腳互換', en: 'RA–LL reversal' },
+    'CW':     { zh: '三肢順時針輪轉', en: 'Clockwise rotation' },
+    'CCW':    { zh: '三肢逆時針輪轉', en: 'Counter-clockwise rotation' },
+    'RA-RL':  { zh: '右手–右腳互換', en: 'RA–RL reversal' },
+    'LA-RL':  { zh: '左手–右腳互換', en: 'LA–RL reversal' },
+    'LL-RL':  { zh: '左腳–右腳互換', en: 'LL–RL reversal' },
+    'dextro': { zh: '真正右位心', en: 'True dextrocardia' }
+  };
+
+  // ---------- 一個心搏：各成分 (時間 s, 寬度 s, 振幅 mV, 方向) ----------
+  function makeBeat(p) {
+    p = p || {};
+    var axis = p.axisRot || 0;          // 額面旋轉角（度，正 = 順時針/往右偏）
+    var g = p.gain || 1;
+    var mirror = p.dextro ? -1 : 1;     // 右位心：x 鏡像
+    function dir(v) { var r = rotZ(norm(v), axis); return [r[0] * mirror, r[1], r[2]]; }
+    return [
+      { t: 0.100, s: 0.026, a: 0.17 * g * (p.pGain || 1), d: dir([0.45, 0.80, 0.30]) },      // P
+      { t: 0.236, s: 0.007, a: 0.16 * g, d: dir([-0.45, -0.15, 0.60]) },                      // q（中隔）
+      { t: 0.256, s: 0.011, a: 1.50 * g, d: dir([0.72, 0.56, -0.40]) },                       // R
+      { t: 0.277, s: 0.009, a: 0.42 * g, d: dir([-0.35, -0.30, -0.42]) },                     // S（終末）
+      { t: 0.455, s: 0.052, a: 0.32 * g, d: dir([0.65, 0.50, 0.40]) }                         // T
+    ];
+  }
+
+  // 偶極在時間 t（相對心搏起點）
+  function dipoleAt(t, beat) {
+    var d = [0, 0, 0];
+    for (var i = 0; i < beat.length; i++) {
+      var c = beat[i];
+      // T 波用不對稱高斯（上升慢、下降快）
+      var s = (i === beat.length - 1 && t > c.t) ? c.s * 0.78 : c.s;
+      var w = c.a * gauss(t, c.t, s);
+      d[0] += w * c.d[0]; d[1] += w * c.d[1]; d[2] += w * c.d[2];
+    }
+    return d;
+  }
+
+  // ---------- 主函式：產生 12 導程取樣 ----------
+  // cfg: { swap, hr, dur, fs, axisRot, gain, masonLikar, noise, seed }
+  function generate(cfg) {
+    cfg = cfg || {};
+    var swap = cfg.swap || 'normal';
+    var hr = cfg.hr || 72, dur = cfg.dur || 10, fs = cfg.fs || 250;
+    var E = cfg.masonLikar ? ELECTRODES_ML : ELECTRODES_STD;
+    var map = SWAPS[swap] || SWAPS.normal;
+    var beat = makeBeat({ axisRot: cfg.axisRot || 0, gain: cfg.gain || 1, dextro: swap === 'dextro', pGain: cfg.pGain });
+    var rnd = mulberry32(cfg.seed || 1);
+    var rr = 60 / hr;
+    var n = Math.floor(dur * fs);
+    var names = ['I', 'II', 'III', 'aVR', 'aVL', 'aVF', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6'];
+    var out = {}; names.forEach(function (k) { out[k] = new Float32Array(n); });
+    var noise = cfg.noise == null ? 1 : cfg.noise;
+    var wanderPh = rnd() * 6.28, wanderF = 0.18 + rnd() * 0.15;
+    // 輕微竇性心律不整
+    var beatStarts = [], tb = 0.15;
+    while (tb < dur + 1) { beatStarts.push(tb); tb += rr * (1 + (rnd() - 0.5) * 0.06); }
+
+    for (var i = 0; i < n; i++) {
+      var t = i / fs, d = [0, 0, 0];
+      for (var b = 0; b < beatStarts.length; b++) {
+        var rel = t - beatStarts[b];
+        if (rel < -0.05 || rel > 0.75) continue;
+        var dd = dipoleAt(rel, beat);
+        d[0] += dd[0]; d[1] += dd[1]; d[2] += dd[2];
+      }
+      // 電極電位
+      var phi = {};
+      ['RA', 'LA', 'LL', 'RL'].forEach(function (e) { phi[e] = dot(d, E[e]) * LIMB_K; });
+      ['V1', 'V2', 'V3', 'V4', 'V5', 'V6'].forEach(function (e) { phi[e] = dot(d, E[e]) * CHEST_K; });
+      // 導線標籤 → 實際位置
+      var ra = phi[map.RA], la = phi[map.LA], ll = phi[map.LL];
+      var wct = (ra + la + ll) / 3;
+      var base = noise * (0.035 * Math.sin(2 * Math.PI * wanderF * t + wanderPh) + 0.012 * (rnd() - 0.5));
+      out.I[i] = la - ra + base;
+      out.II[i] = ll - ra + base;
+      out.III[i] = ll - la + base;
+      out.aVR[i] = ra - (la + ll) / 2 + base;
+      out.aVL[i] = la - (ra + ll) / 2 + base;
+      out.aVF[i] = ll - (ra + la) / 2 + base;
+      for (var v = 1; v <= 6; v++) out['V' + v][i] = phi['V' + v] - wct + base;
+    }
+    return { leads: out, fs: fs, dur: dur, hr: hr, swap: swap, masonLikar: !!cfg.masonLikar };
+  }
+
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  // ---------- SVG 繪圖 ----------
+  // layout: '4x3'（標準機器：4 欄各 2.5 s + 10 s 節律條）或 '3x4'（手機直式：3 欄各 2.5 s + 7.5 s 節律條）
+  function toSVG(rec, opt) {
+    opt = opt || {};
+    var layout = opt.layout || '4x3';
+    var pxmm = opt.pxPerMm || 4;              // 1 mm = 4 px
+    var mmPerSec = 25, mmPerMv = 10;
+    var cols = layout === '3x4' ? 3 : 4;
+    var rows = layout === '3x4' ? 4 : 3;
+    var order = ['I', 'II', 'III', 'aVR', 'aVL', 'aVF', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6'];
+    var segSec = 2.5, segW = segSec * mmPerSec * pxmm;   // 250 px
+    var rowH = (opt.rowMm || 30) * pxmm;                 // 120 px
+    var calW = 5 * pxmm;                                 // 定標脈衝 0.2 s
+    var W = calW + cols * segW, rhythm = opt.rhythm !== false;
+    var H = rows * rowH + (rhythm ? rowH : 0);
+    var fs = rec.fs, L = rec.leads;
+    var hi = opt.highlight || [];
+    var s = [];
+    s.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" font-family="Helvetica,Arial,sans-serif">');
+    s.push('<defs><pattern id="g1" width="' + pxmm + '" height="' + pxmm + '" patternUnits="userSpaceOnUse"><path d="M ' + pxmm + ' 0 L 0 0 0 ' + pxmm + '" fill="none" stroke="#f0b8b8" stroke-width="0.5"/></pattern>' +
+      '<pattern id="g5" width="' + 5 * pxmm + '" height="' + 5 * pxmm + '" patternUnits="userSpaceOnUse"><rect width="' + 5 * pxmm + '" height="' + 5 * pxmm + '" fill="url(#g1)"/><path d="M ' + 5 * pxmm + ' 0 L 0 0 0 ' + 5 * pxmm + '" fill="none" stroke="#e58a8a" stroke-width="0.9"/></pattern></defs>');
+    s.push('<rect width="' + W + '" height="' + H + '" fill="#fff8f6"/><rect width="' + W + '" height="' + H + '" fill="url(#g5)"/>');
+    function path(lead, t0, t1, x0, baseY) {
+      var i0 = Math.round(t0 * fs), i1 = Math.min(Math.round(t1 * fs), lead.length);
+      var step = Math.max(1, Math.round(fs / (mmPerSec * pxmm)));   // 1 sample / px
+      var d = '';
+      for (var i = i0; i < i1; i += step) {
+        var x = x0 + (i - i0) / fs * mmPerSec * pxmm;
+        var y = baseY - lead[i] * mmPerMv * pxmm;
+        d += (i === i0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1);
+      }
+      return d;
+    }
+    for (var r = 0; r < rows; r++) {
+      var baseY = r * rowH + rowH * 0.6;
+      // 定標脈衝
+      s.push('<path d="M0 ' + baseY + ' h' + pxmm + ' v-' + 10 * pxmm + ' h' + 3 * pxmm + ' v' + 10 * pxmm + ' h' + pxmm + '" fill="none" stroke="#111" stroke-width="1.3"/>');
+      for (var c = 0; c < cols; c++) {
+        var name = layout === '3x4' ? order[r * cols + c] : order[c * rows + r];   // 3x4：每列三個；4x3：每欄三個
+        var x0 = calW + c * segW, t0 = c * segSec;
+        var isHi = hi.indexOf(name) >= 0;
+        if (isHi) s.push('<rect x="' + x0 + '" y="' + (r * rowH) + '" width="' + segW + '" height="' + rowH + '" fill="#ffe08a" fill-opacity="0.35"/>');
+        s.push('<text x="' + (x0 + 6) + '" y="' + (r * rowH + 16) + '" font-size="' + 3.6 * pxmm + '" font-weight="bold" fill="#111">' + name + '</text>');
+        s.push('<path d="' + path(L[name], t0, t0 + segSec, x0, baseY) + '" fill="none" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/>');
+        if (c > 0) s.push('<path d="M' + x0 + ' ' + (r * rowH + 4) + ' v' + (rowH * 0.25) + '" stroke="#111" stroke-width="0.8"/>');
+      }
+    }
+    if (rhythm) {
+      var by = rows * rowH + rowH * 0.6, rl = opt.rhythmLead || 'II';
+      s.push('<path d="M0 ' + by + ' h' + pxmm + ' v-' + 10 * pxmm + ' h' + 3 * pxmm + ' v' + 10 * pxmm + ' h' + pxmm + '" fill="none" stroke="#111" stroke-width="1.3"/>');
+      s.push('<text x="' + (calW + 6) + '" y="' + (rows * rowH + 16) + '" font-size="' + 3.6 * pxmm + '" font-weight="bold" fill="#111">' + rl + '</text>');
+      s.push('<path d="' + path(L[rl], 0, cols * segSec, calW, by) + '" fill="none" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/>');
+    }
+    if (opt.caption) s.push('<text x="' + (W - 6) + '" y="' + (H - 6) + '" text-anchor="end" font-size="' + 3 * pxmm + '" fill="#666">' + opt.caption + '</text>');
+    s.push('</svg>');
+    return s.join('');
+  }
+
+  // 單一導程小圖（教學卡用）
+  function leadSVG(rec, name, opt) {
+    opt = opt || {};
+    var pxmm = opt.pxPerMm || 4, secs = opt.sec || 2.0;
+    var W = secs * 25 * pxmm, H = (opt.rowMm || 28) * pxmm, baseY = H * 0.62, fs = rec.fs, lead = rec.leads[name];
+    var i0 = Math.round((opt.t0 || 0.0) * fs), i1 = Math.min(Math.round(((opt.t0 || 0) + secs) * fs), lead.length);
+    var d = '';
+    for (var i = i0; i < i1; i++) { var x = (i - i0) / fs * 25 * pxmm, y = baseY - lead[i] * 10 * pxmm; d += (i === i0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1); }
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '">' +
+      '<defs><pattern id="lg1" width="' + pxmm + '" height="' + pxmm + '" patternUnits="userSpaceOnUse"><path d="M ' + pxmm + ' 0 L 0 0 0 ' + pxmm + '" fill="none" stroke="#f0b8b8" stroke-width="0.5"/></pattern>' +
+      '<pattern id="lg5" width="' + 5 * pxmm + '" height="' + 5 * pxmm + '" patternUnits="userSpaceOnUse"><rect width="' + 5 * pxmm + '" height="' + 5 * pxmm + '" fill="url(#lg1)"/><path d="M ' + 5 * pxmm + ' 0 L 0 0 0 ' + 5 * pxmm + '" fill="none" stroke="#e58a8a" stroke-width="0.9"/></pattern></defs>' +
+      '<rect width="' + W + '" height="' + H + '" fill="#fff8f6"/><rect width="' + W + '" height="' + H + '" fill="url(#lg5)"/>' +
+      '<text x="6" y="' + 4.2 * pxmm + '" font-size="' + 3.6 * pxmm + '" font-weight="bold" font-family="Helvetica,Arial,sans-serif" fill="#111">' + name + '</text>' +
+      '<path d="' + d + '" fill="none" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+  }
+
+  // 額面 QRS 軸（度）— 由 I 與 aVF 的 QRS 淨面積估計
+  function qrsAxis(rec) {
+    var fs = rec.fs, L = rec.leads, i0 = Math.round(0.36 * fs), i1 = Math.round(0.45 * fs); // 第一拍 QRS 區間（心搏起點 0.15 s）
+    var sI = 0, sF = 0;
+    for (var i = i0; i < i1; i++) { sI += L.I[i]; sF += L.aVF[i]; }
+    return Math.round(Math.atan2(sF, sI) * 180 / Math.PI);
+  }
+
+  return { generate: generate, toSVG: toSVG, leadSVG: leadSVG, qrsAxis: qrsAxis, SWAPS: SWAPS, SWAP_INFO: SWAP_INFO, ELECTRODES_STD: ELECTRODES_STD };
+});
+
+</script>
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id);};
+var POOL_EASY=['normal','normal','RA-LA','RA-LL','RA-RL','LA-RL'];
+var POOL_HARD=['normal','normal','RA-LA','RA-LL','LA-LL','LA-LL','RA-RL','LA-RL','CW','CCW','dextro'];
+var OPTS_EASY=['normal','RA-LA','RA-LL','RA-RL','LA-RL'];
+var OPTS_HARD=['normal','RA-LA','LA-LL','RA-LL','CW','CCW','RA-RL','LA-RL','dextro'];
+var LABEL={normal:['接線正確','Correct'],'RA-LA':['RA–LA','右手–左手'],'LA-LL':['LA–LL','左手–左腳'],'RA-LL':['RA–LL','右手–左腳'],CW:['順時針輪轉','RA→LA→LL'],CCW:['逆時針輪轉','RA→LL→LA'],'RA-RL':['RA–RL','右手–右腳'],'LA-RL':['LA–RL','左手–右腳'],dextro:['真正右位心','不是接錯']};
+var HI={normal:[],'RA-LA':['I','aVR','aVL'],'LA-LL':['I','II','III'],'RA-LL':['II','III','aVF','aVR'],CW:['I','II','III'],CCW:['I','II','III'],'RA-RL':['II','I','III'],'LA-RL':['III','I'],dextro:['V4','V5','V6','I']};
+var ROWS={normal:['I','II','III','aVR','aVL','aVF'],'RA-LA':['−I','III','II','aVL','aVR','aVF'],'LA-LL':['II','I','−III','aVR','aVF','aVL'],'RA-LL':['−III','−II','−I','aVF','aVL','aVR'],CW:['III','−I','−II','aVL','aVF','aVR'],CCW:['−II','−III','I','aVF','aVR','aVL'],'RA-RL':['≈ −III','≈ 0','III','≈ aVF','≈ −III','≈ aVF'],'LA-RL':['≈ II','II','≈ 0','≈ aVR','≈ II','≈ aVR'],dextro:['鏡像','鏡像','鏡像','鏡像','鏡像','鏡像']};
+var EXP={
+ normal:'<b>接線正確。</b>I、II 直立；aVR 的 P–QRS–T 全部朝下；V1 到 V6 的 R 波逐漸變大。三步快篩都過，也沒有單獨倒置的 III。',
+ 'RA-LA':'<b>右手與左手接反。</b>I 整個倒置（含 P 波），aVR 變直立，aVL 與 aVR 互換、II 與 III 互換；胸前完全不變。口訣：<b>I 朝下、aVR 朝上、胸前正常</b>。像右位心，但右位心的 V4–V6 會失去 R 波。',
+ 'LA-LL':'<b>左手與左腳接反，最難認的一種。</b>I 變成 II、aVL 與 aVF 互換、<b>III 單獨倒置</b>；整張常常看起來「更正常」。線索：<b>I 的 P 波比 II 高</b>、III 的 P 波終末為正。懷疑就重錄。',
+ 'RA-LL':'<b>右手與左腳接反。</b>II、III、aVF <b>連 P 波一起倒置</b>，aVR 直立；像下壁梗塞加心房節律。真正的下壁梗塞，II、aVF 的 P 波仍然直立。',
+ CW:'<b>三肢順時針輪轉（RA→LA→LL→RA）。</b>I 變成 III、II 變成 −I、III 變成 −II；aVR 直立。換機器、換線材那幾天最容易發生。',
+ CCW:'<b>三肢逆時針輪轉（RA→LL→LA→RA）。</b>I 變成 −II、II 變成 −III、III 變成 I；I、II、aVL 倒置，aVR 直立。',
+ 'RA-RL':'<b>右手與右腳接反。</b>II 量的是兩條腿之間的電位差，所以<b>幾乎是平線</b>；I 變成像 −III；<b>只有 III 完全沒變</b>。胸前導程被扭曲，間期不可信。',
+ 'LA-RL':'<b>左手與右腳接反。</b>III <b>幾乎是平線</b>，I 變得像 II。口訣：平線在哪條導程，兩個電極就都在腿上。',
+ dextro:'<b>真正右位心，不是接錯。</b>肢體導程與 RA–LA 一模一樣（I 倒置、aVR 直立），但 <b>V4 到 V6 的 R 波消失</b>、越來越小。RA–LA 的胸前會完全正常。處理：不是重錄，是在報告註記並用右側胸前導程。'
+};
+var ML_NOTE='<p style="margin:8px 0 0;color:#8a1538"><b>軀幹貼法提醒：</b>Mason–Likar 下兩腿電位差變大，RA–RL 或 LA–RL 的那條導程只是變小、不是平線；「沒有平線」不能排除接錯。</p>';
+
+var settings={diff:'easy',ml:false};
+var store=load();
+function load(){try{return JSON.parse(localStorage.getItem('llr-trainer-v1')||'{}');}catch(e){return {};}}
+function save(){try{localStorage.setItem('llr-trainer-v1',JSON.stringify(store));}catch(e){}}
+store.total=store.total||0; store.bestStreak=store.bestStreak||0; store.best=store.best||null;
+
+function rnd(a,b){return a+Math.random()*(b-a);}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+var lastSwap=null;
+function newCase(){
+  var pool=settings.diff==='easy'?POOL_EASY:POOL_HARD, swap=pick(pool), tries=0;
+  while(swap===lastSwap&&tries++<5) swap=pick(pool);
+  lastSwap=swap;
+  var cfg={swap:swap,hr:Math.round(rnd(56,96)),axisRot:Math.round(rnd(-25,30)),gain:rnd(0.8,1.2),pGain:rnd(0.8,1.3),seed:Math.floor(Math.random()*1e9),masonLikar:settings.ml,dur:10,fs:250};
+  return {cfg:cfg,rec:ECG.generate(cfg)};
+}
+function narrow(){return window.innerWidth<700;}
+function renderECG(box,rec,hi){
+  var z=box.querySelector('.zoomhint');
+  box.innerHTML=ECG.toSVG(rec,{layout:narrow()?'3x4':'4x3',highlight:hi||[],pxPerMm:4});
+  if(z) box.appendChild(z);
+  box.onclick=function(){ $('zoomC').innerHTML=ECG.toSVG(rec,{layout:'4x3',highlight:hi||[],pxPerMm:4}); $('zoom').classList.add('on'); };
+}
+function buildOpts(container,onPick){
+  var list=settings.diff==='easy'?OPTS_EASY:OPTS_HARD; container.innerHTML='';
+  list.forEach(function(k){
+    var b=document.createElement('button'); b.className='opt'; b.dataset.k=k;
+    b.innerHTML=LABEL[k][0]+'<small>'+LABEL[k][1]+'</small>';
+    b.onclick=function(){onPick(k,b);}; container.appendChild(b);
+  });
+}
+function explain(swap,ml){
+  var r=ROWS[swap], names=['I','II','III','aVR','aVL','aVF'], hi=HI[swap];
+  var t='<table><tr><th>標示</th>'+names.map(function(n){return '<th>'+n+'</th>';}).join('')+'</tr><tr><td>實際顯示</td>'+r.map(function(v,i){return '<td class="'+(hi.indexOf(names[i])>=0?'hi':'')+'">'+v+'</td>';}).join('')+'</tr></table>';
+  var chest = (swap==='RA-RL'||swap==='LA-RL')?'<p style="margin:6px 0 0;font-size:13px;color:#5b6472">胸前導程：Wilson 中樞端被扭曲，輕微失真。</p>':(swap==='dextro'?'<p style="margin:6px 0 0;font-size:13px;color:#5b6472">胸前導程：R 波從 V1 到 V6 越來越小。</p>':'<p style="margin:6px 0 0;font-size:13px;color:#5b6472">胸前導程：完全不變。</p>');
+  return EXP[swap]+t+chest+((ml&&(swap==='RA-RL'||swap==='LA-RL'))?ML_NOTE:'');
+}
+function grade(container,chosen,answer){
+  container.querySelectorAll('.opt').forEach(function(b){
+    b.disabled=true;
+    if(b.dataset.k===answer) b.classList.add('correct');
+    else if(b.dataset.k===chosen) b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+}
+
+/* ---------- 練習 ---------- */
+var P={cur:null,ok:0,no:0,streak:0,answered:false};
+function startP(){
+  P.cur=newCase(); P.answered=false;
+  renderECG($('ecgP'),P.cur.rec,[]);
+  buildOpts($('optsP'),answerP);
+  $('verP').textContent=''; $('verP').className='verdict'; $('expP').style.display='none';
+  $('nextP').disabled=true; $('nextP').textContent='請先作答';
+}
+function answerP(k,btn){
+  if(P.answered) return; P.answered=true;
+  var ans=P.cur.cfg.swap, right=(k===ans);
+  grade($('optsP'),k,ans);
+  if(right){P.ok++;P.streak++; if(P.streak>store.bestStreak) store.bestStreak=P.streak;} else {P.no++;P.streak=0;}
+  store.total++; save();
+  $('verP').textContent=right?'答對了':'答錯了，正確答案：'+LABEL[ans][0]+'（'+LABEL[ans][1]+'）';
+  $('verP').className='verdict '+(right?'ok':'no');
+  $('expP').innerHTML=explain(ans,P.cur.cfg.masonLikar); $('expP').style.display='block';
+  renderECG($('ecgP'),P.cur.rec,HI[ans]);
+  $('nextP').disabled=false; $('nextP').textContent='下一題';
+  $('okP').textContent=P.ok; $('noP').textContent=P.no; $('bestStreak').textContent=store.bestStreak; $('totalP').textContent=store.total;
+  $('hScore').textContent='連勝 '+P.streak;
+}
+$('nextP').onclick=startP; $('skipP').onclick=startP;
+
+/* ---------- 挑戰 ---------- */
+var C={i:0,ok:0,cur:null,t0:0,timer:null,log:[],answered:false};
+function fmtBest(){ if(!store.best) return '尚無紀錄'; return store.best.score+' / 10 ・ '+store.best.sec+' 秒（'+store.best.diff+(store.best.ml?'・軀幹':'')+'）'; }
+$('chBest').textContent=fmtBest();
+$('chStart').onclick=function(){
+  C={i:0,ok:0,cur:null,t0:Date.now(),timer:null,log:[],answered:false};
+  $('chIntro').style.display='none'; $('chResult').style.display='none'; $('chGame').style.display='block';
+  C.timer=setInterval(function(){ $('chTime').textContent=Math.floor((Date.now()-C.t0)/1000); },500);
+  nextC();
+};
+function nextC(){
+  C.i++; C.answered=false; C.cur=newCase();
+  $('chN').textContent=C.i; $('chBar').style.width=((C.i-1)*10)+'%';
+  renderECG($('ecgC'),C.cur.rec,[]);
+  buildOpts($('optsC'),answerC);
+  $('verC').textContent=''; $('verC').className='verdict'; $('expC').style.display='none';
+  $('nextC').disabled=true; $('nextC').textContent='請先作答';
+}
+function answerC(k){
+  if(C.answered) return; C.answered=true;
+  var ans=C.cur.cfg.swap, right=(k===ans);
+  grade($('optsC'),k,ans); if(right) C.ok++;
+  C.log.push({n:C.i,ans:ans,k:k,right:right});
+  $('chOk').textContent=C.ok;
+  $('verC').textContent=right?'答對了':'答錯了，正確答案：'+LABEL[ans][0];
+  $('verC').className='verdict '+(right?'ok':'no');
+  $('expC').innerHTML=explain(ans,C.cur.cfg.masonLikar); $('expC').style.display='block';
+  renderECG($('ecgC'),C.cur.rec,HI[ans]);
+  $('nextC').disabled=false; $('nextC').textContent=C.i<10?'下一題':'看成績';
+}
+$('nextC').onclick=function(){ if(C.i<10) nextC(); else finishC(); };
+function finishC(){
+  clearInterval(C.timer); var sec=Math.floor((Date.now()-C.t0)/1000);
+  $('chGame').style.display='none'; $('chResult').style.display='block'; $('chBar').style.width='100%';
+  $('rScore').textContent=C.ok;
+  var tier=C.ok===10?'可帶教 L4':C.ok>=8?'獨立執行 L3':C.ok>=6?'監督下執行 L2':'回去看學習卡';
+  $('rTier').textContent=tier; $('rTime').textContent='用時 '+sec+' 秒 ・ '+(settings.diff==='easy'?'入門':'進階')+(settings.ml?' ・ 軀幹貼法':' ・ 四肢末端');
+  $('rList').innerHTML=C.log.map(function(e){return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #e3d3d8"><span>第 '+e.n+' 題　'+LABEL[e.ans][0]+'</span><b style="color:'+(e.right?'#1b7f3b':'#c62828')+'">'+(e.right?'✓':'✗ 選了 '+LABEL[e.k][0])+'</b></div>';}).join('');
+  var better=!store.best||C.ok>store.best.score||(C.ok===store.best.score&&sec<store.best.sec);
+  if(better){store.best={score:C.ok,sec:sec,diff:settings.diff==='easy'?'入門':'進階',ml:settings.ml}; save();}
+  $('chBest').textContent=fmtBest();
+}
+$('chAgain').onclick=function(){ $('chResult').style.display='none'; $('chIntro').style.display='block'; };
+$('chShare').onclick=function(){
+  var txt='肢體導極錯置挑戰：'+C.ok+'/10，'+$('rTime').textContent+'。 https://drake1128.github.io/saq-questionnaire/limb-lead-reversal-trainer.html';
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){$('chShare').textContent='已複製 ✓';});}
+  else window.prompt('複製成績',txt);
+};
+
+/* ---------- 設定與分頁 ---------- */
+function seg(id,fn){ $(id).querySelectorAll('button').forEach(function(b){ b.onclick=function(){ $(id).querySelectorAll('button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); fn(b.dataset.v); }; }); }
+seg('segDiff',function(v){ settings.diff=v; $('diffHint').textContent=v==='easy'?'入門：正常／RA–LA／RA–LL／RA–RL／LA–RL。進階加入 LA–LL、三肢輪轉、真正右位心。':'進階：九個選項，含最難的 LA–LL、三肢輪轉，以及「不是接錯」的真正右位心。'; startP(); });
+seg('segML',function(v){ settings.ml=(v==='ml'); startP(); });
+document.querySelectorAll('nav.tabs button').forEach(function(b){ b.onclick=function(){
+  document.querySelectorAll('nav.tabs button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on');
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');}); $('tab-'+b.dataset.tab).classList.add('on');
+  window.scrollTo(0,0);
+};});
+$('zoomClose').onclick=function(){ $('zoom').classList.remove('on'); };
+window.addEventListener('resize',function(){ if(P.cur) renderECG($('ecgP'),P.cur.rec,P.answered?HI[P.cur.cfg.swap]:[]); });
+
+/* 學習卡小圖：各型態的 I / aVR */
+(function(){
+  var box=$('miniCards'), items=[['normal','接線正確'],['RA-LA','RA–LA：I 倒、aVR 直立'],['RA-LL','RA–LL：II 連 P 都倒'],['LA-LL','LA–LL：III 單獨倒'],['RA-RL','RA–RL：II 平線'],['LA-RL','LA–RL：III 平線']];
+  items.forEach(function(it){
+    var rec=ECG.generate({swap:it[0],hr:72,seed:5,noise:0.3,dur:4});
+    var leads=it[0]==='RA-LL'?['II','aVR']:it[0]==='LA-LL'?['I','III']:it[0]==='RA-RL'?['II','III']:it[0]==='LA-RL'?['III','I']:['I','aVR'];
+    var f=document.createElement('figure');
+    f.innerHTML='<div style="display:flex">'+leads.map(function(l){return ECG.leadSVG(rec,l,{sec:1.4,t0:0.05,pxPerMm:3});}).join('')+'</div><figcaption>'+it[1]+'</figcaption>';
+    box.appendChild(f);
+  });
+})();
+
+$('bestStreak').textContent=store.bestStreak; $('totalP').textContent=store.total;
+startP();
+})();
+
+var SHARE_URL='https://drake1128.github.io/saq-questionnaire/limb-lead-reversal-trainer.html';
+function toggleShare(){document.getElementById('shareMenu').classList.toggle('on');}
+function copyShareLink(btn){
+  var done=function(){btn.textContent='已複製連結 ✓';setTimeout(function(){btn.textContent='複製連結';},1800);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(SHARE_URL).then(done,function(){window.prompt('請手動複製連結',SHARE_URL);});}
+  else window.prompt('請手動複製連結',SHARE_URL);
+}
+document.addEventListener('click',function(e){var fab=document.querySelector('.share-fab');if(fab&&!fab.contains(e.target))document.getElementById('shareMenu').classList.remove('on');});
+</script>
+</body>
+</html>
